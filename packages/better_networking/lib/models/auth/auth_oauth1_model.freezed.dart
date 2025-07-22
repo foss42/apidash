@@ -26,7 +26,8 @@ mixin _$AuthOAuth1Model {
   String get credentialsFilePath => throw _privateConstructorUsedError;
   String? get accessToken => throw _privateConstructorUsedError;
   String? get tokenSecret => throw _privateConstructorUsedError;
-  String get signatureMethod => throw _privateConstructorUsedError;
+  OAuth1SignatureMethod get signatureMethod =>
+      throw _privateConstructorUsedError;
   String get parameterLocation => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
   String? get realm => throw _privateConstructorUsedError;
@@ -59,7 +60,7 @@ abstract class $AuthOAuth1ModelCopyWith<$Res> {
     String credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
-    String signatureMethod,
+    OAuth1SignatureMethod signatureMethod,
     String parameterLocation,
     String version,
     String? realm,
@@ -126,7 +127,7 @@ class _$AuthOAuth1ModelCopyWithImpl<$Res, $Val extends AuthOAuth1Model>
             signatureMethod: null == signatureMethod
                 ? _value.signatureMethod
                 : signatureMethod // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as OAuth1SignatureMethod,
             parameterLocation: null == parameterLocation
                 ? _value.parameterLocation
                 : parameterLocation // ignore: cast_nullable_to_non_nullable
@@ -180,7 +181,7 @@ abstract class _$$AuthOAuth1ModelImplCopyWith<$Res>
     String credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
-    String signatureMethod,
+    OAuth1SignatureMethod signatureMethod,
     String parameterLocation,
     String version,
     String? realm,
@@ -246,7 +247,7 @@ class __$$AuthOAuth1ModelImplCopyWithImpl<$Res>
         signatureMethod: null == signatureMethod
             ? _value.signatureMethod
             : signatureMethod // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as OAuth1SignatureMethod,
         parameterLocation: null == parameterLocation
             ? _value.parameterLocation
             : parameterLocation // ignore: cast_nullable_to_non_nullable
@@ -293,7 +294,7 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
     required this.credentialsFilePath,
     this.accessToken,
     this.tokenSecret,
-    this.signatureMethod = "hmacSha1",
+    this.signatureMethod = OAuth1SignatureMethod.hmacSha1,
     this.parameterLocation = "header",
     this.version = '1.0',
     this.realm,
@@ -319,7 +320,7 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
   final String? tokenSecret;
   @override
   @JsonKey()
-  final String signatureMethod;
+  final OAuth1SignatureMethod signatureMethod;
   @override
   @JsonKey()
   final String parameterLocation;
@@ -421,7 +422,7 @@ abstract class _AuthOAuth1Model implements AuthOAuth1Model {
     required final String credentialsFilePath,
     final String? accessToken,
     final String? tokenSecret,
-    final String signatureMethod,
+    final OAuth1SignatureMethod signatureMethod,
     final String parameterLocation,
     final String version,
     final String? realm,
@@ -446,7 +447,7 @@ abstract class _AuthOAuth1Model implements AuthOAuth1Model {
   @override
   String? get tokenSecret;
   @override
-  String get signatureMethod;
+  OAuth1SignatureMethod get signatureMethod;
   @override
   String get parameterLocation;
   @override

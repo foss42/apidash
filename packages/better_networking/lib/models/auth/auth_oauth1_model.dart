@@ -1,3 +1,4 @@
+import 'package:better_networking/consts.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_oauth1_model.g.dart';
@@ -12,7 +13,7 @@ class AuthOAuth1Model with _$AuthOAuth1Model {
     required String credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
-    @Default("hmacSha1") String signatureMethod,
+    @Default(OAuth1SignatureMethod.hmacSha1) OAuth1SignatureMethod signatureMethod,
     @Default("header") String parameterLocation,
     @Default('1.0') String version,
     String? realm,

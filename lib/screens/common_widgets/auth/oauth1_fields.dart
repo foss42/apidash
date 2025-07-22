@@ -32,7 +32,7 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
   late TextEditingController _timestampController;
   late TextEditingController _realmController;
   late TextEditingController _nonceController;
-  late String _signatureMethodController;
+  late OAuth1SignatureMethod _signatureMethodController;
   late String _addAuthDataTo;
 
   @override
@@ -53,7 +53,8 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
     _timestampController = TextEditingController(text: oauth1?.timestamp ?? '');
     _realmController = TextEditingController(text: oauth1?.realm ?? '');
     _nonceController = TextEditingController(text: oauth1?.nonce ?? '');
-    _signatureMethodController = oauth1?.signatureMethod ?? 'hmacsha1';
+    _signatureMethodController =
+        oauth1?.signatureMethod ?? OAuth1SignatureMethod.hmacSha1;
     _addAuthDataTo = oauth1?.parameterLocation ?? 'url';
   }
 
@@ -115,17 +116,12 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
           ),
         ),
         const SizedBox(height: 4),
-        ADPopupMenu<String>(
-          value: _signatureMethodController.trim(),
-          values: const [
-            ('HMAC-SHA1', 'hmacsha1'),
-            ('HMAC-SHA256', 'hmacsha256'),
-            ('HMAC-SHA512', 'hmacsha512'),
-            ('Plaintext', 'plaintext'),
-          ],
+        ADPopupMenu<OAuth1SignatureMethod>(
+          value: _signatureMethodController.displayType,
+          values: OAuth1SignatureMethod.values.map((e) => (e, e.displayType)),
           tooltip: "this algorithm will be used to produce the digest",
           isOutlined: true,
-          onChanged: (String? newAlgo) {
+          onChanged: (OAuth1SignatureMethod? newAlgo) {
             if (newAlgo != null) {
               setState(() {
                 _signatureMethodController = newAlgo;

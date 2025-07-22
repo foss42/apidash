@@ -14,7 +14,12 @@ _$AuthOAuth1ModelImpl _$$AuthOAuth1ModelImplFromJson(
   credentialsFilePath: json['credentialsFilePath'] as String,
   accessToken: json['accessToken'] as String?,
   tokenSecret: json['tokenSecret'] as String?,
-  signatureMethod: json['signatureMethod'] as String? ?? "hmacSha1",
+  signatureMethod:
+      $enumDecodeNullable(
+        _$OAuth1SignatureMethodEnumMap,
+        json['signatureMethod'],
+      ) ??
+      OAuth1SignatureMethod.hmacSha1,
   parameterLocation: json['parameterLocation'] as String? ?? "header",
   version: json['version'] as String? ?? '1.0',
   realm: json['realm'] as String?,
@@ -33,7 +38,7 @@ Map<String, dynamic> _$$AuthOAuth1ModelImplToJson(
   'credentialsFilePath': instance.credentialsFilePath,
   'accessToken': instance.accessToken,
   'tokenSecret': instance.tokenSecret,
-  'signatureMethod': instance.signatureMethod,
+  'signatureMethod': _$OAuth1SignatureMethodEnumMap[instance.signatureMethod]!,
   'parameterLocation': instance.parameterLocation,
   'version': instance.version,
   'realm': instance.realm,
@@ -42,4 +47,9 @@ Map<String, dynamic> _$$AuthOAuth1ModelImplToJson(
   'nonce': instance.nonce,
   'timestamp': instance.timestamp,
   'includeBodyHash': instance.includeBodyHash,
+};
+
+const _$OAuth1SignatureMethodEnumMap = {
+  OAuth1SignatureMethod.hmacSha1: 'hmacSha1',
+  OAuth1SignatureMethod.plaintext: 'plaintext',
 };
