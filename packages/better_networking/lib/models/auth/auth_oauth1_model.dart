@@ -9,6 +9,7 @@ class AuthOAuth1Model with _$AuthOAuth1Model {
   const factory AuthOAuth1Model({
     required String consumerKey,
     required String consumerSecret,
+    required String credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
     @Default("hmacSha1") String signatureMethod,

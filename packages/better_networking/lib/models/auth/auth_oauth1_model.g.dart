@@ -11,6 +11,7 @@ _$AuthOAuth1ModelImpl _$$AuthOAuth1ModelImplFromJson(
 ) => _$AuthOAuth1ModelImpl(
   consumerKey: json['consumerKey'] as String,
   consumerSecret: json['consumerSecret'] as String,
+  credentialsFilePath: json['credentialsFilePath'] as String,
   accessToken: json['accessToken'] as String?,
   tokenSecret: json['tokenSecret'] as String?,
   signatureMethod: json['signatureMethod'] as String? ?? "hmacSha1",
@@ -29,6 +30,7 @@ Map<String, dynamic> _$$AuthOAuth1ModelImplToJson(
 ) => <String, dynamic>{
   'consumerKey': instance.consumerKey,
   'consumerSecret': instance.consumerSecret,
+  'credentialsFilePath': instance.credentialsFilePath,
   'accessToken': instance.accessToken,
   'tokenSecret': instance.tokenSecret,
   'signatureMethod': instance.signatureMethod,

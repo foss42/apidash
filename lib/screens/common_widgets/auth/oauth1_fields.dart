@@ -1,3 +1,4 @@
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/widgets/widgets.dart';
@@ -188,7 +189,13 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
     );
   }
 
-  void _updateOAuth1() {
+  void _updateOAuth1() async {
+    final String? credentialsFilePath =
+        await getApplicationSupportDirectoryFilePath(
+            "oauth1_credentials", "json");
+    if (credentialsFilePath == null) {
+      return;
+    }
     widget.updateAuth?.call(
       widget.authData?.copyWith(
             type: APIAuthType.oauth1,
@@ -204,6 +211,7 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
               timestamp: _timestampController.text.trim(),
               nonce: _nonceController.text.trim(),
               realm: _realmController.text.trim(),
+              credentialsFilePath: credentialsFilePath,
             ),
           ) ??
           AuthModel(
@@ -220,6 +228,7 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
               timestamp: _timestampController.text.trim(),
               nonce: _nonceController.text.trim(),
               realm: _realmController.text.trim(),
+              credentialsFilePath: credentialsFilePath,
             ),
           ),
     );

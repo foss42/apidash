@@ -7,6 +7,8 @@ import 'package:better_networking/better_networking.dart';
 import 'package:better_networking/utils/auth/oauth2_utils.dart';
 import 'package:flutter/foundation.dart';
 
+import 'oauth1_utils.dart';
+
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
   AuthModel? authData,
@@ -157,8 +159,24 @@ Future<HttpRequestModel> handleAuth(
       }
       break;
     case APIAuthType.oauth1:
-      // TODO: Handle this case.
-      throw UnimplementedError();
+      if (authData.oauth1 != null) {
+        final oauth1Model = authData.oauth1!;
+
+        try {
+          final client = generateOAuth1AuthHeader(
+            oauth1Model,
+            httpRequestModel,
+          );
+
+          updatedHeaders.add(
+            NameValueModel(name: 'Authorization', value: client),
+          );
+          updatedHeaderEnabledList.add(true);
+        } catch (e) {
+          throw Exception('OAuth 1.0 authentication failed: $e');
+        }
+      }
+      break;
     case APIAuthType.oauth2:
       final oauth2 = authData.oauth2;
 

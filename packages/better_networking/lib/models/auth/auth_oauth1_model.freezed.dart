@@ -23,6 +23,7 @@ AuthOAuth1Model _$AuthOAuth1ModelFromJson(Map<String, dynamic> json) {
 mixin _$AuthOAuth1Model {
   String get consumerKey => throw _privateConstructorUsedError;
   String get consumerSecret => throw _privateConstructorUsedError;
+  String get credentialsFilePath => throw _privateConstructorUsedError;
   String? get accessToken => throw _privateConstructorUsedError;
   String? get tokenSecret => throw _privateConstructorUsedError;
   String get signatureMethod => throw _privateConstructorUsedError;
@@ -55,6 +56,7 @@ abstract class $AuthOAuth1ModelCopyWith<$Res> {
   $Res call({
     String consumerKey,
     String consumerSecret,
+    String credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
     String signatureMethod,
@@ -86,6 +88,7 @@ class _$AuthOAuth1ModelCopyWithImpl<$Res, $Val extends AuthOAuth1Model>
   $Res call({
     Object? consumerKey = null,
     Object? consumerSecret = null,
+    Object? credentialsFilePath = null,
     Object? accessToken = freezed,
     Object? tokenSecret = freezed,
     Object? signatureMethod = null,
@@ -107,6 +110,10 @@ class _$AuthOAuth1ModelCopyWithImpl<$Res, $Val extends AuthOAuth1Model>
             consumerSecret: null == consumerSecret
                 ? _value.consumerSecret
                 : consumerSecret // ignore: cast_nullable_to_non_nullable
+                      as String,
+            credentialsFilePath: null == credentialsFilePath
+                ? _value.credentialsFilePath
+                : credentialsFilePath // ignore: cast_nullable_to_non_nullable
                       as String,
             accessToken: freezed == accessToken
                 ? _value.accessToken
@@ -170,6 +177,7 @@ abstract class _$$AuthOAuth1ModelImplCopyWith<$Res>
   $Res call({
     String consumerKey,
     String consumerSecret,
+    String credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
     String signatureMethod,
@@ -200,6 +208,7 @@ class __$$AuthOAuth1ModelImplCopyWithImpl<$Res>
   $Res call({
     Object? consumerKey = null,
     Object? consumerSecret = null,
+    Object? credentialsFilePath = null,
     Object? accessToken = freezed,
     Object? tokenSecret = freezed,
     Object? signatureMethod = null,
@@ -221,6 +230,10 @@ class __$$AuthOAuth1ModelImplCopyWithImpl<$Res>
         consumerSecret: null == consumerSecret
             ? _value.consumerSecret
             : consumerSecret // ignore: cast_nullable_to_non_nullable
+                  as String,
+        credentialsFilePath: null == credentialsFilePath
+            ? _value.credentialsFilePath
+            : credentialsFilePath // ignore: cast_nullable_to_non_nullable
                   as String,
         accessToken: freezed == accessToken
             ? _value.accessToken
@@ -277,6 +290,7 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
   const _$AuthOAuth1ModelImpl({
     required this.consumerKey,
     required this.consumerSecret,
+    required this.credentialsFilePath,
     this.accessToken,
     this.tokenSecret,
     this.signatureMethod = "hmacSha1",
@@ -297,6 +311,8 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
   final String consumerKey;
   @override
   final String consumerSecret;
+  @override
+  final String credentialsFilePath;
   @override
   final String? accessToken;
   @override
@@ -326,7 +342,7 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
 
   @override
   String toString() {
-    return 'AuthOAuth1Model(consumerKey: $consumerKey, consumerSecret: $consumerSecret, accessToken: $accessToken, tokenSecret: $tokenSecret, signatureMethod: $signatureMethod, parameterLocation: $parameterLocation, version: $version, realm: $realm, callbackUrl: $callbackUrl, verifier: $verifier, nonce: $nonce, timestamp: $timestamp, includeBodyHash: $includeBodyHash)';
+    return 'AuthOAuth1Model(consumerKey: $consumerKey, consumerSecret: $consumerSecret, credentialsFilePath: $credentialsFilePath, accessToken: $accessToken, tokenSecret: $tokenSecret, signatureMethod: $signatureMethod, parameterLocation: $parameterLocation, version: $version, realm: $realm, callbackUrl: $callbackUrl, verifier: $verifier, nonce: $nonce, timestamp: $timestamp, includeBodyHash: $includeBodyHash)';
   }
 
   @override
@@ -338,6 +354,8 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
                 other.consumerKey == consumerKey) &&
             (identical(other.consumerSecret, consumerSecret) ||
                 other.consumerSecret == consumerSecret) &&
+            (identical(other.credentialsFilePath, credentialsFilePath) ||
+                other.credentialsFilePath == credentialsFilePath) &&
             (identical(other.accessToken, accessToken) ||
                 other.accessToken == accessToken) &&
             (identical(other.tokenSecret, tokenSecret) ||
@@ -365,6 +383,7 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
     runtimeType,
     consumerKey,
     consumerSecret,
+    credentialsFilePath,
     accessToken,
     tokenSecret,
     signatureMethod,
@@ -399,6 +418,7 @@ abstract class _AuthOAuth1Model implements AuthOAuth1Model {
   const factory _AuthOAuth1Model({
     required final String consumerKey,
     required final String consumerSecret,
+    required final String credentialsFilePath,
     final String? accessToken,
     final String? tokenSecret,
     final String signatureMethod,
@@ -419,6 +439,8 @@ abstract class _AuthOAuth1Model implements AuthOAuth1Model {
   String get consumerKey;
   @override
   String get consumerSecret;
+  @override
+  String get credentialsFilePath;
   @override
   String? get accessToken;
   @override
