@@ -104,7 +104,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
 
   // Otherwise, perform the client credentials grant
   final client = await oauth2.clientCredentialsGrant(
-    Uri.parse(oauth2Model.authorizationUrl),
+    Uri.parse(oauth2Model.accessTokenUrl),
     oauth2Model.clientId,
     oauth2Model.clientSecret,
     scopes: oauth2Model.scope != null ? [oauth2Model.scope!] : null,
@@ -157,7 +157,7 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
 
   // Otherwise, perform the owner password grant
   final client = await oauth2.resourceOwnerPasswordGrant(
-    Uri.parse(oauth2Model.authorizationUrl),
+    Uri.parse(oauth2Model.accessTokenUrl),
     oauth2Model.username!,
     oauth2Model.password!,
     identifier: oauth2Model.clientId,
