@@ -197,7 +197,9 @@ Future<HttpRequestModel> handleAuth(
             secret: oauth2.clientSecret,
             authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
             redirectUrl: Uri.parse(
-              oauth2.redirectUrl ?? "apidash://oauth2/callback",
+              oauth2.redirectUrl!.isEmpty
+                  ? "apidash://oauth2/callback"
+                  : oauth2.redirectUrl!,
             ),
             tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
             credentialsFile: credentialsFile,

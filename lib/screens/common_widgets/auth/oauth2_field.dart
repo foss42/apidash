@@ -55,11 +55,11 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
     _usernameController = TextEditingController(text: oauth2?.username ?? '');
     _passwordController = TextEditingController(text: oauth2?.password ?? '');
     _refreshTokenController =
-        TextEditingController(text: oauth2?.refreshToken ?? 'N/A');
+        TextEditingController(text: oauth2?.refreshToken ?? '');
     _identityTokenController =
-        TextEditingController(text: oauth2?.identityToken ?? 'N/A');
+        TextEditingController(text: oauth2?.identityToken ?? '');
     _accessTokenController =
-        TextEditingController(text: oauth2?.accessToken ?? 'N/A');
+        TextEditingController(text: oauth2?.accessToken ?? '');
     _codeChallengeMethod = oauth2?.codeChallengeMethod ?? 'sha-256';
 
     // Load credentials from file if available
@@ -79,8 +79,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           } else {
             _refreshTokenController.text = "N/A";
           }
-          if (decoded['id_token'] != null) {
-            _identityTokenController.text = decoded['identityToken']!;
+          if (decoded['idToken'] != null) {
+            _identityTokenController.text = decoded['idToken']!;
           } else {
             _identityTokenController.text = "N/A";
           }
@@ -89,6 +89,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           } else {
             _accessTokenController.text = "N/A";
           }
+          // "expiration": 1753258479104
         });
       }
     }
@@ -98,7 +99,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: ClampingScrollPhysics(),
       children: [
         Text(
           "Grant Type",
@@ -243,7 +244,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             readOnly: widget.readOnly,
             controller: _refreshTokenController,
             hintText: "Refresh Token",
-            isObscureText: true,
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
@@ -252,7 +252,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             readOnly: widget.readOnly,
             controller: _identityTokenController,
             hintText: "Identity Token",
-            isObscureText: true,
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
@@ -260,7 +259,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _accessTokenController,
-            isObscureText: true,
             hintText: "Access Token",
             onChanged: (_) => _updateOAuth2(),
           ),

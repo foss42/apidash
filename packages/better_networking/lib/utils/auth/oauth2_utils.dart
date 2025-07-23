@@ -65,6 +65,7 @@ Future<oauth2.Client> oAuth2AuthorizationCodeGrantHandler({
     log('OAuth2 authorization successful, saving credentials');
 
     await credentialsFile.writeAsString(client.credentials.toJson());
+    log(client.credentials.toJson());
 
     return client;
   } catch (e) {
