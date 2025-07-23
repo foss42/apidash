@@ -26,7 +26,8 @@ String generateOAuth1AuthHeader(
   // Build OAuth parameters map
   final oauthParams = <String, String>{
     'oauth_consumer_key': oauth1Model.consumerKey,
-    'oauth_signature_method': oauth1Model.signatureMethod.displayType,
+    'oauth_signature_method': oauth1Model.signatureMethod.displayType
+        .toUpperCase(),
     'oauth_timestamp': timestamp,
     'oauth_nonce': nonce,
     'oauth_version': oauth1Model.version,

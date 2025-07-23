@@ -76,9 +76,8 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
         ADPopupMenu<String>(
           value: _addAuthDataTo,
           values: const [
-            ('URL', 'url'),
-            ('Header', 'header'),
-            ('Body', 'body'),
+            ('Request URL / Request Body', 'url'),
+            ('Request Header', 'header'),
           ],
           tooltip: "Select where to add API key",
           isOutlined: true,
