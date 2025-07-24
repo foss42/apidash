@@ -1,8 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:better_networking/utils/auth/jwt_auth_utils.dart';
 import 'package:better_networking/utils/auth/digest_auth_utils.dart';
 import 'package:better_networking/better_networking.dart';
+import 'package:better_networking/utils/auth/oauth2_utils.dart';
+import 'package:flutter/foundation.dart';
+
+import 'oauth1_utils.dart';
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
@@ -154,11 +159,98 @@ Future<HttpRequestModel> handleAuth(
       }
       break;
     case APIAuthType.oauth1:
-      // TODO: Handle this case.
-      throw UnimplementedError();
+      if (authData.oauth1 != null) {
+        final oauth1Model = authData.oauth1!;
+
+        try {
+          final client = generateOAuth1AuthHeader(
+            oauth1Model,
+            httpRequestModel,
+          );
+
+          updatedHeaders.add(
+            NameValueModel(name: 'Authorization', value: client),
+          );
+          updatedHeaderEnabledList.add(true);
+        } catch (e) {
+          throw Exception('OAuth 1.0 authentication failed: $e');
+        }
+      }
+      break;
     case APIAuthType.oauth2:
-      // TODO: Handle this case.
-      throw UnimplementedError();
+      final oauth2 = authData.oauth2;
+
+      if (oauth2 == null) {
+        throw Exception("Failed to get OAuth2 Data");
+      }
+
+      if (oauth2.redirectUrl == null) {
+        throw Exception("No Redirect URL found!");
+      }
+
+      final credentialsFile = File(oauth2.credentialsFilePath);
+
+      switch (oauth2.grantType) {
+        case OAuth2GrantType.authorizationCode:
+          final res = await oAuth2AuthorizationCodeGrantHandler(
+            identifier: oauth2.clientId,
+            secret: oauth2.clientSecret,
+            authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
+            redirectUrl: Uri.parse(
+              oauth2.redirectUrl!.isEmpty
+                  ? "apidash://oauth2/callback"
+                  : oauth2.redirectUrl!,
+            ),
+            tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
+            credentialsFile: credentialsFile,
+            scope: oauth2.scope,
+          );
+          debugPrint(res.credentials.accessToken);
+
+          // Add the access token to the request headers
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${res.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+
+          break;
+        case OAuth2GrantType.clientCredentials:
+          final client = await oAuth2ClientCredentialsGrantHandler(
+            oauth2Model: oauth2,
+            credentialsFile: credentialsFile,
+          );
+          debugPrint(client.credentials.accessToken);
+
+          // Add the access token to the request headers
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${client.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+          break;
+        case OAuth2GrantType.resourceOwnerPassword:
+          debugPrint("==Resource Owner Password==");
+          final client = await oAuth2ResourceOwnerPasswordGrantHandler(
+            oauth2Model: oauth2,
+            credentialsFile: credentialsFile,
+          );
+          debugPrint(client.credentials.accessToken);
+
+          // Add the access token to the request headers
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${client.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+          break;
+      }
   }
 
   return httpRequestModel.copyWith(
