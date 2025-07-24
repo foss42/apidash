@@ -63,35 +63,35 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Add auth data to",
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 14,
-          ),
-        ),
-        SizedBox(
-          height: 4,
-        ),
-        ADPopupMenu<String>(
-          value: _addAuthDataTo,
-          values: const [
-            ('Request URL / Request Body', 'url'),
-            ('Request Header', 'header'),
-          ],
-          tooltip: "Select where to add API key",
-          isOutlined: true,
-          onChanged: (String? newLocation) {
-            if (newLocation != null) {
-              setState(() {
-                _addAuthDataTo = newLocation;
-              });
+        // Text(
+        //   "Add auth data to",
+        //   style: TextStyle(
+        //     fontWeight: FontWeight.normal,
+        //     fontSize: 14,
+        //   ),
+        // ),
+        // SizedBox(
+        //   height: 4,
+        // ),
+        // ADPopupMenu<String>(
+        //   value: _addAuthDataTo,
+        //   values: const [
+        //     ('Request URL / Request Body', 'url'),
+        //     ('Request Header', 'header'),
+        //   ],
+        //   tooltip: "Select where to add API key",
+        //   isOutlined: true,
+        //   onChanged: (String? newLocation) {
+        //     if (newLocation != null) {
+        //       setState(() {
+        //         _addAuthDataTo = newLocation;
+        //       });
 
-              _updateOAuth1();
-            }
-          },
-        ),
-        const SizedBox(height: 16),
+        //       _updateOAuth1();
+        //     }
+        //   },
+        // ),
+        // const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _consumerKeyController,
