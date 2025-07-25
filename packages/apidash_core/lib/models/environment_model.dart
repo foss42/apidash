@@ -32,6 +32,7 @@ class EnvironmentVariableModel with _$EnvironmentVariableModel {
     required String value,
     @Default(EnvironmentVariableType.variable) EnvironmentVariableType type,
     @Default(false) bool enabled,
+    @Default(false) bool fromOS,
   }) = _EnvironmentVariableModel;
 
   factory EnvironmentVariableModel.fromJson(Map<String, Object?> json) =>
@@ -39,9 +40,9 @@ class EnvironmentVariableModel with _$EnvironmentVariableModel {
 }
 
 const kEnvironmentVariableEmptyModel =
-    EnvironmentVariableModel(key: "", value: "");
+    EnvironmentVariableModel(key: "", value: "", fromOS: false);
 const kEnvironmentSecretEmptyModel = EnvironmentVariableModel(
-    key: "", value: "", type: EnvironmentVariableType.secret);
+    key: "", value: "", type: EnvironmentVariableType.secret, fromOS: false);
 
 class EnvironmentVariableSuggestion {
   final String environmentId;

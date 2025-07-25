@@ -70,6 +70,11 @@ class EditEnvironmentVariablesState
         label: Text("Variable value"),
       ),
       DataColumn2(
+        label: Text('OS'),
+        fixedWidth: 50,
+        tooltip: 'Use OS environment variable',
+      ),
+      DataColumn2(
         label: Text(''),
         fixedWidth: 32,
       ),
@@ -146,6 +151,27 @@ class EditEnvironmentVariablesState
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              Tooltip(
+                message: 'Fetch value from OS environment',
+                child: ADCheckBox(
+                  keyId: "$selectedId-$index-variables-os-$seed",
+                  value: variableRows[index].fromOS,
+                  onChanged: isLast
+                      ? null
+                      : (value) {
+                          if (value != null) {
+                            setState(() {
+                              variableRows[index] =
+                                  variableRows[index].copyWith(fromOS: value);
+                            });
+                          }
+                          _onFieldChange(selectedId!);
+                        },
+                  colorScheme: Theme.of(context).colorScheme,
+                ),
               ),
             ),
             DataCell(
