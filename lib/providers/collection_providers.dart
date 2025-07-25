@@ -339,7 +339,12 @@ class CollectionStateNotifier
 
     if (apiType == APIType.ai) {
       aiRequestModel = requestModel.aiRequestModel!;
-      final genAIRequest = aiRequestModel.createRequest();
+
+      final streamingMode = aiRequestModel.payload
+              .configMap[LLMConfigName.stream.name]?.configValue.value ??
+          false;
+
+      final genAIRequest = aiRequestModel.createRequest(stream: streamingMode);
       substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
         HttpRequestModel(
           method: HTTPVerb.post,

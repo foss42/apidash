@@ -164,7 +164,7 @@ class LLMConfigTextValue extends LLMModelConfigValue {
   }
 }
 
-enum LLMConfigName { temperature, top_p, max_tokens, endpoint }
+enum LLMConfigName { temperature, top_p, max_tokens, endpoint, stream }
 
 Map<LLMConfigName, LLMModelConfiguration> defaultLLMConfigurations = {
   LLMConfigName.temperature: LLMModelConfiguration(
@@ -187,5 +187,13 @@ Map<LLMConfigName, LLMModelConfiguration> defaultLLMConfigurations = {
     configDescription: 'The maximum number of tokens allowed in the output',
     configType: LLMModelConfigurationType.numeric,
     configValue: LLMConfigNumericValue(value: -1),
+  ),
+  LLMConfigName.stream: LLMModelConfiguration(
+    configId: 'stream',
+    configName: 'Enable Streaming Mode',
+    configDescription:
+        'The LLM output will be sent in a stream instead of all at once',
+    configType: LLMModelConfigurationType.boolean,
+    configValue: LLMConfigBooleanValue(value: false),
   ),
 };

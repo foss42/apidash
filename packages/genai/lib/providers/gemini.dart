@@ -12,9 +12,12 @@ class GeminiModelController extends ModelController {
     systemPrompt: '',
     userPrompt: '',
     configMap: {
+      //TODO: CHANGES TO THESE DO NOT APPLY TO OLDER REQUESTS!!!!!!
       LLMConfigName.temperature.name:
           defaultLLMConfigurations[LLMConfigName.temperature]!,
       LLMConfigName.top_p.name: defaultLLMConfigurations[LLMConfigName.top_p]!,
+      LLMConfigName.stream.name:
+          defaultLLMConfigurations[LLMConfigName.stream]!,
     },
   ).clone();
 
