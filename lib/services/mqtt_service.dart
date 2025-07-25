@@ -172,11 +172,6 @@ class MQTTService {
       _client!.disconnect();
     }
     _client = null;
-    _addEvent(MQTTEvent(
-      timestamp: DateTime.now(),
-      type: MQTTEventType.disconnect,
-      description: "Disconnected from broker",
-    ));
     _updateState(const MQTTConnectionState());
   }
 
