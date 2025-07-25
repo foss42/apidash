@@ -132,11 +132,6 @@ class MQTTService {
       
       if (_client!.connectionStatus!.state == MqttConnectionState.connected) {
         print('[MQTT] Connected successfully!');
-        _addEvent(MQTTEvent(
-          timestamp: DateTime.now(),
-          type: MQTTEventType.connect,
-          description: "Connected to broker",
-        ));
         _updateState(_state.copyWith(isConnected: true, error: null));
         
         // Subscribe to topics
@@ -192,12 +187,6 @@ class MQTTService {
 
     try {
       _client!.subscribe(topic, MqttQos.values[qos]);
-      _addEvent(MQTTEvent(
-        timestamp: DateTime.now(),
-        type: MQTTEventType.subscribe,
-        topic: topic,
-        description: "Subscribed to topic $topic",
-      ));
       return true;
     } catch (e) {
       _addEvent(MQTTEvent(
