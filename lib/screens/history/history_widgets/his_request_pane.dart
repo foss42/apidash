@@ -127,6 +127,10 @@ class HistoryRequestPane extends ConsumerWidget {
             const HistoryScriptsTab(),
           ],
         ),
+      APIType.mqtt => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(child: Text('MQTT History Request (TODO)')),
+      ),
       _ => kSizedBoxEmpty,
     };
   }

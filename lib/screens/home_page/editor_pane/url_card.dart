@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/models.dart';
 import '../../common_widgets/common_widgets.dart';
+import '../../../models/mqtt_request_model.dart';
+import '../../../services/mqtt_service.dart' show MQTTConnectionState;
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -12,8 +15,11 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
+    final selectedRequestModel = ref.watch(selectedRequestModelProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    final mqttModel = selectedRequestModel?.mqttRequestModel;
+    final mqttState = selectedRequestModel?.mqttConnectionState;
     return Card(
       color: kColorTransparent,
       surfaceTintColor: kColorTransparent,
@@ -29,44 +35,111 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
           vertical: 5,
           horizontal: !context.isMediumWindow ? 20 : 6,
         ),
-        child: context.isMediumWindow
-            ? Row(
-                children: [
-                  switch (apiType) {
-                    APIType.rest => const DropdownButtonHTTPMethod(),
-                    APIType.graphql => kSizedBoxEmpty,
-                    null => kSizedBoxEmpty,
+        child: Row(
+          children: [
+            switch (apiType) {
+              APIType.rest => const DropdownButtonHTTPMethod(),
+              _ => const SizedBox.shrink(),
+            },
+            if (apiType == APIType.rest) kHSpacer5,
+            Expanded(
+              child: switch (apiType) {
+                APIType.mqtt => EnvURLField(
+                  selectedId: ref.watch(selectedIdStateProvider)!,
+                  initialValue: mqttModel?.brokerUrl,
+                  onChanged: (value) {
+                    ref.read(collectionStateNotifierProvider.notifier).updateMQTTState(
+                      id: ref.watch(selectedIdStateProvider),
+                      mqttRequestModel: mqttModel!.copyWith(brokerUrl: value),
+                    );
                   },
-                  switch (apiType) {
-                    APIType.rest => kHSpacer5,
-                    _ => kHSpacer8,
+                  onFieldSubmitted: (value) {
+                    ref.read(collectionStateNotifierProvider.notifier).updateMQTTState(
+                      id: ref.watch(selectedIdStateProvider),
+                      mqttRequestModel: mqttModel!.copyWith(brokerUrl: value),
+                    );
+                    ref.read(collectionStateNotifierProvider.notifier).sendRequest();
                   },
-                  const Expanded(
-                    child: URLTextField(),
+                  focusNode: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Broker URL',
+                    labelText: 'Broker URL',
+                    border: InputBorder.none,
                   ),
-                ],
-              )
-            : Row(
-                children: [
-                  switch (apiType) {
-                    APIType.rest => const DropdownButtonHTTPMethod(),
-                    APIType.graphql => kSizedBoxEmpty,
-                    null => kSizedBoxEmpty,
+                ),
+                _ => EnvURLField(
+                  selectedId: ref.watch(selectedIdStateProvider)!,
+                  initialValue: ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .getRequestModel(ref.watch(selectedIdStateProvider)!)
+                      ?.httpRequestModel
+                      ?.url,
+                  onChanged: (value) {
+                    ref.read(collectionStateNotifierProvider.notifier).update(url: value);
                   },
-                  switch (apiType) {
-                    APIType.rest => kHSpacer20,
-                    _ => kHSpacer8,
+                  onFieldSubmitted: (value) {
+                    ref.read(collectionStateNotifierProvider.notifier).sendRequest();
                   },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
-                  kHSpacer20,
-                  const SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
-                  )
-                ],
+                  focusNode: null,
+                ),
+              },
+            ),
+            if (apiType == APIType.mqtt && mqttModel != null) ...[
+              kHSpacer20,
+              SizedBox(
+                width: 220,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 70,
+                      child: TextField(
+                        controller: TextEditingController(text: mqttModel.port.toString()),
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Port',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                        ),
+                        onChanged: (val) {
+                          final port = int.tryParse(val) ?? mqttModel.port;
+                          ref.read(collectionStateNotifierProvider.notifier).updateMQTTState(
+                            id: ref.watch(selectedIdStateProvider),
+                            mqttRequestModel: mqttModel.copyWith(port: port),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 120,
+                      child: TextField(
+                        controller: TextEditingController(text: mqttModel.clientId),
+                        decoration: const InputDecoration(
+                          labelText: 'Client ID',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                        ),
+                        onChanged: (val) {
+                          ref.read(collectionStateNotifierProvider.notifier).updateMQTTState(
+                            id: ref.watch(selectedIdStateProvider),
+                            mqttRequestModel: mqttModel.copyWith(clientId: val),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
+            ],
+            kHSpacer20,
+            const SizedBox(
+              height: 36,
+              child: SendRequestButton(),
+            ),
+          ],
+        ),
       ),
     );
   }

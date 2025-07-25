@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'env_trigger_field.dart';
 
+// these changes are made to accomodate MQTT requirements in URL card
+
+
 class EnvURLField extends StatelessWidget {
   const EnvURLField({
     super.key,
@@ -11,6 +14,7 @@ class EnvURLField extends StatelessWidget {
     this.onChanged,
     this.onFieldSubmitted,
     this.focusNode,
+    this.decoration,
   });
 
   final String selectedId;
@@ -18,6 +22,7 @@ class EnvURLField extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
+  final InputDecoration? decoration;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,7 @@ class EnvURLField extends StatelessWidget {
       initialValue: initialValue,
       focusNode: focusNode,
       style: kCodeStyle,
-      decoration: InputDecoration(
+      decoration: decoration ?? InputDecoration(
         hintText: kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
           color: Theme.of(context).colorScheme.outlineVariant,

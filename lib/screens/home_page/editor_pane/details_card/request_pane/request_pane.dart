@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'request_pane_graphql.dart';
 import 'request_pane_rest.dart';
+import 'mqtt/mqtt_request_pane.dart';
 
 class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({super.key});
@@ -17,6 +18,7 @@ class EditRequestPane extends ConsumerWidget {
     return switch (apiType) {
       APIType.rest => const EditRestRequestPane(),
       APIType.graphql => const EditGraphQLRequestPane(),
+      APIType.mqtt => const EditMQTTRequestPane(),
       _ => kSizedBoxEmpty,
     };
   }
