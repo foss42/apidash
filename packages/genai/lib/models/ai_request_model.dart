@@ -32,7 +32,7 @@ class AIRequestModel with _$AIRequestModel {
 
   LLMRequestDetails createRequest() {
     final controller = model.provider.modelController;
-    return controller.createRequest(model, payload);
+    return controller.createRequest(model, payload, stream: true);
   }
 
   factory AIRequestModel.fromDefaultSaveObject(LLMSaveObject? defaultLLMSO) {

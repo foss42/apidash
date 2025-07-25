@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -186,7 +188,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: SSEDisplay(
-                        sseOutput: widget.sseOutput,
+                        sseOutput: widget.sseOutput ?? [],
                       ),
                     ),
                   ),
