@@ -15,6 +15,8 @@ class AnthropicModelController extends ModelController {
       LLMConfigName.temperature.name:
           defaultLLMConfigurations[LLMConfigName.temperature]!,
       LLMConfigName.top_p.name: defaultLLMConfigurations[LLMConfigName.top_p]!,
+      LLMConfigName.stream.name:
+          defaultLLMConfigurations[LLMConfigName.stream]!,
     },
   ).clone();
 

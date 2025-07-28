@@ -39,6 +39,7 @@ class _SSEDisplayState extends ConsumerState<SSEDisplay> {
       String out = "";
       for (String x in widget.sseOutput) {
         x = x.substring(6);
+        if (x.contains('[DONE]')) continue;
         out += aiRequestModel.model.provider.modelController
                 .streamOutputFormatter(jsonDecode(x)) ??
             "<?>";
