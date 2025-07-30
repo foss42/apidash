@@ -5,6 +5,7 @@ import 'package:apidash/widgets/field_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'consts.dart';
 
 class OAuth2Fields extends StatefulWidget {
   final AuthModel? authData;
@@ -102,24 +103,26 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
       physics: ClampingScrollPhysics(),
       children: [
         Text(
-          "Grant Type",
+          kLabelOAuth2GrantType,
           style: Theme.of(context).textTheme.labelLarge,
         ),
         kVSpacer5,
         ADPopupMenu<OAuth2GrantType>(
           value: _grantType.displayType,
           values: OAuth2GrantType.values.map((e) => (e, e.displayType)),
-          tooltip: "Select OAuth 2.0 grant type",
+          tooltip: kTooltipOAuth2GrantType,
           isOutlined: true,
-          onChanged: (OAuth2GrantType? newGrantType) {
-            if (newGrantType != null && newGrantType != _grantType) {
-              setState(() {
-                _grantType = newGrantType;
-              });
+          onChanged: widget.readOnly
+              ? null
+              : (OAuth2GrantType? newGrantType) {
+                  if (newGrantType != null && newGrantType != _grantType) {
+                    setState(() {
+                      _grantType = newGrantType;
+                    });
 
-              _updateOAuth2();
-            }
-          },
+                    _updateOAuth2();
+                  }
+                },
         ),
         kVSpacer16,
         if (_shouldShowField(OAuth2Field.authorizationUrl))
@@ -127,7 +130,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _authorizationUrlController,
-              hintText: "Authorization URL",
+              hintText: kHintOAuth2AuthorizationUrl,
+              infoText: kInfoOAuth2AuthorizationUrl,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
@@ -136,7 +140,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _usernameController,
-              hintText: "Username",
+              hintText: kHintOAuth2Username,
+              infoText: kInfoOAuth2Username,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
@@ -145,7 +150,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _passwordController,
-              hintText: "Password",
+              hintText: kHintOAuth2Password,
+              infoText: kInfoOAuth2Password,
               isObscureText: true,
               onChanged: (_) => _updateOAuth2(),
             ),
@@ -155,7 +161,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _accessTokenUrlController,
-              hintText: "Access Token URL",
+              hintText: kHintOAuth2AccessTokenUrl,
+              infoText: kInfoOAuth2AccessTokenUrl,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
@@ -164,7 +171,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _clientIdController,
-              hintText: "Client ID",
+              hintText: kHintOAuth2ClientId,
+              infoText: kInfoOAuth2ClientId,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
@@ -173,14 +181,15 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _clientSecretController,
-              hintText: "Client Secret",
+              hintText: kHintOAuth2ClientSecret,
+              infoText: kInfoOAuth2ClientSecret,
               isObscureText: true,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
         if (_shouldShowField(OAuth2Field.codeChallengeMethod)) ...[
           Text(
-            "Code Challenge Method",
+            kLabelOAuth2CodeChallengeMethod,
             style: Theme.of(context).textTheme.labelLarge,
           ),
           kVSpacer5,
@@ -190,17 +199,20 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               ('SHA-256', 'sha-256'),
               ('Plaintext', 'plaintext'),
             ],
-            tooltip: "Code challenge method for PKCE",
+            tooltip: kTooltipOAuth2CodeChallengeMethod,
             isOutlined: true,
-            onChanged: (String? newMethod) {
-              if (newMethod != null && newMethod != _codeChallengeMethod) {
-                setState(() {
-                  _codeChallengeMethod = newMethod;
-                });
+            onChanged: widget.readOnly
+                ? null
+                : (String? newMethod) {
+                    if (newMethod != null &&
+                        newMethod != _codeChallengeMethod) {
+                      setState(() {
+                        _codeChallengeMethod = newMethod;
+                      });
 
-                _updateOAuth2();
-              }
-            },
+                      _updateOAuth2();
+                    }
+                  },
           ),
           kVSpacer16,
         ],
@@ -209,7 +221,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _redirectUrlController,
-              hintText: "Redirect URL",
+              hintText: kHintOAuth2RedirectUrl,
+              infoText: kInfoOAuth2RedirectUrl,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
@@ -218,7 +231,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _scopeController,
-              hintText: "Scope",
+              hintText: kHintOAuth2Scope,
+              infoText: kInfoOAuth2Scope,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
@@ -227,13 +241,14 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             AuthTextField(
               readOnly: widget.readOnly,
               controller: _stateController,
-              hintText: "State",
+              hintText: kHintOAuth2State,
+              infoText: kInfoOAuth2State,
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
         ..._buildFieldWithSpacing(
           ADTextButton(
-            label: "Clear OAuth2 Session",
+            label: kButtonClearOAuth2Session,
             onPressed: clearStoredCredentials,
           ),
         ),
@@ -243,7 +258,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _refreshTokenController,
-            hintText: "Refresh Token",
+            hintText: kHintOAuth2RefreshToken,
+            infoText: kInfoOAuth2RefreshToken,
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
@@ -251,7 +267,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _identityTokenController,
-            hintText: "Identity Token",
+            hintText: kHintOAuth2IdentityToken,
+            infoText: kInfoOAuth2IdentityToken,
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
@@ -259,7 +276,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _accessTokenController,
-            hintText: "Access Token",
+            hintText: kHintOAuth2AccessToken,
+            infoText: kInfoOAuth2AccessToken,
             onChanged: (_) => _updateOAuth2(),
           ),
         ),

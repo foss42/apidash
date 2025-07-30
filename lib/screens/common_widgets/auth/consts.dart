@@ -63,6 +63,82 @@ const kHintJson =
 const kHeaderPrefix = 'Bearer';
 const kQueryParamKey = 'token';
 
+// OAuth1 Auth
+const kHintOAuth1ConsumerKey = "Consumer Key";
+const kInfoOAuth1ConsumerKey =
+    "The consumer key provided by the service provider to identify your application.";
+const kHintOAuth1ConsumerSecret = "Consumer Secret";
+const kInfoOAuth1ConsumerSecret =
+    "The consumer secret provided by the service provider. Keep this secure and never expose it publicly.";
+const kHintOAuth1AccessToken = "Access Token";
+const kInfoOAuth1AccessToken =
+    "The access token obtained after user authorization. This represents the user's permission to access their data.";
+const kHintOAuth1TokenSecret = "Token Secret";
+const kInfoOAuth1TokenSecret =
+    "The token secret associated with the access token. Used to sign requests along with the consumer secret.";
+const kHintOAuth1CallbackUrl = "Callback URL";
+const kInfoOAuth1CallbackUrl =
+    "The URL where the user will be redirected after authorization. Must match the URL registered with the service provider.";
+const kHintOAuth1Verifier = "Verifier";
+const kInfoOAuth1Verifier =
+    "The verification code received after user authorization. Used to exchange the request token for an access token.";
+const kHintOAuth1Timestamp = "Timestamp";
+const kInfoOAuth1Timestamp =
+    "Unix timestamp when the request is made. Usually generated automatically to prevent replay attacks.";
+const kHintOAuth1Nonce = "Nonce";
+const kInfoOAuth1Nonce =
+    "A unique random string for each request. Helps prevent replay attacks and ensures request uniqueness.";
+const kHintOAuth1Realm = "Realm";
+const kInfoOAuth1Realm =
+    "Optional realm parameter that defines the protection space. Some services require this for proper authentication.";
+const kLabelOAuth1SignatureMethod = "Signature Method";
+const kTooltipOAuth1SignatureMethod =
+    "Select the signature method for OAuth 1.0 authentication";
+
+// OAuth2 Auth
+const kLabelOAuth2GrantType = "Grant Type";
+const kTooltipOAuth2GrantType = "Select OAuth 2.0 grant type";
+const kHintOAuth2AuthorizationUrl = "Authorization URL";
+const kInfoOAuth2AuthorizationUrl =
+    "The authorization endpoint URL where users are redirected to grant permission to your application.";
+const kHintOAuth2AccessTokenUrl = "Access Token URL";
+const kInfoOAuth2AccessTokenUrl =
+    "The token endpoint URL where authorization codes are exchanged for access tokens.";
+const kHintOAuth2ClientId = "Client ID";
+const kInfoOAuth2ClientId =
+    "The client identifier issued to your application by the authorization server.";
+const kHintOAuth2ClientSecret = "Client Secret";
+const kInfoOAuth2ClientSecret =
+    "The client secret issued to your application. Keep this secure and never expose it publicly.";
+const kHintOAuth2RedirectUrl = "Redirect URL";
+const kInfoOAuth2RedirectUrl =
+    "The URL where users are redirected after authorization. Must match the URL registered with the service.";
+const kHintOAuth2Scope = "Scope";
+const kInfoOAuth2Scope =
+    "Space-separated list of permissions your application is requesting access to.";
+const kHintOAuth2State = "State";
+const kInfoOAuth2State =
+    "An unguessable random string used to protect against cross-site request forgery attacks.";
+const kHintOAuth2Username = "Username";
+const kInfoOAuth2Username =
+    "Your username for resource owner password credentials grant type.";
+const kHintOAuth2Password = "Password";
+const kInfoOAuth2Password =
+    "Your password for resource owner password credentials grant type.";
+const kHintOAuth2RefreshToken = "Refresh Token";
+const kInfoOAuth2RefreshToken =
+    "Token used to obtain new access tokens when the current access token expires.";
+const kHintOAuth2IdentityToken = "Identity Token";
+const kInfoOAuth2IdentityToken =
+    "JWT token containing user identity information, typically used in OpenID Connect flows.";
+const kHintOAuth2AccessToken = "Access Token";
+const kInfoOAuth2AccessToken =
+    "The token used to access protected resources on behalf of the user.";
+const kLabelOAuth2CodeChallengeMethod = "Code Challenge Method";
+const kTooltipOAuth2CodeChallengeMethod =
+    "Code challenge method for PKCE (Proof Key for Code Exchange)";
+const kButtonClearOAuth2Session = "Clear OAuth2 Session";
+
 //AuthPAge
 const kLabelSelectAuthType = "Authentication Type";
 const kTooltipSelectAuth = "Select Authentication Type";

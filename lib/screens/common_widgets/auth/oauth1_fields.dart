@@ -3,6 +3,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'consts.dart';
 
 class OAuth1Fields extends StatefulWidget {
   final AuthModel? authData;
@@ -95,20 +96,22 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _consumerKeyController,
-          hintText: "Consumer Key",
+          hintText: kHintOAuth1ConsumerKey,
+          infoText: kInfoOAuth1ConsumerKey,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _consumerSecretController,
-          hintText: "Consumer Secret",
+          hintText: kHintOAuth1ConsumerSecret,
+          infoText: kInfoOAuth1ConsumerSecret,
           isObscureText: true,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         Text(
-          "Signature Method",
+          kLabelOAuth1SignatureMethod,
           style: TextStyle(
             fontWeight: FontWeight.normal,
             fontSize: 14,
@@ -118,65 +121,75 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
         ADPopupMenu<OAuth1SignatureMethod>(
           value: _signatureMethodController.displayType,
           values: OAuth1SignatureMethod.values.map((e) => (e, e.displayType)),
-          tooltip: "this algorithm will be used to produce the digest",
+          tooltip: kTooltipOAuth1SignatureMethod,
           isOutlined: true,
-          onChanged: (OAuth1SignatureMethod? newAlgo) {
-            if (newAlgo != null) {
-              setState(() {
-                _signatureMethodController = newAlgo;
-              });
+          onChanged: widget.readOnly
+              ? null
+              : (OAuth1SignatureMethod? newAlgo) {
+                  if (newAlgo != null) {
+                    setState(() {
+                      _signatureMethodController = newAlgo;
+                    });
 
-              _updateOAuth1();
-            }
-          },
+                    _updateOAuth1();
+                  }
+                },
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _accessTokenController,
-          hintText: "Access Token",
+          hintText: kHintOAuth1AccessToken,
+          infoText: kInfoOAuth1AccessToken,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _tokenSecretController,
-          hintText: "Token Secret",
+          hintText: kHintOAuth1TokenSecret,
+          infoText: kInfoOAuth1TokenSecret,
+          isObscureText: true,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _callbackUrlController,
-          hintText: "Callback URL",
+          hintText: kHintOAuth1CallbackUrl,
+          infoText: kInfoOAuth1CallbackUrl,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _verifierController,
-          hintText: "Verifier",
+          hintText: kHintOAuth1Verifier,
+          infoText: kInfoOAuth1Verifier,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _timestampController,
-          hintText: "Timestamp",
+          hintText: kHintOAuth1Timestamp,
+          infoText: kInfoOAuth1Timestamp,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _nonceController,
-          hintText: "Nonce",
+          hintText: kHintOAuth1Nonce,
+          infoText: kInfoOAuth1Nonce,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _realmController,
-          hintText: "Realm",
+          hintText: kHintOAuth1Realm,
+          infoText: kInfoOAuth1Realm,
           onChanged: (_) => _updateOAuth1(),
         ),
         const SizedBox(height: 16),
