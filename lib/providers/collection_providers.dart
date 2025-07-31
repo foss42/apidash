@@ -207,6 +207,7 @@ class CollectionStateNotifier
     String? id,
     HTTPVerb? method,
     APIType? apiType,
+    AuthModel? authModel,
     String? url,
     String? name,
     String? description,
@@ -242,6 +243,7 @@ class CollectionStateNotifier
         url: url ?? currentHttpRequestModel.url,
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
+        authModel: authModel ?? currentHttpRequestModel.authModel,
         isHeaderEnabledList:
             isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
         isParamEnabledList:
@@ -315,6 +317,7 @@ class CollectionStateNotifier
     var responseRec = await sendHttpRequest(
       requestId,
       apiType,
+      requestModel.httpRequestModel?.authModel,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
@@ -356,7 +359,10 @@ class CollectionStateNotifier
         httpResponseModel: httpResponseModel,
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,
+        authModel: requestModel.httpRequestModel?.authModel,
       );
+
+      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
 
       if (!requestModel.postRequestScript.isNullOrEmpty()) {
         newRequestModel = await handlePostResponseScript(
@@ -373,7 +379,6 @@ class CollectionStateNotifier
           },
         );
       }
-      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
     // update state with response data
@@ -444,6 +449,7 @@ class CollectionStateNotifier
             : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
       );
     }
+
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;

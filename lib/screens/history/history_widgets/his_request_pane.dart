@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import '../../common_widgets/common_widgets.dart';
 import 'his_scripts_tab.dart';
 
 class HistoryRequestPane extends ConsumerWidget {
@@ -45,6 +46,12 @@ class HistoryRequestPane extends ConsumerWidget {
             .select((value) => value?.postRequestScript?.length)) ??
         0;
 
+    final hasAuth = ref.watch(selectedHistoryRequestModelProvider
+        .select((value) => value?.authModel?.type != APIAuthType.none));
+
+    final authModel = ref.watch(selectedHistoryRequestModelProvider
+        .select((value) => value?.authModel));
+
     return switch (apiType) {
       APIType.rest => RequestPane(
           key: const Key("history-request-pane-rest"),
@@ -57,12 +64,14 @@ class HistoryRequestPane extends ConsumerWidget {
           showViewCodeButton: !isCompact,
           showIndicators: [
             paramLength > 0,
+            hasAuth,
             headerLength > 0,
             hasBody,
-            scriptsLength > 0
+            scriptsLength > 0,
           ],
           tabLabels: const [
             kLabelURLParams,
+            kLabelAuth,
             kLabelHeaders,
             kLabelBody,
             kLabelScripts,
@@ -71,6 +80,10 @@ class HistoryRequestPane extends ConsumerWidget {
             RequestDataTable(
               rows: params, 
               keyName: kNameURLParam,
+            ),
+            AuthPage(
+              authModel: authModel,
+              readOnly: true,
             ),
             RequestDataTable(
               rows: headers, 
@@ -89,9 +102,15 @@ class HistoryRequestPane extends ConsumerWidget {
                 !codePaneVisible;
           },
           showViewCodeButton: !isCompact,
-          showIndicators: [headerLength > 0, hasQuery, scriptsLength > 0],
+          showIndicators: [
+            headerLength > 0,
+            hasAuth,
+            hasQuery,
+            scriptsLength > 0
+          ],
           tabLabels: const [
             kLabelHeaders,
+            kLabelAuth,
             kLabelQuery,
             kLabelScripts,
           ],
@@ -99,6 +118,10 @@ class HistoryRequestPane extends ConsumerWidget {
             RequestDataTable(
               rows: headers, 
               keyName: kNameHeader,
+            ),
+            AuthPage(
+              authModel: authModel,
+              readOnly: true,
             ),
             const HisRequestBody(),
             const HistoryScriptsTab(),

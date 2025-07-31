@@ -396,6 +396,14 @@ const httpRequestModelGet4Json = <String, dynamic>{
     {'name': 'add_space', 'value': 'true'},
     {'name': 'trailing_zeros', 'value': 'true'}
   ],
+  'authModel': {
+    'type': 'none',
+    'apikey': null,
+    'bearer': null,
+    'basic': null,
+    'jwt': null,
+    'digest': null
+  },
   "isHeaderEnabledList": null,
   "isParamEnabledList": null,
   "bodyContentType": "json",
@@ -415,6 +423,14 @@ const httpRequestModelPost10Json = <String, dynamic>{
     {'name': 'size', 'value': '2'},
     {'name': 'len', 'value': '3'}
   ],
+  'authModel': {
+    'type': 'none',
+    'apikey': null,
+    'bearer': null,
+    'basic': null,
+    'jwt': null,
+    'digest': null
+  },
   'isHeaderEnabledList': [false, true],
   'isParamEnabledList': null,
   "bodyContentType": 'json',
