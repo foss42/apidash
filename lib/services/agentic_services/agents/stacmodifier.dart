@@ -15,7 +15,7 @@ DO NOT CHANGE ANYTHING UNLESS SPECIFICALLY ASKED TO
 ONLY FLutter-SDUI Representation NOTHING ELSE. DO NOT START OR END WITH TEXT, ONLY FLutter-SDUI Representatiin.
 """;
 
-class SlacModifierBot extends APIDashAIAgent {
+class StacModifierBot extends APIDashAIAgent {
   @override
   String get agentName => 'STAC_MODIFIER';
 
