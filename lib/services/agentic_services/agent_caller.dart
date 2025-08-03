@@ -7,7 +7,7 @@ import 'package:genai/genai.dart';
 class APIDashAgentCaller {
   static APIDashAgentCaller instance = APIDashAgentCaller();
 
-  Future<(String? output, String error)> call(
+  Future<dynamic> call(
     APIDashAIAgent agent, {
     required WidgetRef ref,
     required AgentInputs input,
@@ -15,7 +15,7 @@ class APIDashAgentCaller {
     LLMSaveObject? llmso =
         ref.read(settingsProvider.select((e) => e.defaultLLMSaveObject));
     if (llmso == null) {
-      return (null, 'NO_DEFAULT_LLM');
+      throw Exception('NO DEFAULT LLM');
     }
     LLMModel? model = llmso.selectedLLM;
     final ans = await GenAIAgenticService.callAgent(

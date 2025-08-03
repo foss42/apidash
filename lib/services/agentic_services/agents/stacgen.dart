@@ -1,6 +1,6 @@
 import 'package:genai/agentic_engine/blueprint.dart';
 
-const String kIntermediateRepGenSystemPrompt = """
+const String _sysprompt = """
 You are an expert agent whose sole JOB is to generate FLutter-SDUI (json-like) representation from a Text based description
 and a provided Schema
 
@@ -232,7 +232,7 @@ class StacGenBot extends APIDashAIAgent {
 
   @override
   String getSystemPrompt() {
-    return kIntermediateRepGenSystemPrompt;
+    return _sysprompt;
   }
 
   @override

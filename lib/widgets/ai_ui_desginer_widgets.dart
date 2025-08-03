@@ -1,12 +1,14 @@
 import 'dart:convert';
-
 import 'package:apidash/consts.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genai/agentic_engine/blueprint.dart';
 import 'package:stac/stac.dart' as stac;
+
+import '../services/agentic_services/agents/agents.dart';
 
 void showCustomDialog(BuildContext context, String content) {
   showDialog(
@@ -48,32 +50,37 @@ class _DialogContentsState extends ConsumerState<DialogContents> {
     });
     //STEP 1: RESPONSE_ANALYSER (call the Semantic Analysis & IRGen Bots in parallel)
     final step1Res = await Future.wait([
-      APIDashAgentCaller.instance.semanticAnalyser(
-        ref,
+      APIDashAgentCaller.instance.call(
+        ResponseSemanticAnalyser(),
+        ref: ref,
         input: AgentInputs(query: apiResponse),
       ),
-      APIDashAgentCaller.instance.irGenerator(
-        ref,
+      APIDashAgentCaller.instance.call(
+        IntermediateRepresentationGen(),
+        ref: ref,
         input: AgentInputs(variables: {
           'VAR_API_RESPONSE': apiResponse,
         }),
       ),
     ]);
-    final SA = step1Res[0]['SEMANTIC_ANALYSIS'];
-    final IR = step1Res[1]['INTERMEDIATE_REPRESENTATION'];
+
+    final SA = step1Res[0]?['SEMANTIC_ANALYSIS'];
+    final IR = step1Res[1]?['INTERMEDIATE_REPRESENTATION'];
     print("Semantic Analysis: $SA");
     print("Intermediate Representation: $IR");
 
     //STEP 2: STAC_GEN (Generate the SDUI Code)
-    final sduiCode = await APIDashAgentCaller.instance.stacGenerator(
-      ref,
+
+    final sduiCode = await APIDashAgentCaller.instance.call(
+      StacGenBot(),
+      ref: ref,
       input: AgentInputs(variables: {
         'VAR_RAW_API_RESPONSE': apiResponse,
         'VAR_INTERMEDIATE_REPR': IR,
         'VAR_SEMANTIC_ANALYSIS': SA,
       }),
     );
-    return sduiCode['STAC'].toString();
+    return sduiCode?['STAC']?.toString() ?? "<NONE>";
   }
 
   @override
