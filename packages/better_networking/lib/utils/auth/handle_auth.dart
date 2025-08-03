@@ -192,7 +192,8 @@ Future<HttpRequestModel> handleAuth(
 
       switch (oauth2.grantType) {
         case OAuth2GrantType.authorizationCode:
-          final res = await oAuth2AuthorizationCodeGrantHandler(
+          // Use localhost callback server for desktop platforms, fallback to custom scheme for mobile
+          final res = await oAuth2AuthorizationCodeGrant(
             identifier: oauth2.clientId,
             secret: oauth2.clientSecret,
             authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
@@ -205,13 +206,27 @@ Future<HttpRequestModel> handleAuth(
             credentialsFile: credentialsFile,
             scope: oauth2.scope,
           );
-          debugPrint(res.credentials.accessToken);
+
+          // Clean up the callback server if it exists and is still running
+          // Note: The server might have already stopped itself due to timeout/error/completion
+          final server = res.$2;
+          if (server != null) {
+            try {
+              await server.stop();
+            } catch (e) {
+              debugPrint(
+                'Error stopping OAuth callback server (might already be stopped): $e',
+              );
+            }
+          }
+
+          debugPrint(res.$1.credentials.accessToken);
 
           // Add the access token to the request headers
           updatedHeaders.add(
             NameValueModel(
               name: 'Authorization',
-              value: 'Bearer ${res.credentials.accessToken}',
+              value: 'Bearer ${res.$1.credentials.accessToken}',
             ),
           );
           updatedHeaderEnabledList.add(true);
