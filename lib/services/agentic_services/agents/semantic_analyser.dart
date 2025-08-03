@@ -1,6 +1,6 @@
 import 'package:genai/agentic_engine/blueprint.dart';
 
-const String kSemanticAnalyserSystemPrompt = """
+const String _sysprompt = """
 You are an expert at understanding API response structures. 
 When i provide a sample JSON response, Please give me a semantic analysis about it.
 
@@ -20,7 +20,7 @@ class ResponseSemanticAnalyser extends APIDashAIAgent {
 
   @override
   String getSystemPrompt() {
-    return kSemanticAnalyserSystemPrompt;
+    return _sysprompt;
   }
 
   @override

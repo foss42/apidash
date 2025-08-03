@@ -1,6 +1,6 @@
 import 'package:genai/agentic_engine/blueprint.dart';
 
-const String kIntermediateRepGenSystemPrompt = """
+const String _sysprompt = """
 You are an expert at converting API Responses into a YAML schema tree.
 When you get a given JSON API Response, I want you to break it down and recombine it in the form of a YAMK UI schema.
 
@@ -45,7 +45,7 @@ class IntermediateRepresentationGen extends APIDashAIAgent {
 
   @override
   String getSystemPrompt() {
-    return kIntermediateRepGenSystemPrompt;
+    return _sysprompt;
   }
 
   @override
