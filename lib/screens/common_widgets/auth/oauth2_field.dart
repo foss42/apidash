@@ -1,13 +1,18 @@
 import 'dart:convert';
 
+import 'package:apidash/providers/settings_providers.dart';
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash/widgets/field_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import 'consts.dart';
 
-class OAuth2Fields extends StatefulWidget {
+class OAuth2Fields extends ConsumerStatefulWidget {
   final AuthModel? authData;
   final bool readOnly;
   final Function(AuthModel?)? updateAuth;
@@ -18,10 +23,10 @@ class OAuth2Fields extends StatefulWidget {
     this.readOnly = false,
   });
   @override
-  State<OAuth2Fields> createState() => _OAuth2FieldsState();
+  ConsumerState<OAuth2Fields> createState() => _OAuth2FieldsState();
 }
 
-class _OAuth2FieldsState extends State<OAuth2Fields> {
+class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
   late OAuth2GrantType _grantType;
   late TextEditingController _authorizationUrlController;
   late TextEditingController _accessTokenUrlController;
@@ -36,6 +41,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
   late TextEditingController _refreshTokenController;
   late TextEditingController _identityTokenController;
   late TextEditingController _accessTokenController;
+  DateTime? _tokenExpiration;
 
   @override
   void initState() {
@@ -70,34 +76,64 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
   Future<void> _loadCredentialsFromFile() async {
     final credentialsFilePath = widget.authData?.oauth2?.credentialsFilePath;
     if (credentialsFilePath != null && credentialsFilePath.isNotEmpty) {
-      final credentialsFile = await loadFileFromPath(credentialsFilePath);
-      if (credentialsFile != null) {
-        final credentials = await credentialsFile.readAsString();
-        final Map<String, dynamic> decoded = jsonDecode(credentials);
-        setState(() {
-          if (decoded['refreshToken'] != null) {
-            _refreshTokenController.text = decoded['refreshToken']!;
-          } else {
-            _refreshTokenController.text = "N/A";
+      try {
+        final credentialsFile = await loadFileFromPath(credentialsFilePath);
+        if (credentialsFile != null) {
+          final credentials = await credentialsFile.readAsString();
+          if (credentials.isNotEmpty) {
+            final Map<String, dynamic> decoded = jsonDecode(credentials);
+            setState(() {
+              if (decoded['refreshToken'] != null) {
+                _refreshTokenController.text = decoded['refreshToken']!;
+              } else {
+                _refreshTokenController.text = "N/A";
+              }
+              if (decoded['idToken'] != null) {
+                _identityTokenController.text = decoded['idToken']!;
+              } else {
+                _identityTokenController.text = "N/A";
+              }
+              if (decoded['accessToken'] != null) {
+                _accessTokenController.text = decoded['accessToken']!;
+              } else {
+                _accessTokenController.text = "N/A";
+              }
+              // Parse expiration time
+              if (decoded['expiration'] != null) {
+                _tokenExpiration =
+                    DateTime.fromMillisecondsSinceEpoch(decoded['expiration']!);
+              } else {
+                _tokenExpiration = null;
+              }
+            });
           }
-          if (decoded['idToken'] != null) {
-            _identityTokenController.text = decoded['idToken']!;
-          } else {
-            _identityTokenController.text = "N/A";
-          }
-          if (decoded['accessToken'] != null) {
-            _accessTokenController.text = decoded['accessToken']!;
-          } else {
-            _accessTokenController.text = "N/A";
-          }
-          // "expiration": 1753258479104
-        });
+        }
+      } catch (e) {
+        // Handle file reading or JSON parsing errors silently
+        debugPrint('Error loading OAuth2 credentials: $e');
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Watch for changes in the selected request model's HTTP response
+    ref.listen<RequestModel?>(selectedRequestModelProvider, (previous, next) {
+      // Check if the HTTP response has changed (new response received)
+      if (previous?.httpResponseModel != next?.httpResponseModel &&
+          next?.httpResponseModel != null) {
+        // Only reload if this request uses OAuth2 auth and has credentials file path
+        final authModel = next?.httpRequestModel?.authModel;
+        if (authModel?.type == APIAuthType.oauth2 &&
+            authModel?.oauth2?.credentialsFilePath != null) {
+          // Small delay to ensure file is written before reading
+          Future.delayed(const Duration(milliseconds: 100), () {
+            _loadCredentialsFromFile();
+          });
+        }
+      }
+    });
+
     return ListView(
       shrinkWrap: true,
       physics: ClampingScrollPhysics(),
@@ -273,12 +309,28 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           ),
         ),
         ..._buildFieldWithSpacing(
-          AuthTextField(
-            readOnly: widget.readOnly,
-            controller: _accessTokenController,
-            hintText: kHintOAuth2AccessToken,
-            infoText: kInfoOAuth2AccessToken,
-            onChanged: (_) => _updateOAuth2(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AuthTextField(
+                readOnly: widget.readOnly,
+                controller: _accessTokenController,
+                hintText: kHintOAuth2AccessToken,
+                infoText: kInfoOAuth2AccessToken,
+                onChanged: (_) => _updateOAuth2(),
+              ),
+              if (_tokenExpiration != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  _getExpirationText(),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: _tokenExpiration!.isBefore(DateTime.now())
+                            ? Theme.of(context).colorScheme.error
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
+            ],
           ),
         ),
         kVSpacer16,
@@ -331,18 +383,18 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
 
   void _updateOAuth2() async {
     final String? credentialsFilePath =
-        await getApplicationSupportDirectoryFilePath(
-            "oauth2_credentials", "json");
+        ref.read(settingsProvider).workspaceFolderPath;
     if (credentialsFilePath == null) {
       return;
     }
+
     final updatedOAuth2 = AuthOAuth2Model(
       grantType: _grantType,
       authorizationUrl: _authorizationUrlController.text.trim(),
       clientId: _clientIdController.text.trim(),
       accessTokenUrl: _accessTokenUrlController.text.trim(),
       clientSecret: _clientSecretController.text.trim(),
-      credentialsFilePath: credentialsFilePath,
+      credentialsFilePath: "$credentialsFilePath/oauth2_credentials.json",
       codeChallengeMethod: _codeChallengeMethod,
       redirectUrl: _redirectUrlController.text.trim(),
       scope: _scopeController.text.trim(),
@@ -370,6 +422,35 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
     final credentialsFilePath = widget.authData?.oauth2?.credentialsFilePath;
     if (credentialsFilePath != null && credentialsFilePath.isNotEmpty) {
       await deleteFileFromPath(credentialsFilePath);
+    }
+    setState(() {
+      _refreshTokenController.text = "";
+      _accessTokenController.text = "";
+      _identityTokenController.text = "";
+      _tokenExpiration = null;
+    });
+  }
+
+  String _getExpirationText() {
+    if (_tokenExpiration == null) {
+      return "";
+    }
+
+    final now = DateTime.now();
+    if (_tokenExpiration!.isBefore(now)) {
+      return "Token expired ${timeago.format(_tokenExpiration!, clock: now)}";
+    } else {
+      // For future times, we want to show "in X hours" instead of "X hours from now"
+      final duration = _tokenExpiration!.difference(now);
+      if (duration.inDays > 0) {
+        return "Token expires in ${duration.inDays} day${duration.inDays > 1 ? 's' : ''}";
+      } else if (duration.inHours > 0) {
+        return "Token expires in ${duration.inHours} hour${duration.inHours > 1 ? 's' : ''}";
+      } else if (duration.inMinutes > 0) {
+        return "Token expires in ${duration.inMinutes} minute${duration.inMinutes > 1 ? 's' : ''}";
+      } else {
+        return "Token expires in less than a minute";
+      }
     }
   }
 

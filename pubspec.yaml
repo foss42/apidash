@@ -64,6 +64,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   share_plus: ^10.1.4
   shared_preferences: ^2.5.2
+  timeago: ^3.7.0
   url_launcher: ^6.2.5
   uuid: ^4.5.0
   vector_graphics_compiler: ^1.1.9+1
