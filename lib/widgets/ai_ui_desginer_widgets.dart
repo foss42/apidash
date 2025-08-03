@@ -84,6 +84,27 @@ class _DialogContentsState extends ConsumerState<DialogContents> {
     return sduiCode?['STAC']?.toString() ?? "<NONE>";
   }
 
+  Future<void> modifySDUICode(String modificationRequest) async {
+    setState(() {
+      index = 1; //Induce Loading
+    });
+
+    final res = await APIDashAgentCaller.instance.call(
+      StacModifierBot(),
+      ref: ref,
+      input: AgentInputs(variables: {
+        'VAR_CODE': generatedSDUI,
+        'VAR_CLIENT_REQUEST': modificationRequest,
+      }),
+    );
+
+    final SDUI = res['STAC'];
+    setState(() {
+      generatedSDUI = SDUI;
+      index = 2;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return IndexedStack(
@@ -105,24 +126,19 @@ class _DialogContentsState extends ConsumerState<DialogContents> {
           child: Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 40.0),
-              child: GestureDetector(
-                onTap: () {
-                  // setState(() {
-                  //   index = 2;
-                  // });
-                },
-                child: Container(
-                  height: 500,
-                  child: SendingWidget(
-                    startSendingTime: DateTime.now(),
-                  ),
+              child: Container(
+                height: 500,
+                child: SendingWidget(
+                  startSendingTime: DateTime.now(),
+                  showTimeElapsed: false,
                 ),
               ),
             ),
           ),
         ),
         SDUIPreviewPage(
-          onNext: () {},
+          key: ValueKey(generatedSDUI.hashCode),
+          onModificationRequestMade: modifySDUICode,
           sduiCode: generatedSDUI,
         )
       ],
@@ -248,9 +264,12 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
 
 class SDUIPreviewPage extends ConsumerStatefulWidget {
   final String sduiCode;
-  final Function() onNext;
-  const SDUIPreviewPage(
-      {super.key, required this.onNext, required this.sduiCode});
+  final Function(String) onModificationRequestMade;
+  const SDUIPreviewPage({
+    super.key,
+    required this.onModificationRequestMade,
+    required this.sduiCode,
+  });
 
   @override
   ConsumerState<SDUIPreviewPage> createState() => _SDUIPreviewPageState();
@@ -258,6 +277,7 @@ class SDUIPreviewPage extends ConsumerStatefulWidget {
 
 class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
   bool exportingCode = false;
+  String modificationRequest = "";
 
   @override
   Widget build(BuildContext context) {
@@ -303,6 +323,11 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                 ),
               ),
               child: TextField(
+                onChanged: (z) {
+                  setState(() {
+                    modificationRequest = z;
+                  });
+                },
                 maxLines: 3, // Makes the text box taller
                 style: TextStyle(color: Colors.white), // White text
                 decoration: InputDecoration(
@@ -370,7 +395,9 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                       minimumSize: const Size(44, 44),
                     ),
                     onPressed: () {
-                      widget.onNext();
+                      if (modificationRequest.isNotEmpty) {
+                        widget.onModificationRequestMade(modificationRequest);
+                      }
                     },
                     icon: Icon(
                       Icons.generating_tokens,
