@@ -4,6 +4,7 @@ import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genai/agentic_engine/blueprint.dart';
 import 'package:stac/stac.dart' as stac;
@@ -245,17 +246,19 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
   }
 }
 
-class SDUIPreviewPage extends StatefulWidget {
+class SDUIPreviewPage extends ConsumerStatefulWidget {
   final String sduiCode;
   final Function() onNext;
   const SDUIPreviewPage(
       {super.key, required this.onNext, required this.sduiCode});
 
   @override
-  State<SDUIPreviewPage> createState() => _SDUIPreviewPageState();
+  ConsumerState<SDUIPreviewPage> createState() => _SDUIPreviewPageState();
 }
 
-class _SDUIPreviewPageState extends State<SDUIPreviewPage> {
+class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
+  bool exportingCode = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -288,72 +291,97 @@ class _SDUIPreviewPageState extends State<SDUIPreviewPage> {
             ),
           ),
           kVSpacer20,
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.black, // Dark background
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: Colors.grey, // Border color
-                width: 1,
+          if (!exportingCode) ...[
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.black, // Dark background
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                  color: Colors.grey, // Border color
+                  width: 1,
+                ),
+              ),
+              child: TextField(
+                maxLines: 3, // Makes the text box taller
+                style: TextStyle(color: Colors.white), // White text
+                decoration: InputDecoration(
+                  hintText: 'Any Modifications?',
+                  hintStyle: TextStyle(color: Colors.grey), // Grey hint text
+                  border: InputBorder.none, // Removes the default border
+                  contentPadding: EdgeInsets.all(16), // Padding inside the box
+                ),
               ),
             ),
-            child: TextField(
-              maxLines: 3, // Makes the text box taller
-              style: TextStyle(color: Colors.white), // White text
-              decoration: InputDecoration(
-                hintText: 'Any Modifications?',
-                hintStyle: TextStyle(color: Colors.grey), // Grey hint text
-                border: InputBorder.none, // Removes the default border
-                contentPadding: EdgeInsets.all(16), // Padding inside the box
-              ),
-            ),
-          ),
-          kVSpacer20,
+            kVSpacer20,
+          ],
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Align(
                 alignment: Alignment.centerRight,
-                child: FilledButton.tonalIcon(
-                  style: FilledButton.styleFrom(
-                    padding: kPh12,
-                    minimumSize: const Size(44, 44),
-                  ),
-                  onPressed: () {
-                    widget.onNext();
-                  },
-                  icon: Icon(
-                    Icons.download,
-                  ),
-                  label: const SizedBox(
-                    child: Text(
-                      "Export Code",
-                    ),
-                  ),
-                ),
+                child: (exportingCode)
+                    ? Container(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1,
+                        ),
+                        margin: EdgeInsets.only(right: 10),
+                      )
+                    : FilledButton.tonalIcon(
+                        style: FilledButton.styleFrom(
+                          padding: kPh12,
+                          minimumSize: const Size(44, 44),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            exportingCode = true;
+                          });
+                          final ans = await APIDashAgentCaller.instance.call(
+                            StacToFlutterBot(),
+                            ref: ref,
+                            input: AgentInputs(
+                                variables: {'VAR_CODE': widget.sduiCode}),
+                          );
+                          final exportedCode = ans['CODE'];
+                          Clipboard.setData(ClipboardData(text: ans['CODE']));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Copied to clipboard!")));
+                          setState(() {
+                            exportingCode = false;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.download,
+                        ),
+                        label: const SizedBox(
+                          child: Text(
+                            "Export Code",
+                          ),
+                        ),
+                      ),
               ),
               kHSpacer10,
-              Align(
-                alignment: Alignment.centerRight,
-                child: FilledButton.tonalIcon(
-                  style: FilledButton.styleFrom(
-                    padding: kPh12,
-                    minimumSize: const Size(44, 44),
-                  ),
-                  onPressed: () {
-                    widget.onNext();
-                  },
-                  icon: Icon(
-                    Icons.generating_tokens,
-                  ),
-                  label: const SizedBox(
-                    child: Text(
-                      "Make Modifications",
+              if (!exportingCode)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton.tonalIcon(
+                    style: FilledButton.styleFrom(
+                      padding: kPh12,
+                      minimumSize: const Size(44, 44),
+                    ),
+                    onPressed: () {
+                      widget.onNext();
+                    },
+                    icon: Icon(
+                      Icons.generating_tokens,
+                    ),
+                    label: const SizedBox(
+                      child: Text(
+                        "Make Modifications",
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ],
