@@ -11,6 +11,10 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  //Load all LLMs
+  // await LLMManager.fetchAvailableLLMs();
+  await LLMManager.loadAvailableLLMs();
+
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
   initializeJsRuntime();
@@ -24,10 +28,6 @@ void main() async {
   if (!initStatus) {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
-
-  //Load all LLMs
-  // await LLMManager.fetchAvailableLLMs();
-  await LLMManager.loadAvailableLLMs();
 
   runApp(
     ProviderScope(
