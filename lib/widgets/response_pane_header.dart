@@ -54,7 +54,11 @@ class ResponsePaneHeader extends ConsumerWidget {
               onPressed: () {
                 final model = ref.watch(selectedRequestModelProvider
                     .select((value) => value?.httpResponseModel));
-                showCustomDialog(context, model?.formattedBody ?? "");
+                if (model == null) return;
+                final body = (model.sseOutput?.isNotEmpty ?? false)
+                    ? model.sseOutput?.join("\n")
+                    : model.formattedBody ?? model.body;
+                showCustomDialog(context, body ?? "");
               },
               icon: Icon(
                 Icons.generating_tokens,
