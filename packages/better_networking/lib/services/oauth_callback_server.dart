@@ -10,9 +10,7 @@ class OAuthCallbackServer {
   String? _path;
   final Completer<String> _completer = Completer<String>();
   Timer? _timeoutTimer;
-  Timer? _heartbeatTimer;
-  DateTime? _lastHeartbeat;
-  bool _browserTabActive = false;
+  bool _isCancelled = false;
 
   /// Starts the HTTP server and returns the callback URL.
   ///
@@ -53,17 +51,22 @@ class OAuthCallbackServer {
   ///
   /// [timeout] - Optional timeout duration (defaults to 3 minutes)
   /// Throws [TimeoutException] if no callback is received within the timeout period.
-  /// Throws [Exception] if the browser tab is closed without completing authorization.
+  /// Throws [Exception] if the OAuth flow was manually cancelled.
   Future<String> waitForCallback({
     Duration timeout = const Duration(minutes: 3),
   }) async {
+    // Check if already cancelled before starting
+    if (_isCancelled) {
+      throw Exception('OAuth flow was cancelled');
+    }
+
     // Set up timeout timer
     _timeoutTimer = Timer(timeout, () {
-      if (!_completer.isCompleted) {
+      if (!_completer.isCompleted && !_isCancelled) {
         _completer.completeError(
           TimeoutException(
             'OAuth callback timeout: No response received within ${timeout.inMinutes} minutes. '
-            'The user may have closed the browser tab without completing authorization.',
+            'You can manually cancel this operation or wait for completion.',
             timeout,
           ),
         );
@@ -75,15 +78,11 @@ class OAuthCallbackServer {
       }
     });
 
-    // Set up heartbeat monitoring to detect if browser tab is closed
-    _startHeartbeatMonitoring();
-
     try {
       return await _completer.future;
     } finally {
       _timeoutTimer?.cancel();
       _timeoutTimer = null;
-      _stopHeartbeatMonitoring();
     }
   }
 
@@ -96,7 +95,6 @@ class OAuthCallbackServer {
 
     _timeoutTimer?.cancel();
     _timeoutTimer = null;
-    _stopHeartbeatMonitoring();
 
     try {
       await _server?.close();
@@ -111,9 +109,9 @@ class OAuthCallbackServer {
   /// Cancels the waiting callback operation.
   /// This is useful when the user wants to cancel the OAuth flow manually.
   void cancel([String reason = 'OAuth flow cancelled by user']) {
+    _isCancelled = true;
     _timeoutTimer?.cancel();
     _timeoutTimer = null;
-    _stopHeartbeatMonitoring();
 
     if (!_completer.isCompleted) {
       _completer.completeError(Exception('OAuth callback cancelled: $reason'));
@@ -123,48 +121,8 @@ class OAuthCallbackServer {
     _stopServerOnError(reason);
   }
 
-  /// Starts heartbeat monitoring to detect browser tab closure
-  void _startHeartbeatMonitoring() {
-    _lastHeartbeat = DateTime.now();
-    _browserTabActive = true;
-
-    // Check for heartbeat every 5 seconds
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      final now = DateTime.now();
-
-      // If no heartbeat received for 5 seconds and we had an active tab before
-      if (_browserTabActive &&
-          _lastHeartbeat != null &&
-          now.difference(_lastHeartbeat!).inSeconds > 5) {
-        log(
-          'Browser tab appears to be closed (no heartbeat for ${now.difference(_lastHeartbeat!).inSeconds}s)',
-        );
-
-        if (!_completer.isCompleted) {
-          _completer.completeError(
-            Exception(
-              'OAuth authorization cancelled: Browser tab was closed without completing the authorization process. '
-              'Please try again and complete the authorization in your browser.',
-            ),
-          );
-        }
-        timer.cancel();
-
-        // Automatically stop the server when browser tab is closed
-        _stopServerOnError(
-          'Browser tab closed without completing authorization',
-        );
-      }
-    });
-  }
-
-  /// Stops heartbeat monitoring
-  void _stopHeartbeatMonitoring() {
-    _heartbeatTimer?.cancel();
-    _heartbeatTimer = null;
-    _lastHeartbeat = null;
-    _browserTabActive = false;
-  }
+  /// Checks if the OAuth flow was cancelled
+  bool get isCancelled => _isCancelled;
 
   /// Stops the server immediately due to an error condition
   /// This is used for automatic cleanup when errors occur
@@ -179,7 +137,6 @@ class OAuthCallbackServer {
     // Cancel any active timers
     _timeoutTimer?.cancel();
     _timeoutTimer = null;
-    _stopHeartbeatMonitoring();
 
     // Close the server without waiting
     _server
@@ -198,20 +155,6 @@ class OAuthCallbackServer {
     log('OAuth request received: ${request.uri}');
 
     try {
-      // Handle heartbeat requests
-      if (request.uri.path == '/heartbeat') {
-        _lastHeartbeat = DateTime.now();
-        _browserTabActive = true;
-        request.response
-          ..statusCode = HttpStatus.ok
-          ..headers.add('Access-Control-Allow-Origin', '*')
-          ..headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-          ..headers.add('Access-Control-Allow-Headers', 'Content-Type')
-          ..write('ok')
-          ..close();
-        return;
-      }
-
       // Handle OPTIONS preflight requests for CORS
       if (request.method == 'OPTIONS') {
         request.response
@@ -335,39 +278,15 @@ class OAuthCallbackServer {
     let seconds = 5;
     const timer = document.getElementById('timer');
     
-    // Send heartbeat to let server know we're still active
-    const sendHeartbeat = () => {
-      fetch('/heartbeat', { method: 'GET', mode: 'no-cors' }).catch(() => {
-        // Ignore fetch errors as we're just sending a signal
-      });
-    };
-    
-    // Send initial heartbeat and set up periodic heartbeats
-    sendHeartbeat();
-    const heartbeatInterval = setInterval(sendHeartbeat, 2000);
-    
     // Countdown timer
     const countdown = setInterval(() => {
       seconds--;
       timer.textContent = seconds;
       if (seconds <= 0) {
         clearInterval(countdown);
-        clearInterval(heartbeatInterval);
         window.close();
       }
     }, 1000);
-    
-    // Send notification when window is about to close
-    window.addEventListener('beforeunload', () => {
-      clearInterval(heartbeatInterval);
-      // Try to send final heartbeat to indicate closure
-      navigator.sendBeacon('/heartbeat', 'closing');
-    });
-    
-    // Handle when user manually closes the window
-    window.addEventListener('unload', () => {
-      clearInterval(heartbeatInterval);
-    });
   </script>
 </body>
 </html>
@@ -408,37 +327,15 @@ class OAuthCallbackServer {
     let seconds = 10;
     const timer = document.getElementById('timer');
     
-    // Send heartbeat to let server know we're still active
-    const sendHeartbeat = () => {
-      fetch('/heartbeat', { method: 'GET', mode: 'no-cors' }).catch(() => {
-        // Ignore fetch errors
-      });
-    };
-    
-    // Send initial heartbeat and set up periodic heartbeats
-    sendHeartbeat();
-    const heartbeatInterval = setInterval(sendHeartbeat, 2000);
-    
     // Countdown timer
     const countdown = setInterval(() => {
       seconds--;
       timer.textContent = seconds;
       if (seconds <= 0) {
         clearInterval(countdown);
-        clearInterval(heartbeatInterval);
         window.close();
       }
     }, 1000);
-    
-    // Handle window closing events
-    window.addEventListener('beforeunload', () => {
-      clearInterval(heartbeatInterval);
-      navigator.sendBeacon('/heartbeat', 'closing');
-    });
-    
-    window.addEventListener('unload', () => {
-      clearInterval(heartbeatInterval);
-    });
   </script>
 </body>
 </html>
@@ -469,28 +366,6 @@ class OAuthCallbackServer {
       Please return to API Dash to complete the OAuth flow.
     </div>
   </div>
-  <script>
-    // Send heartbeat to let server know we're still active even on info page
-    const sendHeartbeat = () => {
-      fetch('/heartbeat', { method: 'GET', mode: 'no-cors' }).catch(() => {
-        // Ignore fetch errors
-      });
-    };
-    
-    // Send initial heartbeat and set up periodic heartbeats
-    sendHeartbeat();
-    const heartbeatInterval = setInterval(sendHeartbeat, 2000);
-    
-    // Handle window closing events
-    window.addEventListener('beforeunload', () => {
-      clearInterval(heartbeatInterval);
-      navigator.sendBeacon('/heartbeat', 'closing');
-    });
-    
-    window.addEventListener('unload', () => {
-      clearInterval(heartbeatInterval);
-    });
-  </script>
 </body>
 </html>
     ''';
