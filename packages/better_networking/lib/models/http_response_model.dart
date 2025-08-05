@@ -62,7 +62,11 @@ class HttpResponseModel with _$HttpResponseModel {
   String? get contentType => headers?.getValueContentType();
   MediaType? get mediaType => getMediaTypeFromHeaders(headers);
 
-  HttpResponseModel fromResponse({required Response response, Duration? time}) {
+  HttpResponseModel fromResponse({
+    required Response response,
+    Duration? time,
+    bool isStreamingResponse = false,
+  }) {
     final responseHeaders = mergeMaps({
       HttpHeaders.contentLengthHeader: response.contentLength.toString(),
     }, response.headers);
@@ -80,6 +84,7 @@ class HttpResponseModel with _$HttpResponseModel {
       formattedBody: formatBody(body, mediaType),
       bodyBytes: response.bodyBytes,
       time: time,
+      sseOutput: isStreamingResponse ? [body] : null,
     );
   }
 }

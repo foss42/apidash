@@ -19,7 +19,6 @@ void main() {
       final (resp, dur, err) = await sendHttpRequest(
         'get_test',
         APIType.rest,
-        null,
         model,
       );
       final output = jsonDecode(resp?.body ?? '{}');
@@ -60,7 +59,6 @@ void main() {
       final (resp, dur, err) = await sendHttpRequest(
         'mpreq',
         APIType.rest,
-        null,
         model,
       );
       final output = jsonDecode(resp?.body ?? '{}');
@@ -88,12 +86,7 @@ void main() {
           NameValueModel(name: 'Accept', value: 'application/json'),
         ],
       );
-      final stream = await streamHttpRequest(
-        'get_test',
-        APIType.rest,
-        null,
-        model,
-      );
+      final stream = await streamHttpRequest('get_test', APIType.rest, model);
       final output = await stream.first;
       expect(
         output?.$2?.statusCode == 200,
@@ -115,12 +108,7 @@ void main() {
 }""",
       );
 
-      final stream = await streamHttpRequest(
-        'post_test',
-        APIType.rest,
-        null,
-        model,
-      );
+      final stream = await streamHttpRequest('post_test', APIType.rest, model);
       final output = await stream.first;
 
       expect(output?.$2?.statusCode, equals(200), reason: 'Expected 200 Ok');
@@ -133,7 +121,6 @@ void main() {
       final stream = await streamHttpRequest(
         'empty_url_test',
         APIType.rest,
-        null,
         model,
       );
       final output = await stream.first;
@@ -149,7 +136,6 @@ void main() {
       final stream = await streamHttpRequest(
         'invalid_url_test',
         APIType.rest,
-        null,
         model,
       );
       final output = await stream.first;
@@ -170,7 +156,6 @@ void main() {
       final stream = await streamHttpRequest(
         'large_body_test',
         APIType.rest,
-        null,
         model,
       );
       final output = await stream.first;
@@ -199,12 +184,7 @@ void main() {
         cancelHttpRequest('get_test_c');
       });
       debugPrint("Stream start");
-      final stream = await streamHttpRequest(
-        'get_test_c',
-        APIType.rest,
-        null,
-        model,
-      );
+      final stream = await streamHttpRequest('get_test_c', APIType.rest, model);
       debugPrint("Stream get output");
       final output = await stream.first;
       final errMsg = output?.$4;

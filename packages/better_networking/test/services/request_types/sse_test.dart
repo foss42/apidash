@@ -13,12 +13,7 @@ void main() {
           method: HTTPVerb.get,
         );
 
-        final stream = await streamHttpRequest(
-          'sse_test',
-          APIType.rest,
-          null,
-          model,
-        );
+        final stream = await streamHttpRequest('sse_test', APIType.rest, model);
 
         final outputs = <HttpStreamOutput?>[];
         final subscription = stream.listen(outputs.add);
@@ -44,12 +39,7 @@ void main() {
           method: HTTPVerb.get,
         );
 
-        final stream = await streamHttpRequest(
-          'sse_test',
-          APIType.rest,
-          null,
-          model,
-        );
+        final stream = await streamHttpRequest('sse_test', APIType.rest, model);
         final outputs = <HttpStreamOutput?>[];
         final subscription = stream.listen(outputs.add);
 

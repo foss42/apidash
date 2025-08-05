@@ -321,7 +321,6 @@ class CollectionStateNotifier
     final stream = await streamHttpRequest(
       requestId,
       apiType,
-      requestModel.httpRequestModel?.authModel,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
@@ -330,50 +329,45 @@ class CollectionStateNotifier
     HttpResponseModel? httpResponseModel;
     HistoryRequestModel? historyModel;
     RequestModel newRequestModel = requestModel;
-    bool? isTextStream;
+    bool isStreamingResponse = false;
     final completer = Completer<(Response?, Duration?, String?)>();
 
     StreamSubscription? sub;
 
-    sub = stream.listen((d) async {
-      if (d == null) return;
+    sub = stream.listen((rec) async {
+      if (rec == null) return;
 
-      isTextStream = d.$1;
-      final response = d.$2;
-      final duration = d.$3;
-      final errorMessage = d.$4;
+      isStreamingResponse = rec.$1 ?? false;
+      final response = rec.$2;
+      final duration = rec.$3;
+      final errorMessage = rec.$4;
 
-      if (isTextStream == false) {
-        if (!completer.isCompleted) {
-          completer.complete((response, duration, errorMessage));
+      if (isStreamingResponse) {
+        httpResponseModel = httpResponseModel?.copyWith(
+          time: duration,
+          sseOutput: [
+            ...(httpResponseModel?.sseOutput ?? []),
+            if (response != null) response.body,
+          ],
+        );
+
+        newRequestModel = newRequestModel.copyWith(
+          httpResponseModel: httpResponseModel,
+          isStreaming: true,
+        );
+        state = {
+          ...state!,
+          requestId: newRequestModel,
+        };
+        unsave();
+
+        if (historyModel != null && httpResponseModel != null) {
+          historyModel =
+              historyModel!.copyWith(httpResponseModel: httpResponseModel!);
+          ref
+              .read(historyMetaStateNotifier.notifier)
+              .editHistoryRequest(historyModel!);
         }
-        return;
-      }
-
-      httpResponseModel = httpResponseModel?.copyWith(
-        time: duration,
-        sseOutput: [
-          ...(httpResponseModel?.sseOutput ?? []),
-          if (response != null) response.body,
-        ],
-      );
-
-      newRequestModel = newRequestModel.copyWith(
-        httpResponseModel: httpResponseModel,
-        isStreaming: true,
-      );
-      state = {
-        ...state!,
-        requestId: newRequestModel,
-      };
-      unsave();
-
-      if (historyModel != null && httpResponseModel != null) {
-        historyModel =
-            historyModel!.copyWith(httpResponseModel: httpResponseModel!);
-        ref
-            .read(historyMetaStateNotifier.notifier)
-            .editHistoryRequest(historyModel!);
       }
 
       if (!completer.isCompleted) {
@@ -403,15 +397,11 @@ class CollectionStateNotifier
       );
     } else {
       final statusCode = response.statusCode;
-
-      httpResponseModel = baseHttpResponseModel
-          .fromResponse(
-            response: response,
-            time: duration,
-          )
-          .copyWith(
-            sseOutput: (isTextStream == true) ? [response.body] : [],
-          );
+      httpResponseModel = baseHttpResponseModel.fromResponse(
+        response: response,
+        time: duration,
+        isStreamingResponse: isStreamingResponse,
+      );
 
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,

@@ -158,7 +158,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
-  AuthModel? authData,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
@@ -166,7 +165,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   final stream = await streamHttpRequest(
     requestId,
     apiType,
-    authData,
     requestModel,
     defaultUriScheme: defaultUriScheme,
     noSSL: noSSL,
@@ -206,11 +204,11 @@ http.Request prepareHttpRequest({
 Future<Stream<HttpStreamOutput>> streamHttpRequest(
   String requestId,
   APIType apiType,
-  AuthModel? authData,
   HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
+  final authData = httpRequestModel.authModel;
   final controller = StreamController<HttpStreamOutput>();
   StreamSubscription<List<int>?>? subscription;
   final stopwatch = Stopwatch()..start();

@@ -14,7 +14,6 @@ void main() {
         final result = await sendHttpRequest(
           'test-request',
           APIType.rest,
-          null,
           httpRequestModel,
         );
 
