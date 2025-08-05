@@ -420,7 +420,7 @@ class CollectionStateNotifier
         isWorking: false,
       );
 
-      final newHistoryId = getNewUuid();
+      String newHistoryId = getNewUuid();
       historyModel = HistoryRequestModel(
         historyId: newHistoryId,
         metaData: HistoryMetaModel(
