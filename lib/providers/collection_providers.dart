@@ -209,6 +209,7 @@ class CollectionStateNotifier
     String? id,
     HTTPVerb? method,
     APIType? apiType,
+    AuthModel? authModel,
     String? url,
     String? name,
     String? description,
@@ -244,6 +245,7 @@ class CollectionStateNotifier
         url: url ?? currentHttpRequestModel.url,
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
+        authModel: authModel ?? currentHttpRequestModel.authModel,
         isHeaderEnabledList:
             isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
         isParamEnabledList:
@@ -278,12 +280,13 @@ class CollectionStateNotifier
 
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
     final EnvironmentModel? originalEnvironmentModel =
-        ref.read(selectedEnvironmentModelProvider);
+        ref.read(activeEnvironmentModelProvider);
 
-    if (requestModel != null &&
-        !requestModel.preRequestScript.isNullOrEmpty()) {
-      requestModel = await handlePreRequestScript(
-        requestModel,
+    RequestModel executionRequestModel = requestModel!.copyWith();
+
+    if (!requestModel.preRequestScript.isNullOrEmpty()) {
+      executionRequestModel = await handlePreRequestScript(
+        executionRequestModel,
         originalEnvironmentModel,
         (envModel, updatedValues) {
           ref
@@ -297,9 +300,9 @@ class CollectionStateNotifier
       );
     }
 
-    APIType apiType = requestModel!.apiType;
+    APIType apiType = executionRequestModel.apiType;
     HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+        getSubstitutedHttpRequestModel(executionRequestModel.httpRequestModel!);
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
 
     // Set model to working and streaming
@@ -314,6 +317,7 @@ class CollectionStateNotifier
     final stream = await streamHttpRequest(
       requestId,
       apiType,
+      requestModel.httpRequestModel?.authModel,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
@@ -428,7 +432,10 @@ class CollectionStateNotifier
         httpResponseModel: respModel!,
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,
+        authModel: requestModel.httpRequestModel?.authModel,
       );
+
+      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM);
 
       if (!requestModel.postRequestScript.isNullOrEmpty()) {
         newRequestModel = await handlePostResponseScript(
@@ -445,8 +452,6 @@ class CollectionStateNotifier
           },
         );
       }
-
-      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM!);
     }
 
     // Final state update
@@ -518,6 +523,7 @@ class CollectionStateNotifier
             : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
       );
     }
+
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;

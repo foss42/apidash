@@ -58,8 +58,9 @@ Future<RequestModel> handlePreRequestScript(
     if (scriptResult.updatedEnvironment.isNotEmpty) {
       debugPrint(
           "Warning: Pre-request script updated environment variables, but no active environment was selected to save them to.");
+      return requestModel;
     }
-    return requestModel;
+    return newRequestModel;
   }
   return newRequestModel;
 }
@@ -71,7 +72,7 @@ Future<RequestModel> handlePostResponseScript(
 ) async {
   final scriptResult = await executePostResponseScript(
     currentRequestModel: requestModel,
-    activeEnvironment: originalEnvironmentModel?.toJson() ?? {},
+    activeEnvironment: originalEnvironmentModel?.toJson() ?? {"values": []},
   );
 
   final newRequestModel =
