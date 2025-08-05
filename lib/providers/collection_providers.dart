@@ -273,10 +273,14 @@ class CollectionStateNotifier
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
 
-    if (requestId == null || state == null) return;
+    if (requestId == null || state == null) {
+      return;
+    }
 
     RequestModel? requestModel = state![requestId];
-    if (requestModel?.httpRequestModel == null) return;
+    if (requestModel?.httpRequestModel == null) {
+      return;
+    }
 
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
     final EnvironmentModel? originalEnvironmentModel =
@@ -435,7 +439,7 @@ class CollectionStateNotifier
         authModel: requestModel.httpRequestModel?.authModel,
       );
 
-      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM);
+      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM!);
 
       if (!requestModel.postRequestScript.isNullOrEmpty()) {
         newRequestModel = await handlePostResponseScript(
