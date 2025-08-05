@@ -1,36 +1,45 @@
+import 'dart:math';
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'env_trigger_field.dart';
 
-class AuthTextField extends StatefulWidget {
+class EnvAuthField extends StatefulWidget {
   final String hintText;
   final String? title;
-  final TextEditingController controller;
   final bool isObscureText;
   final Function(String)? onChanged;
   final bool readOnly;
   final String? infoText;
+  final String? initialValue;
 
-  const AuthTextField(
+  const EnvAuthField(
       {super.key,
       this.title,
       required this.hintText,
-      required this.controller,
       required this.onChanged,
       this.readOnly = false,
       this.isObscureText = false,
-      this.infoText});
+      this.infoText,
+      this.initialValue = ""});
 
   @override
-  State<AuthTextField> createState() => _AuthFieldState();
+  State<EnvAuthField> createState() => _AuthFieldState();
 }
 
-class _AuthFieldState extends State<AuthTextField> {
+class _AuthFieldState extends State<EnvAuthField> {
   late bool _obscureText;
+  late String _currentValue;
 
   @override
   void initState() {
     super.initState();
-    _obscureText = widget.isObscureText;
+    _currentValue = widget.initialValue ?? "";
+    if (_currentValue.contains("{{")) {
+      _obscureText = false;
+    } else {
+      _obscureText = widget.isObscureText;
+    }
   }
 
   void _toggleVisibility() {
@@ -67,22 +76,35 @@ class _AuthFieldState extends State<AuthTextField> {
             ],
           ),
           const SizedBox(height: 6),
-          TextFormField(
+          EnvironmentTriggerField(
+            keyId: "auth-${widget.title ?? widget.hintText}-${Random.secure()}",
+            onChanged: (value) {
+              setState(() {
+                _currentValue = value;
+                // Update obscure text based on whether the current value contains env vars
+                if (value.contains("{{")) {
+                  _obscureText = false;
+                } else {
+                  _obscureText = widget.isObscureText;
+                }
+              });
+              widget.onChanged?.call(value);
+            },
+            initialValue: widget.initialValue,
             readOnly: widget.readOnly,
-            controller: widget.controller,
+            obscureText: _obscureText,
             style: kCodeStyle.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
             ),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
-              constraints: BoxConstraints(
-                  maxWidth: MediaQuery.sizeOf(context).width - 80),
-              contentPadding: kP10,
+            decoration: getTextFieldInputDecoration(
+              Theme.of(context).colorScheme,
               hintText: widget.hintText,
-              hintStyle: Theme.of(context).textTheme.bodySmall,
-              suffixIcon: widget.isObscureText
+              isDense: true,
+              contentPadding: kIsMobile ? kPh6b12 : null,
+              // null when initial text contains env vars
+              suffixIcon: (widget.isObscureText &&
+                      !_currentValue.contains("{{"))
                   ? IconButton(
                       icon: Icon(
                         _obscureText ? Icons.visibility_off : Icons.visibility,
@@ -91,25 +113,7 @@ class _AuthFieldState extends State<AuthTextField> {
                       onPressed: _toggleVisibility,
                     )
                   : null,
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                ),
-              ),
             ),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return "${widget.hintText} cannot be empty!";
-              }
-              return null;
-            },
-            obscureText: _obscureText,
-            onChanged: widget.onChanged,
           ),
         ],
       ),

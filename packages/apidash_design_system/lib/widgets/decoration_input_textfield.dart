@@ -8,6 +8,7 @@ InputDecoration getTextFieldInputDecoration(
   TextStyle? hintTextStyle,
   double? hintTextFontSize,
   Color? hintTextColor,
+  Widget? suffixIcon,
   EdgeInsetsGeometry? contentPadding,
   Color? focussedBorderColor,
   Color? enabledBorderColor,
@@ -21,6 +22,7 @@ InputDecoration getTextFieldInputDecoration(
           fontSize: hintTextFontSize,
           color: hintTextColor ?? clrScheme.outlineVariant,
         ),
+        suffixIcon: suffixIcon,
     hintText: hintText,
     contentPadding: contentPadding ?? kP10,
     focusedBorder: OutlineInputBorder(

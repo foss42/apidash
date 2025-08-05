@@ -25,7 +25,7 @@ void main() {
         expect(
           eventCount,
           greaterThanOrEqualTo(2),
-          reason: 'No SSE events received',
+          reason: 'Output -> $outputs',
         );
       },
       timeout: const Timeout(Duration(seconds: 12)),
