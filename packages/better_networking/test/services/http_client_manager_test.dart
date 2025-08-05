@@ -19,7 +19,7 @@ void main() {
     });
 
     test('should track active client correctly', () {
-      final requestId = 'req1';
+      const requestId = 'req1';
       manager.createClient(requestId);
       expect(manager.hasActiveClient(requestId), isTrue);
 
