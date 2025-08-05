@@ -327,8 +327,8 @@ class CollectionStateNotifier
       noSSL: noSSL,
     );
 
-    HttpResponseModel? respModel;
-    HistoryRequestModel? historyM;
+    HttpResponseModel? httpResponseModel;
+    HistoryRequestModel? historyModel;
     RequestModel newRequestModel = requestModel;
     bool? isTextStream;
     final completer = Completer<(Response?, Duration?, String?)>();
@@ -350,16 +350,16 @@ class CollectionStateNotifier
         return;
       }
 
-      respModel = respModel?.copyWith(
+      httpResponseModel = httpResponseModel?.copyWith(
         time: duration,
         sseOutput: [
-          ...(respModel?.sseOutput ?? []),
+          ...(httpResponseModel?.sseOutput ?? []),
           if (response != null) response.body,
         ],
       );
 
       newRequestModel = newRequestModel.copyWith(
-        httpResponseModel: respModel,
+        httpResponseModel: httpResponseModel,
         isStreaming: true,
       );
       state = {
@@ -368,11 +368,12 @@ class CollectionStateNotifier
       };
       unsave();
 
-      if (historyM != null && respModel != null) {
-        historyM = historyM!.copyWith(httpResponseModel: respModel!);
+      if (historyModel != null && httpResponseModel != null) {
+        historyModel =
+            historyModel!.copyWith(httpResponseModel: httpResponseModel!);
         ref
             .read(historyMetaStateNotifier.notifier)
-            .editHistoryRequest(historyM!);
+            .editHistoryRequest(historyModel!);
       }
 
       if (!completer.isCompleted) {
@@ -403,7 +404,7 @@ class CollectionStateNotifier
     } else {
       final statusCode = response.statusCode;
 
-      respModel = baseHttpResponseModel
+      httpResponseModel = baseHttpResponseModel
           .fromResponse(
             response: response,
             time: duration,
@@ -415,15 +416,15 @@ class CollectionStateNotifier
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: respModel,
+        httpResponseModel: httpResponseModel,
         isWorking: false,
       );
 
-      final historyId = getNewUuid();
-      historyM = HistoryRequestModel(
-        historyId: historyId,
+      final newHistoryId = getNewUuid();
+      historyModel = HistoryRequestModel(
+        historyId: newHistoryId,
         metaData: HistoryMetaModel(
-          historyId: historyId,
+          historyId: newHistoryId,
           requestId: requestId,
           apiType: requestModel.apiType,
           name: requestModel.name,
@@ -433,13 +434,15 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: respModel!,
+        httpResponseModel: httpResponseModel!,
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,
         authModel: requestModel.httpRequestModel?.authModel,
       );
 
-      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM!);
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .addHistoryRequest(historyModel!);
 
       if (!requestModel.postRequestScript.isNullOrEmpty()) {
         newRequestModel = await handlePostResponseScript(
