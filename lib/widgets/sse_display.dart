@@ -2,26 +2,21 @@ import 'dart:convert';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-class SSEDisplay extends StatefulWidget {
-  final String sseOutput;
-  const SSEDisplay({super.key, required this.sseOutput});
+class SSEDisplay extends StatelessWidget {
+  final List<String>? sseOutput;
+  const SSEDisplay({
+    super.key,
+    this.sseOutput,
+  });
 
-  @override
-  State<SSEDisplay> createState() => _SSEDisplayState();
-}
-
-class _SSEDisplayState extends State<SSEDisplay> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fontSizeMedium = theme.textTheme.bodyMedium?.fontSize;
     final isDark = theme.brightness == Brightness.dark;
-    List<dynamic> sse;
-    try {
-      sse = jsonDecode(widget.sseOutput);
-    } catch (e) {
+    if (sseOutput == null || sseOutput!.isEmpty) {
       return Text(
-        'Invalid SSE output',
+        'No content',
         style: kCodeStyle.copyWith(
           fontSize: fontSizeMedium,
           color: isDark ? kColorDarkDanger : kColorLightDanger,
@@ -31,7 +26,7 @@ class _SSEDisplayState extends State<SSEDisplay> {
 
     return ListView(
       padding: kP1,
-      children: sse.reversed.where((e) => e != '').map<Widget>((chunk) {
+      children: sseOutput!.reversed.where((e) => e != '').map<Widget>((chunk) {
         Map<String, dynamic>? parsedJson;
         try {
           parsedJson = jsonDecode(chunk);

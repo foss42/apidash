@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
@@ -24,6 +22,7 @@ class ResponseBody extends StatelessWidget {
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
+    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
     var body = responseModel.body;
     var formattedBody = responseModel.formattedBody;
     if (body == null) {
@@ -36,6 +35,9 @@ class ResponseBody extends StatelessWidget {
         showIcon: false,
         showIssueButton: false,
       );
+    }
+    if (isSSE) {
+      body = responseModel.sseOutput!.join();
     }
 
     final mediaType =
@@ -56,20 +58,6 @@ class ResponseBody extends StatelessWidget {
       options.remove(ResponseBodyView.code);
     }
 
-    // print('reM -> ${responseModel.sseOutput}');
-
-    if (responseModel.sseOutput?.isNotEmpty ?? false) {
-      // final modifiedBody = responseModel.sseOutput!.join('\n\n');
-      return ResponseBodySuccess(
-        key: Key("${selectedRequestModel!.id}-response"),
-        mediaType: MediaType('text', 'event-stream'),
-        options: [ResponseBodyView.sse, ResponseBodyView.raw],
-        bytes: utf8.encode((responseModel.sseOutput!).toString()),
-        body: jsonEncode(responseModel.sseOutput!),
-        formattedBody: responseModel.sseOutput!.join('\n'),
-      );
-    }
-
     return ResponseBodySuccess(
       key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
@@ -77,6 +65,7 @@ class ResponseBody extends StatelessWidget {
       bytes: responseModel.bodyBytes!,
       body: body,
       formattedBody: formattedBody,
+      sseOutput: responseModel.sseOutput,
       highlightLanguage: highlightLanguage,
     );
   }
