@@ -84,11 +84,7 @@ void main() {
       httpClientManager.cancelRequest('graphql_test_cancellation');
       final output = await stream.last;
       final errMsg = output?.$4;
-      expect(
-        errMsg,
-        'Request Cancelled',
-        reason: 'Request Cancellation Failed',
-      );
+      expect(errMsg, 'Request Cancelled');
     });
   });
 }

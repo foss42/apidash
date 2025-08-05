@@ -59,11 +59,7 @@ void main() {
         await subscription.cancel();
 
         final errMsg = outputs.lastOrNull?.$4;
-        expect(
-          errMsg,
-          'Request Cancelled',
-          reason: 'Request Cancellation Failed',
-        );
+        expect(errMsg, 'Request Cancelled');
       },
       timeout: const Timeout(Duration(seconds: 12)),
     );
