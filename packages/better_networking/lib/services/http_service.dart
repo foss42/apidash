@@ -11,9 +11,16 @@ import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
 
+typedef HttpStreamOutput = (
+  bool? streamOutput,
+  HttpResponse? resp,
+  Duration? dur,
+  String? err,
+)?;
+
 final httpClientManager = HttpClientManager();
 
-Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
+Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
   String requestId,
   APIType apiType,
   AuthModel? authData,
@@ -148,6 +155,24 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   }
 }
 
+Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
+  String requestId,
+  APIType apiType,
+  HttpRequestModel requestModel, {
+  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
+  bool noSSL = false,
+}) async {
+  final stream = await streamHttpRequest(
+    requestId,
+    apiType,
+    requestModel,
+    defaultUriScheme: defaultUriScheme,
+    noSSL: noSSL,
+  );
+  final output = await stream.first;
+  return (output?.$2, output?.$3, output?.$4);
+}
+
 void cancelHttpRequest(String? requestId) {
   httpClientManager.cancelRequest(requestId);
 }
@@ -176,33 +201,42 @@ http.Request prepareHttpRequest({
   return request;
 }
 
-Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
+Future<Stream<HttpStreamOutput>> streamHttpRequest(
   String requestId,
   APIType apiType,
-  HttpRequestModel requestModel, {
+  HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
-  final controller = StreamController<(String?, Duration?, String?)?>();
-  StreamSubscription<String?>? subscription;
+  final authData = httpRequestModel.authModel;
+  final controller = StreamController<HttpStreamOutput>();
+  StreamSubscription<List<int>?>? subscription;
   final stopwatch = Stopwatch()..start();
 
-  cleanup() async {
+  Future<void> _cleanup() async {
     stopwatch.stop();
+    await subscription?.cancel();
     httpClientManager.closeClient(requestId);
     await Future.microtask(() {});
     controller.close();
   }
 
-  Future<void> handleError(dynamic error) async {
+  Future<void> _addCancelledMessage() async {
+    if (!controller.isClosed) {
+      controller.add((null, null, null, kMsgRequestCancelled));
+    }
+    httpClientManager.removeCancelledRequest(requestId);
+    await _cleanup();
+  }
+
+  Future<void> _addErrorMessage(dynamic error) async {
     await Future.microtask(() {});
     if (httpClientManager.wasRequestCancelled(requestId)) {
-      controller.add((null, null, kMsgRequestCancelled));
-      httpClientManager.removeCancelledRequest(requestId);
+      await _addCancelledMessage();
     } else {
-      controller.add((null, null, error.toString()));
+      controller.add((null, null, null, error.toString()));
+      await _cleanup();
     }
-    await cleanup();
   }
 
   controller.onCancel = () async {
@@ -211,61 +245,145 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
   };
 
   if (httpClientManager.wasRequestCancelled(requestId)) {
-    controller.add((null, null, kMsgRequestCancelled));
-    httpClientManager.removeCancelledRequest(requestId);
-    controller.close();
+    await _addCancelledMessage();
     return controller.stream;
   }
 
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+
+  HttpRequestModel authenticatedHttpRequestModel = httpRequestModel.copyWith();
+
+  try {
+    if (authData != null && authData.type != APIAuthType.none) {
+      authenticatedHttpRequestModel = await handleAuth(
+        httpRequestModel,
+        authData,
+      );
+    }
+  } catch (e) {
+    await _addErrorMessage(e.toString());
+    return controller.stream;
+  }
+
   final (uri, uriError) = getValidRequestUri(
-    requestModel.url,
-    requestModel.enabledParams,
+    authenticatedHttpRequestModel.url,
+    authenticatedHttpRequestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
 
   if (uri == null) {
-    await handleError(uriError ?? 'Invalid URL');
+    await _addErrorMessage(uriError ?? 'Invalid URL');
     return controller.stream;
   }
 
+  try {
+    final streamedResponse = await makeStreamedRequest(
+      client: client,
+      uri: uri,
+      requestModel: authenticatedHttpRequestModel,
+      apiType: apiType,
+    );
+
+    HttpResponse _createResponseFromBytes(List<int> bytes) {
+      return HttpResponse.bytes(
+        bytes,
+        streamedResponse.statusCode,
+        request: streamedResponse.request,
+        headers: streamedResponse.headers,
+        isRedirect: streamedResponse.isRedirect,
+        persistentConnection: streamedResponse.persistentConnection,
+        reasonPhrase: streamedResponse.reasonPhrase,
+      );
+    }
+
+    final contentType =
+        getMediaTypeFromHeaders(streamedResponse.headers)?.mimeType ?? '';
+    final chunkList = <List<int>>[];
+
+    subscription = streamedResponse.stream.listen(
+      (bytes) async {
+        if (controller.isClosed) return;
+        final isStreaming = kStreamingResponseTypes.contains(contentType);
+        if (isStreaming) {
+          final response = _createResponseFromBytes(bytes);
+          controller.add((true, response, stopwatch.elapsed, null));
+        } else {
+          chunkList.add(bytes);
+        }
+      },
+      onDone: () async {
+        if (chunkList.isNotEmpty && !controller.isClosed) {
+          final allBytes = chunkList.expand((x) => x).toList();
+          final response = _createResponseFromBytes(allBytes);
+          final isStreaming = kStreamingResponseTypes.contains(contentType);
+          controller.add((isStreaming, response, stopwatch.elapsed, null));
+          chunkList.clear();
+        } else {
+          final response = _createResponseFromBytes([]);
+          controller.add((false, response, stopwatch.elapsed, null));
+        }
+        await _cleanup();
+      },
+      onError: _addErrorMessage,
+    );
+    return controller.stream;
+  } catch (e) {
+    await _addErrorMessage(e);
+    return controller.stream;
+  }
+}
+
+Future<http.StreamedResponse> makeStreamedRequest({
+  required http.Client client,
+  required Uri uri,
+  required HttpRequestModel requestModel,
+  required APIType apiType,
+}) async {
   final headers = requestModel.enabledHeadersMap;
   final hasBody = kMethodsWithBody.contains(requestModel.method);
   final isMultipart = requestModel.bodyContentType == ContentType.formdata;
 
-  try {
-    //HANDLE MULTI-PART
-    if (apiType == APIType.rest && isMultipart && hasBody) {
-      final multipart = http.MultipartRequest(
-        requestModel.method.name.toUpperCase(),
-        uri,
-      )..headers.addAll(headers);
+  http.StreamedResponse streamedResponse;
 
-      for (final data in requestModel.formDataList) {
-        if (data.type == FormDataType.text) {
-          multipart.fields[data.name] = data.value;
-        } else {
-          multipart.files.add(
-            await http.MultipartFile.fromPath(data.name, data.value),
-          );
+  //----------------- Request Creation ---------------------
+  //Handling HTTP Multipart Requests
+  if (apiType == APIType.rest && isMultipart && hasBody) {
+    final multipart = http.MultipartRequest(
+      requestModel.method.name.toUpperCase(),
+      uri,
+    )..headers.addAll(headers);
+    for (final data in requestModel.formDataList) {
+      if (data.type == FormDataType.text) {
+        multipart.fields[data.name] = data.value;
+      } else {
+        multipart.files.add(
+          await http.MultipartFile.fromPath(data.name, data.value),
+        );
+      }
+    }
+    streamedResponse = await client.send(multipart);
+  } else if (apiType == APIType.graphql) {
+    // Handling GraphQL Requests
+    var requestBody = getGraphQLBody(requestModel);
+    String? body;
+    if (requestBody != null) {
+      var contentLength = utf8.encode(requestBody).length;
+      if (contentLength > 0) {
+        body = requestBody;
+        headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+        if (!requestModel.hasContentTypeHeader) {
+          headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
         }
       }
-
-      final streamedResponse = await client.send(multipart);
-      final stream = streamTextResponse(streamedResponse);
-
-      subscription = stream.listen(
-        (data) => controller.add((data, stopwatch.elapsed, null)),
-        onDone: () => cleanup(),
-        onError: handleError,
-      );
-
-      return controller.stream;
     }
-
+    final request = http.Request('POST', uri)
+      ..headers.addAll(headers)
+      ..body = body ?? '';
+    streamedResponse = await client.send(request);
+  } else {
+    //Handling regular REST Requests
     String? body;
     bool overrideContentType = false;
-
     if (hasBody && requestModel.body?.isNotEmpty == true) {
       body = requestModel.body;
       if (!requestModel.hasContentTypeHeader) {
@@ -275,7 +393,6 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
         overrideContentType = true;
       }
     }
-
     final request = prepareHttpRequest(
       url: uri,
       method: requestModel.method.name.toUpperCase(),
@@ -283,23 +400,7 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
       body: body,
       overrideContentType: overrideContentType,
     );
-
-    final streamedResponse = await client.send(request);
-    final stream = streamTextResponse(streamedResponse);
-
-    subscription = stream.listen(
-      (data) {
-        if (!controller.isClosed) {
-          controller.add((data, stopwatch.elapsed, null));
-        }
-      },
-      onDone: () => cleanup(),
-      onError: handleError,
-    );
-
-    return controller.stream;
-  } catch (e) {
-    await handleError(e);
-    return controller.stream;
+    streamedResponse = await client.send(request);
   }
+  return streamedResponse;
 }

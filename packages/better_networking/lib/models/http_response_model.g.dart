@@ -21,6 +21,9 @@ _$HttpResponseModelImpl _$$HttpResponseModelImplFromJson(Map json) =>
         json['bodyBytes'] as List<int>?,
       ),
       time: const DurationConverter().fromJson((json['time'] as num?)?.toInt()),
+      sseOutput: (json['sseOutput'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$$HttpResponseModelImplToJson(
@@ -33,4 +36,5 @@ Map<String, dynamic> _$$HttpResponseModelImplToJson(
   'formattedBody': instance.formattedBody,
   'bodyBytes': const Uint8ListConverter().toJson(instance.bodyBytes),
   'time': const DurationConverter().toJson(instance.time),
+  'sseOutput': instance.sseOutput,
 };

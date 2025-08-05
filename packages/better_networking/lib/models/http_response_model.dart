@@ -53,6 +53,7 @@ class HttpResponseModel with _$HttpResponseModel {
     String? formattedBody,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
+    List<String>? sseOutput,
   }) = _HttpResponseModel;
 
   factory HttpResponseModel.fromJson(Map<String, Object?> json) =>
@@ -61,14 +62,20 @@ class HttpResponseModel with _$HttpResponseModel {
   String? get contentType => headers?.getValueContentType();
   MediaType? get mediaType => getMediaTypeFromHeaders(headers);
 
-  HttpResponseModel fromResponse({required Response response, Duration? time}) {
+  HttpResponseModel fromResponse({
+    required Response response,
+    Duration? time,
+    bool isStreamingResponse = false,
+  }) {
     final responseHeaders = mergeMaps({
       HttpHeaders.contentLengthHeader: response.contentLength.toString(),
     }, response.headers);
     MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
+
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
         : response.body;
+
     return HttpResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
@@ -77,6 +84,7 @@ class HttpResponseModel with _$HttpResponseModel {
       formattedBody: formatBody(body, mediaType),
       bodyBytes: response.bodyBytes,
       time: time,
+      sseOutput: isStreamingResponse ? [body] : null,
     );
   }
 }

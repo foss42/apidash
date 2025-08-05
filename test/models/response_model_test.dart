@@ -17,7 +17,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet1.id,
       requestModelGet1.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelGet1.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -36,7 +35,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet13.id,
       requestModelGet13.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelGet13.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -54,7 +52,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost11.id,
       requestModelPost11.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelPost11.httpRequestModel!,
     );
 
@@ -69,7 +66,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost12.id,
       requestModelPost12.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelPost12.httpRequestModel!,
     );
 
@@ -83,7 +79,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost13.id,
       requestModelPost13.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelPost13.httpRequestModel!,
     );
 
@@ -97,7 +92,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -110,7 +104,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: true,
@@ -131,7 +124,6 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelOptions1.id,
       requestModelOptions1.apiType,
-      AuthModel(type: APIAuthType.none),
       requestModelOptions1.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,

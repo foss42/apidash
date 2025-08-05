@@ -60,6 +60,7 @@ export 'splitview_drawer.dart';
 export 'splitview_dashboard.dart';
 export 'splitview_equal.dart';
 export 'splitview_history.dart';
+export 'sse_display.dart';
 export 'tabbar_segmented.dart';
 export 'table_map.dart';
 export 'table_request_form.dart';
