@@ -1,4 +1,4 @@
-# 📡 `better_networking` Package
+# better_networking
 
 `better_networking` is a lightweight and extensible Dart package designed to simplify HTTP requests and streaming operations. It provides enhanced request modeling, consistent response handling, and built-in utility functions to streamline interactions with both REST and GraphQL APIs. Whether you're handling HTTP requests or streaming data (e.g., Server-Sent Events), this package makes the process more testable and developer-friendly.
 
@@ -6,12 +6,12 @@
 
 ## 🔧 Features
 
-* **Unified request modeling** via `HttpRequestModel`
-* **Consistent response handling** with `HttpResponseModel`
-* **Streamed response support** (e.g., SSE)
-* **Client management** with cancellation and lifecycle control
-* **Built-in utilities** for parsing headers and content types
-* **Support for both REST and GraphQL APIs**
+- **Unified request modeling** via `HttpRequestModel`
+- **Consistent response handling** with `HttpResponseModel`
+- **Streamed response support** (e.g., SSE)
+- **Client management** with cancellation and lifecycle control
+- **Built-in utilities** for parsing headers and content types
+- **Support for both REST and GraphQL APIs**
 
 ---
 
@@ -83,16 +83,16 @@ const factory HttpRequestModel({
 
 #### Fields:
 
-* **`method`**: The HTTP verb to use (e.g., GET, POST, PUT).
-* **`url`**: The target URL for the request.
-* **`headers`**: A list of header key-value pairs.
-* **`params`**: URL parameters as key-value pairs.
-* **`isHeaderEnabledList`**: Toggles for enabling/disabling individual headers.
-* **`isParamEnabledList`**: Toggles for enabling/disabling individual parameters.
-* **`bodyContentType`**: The MIME type for the request body (e.g., `json`, `form`).
-* **`body`**: The raw body of the request (usually a JSON or string).
-* **`query`**: A custom query string to be appended to the URL.
-* **`formData`**: Multipart form data (for file uploads, etc.).
+- **`method`**: The HTTP verb to use (e.g., GET, POST, PUT).
+- **`url`**: The target URL for the request.
+- **`headers`**: A list of header key-value pairs.
+- **`params`**: URL parameters as key-value pairs.
+- **`isHeaderEnabledList`**: Toggles for enabling/disabling individual headers.
+- **`isParamEnabledList`**: Toggles for enabling/disabling individual parameters.
+- **`bodyContentType`**: The MIME type for the request body (e.g., `json`, `form`).
+- **`body`**: The raw body of the request (usually a JSON or string).
+- **`query`**: A custom query string to be appended to the URL.
+- **`formData`**: Multipart form data (for file uploads, etc.).
 
 ---
 
@@ -165,18 +165,15 @@ stream.listen((data) {
 });
 ```
 
----
-
 ## 🤝 Contributing
 
 We welcome contributions to the `better_networking` package! If you'd like to contribute, please fork the repository and submit a pull request. For major changes or new features, it's a good idea to open an issue first to discuss your ideas.
 
----
+## Maintainer
 
-## 🪪 License
+- Ashita Prasad ([GitHub](https://github.com/ashitaprasad), [LinkedIn](https://www.linkedin.com/in/ashitaprasad/), [X](https://x.com/ashitaprasad))
+- Manas Hejmadi (contributor) ([GitHub](https://github.com/synapsecode))
 
-`better_networking` is licensed under the MIT License.
+## License
 
-MIT © API Dash
-
----
+This project is licensed under the [Apache License 2.0](https://github.com/foss42/apidash/blob/main/packages/better_networking/LICENSE).
