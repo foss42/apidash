@@ -299,7 +299,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     }
 
     final contentType =
-        streamedResponse.headers['content-type']?.toString() ?? '';
+        getMediaTypeFromHeaders(streamedResponse.headers)?.mimeType ?? '';
     final chunkList = <List<int>>[];
 
     subscription = streamedResponse.stream.listen(
