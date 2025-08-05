@@ -54,10 +54,10 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                 final (resp, duration, err) = await sendHttpRequest(
                   'G1',
                   APIType.rest,
-                  AuthModel(type: APIAuthType.none),
                   HttpRequestModel(
                     url: 'https://reqres.in/api/users/2',
                     method: HTTPVerb.get,
+                    authModel: AuthModel(type: APIAuthType.none),
                     headers: [
                       NameValueModel(
                         name: 'x-api-key',
@@ -81,10 +81,10 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                 final (resp, duration, err) = await sendHttpRequest(
                   'P1',
                   APIType.rest,
-                  AuthModel(type: APIAuthType.none),
                   HttpRequestModel(
                     url: 'https://reqres.in/api/users',
                     method: HTTPVerb.post,
+                    authModel: AuthModel(type: APIAuthType.none),
                     headers: [
                       NameValueModel(
                         name: 'x-api-key',
@@ -112,6 +112,7 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                   HttpRequestModel(
                     method: HTTPVerb.post,
                     url: 'http://localhost:11434/v1/chat/completions',
+                    authModel: null,
                     body: jsonEncode({
                       'model': 'gemma3:latest',
                       'stream': true,

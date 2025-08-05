@@ -15,13 +15,16 @@ class ResponseBodySuccess extends StatefulWidget {
       required this.options,
       required this.bytes,
       this.formattedBody,
+      this.sseOutput,
       this.highlightLanguage});
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
   final Uint8List bytes;
   final String? formattedBody;
+  final List<String>? sseOutput;
   final String? highlightLanguage;
+
   @override
   State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
 }
@@ -141,6 +144,16 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           widget.formattedBody ?? widget.body,
                           style: kCodeStyle,
                         ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.sse => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SSEDisplay(
+                        sseOutput: widget.sseOutput,
                       ),
                     ),
                   ),

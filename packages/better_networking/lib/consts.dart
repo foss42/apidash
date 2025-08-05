@@ -89,6 +89,15 @@ const kSubTypeYaml = 'yaml';
 const kSubTypeXYaml = 'x-yaml';
 const kSubTypeYml = 'x-yml';
 const kSubTypeXWwwFormUrlencoded = 'x-www-form-urlencoded';
+const kSubTypeXNdjson = 'x-ndjson';
+const kSubTypeNdjson = 'ndjson';
+const kSubTypeJsonSeq = 'json-seq';
+const kSubTypeXLdjson = 'x-ldjson';
+const kSubTypeLdjson = 'ldjson';
+const kSubTypeXJsonStream = 'x-json-stream';
+const kSubTypeJsonStream = 'json-stream';
+const kSubTypeJsonstream = 'jsonstream';
+const kSubTypeStreamJson = 'stream+json';
 
 const kTypeText = 'text';
 // text
@@ -101,6 +110,7 @@ const kSubTypePlain = 'plain';
 const kSubTypeTextXml = 'xml';
 const kSubTypeTextYaml = 'yaml';
 const kSubTypeTextYml = 'yml';
+const kSubTypeEventStream = 'event-stream';
 
 const kTypeImage = 'image';
 //image
@@ -113,6 +123,19 @@ const kTypeMultipart = "multipart";
 const kSubTypeFormData = "form-data";
 
 const kSubTypeDefaultViewOptions = 'all';
+
+List<String> kStreamingResponseTypes = [
+  '$kTypeText/$kSubTypeEventStream',
+  '$kTypeApplication/$kSubTypeXNdjson',
+  '$kTypeApplication/$kSubTypeNdjson',
+  '$kTypeApplication/$kSubTypeJsonSeq',
+  '$kTypeApplication/$kSubTypeXLdjson',
+  '$kTypeApplication/$kSubTypeLdjson',
+  '$kTypeApplication/$kSubTypeXJsonStream',
+  '$kTypeApplication/$kSubTypeJsonStream',
+  '$kTypeApplication/$kSubTypeJsonstream',
+  '$kTypeApplication/$kSubTypeStreamJson',
+];
 
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
