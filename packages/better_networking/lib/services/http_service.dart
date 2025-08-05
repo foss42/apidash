@@ -1,5 +1,3 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -13,7 +11,149 @@ import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
 
+typedef HttpStreamOutput = (
+  bool? streamOutput,
+  HttpResponse? resp,
+  Duration? dur,
+  String? err,
+)?;
+
 final httpClientManager = HttpClientManager();
+
+Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
+  String requestId,
+  APIType apiType,
+  AuthModel? authData,
+  HttpRequestModel requestModel, {
+  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
+  bool noSSL = false,
+}) async {
+  if (httpClientManager.wasRequestCancelled(requestId)) {
+    httpClientManager.removeCancelledRequest(requestId);
+  }
+  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+
+  HttpRequestModel authenticatedRequestModel = requestModel.copyWith();
+
+  try {
+    if (authData != null && authData.type != APIAuthType.none) {
+      authenticatedRequestModel = await handleAuth(requestModel, authData);
+    }
+  } catch (e) {
+    return (null, null, e.toString());
+  }
+
+  (Uri?, String?) uriRec = getValidRequestUri(
+    authenticatedRequestModel.url,
+    authenticatedRequestModel.enabledParams,
+    defaultUriScheme: defaultUriScheme,
+  );
+
+  if (uriRec.$1 != null) {
+    Uri requestUrl = uriRec.$1!;
+    Map<String, String> headers = authenticatedRequestModel.enabledHeadersMap;
+    bool overrideContentType = false;
+    HttpResponse? response;
+    String? body;
+    try {
+      Stopwatch stopwatch = Stopwatch()..start();
+      if (apiType == APIType.rest) {
+        var isMultiPartRequest =
+            requestModel.bodyContentType == ContentType.formdata;
+
+        if (kMethodsWithBody.contains(authenticatedRequestModel.method)) {
+          var requestBody = authenticatedRequestModel.body;
+          if (requestBody != null &&
+              !isMultiPartRequest &&
+              requestBody.isNotEmpty) {
+            body = requestBody;
+            if (authenticatedRequestModel.hasContentTypeHeader) {
+              overrideContentType = true;
+            } else {
+              headers[HttpHeaders.contentTypeHeader] =
+                  authenticatedRequestModel.bodyContentType.header;
+            }
+          }
+          if (isMultiPartRequest) {
+            var multiPartRequest = http.MultipartRequest(
+              authenticatedRequestModel.method.name.toUpperCase(),
+              requestUrl,
+            );
+            multiPartRequest.headers.addAll(headers);
+            for (var formData in authenticatedRequestModel.formDataList) {
+              if (formData.type == FormDataType.text) {
+                multiPartRequest.fields.addAll({formData.name: formData.value});
+              } else {
+                multiPartRequest.files.add(
+                  await http.MultipartFile.fromPath(
+                    formData.name,
+                    formData.value,
+                  ),
+                );
+              }
+            }
+            http.StreamedResponse multiPartResponse = await client.send(
+              multiPartRequest,
+            );
+
+            stopwatch.stop();
+            http.Response convertedMultiPartResponse =
+                await convertStreamedResponse(multiPartResponse);
+            return (convertedMultiPartResponse, stopwatch.elapsed, null);
+          }
+        }
+        switch (authenticatedRequestModel.method) {
+          case HTTPVerb.get:
+            response = await client.get(requestUrl, headers: headers);
+            break;
+          case HTTPVerb.head:
+            response = await client.head(requestUrl, headers: headers);
+            break;
+          case HTTPVerb.post:
+          case HTTPVerb.put:
+          case HTTPVerb.patch:
+          case HTTPVerb.delete:
+          case HTTPVerb.options:
+            final request = prepareHttpRequest(
+              url: requestUrl,
+              method: authenticatedRequestModel.method.name.toUpperCase(),
+              headers: headers,
+              body: body,
+              overrideContentType: overrideContentType,
+            );
+            final streamed = await client.send(request);
+            response = await http.Response.fromStream(streamed);
+            break;
+        }
+      }
+      if (apiType == APIType.graphql) {
+        var requestBody = getGraphQLBody(authenticatedRequestModel);
+        if (requestBody != null) {
+          var contentLength = utf8.encode(requestBody).length;
+          if (contentLength > 0) {
+            body = requestBody;
+            headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+            if (!authenticatedRequestModel.hasContentTypeHeader) {
+              headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
+            }
+          }
+        }
+        response = await client.post(requestUrl, headers: headers, body: body);
+      }
+      stopwatch.stop();
+      return (response, stopwatch.elapsed, null);
+    } catch (e) {
+      if (httpClientManager.wasRequestCancelled(requestId)) {
+        return (null, null, kMsgRequestCancelled);
+      }
+      return (null, null, e.toString());
+    } finally {
+      httpClientManager.closeClient(requestId);
+    }
+  } else {
+    return (null, null, uriRec.$2);
+  }
+}
 
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
@@ -60,13 +200,6 @@ http.Request prepareHttpRequest({
   request.headers.addAll(headers);
   return request;
 }
-
-typedef HttpStreamOutput = (
-  bool? streamOutput,
-  HttpResponse? resp,
-  Duration? dur,
-  String? err,
-)?;
 
 Future<Stream<HttpStreamOutput>> streamHttpRequest(
   String requestId,
