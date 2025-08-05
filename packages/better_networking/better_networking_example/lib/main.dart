@@ -109,6 +109,7 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                 final stream = await streamHttpRequest(
                   'S1',
                   APIType.rest,
+                  null,
                   HttpRequestModel(
                     method: HTTPVerb.post,
                     url: 'http://localhost:11434/v1/chat/completions',

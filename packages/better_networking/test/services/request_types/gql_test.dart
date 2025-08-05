@@ -24,6 +24,7 @@ void main() {
       final stream = await streamHttpRequest(
         'graphql_test',
         APIType.graphql,
+        null,
         model,
       );
 
@@ -54,6 +55,7 @@ void main() {
       final stream = await streamHttpRequest(
         'graphql_bad',
         APIType.graphql,
+        null,
         model,
       );
       final output = await stream.first;
@@ -76,6 +78,7 @@ void main() {
       final stream = await streamHttpRequest(
         'graphql_test_cancellation',
         APIType.graphql,
+        null,
         model,
       );
       httpClientManager.cancelRequest('graphql_test_cancellation');

@@ -158,6 +158,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
+  AuthModel? authData,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
@@ -165,6 +166,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   final stream = await streamHttpRequest(
     requestId,
     apiType,
+    authData,
     requestModel,
     defaultUriScheme: defaultUriScheme,
     noSSL: noSSL,
@@ -204,7 +206,8 @@ http.Request prepareHttpRequest({
 Future<Stream<HttpStreamOutput>> streamHttpRequest(
   String requestId,
   APIType apiType,
-  HttpRequestModel requestModel, {
+  AuthModel? authData,
+  HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
@@ -249,9 +252,24 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
   }
 
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+
+  HttpRequestModel authenticatedHttpRequestModel = httpRequestModel.copyWith();
+
+  try {
+    if (authData != null && authData.type != APIAuthType.none) {
+      authenticatedHttpRequestModel = await handleAuth(
+        httpRequestModel,
+        authData,
+      );
+    }
+  } catch (e) {
+    await _addErrorMessage(e.toString());
+    return controller.stream;
+  }
+
   final (uri, uriError) = getValidRequestUri(
-    requestModel.url,
-    requestModel.enabledParams,
+    authenticatedHttpRequestModel.url,
+    authenticatedHttpRequestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
 
@@ -264,7 +282,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     final streamedResponse = await makeStreamedRequest(
       client: client,
       uri: uri,
-      requestModel: requestModel,
+      requestModel: authenticatedHttpRequestModel,
       apiType: apiType,
     );
 
