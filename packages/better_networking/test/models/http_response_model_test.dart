@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:better_networking/better_networking.dart';
+import 'package:better_networking/consts.dart';
+import 'package:better_networking/models/models.dart';
 import 'package:test/test.dart';
 import 'package:http/http.dart' as http;
 
