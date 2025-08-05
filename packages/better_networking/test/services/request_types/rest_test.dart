@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:better_networking/better_networking.dart';
+import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('sendHttpRequest: REST Specific Tests', () {
     test('GET (Regular)', () async {
       const model = HttpRequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts/1',
+        url: 'https://api.apidash.dev',
         method: HTTPVerb.get,
         headers: [
           NameValueModel(name: 'User-Agent', value: 'Dart/3.0 (dart:io)'),
@@ -23,7 +24,7 @@ void main() {
       );
       final output = jsonDecode(resp?.body ?? '{}');
       expect(resp?.statusCode == 200, true, reason: 'Response must be 200');
-      expect(jsonEncode(output), contains('userId'));
+      expect(jsonEncode(output), contains('doc'));
     });
   });
 
@@ -80,7 +81,7 @@ void main() {
   group('streamHttpRequest: REST Specific Tests', () {
     test('GET (Regular)', () async {
       const model = HttpRequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts/1',
+        url: 'https://api.apidash.dev',
         method: HTTPVerb.get,
         headers: [
           NameValueModel(name: 'User-Agent', value: 'Dart/3.0 (dart:io)'),
@@ -99,17 +100,19 @@ void main() {
         true,
         reason: 'Response must be 200',
       );
-      expect(output?.$2?.body, contains('userId'));
+      expect(output?.$2?.body, contains('doc'));
     });
 
     test('POST (JSON Body)', () async {
       const model = HttpRequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts',
+        url: 'https://api.apidash.dev/case/lower',
         method: HTTPVerb.post,
         headers: [
           NameValueModel(name: 'Content-Type', value: 'application/json'),
         ],
-        body: '{"title": "foo", "body": "bar", "userId": 1}',
+        body: r"""{
+"text": "I LOVE Flutter"
+}""",
       );
 
       final stream = await streamHttpRequest(
@@ -120,14 +123,9 @@ void main() {
       );
       final output = await stream.first;
 
-      expect(
-        output?.$2?.statusCode,
-        equals(201),
-        reason: 'Expected 201 Created',
-      );
+      expect(output?.$2?.statusCode, equals(200), reason: 'Expected 200 Ok');
       final body = jsonDecode(output!.$2!.body);
-      expect(body['title'], equals('foo'));
-      expect(body['body'], equals('bar'));
+      expect(body['data'], equals('i love flutter'));
     });
 
     test('Empty URL should be handled', () async {
@@ -165,7 +163,7 @@ void main() {
 
     test('REST: Large response body', () async {
       const model = HttpRequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts',
+        url: 'https://api.github.com/repos/foss42/apidash',
         method: HTTPVerb.get,
       );
 
@@ -188,29 +186,32 @@ void main() {
 
     test('REST: Cancellation', () async {
       const model = HttpRequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts/1',
+        url: 'https://api.apidash.dev/io/delay',
         method: HTTPVerb.get,
+        params: [NameValueModel(name: 'wait', value: '5')],
         headers: [
           NameValueModel(name: 'User-Agent', value: 'Dart/3.0 (dart:io)'),
           NameValueModel(name: 'Accept', value: 'application/json'),
         ],
       );
+      Future.delayed(const Duration(seconds: 2), () {
+        debugPrint("Stream canceled");
+        cancelHttpRequest('get_test_c');
+      });
+      debugPrint("Stream start");
       final stream = await streamHttpRequest(
         'get_test_c',
         APIType.rest,
         null,
         model,
       );
-      cancelHttpRequest('get_test_c');
+      debugPrint("Stream get output");
       final output = await stream.first;
       final errMsg = output?.$4;
-      expect(
-        errMsg,
-        'Request Cancelled',
-        reason: 'Request Cancellation Failed',
-      );
+      expect(errMsg, 'Request Cancelled');
     });
   });
+
   group('Testing overrideContentType functionality', () {
     test('overrideContentType is true', () async {
       final request = prepareHttpRequest(
@@ -232,6 +233,10 @@ void main() {
         overrideContentType: false,
       );
       expect(request.headers['content-type'], isNot('application/json'));
+      expect(
+        request.headers['content-type'],
+        'application/json; charset=utf-8',
+      );
     });
   });
 }
