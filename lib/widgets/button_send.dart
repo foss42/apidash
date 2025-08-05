@@ -25,7 +25,7 @@ class SendButton extends StatelessWidget {
           ? [
               kHSpacer8,
               Text(
-                isStreaming ? 'Stop' : kLabelCancel,
+                isStreaming ? kLabelStop : kLabelCancel,
                 style: kTextStyleButton,
               ),
               kHSpacer6,

@@ -438,6 +438,7 @@ const kLabelDuplicate = "Duplicate";
 const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
+const kLabelStop = "Stop";
 const kLabelOk = "Ok";
 const kLabelImport = "Import";
 const kUntitled = "untitled";
