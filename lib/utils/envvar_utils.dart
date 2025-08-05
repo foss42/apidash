@@ -92,12 +92,12 @@ HttpRequestModel substituteHttpRequestModel(
     }).toList(),
     body: substituteVariables(httpRequestModel.body, combinedEnvVarMap),
     authModel:
-        _substituteAuthModel(httpRequestModel.authModel, combinedEnvVarMap),
+        substituteAuthModel(httpRequestModel.authModel, combinedEnvVarMap),
   );
   return newRequestModel;
 }
 
-AuthModel? _substituteAuthModel(
+AuthModel? substituteAuthModel(
     AuthModel? authModel, Map<String, String> envVarMap) {
   if (authModel == null) return null;
 
