@@ -14,74 +14,74 @@ class _SSEDisplayState extends State<SSEDisplay> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final fontSizeMedium = theme.textTheme.bodyMedium?.fontSize;
+    final isDark = theme.brightness == Brightness.dark;
     List<dynamic> sse;
     try {
       sse = jsonDecode(widget.sseOutput);
     } catch (e) {
       return Text(
         'Invalid SSE output',
-        style: theme.textTheme.bodyMedium?.copyWith(color: Colors.red),
+        style: kCodeStyle.copyWith(
+          fontSize: fontSizeMedium,
+          color: isDark ? kColorDarkDanger : kColorLightDanger,
+        ),
       );
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: sse.reversed.where((e) => e != '').map<Widget>((chunk) {
-          Map<String, dynamic>? parsedJson;
-          try {
-            parsedJson = jsonDecode(chunk);
-          } catch (_) {}
+    return ListView(
+      padding: kP1,
+      children: sse.reversed.where((e) => e != '').map<Widget>((chunk) {
+        Map<String, dynamic>? parsedJson;
+        try {
+          parsedJson = jsonDecode(chunk);
+        } catch (_) {}
 
-          return Card(
-            color: Theme.of(context).brightness == Brightness.light
-                ? Colors.white
-                : const Color.fromARGB(255, 14, 20, 27),
-            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: parsedJson != null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: parsedJson.entries.map((entry) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${entry.key}: ',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: kColorGQL,
-                                ),
+        return Card(
+          color: theme.colorScheme.surfaceContainerLowest,
+          shape: RoundedRectangleBorder(
+            borderRadius: kBorderRadius6,
+          ),
+          child: Padding(
+            padding: kP8,
+            child: parsedJson != null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: parsedJson.entries.map((entry) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${entry.key}: ',
+                              style: kCodeStyle.copyWith(
+                                fontSize: fontSizeMedium,
+                                color: isDark ? kColorGQL.toDark : kColorGQL,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  entry.value.toString(),
-                                  style: kCodeStyle,
-                                ),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                entry.value.toString(),
+                                style: kCodeStyle,
                               ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    )
-                  : Text(
-                      chunk.toString().trim(),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontFamily: 'monospace',
-                      ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  )
+                : Text(
+                    chunk.toString().trim(),
+                    style: kCodeStyle.copyWith(
+                      fontSize: fontSizeMedium,
                     ),
-            ),
-          );
-        }).toList(),
-      ),
+                  ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
