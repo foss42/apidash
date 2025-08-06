@@ -63,6 +63,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      physics: ClampingScrollPhysics(),
       shrinkWrap: true,
       children: [
         // Text(
