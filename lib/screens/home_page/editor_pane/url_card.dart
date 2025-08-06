@@ -129,8 +129,11 @@ class SendRequestButton extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
+    final isStreaming = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.isStreaming));
 
     return SendButton(
+      isStreaming: isStreaming ?? false,
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();

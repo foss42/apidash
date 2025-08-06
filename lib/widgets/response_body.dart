@@ -22,6 +22,7 @@ class ResponseBody extends StatelessWidget {
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
+    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
     var body = responseModel.body;
     var formattedBody = responseModel.formattedBody;
     if (body == null) {
@@ -34,6 +35,9 @@ class ResponseBody extends StatelessWidget {
         showIcon: false,
         showIssueButton: false,
       );
+    }
+    if (isSSE) {
+      body = responseModel.sseOutput!.join();
     }
 
     final mediaType =
@@ -61,6 +65,7 @@ class ResponseBody extends StatelessWidget {
       bytes: responseModel.bodyBytes!,
       body: body,
       formattedBody: formattedBody,
+      sseOutput: responseModel.sseOutput,
       highlightLanguage: highlightLanguage,
     );
   }

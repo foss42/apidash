@@ -27,6 +27,7 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       sendingTime: json['sendingTime'] == null
           ? null
           : DateTime.parse(json['sendingTime'] as String),
+      isStreaming: json['isStreaming'] as bool? ?? false,
       preRequestScript: json['preRequestScript'] as String?,
       postRequestScript: json['postRequestScript'] as String?,
     );

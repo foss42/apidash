@@ -159,6 +159,7 @@ enum ResponseBodyView {
   preview("Preview", Icons.visibility_rounded),
   code("Preview", Icons.code_rounded),
   raw("Raw", Icons.text_snippet_rounded),
+  sse("SSE", Icons.stream),
   none("Preview", Icons.warning);
 
   const ResponseBodyView(this.label, this.icon);
@@ -182,6 +183,10 @@ const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.code,
   ResponseBodyView.raw
 ];
+const kPreviewSSERawBodyViewOptions = [
+  ResponseBodyView.sse,
+  ResponseBodyView.raw
+];
 
 const Map<String, Map<String, List<ResponseBodyView>>>
     kResponseBodyViewOptions = {
@@ -195,6 +200,15 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeYaml: kCodeRawBodyViewOptions,
     kSubTypeXYaml: kCodeRawBodyViewOptions,
     kSubTypeYml: kCodeRawBodyViewOptions,
+    kSubTypeXNdjson: kPreviewSSERawBodyViewOptions,
+    kSubTypeNdjson: kPreviewSSERawBodyViewOptions,
+    kSubTypeJsonSeq: kPreviewSSERawBodyViewOptions,
+    kSubTypeXLdjson: kPreviewSSERawBodyViewOptions,
+    kSubTypeLdjson: kPreviewSSERawBodyViewOptions,
+    kSubTypeXJsonStream: kPreviewSSERawBodyViewOptions,
+    kSubTypeJsonStream: kPreviewSSERawBodyViewOptions,
+    kSubTypeJsonstream: kPreviewSSERawBodyViewOptions,
+    kSubTypeStreamJson: kPreviewSSERawBodyViewOptions,
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
@@ -216,6 +230,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeTextXml: kCodeRawBodyViewOptions,
     kSubTypeTextYaml: kCodeRawBodyViewOptions,
     kSubTypeTextYml: kCodeRawBodyViewOptions,
+    kSubTypeEventStream: kPreviewSSERawBodyViewOptions,
   },
 };
 
@@ -437,6 +452,7 @@ const kLabelDuplicate = "Duplicate";
 const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
+const kLabelStop = "Stop";
 const kLabelOk = "Ok";
 const kLabelImport = "Import";
 const kUntitled = "untitled";

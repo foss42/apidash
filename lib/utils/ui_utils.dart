@@ -21,7 +21,7 @@ Color getResponseStatusCodeColor(int? statusCode,
     }
   }
   if (brightness == Brightness.dark) {
-    col = getDarkModeColor(col);
+    col = col.toDark;
   }
   return col;
 }
@@ -38,7 +38,7 @@ Color getAPIColor(
     APIType.graphql => kColorGQL,
   };
   if (brightness == Brightness.dark) {
-    col = getDarkModeColor(col);
+    col = col.toDark;
   }
   return col;
 }
@@ -55,13 +55,6 @@ Color getHTTPMethodColor(HTTPVerb? method) {
     _ => kColorHttpMethodGet,
   };
   return col;
-}
-
-Color getDarkModeColor(Color col) {
-  return Color.alphaBlend(
-    col.withValues(alpha: kOpacityDarkModeBlend),
-    kColorWhite,
-  );
 }
 
 double? getJsonPreviewerMaxRootNodeWidth(double w) {
