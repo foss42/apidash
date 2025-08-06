@@ -1,11 +1,12 @@
-import 'package:apidash/utils/utils.dart';
+import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'consts.dart';
 
-class OAuth1Fields extends StatefulWidget {
+class OAuth1Fields extends ConsumerStatefulWidget {
   final AuthModel? authData;
 
   final bool readOnly;
@@ -20,10 +21,10 @@ class OAuth1Fields extends StatefulWidget {
   });
 
   @override
-  State<OAuth1Fields> createState() => _OAuth1FieldsState();
+  ConsumerState<OAuth1Fields> createState() => _OAuth1FieldsState();
 }
 
-class _OAuth1FieldsState extends State<OAuth1Fields> {
+class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
   late TextEditingController _consumerKeyController;
   late TextEditingController _consumerSecretController;
   late TextEditingController _accessTokenController;
@@ -61,8 +62,8 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         // Text(
         //   "Add auth data to",
@@ -198,12 +199,11 @@ class _OAuth1FieldsState extends State<OAuth1Fields> {
   }
 
   void _updateOAuth1() async {
-    final String? credentialsFilePath =
-        await getApplicationSupportDirectoryFilePath(
-            "oauth1_credentials", "json");
-    if (credentialsFilePath == null) {
-      return;
-    }
+    final settingsModel = ref.read(settingsProvider);
+    final credentialsFilePath = settingsModel.workspaceFolderPath != null
+        ? "${settingsModel.workspaceFolderPath}/oauth1_credentials.json"
+        : null;
+
     widget.updateAuth?.call(
       widget.authData?.copyWith(
             type: APIAuthType.oauth1,

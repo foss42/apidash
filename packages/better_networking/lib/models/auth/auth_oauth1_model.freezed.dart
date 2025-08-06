@@ -23,7 +23,7 @@ AuthOAuth1Model _$AuthOAuth1ModelFromJson(Map<String, dynamic> json) {
 mixin _$AuthOAuth1Model {
   String get consumerKey => throw _privateConstructorUsedError;
   String get consumerSecret => throw _privateConstructorUsedError;
-  String get credentialsFilePath => throw _privateConstructorUsedError;
+  String? get credentialsFilePath => throw _privateConstructorUsedError;
   String? get accessToken => throw _privateConstructorUsedError;
   String? get tokenSecret => throw _privateConstructorUsedError;
   OAuth1SignatureMethod get signatureMethod =>
@@ -57,7 +57,7 @@ abstract class $AuthOAuth1ModelCopyWith<$Res> {
   $Res call({
     String consumerKey,
     String consumerSecret,
-    String credentialsFilePath,
+    String? credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
     OAuth1SignatureMethod signatureMethod,
@@ -89,7 +89,7 @@ class _$AuthOAuth1ModelCopyWithImpl<$Res, $Val extends AuthOAuth1Model>
   $Res call({
     Object? consumerKey = null,
     Object? consumerSecret = null,
-    Object? credentialsFilePath = null,
+    Object? credentialsFilePath = freezed,
     Object? accessToken = freezed,
     Object? tokenSecret = freezed,
     Object? signatureMethod = null,
@@ -112,10 +112,10 @@ class _$AuthOAuth1ModelCopyWithImpl<$Res, $Val extends AuthOAuth1Model>
                 ? _value.consumerSecret
                 : consumerSecret // ignore: cast_nullable_to_non_nullable
                       as String,
-            credentialsFilePath: null == credentialsFilePath
+            credentialsFilePath: freezed == credentialsFilePath
                 ? _value.credentialsFilePath
                 : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             accessToken: freezed == accessToken
                 ? _value.accessToken
                 : accessToken // ignore: cast_nullable_to_non_nullable
@@ -178,7 +178,7 @@ abstract class _$$AuthOAuth1ModelImplCopyWith<$Res>
   $Res call({
     String consumerKey,
     String consumerSecret,
-    String credentialsFilePath,
+    String? credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
     OAuth1SignatureMethod signatureMethod,
@@ -209,7 +209,7 @@ class __$$AuthOAuth1ModelImplCopyWithImpl<$Res>
   $Res call({
     Object? consumerKey = null,
     Object? consumerSecret = null,
-    Object? credentialsFilePath = null,
+    Object? credentialsFilePath = freezed,
     Object? accessToken = freezed,
     Object? tokenSecret = freezed,
     Object? signatureMethod = null,
@@ -232,10 +232,10 @@ class __$$AuthOAuth1ModelImplCopyWithImpl<$Res>
             ? _value.consumerSecret
             : consumerSecret // ignore: cast_nullable_to_non_nullable
                   as String,
-        credentialsFilePath: null == credentialsFilePath
+        credentialsFilePath: freezed == credentialsFilePath
             ? _value.credentialsFilePath
             : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         accessToken: freezed == accessToken
             ? _value.accessToken
             : accessToken // ignore: cast_nullable_to_non_nullable
@@ -291,7 +291,7 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
   const _$AuthOAuth1ModelImpl({
     required this.consumerKey,
     required this.consumerSecret,
-    required this.credentialsFilePath,
+    this.credentialsFilePath,
     this.accessToken,
     this.tokenSecret,
     this.signatureMethod = OAuth1SignatureMethod.hmacSha1,
@@ -313,7 +313,7 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
   @override
   final String consumerSecret;
   @override
-  final String credentialsFilePath;
+  final String? credentialsFilePath;
   @override
   final String? accessToken;
   @override
@@ -419,7 +419,7 @@ abstract class _AuthOAuth1Model implements AuthOAuth1Model {
   const factory _AuthOAuth1Model({
     required final String consumerKey,
     required final String consumerSecret,
-    required final String credentialsFilePath,
+    final String? credentialsFilePath,
     final String? accessToken,
     final String? tokenSecret,
     final OAuth1SignatureMethod signatureMethod,
@@ -441,7 +441,7 @@ abstract class _AuthOAuth1Model implements AuthOAuth1Model {
   @override
   String get consumerSecret;
   @override
-  String get credentialsFilePath;
+  String? get credentialsFilePath;
   @override
   String? get accessToken;
   @override

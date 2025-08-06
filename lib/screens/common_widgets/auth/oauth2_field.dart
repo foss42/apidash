@@ -384,9 +384,6 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
   void _updateOAuth2() async {
     final String? credentialsFilePath =
         ref.read(settingsProvider).workspaceFolderPath;
-    if (credentialsFilePath == null) {
-      return;
-    }
 
     final updatedOAuth2 = AuthOAuth2Model(
       grantType: _grantType,
@@ -394,7 +391,9 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
       clientId: _clientIdController.text.trim(),
       accessTokenUrl: _accessTokenUrlController.text.trim(),
       clientSecret: _clientSecretController.text.trim(),
-      credentialsFilePath: "$credentialsFilePath/oauth2_credentials.json",
+      credentialsFilePath: credentialsFilePath != null
+          ? "$credentialsFilePath/oauth2_credentials.json"
+          : null,
       codeChallengeMethod: _codeChallengeMethod,
       redirectUrl: _redirectUrlController.text.trim(),
       scope: _scopeController.text.trim(),

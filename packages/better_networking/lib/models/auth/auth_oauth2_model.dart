@@ -13,7 +13,7 @@ class AuthOAuth2Model with _$AuthOAuth2Model {
     required String accessTokenUrl,
     required String clientId,
     required String clientSecret,
-    required String credentialsFilePath,
+    String? credentialsFilePath,
     String? redirectUrl,
     String? scope,
     String? state,

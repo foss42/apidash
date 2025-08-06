@@ -26,7 +26,7 @@ mixin _$AuthOAuth2Model {
   String get accessTokenUrl => throw _privateConstructorUsedError;
   String get clientId => throw _privateConstructorUsedError;
   String get clientSecret => throw _privateConstructorUsedError;
-  String get credentialsFilePath => throw _privateConstructorUsedError;
+  String? get credentialsFilePath => throw _privateConstructorUsedError;
   String? get redirectUrl => throw _privateConstructorUsedError;
   String? get scope => throw _privateConstructorUsedError;
   String? get state => throw _privateConstructorUsedError;
@@ -62,7 +62,7 @@ abstract class $AuthOAuth2ModelCopyWith<$Res> {
     String accessTokenUrl,
     String clientId,
     String clientSecret,
-    String credentialsFilePath,
+    String? credentialsFilePath,
     String? redirectUrl,
     String? scope,
     String? state,
@@ -97,7 +97,7 @@ class _$AuthOAuth2ModelCopyWithImpl<$Res, $Val extends AuthOAuth2Model>
     Object? accessTokenUrl = null,
     Object? clientId = null,
     Object? clientSecret = null,
-    Object? credentialsFilePath = null,
+    Object? credentialsFilePath = freezed,
     Object? redirectUrl = freezed,
     Object? scope = freezed,
     Object? state = freezed,
@@ -132,10 +132,10 @@ class _$AuthOAuth2ModelCopyWithImpl<$Res, $Val extends AuthOAuth2Model>
                 ? _value.clientSecret
                 : clientSecret // ignore: cast_nullable_to_non_nullable
                       as String,
-            credentialsFilePath: null == credentialsFilePath
+            credentialsFilePath: freezed == credentialsFilePath
                 ? _value.credentialsFilePath
                 : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             redirectUrl: freezed == redirectUrl
                 ? _value.redirectUrl
                 : redirectUrl // ignore: cast_nullable_to_non_nullable
@@ -201,7 +201,7 @@ abstract class _$$AuthOAuth2ModelImplCopyWith<$Res>
     String accessTokenUrl,
     String clientId,
     String clientSecret,
-    String credentialsFilePath,
+    String? credentialsFilePath,
     String? redirectUrl,
     String? scope,
     String? state,
@@ -235,7 +235,7 @@ class __$$AuthOAuth2ModelImplCopyWithImpl<$Res>
     Object? accessTokenUrl = null,
     Object? clientId = null,
     Object? clientSecret = null,
-    Object? credentialsFilePath = null,
+    Object? credentialsFilePath = freezed,
     Object? redirectUrl = freezed,
     Object? scope = freezed,
     Object? state = freezed,
@@ -270,10 +270,10 @@ class __$$AuthOAuth2ModelImplCopyWithImpl<$Res>
             ? _value.clientSecret
             : clientSecret // ignore: cast_nullable_to_non_nullable
                   as String,
-        credentialsFilePath: null == credentialsFilePath
+        credentialsFilePath: freezed == credentialsFilePath
             ? _value.credentialsFilePath
             : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         redirectUrl: freezed == redirectUrl
             ? _value.redirectUrl
             : redirectUrl // ignore: cast_nullable_to_non_nullable
@@ -332,7 +332,7 @@ class _$AuthOAuth2ModelImpl implements _AuthOAuth2Model {
     required this.accessTokenUrl,
     required this.clientId,
     required this.clientSecret,
-    required this.credentialsFilePath,
+    this.credentialsFilePath,
     this.redirectUrl,
     this.scope,
     this.state,
@@ -361,7 +361,7 @@ class _$AuthOAuth2ModelImpl implements _AuthOAuth2Model {
   @override
   final String clientSecret;
   @override
-  final String credentialsFilePath;
+  final String? credentialsFilePath;
   @override
   final String? redirectUrl;
   @override
@@ -477,7 +477,7 @@ abstract class _AuthOAuth2Model implements AuthOAuth2Model {
     required final String accessTokenUrl,
     required final String clientId,
     required final String clientSecret,
-    required final String credentialsFilePath,
+    final String? credentialsFilePath,
     final String? redirectUrl,
     final String? scope,
     final String? state,
@@ -505,7 +505,7 @@ abstract class _AuthOAuth2Model implements AuthOAuth2Model {
   @override
   String get clientSecret;
   @override
-  String get credentialsFilePath;
+  String? get credentialsFilePath;
   @override
   String? get redirectUrl;
   @override

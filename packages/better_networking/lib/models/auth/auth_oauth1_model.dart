@@ -10,10 +10,11 @@ class AuthOAuth1Model with _$AuthOAuth1Model {
   const factory AuthOAuth1Model({
     required String consumerKey,
     required String consumerSecret,
-    required String credentialsFilePath,
+    String? credentialsFilePath,
     String? accessToken,
     String? tokenSecret,
-    @Default(OAuth1SignatureMethod.hmacSha1) OAuth1SignatureMethod signatureMethod,
+    @Default(OAuth1SignatureMethod.hmacSha1)
+    OAuth1SignatureMethod signatureMethod,
     @Default("header") String parameterLocation,
     @Default('1.0') String version,
     String? realm,

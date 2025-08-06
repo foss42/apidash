@@ -11,7 +11,7 @@ _$AuthOAuth1ModelImpl _$$AuthOAuth1ModelImplFromJson(
 ) => _$AuthOAuth1ModelImpl(
   consumerKey: json['consumerKey'] as String,
   consumerSecret: json['consumerSecret'] as String,
-  credentialsFilePath: json['credentialsFilePath'] as String,
+  credentialsFilePath: json['credentialsFilePath'] as String?,
   accessToken: json['accessToken'] as String?,
   tokenSecret: json['tokenSecret'] as String?,
   signatureMethod:

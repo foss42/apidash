@@ -20,12 +20,12 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   required Uri authorizationEndpoint,
   required Uri tokenEndpoint,
   required Uri redirectUrl,
-  required File credentialsFile,
+  required File? credentialsFile,
   String? state,
   String? scope,
 }) async {
-  // Check for existing valid credentials first
-  if (await credentialsFile.exists()) {
+  // Check for existing credentials first
+  if (credentialsFile != null && await credentialsFile.exists()) {
     try {
       final json = await credentialsFile.readAsString();
       final credentials = oauth2.Credentials.fromJson(json);
@@ -139,7 +139,9 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
     );
 
     log('OAuth2 authorization successful, saving credentials');
-    await credentialsFile.writeAsString(client.credentials.toJson());
+    if (credentialsFile != null) {
+      await credentialsFile.writeAsString(client.credentials.toJson());
+    }
     log(client.credentials.toJson());
 
     return (client, callbackServer);
@@ -166,10 +168,10 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
 
 Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
   required AuthOAuth2Model oauth2Model,
-  required File credentialsFile,
+  required File? credentialsFile,
 }) async {
   // Try to use saved credentials
-  if (await credentialsFile.exists()) {
+  if (credentialsFile != null && await credentialsFile.exists()) {
     try {
       final json = await credentialsFile.readAsString();
       final credentials = oauth2.Credentials.fromJson(json);
@@ -211,8 +213,10 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
     log('Successfully authenticated via client credentials grant');
 
     try {
-      await credentialsFile.writeAsString(client.credentials.toJson());
-      log('Saved credentials to file');
+      if (credentialsFile != null) {
+        await credentialsFile.writeAsString(client.credentials.toJson());
+        log('Saved credentials to file');
+      }
     } catch (e) {
       log('Failed to save credentials: $e');
     }
@@ -230,10 +234,10 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
 
 Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
   required AuthOAuth2Model oauth2Model,
-  required File credentialsFile,
+  required File? credentialsFile,
 }) async {
   // Try to use saved credentials
-  if (await credentialsFile.exists()) {
+  if (credentialsFile != null && await credentialsFile.exists()) {
     try {
       final json = await credentialsFile.readAsString();
       final credentials = oauth2.Credentials.fromJson(json);
@@ -281,8 +285,10 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
     log('Successfully authenticated via client credentials grant');
 
     try {
-      await credentialsFile.writeAsString(client.credentials.toJson());
-      log('Saved credentials to file');
+      if (credentialsFile != null) {
+        await credentialsFile.writeAsString(client.credentials.toJson());
+        log('Saved credentials to file');
+      }
     } catch (e) {
       log('Failed to save credentials: $e');
     }

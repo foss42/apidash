@@ -16,7 +16,7 @@ _$AuthOAuth2ModelImpl _$$AuthOAuth2ModelImplFromJson(
   accessTokenUrl: json['accessTokenUrl'] as String,
   clientId: json['clientId'] as String,
   clientSecret: json['clientSecret'] as String,
-  credentialsFilePath: json['credentialsFilePath'] as String,
+  credentialsFilePath: json['credentialsFilePath'] as String?,
   redirectUrl: json['redirectUrl'] as String?,
   scope: json['scope'] as String?,
   state: json['state'] as String?,

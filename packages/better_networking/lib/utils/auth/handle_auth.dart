@@ -188,7 +188,9 @@ Future<HttpRequestModel> handleAuth(
         throw Exception("No Redirect URL found!");
       }
 
-      final credentialsFile = File(oauth2.credentialsFilePath);
+      final credentialsFile = oauth2.credentialsFilePath != null
+          ? File(oauth2.credentialsFilePath!)
+          : null;
 
       switch (oauth2.grantType) {
         case OAuth2GrantType.authorizationCode:
