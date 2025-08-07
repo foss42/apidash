@@ -321,9 +321,12 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
             ),
           ),
         ..._buildFieldWithSpacing(
-          ADTextButton(
-            label: kButtonClearOAuth2Session,
-            onPressed: clearStoredCredentials,
+          Align(
+            alignment: Alignment.centerRight,
+            child: ADTextButton(
+              label: kButtonClearOAuth2Session,
+              onPressed: clearStoredCredentials,
+            ),
           ),
         ),
         Divider(),
