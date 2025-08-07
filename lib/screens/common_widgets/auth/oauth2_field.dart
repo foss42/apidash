@@ -4,12 +4,12 @@ import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/file_utils.dart';
-import 'package:apidash/widgets/field_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import '../common_widgets.dart';
 import 'consts.dart';
 
 class OAuth2Fields extends ConsumerStatefulWidget {
@@ -28,19 +28,19 @@ class OAuth2Fields extends ConsumerStatefulWidget {
 
 class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
   late OAuth2GrantType _grantType;
-  late TextEditingController _authorizationUrlController;
-  late TextEditingController _accessTokenUrlController;
-  late TextEditingController _clientIdController;
-  late TextEditingController _clientSecretController;
-  late TextEditingController _redirectUrlController;
-  late TextEditingController _scopeController;
-  late TextEditingController _stateController;
+  late String _authorizationUrl;
+  late String _accessTokenUrl;
+  late String _clientId;
+  late String _clientSecret;
+  late String _redirectUrl;
+  late String _scope;
+  late String _state;
   late String _codeChallengeMethod;
-  late TextEditingController _usernameController;
-  late TextEditingController _passwordController;
-  late TextEditingController _refreshTokenController;
-  late TextEditingController _identityTokenController;
-  late TextEditingController _accessTokenController;
+  late String _username;
+  late String _password;
+  late String _refreshToken;
+  late String _identityToken;
+  late String _accessToken;
   DateTime? _tokenExpiration;
 
   @override
@@ -48,25 +48,18 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
     super.initState();
     final oauth2 = widget.authData?.oauth2;
     _grantType = oauth2?.grantType ?? OAuth2GrantType.authorizationCode;
-    _authorizationUrlController =
-        TextEditingController(text: oauth2?.authorizationUrl ?? '');
-    _accessTokenUrlController =
-        TextEditingController(text: oauth2?.accessTokenUrl ?? '');
-    _clientIdController = TextEditingController(text: oauth2?.clientId ?? '');
-    _clientSecretController =
-        TextEditingController(text: oauth2?.clientSecret ?? '');
-    _redirectUrlController =
-        TextEditingController(text: oauth2?.redirectUrl ?? '');
-    _scopeController = TextEditingController(text: oauth2?.scope ?? '');
-    _stateController = TextEditingController(text: oauth2?.state ?? '');
-    _usernameController = TextEditingController(text: oauth2?.username ?? '');
-    _passwordController = TextEditingController(text: oauth2?.password ?? '');
-    _refreshTokenController =
-        TextEditingController(text: oauth2?.refreshToken ?? '');
-    _identityTokenController =
-        TextEditingController(text: oauth2?.identityToken ?? '');
-    _accessTokenController =
-        TextEditingController(text: oauth2?.accessToken ?? '');
+    _authorizationUrl = oauth2?.authorizationUrl ?? '';
+    _accessTokenUrl = oauth2?.accessTokenUrl ?? '';
+    _clientId = oauth2?.clientId ?? '';
+    _clientSecret = oauth2?.clientSecret ?? '';
+    _redirectUrl = oauth2?.redirectUrl ?? '';
+    _scope = oauth2?.scope ?? '';
+    _state = oauth2?.state ?? '';
+    _username = oauth2?.username ?? '';
+    _password = oauth2?.password ?? '';
+    _refreshToken = oauth2?.refreshToken ?? '';
+    _identityToken = oauth2?.identityToken ?? '';
+    _accessToken = oauth2?.accessToken ?? '';
     _codeChallengeMethod = oauth2?.codeChallengeMethod ?? 'sha-256';
 
     // Load credentials from file if available
@@ -84,19 +77,19 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
             final Map<String, dynamic> decoded = jsonDecode(credentials);
             setState(() {
               if (decoded['refreshToken'] != null) {
-                _refreshTokenController.text = decoded['refreshToken']!;
+                _refreshToken = decoded['refreshToken']!;
               } else {
-                _refreshTokenController.text = "N/A";
+                _refreshToken = "N/A";
               }
               if (decoded['idToken'] != null) {
-                _identityTokenController.text = decoded['idToken']!;
+                _identityToken = decoded['idToken']!;
               } else {
-                _identityTokenController.text = "N/A";
+                _identityToken = "N/A";
               }
               if (decoded['accessToken'] != null) {
-                _accessTokenController.text = decoded['accessToken']!;
+                _accessToken = decoded['accessToken']!;
               } else {
-                _accessTokenController.text = "N/A";
+                _accessToken = "N/A";
               }
               // Parse expiration time
               if (decoded['expiration'] != null) {
@@ -163,64 +156,94 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
         kVSpacer16,
         if (_shouldShowField(OAuth2Field.authorizationUrl))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _authorizationUrlController,
+              initialValue: _authorizationUrl,
               hintText: kHintOAuth2AuthorizationUrl,
               infoText: kInfoOAuth2AuthorizationUrl,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _authorizationUrl = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.username))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _usernameController,
+              initialValue: _username,
               hintText: kHintOAuth2Username,
               infoText: kInfoOAuth2Username,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _username = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.password))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _passwordController,
+              initialValue: _password,
               hintText: kHintOAuth2Password,
               infoText: kInfoOAuth2Password,
               isObscureText: true,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _password = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.accessTokenUrl))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _accessTokenUrlController,
+              initialValue: _accessTokenUrl,
               hintText: kHintOAuth2AccessTokenUrl,
               infoText: kInfoOAuth2AccessTokenUrl,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _accessTokenUrl = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.clientId))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _clientIdController,
+              initialValue: _clientId,
               hintText: kHintOAuth2ClientId,
               infoText: kInfoOAuth2ClientId,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _clientId = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.clientSecret))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _clientSecretController,
+              initialValue: _clientSecret,
               hintText: kHintOAuth2ClientSecret,
               infoText: kInfoOAuth2ClientSecret,
               isObscureText: true,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _clientSecret = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.codeChallengeMethod)) ...[
@@ -254,32 +277,47 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
         ],
         if (_shouldShowField(OAuth2Field.redirectUrl))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _redirectUrlController,
+              initialValue: _redirectUrl,
               hintText: kHintOAuth2RedirectUrl,
               infoText: kInfoOAuth2RedirectUrl,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _redirectUrl = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.scope))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _scopeController,
+              initialValue: _scope,
               hintText: kHintOAuth2Scope,
               infoText: kInfoOAuth2Scope,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _scope = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         if (_shouldShowField(OAuth2Field.state))
           ..._buildFieldWithSpacing(
-            AuthTextField(
+            EnvAuthField(
               readOnly: widget.readOnly,
-              controller: _stateController,
+              initialValue: _state,
               hintText: kHintOAuth2State,
               infoText: kInfoOAuth2State,
-              onChanged: (_) => _updateOAuth2(),
+              onChanged: (value) {
+                setState(() {
+                  _state = value;
+                });
+                _updateOAuth2();
+              },
             ),
           ),
         ..._buildFieldWithSpacing(
@@ -291,33 +329,48 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
         Divider(),
         kVSpacer16,
         ..._buildFieldWithSpacing(
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _refreshTokenController,
+            initialValue: _refreshToken,
             hintText: kHintOAuth2RefreshToken,
             infoText: kInfoOAuth2RefreshToken,
-            onChanged: (_) => _updateOAuth2(),
+            onChanged: (value) {
+              setState(() {
+                _refreshToken = value;
+              });
+              _updateOAuth2();
+            },
           ),
         ),
         ..._buildFieldWithSpacing(
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _identityTokenController,
+            initialValue: _identityToken,
             hintText: kHintOAuth2IdentityToken,
             infoText: kInfoOAuth2IdentityToken,
-            onChanged: (_) => _updateOAuth2(),
+            onChanged: (value) {
+              setState(() {
+                _identityToken = value;
+              });
+              _updateOAuth2();
+            },
           ),
         ),
         ..._buildFieldWithSpacing(
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AuthTextField(
+              EnvAuthField(
                 readOnly: widget.readOnly,
-                controller: _accessTokenController,
+                initialValue: _accessToken,
                 hintText: kHintOAuth2AccessToken,
                 infoText: kInfoOAuth2AccessToken,
-                onChanged: (_) => _updateOAuth2(),
+                onChanged: (value) {
+                  setState(() {
+                    _accessToken = value;
+                  });
+                  _updateOAuth2();
+                },
               ),
               if (_tokenExpiration != null) ...[
                 const SizedBox(height: 4),
@@ -387,22 +440,22 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
 
     final updatedOAuth2 = AuthOAuth2Model(
       grantType: _grantType,
-      authorizationUrl: _authorizationUrlController.text.trim(),
-      clientId: _clientIdController.text.trim(),
-      accessTokenUrl: _accessTokenUrlController.text.trim(),
-      clientSecret: _clientSecretController.text.trim(),
+      authorizationUrl: _authorizationUrl.trim(),
+      clientId: _clientId.trim(),
+      accessTokenUrl: _accessTokenUrl.trim(),
+      clientSecret: _clientSecret.trim(),
       credentialsFilePath: credentialsFilePath != null
           ? "$credentialsFilePath/oauth2_credentials.json"
           : null,
       codeChallengeMethod: _codeChallengeMethod,
-      redirectUrl: _redirectUrlController.text.trim(),
-      scope: _scopeController.text.trim(),
-      state: _stateController.text.trim(),
-      username: _usernameController.text.trim(),
-      password: _passwordController.text.trim(),
-      refreshToken: _refreshTokenController.text.trim(),
-      identityToken: _identityTokenController.text.trim(),
-      accessToken: _accessTokenController.text.trim(),
+      redirectUrl: _redirectUrl.trim(),
+      scope: _scope.trim(),
+      state: _state.trim(),
+      username: _username.trim(),
+      password: _password.trim(),
+      refreshToken: _refreshToken.trim(),
+      identityToken: _identityToken.trim(),
+      accessToken: _accessToken.trim(),
     );
 
     widget.updateAuth?.call(
@@ -423,9 +476,9 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
       await deleteFileFromPath(credentialsFilePath);
     }
     setState(() {
-      _refreshTokenController.text = "";
-      _accessTokenController.text = "";
-      _identityTokenController.text = "";
+      _refreshToken = "";
+      _accessToken = "";
+      _identityToken = "";
       _tokenExpiration = null;
     });
   }
@@ -455,18 +508,6 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
 
   @override
   void dispose() {
-    _authorizationUrlController.dispose();
-    _accessTokenUrlController.dispose();
-    _clientIdController.dispose();
-    _clientSecretController.dispose();
-    _redirectUrlController.dispose();
-    _scopeController.dispose();
-    _stateController.dispose();
-    _usernameController.dispose();
-    _passwordController.dispose();
-    _refreshTokenController.dispose();
-    _identityTokenController.dispose();
-    _accessTokenController.dispose();
     super.dispose();
   }
 }

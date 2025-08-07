@@ -1,9 +1,9 @@
 import 'package:apidash/providers/settings_providers.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../common_widgets.dart';
 import 'consts.dart';
 
 class OAuth1Fields extends ConsumerStatefulWidget {
@@ -25,15 +25,15 @@ class OAuth1Fields extends ConsumerStatefulWidget {
 }
 
 class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
-  late TextEditingController _consumerKeyController;
-  late TextEditingController _consumerSecretController;
-  late TextEditingController _accessTokenController;
-  late TextEditingController _tokenSecretController;
-  late TextEditingController _callbackUrlController;
-  late TextEditingController _verifierController;
-  late TextEditingController _timestampController;
-  late TextEditingController _realmController;
-  late TextEditingController _nonceController;
+  late String _consumerKey;
+  late String _consumerSecret;
+  late String _accessToken;
+  late String _tokenSecret;
+  late String _callbackUrl;
+  late String _verifier;
+  late String _timestamp;
+  late String _realm;
+  late String _nonce;
   late OAuth1SignatureMethod _signatureMethodController;
   late String _addAuthDataTo;
 
@@ -41,20 +41,15 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
   void initState() {
     super.initState();
     final oauth1 = widget.authData?.oauth1;
-    _consumerKeyController =
-        TextEditingController(text: oauth1?.consumerKey ?? '');
-    _consumerSecretController =
-        TextEditingController(text: oauth1?.consumerSecret ?? '');
-    _accessTokenController =
-        TextEditingController(text: oauth1?.accessToken ?? '');
-    _tokenSecretController =
-        TextEditingController(text: oauth1?.tokenSecret ?? '');
-    _callbackUrlController =
-        TextEditingController(text: oauth1?.callbackUrl ?? '');
-    _verifierController = TextEditingController(text: oauth1?.verifier ?? '');
-    _timestampController = TextEditingController(text: oauth1?.timestamp ?? '');
-    _realmController = TextEditingController(text: oauth1?.realm ?? '');
-    _nonceController = TextEditingController(text: oauth1?.nonce ?? '');
+    _consumerKey = oauth1?.consumerKey ?? '';
+    _consumerSecret = oauth1?.consumerSecret ?? '';
+    _accessToken = oauth1?.accessToken ?? '';
+    _tokenSecret = oauth1?.tokenSecret ?? '';
+    _callbackUrl = oauth1?.callbackUrl ?? '';
+    _verifier = oauth1?.verifier ?? '';
+    _timestamp = oauth1?.timestamp ?? '';
+    _realm = oauth1?.realm ?? '';
+    _nonce = oauth1?.nonce ?? '';
     _signatureMethodController =
         oauth1?.signatureMethod ?? OAuth1SignatureMethod.hmacSha1;
     _addAuthDataTo = oauth1?.parameterLocation ?? 'url';
@@ -95,21 +90,31 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
         //   },
         // ),
         // const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _consumerKeyController,
+          initialValue: _consumerKey,
           hintText: kHintOAuth1ConsumerKey,
           infoText: kInfoOAuth1ConsumerKey,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _consumerKey = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _consumerSecretController,
+          initialValue: _consumerSecret,
           hintText: kHintOAuth1ConsumerSecret,
           infoText: kInfoOAuth1ConsumerSecret,
           isObscureText: true,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _consumerSecret = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
         Text(
@@ -138,61 +143,96 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
                 },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _accessTokenController,
+          initialValue: _accessToken,
           hintText: kHintOAuth1AccessToken,
           infoText: kInfoOAuth1AccessToken,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _accessToken = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _tokenSecretController,
+          initialValue: _tokenSecret,
           hintText: kHintOAuth1TokenSecret,
           infoText: kInfoOAuth1TokenSecret,
           isObscureText: true,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _tokenSecret = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _callbackUrlController,
+          initialValue: _callbackUrl,
           hintText: kHintOAuth1CallbackUrl,
           infoText: kInfoOAuth1CallbackUrl,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _callbackUrl = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _verifierController,
+          initialValue: _verifier,
           hintText: kHintOAuth1Verifier,
           infoText: kInfoOAuth1Verifier,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _verifier = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _timestampController,
+          initialValue: _timestamp,
           hintText: kHintOAuth1Timestamp,
           infoText: kInfoOAuth1Timestamp,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _timestamp = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _nonceController,
+          initialValue: _nonce,
           hintText: kHintOAuth1Nonce,
           infoText: kInfoOAuth1Nonce,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _nonce = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _realmController,
+          initialValue: _realm,
           hintText: kHintOAuth1Realm,
           infoText: kInfoOAuth1Realm,
-          onChanged: (_) => _updateOAuth1(),
+          onChanged: (value) {
+            setState(() {
+              _realm = value;
+            });
+            _updateOAuth1();
+          },
         ),
         const SizedBox(height: 16),
       ],
@@ -209,34 +249,34 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
       widget.authData?.copyWith(
             type: APIAuthType.oauth1,
             oauth1: AuthOAuth1Model(
-              consumerKey: _consumerKeyController.text.trim(),
-              consumerSecret: _consumerSecretController.text.trim(),
-              accessToken: _accessTokenController.text.trim(),
-              tokenSecret: _tokenSecretController.text.trim(),
+              consumerKey: _consumerKey.trim(),
+              consumerSecret: _consumerSecret.trim(),
+              accessToken: _accessToken.trim(),
+              tokenSecret: _tokenSecret.trim(),
               signatureMethod: _signatureMethodController,
               parameterLocation: _addAuthDataTo,
-              callbackUrl: _callbackUrlController.text.trim(),
-              verifier: _verifierController.text.trim(),
-              timestamp: _timestampController.text.trim(),
-              nonce: _nonceController.text.trim(),
-              realm: _realmController.text.trim(),
+              callbackUrl: _callbackUrl.trim(),
+              verifier: _verifier.trim(),
+              timestamp: _timestamp.trim(),
+              nonce: _nonce.trim(),
+              realm: _realm.trim(),
               credentialsFilePath: credentialsFilePath,
             ),
           ) ??
           AuthModel(
             type: APIAuthType.oauth1,
             oauth1: AuthOAuth1Model(
-              consumerKey: _consumerKeyController.text.trim(),
-              consumerSecret: _consumerSecretController.text.trim(),
-              accessToken: _accessTokenController.text.trim(),
-              tokenSecret: _tokenSecretController.text.trim(),
+              consumerKey: _consumerKey.trim(),
+              consumerSecret: _consumerSecret.trim(),
+              accessToken: _accessToken.trim(),
+              tokenSecret: _tokenSecret.trim(),
               signatureMethod: _signatureMethodController,
               parameterLocation: _addAuthDataTo,
-              callbackUrl: _callbackUrlController.text.trim(),
-              verifier: _verifierController.text.trim(),
-              timestamp: _timestampController.text.trim(),
-              nonce: _nonceController.text.trim(),
-              realm: _realmController.text.trim(),
+              callbackUrl: _callbackUrl.trim(),
+              verifier: _verifier.trim(),
+              timestamp: _timestamp.trim(),
+              nonce: _nonce.trim(),
+              realm: _realm.trim(),
               credentialsFilePath: credentialsFilePath,
             ),
           ),
