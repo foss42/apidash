@@ -2,10 +2,12 @@ import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/screens/common_widgets/auth/oauth2_field.dart';
-import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,20 +40,23 @@ void main() {
             ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
       expect(find.byType(ADPopupMenu<OAuth2GrantType>), findsOneWidget);
       expect(find.text('Grant Type'), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
       // Note: ADTextButton might not be visible in all configurations
     });
 
@@ -86,19 +91,22 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
       expect(find.byType(ADPopupMenu<OAuth2GrantType>), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
     testWidgets('updates auth data when grant type changes',
@@ -126,10 +134,12 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -177,21 +187,27 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find the authorization URL field and update it
-      final authUrlField = find.byType(AuthTextField).first;
+      // Find the authorization URL field using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final authUrlField = find.descendant(
+        of: find.byType(EnvAuthField).first,
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(authUrlField);
-      await tester.enterText(
-          authUrlField, 'https://new.auth.apidash.dev/authorize');
+      tester.testTextInput.enterText('https://new.auth.apidash.dev/authorize');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -227,21 +243,27 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find the access token URL field and update it
-      final accessTokenUrlField = find.byType(AuthTextField).at(1);
+      // Find the access token URL field using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final accessTokenUrlField = find.descendant(
+        of: find.byType(EnvAuthField).at(1),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(accessTokenUrlField);
-      await tester.enterText(
-          accessTokenUrlField, 'https://new.auth.apidash.dev/token');
+      tester.testTextInput.enterText('https://new.auth.apidash.dev/token');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -277,20 +299,27 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find the client ID field and update it
-      final clientIdField = find.byType(AuthTextField).at(2);
+      // Find the client ID field using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final clientIdField = find.descendant(
+        of: find.byType(EnvAuthField).at(2),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(clientIdField);
-      await tester.enterText(clientIdField, 'new_client_id');
+      tester.testTextInput.enterText('new_client_id');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -325,20 +354,27 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find the client secret field and update it
-      final clientSecretField = find.byType(AuthTextField).at(3);
+      // Find the client secret field using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final clientSecretField = find.descendant(
+        of: find.byType(EnvAuthField).at(3),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(clientSecretField);
-      await tester.enterText(clientSecretField, 'new_client_secret');
+      tester.testTextInput.enterText('new_client_secret');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -372,11 +408,13 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
-                readOnly: true,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                  readOnly: true,
+                ),
               ),
             ),
           ),
@@ -385,9 +423,9 @@ void main() {
 
       // Verify that widgets are rendered
       expect(find.byType(ADPopupMenu<OAuth2GrantType>), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
 
-      // The readOnly property should be passed to AuthTextField widgets
+      // The readOnly property should be passed to ExtendedTextField widgets
       // This is verified by the widget structure itself
     });
 
@@ -416,10 +454,12 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -427,7 +467,7 @@ void main() {
       );
 
       expect(find.byType(ADPopupMenu<OAuth2GrantType>), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
     testWidgets(
@@ -446,20 +486,27 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Enter client ID
-      final clientIdField = find.byType(AuthTextField).at(2);
+      // Enter client ID using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final clientIdField = find.descendant(
+        of: find.byType(EnvAuthField).at(2),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(clientIdField);
-      await tester.enterText(clientIdField, 'test_client_id');
+      tester.testTextInput.enterText('test_client_id');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called with correct structure
@@ -483,10 +530,12 @@ void main() {
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+            home: Portal(
+              child: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -495,7 +544,7 @@ void main() {
 
       expect(find.byType(ADPopupMenu<OAuth2GrantType>), findsOneWidget);
       expect(find.text('Grant Type'), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
     testWidgets('shows different fields based on grant type',
@@ -524,11 +573,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -536,7 +587,7 @@ void main() {
       );
 
       // For resource owner password grant type, username and password fields should be visible
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
     testWidgets('updates auth data when username changes',
@@ -565,21 +616,28 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find the username field and update it
-      final usernameField = find.byType(AuthTextField).first;
+      // Find the username field using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final usernameField = find.descendant(
+        of: find.byType(EnvAuthField).first,
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(usernameField);
-      await tester.enterText(usernameField, 'new_user');
+      tester.testTextInput.enterText('new_user');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -614,21 +672,32 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find the scope field by its text field
-      // Since field ordering may vary, let's try to find it by clearing first
-      await tester.enterText(
-          find.byType(AuthTextField).last, 'read write admin');
+      // Find the scope field using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      // For authorization code grant, the scope field should be available
+      // Use the 5th EnvAuthField for scope
+      final scopeField = find.descendant(
+        of: find.byType(EnvAuthField).at(4),
+        matching: find.byType(ExtendedTextField),
+      );
+      await tester.tap(scopeField);
+      await tester.pumpAndSettle();
+
+      tester.testTextInput.enterText('read write admin');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -662,11 +731,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -719,11 +790,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -732,7 +805,7 @@ void main() {
 
       // Client credentials should show fewer fields
       expect(find.byType(ADPopupMenu<OAuth2GrantType>), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
 
       // Should not show code challenge method dropdown for client credentials
       expect(find.byType(ADPopupMenu<String>), findsNothing);
@@ -764,11 +837,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -812,21 +887,28 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Enter client ID to trigger _updateOAuth2 with null workspace path
-      final clientIdField = find.byType(AuthTextField).at(2);
+      // Enter client ID to trigger _updateOAuth2 with null workspace path using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final clientIdField = find.descendant(
+        of: find.byType(EnvAuthField).at(2),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(clientIdField);
-      await tester.enterText(clientIdField, 'test_client_id');
+      tester.testTextInput.enterText('test_client_id');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called even with null workspace path
@@ -857,11 +939,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -901,11 +985,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -958,21 +1044,28 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find the password field (should be the second field for this grant type)
-      final passwordField = find.byType(AuthTextField).at(1);
+      // Find the password field using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      final passwordField = find.descendant(
+        of: find.byType(EnvAuthField).at(1),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(passwordField);
-      await tester.enterText(passwordField, 'new_password');
+      tester.testTextInput.enterText('new_password');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -1006,11 +1099,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -1019,7 +1114,7 @@ void main() {
 
       // Verify widget is rendered (this tests the HTTP response listener setup)
       expect(find.byType(OAuth2Fields), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
     testWidgets('tests state and redirect URL field updates',
@@ -1047,32 +1142,38 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
         ),
       );
 
-      // Find all auth text fields
-      final textFields = find.byType(AuthTextField);
-      expect(textFields.evaluate().length, greaterThanOrEqualTo(5));
-      
-      // Update one of the text fields (be safe about the index)
-      if (textFields.evaluate().length > 3) {
-        await tester.enterText(textFields.at(3), 'new_value');
+      // Find all auth text fields using find.descendant
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      // Update one of the text fields using find.descendant (be safe about the index)
+      final authFields = find.byType(EnvAuthField);
+      if (authFields.evaluate().length > 3) {
+        final fieldToUpdate = find.descendant(
+          of: authFields.at(3),
+          matching: find.byType(ExtendedTextField),
+        );
+        await tester.tap(fieldToUpdate);
+        tester.testTextInput.enterText('new_value');
         await tester.pumpAndSettle();
 
         expect(capturedAuthUpdates.length, greaterThan(0));
       }
     });
 
-    testWidgets('tests token field updates',
-        (WidgetTester tester) async {
+    testWidgets('tests token field updates', (WidgetTester tester) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1097,33 +1198,57 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth2Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
+                ),
               ),
             ),
           ),
         ),
       );
 
-      final textFields = find.byType(AuthTextField);
-      
-      // Update refresh token field
-      await tester.enterText(textFields.last.evaluate().length > 7 ? textFields.at(7) : textFields.last, 'new_refresh');
+      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+
+      // Try to tap on an accessible field using find.descendant (not the last one since it might be off-screen)
+      final fieldToUpdate = find.descendant(
+        of: find.byType(EnvAuthField).at(2),
+        matching: find.byType(ExtendedTextField),
+      );
+      await tester.tap(fieldToUpdate);
+      await tester.pumpAndSettle();
+
+      tester.testTextInput.enterText('new_value');
       await tester.pumpAndSettle();
 
       expect(capturedAuthUpdates.length, greaterThan(0));
 
-      // Update identity token field
-      await tester.enterText(textFields.last.evaluate().length > 8 ? textFields.at(8) : textFields.last, 'new_identity');
+      // Update identity token field using find.descendant
+      final authFields = find.byType(EnvAuthField);
+      final identityTokenField = find.descendant(
+        of: authFields.evaluate().length > 8
+            ? authFields.at(8)
+            : authFields.last,
+        matching: find.byType(ExtendedTextField),
+      );
+      await tester.tap(identityTokenField);
+      tester.testTextInput.enterText('new_identity');
       await tester.pumpAndSettle();
 
       expect(capturedAuthUpdates.length, greaterThan(1));
 
-      // Update access token field
-      await tester.enterText(textFields.last, 'new_access');
+      // Update access token field using find.descendant
+      final accessTokenField = find.descendant(
+        of: authFields.last,
+        matching: find.byType(ExtendedTextField),
+      );
+      await tester.tap(accessTokenField);
+      tester.testTextInput.enterText('new_access');
       await tester.pumpAndSettle();
 
       expect(capturedAuthUpdates.length, greaterThan(2));
@@ -1156,11 +1281,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -1170,10 +1297,10 @@ void main() {
       // Debug: Look for all buttons and text widgets
       final allButtons = find.byType(ADTextButton);
       print('Found ${allButtons.evaluate().length} ADTextButton widgets');
-      
+
       final allText = find.byType(Text);
       print('Found ${allText.evaluate().length} Text widgets');
-      
+
       // Try finding the button widget itself
       if (allButtons.evaluate().isNotEmpty) {
         await tester.tap(allButtons.first);
@@ -1208,11 +1335,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -1221,7 +1350,7 @@ void main() {
 
       // Widget should render normally even with empty credentials file path
       expect(find.byType(OAuth2Fields), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
     testWidgets('tests clear credentials with null or empty file path',
@@ -1251,11 +1380,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -1297,11 +1428,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -1310,10 +1443,11 @@ void main() {
 
       // Test that widget handles missing credential files gracefully
       expect(find.byType(OAuth2Fields), findsOneWidget);
-      expect(find.byType(AuthTextField), findsAtLeastNWidgets(5));
+      expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
-    testWidgets('tests _getExpirationText with different token expiration states',
+    testWidgets(
+        'tests _getExpirationText with different token expiration states',
         (WidgetTester tester) async {
       // Test with no token expiration
       mockAuthData = const AuthModel(
@@ -1338,11 +1472,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),
@@ -1377,11 +1513,13 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: OAuth2Fields(
-                authData: mockAuthData,
-                updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: OAuth2Fields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
               ),
             ),
           ),

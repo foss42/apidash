@@ -1,10 +1,12 @@
 import 'package:apidash/screens/common_widgets/auth/oauth1_fields.dart';
-import 'package:apidash/widgets/field_auth.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/models/models.dart';
@@ -38,12 +40,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -51,7 +55,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(9));
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
       expect(find.byType(ADPopupMenu<OAuth1SignatureMethod>), findsOneWidget);
       expect(find.text('Signature Method'), findsOneWidget);
     });
@@ -86,12 +90,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -99,7 +105,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(9));
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
       expect(find.byType(ADPopupMenu<OAuth1SignatureMethod>), findsOneWidget);
     });
 
@@ -126,12 +132,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -139,10 +147,18 @@ void main() {
         ),
       );
 
-      // Find the consumer key field (first AuthTextField)
-      final consumerKeyField = find.byType(AuthTextField).first;
+      // Find the consumer key field using find.descendant
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
+
+      final consumerKeyField = find.descendant(
+        of: find.byType(EnvAuthField).first,
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(consumerKeyField);
-      await tester.enterText(consumerKeyField, 'new_consumer_key');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('new_consumer_key');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -175,12 +191,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -188,10 +206,18 @@ void main() {
         ),
       );
 
-      // Find the consumer secret field (second AuthTextField)
-      final consumerSecretField = find.byType(AuthTextField).at(1);
+      // Find the consumer secret field using find.descendant
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
+
+      final consumerSecretField = find.descendant(
+        of: find.byType(EnvAuthField).at(1),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(consumerSecretField);
-      await tester.enterText(consumerSecretField, 'new_consumer_secret');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('new_consumer_secret');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -224,12 +250,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -279,12 +307,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -292,10 +322,18 @@ void main() {
         ),
       );
 
-      // Find the access token field (3rd AuthTextField, after consumer key, secret, and before signature method dropdown)
-      final accessTokenField = find.byType(AuthTextField).at(2);
+      // Find the access token field using find.descendant
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
+
+      final accessTokenField = find.descendant(
+        of: find.byType(EnvAuthField).at(2),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(accessTokenField);
-      await tester.enterText(accessTokenField, 'new_access_token');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('new_access_token');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -327,13 +365,15 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
-                  readOnly: true,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                    readOnly: true,
+                  ),
                 ),
               ),
             ),
@@ -341,11 +381,11 @@ void main() {
         ),
       );
 
-      // Verify that AuthTextField widgets are rendered
-      expect(find.byType(AuthTextField), findsNWidgets(9));
+      // Verify that EnvAuthField widgets are rendered
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
       expect(find.byType(ADPopupMenu<OAuth1SignatureMethod>), findsOneWidget);
 
-      // The readOnly property should be passed to AuthTextField widgets
+      // The readOnly property should be passed to EnvAuthField widgets
       // This is verified by the widget structure itself
     });
 
@@ -374,12 +414,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -387,7 +429,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(9));
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
       expect(find.byType(ADPopupMenu<OAuth1SignatureMethod>), findsOneWidget);
     });
 
@@ -406,12 +448,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -419,10 +463,18 @@ void main() {
         ),
       );
 
-      // Enter consumer key
-      final consumerKeyField = find.byType(AuthTextField).first;
+      // Enter consumer key using find.descendant
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
+
+      final consumerKeyField = find.descendant(
+        of: find.byType(EnvAuthField).first,
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(consumerKeyField);
-      await tester.enterText(consumerKeyField, 'test_consumer_key');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('test_consumer_key');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called with correct structure
@@ -445,12 +497,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -458,7 +512,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(9));
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
       expect(find.text('Signature Method'), findsOneWidget);
     });
 
@@ -487,12 +541,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -500,10 +556,18 @@ void main() {
         ),
       );
 
-      // Find the token secret field (4th AuthTextField)
-      final tokenSecretField = find.byType(AuthTextField).at(3);
+      // Find the token secret field using find.descendant
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
+
+      final tokenSecretField = find.descendant(
+        of: find.byType(EnvAuthField).at(3),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(tokenSecretField);
-      await tester.enterText(tokenSecretField, 'new_token_secret');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('new_token_secret');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -537,12 +601,14 @@ void main() {
                 )),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: OAuth1Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: OAuth1Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
@@ -550,11 +616,18 @@ void main() {
         ),
       );
 
-      // Find the callback URL field (5th AuthTextField)
-      final callbackUrlField = find.byType(AuthTextField).at(4);
+      // Find the callback URL field using find.descendant
+      expect(find.byType(EnvAuthField), findsNWidgets(9));
+
+      final callbackUrlField = find.descendant(
+        of: find.byType(EnvAuthField).at(4),
+        matching: find.byType(ExtendedTextField),
+      );
       await tester.tap(callbackUrlField);
-      await tester.enterText(
-          callbackUrlField, 'http://api.apidash.dev/callback');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('http://api.apidash.dev/callback');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called

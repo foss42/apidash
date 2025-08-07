@@ -1257,10 +1257,8 @@ void main() {
 
   group('Pre-request Script - Request Modification Tests', () {
     test('should modify headers correctly', () async {
-      List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
           EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
       }
 
       final result = await handlePreRequestScript(
