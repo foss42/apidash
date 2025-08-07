@@ -8,9 +8,9 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import '../common_widgets.dart';
 import 'consts.dart';
+import 'utils.dart';
 
 class OAuth2Fields extends ConsumerStatefulWidget {
   final AuthModel? authData;
@@ -375,7 +375,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               if (_tokenExpiration != null) ...[
                 const SizedBox(height: 4),
                 Text(
-                  _getExpirationText(),
+                  getExpirationText(_tokenExpiration),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: _tokenExpiration!.isBefore(DateTime.now())
                             ? Theme.of(context).colorScheme.error
@@ -482,49 +482,4 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
       _tokenExpiration = null;
     });
   }
-
-  String _getExpirationText() {
-    if (_tokenExpiration == null) {
-      return "";
-    }
-
-    final now = DateTime.now();
-    if (_tokenExpiration!.isBefore(now)) {
-      return "Token expired ${timeago.format(_tokenExpiration!, clock: now)}";
-    } else {
-      // For future times, we want to show "in X hours" instead of "X hours from now"
-      final duration = _tokenExpiration!.difference(now);
-      if (duration.inDays > 0) {
-        return "Token expires in ${duration.inDays} day${duration.inDays > 1 ? 's' : ''}";
-      } else if (duration.inHours > 0) {
-        return "Token expires in ${duration.inHours} hour${duration.inHours > 1 ? 's' : ''}";
-      } else if (duration.inMinutes > 0) {
-        return "Token expires in ${duration.inMinutes} minute${duration.inMinutes > 1 ? 's' : ''}";
-      } else {
-        return "Token expires in less than a minute";
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-}
-
-enum OAuth2Field {
-  authorizationUrl,
-  accessTokenUrl,
-  clientId,
-  clientSecret,
-  redirectUrl,
-  scope,
-  state,
-  codeChallengeMethod,
-  username,
-  password,
-  refreshToken,
-  identityToken,
-  accessToken,
-  clearSession,
 }

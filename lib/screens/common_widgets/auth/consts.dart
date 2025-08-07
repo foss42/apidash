@@ -1,5 +1,22 @@
 const kEmpty = '';
 
+enum OAuth2Field {
+  authorizationUrl,
+  accessTokenUrl,
+  clientId,
+  clientSecret,
+  redirectUrl,
+  scope,
+  state,
+  codeChallengeMethod,
+  username,
+  password,
+  refreshToken,
+  identityToken,
+  accessToken,
+  clearSession,
+}
+
 // API Key Auth
 const kApiKeyHeaderName = 'x-api-key';
 const kAddToLocations = [
