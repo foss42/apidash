@@ -96,9 +96,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           hintText: kHintOAuth1ConsumerKey,
           infoText: kInfoOAuth1ConsumerKey,
           onChanged: (value) {
-            setState(() {
-              _consumerKey = value;
-            });
+            _consumerKey = value;
             _updateOAuth1();
           },
         ),
@@ -110,9 +108,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           infoText: kInfoOAuth1ConsumerSecret,
           isObscureText: true,
           onChanged: (value) {
-            setState(() {
-              _consumerSecret = value;
-            });
+            _consumerSecret = value;
             _updateOAuth1();
           },
         ),
@@ -134,10 +130,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
               ? null
               : (OAuth1SignatureMethod? newAlgo) {
                   if (newAlgo != null) {
-                    setState(() {
-                      _signatureMethodController = newAlgo;
-                    });
-
+                    _signatureMethodController = newAlgo;
                     _updateOAuth1();
                   }
                 },
@@ -149,9 +142,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           hintText: kHintOAuth1AccessToken,
           infoText: kInfoOAuth1AccessToken,
           onChanged: (value) {
-            setState(() {
-              _accessToken = value;
-            });
+            _accessToken = value;
             _updateOAuth1();
           },
         ),
@@ -163,9 +154,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           infoText: kInfoOAuth1TokenSecret,
           isObscureText: true,
           onChanged: (value) {
-            setState(() {
-              _tokenSecret = value;
-            });
+            _tokenSecret = value;
             _updateOAuth1();
           },
         ),
@@ -176,9 +165,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           hintText: kHintOAuth1CallbackUrl,
           infoText: kInfoOAuth1CallbackUrl,
           onChanged: (value) {
-            setState(() {
-              _callbackUrl = value;
-            });
+            _callbackUrl = value;
             _updateOAuth1();
           },
         ),
@@ -189,9 +176,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           hintText: kHintOAuth1Verifier,
           infoText: kInfoOAuth1Verifier,
           onChanged: (value) {
-            setState(() {
-              _verifier = value;
-            });
+            _verifier = value;
             _updateOAuth1();
           },
         ),
@@ -202,9 +187,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           hintText: kHintOAuth1Timestamp,
           infoText: kInfoOAuth1Timestamp,
           onChanged: (value) {
-            setState(() {
-              _timestamp = value;
-            });
+            _timestamp = value;
             _updateOAuth1();
           },
         ),
@@ -215,9 +198,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           hintText: kHintOAuth1Nonce,
           infoText: kInfoOAuth1Nonce,
           onChanged: (value) {
-            setState(() {
-              _nonce = value;
-            });
+            _nonce = value;
             _updateOAuth1();
           },
         ),
@@ -228,9 +209,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
           hintText: kHintOAuth1Realm,
           infoText: kInfoOAuth1Realm,
           onChanged: (value) {
-            setState(() {
-              _realm = value;
-            });
+            _realm = value;
             _updateOAuth1();
           },
         ),

@@ -145,9 +145,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               ? null
               : (OAuth2GrantType? newGrantType) {
                   if (newGrantType != null && newGrantType != _grantType) {
-                    setState(() {
-                      _grantType = newGrantType;
-                    });
+                    _grantType = newGrantType;
 
                     _updateOAuth2();
                   }
@@ -162,9 +160,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               hintText: kHintOAuth2AuthorizationUrl,
               infoText: kInfoOAuth2AuthorizationUrl,
               onChanged: (value) {
-                setState(() {
-                  _authorizationUrl = value;
-                });
+                _authorizationUrl = value;
+
                 _updateOAuth2();
               },
             ),
@@ -177,9 +174,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               hintText: kHintOAuth2Username,
               infoText: kInfoOAuth2Username,
               onChanged: (value) {
-                setState(() {
-                  _username = value;
-                });
+                _username = value;
+
                 _updateOAuth2();
               },
             ),
@@ -193,9 +189,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               infoText: kInfoOAuth2Password,
               isObscureText: true,
               onChanged: (value) {
-                setState(() {
-                  _password = value;
-                });
+                _password = value;
+
                 _updateOAuth2();
               },
             ),
@@ -208,9 +203,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               hintText: kHintOAuth2AccessTokenUrl,
               infoText: kInfoOAuth2AccessTokenUrl,
               onChanged: (value) {
-                setState(() {
-                  _accessTokenUrl = value;
-                });
+                _accessTokenUrl = value;
                 _updateOAuth2();
               },
             ),
@@ -223,9 +216,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               hintText: kHintOAuth2ClientId,
               infoText: kInfoOAuth2ClientId,
               onChanged: (value) {
-                setState(() {
-                  _clientId = value;
-                });
+                _clientId = value;
+
                 _updateOAuth2();
               },
             ),
@@ -239,9 +231,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               infoText: kInfoOAuth2ClientSecret,
               isObscureText: true,
               onChanged: (value) {
-                setState(() {
-                  _clientSecret = value;
-                });
+                _clientSecret = value;
+
                 _updateOAuth2();
               },
             ),
@@ -265,9 +256,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
                 : (String? newMethod) {
                     if (newMethod != null &&
                         newMethod != _codeChallengeMethod) {
-                      setState(() {
-                        _codeChallengeMethod = newMethod;
-                      });
+                      _codeChallengeMethod = newMethod;
 
                       _updateOAuth2();
                     }
@@ -283,9 +272,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               hintText: kHintOAuth2RedirectUrl,
               infoText: kInfoOAuth2RedirectUrl,
               onChanged: (value) {
-                setState(() {
-                  _redirectUrl = value;
-                });
+                _redirectUrl = value;
+
                 _updateOAuth2();
               },
             ),
@@ -298,9 +286,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               hintText: kHintOAuth2Scope,
               infoText: kInfoOAuth2Scope,
               onChanged: (value) {
-                setState(() {
-                  _scope = value;
-                });
+                _scope = value;
+
                 _updateOAuth2();
               },
             ),
@@ -313,9 +300,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               hintText: kHintOAuth2State,
               infoText: kInfoOAuth2State,
               onChanged: (value) {
-                setState(() {
-                  _state = value;
-                });
+                _state = value;
+
                 _updateOAuth2();
               },
             ),
@@ -338,9 +324,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
             hintText: kHintOAuth2RefreshToken,
             infoText: kInfoOAuth2RefreshToken,
             onChanged: (value) {
-              setState(() {
-                _refreshToken = value;
-              });
+              _refreshToken = value;
+
               _updateOAuth2();
             },
           ),
@@ -352,9 +337,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
             hintText: kHintOAuth2IdentityToken,
             infoText: kInfoOAuth2IdentityToken,
             onChanged: (value) {
-              setState(() {
-                _identityToken = value;
-              });
+              _identityToken = value;
+
               _updateOAuth2();
             },
           ),
@@ -369,9 +353,8 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
                 hintText: kHintOAuth2AccessToken,
                 infoText: kInfoOAuth2AccessToken,
                 onChanged: (value) {
-                  setState(() {
-                    _accessToken = value;
-                  });
+                  _accessToken = value;
+
                   _updateOAuth2();
                 },
               ),
