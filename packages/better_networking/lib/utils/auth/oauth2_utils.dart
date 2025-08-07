@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer' show log;
 import 'dart:io';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -31,14 +30,13 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       final credentials = oauth2.Credentials.fromJson(json);
 
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
-        log('Using existing valid credentials');
         return (
           oauth2.Client(credentials, identifier: identifier, secret: secret),
           null,
         );
       }
     } catch (e) {
-      log('Error reading existing credentials: $e');
+      // Ignore credential reading errors and continue with fresh authentication
     }
   }
 
@@ -56,9 +54,6 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       callbackServer = OAuthCallbackServer();
       final localhostUrl = await callbackServer.start();
       actualRedirectUrl = Uri.parse(localhostUrl);
-      log('Using localhost callback server: $localhostUrl');
-    } else {
-      log('Using custom scheme callback: ${redirectUrl.toString()}');
     }
 
     final grant = oauth2.AuthorizationCodeGrant(
@@ -75,9 +70,6 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       state: state,
     );
 
-    log('Generated authorization URL: ${authorizationUrl.toString()}');
-    log('Expected redirect URL: ${actualRedirectUrl.toString()}');
-
     String callbackUri;
 
     if (PlatformUtils.shouldUseLocalhostCallback && callbackServer != null) {
@@ -92,8 +84,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
         // Convert the relative callback to full URL
         callbackUri =
             'http://localhost${Uri.parse(callbackUri).path}${Uri.parse(callbackUri).query.isNotEmpty ? '?${Uri.parse(callbackUri).query}' : ''}';
-      } on TimeoutException catch (e) {
-        log('OAuth callback timeout: ${e.message}');
+      } on TimeoutException {
         throw Exception(
           'OAuth authorization timed out after 3 minutes. '
           'Please try again and complete the authorization in your browser. '
@@ -103,18 +94,15 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
         // Handle custom exceptions like browser tab closure
         final errorMessage = e.toString();
         if (errorMessage.contains('Browser tab was closed')) {
-          log('OAuth authorization cancelled: Browser tab closed');
           throw Exception(
             'OAuth authorization was cancelled because the browser tab was closed. '
             'Please try again and complete the authorization process without closing the browser tab.',
           );
         } else if (errorMessage.contains('OAuth callback cancelled')) {
-          log('OAuth authorization cancelled by user');
           throw Exception(
             'OAuth authorization was cancelled. Please try again if you want to complete the authentication.',
           );
         } else {
-          log('OAuth callback error: $errorMessage');
           throw Exception('OAuth authorization failed: $errorMessage');
         }
       }
@@ -130,32 +118,24 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       );
     }
 
-    log('Received callback URI: $callbackUri');
-
     // Parse the callback URI and handle the authorization response
     final callbackUriParsed = Uri.parse(callbackUri);
     final client = await grant.handleAuthorizationResponse(
       callbackUriParsed.queryParameters,
     );
 
-    log('OAuth2 authorization successful, saving credentials');
     if (credentialsFile != null) {
       await credentialsFile.writeAsString(client.credentials.toJson());
     }
-    log(client.credentials.toJson());
 
     return (client, callbackServer);
   } catch (e) {
-    log('Error during OAuth2 flow: $e');
     // Clean up the callback server immediately on error
     if (callbackServer != null) {
       try {
         await callbackServer.stop();
-        log('Callback server stopped due to OAuth2 flow error');
       } catch (serverError) {
-        log(
-          'Error stopping callback server during error cleanup: $serverError',
-        );
+        // Ignore server cleanup errors
       }
     }
     // Re-throw the original error
@@ -177,7 +157,6 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
       final credentials = oauth2.Credentials.fromJson(json);
 
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
-        log('Using existing valid credentials');
         return oauth2.Client(
           credentials,
           identifier: oauth2Model.clientId,
@@ -185,11 +164,9 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
         );
       }
     } catch (e) {
-      log('Error reading existing credentials: $e');
+      // Ignore credential reading errors and continue with fresh authentication
     }
   }
-  log("Creating Client with id: ${oauth2Model.clientId}");
-  log("Creating Client with sec: ${oauth2Model.clientSecret}");
 
   // Create a unique request ID for this OAuth flow
   final requestId = 'oauth2-client-${DateTime.now().millisecondsSinceEpoch}';
@@ -206,19 +183,13 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
       basicAuth: false,
       httpClient: baseClient,
     );
-    log("Created Client with id: ${client.identifier}");
-    log("Created Client with sec: ${client.secret}");
-    log("Created Client with sec: ${client.credentials.toJson()}");
-
-    log('Successfully authenticated via client credentials grant');
 
     try {
       if (credentialsFile != null) {
         await credentialsFile.writeAsString(client.credentials.toJson());
-        log('Saved credentials to file');
       }
     } catch (e) {
-      log('Failed to save credentials: $e');
+      // Ignore credential saving errors
     }
 
     // Clean up the HTTP client
@@ -243,7 +214,6 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
       final credentials = oauth2.Credentials.fromJson(json);
 
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
-        log('Using existing valid credentials');
         return oauth2.Client(
           credentials,
           identifier: oauth2Model.clientId,
@@ -251,15 +221,13 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
         );
       }
     } catch (e) {
-      log('Error reading existing credentials: $e');
+      // Ignore credential reading errors and continue with fresh authentication
     }
   }
   if ((oauth2Model.username == null || oauth2Model.username!.isEmpty) ||
       (oauth2Model.password == null || oauth2Model.password!.isEmpty)) {
     throw Exception("Username or Password cannot be empty");
   }
-  log("Creating Client with id: ${oauth2Model.clientId}");
-  log("Creating Client with sec: ${oauth2Model.clientSecret}");
 
   // Create a unique request ID for this OAuth flow
   final requestId = 'oauth2-password-${DateTime.now().millisecondsSinceEpoch}';
@@ -278,19 +246,13 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
       basicAuth: false,
       httpClient: baseClient,
     );
-    log("Created Client with id: ${client.identifier}");
-    log("Created Client with sec: ${client.secret}");
-    log("Created Client with sec: ${client.credentials.toJson()}");
-
-    log('Successfully authenticated via client credentials grant');
 
     try {
       if (credentialsFile != null) {
         await credentialsFile.writeAsString(client.credentials.toJson());
-        log('Saved credentials to file');
       }
     } catch (e) {
-      log('Failed to save credentials: $e');
+      // Ignore credential saving errors
     }
 
     // Clean up the HTTP client
@@ -327,7 +289,6 @@ Future<void> _openUrlInBrowser(String url) async {
       }
     }
   } catch (e) {
-    log('Error opening URL in browser: $e');
     // Fallback: throw an exception so the calling code can handle it
     throw Exception('Failed to open authorization URL in browser: $e');
   }
