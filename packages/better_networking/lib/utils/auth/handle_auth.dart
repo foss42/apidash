@@ -111,9 +111,10 @@ Future<HttpRequestModel> handleAuth(
           );
           updatedHeaderEnabledList.add(true);
         } else {
-          final httpResult = await sendHttpRequest(
+          final httpResult = await sendHttpRequestV1(
             "digest-${Random.secure()}",
             APIType.rest,
+            null,
             httpRequestModel,
           );
           final httpResponse = httpResult.$1;
