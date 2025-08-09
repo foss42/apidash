@@ -1,20 +1,33 @@
 import 'dart:convert';
+import 'package:apidash/models/request_model.dart';
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/history_providers.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genai/genai.dart';
+import 'package:genai/models/ai_request_model.dart';
 
-class SSEDisplay extends StatelessWidget {
-  final List<String>? sseOutput;
+class SSEDisplay extends StatefulWidget {
+  final LLMModel? selectedLLModel;
+  final List<String> sseOutput;
   const SSEDisplay({
     super.key,
-    this.sseOutput,
+    required this.sseOutput,
+    this.selectedLLModel,
   });
 
+  @override
+  State<SSEDisplay> createState() => _SSEDisplayState();
+}
+
+class _SSEDisplayState extends State<SSEDisplay> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fontSizeMedium = theme.textTheme.bodyMedium?.fontSize;
     final isDark = theme.brightness == Brightness.dark;
-    if (sseOutput == null || sseOutput!.isEmpty) {
+    if (widget.sseOutput.isEmpty) {
       return Text(
         'No content',
         style: kCodeStyle.copyWith(
@@ -24,9 +37,40 @@ class SSEDisplay extends StatelessWidget {
       );
     }
 
+    if (widget.selectedLLModel != null) {
+      // For RAW Text output (only AI Requests)
+      String out = "";
+      final mc = widget.selectedLLModel!.provider.modelController;
+      for (String x in widget.sseOutput) {
+        x = x.trim();
+        if (x.isEmpty || x.contains('[DONE]')) {
+          continue;
+        }
+
+        // Start with JSON
+        final pos = x.indexOf('{');
+        if (pos == -1) continue;
+        x = x.substring(pos);
+
+        Map? dec;
+        try {
+          dec = jsonDecode(x);
+          final z = mc.streamOutputFormatter(dec!);
+          out += z ?? '<?>';
+        } catch (e) {
+          print("Error in JSONDEC $e");
+        }
+      }
+      return SingleChildScrollView(
+        child: Text(out),
+      );
+    }
+
     return ListView(
       padding: kP1,
-      children: sseOutput!.reversed.where((e) => e != '').map<Widget>((chunk) {
+      children: widget.sseOutput.reversed
+          .where((e) => e.trim() != '')
+          .map<Widget>((chunk) {
         Map<String, dynamic>? parsedJson;
         try {
           parsedJson = jsonDecode(chunk);

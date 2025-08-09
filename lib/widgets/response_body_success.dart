@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -5,25 +7,28 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:genai/genai.dart';
 import 'button_share.dart';
 
 class ResponseBodySuccess extends StatefulWidget {
-  const ResponseBodySuccess(
-      {super.key,
-      required this.mediaType,
-      required this.body,
-      required this.options,
-      required this.bytes,
-      this.formattedBody,
-      this.sseOutput,
-      this.highlightLanguage});
+  const ResponseBodySuccess({
+    super.key,
+    required this.mediaType,
+    required this.body,
+    required this.options,
+    required this.bytes,
+    this.formattedBody,
+    // this.sseOutput,
+    this.highlightLanguage,
+    this.selectedModel,
+  });
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
   final Uint8List bytes;
   final String? formattedBody;
-  final List<String>? sseOutput;
   final String? highlightLanguage;
+  final LLMModel? selectedModel; //ONLY FOR AI-REQUESTS
 
   @override
   State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
@@ -45,6 +50,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
       ),
       borderRadius: kBorderRadius8,
     );
+
+    final isAIRequest = widget.options.contains(ResponseBodyView.answer);
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -87,20 +94,33 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         ),
                   const Spacer(),
                   ((widget.options == kPreviewRawBodyViewOptions) ||
-                          kCodeRawBodyViewOptions.contains(currentSeg))
+                          kCodeRawBodyViewOptions.contains(currentSeg) ||
+                          isAIRequest)
                       ? CopyButton(
-                          toCopy: widget.formattedBody ?? widget.body,
+                          toCopy: (currentSeg == ResponseBodyView.answer)
+                              ? widget.formattedBody!
+                              : isAIRequest
+                                  ? formatBody(widget.body, widget.mediaType)!
+                                  : (widget.formattedBody ?? widget.body),
                           showLabel: showLabel,
                         )
                       : const SizedBox(),
                   kIsMobile
                       ? ShareButton(
-                          toShare: widget.formattedBody ?? widget.body,
+                          toShare: (currentSeg == ResponseBodyView.answer)
+                              ? widget.formattedBody!
+                              : isAIRequest
+                                  ? formatBody(widget.body, widget.mediaType)!
+                                  : (widget.formattedBody ?? widget.body),
                           showLabel: showLabel,
                         )
                       : SaveInDownloadsButton(
-                          content: widget.bytes,
-                          mimeType: widget.mediaType.mimeType,
+                          content: (currentSeg == ResponseBodyView.answer)
+                              ? utf8.encode(widget.formattedBody!)
+                              : widget.bytes,
+                          mimeType: (currentSeg == ResponseBodyView.answer)
+                              ? 'text/plain'
+                              : widget.mediaType.mimeType,
                           showLabel: showLabel,
                         ),
                 ],
@@ -141,6 +161,24 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       decoration: textContainerdecoration,
                       child: SingleChildScrollView(
                         child: SelectableText(
+                          widget.options.contains(ResponseBodyView.answer)
+                              ? formatBody(
+                                  widget.body,
+                                  MediaType(kTypeApplication, kSubTypeJson),
+                                )!
+                              : (widget.formattedBody ?? widget.body),
+                          style: kCodeStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.answer => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
                           widget.formattedBody ?? widget.body,
                           style: kCodeStyle,
                         ),
@@ -153,7 +191,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: SSEDisplay(
-                        sseOutput: widget.sseOutput,
+                        sseOutput: widget.formattedBody?.split('\n') ?? [],
+                        selectedLLModel: widget.selectedModel,
                       ),
                     ),
                   ),
