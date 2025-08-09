@@ -388,7 +388,7 @@ class CollectionStateNotifier
 
     StreamSubscription? sub;
 
-    // bool streaming = true; //DEFAULT to streaming
+    bool streaming = true; //DEFAULT to streaming
 
     sub = stream.listen((rec) async {
       if (rec == null) return;
@@ -399,7 +399,7 @@ class CollectionStateNotifier
       final errorMessage = rec.$4;
 
       if (isStreamingResponse == false) {
-        // streaming = false;
+        streaming = false;
         if (!completer.isCompleted) {
           completer.complete((response, duration, errorMessage));
         }
@@ -466,6 +466,22 @@ class CollectionStateNotifier
         time: duration,
         isStreamingResponse: isStreamingResponse,
       );
+
+      if (!streaming) {
+        //AI-FORMATTING for Non Streaming Varaint
+        if (apiType == APIType.ai) {
+          final mT = httpResponseModel?.mediaType;
+          final body = (mT?.subtype == kSubTypeJson)
+              ? utf8.decode(response.bodyBytes)
+              : response.body;
+
+          final fb = response.statusCode == 200
+              ? aiRequestModel?.model.provider.modelController
+                  .outputFormatter(jsonDecode(body))
+              : formatBody(body, mT);
+          httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+        }
+      }
 
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,

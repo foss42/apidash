@@ -66,10 +66,7 @@ class ResponseBody extends StatelessWidget {
       options.remove(ResponseBodyView.code);
     }
 
-    // print('reM -> ${responseModel.sseOutput}');
-
     if (httpResponseModel.sseOutput?.isNotEmpty ?? false) {
-      // final modifiedBody = responseModel.sseOutput!.join('\n\n');
       return ResponseBodySuccess(
         key: Key("${selectedRequestModel!.id}-response"),
         mediaType: MediaType('text', 'event-stream'),
@@ -77,6 +74,7 @@ class ResponseBody extends StatelessWidget {
         bytes: utf8.encode((httpResponseModel.sseOutput!).toString()),
         body: jsonEncode(httpResponseModel.sseOutput!),
         formattedBody: httpResponseModel.sseOutput!.join('\n'),
+        selectedModel: selectedRequestModel?.aiRequestModel?.model,
       );
     }
 
@@ -87,8 +85,8 @@ class ResponseBody extends StatelessWidget {
       bytes: httpResponseModel.bodyBytes!,
       body: body,
       formattedBody: formattedBody,
-      sseOutput: httpResponseModel.sseOutput,
       highlightLanguage: highlightLanguage,
+      selectedModel: selectedRequestModel?.aiRequestModel?.model,
     );
   }
 }

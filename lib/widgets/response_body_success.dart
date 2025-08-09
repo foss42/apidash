@@ -7,25 +7,28 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:genai/genai.dart';
 import 'button_share.dart';
 
 class ResponseBodySuccess extends StatefulWidget {
-  const ResponseBodySuccess(
-      {super.key,
-      required this.mediaType,
-      required this.body,
-      required this.options,
-      required this.bytes,
-      this.formattedBody,
-      this.sseOutput,
-      this.highlightLanguage});
+  const ResponseBodySuccess({
+    super.key,
+    required this.mediaType,
+    required this.body,
+    required this.options,
+    required this.bytes,
+    this.formattedBody,
+    // this.sseOutput,
+    this.highlightLanguage,
+    this.selectedModel,
+  });
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
   final Uint8List bytes;
   final String? formattedBody;
-  final List<String>? sseOutput;
   final String? highlightLanguage;
+  final LLMModel? selectedModel; //ONLY FOR AI-REQUESTS
 
   @override
   State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
@@ -188,7 +191,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: SSEDisplay(
-                        sseOutput: widget.sseOutput ?? [],
+                        sseOutput: widget.formattedBody?.split('\n') ?? [],
+                        selectedLLModel: widget.selectedModel,
                       ),
                     ),
                   ),
