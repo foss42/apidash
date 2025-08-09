@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash/apitoolgen/request_consolidator.dart';
 import 'package:apidash/apitoolgen/tool_templates.dart';
 import 'package:apidash/consts.dart';
@@ -8,11 +10,14 @@ import 'package:apidash/widgets/ai_ui_desginer_widgets.dart';
 import 'package:apidash/widgets/button_copy.dart';
 import 'package:apidash/widgets/previewer_code.dart';
 import 'package:apidash/widgets/widget_sending.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/tokens/tokens.dart';
 import 'package:apidash_design_system/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genai/agentic_engine/blueprint.dart';
+
+import '../providers/providers.dart';
 
 class GenerateToolDialog extends ConsumerStatefulWidget {
   final APIDashRequestDescription requestDesc;
@@ -20,6 +25,46 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
     super.key,
     required this.requestDesc,
   });
+
+  static show(BuildContext context, WidgetRef ref) {
+    final requestModel = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel));
+    final responseModel = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpResponseModel));
+
+    if (requestModel == null) return;
+    if (responseModel == null) return;
+
+    String? bodyTXT;
+    Map? bodyJSON;
+    List<Map>? bodyFormData;
+
+    if (requestModel.bodyContentType == ContentType.formdata) {
+      bodyFormData = requestModel.formDataMapList;
+    } else if (requestModel.bodyContentType == ContentType.json) {
+      bodyJSON = jsonDecode(requestModel.body.toString());
+    } else {
+      bodyTXT = requestModel.body!;
+    }
+
+    final reqDesModel = APIDashRequestDescription(
+      endpoint: requestModel.url,
+      method: requestModel.method.name.toUpperCase(),
+      responseType: responseModel.contentType.toString(),
+      headers: requestModel.headersMap,
+      response: responseModel.body,
+      formData: bodyFormData,
+      bodyTXT: bodyTXT,
+      bodyJSON: bodyJSON,
+    );
+
+    showCustomDialog(
+      context,
+      GenerateToolDialog(
+        requestDesc: reqDesModel,
+      ),
+    );
+  }
 
   @override
   ConsumerState<GenerateToolDialog> createState() => _GenerateToolDialogState();
