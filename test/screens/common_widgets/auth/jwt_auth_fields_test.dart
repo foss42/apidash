@@ -270,7 +270,16 @@ void main() {
       );
 
       // Find the secret field
-      final secretField = find.byType(ExtendedTextField).first;
+      final authField = find.byType(EnvAuthField);
+      expect(authField, findsOneWidget);
+
+      // Find ExtendedTextField within the EnvAuthField using find.descendant
+      final secretField = find.descendant(
+        of: authField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(secretField, findsOneWidget);
+
       await tester.tap(secretField);
       tester.testTextInput.enterText('new-secret');
       await tester.pumpAndSettle();
