@@ -35,6 +35,7 @@ class HistoryResponsePane extends ConsumerWidget {
               children: [
                 ResponseBody(
                   selectedRequestModel: requestModel,
+                  isPartOfHistory: true,
                 ),
                 ResponseHeaders(
                   responseHeaders: historyHttpResponseModel?.headers ?? {},

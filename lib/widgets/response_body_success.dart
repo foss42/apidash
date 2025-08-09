@@ -26,6 +26,7 @@ class ResponseBodySuccess extends ConsumerStatefulWidget {
     this.formattedBody,
     this.highlightLanguage,
     this.selectedModel,
+    this.isPartOfHistory = false,
   });
   final MediaType mediaType;
   final List<ResponseBodyView> options;
@@ -34,6 +35,7 @@ class ResponseBodySuccess extends ConsumerStatefulWidget {
   final String? formattedBody;
   final String? highlightLanguage;
   final LLMModel? selectedModel; //ONLY FOR AI-REQUESTS
+  final bool isPartOfHistory;
 
   @override
   ConsumerState<ResponseBodySuccess> createState() =>
@@ -69,96 +71,53 @@ class _ResponseBodySuccessState extends ConsumerState<ResponseBodySuccess> {
           padding: kP10,
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FilledButton.tonalIcon(
-                    style: FilledButton.styleFrom(
-                      padding: kPh12,
-                      minimumSize: const Size(44, 44),
-                    ),
-                    onPressed: () async {
-                      final requestModel = ref.watch(
-                          selectedRequestModelProvider
-                              .select((value) => value?.httpRequestModel));
-                      final responseModel = ref.watch(
-                          selectedRequestModelProvider
-                              .select((value) => value?.httpResponseModel));
-
-                      if (requestModel == null) return;
-                      if (responseModel == null) {
-                        print("AA");
-                        return;
-                      }
-
-                      String? bodyTXT;
-                      Map? bodyJSON;
-                      List<Map>? bodyFormData;
-
-                      if (requestModel.bodyContentType ==
-                          ContentType.formdata) {
-                        bodyFormData = requestModel.formDataMapList;
-                      } else if (requestModel.bodyContentType ==
-                          ContentType.json) {
-                        bodyJSON = jsonDecode(requestModel.body.toString());
-                      } else {
-                        bodyTXT = requestModel.body!;
-                      }
-
-                      final reqDesModel = APIDashRequestDescription(
-                        endpoint: requestModel.url,
-                        method: requestModel.method.name.toUpperCase(),
-                        responseType: responseModel.contentType.toString(),
-                        headers: requestModel.headersMap,
-                        response: responseModel.body,
-                        formData: bodyFormData,
-                        bodyTXT: bodyTXT,
-                        bodyJSON: bodyJSON,
-                      );
-
-                      print("GT2");
-                      showCustomDialog(
-                        context,
-                        GenerateToolDialog(
-                          requestDesc: reqDesModel,
+              if (!widget.isPartOfHistory)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    FilledButton.tonalIcon(
+                      style: FilledButton.styleFrom(
+                        padding: kPh12,
+                        minimumSize: const Size(44, 44),
+                      ),
+                      onPressed: () async {
+                        GenerateToolDialog.show(context, ref);
+                      },
+                      icon: Icon(
+                        Icons.token_outlined,
+                      ),
+                      label: const SizedBox(
+                        child: Text(
+                          "Generate Tool",
                         ),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.token_outlined,
-                    ),
-                    label: const SizedBox(
-                      child: Text(
-                        "Generate Tool",
                       ),
                     ),
-                  ),
-                  kHSpacer10,
-                  FilledButton.tonalIcon(
-                    style: FilledButton.styleFrom(
-                      padding: kPh12,
-                      minimumSize: const Size(44, 44),
-                    ),
-                    onPressed: () {
-                      final model = ref.watch(selectedRequestModelProvider
-                          .select((value) => value?.httpResponseModel));
-                      showCustomDialog(
-                        context,
-                        GenerateUIDialog(content: model?.formattedBody ?? ""),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.generating_tokens,
-                    ),
-                    label: const SizedBox(
-                      child: Text(
-                        kLabelGenerateUI,
+                    kHSpacer10,
+                    FilledButton.tonalIcon(
+                      style: FilledButton.styleFrom(
+                        padding: kPh12,
+                        minimumSize: const Size(44, 44),
+                      ),
+                      onPressed: () {
+                        final model = ref.watch(selectedRequestModelProvider
+                            .select((value) => value?.httpResponseModel));
+                        showCustomDialog(
+                          context,
+                          GenerateUIDialog(content: model?.formattedBody ?? ""),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.generating_tokens,
+                      ),
+                      label: const SizedBox(
+                        child: Text(
+                          kLabelGenerateUI,
+                        ),
                       ),
                     ),
-                  ),
-                  kHSpacer10,
-                ],
-              ),
+                    kHSpacer10,
+                  ],
+                ),
               kVSpacer10,
               Row(
                 children: [

@@ -12,9 +12,11 @@ class ResponseBody extends StatelessWidget {
   const ResponseBody({
     super.key,
     this.selectedRequestModel,
+    this.isPartOfHistory = false,
   });
 
   final RequestModel? selectedRequestModel;
+  final bool isPartOfHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,7 @@ class ResponseBody extends StatelessWidget {
         body: jsonEncode(responseModel.sseOutput!),
         formattedBody: responseModel.sseOutput!.join('\n'),
         selectedModel: selectedRequestModel?.aiRequestModel?.model,
+        isPartOfHistory: isPartOfHistory,
       );
     }
 
@@ -86,6 +89,7 @@ class ResponseBody extends StatelessWidget {
       formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
       selectedModel: selectedRequestModel?.aiRequestModel?.model,
+      isPartOfHistory: isPartOfHistory,
     );
   }
 }
