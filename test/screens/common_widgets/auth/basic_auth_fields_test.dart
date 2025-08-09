@@ -91,11 +91,20 @@ void main() {
         ),
       );
 
-      // Find the username field (first ExtendedTextField)
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(2));
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(2));
 
-      final usernameField = textFields.first;
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
       await tester.pumpAndSettle();
 
@@ -133,11 +142,20 @@ void main() {
         ),
       );
 
-      // Find the password field (second ExtendedTextField)
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(2));
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(2));
 
-      final passwordField = textFields.last;
+      // Find the last EnvAuthField (password field)
+      final lastAuthField = authFields.last;
+
+      // Find ExtendedTextField within the last EnvAuthField using find.descendant
+      final passwordField = find.descendant(
+        of: lastAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(passwordField, findsOneWidget);
+
       await tester.tap(passwordField);
       await tester.pumpAndSettle();
 
@@ -245,10 +263,19 @@ void main() {
       );
 
       // Enter username
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(2));
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(2));
 
-      final usernameField = textFields.first;
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
       await tester.pumpAndSettle();
 
