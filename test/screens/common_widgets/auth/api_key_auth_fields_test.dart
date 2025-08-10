@@ -69,12 +69,16 @@ void main() {
       final authFields = find.byType(EnvAuthField);
       expect(authFields, findsNWidgets(2));
 
-      // Find ExtendedTextField widgets within the EnvAuthField widgets
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(2));
+      // Find the last EnvAuthField (API key value field)
+      final lastAuthField = authFields.last;
 
-      // Use testTextInput to directly input text
-      final lastField = textFields.last;
+      // Find ExtendedTextField within the last EnvAuthField using find.descendant
+      final lastField = find.descendant(
+        of: lastAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(lastField, findsOneWidget);
+
       await tester.tap(lastField);
       await tester.pumpAndSettle();
 
@@ -218,12 +222,22 @@ void main() {
       // Wait for the widget to settle
       await tester.pumpAndSettle();
 
-      // Find ExtendedTextField widgets
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(2));
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(2));
 
-      // Tap and enter text in the name field (should be the first text field)
-      await tester.tap(textFields.first);
+      // Find the first EnvAuthField (API key name field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final nameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(nameField, findsOneWidget);
+
+      // Tap and enter text in the name field
+      await tester.tap(nameField);
       await tester.pumpAndSettle();
 
       // Use tester.testTextInput to enter text directly
@@ -266,15 +280,21 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find EnvAuthField widgets
-      final textFields = find.byType(EnvAuthField);
-      expect(textFields, findsNWidgets(2));
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(2));
 
-      // Find the underlying ExtendedTextField widgets
-      final extendedTextFields = find.byType(ExtendedTextField);
-      expect(extendedTextFields, findsAtLeastNWidgets(2));
+      // Find the last EnvAuthField (API key value field)
+      final lastAuthField = authFields.last;
 
-      // Tap and enter text in the key field (should be the last text field)
-      await tester.tap(extendedTextFields.last);
+      // Find ExtendedTextField within the last EnvAuthField using find.descendant
+      final keyField = find.descendant(
+        of: lastAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(keyField, findsOneWidget);
+
+      // Tap and enter text in the key field
+      await tester.tap(keyField);
       await tester.pumpAndSettle();
 
       // Use tester.testTextInput to enter text directly
