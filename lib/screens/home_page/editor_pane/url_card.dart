@@ -124,14 +124,12 @@ class URLTextField extends ConsumerWidget {
               ?.httpRequestModel
               ?.url,
       onChanged: (value) {
-        final aim = ref
-            .read(collectionStateNotifierProvider)![selectedId]!
-            .aiRequestModel;
-        if (aim != null) {
-          aim.payload.endpoint = value;
+        if (aiReqM != null) {
+          // Handle AI Endpoint Changes
+          aiReqM.payload.endpoint = value;
           ref
               .read(collectionStateNotifierProvider.notifier)
-              .update(aiRequestModel: aim.updatePayload(aim.payload));
+              .update(aiRequestModel: aiReqM.updatePayload(aiReqM.payload));
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }

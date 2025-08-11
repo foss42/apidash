@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:better_networking/better_networking.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:genai/llm_config.dart';
 import '../llm_model.dart';
 import '../llm_provider.dart';
 import '../llm_saveobject.dart';
@@ -57,6 +61,24 @@ class AIRequestModel with _$AIRequestModel {
       model: model,
       payload: payload.clone(),
       provider: provider,
+    );
+  }
+
+  HttpRequestModel convertToHTTPRequest() {
+    final streamingMode =
+        payload.configMap[LLMConfigName.stream.name]?.configValue.value ??
+        false;
+    final genAIRequest = createRequest(stream: streamingMode);
+    return HttpRequestModel(
+      method: HTTPVerb.post,
+      headers: [
+        ...genAIRequest.headers.entries.map(
+          (x) => NameValueModel(name: x.key, value: x.value),
+        ),
+      ],
+      url: genAIRequest.endpoint,
+      bodyContentType: ContentType.json,
+      body: jsonEncode(genAIRequest.body),
     );
   }
 }

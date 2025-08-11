@@ -1,12 +1,7 @@
 import 'dart:convert';
-import 'package:apidash/models/request_model.dart';
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/providers/history_providers.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genai/genai.dart';
-import 'package:genai/models/ai_request_model.dart';
 
 class SSEDisplay extends StatefulWidget {
   final LLMModel? selectedLLModel;

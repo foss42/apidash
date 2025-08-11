@@ -52,10 +52,7 @@ class ResponseDetails extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-
-    HttpResponseModel? httpResponseModel;
-
-    httpResponseModel = ref.watch(selectedRequestModelProvider
+    final responseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
 
     return Column(
@@ -63,7 +60,7 @@ class ResponseDetails extends ConsumerWidget {
         ResponsePaneHeader(
           responseStatus: responseStatus,
           message: message,
-          time: httpResponseModel?.time,
+          time: responseModel?.time,
           onClearResponse: () {
             ref.read(collectionStateNotifierProvider.notifier).clearResponse();
           },
@@ -111,8 +108,9 @@ class ResponseHeadersTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final requestHeaders =
         ref.watch(selectedRequestModelProvider.select((value) {
-      return value?.httpResponseModel!.requestHeaders;
-    }));
+              return value?.httpResponseModel!.requestHeaders;
+            })) ??
+            {};
 
     final responseHeaders =
         ref.watch(selectedRequestModelProvider.select((value) {
@@ -122,7 +120,7 @@ class ResponseHeadersTab extends ConsumerWidget {
 
     return ResponseHeaders(
       responseHeaders: responseHeaders,
-      requestHeaders: requestHeaders as Map? ?? {},
+      requestHeaders: requestHeaders,
     );
   }
 }

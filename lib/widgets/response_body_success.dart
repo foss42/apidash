@@ -18,7 +18,6 @@ class ResponseBodySuccess extends StatefulWidget {
     required this.options,
     required this.bytes,
     this.formattedBody,
-    // this.sseOutput,
     this.highlightLanguage,
     this.selectedModel,
   });

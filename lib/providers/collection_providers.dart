@@ -332,32 +332,14 @@ class CollectionStateNotifier
     }
 
     APIType apiType = executionRequestModel.apiType;
-
-    late HttpRequestModel substitutedHttpRequestModel;
     AIRequestModel? aiRequestModel;
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+    HttpRequestModel substitutedHttpRequestModel;
 
     if (apiType == APIType.ai) {
       aiRequestModel = requestModel.aiRequestModel!;
-
-      final streamingMode = aiRequestModel.payload
-              .configMap[LLMConfigName.stream.name]?.configValue.value ??
-          false;
-
-      final genAIRequest = aiRequestModel.createRequest(stream: streamingMode);
-      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
-        HttpRequestModel(
-          method: HTTPVerb.post,
-          headers: [
-            ...genAIRequest.headers.entries.map(
-              (x) => NameValueModel(name: x.key, value: x.value),
-            ),
-          ],
-          url: genAIRequest.endpoint,
-          bodyContentType: ContentType.json,
-          body: jsonEncode(genAIRequest.body),
-        ),
-      );
+      substitutedHttpRequestModel =
+          getSubstitutedHttpRequestModel(aiRequestModel.convertToHTTPRequest());
     } else {
       substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
           executionRequestModel.httpRequestModel!);
@@ -371,6 +353,7 @@ class CollectionStateNotifier
         sendingTime: DateTime.now(),
       ),
     };
+    bool streamingMode = true; //Default: Streaming First
 
     final stream = await streamHttpRequest(
       requestId,
@@ -388,8 +371,6 @@ class CollectionStateNotifier
 
     StreamSubscription? sub;
 
-    bool streaming = true; //DEFAULT to streaming
-
     sub = stream.listen((rec) async {
       if (rec == null) return;
 
@@ -399,7 +380,7 @@ class CollectionStateNotifier
       final errorMessage = rec.$4;
 
       if (isStreamingResponse == false) {
-        streaming = false;
+        streamingMode = false;
         if (!completer.isCompleted) {
           completer.complete((response, duration, errorMessage));
         }
@@ -467,20 +448,18 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
-      if (!streaming) {
-        //AI-FORMATTING for Non Streaming Varaint
-        if (apiType == APIType.ai) {
-          final mT = httpResponseModel?.mediaType;
-          final body = (mT?.subtype == kSubTypeJson)
-              ? utf8.decode(response.bodyBytes)
-              : response.body;
+      //AI-FORMATTING for Non Streaming Varaint
+      if (streamingMode == false && apiType == APIType.ai) {
+        final mT = httpResponseModel?.mediaType;
+        final body = (mT?.subtype == kSubTypeJson)
+            ? utf8.decode(response.bodyBytes)
+            : response.body;
 
-          final fb = response.statusCode == 200
-              ? aiRequestModel?.model.provider.modelController
-                  .outputFormatter(jsonDecode(body))
-              : formatBody(body, mT);
-          httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
-        }
+        final fb = response.statusCode == 200
+            ? aiRequestModel?.model.provider.modelController
+                .outputFormatter(jsonDecode(body))
+            : formatBody(body, mT);
+        httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
       }
 
       newRequestModel = newRequestModel.copyWith(
