@@ -58,8 +58,8 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/country/data";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
-            requestBuilder
-                .addQueryParam("code", "US");
+           
+            requestBuilder.addQueryParam("code", "US"); 
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -96,8 +96,9 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/country/data";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
-            requestBuilder
-                .addQueryParam("code", "IND");
+           
+            requestBuilder.addQueryParam("code", "IND"); 
+            requestBuilder.addQueryParam("code", "US"); 
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -134,12 +135,12 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/humanize/social";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
-            requestBuilder
-                .addQueryParam("num", "8700000")
-                .addQueryParam("digits", "3")
-                .addQueryParam("system", "SS")
-                .addQueryParam("add_space", "true")
-                .addQueryParam("trailing_zeros", "true");
+           
+            requestBuilder.addQueryParam("num", "8700000");  
+            requestBuilder.addQueryParam("digits", "3");  
+            requestBuilder.addQueryParam("system", "SS");  
+            requestBuilder.addQueryParam("add_space", "true");  
+            requestBuilder.addQueryParam("trailing_zeros", "true"); 
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -214,8 +215,8 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.github.com/repos/foss42/apidash";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
-            requestBuilder
-                .addQueryParam("raw", "true");
+           
+            requestBuilder.addQueryParam("raw", "true"); 
             requestBuilder
                 .addHeader("User-Agent", "Test Agent");
             Future<Response> whenResponse = requestBuilder.execute();
@@ -290,8 +291,8 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.github.com/repos/foss42/apidash";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
-            requestBuilder
-                .addQueryParam("raw", "true");
+           
+            requestBuilder.addQueryParam("raw", "true"); 
             requestBuilder
                 .addHeader("User-Agent", "Test Agent");
             Future<Response> whenResponse = requestBuilder.execute();
@@ -330,9 +331,9 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/humanize/social";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
-            requestBuilder
-                .addQueryParam("num", "8700000")
-                .addQueryParam("add_space", "true");
+           
+            requestBuilder.addQueryParam("num", "8700000");  
+            requestBuilder.addQueryParam("add_space", "true"); 
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -407,9 +408,9 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/humanize/social";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
-            requestBuilder
-                .addQueryParam("num", "8700000")
-                .addQueryParam("digits", "3");
+           
+            requestBuilder.addQueryParam("num", "8700000");  
+            requestBuilder.addQueryParam("digits", "3"); 
             requestBuilder
                 .addHeader("User-Agent", "Test Agent");
             Future<Response> whenResponse = requestBuilder.execute();
@@ -953,9 +954,9 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/io/form";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
-            requestBuilder
-                .addQueryParam("size", "2")
-                .addQueryParam("len", "3");
+           
+            requestBuilder.addQueryParam("size", "2");  
+            requestBuilder.addQueryParam("len", "3"); 
 
             Map<String, String> params = new HashMap<>() {
                 { 
@@ -1012,9 +1013,9 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/io/img";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
-            requestBuilder
-                .addQueryParam("size", "2")
-                .addQueryParam("len", "3");
+           
+            requestBuilder.addQueryParam("size", "2");  
+            requestBuilder.addQueryParam("len", "3"); 
             requestBuilder
                 .addHeader("User-Agent", "Test Agent")
                 .addHeader("Keep-Alive", "true");
@@ -1092,6 +1093,7 @@ public class Main {
 }""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("PUT", url);
             requestBuilder
+                .addHeader("x-api-key", "reqres-free-v1")
                 .addHeader("Content-Type", "application/json");
             requestBuilder.setBody(bodyContent);
             Future<Response> whenResponse = requestBuilder.execute();
@@ -1138,6 +1140,7 @@ public class Main {
 }""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("PATCH", url);
             requestBuilder
+                .addHeader("x-api-key", "reqres-free-v1")
                 .addHeader("Content-Type", "application/json");
             requestBuilder.setBody(bodyContent);
             Future<Response> whenResponse = requestBuilder.execute();
@@ -1178,6 +1181,8 @@ public class Main {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://reqres.in/api/users/2";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("DELETE", url);
+            requestBuilder
+                .addHeader("x-api-key", "reqres-free-v1");
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -1220,6 +1225,7 @@ public class Main {
 }""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("DELETE", url);
             requestBuilder
+                .addHeader("x-api-key", "reqres-free-v1")
                 .addHeader("Content-Type", "application/json");
             requestBuilder.setBody(bodyContent);
             Future<Response> whenResponse = requestBuilder.execute();

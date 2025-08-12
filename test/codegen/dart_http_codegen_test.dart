@@ -41,7 +41,9 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://api.apidash.dev/country/data');
 
-  var queryParams = {'code': 'US'};
+  var queryParams = {
+    'code': ['US']
+  };
   uri = uri.replace(queryParameters: queryParams);
 
   final response = await http.get(uri);
@@ -70,10 +72,15 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.apidash.dev/country/data?code=US');
+  var uri = Uri.parse('https://api.apidash.dev/country/data');
 
-  var queryParams = {'code': 'IND'};
-  var urlQueryParams = Map<String, String>.from(uri.queryParameters);
+  var queryParams = {
+    'code': [
+      'IND',
+      'US',
+    ]
+  };
+  var urlQueryParams = Map<String, dynamic>.from(uri.queryParameters);
   urlQueryParams.addAll(queryParams);
   uri = uri.replace(queryParameters: urlQueryParams);
 
@@ -105,11 +112,11 @@ void main() async {
   var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   var queryParams = {
-    'num': '8700000',
-    'digits': '3',
-    'system': 'SS',
-    'add_space': 'true',
-    'trailing_zeros': 'true',
+    'num': ['8700000'],
+    'digits': ['3'],
+    'system': ['SS'],
+    'add_space': ['true'],
+    'trailing_zeros': ['true'],
   };
   uri = uri.replace(queryParameters: queryParams);
 
@@ -172,7 +179,9 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://api.github.com/repos/foss42/apidash');
 
-  var queryParams = {'raw': 'true'};
+  var queryParams = {
+    'raw': ['true']
+  };
   uri = uri.replace(queryParameters: queryParams);
 
   var headers = {'User-Agent': 'Test Agent'};
@@ -234,7 +243,9 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://api.github.com/repos/foss42/apidash');
 
-  var queryParams = {'raw': 'true'};
+  var queryParams = {
+    'raw': ['true']
+  };
   uri = uri.replace(queryParameters: queryParams);
 
   var headers = {'User-Agent': 'Test Agent'};
@@ -270,8 +281,8 @@ void main() async {
   var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   var queryParams = {
-    'num': '8700000',
-    'add_space': 'true',
+    'num': ['8700000'],
+    'add_space': ['true'],
   };
   uri = uri.replace(queryParameters: queryParams);
 
@@ -335,8 +346,8 @@ void main() async {
   var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   var queryParams = {
-    'num': '8700000',
-    'digits': '3',
+    'num': ['8700000'],
+    'digits': ['3'],
   };
   uri = uri.replace(queryParameters: queryParams);
 
@@ -821,8 +832,8 @@ void main() async {
   var uri = Uri.parse('https://api.apidash.dev/io/form');
 
   var queryParams = {
-    'size': '2',
-    'len': '3',
+    'size': ['2'],
+    'len': ['3'],
   };
   uri = uri.replace(queryParameters: queryParams);
 
@@ -888,8 +899,8 @@ void main() async {
   var uri = Uri.parse('https://api.apidash.dev/io/img');
 
   var queryParams = {
-    'size': '2',
-    'len': '3',
+    'size': ['2'],
+    'len': ['3'],
   };
   uri = uri.replace(queryParameters: queryParams);
 
@@ -967,7 +978,10 @@ void main() async {
 "job": "zion resident"
 }''';
 
-  var headers = {'content-type': 'application/json'};
+  var headers = {
+    'x-api-key': 'reqres-free-v1',
+    'content-type': 'application/json',
+  };
 
   final response = await http.put(
     uri,
@@ -1007,7 +1021,10 @@ void main() async {
 "job": "accountant"
 }''';
 
-  var headers = {'content-type': 'application/json'};
+  var headers = {
+    'x-api-key': 'reqres-free-v1',
+    'content-type': 'application/json',
+  };
 
   final response = await http.patch(
     uri,
@@ -1042,7 +1059,12 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://reqres.in/api/users/2');
 
-  final response = await http.delete(uri);
+  var headers = {'x-api-key': 'reqres-free-v1'};
+
+  final response = await http.delete(
+    uri,
+    headers: headers,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -1074,7 +1096,10 @@ void main() async {
 "job": "accountant"
 }''';
 
-  var headers = {'content-type': 'application/json'};
+  var headers = {
+    'x-api-key': 'reqres-free-v1',
+    'content-type': 'application/json',
+  };
 
   final response = await http.delete(
     uri,

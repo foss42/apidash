@@ -58,13 +58,14 @@ func main() {
 """;
 
   String kTemplateQueryParam = """
-  query := url.Query()
-  {% for key, value in params %}
-  query.Set("{{key}}", "{{value}}"){% endfor %}
+query := url.Query()
+{% for param in params %}
+query.Add("{{param.key}}", "{{param.value}}"){% endfor %}
 
-  url.RawQuery = query.Encode()
+url.RawQuery = query.Encode()
 
 """;
+
 
   String kTemplateRequest = """
   req, _ := http.NewRequest("{{method}}", url.String(), {% if hasBody %}payload{% else %}nil{% endif %})
@@ -102,7 +103,7 @@ func main() {
       });
 
       var templateUrl = jj.Template(kTemplateUrl);
-      result += templateUrl.render({"url": url});
+      result += templateUrl.render({"url": url.split('?').first});
 
       var rec = getValidRequestUri(
         url,
@@ -124,15 +125,17 @@ func main() {
             "fields": requestModel.formDataMapList,
           });
         }
-
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var templateQueryParam = jj.Template(kTemplateQueryParam);
-            result += templateQueryParam.render({"params": params});
-          }
+      if (requestModel.enabledParamsMap.isNotEmpty) {
+      var queryParams = [];
+      requestModel.enabledParamsMap.forEach((key, value) {
+        for (var v in value) {
+          queryParams.add({'key': key, 'value': v});
         }
+            });
 
+      var templateQueryParam = jj.Template(kTemplateQueryParam);
+      result += templateQueryParam.render({"params": queryParams});
+    }
         var method = requestModel.method.name.toUpperCase();
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({

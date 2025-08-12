@@ -6,6 +6,17 @@ class RubyNetHttpCodeGen {
 require "net/http"
 
 url = URI("{{url}}")
+
+""";
+
+  String kTemplateRequestParams = """
+\nparams = {
+{% for key, val in params %} "{{ key }}" => [{% for v in val %}"{{ v|string }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+{% endfor %}}
+url.query = URI.encode_www_form(params)\n
+""";
+
+  String kTemplateConnectionAndRequest = """
 https = Net::HTTP.new(url.host, url.port)
 {% if check == "https" %}https.use_ssl = true{% endif %}
 request = Net::HTTP::{{method}}.new(url)
@@ -13,7 +24,8 @@ request = Net::HTTP::{{method}}.new(url)
 
   String kTemplateHeader = """
 {% for key, value in headers %}
-request["{{key}}"] = "{{value}}"{% endfor %}
+request["{{key}}"] = "{{value}}"
+{% endfor %}
 """;
 
   String kTemplateBody = """
@@ -31,7 +43,11 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
-{% if method != "head" %}puts "Response Body: #{response.body}"{% else %}puts "Response Body: #{response.to_hash}"{% endif %}
+{% if method != "head" %}
+puts "Response Body: #{response.body}"
+{% else %}
+puts "Response Headers: #{response.to_hash}"
+{% endif %}
 
 """;
 
@@ -52,7 +68,17 @@ puts "Response Code: #{response.code}"
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": uri.query.isEmpty ? stripUriParams(uri) : uri,
+        "url": uri.toString().split('?').first,
+      });
+      if (requestModel.enabledParamsMap.isNotEmpty) {
+        var templateRequestParams = jj.Template(kTemplateRequestParams);
+        result += templateRequestParams.render({
+          "params": requestModel.enabledParamsMap,
+        });
+      }
+
+      var connectionTemplate = jj.Template(kTemplateConnectionAndRequest);
+      result += connectionTemplate.render({
         "method": requestModel.method.name.capitalize(),
         "check": uri.scheme,
       });
@@ -78,8 +104,7 @@ puts "Response Code: #{response.code}"
       }
 
       if (requestModel.hasFormData) {
-        result += "\n";
-        result += "form_data = [";
+        result += "\nform_data = [";
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         int length = requestModel.formDataMapList.length;
 
@@ -90,16 +115,12 @@ puts "Response Code: #{response.code}"
             "value": element["value"],
             "type": element["type"]
           });
-          length -= 1;
-          if (length == 0) {
-            result += "]";
-          } else {
-            result += "],";
-          }
+          result += "]";
+          if (--length > 0) result += ", ";
         }
         result += "]\n";
         result +=
-            "request.set_form form_data, '${ContentType.formdata.header}'";
+            "request.set_form form_data, '${ContentType.formdata.header}'\n";
       }
 
       result += jj.Template(kStringRequest)
