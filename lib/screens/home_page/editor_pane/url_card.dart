@@ -171,15 +171,18 @@ class SendRequestButton extends ConsumerWidget {
 }
 
 class AIProviderSelector extends ConsumerWidget {
+  final AIRequestModel? readOnlyModel;
+
   const AIProviderSelector({
     super.key,
+    this.readOnlyModel,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final req = ref.watch(collectionStateNotifierProvider)![selectedId]!;
-    AIRequestModel? aiRequestModel = req.aiRequestModel;
+    AIRequestModel? aiRequestModel = readOnlyModel ?? req.aiRequestModel;
 
     if (aiRequestModel == null) {
       return Container();
@@ -194,6 +197,7 @@ class AIProviderSelector extends ConsumerWidget {
     );
 
     return DefaultLLMSelectorButton(
+      readonly: (readOnlyModel != null),
       key: ValueKey(ref.watch(selectedIdStateProvider)),
       defaultLLM: defaultLLMSO,
       onDefaultLLMUpdated: (llmso) {

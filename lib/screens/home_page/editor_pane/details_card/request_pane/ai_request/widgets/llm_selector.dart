@@ -4,30 +4,34 @@ import 'package:flutter/material.dart';
 
 class DefaultLLMSelectorButton extends StatelessWidget {
   final LLMSaveObject? defaultLLM;
+  final bool readonly;
   final Function(LLMSaveObject) onDefaultLLMUpdated;
   const DefaultLLMSelectorButton({
     super.key,
     this.defaultLLM,
+    this.readonly = false,
     required this.onDefaultLLMUpdated,
   });
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () async {
-        final saveObject = await showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              scrollable: true,
-              content: DefaultLLMSelectorDialog(defaultLLM: defaultLLM),
-              contentPadding: EdgeInsets.all(10),
-            );
-          },
-        );
-        if (saveObject == null) return;
-        onDefaultLLMUpdated(saveObject);
-      },
+      onPressed: readonly
+          ? null
+          : () async {
+              final saveObject = await showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    scrollable: true,
+                    content: DefaultLLMSelectorDialog(defaultLLM: defaultLLM),
+                    contentPadding: EdgeInsets.all(10),
+                  );
+                },
+              );
+              if (saveObject == null) return;
+              onDefaultLLMUpdated(saveObject);
+            },
       child: Text(defaultLLM?.selectedLLM.modelName ?? 'Select Model'),
     );
   }
@@ -171,37 +175,41 @@ class _DefaultLLMSelectorDialogState extends State<DefaultLLMSelectorDialog> {
                       borderRadius: BorderRadius.circular(10),
                       color: const Color.fromARGB(27, 0, 0, 0),
                     ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          ...selectedLLMProvider.models.map(
-                            (x) => ListTile(
-                              title: Text(x.modelName),
-                              subtitle: Text(x.identifier),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (llmSaveObject.selectedLLM.identifier ==
-                                      x.identifier)
-                                    CircleAvatar(
-                                      radius: 5,
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  IconButton(
-                                      onPressed: () => removeModel(x),
-                                      icon: Icon(
-                                        Icons.delete,
-                                        size: 20,
-                                      ))
-                                ],
+                    child: Material(
+                      color: Colors.transparent,
+                      child: SingleChildScrollView(
+                        clipBehavior: Clip.hardEdge,
+                        child: Column(
+                          children: [
+                            ...selectedLLMProvider.models.map(
+                              (x) => ListTile(
+                                title: Text(x.modelName),
+                                subtitle: Text(x.identifier),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (llmSaveObject.selectedLLM.identifier ==
+                                        x.identifier)
+                                      CircleAvatar(
+                                        radius: 5,
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    IconButton(
+                                        onPressed: () => removeModel(x),
+                                        icon: Icon(
+                                          Icons.delete,
+                                          size: 20,
+                                        ))
+                                  ],
+                                ),
+                                onTap: () {
+                                  llmSaveObject.selectedLLM = x;
+                                  setState(() {});
+                                },
                               ),
-                              onTap: () {
-                                llmSaveObject.selectedLLM = x;
-                                setState(() {});
-                              },
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
