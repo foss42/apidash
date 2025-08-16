@@ -10,6 +10,23 @@ http.Client createHttpClientWithNoSSL() {
   return IOClient(ioClient);
 }
 
+class _JsonAcceptClient extends http.BaseClient {
+  final http.Client _inner;
+
+  _JsonAcceptClient(this._inner);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    request.headers['Accept'] = 'application/json';
+    return _inner.send(request);
+  }
+
+  @override
+  void close() {
+    _inner.close();
+  }
+}
+
 class HttpClientManager {
   static final HttpClientManager _instance = HttpClientManager._internal();
   static const int _maxCancelledRequests = 100;
@@ -59,5 +76,18 @@ class HttpClientManager {
 
   bool hasActiveClient(String requestId) {
     return _clients.containsKey(requestId);
+  }
+
+  http.Client createClientWithJsonAccept(
+    String requestId, {
+    bool noSSL = false,
+  }) {
+    final baseClient = (noSSL && !kIsWeb)
+        ? createHttpClientWithNoSSL()
+        : http.Client();
+
+    final client = _JsonAcceptClient(baseClient);
+    _clients[requestId] = client;
+    return client;
   }
 }
