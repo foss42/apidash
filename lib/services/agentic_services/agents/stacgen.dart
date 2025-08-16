@@ -233,10 +233,7 @@ const SAMPLE_STAC_RULESET = """
 ```
 {
   "type": "gridView",
-  "physics": {
-    "type": "scrollPhysics",
-    "name": "neverScrollable"
-  },
+  "physics": "never",
   "shrinkWrap": true,
   "padding": {
     "left": 10,
