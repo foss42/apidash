@@ -130,7 +130,9 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
               ? null
               : (OAuth1SignatureMethod? newAlgo) {
                   if (newAlgo != null) {
-                    _signatureMethodController = newAlgo;
+                    setState(() {
+                      _signatureMethodController = newAlgo;
+                    });
                     _updateOAuth1();
                   }
                 },

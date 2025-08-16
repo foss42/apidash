@@ -256,7 +256,9 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
                 : (String? newMethod) {
                     if (newMethod != null &&
                         newMethod != _codeChallengeMethod) {
-                      _codeChallengeMethod = newMethod;
+                      setState(() {
+                        _codeChallengeMethod = newMethod;
+                      });
 
                       _updateOAuth2();
                     }
