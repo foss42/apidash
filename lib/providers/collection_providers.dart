@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:genai/genai.dart';
+import 'package:genai/models/ai_request_model.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
@@ -137,6 +141,7 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null || state?[rId] == null) return;
     var currentModel = state![rId]!;
+
     final newModel = currentModel.copyWith(
       responseStatus: null,
       message: null,
@@ -163,6 +168,8 @@ class CollectionStateNotifier
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
+      httpRequestModel: currentModel.httpRequestModel,
+      aiRequestModel: currentModel.aiRequestModel?.clone(),
       httpResponseModel: null,
       isWorking: false,
       sendingTime: null,
@@ -183,10 +190,15 @@ class CollectionStateNotifier
 
     var itemIds = ref.read(requestSequenceProvider);
     var currentModel = historyRequestModel;
+
+    final aT = currentModel.aiRequestModel != null ? APIType.ai : APIType.rest;
+
     final newModel = RequestModel(
+      apiType: aT,
       id: newId,
       name: "${currentModel.metaData.name} (history)",
-      httpRequestModel: currentModel.httpRequestModel,
+      aiRequestModel: currentModel.aiRequestModel?.clone(),
+      httpRequestModel: currentModel.httpRequestModel ?? HttpRequestModel(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
@@ -226,13 +238,28 @@ class CollectionStateNotifier
     HttpResponseModel? httpResponseModel,
     String? preRequestScript,
     String? postRequestScript,
+    AIRequestModel? aiRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
       debugPrint("Unable to update as Request Id is null");
       return;
     }
+
     var currentModel = state![rId]!;
+
+    if (apiType == APIType.ai) {
+      //Adding default AI Request Modoel
+      AIRequestModel? aiRM = currentModel.aiRequestModel;
+      LLMSaveObject? defaultLLMSO = ref
+          .watch(settingsProvider.notifier)
+          .settingsModel
+          ?.defaultLLMSaveObject; //Settings Default
+      if (aiRM == null) {
+        aiRequestModel = AIRequestModel.fromDefaultSaveObject(defaultLLMSO);
+      }
+    }
+
     var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
@@ -260,6 +287,7 @@ class CollectionStateNotifier
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
       preRequestScript: preRequestScript ?? currentModel.preRequestScript,
       postRequestScript: postRequestScript ?? currentModel.postRequestScript,
+      aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
     );
 
     var map = {...state!};
@@ -304,9 +332,18 @@ class CollectionStateNotifier
     }
 
     APIType apiType = executionRequestModel.apiType;
-    HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(executionRequestModel.httpRequestModel!);
+    AIRequestModel? aiRequestModel;
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+    HttpRequestModel substitutedHttpRequestModel;
+
+    if (apiType == APIType.ai) {
+      aiRequestModel = requestModel.aiRequestModel!;
+      substitutedHttpRequestModel =
+          getSubstitutedHttpRequestModel(aiRequestModel.convertToHTTPRequest());
+    } else {
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
+          executionRequestModel.httpRequestModel!);
+    }
 
     // Set model to working and streaming
     state = {
@@ -316,6 +353,7 @@ class CollectionStateNotifier
         sendingTime: DateTime.now(),
       ),
     };
+    bool streamingMode = true; //Default: Streaming First
 
     final stream = await streamHttpRequest(
       requestId,
@@ -340,6 +378,14 @@ class CollectionStateNotifier
       final response = rec.$2;
       final duration = rec.$3;
       final errorMessage = rec.$4;
+
+      if (isStreamingResponse == false) {
+        streamingMode = false;
+        if (!completer.isCompleted) {
+          completer.complete((response, duration, errorMessage));
+        }
+        return;
+      }
 
       if (isStreamingResponse) {
         httpResponseModel = httpResponseModel?.copyWith(
@@ -402,6 +448,20 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
+      //AI-FORMATTING for Non Streaming Varaint
+      if (streamingMode == false && apiType == APIType.ai) {
+        final mT = httpResponseModel?.mediaType;
+        final body = (mT?.subtype == kSubTypeJson)
+            ? utf8.decode(response.bodyBytes)
+            : response.body;
+
+        final fb = response.statusCode == 200
+            ? aiRequestModel?.model.provider.modelController
+                .outputFormatter(jsonDecode(body))
+            : formatBody(body, mT);
+        httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+      }
+
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
@@ -423,6 +483,7 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
+        aiRequestModel: aiRequestModel,
         httpResponseModel: httpResponseModel!,
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,

@@ -1,6 +1,8 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genai/genai.dart';
+import 'package:stac/stac.dart';
 import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
@@ -9,6 +11,12 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Stac.initialize();
+
+  //Load all LLMs
+  // await LLMManager.fetchAvailableLLMs();
+  await LLMManager.loadAvailableLLMs();
+
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
   initializeJsRuntime();

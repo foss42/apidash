@@ -31,7 +31,7 @@ void main() {
 
       expect(
           find.text(
-              historyRequestModel.httpRequestModel.method.name.toUpperCase()),
+              historyRequestModel.httpRequestModel!.method.name.toUpperCase()),
           findsOneWidget);
     });
 
@@ -45,7 +45,7 @@ void main() {
       );
 
       expect(
-          find.text(historyRequestModel.httpRequestModel.url), findsOneWidget);
+          find.text(historyRequestModel.httpRequestModel!.url), findsOneWidget);
     });
   });
 }

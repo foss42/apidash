@@ -7,9 +7,11 @@ import 'package:apidash/consts.dart';
 
 class SendingWidget extends StatefulWidget {
   final DateTime? startSendingTime;
+  final bool showTimeElapsed;
   const SendingWidget({
     super.key,
     required this.startSendingTime,
+    this.showTimeElapsed = true,
   });
 
   @override
@@ -51,33 +53,34 @@ class _SendingWidgetState extends State<SendingWidget> {
         Center(
           child: Lottie.asset(kAssetSendingLottie),
         ),
-        Padding(
-          padding: kPh20t40,
-          child: Visibility(
-            visible: _millisecondsElapsed >= 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.alarm,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Time elapsed: ${humanizeDuration(Duration(milliseconds: _millisecondsElapsed))}',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: kTextStyleButton.copyWith(
+        if (widget.showTimeElapsed)
+          Padding(
+            padding: kPh20t40,
+            child: Visibility(
+              visible: _millisecondsElapsed >= 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.alarm,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                ),
-              ],
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Time elapsed: ${humanizeDuration(Duration(milliseconds: _millisecondsElapsed))}',
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: kTextStyleButton.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
       ],
     );
   }

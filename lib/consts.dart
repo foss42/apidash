@@ -159,6 +159,7 @@ enum ResponseBodyView {
   preview("Preview", Icons.visibility_rounded),
   code("Preview", Icons.code_rounded),
   raw("Raw", Icons.text_snippet_rounded),
+  answer("Answer", Icons.abc),
   sse("SSE", Icons.stream),
   none("Preview", Icons.warning);
 
@@ -508,3 +509,4 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+const kLabelGenerateUI = "Generate UI";
