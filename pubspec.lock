@@ -690,7 +690,7 @@ packages:
     source: hosted
     version: "2.5.8"
   freezed_annotation:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: freezed_annotation
       sha256: c2e2d632dd9b8a2b7751117abcfc2b4888ecfe181bd9fca7170d9ef02e595fe2
@@ -1669,18 +1669,18 @@ packages:
     dependency: "direct main"
     description:
       name: stac
-      sha256: "53f5ab2c45e093fc5178a51db5bb5ae9ae3fda64fc8a879c90e612ebc7fc6b32"
+      sha256: "9c24c0cb546ab04bf324c17451ad31181cb98e284a489f690a6f381b7a77e47a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.0"
+    version: "0.11.0"
   stac_framework:
     dependency: transitive
     description:
       name: stac_framework
-      sha256: "58fb26982eaf83626eaaefd4db153306f4f198bb2c4a4d288d97705da4eadac0"
+      sha256: "54e1a14f01664443f3be3d158781c07e69ab0e04993495ddd0b6b1d68c84875b"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.3.0"
   stack_trace:
     dependency: transitive
     description:

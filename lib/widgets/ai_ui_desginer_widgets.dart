@@ -482,9 +482,13 @@ class StacRenderer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return SingleChildScrollView(
+    //   child: SelectableText(stacRepresentation),
+    // );
     return stac.StacApp(
       title: 'Component Preview',
       homeBuilder: (context) => Material(
+        color: Colors.transparent,
         child: stac.Stac.fromJson(jsonDecode(stacRepresentation), context),
       ),
     );
