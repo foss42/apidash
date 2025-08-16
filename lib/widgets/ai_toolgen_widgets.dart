@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:apidash/apitoolgen/request_consolidator.dart';
 import 'package:apidash/apitoolgen/tool_templates.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/widgets/llm_selector.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/apitool_bodygen.dart';
 import 'package:apidash/services/agentic_services/agents/apitool_funcgen.dart';
@@ -153,7 +154,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
           )),
           GeneratedToolCodeCopyPage(
             toolCode: generatedToolCode,
-            language: 'javascript',
+            language: selectedLanguage.trim(),
           ),
         ],
       ),
@@ -192,6 +193,8 @@ class _ToolRequirementSelectorPageState
 
   @override
   Widget build(BuildContext context) {
+    final lightMode = Theme.of(context).brightness == Brightness.light;
+
     return Container(
       width: MediaQuery.of(context).size.width * 0.4, // Large dialog
       padding: EdgeInsets.all(30),
@@ -203,7 +206,6 @@ class _ToolRequirementSelectorPageState
             "Generate API Tool",
             style: TextStyle(
               fontSize: 24,
-              color: Colors.white,
             ),
           ),
           kVSpacer5,
@@ -211,7 +213,9 @@ class _ToolRequirementSelectorPageState
             padding: EdgeInsets.only(left: 3),
             child: Text(
               "Select an agent framework & language",
-              style: TextStyle(color: Colors.white60, fontSize: 15),
+              style: TextStyle(
+                  color: lightMode ? Colors.black54 : Colors.white60,
+                  fontSize: 15),
             ),
           ),
           kVSpacer20,
@@ -219,7 +223,9 @@ class _ToolRequirementSelectorPageState
             padding: EdgeInsets.only(left: 3),
             child: Text(
               "Agent Framework",
-              style: TextStyle(color: Colors.white60),
+              style: TextStyle(
+                color: lightMode ? Colors.black54 : Colors.white60,
+              ),
             ),
           ),
           kVSpacer8,
@@ -248,7 +254,9 @@ class _ToolRequirementSelectorPageState
             padding: EdgeInsets.only(left: 3),
             child: Text(
               "Target Language",
-              style: TextStyle(color: Colors.white60),
+              style: TextStyle(
+                color: lightMode ? Colors.black54 : Colors.white60,
+              ),
             ),
           ),
           kVSpacer8,
@@ -273,22 +281,28 @@ class _ToolRequirementSelectorPageState
             isOutlined: true,
           ),
           kVSpacer20,
-          FilledButton.tonalIcon(
-            style: FilledButton.styleFrom(
-              padding: kPh12,
-              minimumSize: const Size(44, 44),
-            ),
-            onPressed: () {
-              widget.onGenerateCallback(agentFramework, targetLanguage);
-            },
-            icon: Icon(
-              Icons.token_outlined,
-            ),
-            label: const SizedBox(
-              child: Text(
-                "Generate Tool",
+          Row(
+            children: [
+              FilledButton.tonalIcon(
+                style: FilledButton.styleFrom(
+                  padding: kPh12,
+                  minimumSize: const Size(44, 44),
+                ),
+                onPressed: () {
+                  widget.onGenerateCallback(agentFramework, targetLanguage);
+                },
+                icon: Icon(
+                  Icons.token_outlined,
+                ),
+                label: const SizedBox(
+                  child: Text(
+                    "Generate Tool",
+                  ),
+                ),
               ),
-            ),
+              kHSpacer5,
+              DefaultLLModelSelectorWidget(),
+            ],
           ),
         ],
       ),
@@ -304,9 +318,8 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var codeTheme = Theme.of(context).brightness == Brightness.light
-        ? kLightCodeTheme
-        : kDarkCodeTheme;
+    final lightMode = Theme.of(context).brightness == Brightness.light;
+    var codeTheme = lightMode ? kLightCodeTheme : kDarkCodeTheme;
 
     if (toolCode == null) {
       return SendingWidget(
@@ -321,7 +334,7 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
         child: Center(
           child: Icon(
             Icons.token_outlined,
-            color: Colors.white12,
+            color: lightMode ? Colors.black12 : Colors.white12,
             size: 500,
           ),
         ),
@@ -329,7 +342,7 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
     }
 
     return Container(
-      color: const Color.fromARGB(255, 28, 28, 28),
+      color: const Color.fromARGB(26, 123, 123, 123),
       padding: EdgeInsets.all(20),
       width: MediaQuery.of(context).size.width * 0.50,
       child: Column(
@@ -352,6 +365,43 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class DefaultLLModelSelectorWidget extends ConsumerWidget {
+  const DefaultLLModelSelectorWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    return Opacity(
+      opacity: 0.8,
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 3),
+            child: Text(
+              "with",
+              style: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black54
+                      : Colors.white60,
+                  fontSize: 15),
+            ),
+          ),
+          SizedBox(width: 5),
+          DefaultLLMSelectorButton(
+            defaultLLM: settings.defaultLLMSaveObject,
+            onDefaultLLMUpdated: (d) {
+              ref
+                  .read(settingsProvider.notifier)
+                  .update(defaultLLMSaveObject: d);
+            },
+          ),
+          kVSpacer5,
         ],
       ),
     );
