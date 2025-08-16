@@ -15,7 +15,6 @@ void showCustomDialog(BuildContext context, Widget dialogContent) {
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        backgroundColor: Color.fromARGB(255, 16, 20, 24), // Dark background
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
