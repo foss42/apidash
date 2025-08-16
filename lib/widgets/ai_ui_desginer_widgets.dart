@@ -390,27 +390,16 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.black, // Dark background
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(
-                  color: Colors.grey, // Border color
-                  width: 1,
-                ),
               ),
-              child: TextField(
+              child: ADOutlinedTextField(
+                hintText: 'Any Modifications?',
                 onChanged: (z) {
                   setState(() {
                     modificationRequest = z;
                   });
                 },
                 maxLines: 3, // Makes the text box taller
-                style: TextStyle(color: Colors.white), // White text
-                decoration: InputDecoration(
-                  hintText: 'Any Modifications?',
-                  hintStyle: TextStyle(color: Colors.grey), // Grey hint text
-                  border: InputBorder.none, // Removes the default border
-                  contentPadding: EdgeInsets.all(16), // Padding inside the box
-                ),
               ),
             ),
             kVSpacer20,
