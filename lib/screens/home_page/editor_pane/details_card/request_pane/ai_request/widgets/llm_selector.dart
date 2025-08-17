@@ -76,6 +76,58 @@ class _DefaultLLMSelectorDialogState extends State<DefaultLLMSelectorDialog> {
   @override
   Widget build(BuildContext context) {
     if (!initialized) return SizedBox();
+
+    if (context.isMediumWindow) {
+      return Container(
+        padding: EdgeInsets.all(20),
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                await LLMManager.fetchAvailableLLMs();
+                setState(() {});
+              },
+              child: Text('Fetch Models'),
+            ),
+            kVSpacer10,
+            Row(
+              children: [
+                Text('Select Provider'),
+                kHSpacer20,
+                Expanded(
+                  child: ADDropdownButton(
+                    onChanged: (x) {
+                      if (x == null) return;
+                      selectedLLMProvider = x;
+                      final models = x.models;
+                      final mC = x.modelController;
+                      final p = mC.inputPayload;
+                      llmSaveObject = LLMSaveObject(
+                        endpoint: p.endpoint,
+                        credential: '',
+                        configMap: p.configMap,
+                        selectedLLM: models.first,
+                        provider: x,
+                      );
+                      setState(() {});
+                    },
+                    value: selectedLLMProvider,
+                    values: LLMProvider.values
+                        .where(((e) => e.models.isNotEmpty))
+                        .map((e) => (e, e.displayName)),
+                  ),
+                ),
+              ],
+            ),
+            kVSpacer10,
+            _buildModelSelector(),
+          ],
+        ),
+      );
+    }
+
     return Container(
       padding: EdgeInsets.all(20),
       width: MediaQuery.of(context).size.width * 0.8,
@@ -128,115 +180,107 @@ class _DefaultLLMSelectorDialogState extends State<DefaultLLMSelectorDialog> {
           SizedBox(width: 40),
           Flexible(
             flex: 3,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    selectedLLMProvider.displayName,
-                    style: TextStyle(fontSize: 28),
-                  ),
-                  SizedBox(height: 20),
-                  if (selectedLLMProvider != LLMProvider.ollama) ...[
-                    Text('API Key / Credential'),
-                    kVSpacer8,
-                    BoundedTextField(
-                      onChanged: (x) {
-                        llmSaveObject.credential = x;
-                        setState(() {});
-                      },
-                      value: llmSaveObject.credential,
-                    ),
-                    kVSpacer10,
-                  ],
-                  Text('Endpoint'),
-                  kVSpacer8,
-                  BoundedTextField(
-                    key: ValueKey(llmSaveObject.provider),
-                    onChanged: (x) {
-                      llmSaveObject.endpoint = x;
-                      setState(() {});
-                    },
-                    value: llmSaveObject.endpoint,
-                  ),
-                  kVSpacer20,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Models'),
-                      IconButton(onPressed: addNewModel, icon: Icon(Icons.add))
-                    ],
-                  ),
-                  kVSpacer8,
-                  Container(
-                    height: 300,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromARGB(27, 0, 0, 0),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: SingleChildScrollView(
-                        clipBehavior: Clip.hardEdge,
-                        child: Column(
-                          children: [
-                            ...selectedLLMProvider.models.map(
-                              (x) => ListTile(
-                                title: Text(x.modelName),
-                                subtitle: Text(x.identifier),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (llmSaveObject.selectedLLM.identifier ==
-                                        x.identifier)
-                                      CircleAvatar(
-                                        radius: 5,
-                                        backgroundColor: Colors.green,
-                                      ),
-                                    IconButton(
-                                        onPressed: () => removeModel(x),
-                                        icon: Icon(
-                                          Icons.delete,
-                                          size: 20,
-                                        ))
-                                  ],
-                                ),
-                                onTap: () {
-                                  llmSaveObject.selectedLLM = x;
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  kVSpacer10,
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        llmSaveObject.provider = selectedLLMProvider;
-                        Navigator.of(context).pop(llmSaveObject);
-                      },
-                      child: Text('Save Changes'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: _buildModelSelector(),
           ),
         ],
       ),
     );
   }
 
-  removeModel(LLMModel model) async {
-    await LLMManager.removeLLM(
-        selectedLLMProvider.name, model.identifier, model.modelName);
-    setState(() {});
+  _buildModelSelector() {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(
+            selectedLLMProvider.displayName,
+            style: TextStyle(fontSize: 28),
+          ),
+          SizedBox(height: 20),
+          if (selectedLLMProvider != LLMProvider.ollama) ...[
+            Text('API Key / Credential'),
+            kVSpacer8,
+            BoundedTextField(
+              onChanged: (x) {
+                llmSaveObject.credential = x;
+                setState(() {});
+              },
+              value: llmSaveObject.credential,
+            ),
+            kVSpacer10,
+          ],
+          Text('Endpoint'),
+          kVSpacer8,
+          BoundedTextField(
+            key: ValueKey(llmSaveObject.provider),
+            onChanged: (x) {
+              llmSaveObject.endpoint = x;
+              setState(() {});
+            },
+            value: llmSaveObject.endpoint,
+          ),
+          kVSpacer20,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Models'),
+              IconButton(onPressed: addNewModel, icon: Icon(Icons.add))
+            ],
+          ),
+          kVSpacer8,
+          Container(
+            height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color.fromARGB(27, 0, 0, 0),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: SingleChildScrollView(
+                clipBehavior: Clip.hardEdge,
+                child: Column(
+                  children: [
+                    ...selectedLLMProvider.models.map(
+                      (x) => ListTile(
+                        title: Text(x.modelName),
+                        subtitle: Text(x.identifier),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (llmSaveObject.selectedLLM.identifier ==
+                                x.identifier)
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: Colors.green,
+                              ),
+                          ],
+                        ),
+                        onTap: () {
+                          llmSaveObject.selectedLLM = x;
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          kVSpacer10,
+          Align(
+            alignment: Alignment.centerRight,
+            child: ElevatedButton(
+              onPressed: () {
+                llmSaveObject.provider = selectedLLMProvider;
+                Navigator.of(context).pop(llmSaveObject);
+              },
+              child: Text('Save Changes'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   addNewModel() async {
