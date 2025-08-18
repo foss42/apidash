@@ -13,16 +13,20 @@ class HistoryResponsePane extends ConsumerWidget {
     final selectedId = ref.watch(selectedHistoryIdStateProvider);
     final selectedHistoryRequest =
         ref.watch(selectedHistoryRequestModelProvider);
+
     final historyHttpResponseModel = selectedHistoryRequest?.httpResponseModel;
 
     if (selectedId != null) {
       final requestModel =
           getRequestModelFromHistoryModel(selectedHistoryRequest!);
+
+      final statusCode = historyHttpResponseModel?.statusCode;
+
       return Column(
         children: [
           ResponsePaneHeader(
-            responseStatus: historyHttpResponseModel?.statusCode,
-            message: kResponseCodeReasons[historyHttpResponseModel?.statusCode],
+            responseStatus: statusCode,
+            message: kResponseCodeReasons[statusCode],
             time: historyHttpResponseModel?.time,
           ),
           Expanded(
