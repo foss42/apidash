@@ -22,7 +22,8 @@ HistoryRequestModel _$HistoryRequestModelFromJson(Map<String, dynamic> json) {
 mixin _$HistoryRequestModel {
   String get historyId => throw _privateConstructorUsedError;
   HistoryMetaModel get metaData => throw _privateConstructorUsedError;
-  HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
+  HttpRequestModel? get httpRequestModel => throw _privateConstructorUsedError;
+  AIRequestModel? get aiRequestModel => throw _privateConstructorUsedError;
   HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
   String? get preRequestScript => throw _privateConstructorUsedError;
   String? get postRequestScript => throw _privateConstructorUsedError;
@@ -47,14 +48,16 @@ abstract class $HistoryRequestModelCopyWith<$Res> {
   $Res call(
       {String historyId,
       HistoryMetaModel metaData,
-      HttpRequestModel httpRequestModel,
+      HttpRequestModel? httpRequestModel,
+      AIRequestModel? aiRequestModel,
       HttpResponseModel httpResponseModel,
       String? preRequestScript,
       String? postRequestScript,
       AuthModel? authModel});
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
-  $HttpRequestModelCopyWith<$Res> get httpRequestModel;
+  $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
+  $AIRequestModelCopyWith<$Res>? get aiRequestModel;
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
   $AuthModelCopyWith<$Res>? get authModel;
 }
@@ -76,7 +79,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   $Res call({
     Object? historyId = null,
     Object? metaData = null,
-    Object? httpRequestModel = null,
+    Object? httpRequestModel = freezed,
+    Object? aiRequestModel = freezed,
     Object? httpResponseModel = null,
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
@@ -91,10 +95,14 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
           ? _value.metaData
           : metaData // ignore: cast_nullable_to_non_nullable
               as HistoryMetaModel,
-      httpRequestModel: null == httpRequestModel
+      httpRequestModel: freezed == httpRequestModel
           ? _value.httpRequestModel
           : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel,
+              as HttpRequestModel?,
+      aiRequestModel: freezed == aiRequestModel
+          ? _value.aiRequestModel
+          : aiRequestModel // ignore: cast_nullable_to_non_nullable
+              as AIRequestModel?,
       httpResponseModel: null == httpResponseModel
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
@@ -128,9 +136,27 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $HttpRequestModelCopyWith<$Res> get httpRequestModel {
-    return $HttpRequestModelCopyWith<$Res>(_value.httpRequestModel, (value) {
+  $HttpRequestModelCopyWith<$Res>? get httpRequestModel {
+    if (_value.httpRequestModel == null) {
+      return null;
+    }
+
+    return $HttpRequestModelCopyWith<$Res>(_value.httpRequestModel!, (value) {
       return _then(_value.copyWith(httpRequestModel: value) as $Val);
+    });
+  }
+
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $AIRequestModelCopyWith<$Res>? get aiRequestModel {
+    if (_value.aiRequestModel == null) {
+      return null;
+    }
+
+    return $AIRequestModelCopyWith<$Res>(_value.aiRequestModel!, (value) {
+      return _then(_value.copyWith(aiRequestModel: value) as $Val);
     });
   }
 
@@ -170,7 +196,8 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
   $Res call(
       {String historyId,
       HistoryMetaModel metaData,
-      HttpRequestModel httpRequestModel,
+      HttpRequestModel? httpRequestModel,
+      AIRequestModel? aiRequestModel,
       HttpResponseModel httpResponseModel,
       String? preRequestScript,
       String? postRequestScript,
@@ -179,7 +206,9 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
   @override
   $HistoryMetaModelCopyWith<$Res> get metaData;
   @override
-  $HttpRequestModelCopyWith<$Res> get httpRequestModel;
+  $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
+  @override
+  $AIRequestModelCopyWith<$Res>? get aiRequestModel;
   @override
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
   @override
@@ -201,7 +230,8 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
   $Res call({
     Object? historyId = null,
     Object? metaData = null,
-    Object? httpRequestModel = null,
+    Object? httpRequestModel = freezed,
+    Object? aiRequestModel = freezed,
     Object? httpResponseModel = null,
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
@@ -216,10 +246,14 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
           ? _value.metaData
           : metaData // ignore: cast_nullable_to_non_nullable
               as HistoryMetaModel,
-      httpRequestModel: null == httpRequestModel
+      httpRequestModel: freezed == httpRequestModel
           ? _value.httpRequestModel
           : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel,
+              as HttpRequestModel?,
+      aiRequestModel: freezed == aiRequestModel
+          ? _value.aiRequestModel
+          : aiRequestModel // ignore: cast_nullable_to_non_nullable
+              as AIRequestModel?,
       httpResponseModel: null == httpResponseModel
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
@@ -247,7 +281,8 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   const _$HistoryRequestModelImpl(
       {required this.historyId,
       required this.metaData,
-      required this.httpRequestModel,
+      this.httpRequestModel,
+      this.aiRequestModel,
       required this.httpResponseModel,
       this.preRequestScript,
       this.postRequestScript,
@@ -261,7 +296,9 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   @override
   final HistoryMetaModel metaData;
   @override
-  final HttpRequestModel httpRequestModel;
+  final HttpRequestModel? httpRequestModel;
+  @override
+  final AIRequestModel? aiRequestModel;
   @override
   final HttpResponseModel httpResponseModel;
   @override
@@ -273,7 +310,7 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
 
   @override
   String toString() {
-    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, authModel: $authModel)';
+    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, aiRequestModel: $aiRequestModel, httpResponseModel: $httpResponseModel, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, authModel: $authModel)';
   }
 
   @override
@@ -287,6 +324,8 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
                 other.metaData == metaData) &&
             (identical(other.httpRequestModel, httpRequestModel) ||
                 other.httpRequestModel == httpRequestModel) &&
+            (identical(other.aiRequestModel, aiRequestModel) ||
+                other.aiRequestModel == aiRequestModel) &&
             (identical(other.httpResponseModel, httpResponseModel) ||
                 other.httpResponseModel == httpResponseModel) &&
             (identical(other.preRequestScript, preRequestScript) ||
@@ -304,6 +343,7 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
       historyId,
       metaData,
       httpRequestModel,
+      aiRequestModel,
       httpResponseModel,
       preRequestScript,
       postRequestScript,
@@ -330,7 +370,8 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   const factory _HistoryRequestModel(
       {required final String historyId,
       required final HistoryMetaModel metaData,
-      required final HttpRequestModel httpRequestModel,
+      final HttpRequestModel? httpRequestModel,
+      final AIRequestModel? aiRequestModel,
       required final HttpResponseModel httpResponseModel,
       final String? preRequestScript,
       final String? postRequestScript,
@@ -344,7 +385,9 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   @override
   HistoryMetaModel get metaData;
   @override
-  HttpRequestModel get httpRequestModel;
+  HttpRequestModel? get httpRequestModel;
+  @override
+  AIRequestModel? get aiRequestModel;
   @override
   HttpResponseModel get httpResponseModel;
   @override

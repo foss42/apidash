@@ -106,12 +106,18 @@ class ResponseHeadersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requestHeaders = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel?.requestHeaders)) ??
-        {};
-    final responseHeaders = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel?.headers)) ??
-        {};
+    final requestHeaders =
+        ref.watch(selectedRequestModelProvider.select((value) {
+              return value?.httpResponseModel!.requestHeaders;
+            })) ??
+            {};
+
+    final responseHeaders =
+        ref.watch(selectedRequestModelProvider.select((value) {
+              return value?.httpResponseModel!.headers;
+            })) ??
+            {};
+
     return ResponseHeaders(
       responseHeaders: responseHeaders,
       requestHeaders: requestHeaders,
