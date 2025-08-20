@@ -47,3 +47,14 @@ A List of API endpoints that can be used for testing API Dash
 ## SSE
 
 - https://sse.dev
+
+## Auth
+ - **Bearer**
+    - https://httpbin.org/bearer
+
+ - **Basic Auth**
+    - https://httpbin.org/basic-auth/{username}/{password}
+
+ - **Digest Auth**
+    - https://httpbin.org/digest-auth/{qop}/{usenamer}/{password}/{algorithm}
+
