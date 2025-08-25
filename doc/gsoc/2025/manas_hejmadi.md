@@ -13,7 +13,6 @@
 - [Code Repository](https://github.com/foss42/apidash)
 - [Discussion Logs](https://github.com/foss42/apidash/discussions/852)
 
-
 ## Proposed Objectives
 1. Refactor Apidash’s core networking components into a standalone reusable and testable package.
 2. Add Streaming & Server-Sent Events (SSE) support to the Apidash client.
@@ -57,6 +56,8 @@ cancelHttpRequest('unique-request-id');
 
 ![Code Coverage Report](./images/bnetlcov.png)
 
+---
+
 ### Added SSE and Streaming Support to the Client
 ![Code Coverage Report](./images/sse_ex1.png)
 SSE Support was a long pending [issue](https://github.com/foss42/apidash/issues/116) (since 2024) and hence the mentors asked me to see if i was able to implement SSE support into `better_networking` and simultaneously into `apidash` itself. The implementations suggested by other contributors in the past involved creation of SSE as a completely new request type.
@@ -84,21 +85,80 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 ```
 This way, everything stays unified and we reduce the amount of duplication
  
+---
+
 ### Added Agents and AI Requests Support
 With the rapid rise of Generative AI, it became clear that API Dash required a dedicated AI request interface with support for agentic systems. Based on this need, my mentors tasked me with developing a comprehensive AI Requests feature, along with an integrated agent building framework for future agentic integrations within the apidash application
 
-The new AI Requests feature supports key capabilities such as remote model imports, multi-provider integration, and streaming responses.
+![AI Requests](./images/aireq1.png)
+![AI Requests](./images/aireq2.png)
+
+The new AI Requests feature supports key capabilities such as remote model import and selection, multi-provider integration, along with support for streaming responses.
+
+![LLM Provider Selector](./images/modelselector2.png)
 
 The newly created genai package enables users to build their own agents with features like prompt templating and more, making it simple and efficient to create powerful in-app agents.
 
+![Agentic Infrastructure](./images/llmarch.png)
+
+#### Sample Agent Code
+
+```dart
+//simple_func_agent.dart
+
+class SimpleFuncGenerator extends APIDashAIAgent {
+  @override
+  String get agentName => 'SIMPLE_FUNCGEN';
+
+  @override
+  String getSystemPrompt() {
+    return """You are a function generator.
+Given API details (REQDATA) and a programming language (TARGET_LANGUAGE),
+create a method named `func` that performs the API call.
+Return only the code.
+""";
+  }
+
+  @override
+  Future<bool> validator(String aiResponse) async {
+    return aiResponse.contains("func");
+  }
+
+  @override
+  Future outputFormatter(String validatedResponse) async {
+    validatedResponse = validatedResponse
+        .replaceAll(RegExp(r'```[a-zA-Z]*\n?'), '')
+        .replaceAll('```', '');
+    return {
+      'FUNC': validatedResponse,
+    };
+  }
+}
+
+```
+---
 
 ### Created the API Tool Generator
 As mentioned in my original GSoC proposal, i wanted to use the newly created agentic architecture provided by `genai` package to build an API Tool Generator. 
 The in-app agent takes the API request details and converts it into standard tool call code from multiple providers such as `openai`, `gemini`, `langchain` and so on
 
+![Tool Generation](./images/toolgen.png)
+
+---
+
 ### Implemented the API Schema to Flutter UI Generator
+
 The Proof of Concept (PoC) for this was already shown during the initial GSoC period. Once the agentic infrastructure had been developed under `genai` package. All that was left to do was to convert the PoC into production ready code along with handling all the errors. 
 
+![API Response](./images/apischema.png)
+
+we could convert the above API response into a Flutter UI that looks something like this and then export the code. We are free to make any natural language modifications if necessary too.
+
+![Generated Widget](./images/gencomp.png)
+
+This makes use of the Server Driven UI Concept powered by [Stac](https://stac.dev/)
+
+---
 
 ## Pull Request Report
 
@@ -126,3 +186,5 @@ The Proof of Concept (PoC) for this was already shown during the initial GSoC pe
 
 ## Design and Prototypes Link
 - [API Tool Generation Research Document ](https://docs.google.com/document/d/17wjzrJcE-HlSy3i3UdgQUEneCXXEKb-XNNiHSp-ECVg)
+- [AI UI Designer prototype](https://github.com/synapsecode/AI_UI_designer_prototype)
+- [FlutRun (My custom remote flutter component rendering service)](https://github.com/synapsecode/FlutRun)
