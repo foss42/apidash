@@ -53,56 +53,13 @@ The Proof of Concept (PoC) for this was already shown during the initial GSoC pe
 
 ## Pull Request Report
 
-<table>
-    <thead>
-        <tr>
-            <th>Feature</th>
-            <th>Pull Requests</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan="2">Refactoring into Better Networking Package</td>
-        </tr>
-        <tr>
-            <td>
-            <a href="https://github.com/foss42/apidash/pull/857">better networking refactoring and package creation</a>
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="2">SSE & Streaming Support</td>
-        </tr>
-         </tr>
-            <td>
-            <a href="https://github.com/foss42/apidash/pull/861">SSE and streaming support for better networking</a>
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="2">Combined: genai package + Native AI Requests Feature</td>
-        </tr>
-         </tr>
-            <td>
-            <a href="https://github.com/foss42/apidash/pull/870">genai package and AI Requests feature</a>
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="2">AI UI Designer & Tool Generator</td>
-        </tr>
-         </tr>
-            <td>
-            <a href="https://github.com/foss42/apidash/pull/874">AI UI Designer + Tool Generator implementation</a>
-            </td>
-        </tr>
-        <tr>
-            <td rowspan="2">Documentation</td>
-        </tr>
-        <tr>
-            <td>
-            <a href="">doc: GSoC Final Report Creation</a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+| Feature                                       | Pull Requests                                                                 |
+|-----------------------------------------------|-------------------------------------------------------------------------------|
+| Refactoring into Better Networking Package    | [better networking refactoring and package creation](https://github.com/foss42/apidash/pull/857) |
+| SSE & Streaming Support                       | [SSE and streaming support for better networking](https://github.com/foss42/apidash/pull/861) |
+| Combined: genai package + Native AI Requests Feature | [genai package and AI Requests feature](https://github.com/foss42/apidash/pull/870) |
+| AI UI Designer & Tool Generator               | [AI UI Designer + Tool Generator implementation](https://github.com/foss42/apidash/pull/874) |
+| Documentation                                 | [doc: GSoC Final Report Creation](https://github.com/foss42/apidash/pull/878)                                           |
 
 
 ## Challenges Faced
@@ -119,4 +76,4 @@ The Proof of Concept (PoC) for this was already shown during the initial GSoC pe
 
 
 ## Design and Prototypes Link
-- [API Tool Generation Research Document ](https://docs.google.com/document/d/17wjzrJcE-HlSy3i3UdgQUEneCXXEKb-XNNiHSp-ECVg/edit?tab=t.0)
+- [API Tool Generation Research Document ](https://docs.google.com/document/d/17wjzrJcE-HlSy3i3UdgQUEneCXXEKb-XNNiHSp-ECVg)
