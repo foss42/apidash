@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:apidash/apitoolgen/request_consolidator.dart';
 import 'package:apidash/apitoolgen/tool_templates.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/widgets/llm_selector.dart';
+import 'package:apidash/screens/common_widgets/ai/ai_model_selector_button.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/apitool_bodygen.dart';
 import 'package:apidash/services/agentic_services/agents/apitool_funcgen.dart';
@@ -393,12 +393,16 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
             ),
           ),
           SizedBox(width: 5),
-          DefaultLLMSelectorButton(
-            defaultLLM: settings.defaultLLMSaveObject,
-            onDefaultLLMUpdated: (d) {
-              ref
-                  .read(settingsProvider.notifier)
-                  .update(defaultLLMSaveObject: d);
+          AIModelSelectorButton(
+            aiRequestModel:
+                AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
+            onModelUpdated: (d) {
+              ref.read(settingsProvider.notifier).update(
+                  defaultAIModel: d.copyWith(
+                      modelConfigs: [],
+                      stream: null,
+                      systemPrompt: '',
+                      userPrompt: '').toJson());
             },
           ),
           kVSpacer5,

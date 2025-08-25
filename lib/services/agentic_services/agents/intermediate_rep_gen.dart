@@ -51,7 +51,7 @@ API_RESPONSE: ```json
 :VAR_API_RESPONSE:
 ```
 
-Return only the Schema and nothing else
+Return only the Schema and nothing else and MAKE SURE TO USE the Actual VALUES instead of text placeholders. this is very important
   """;
 
 class IntermediateRepresentationGen extends APIDashAIAgent {
