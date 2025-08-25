@@ -31,9 +31,58 @@ In addition, we aim to leverage AI to build higher-level features such as an API
 
 We envisioned `better_networking` to be the go-to package for everything related to networking for a flutter application. It contains very easy to use handlers for making all types of HTTP & GraphQL Requests along with advanced features such as Request cancellation and so on. Initially this was tightly coupled with the apidash codebase under `apidash_core`. I had to decouple it and make platform wide changes to accomodate the new package approach. This also allowed us to write better tests for it and reach 95+% code coverage.
 
+This is an example of how better_networking simplifies request handling
+
+
+```dart
+final model = HttpRequestModel(
+  url: 'https://api.example.com/data',
+  method: HTTPVerb.post,
+  headers: [
+    NameValueModel(name: 'Authorization', value: 'Bearer <token>'),
+  ],
+  body: '{"key": "value"}',
+);
+
+//Sending HTTP Requests
+final (resp, duration, err) = await sendHttpRequest(
+  'unique-request-id',
+  APIType.rest,
+  model,
+);
+
+// To cancel the request
+cancelHttpRequest('unique-request-id');
+```
+
+![Code Coverage Report](./images/bnetlcov.png)
+
 ### Added SSE and Streaming Support to the Client
+![Code Coverage Report](./images/sse_ex1.png)
 SSE Support was a long pending [issue](https://github.com/foss42/apidash/issues/116) (since 2024) and hence the mentors asked me to see if i was able to implement SSE support into `better_networking` and simultaneously into `apidash` itself. The implementations suggested by other contributors in the past involved creation of SSE as a completely new request type.
 However, I did not agree with this approach as SSE is not a fundamentally separate request type like GraphQL. Hence, I wrote up a quick demo with SSE implemented within the existing apidash foundation code. The mentors were impressed with this approach as it was far more maintainable and sensible than creating new models for it.
+
+Rewrote the original implementation of `sendHttpRequest` in terms of this new SSE handler
+```dart
+Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
+  String requestId,
+  APIType apiType,
+  HttpRequestModel requestModel, {
+  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
+  bool noSSL = false,
+}) async {
+  final stream = await streamHttpRequest(
+    requestId,
+    apiType,
+    requestModel,
+    defaultUriScheme: defaultUriScheme,
+    noSSL: noSSL,
+  );
+  final output = await stream.first;
+  return (output?.$2, output?.$3, output?.$4);
+}
+```
+This way, everything stays unified and we reduce the amount of duplication
  
 ### Added Agents and AI Requests Support
 With the rapid rise of Generative AI, it became clear that API Dash required a dedicated AI request interface with support for agentic systems. Based on this need, my mentors tasked me with developing a comprehensive AI Requests feature, along with an integrated agent building framework for future agentic integrations within the apidash application
