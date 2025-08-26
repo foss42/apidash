@@ -2,8 +2,6 @@
 
 `genai` is a lightweight and extensible Dart package designed to simplify AI requests and agentic operations. It provides an easy to use and seamless interface for various AI Providers such as (openai, gemini, antrhopic etc).
 
----
-
 ## 🔧 Features
 
 - **Unified request modeling** via `HttpRequestModel`
@@ -12,8 +10,6 @@
 - **Client management** with cancellation and lifecycle control
 - **Built-in utilities** for parsing headers and content types
 - **Support for both REST and GraphQL APIs**
-
----
 
 ## 📦 Installation
 
@@ -29,8 +25,6 @@ Then run the following command in your terminal to fetch the package:
 ```bash
 flutter pub get
 ```
-
----
 
 ## 🚀 Quick Start
 
@@ -51,6 +45,7 @@ GenerativeAI.callGenerativeModel(
 ```
 
 ### Streaming Mode (Callback Style)
+
 ```dart
 final LLMModel geminiModel = LLMProvider.gemini.getLLMByIdentifier('gemini-2.0-flash');
 final ModelController controller = model.provider.modelController;
@@ -68,6 +63,7 @@ GenerativeAI.callGenerativeModel(
 ```
 
 ### Procedural(Manual) Request Building
+
 ```dart
 final LLMModel model = LLMProvider.gemini.getLLMByIdentifier('gemini-2.0-flash');
 final ModelController controller = model.provider.modelController;
@@ -82,9 +78,6 @@ final answer = await GenerativeAI.executeGenAIRequest(model, genAIRequest);
 
 print(answer);
 ```
----
-
-
 
 ## 🤝 Contributing
 

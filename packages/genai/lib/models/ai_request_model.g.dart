@@ -8,15 +8,28 @@ part of 'ai_request_model.dart';
 
 _$AIRequestModelImpl _$$AIRequestModelImplFromJson(Map json) =>
     _$AIRequestModelImpl(
-      payload: LLMInputPayload.fromJSON(json['payload'] as Map),
-      model: LLMModel.fromJson(json['model'] as Map),
-      provider: LLMProvider.fromJSON(json['provider'] as Map),
+      modelProvider: $enumDecodeNullable(
+        _$ModelAPIProviderEnumMap,
+        json['modelProvider'],
+      ),
+      modelRequestData: json['modelRequestData'] == null
+          ? null
+          : ModelRequestData.fromJson(
+              Map<String, Object?>.from(json['modelRequestData'] as Map),
+            ),
     );
 
 Map<String, dynamic> _$$AIRequestModelImplToJson(
   _$AIRequestModelImpl instance,
 ) => <String, dynamic>{
-  'payload': LLMInputPayload.toJSON(instance.payload),
-  'model': LLMModel.toJson(instance.model),
-  'provider': LLMProvider.toJSON(instance.provider),
+  'modelProvider': _$ModelAPIProviderEnumMap[instance.modelProvider],
+  'modelRequestData': instance.modelRequestData?.toJson(),
+};
+
+const _$ModelAPIProviderEnumMap = {
+  ModelAPIProvider.openai: 'openai',
+  ModelAPIProvider.anthropic: 'anthropic',
+  ModelAPIProvider.gemini: 'gemini',
+  ModelAPIProvider.azureopenai: 'azureopenai',
+  ModelAPIProvider.ollama: 'ollama',
 };

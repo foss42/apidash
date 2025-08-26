@@ -11,9 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^2.5.2
   better_networking:
     path: ../better_networking
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+  nanoid: ^1.0.0
 
 dev_dependencies:
   flutter_test:
@@ -22,5 +24,4 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   freezed: ^2.5.7
   json_serializable: ^6.7.1
-
-flutter:
+  test: ^1.25.2

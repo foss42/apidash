@@ -21,12 +21,8 @@ AIRequestModel _$AIRequestModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AIRequestModel {
-  @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
-  LLMInputPayload get payload => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
-  LLMModel get model => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
-  LLMProvider get provider => throw _privateConstructorUsedError;
+  ModelAPIProvider? get modelProvider => throw _privateConstructorUsedError;
+  ModelRequestData? get modelRequestData => throw _privateConstructorUsedError;
 
   /// Serializes this AIRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,13 +42,11 @@ abstract class $AIRequestModelCopyWith<$Res> {
   ) = _$AIRequestModelCopyWithImpl<$Res, AIRequestModel>;
   @useResult
   $Res call({
-    @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
-    LLMInputPayload payload,
-    @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
-    LLMModel model,
-    @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
-    LLMProvider provider,
+    ModelAPIProvider? modelProvider,
+    ModelRequestData? modelRequestData,
   });
+
+  $ModelRequestDataCopyWith<$Res>? get modelRequestData;
 }
 
 /// @nodoc
@@ -70,27 +64,36 @@ class _$AIRequestModelCopyWithImpl<$Res, $Val extends AIRequestModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? payload = null,
-    Object? model = null,
-    Object? provider = null,
+    Object? modelProvider = freezed,
+    Object? modelRequestData = freezed,
   }) {
     return _then(
       _value.copyWith(
-            payload: null == payload
-                ? _value.payload
-                : payload // ignore: cast_nullable_to_non_nullable
-                      as LLMInputPayload,
-            model: null == model
-                ? _value.model
-                : model // ignore: cast_nullable_to_non_nullable
-                      as LLMModel,
-            provider: null == provider
-                ? _value.provider
-                : provider // ignore: cast_nullable_to_non_nullable
-                      as LLMProvider,
+            modelProvider: freezed == modelProvider
+                ? _value.modelProvider
+                : modelProvider // ignore: cast_nullable_to_non_nullable
+                      as ModelAPIProvider?,
+            modelRequestData: freezed == modelRequestData
+                ? _value.modelRequestData
+                : modelRequestData // ignore: cast_nullable_to_non_nullable
+                      as ModelRequestData?,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of AIRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ModelRequestDataCopyWith<$Res>? get modelRequestData {
+    if (_value.modelRequestData == null) {
+      return null;
+    }
+
+    return $ModelRequestDataCopyWith<$Res>(_value.modelRequestData!, (value) {
+      return _then(_value.copyWith(modelRequestData: value) as $Val);
+    });
   }
 }
 
@@ -104,13 +107,12 @@ abstract class _$$AIRequestModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
-    LLMInputPayload payload,
-    @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
-    LLMModel model,
-    @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
-    LLMProvider provider,
+    ModelAPIProvider? modelProvider,
+    ModelRequestData? modelRequestData,
   });
+
+  @override
+  $ModelRequestDataCopyWith<$Res>? get modelRequestData;
 }
 
 /// @nodoc
@@ -127,24 +129,19 @@ class __$$AIRequestModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? payload = null,
-    Object? model = null,
-    Object? provider = null,
+    Object? modelProvider = freezed,
+    Object? modelRequestData = freezed,
   }) {
     return _then(
       _$AIRequestModelImpl(
-        payload: null == payload
-            ? _value.payload
-            : payload // ignore: cast_nullable_to_non_nullable
-                  as LLMInputPayload,
-        model: null == model
-            ? _value.model
-            : model // ignore: cast_nullable_to_non_nullable
-                  as LLMModel,
-        provider: null == provider
-            ? _value.provider
-            : provider // ignore: cast_nullable_to_non_nullable
-                  as LLMProvider,
+        modelProvider: freezed == modelProvider
+            ? _value.modelProvider
+            : modelProvider // ignore: cast_nullable_to_non_nullable
+                  as ModelAPIProvider?,
+        modelRequestData: freezed == modelRequestData
+            ? _value.modelRequestData
+            : modelRequestData // ignore: cast_nullable_to_non_nullable
+                  as ModelRequestData?,
       ),
     );
   }
@@ -154,31 +151,20 @@ class __$$AIRequestModelImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _$AIRequestModelImpl extends _AIRequestModel {
-  _$AIRequestModelImpl({
-    @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
-    required this.payload,
-    @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
-    required this.model,
-    @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
-    required this.provider,
-  }) : super._();
+  const _$AIRequestModelImpl({this.modelProvider, this.modelRequestData})
+    : super._();
 
   factory _$AIRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AIRequestModelImplFromJson(json);
 
   @override
-  @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
-  final LLMInputPayload payload;
+  final ModelAPIProvider? modelProvider;
   @override
-  @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
-  final LLMModel model;
-  @override
-  @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
-  final LLMProvider provider;
+  final ModelRequestData? modelRequestData;
 
   @override
   String toString() {
-    return 'AIRequestModel(payload: $payload, model: $model, provider: $provider)';
+    return 'AIRequestModel(modelProvider: $modelProvider, modelRequestData: $modelRequestData)';
   }
 
   @override
@@ -186,15 +172,15 @@ class _$AIRequestModelImpl extends _AIRequestModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AIRequestModelImpl &&
-            (identical(other.payload, payload) || other.payload == payload) &&
-            (identical(other.model, model) || other.model == model) &&
-            (identical(other.provider, provider) ||
-                other.provider == provider));
+            (identical(other.modelProvider, modelProvider) ||
+                other.modelProvider == modelProvider) &&
+            (identical(other.modelRequestData, modelRequestData) ||
+                other.modelRequestData == modelRequestData));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, payload, model, provider);
+  int get hashCode => Object.hash(runtimeType, modelProvider, modelRequestData);
 
   /// Create a copy of AIRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -214,28 +200,19 @@ class _$AIRequestModelImpl extends _AIRequestModel {
 }
 
 abstract class _AIRequestModel extends AIRequestModel {
-  factory _AIRequestModel({
-    @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
-    required final LLMInputPayload payload,
-    @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
-    required final LLMModel model,
-    @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
-    required final LLMProvider provider,
+  const factory _AIRequestModel({
+    final ModelAPIProvider? modelProvider,
+    final ModelRequestData? modelRequestData,
   }) = _$AIRequestModelImpl;
-  _AIRequestModel._() : super._();
+  const _AIRequestModel._() : super._();
 
   factory _AIRequestModel.fromJson(Map<String, dynamic> json) =
       _$AIRequestModelImpl.fromJson;
 
   @override
-  @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
-  LLMInputPayload get payload;
+  ModelAPIProvider? get modelProvider;
   @override
-  @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
-  LLMModel get model;
-  @override
-  @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
-  LLMProvider get provider;
+  ModelRequestData? get modelRequestData;
 
   /// Create a copy of AIRequestModel
   /// with the given fields replaced by the non-null parameter values.

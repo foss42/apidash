@@ -27,17 +27,12 @@ class AIExample extends StatefulWidget {
 }
 
 class _AIExampleState extends State<AIExample> {
+  late final Future<AvailableModels> aM;
+
   @override
   void initState() {
     super.initState();
-    () async {
-      await LLMManager.fetchAvailableLLMs(); //fetch latest LLMs
-      await LLMManager.loadAvailableLLMs(); //Load Saved LLMs
-      setState(() {});
-    }();
-    LLMManager.fetchAvailableLLMs().then((_) {
-      LLMManager.loadAvailableLLMs().then((_) {});
-    });
+    aM = ModelManager.fetchAvailableModels(); //fetch latest LLMs
     systemPromptController.text = 'Give me a 200 word essay on the given topic';
     inputPromptController.text = 'Apple';
   }
@@ -46,28 +41,33 @@ class _AIExampleState extends State<AIExample> {
     setState(() {
       output = "";
     });
-    GenerativeAI.callGenerativeModel(
-      LLMProvider.fromName(
-        selectedProvider,
-      ).getLLMByIdentifier(selectedModel![0]),
+    callGenerativeModel(
+      AIRequestModel(
+        modelProvider: selectedProvider,
+        modelRequestData: kModelProvidersMap[selectedProvider]
+            ?.defaultRequestData
+            .copyWith(
+              model: selectedModel,
+              apiKey: credentialController.value.text,
+              systemPrompt: systemPromptController.value.text,
+              userPrompt: inputPromptController.value.text,
+              stream: stream,
+            ),
+      ),
       onAnswer: (x) {
         setState(() {
           output += "$x ";
         });
       },
       onError: (e) {
-        print(e);
+        debugPrint(e);
       },
-      systemPrompt: systemPromptController.value.text,
-      userPrompt: inputPromptController.value.text,
-      credential: credentialController.value.text,
-      stream: stream,
     );
   }
 
   String output = "";
-  String selectedProvider = 'ollama';
-  List? selectedModel;
+  ModelAPIProvider selectedProvider = ModelAPIProvider.ollama;
+  String selectedModel = "";
 
   TextEditingController systemPromptController = TextEditingController();
   TextEditingController inputPromptController = TextEditingController();
@@ -77,107 +77,119 @@ class _AIExampleState extends State<AIExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('GenAI Example')),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('Providers'),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ...LLMManager.avaiableModels.keys.map(
-                  (x) => Container(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedProvider = x;
-                        });
-                      },
-                      child: Chip(
-                        label: Text(x),
-                        backgroundColor: selectedProvider == x
-                            ? Colors.blue[50]
-                            : Colors.transparent,
-                      ),
-                    ),
-                    padding: EdgeInsets.only(right: 10),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Text('Models'),
-            SizedBox(height: 10),
-            Wrap(
-              spacing: 5,
-              runSpacing: 5,
-              children: [
-                ...(LLMManager.avaiableModels[selectedProvider] ?? []).map(
-                  (x) => Container(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedModel = x;
-                        });
-                      },
-                      child: Chip(
-                        label: Text(x[1].toString()),
-                        backgroundColor: selectedModel == x
-                            ? Colors.blue[50]
-                            : Colors.transparent,
-                      ),
-                    ),
-                    padding: EdgeInsets.only(right: 10),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            Container(
-              width: 400,
+      body: FutureBuilder(
+        future: aM,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData &&
+              snapshot.data != null) {
+            final data = snapshot.data!;
+            final mappedData = data.map;
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(20),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('Input Prompt'),
-                  TextField(controller: inputPromptController),
+                  Text('Providers'),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ...data.modelProviders.map(
+                        (x) => Container(
+                          padding: EdgeInsets.only(right: 10),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedProvider = x.providerId!;
+                              });
+                            },
+                            child: Chip(
+                              label: Text(x.providerName ?? ""),
+                              backgroundColor: selectedProvider == x.providerId
+                                  ? Colors.blue[50]
+                                  : Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 20),
-                  Text('System Prompt'),
-                  TextField(controller: systemPromptController),
+                  Text('Models'),
+                  SizedBox(height: 10),
+                  Wrap(
+                    spacing: 5,
+                    runSpacing: 5,
+                    children: [
+                      ...(mappedData[selectedProvider]?.models ?? []).map(
+                        (x) => Container(
+                          padding: EdgeInsets.only(right: 10),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedModel = x.id!;
+                              });
+                            },
+                            child: Chip(
+                              label: Text(x.name ?? ""),
+                              backgroundColor: selectedModel == x.id
+                                  ? Colors.blue[50]
+                                  : Colors.transparent,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  Container(
+                    width: 400,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Input Prompt'),
+                        TextField(controller: inputPromptController),
+                        SizedBox(height: 20),
+                        Text('System Prompt'),
+                        TextField(controller: systemPromptController),
+                        SizedBox(height: 20),
+                        Text('Credential'),
+                        TextField(controller: credentialController),
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          generateAIResponse();
+                        },
+                        child: Text('Generate Response (SINGLE-RESPONSE)'),
+                      ),
+                      SizedBox(width: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          generateAIResponse(stream: true);
+                        },
+                        child: Text('Generate Response (STREAM)'),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  Divider(),
                   SizedBox(height: 20),
-                  Text('Credential'),
-                  TextField(controller: credentialController),
-                  SizedBox(height: 20),
+
+                  Text(output),
                 ],
               ),
-            ),
-            SizedBox(height: 30),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    generateAIResponse();
-                  },
-                  child: Text('Generate Response (SINGLE-RESPONSE)'),
-                ),
-                SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    generateAIResponse(stream: true);
-                  },
-                  child: Text('Generate Response (STREAM)'),
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            Divider(),
-            SizedBox(height: 20),
-
-            Text(output),
-          ],
-        ),
+            );
+          }
+          return CircularProgressIndicator();
+        },
       ),
     );
   }
