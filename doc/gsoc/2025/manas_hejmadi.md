@@ -274,30 +274,63 @@ With the AI UI Designer, the response returned from the above API can be automat
 
 ## Challenges Faced
 
-talk about new learnign and overcoming issues
+#### Incomplete Responses after SSE implmentation
+After migrating to SSE, apidash was designed to first listen to a stream and return immediately if the content type wasn’t streaming-related. This worked fine until I discovered an edge case with very long responses: the HTTP protocol splits such responses into multiple packets. Because of the initial stream design, only the first packet was returned, resulting in incomplete outputs.
+To fix this, I implemented a manual chunking mechanism where all incoming packets are collected until the stream ends, after which they are concatenated into the complete response. This resolved the issue and ensured correctness for long streaming outputs.
 
 #### Component Rendering Dilemma
-The core feature of the AI UI Designer is an in-app generated component renderer
+The core feature of the AI UI Designer is an in-app dynamic component renderer. Implementing this is challenging because Dart does not support full runtime reflection for Flutter widgets. In other words, a Flutter program cannot directly execute or render dynamically generated Flutter code at runtime.
+I experimented with the available reflection mechanisms in Dart, but they are limited to the language itself and do not extend to Flutter’s widget tree. As a result, I was only able to render very basic elements such as Text widgets. Anything more complex was practically impossible to achieve with Dart’s restricted reflection capabilities.
 
+Next, I considered using the Dart SDK to build the code into a Flutter Web app and display it to the user through a localhost iframe. However, this would require bundling the Dart SDK with the application, making it significantly heavier. Moreover, it would involve writing platform channel code for macOS, Windows, and other platforms, which would be highly impractical.
 
-apidash is a privacy first api client and due to that specific reason, we are not allowed to send user's api requests to any third party (or our own) servers unless the user is explicitly aware of this. This means that 
+Disappointed with these limitations, I devised a new approach: instead of attempting in-app rendering, I generated the Flutter code and sent it to an external service that could immediately build and deploy it as a Flutter web application, which could then be displayed within an iframe. I implemented this as a project called [FlutRun](https://github.com/synapsecode/AI_UI_designer_prototype) and successfully demonstrated it to the mentors.
+However, this approach was also rejected, as ApiDash is a privacy-first API client that prohibits sending user requests to any external servers (with the exception of LLM calls). Even routing requests to our own servers is restricted, which made this solution impractical to implement.
 
-- SSE long text splitting into 2 packets causing errors and how i handled it
-- SDUI Dilemma (cannot use hosted rendering server, cannot use Reflection, cannot bundle flutter sdk), hence had to rely on Server Driven UI using Stac
-- Stac has no support for returning errors
-- Larger UIs tend to generate too long Stac code which gets clipped and leads to faulty output
-- Since we cannot fine tune or use external models (for data safety), we have to rely solely on Good System prompting to get the Stac code right. This is by far the biggest challenge and that is why we have restricted ourselves to a small subset of Stac widgets. We will expand on this in the future
+Lastly, after some research and discussions with my mentors, I was introduced to the concept of <b>Server-Driven User Interfaces (SDUI)</b>. The core idea is to represent UI as a parseable structure (such as JSON) and then dynamically render it using a rendering pipeline written in Flutter. This approach proved to be both practical and efficient. In fact, I came across the Stac package, which implemented this concept seamlessly, and that ultimately became the solution we adopted.
 
+#### Lack of Error Handling in Stac 
+Stac (the JSON-based representation of Flutter UIs) is opinionated and differs slightly from native Flutter code. As a result, when LLMs generate Stac code, they often produce small mistakes.
+
+The challenge is that the Stac framework surfaces these mistakes only as console errors—they don’t bubble up as exceptions to the caller. I attempted to capture them using Flutter’s ErrorZones and similar mechanisms, but without success.
+
+This limitation is significant because I wanted to implement a reset feature: if the LLM generates invalid Stac code, the app should be able to roll back to the last known good state. With the current design, this isn’t feasible. I even reached out to the Stac founders, who confirmed that proper error bubbling is planned but won’t be available anytime soon.
+
+The only real workaround right now would be to fork Stac and patch it manually—something I’m still debating. For the time being, we’ve mitigated the issue by tuning the system prompt and restricting generations to a small, well-understood subset of Stac. This approach has been working decently so far.
+
+#### Stac Code Clipping
+When the API response is highly complex, agents may generate a verbose UI specification. This can cause the resulting Stac JSON to become so large that it exceeds the LLM’s output context window, resulting in clipped (incomplete) JSON.
+The problem is difficult to detect because Stac lacks proper error handling, so truncated JSON cannot be validated reliably. When this occurs, the system encounters an ugly visual crash.
+Unlike plain text, JSON cannot be trivially streamed or concatenated in parts, since partial structures may break schema integrity. At present, this remains an open issue without a clean solution.
+
+#### Limitations of Prompting
+Because of the platform’s privacy-first design, we cannot send user response data to external models. As a result, we must rely entirely on system prompts to enable this feature.
+Stac code is highly specialized, and while fine-tuning an existing Flutter-focused or JSON-focused model would have been an effective approach, this option is not permitted under our constraints. This creates a significant challenge, since system prompting alone has limited capacity before context loss begins to degrade output quality.
+Our temporary solution is to restrict the feature to a smaller subset of Stac. However, a long-term solution will be necessary to overcome these limitations and support the full scope of functionality.
+
+---
 
 ## Future Work
-- Expand on the available Stac SDUI Widgets so that more detailed UIs can be generated from API complex responses
-- Integration tests for AI Requests Feature and the ToolGen, UIGen Features
+- <b>Error Handling in Stac</b>
+  Stac’s current error handling is limited, making debugging and reliability difficult. A future step would be to improve structured error messages and fallback behaviors for invalid or incomplete code paths. If upstream support remains insufficient, forking Stac to build robust error recovery (such as auto-corrections, retries, or clearer debug traces) may be necessary.
 
+- <b>Expanding Restricted Stac SDUI Widget Library</b>
+
+  At present, the Stac-driven UI generation supports only a subset of widget types. This restricts the richness of UIs generated from complex API responses. Future work will focus on extending the Stac SDUI widget library to cover advanced layout controls, interactive inputs, and custom components. This expansion will allow the system to handle more nuanced use cases and generate production-grade UIs directly from structured data.
+
+- <b> Integration Tests for AI Features </b>
+  Automated testing remains critical to ensure reliability and prevent regressions in AI-driven workflows. Integration tests will be built for tool generation and AI UI Designer
+
+---
 
 ## Design and Prototypes Link
 - [API Tool Generation Research Document ](https://docs.google.com/document/d/17wjzrJcE-HlSy3i3UdgQUEneCXXEKb-XNNiHSp-ECVg)
 - [AI UI Designer prototype](https://github.com/synapsecode/AI_UI_designer_prototype)
 - [FlutRun (My custom remote flutter component rendering service)](https://github.com/synapsecode/FlutRun)
 
+---
+
 ## Conclusion
 Google Summer of Code 2025 with apidash has been a truly amazing experience. My work throughout this project centered on building the core infrastructure that will be the heart of apidash's next-gen features, and I believe I have successfully laid a strong foundation. I look forward to seeing future contributors build upon it and take the project even further.
+
+---
