@@ -225,8 +225,9 @@ class SimpleFuncGenerator extends APIDashAIAgent {
 ---
 
 ### Created the API Tool Generator
-As mentioned in my original GSoC proposal, i wanted to use the newly created agentic architecture provided by `genai` package to build an API Tool Generator. 
-The in-app agent takes the API request details and converts it into standard tool call code from multiple providers such as `openai`, `gemini`, `langchain` and so on
+As proposed in my GSoC proposal, I set out to implement an API Tool Call Generator within the application. It consists of an in-app agent that processes API request details and converts them into standardized tool-call code compatible with providers such as OpenAI, Gemini, LangChain, and others.
+
+This feature is fully built on top of the agentic foundation established by `genai`. Once a user executes an API request and receives a response, they can click “Generate Tool”, which opens a tool generation dialog. Here, the user selects their preferred agent framework along with the target output language (currently Python or Node.js). The client then consolidates all request details, sends them to an LLM, and generates the corresponding function callers. These are subsequently integrated into a predefined, well-researched API Tool template, ensuring reliability and consistency.
 
 ![Tool Generation](./images/toolgen.png)
 
@@ -234,15 +235,20 @@ The in-app agent takes the API request details and converts it into standard too
 
 ### Implemented the API Schema to Flutter UI Generator
 
-The Proof of Concept (PoC) for this was already shown during the initial GSoC period. Once the agentic infrastructure had been developed under `genai` package. All that was left to do was to convert the PoC into production ready code along with handling all the errors. 
+With the foundational infrastructure in place, I was finally ready to implement the original goal of my GSoC project: the AI UI Designer.
+
+The purpose of this feature is straightforward yet powerful—take API responses and automatically transform them into suitable UI components, while also providing the ability to modify the design through natural language instructions. Additionally, the generated UI can be exported as Flutter code, enabling seamless integration into frontend applications.
+
+A Proof of Concept (PoC) for this functionality had already been demonstrated during the initial phase of GSoC. The remaining work involved converting the PoC into production-ready code, addressing error handling, improving stability, and ensuring it could scale as a fully integrated feature within apidash.
+
+This marks a significant milestone, as the AI UI Designer bridges the gap between raw API responses and usable frontend components—removing boilerplate work and streamlining the developer workflow.
+
 
 ![API Response](./images/apischema.png)
 
-we could convert the above API response into a Flutter UI that looks something like this and then export the code. We are free to make any natural language modifications if necessary too.
+With the AI UI Designer, the response returned from the above API can be automatically converted into a Flutter widget. This widget is generated and rendered using the Server-Driven UI (SDUI) approach, powered by the [Stac](https://stac.dev/) package.
 
 ![Generated Widget](./images/gencomp.png)
-
-This makes use of the Server Driven UI Concept powered by [Stac](https://stac.dev/)
 
 ---
 
@@ -269,6 +275,12 @@ This makes use of the Server Driven UI Concept powered by [Stac](https://stac.de
 ## Challenges Faced
 
 talk about new learnign and overcoming issues
+
+#### Component Rendering Dilemma
+The core feature of the AI UI Designer is an in-app generated component renderer
+
+
+apidash is a privacy first api client and due to that specific reason, we are not allowed to send user's api requests to any third party (or our own) servers unless the user is explicitly aware of this. This means that 
 
 - SSE long text splitting into 2 packets causing errors and how i handled it
 - SDUI Dilemma (cannot use hosted rendering server, cannot use Reflection, cannot bundle flutter sdk), hence had to rely on Server Driven UI using Stac
