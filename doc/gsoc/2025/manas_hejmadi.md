@@ -13,33 +13,37 @@
 - [Code Repository](https://github.com/foss42/apidash)
 - [Discussion Logs](https://github.com/foss42/apidash/discussions/852)
 
-## Objectives Summary (DESCRIPTION)
-The primary goal is to extend API Dash with capabilities that go beyond traditional API client functionality. This includes adding streaming and Server-Sent Events (SSE) support, introducing native AI-powered request handling, and refactoring the core networking components into a modular package for better maintainability and reusability.
-In addition, we aim to leverage AI to build higher-level features such as an API-to-Flutter UI generator and an API tool generator to simplify integration for agentic AI applications. Together, these objectives position API Dash as a modern, intelligent, and extensible platform for both developers and AI-driven workflows.
+## Project Description
 
-## Proposed Objectives
+The primary objective of this project was to extend the ApiDash client with new generative AI capabilities that go far beyond the scope of traditional API testing clients. This will position apidash as an OpenSource AI-Native API Testing client.
 
-to accomplish this feaure we had to develop core features which are as follows
-MAJOR FEATURES: 
+Our initial vision was to develop an AI-powered agent capable of transforming raw API responses into structured UI schemas and fully functional UI components that could be directly exported and used in frontend applications. Additionally, we wanted to enable dynamic customization of UI components through natural language prompts, allowing developers to customise the design and layout according to their personal preference. This UI code could then be exported and used directly in their Flutter projects. 
 
-briefly describe what project is about
+As mentioned in the project proposal, we were also aiming to create a one-click `API Request to Tool` generation pipeline, allowing external AI agents to independently interact with APIs. This is a crucial requirement for modern agentic workflows and the idea was that apidash must be ready to serve these needs.
 
-1. Refactor Apidash’s core networking components into a standalone reusable and testable package.
-2. Add Streaming & Server-Sent Events (SSE) support to the Apidash client.
-3. Integrate native AI request handling into the Apidash client.
-4. Develop an AI-powered API-to-Flutter UI generator for seamless UI creation.
-5. Build an API tool generator to help agentic AI applications connect with API endpoints.
+However, during the planning phase it became clear that these ambitious features required strong foundational infrastructure to work at a production level. Under the guidance of my mentors, we identified and implemented several core architectural improvements, such as:
+
+- Refactoring the networking layer into a modular, standalone package to enhance testability and maintainability.
+- Adding streaming support via Server-Sent Events (SSE) to enable real-time AI interactions.
+- Introducing AI request handling and a dedicated AI primitives package. This ensures that any future apidash feature that would need generative ai, can directly import this primitives package instead of implementing everything again. this saves both time and effort.
+
+All in all, these completion of these improvements will establish apidash as a modern, industry ready platform for developers and AI-driven workflows alike.
 
 
 ## Feature Description
 
-### Refactored API Dash's core networking architecture into a standalone package named `better_networking`
+###  `better_networking` package creation & project-wide refactor
 
 `Package Link`: https://pub.dev/packages/better_networking
 
 `Associated Pull Request`: [#857](https://github.com/foss42/apidash/pull/857)
 
-We envisioned `better_networking` to be the go-to package for everything related to networking for a flutter application. It contains very easy to use handlers for making all types of HTTP & GraphQL Requests along with advanced features such as Request cancellation and so on. Initially this was tightly coupled with the apidash codebase under `apidash_core`. I had to decouple it and make platform wide changes to accomodate the new package approach. This also allowed us to write better tests for it and reach 95+% code coverage.
+Initially, the entire networking constructs that apidash relied on was fully written inside a module named `apidash_core`. 
+The networking code was fairly advanced including support for GraphQL, request cancellations and a lot of other good features. Howeever, as it was tightly coupled with apidash, we were unable to allow the rest of the flutter developer community to use these features.
+At apidash, we believe in giving back to the open source community and hence the mentors and I decided to refactor everything into a new package. 
+During discussions, I came up with the name `better_networking`. We envisioned it to  be the go-to package for everything related to networking for a flutter application.
+
+This proved to be a great decision, as we were able to separate it completely, publish it on [pub.dev](https://pub.dev/packages/better_networking), and achieve over 95% code coverage through isolated testing.
 
 This is an example of how better_networking simplifies request handling
 
@@ -215,3 +219,6 @@ talk about new learnign and overcoming issues
 - [API Tool Generation Research Document ](https://docs.google.com/document/d/17wjzrJcE-HlSy3i3UdgQUEneCXXEKb-XNNiHSp-ECVg)
 - [AI UI Designer prototype](https://github.com/synapsecode/AI_UI_designer_prototype)
 - [FlutRun (My custom remote flutter component rendering service)](https://github.com/synapsecode/FlutRun)
+
+## Conclusion
+Google Summer of Code 2025 with apidash has been a truly amazing experience. My work throughout this project centered on building the core infrastructure that will be the heart of apidash's next-gen features, and I believe I have successfully laid a strong foundation. I look forward to seeing future contributors build upon it and take the project even further.
