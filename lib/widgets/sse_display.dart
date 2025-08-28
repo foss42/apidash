@@ -1,28 +1,23 @@
 import 'dart:convert';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:genai/genai.dart';
 
-class SSEDisplay extends StatefulWidget {
-  final LLMModel? selectedLLModel;
-  final List<String> sseOutput;
+class SSEDisplay extends StatelessWidget {
+  final AIRequestModel? aiRequestModel;
+  final List<String>? sseOutput;
   const SSEDisplay({
     super.key,
-    required this.sseOutput,
-    this.selectedLLModel,
+    this.sseOutput,
+    this.aiRequestModel,
   });
 
-  @override
-  State<SSEDisplay> createState() => _SSEDisplayState();
-}
-
-class _SSEDisplayState extends State<SSEDisplay> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fontSizeMedium = theme.textTheme.bodyMedium?.fontSize;
     final isDark = theme.brightness == Brightness.dark;
-    if (widget.sseOutput.isEmpty) {
+    if (sseOutput == null || sseOutput!.isEmpty) {
       return Text(
         'No content',
         style: kCodeStyle.copyWith(
@@ -32,11 +27,10 @@ class _SSEDisplayState extends State<SSEDisplay> {
       );
     }
 
-    if (widget.selectedLLModel != null) {
+    if (aiRequestModel != null) {
       // For RAW Text output (only AI Requests)
       String out = "";
-      final mc = widget.selectedLLModel!.provider.modelController;
-      for (String x in widget.sseOutput) {
+      for (String x in sseOutput!) {
         x = x.trim();
         if (x.isEmpty || x.contains('[DONE]')) {
           continue;
@@ -50,10 +44,10 @@ class _SSEDisplayState extends State<SSEDisplay> {
         Map? dec;
         try {
           dec = jsonDecode(x);
-          final z = mc.streamOutputFormatter(dec!);
+          final z = aiRequestModel?.getFormattedStreamOutput(dec!);
           out += z ?? '<?>';
         } catch (e) {
-          print("Error in JSONDEC $e");
+          debugPrint("SSEDisplay -> Error in JSONDEC $e");
         }
       }
       return SingleChildScrollView(
@@ -63,9 +57,8 @@ class _SSEDisplayState extends State<SSEDisplay> {
 
     return ListView(
       padding: kP1,
-      children: widget.sseOutput.reversed
-          .where((e) => e.trim() != '')
-          .map<Widget>((chunk) {
+      children:
+          sseOutput!.reversed.where((e) => e.trim() != '').map<Widget>((chunk) {
         Map<String, dynamic>? parsedJson;
         try {
           parsedJson = jsonDecode(chunk);

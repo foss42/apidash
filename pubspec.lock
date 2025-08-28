@@ -703,7 +703,7 @@ packages:
     source: hosted
     version: "0.32.1"
   genai:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "packages/genai"
       relative: true

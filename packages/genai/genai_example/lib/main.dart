@@ -42,17 +42,12 @@ class _AIExampleState extends State<AIExample> {
       output = "";
     });
     callGenerativeModel(
-      AIRequestModel(
-        modelProvider: selectedProvider,
-        modelRequestData: kModelProvidersMap[selectedProvider]
-            ?.defaultRequestData
-            .copyWith(
-              model: selectedModel,
-              apiKey: credentialController.value.text,
-              systemPrompt: systemPromptController.value.text,
-              userPrompt: inputPromptController.value.text,
-              stream: stream,
-            ),
+      kModelProvidersMap[selectedProvider]?.defaultAIRequestModel.copyWith(
+        model: selectedModel,
+        apiKey: credentialController.value.text,
+        systemPrompt: systemPromptController.value.text,
+        userPrompt: inputPromptController.value.text,
+        stream: stream,
       ),
       onAnswer: (x) {
         setState(() {
@@ -143,7 +138,7 @@ class _AIExampleState extends State<AIExample> {
                     ],
                   ),
                   SizedBox(height: 30),
-                  Container(
+                  SizedBox(
                     width: 400,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

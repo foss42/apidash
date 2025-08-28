@@ -6,7 +6,8 @@ class GeminiModel extends ModelProvider {
   static final instance = GeminiModel();
 
   @override
-  ModelRequestData get defaultRequestData => kDefaultModelRequestData.copyWith(
+  AIRequestModel get defaultAIRequestModel => kDefaultAiRequestModel.copyWith(
+    modelApiProvider: ModelAPIProvider.gemini,
     url: kGeminiUrl,
     modelConfigs: [
       kDefaultModelConfigTemperature,
@@ -16,13 +17,13 @@ class GeminiModel extends ModelProvider {
   );
 
   @override
-  HttpRequestModel? createRequest(ModelRequestData? requestData) {
-    if (requestData == null) {
+  HttpRequestModel? createRequest(AIRequestModel? aiRequestModel) {
+    if (aiRequestModel == null) {
       return null;
     }
     List<NameValueModel> params = [];
-    String endpoint = "${requestData.url}/${requestData.model}:";
-    if (requestData.stream ?? false) {
+    String endpoint = "${aiRequestModel.url}/${aiRequestModel.model}:";
+    if (aiRequestModel.stream ?? false) {
       endpoint += 'streamGenerateContent';
       params.add(const NameValueModel(name: "alt", value: "sse"));
     } else {
@@ -32,30 +33,32 @@ class GeminiModel extends ModelProvider {
     return HttpRequestModel(
       method: HTTPVerb.post,
       url: endpoint,
-      authModel: AuthModel(
-        type: APIAuthType.apiKey,
-        apikey: AuthApiKeyModel(
-          key: requestData.apiKey,
-          location: 'query',
-          name: 'key',
-        ),
-      ),
+      authModel: aiRequestModel.apiKey == null
+          ? null
+          : AuthModel(
+              type: APIAuthType.apiKey,
+              apikey: AuthApiKeyModel(
+                key: aiRequestModel.apiKey!,
+                location: 'query',
+                name: 'key',
+              ),
+            ),
       body: kJsonEncoder.convert({
         "contents": [
           {
             "role": "user",
             "parts": [
-              {"text": requestData.userPrompt},
+              {"text": aiRequestModel.userPrompt},
             ],
           },
         ],
         "systemInstruction": {
           "role": "system",
           "parts": [
-            {"text": requestData.systemPrompt},
+            {"text": aiRequestModel.systemPrompt},
           ],
         },
-        "generationConfig": requestData.getModelConfigMap(),
+        "generationConfig": aiRequestModel.getModelConfigMap(),
       }),
     );
   }

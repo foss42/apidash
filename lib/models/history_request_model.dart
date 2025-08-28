@@ -1,5 +1,4 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:genai/genai.dart';
 import 'models.dart';
 
 part 'history_request_model.freezed.dart';

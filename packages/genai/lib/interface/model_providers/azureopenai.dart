@@ -4,36 +4,44 @@ import '../consts.dart';
 
 class AzureOpenAIModel extends ModelProvider {
   static final instance = AzureOpenAIModel();
-  @override
-  ModelRequestData get defaultRequestData => kDefaultModelRequestData;
 
   @override
-  HttpRequestModel? createRequest(ModelRequestData? requestData) {
-    if (requestData == null) {
+  AIRequestModel get defaultAIRequestModel => kDefaultAiRequestModel.copyWith(
+    modelApiProvider: ModelAPIProvider.azureopenai,
+  );
+
+  @override
+  HttpRequestModel? createRequest(AIRequestModel? aiRequestModel) {
+    if (aiRequestModel == null) {
       return null;
     }
-    if (requestData.url.isEmpty) {
+    if (aiRequestModel.url.isEmpty) {
       throw Exception('MODEL ENDPOINT IS EMPTY');
     }
     return HttpRequestModel(
       method: HTTPVerb.post,
-      url: requestData.url,
-      authModel: AuthModel(
-        type: APIAuthType.apiKey,
-        apikey: AuthApiKeyModel(key: requestData.apiKey, name: 'api-key'),
-      ),
+      url: aiRequestModel.url,
+      authModel: aiRequestModel.apiKey == null
+          ? null
+          : AuthModel(
+              type: APIAuthType.apiKey,
+              apikey: AuthApiKeyModel(
+                key: aiRequestModel.apiKey!,
+                name: 'api-key',
+              ),
+            ),
       body: kJsonEncoder.convert({
-        "model": requestData.model,
+        "model": aiRequestModel.model,
         "messages": [
-          {"role": "system", "content": requestData.systemPrompt},
-          if (requestData.userPrompt.isNotEmpty) ...{
-            {"role": "user", "content": requestData.userPrompt},
+          {"role": "system", "content": aiRequestModel.systemPrompt},
+          if (aiRequestModel.userPrompt.isNotEmpty) ...{
+            {"role": "user", "content": aiRequestModel.userPrompt},
           } else ...{
             {"role": "user", "content": "Generate"},
           },
         ],
-        ...requestData.getModelConfigMap(),
-        if (requestData.stream ?? false) ...{'stream': true},
+        ...aiRequestModel.getModelConfigMap(),
+        if (aiRequestModel.stream ?? false) ...{'stream': true},
       }),
     );
   }

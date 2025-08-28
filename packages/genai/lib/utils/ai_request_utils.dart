@@ -96,10 +96,9 @@ Future<void> callGenerativeModel(
   required Function(String?) onAnswer,
   required Function(dynamic) onError,
 }) async {
-  final modelRequestData = aiRequestModel?.modelRequestData;
-  if (modelRequestData != null) {
+  if (aiRequestModel != null) {
     try {
-      if (modelRequestData.stream ?? false) {
+      if (aiRequestModel.stream ?? false) {
         final answerStream = await streamGenAIRequest(aiRequestModel);
         processGenAIStreamOutput(answerStream, (w) {
           onAnswer('$w ');

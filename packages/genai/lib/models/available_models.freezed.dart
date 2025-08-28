@@ -363,13 +363,14 @@ class __$$AIModelProviderImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$AIModelProviderImpl implements _AIModelProvider {
+class _$AIModelProviderImpl extends _AIModelProvider {
   const _$AIModelProviderImpl({
     @JsonKey(name: "provider_id") this.providerId,
     @JsonKey(name: "provider_name") this.providerName,
     @JsonKey(name: "source_url") this.sourceUrl,
     @JsonKey(name: "models") final List<Model>? models,
-  }) : _models = models;
+  }) : _models = models,
+       super._();
 
   factory _$AIModelProviderImpl.fromJson(Map<String, dynamic> json) =>
       _$$AIModelProviderImplFromJson(json);
@@ -440,13 +441,14 @@ class _$AIModelProviderImpl implements _AIModelProvider {
   }
 }
 
-abstract class _AIModelProvider implements AIModelProvider {
+abstract class _AIModelProvider extends AIModelProvider {
   const factory _AIModelProvider({
     @JsonKey(name: "provider_id") final ModelAPIProvider? providerId,
     @JsonKey(name: "provider_name") final String? providerName,
     @JsonKey(name: "source_url") final String? sourceUrl,
     @JsonKey(name: "models") final List<Model>? models,
   }) = _$AIModelProviderImpl;
+  const _AIModelProvider._() : super._();
 
   factory _AIModelProvider.fromJson(Map<String, dynamic> json) =
       _$AIModelProviderImpl.fromJson;

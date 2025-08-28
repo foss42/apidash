@@ -184,8 +184,9 @@ const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.code,
   ResponseBodyView.raw
 ];
-const kPreviewSSERawBodyViewOptions = [
-  ResponseBodyView.sse,
+const kSSERawBodyViewOptions = [ResponseBodyView.sse, ResponseBodyView.raw];
+const kAnswerRawBodyViewOptions = [
+  ResponseBodyView.answer,
   ResponseBodyView.raw
 ];
 
@@ -201,15 +202,15 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeYaml: kCodeRawBodyViewOptions,
     kSubTypeXYaml: kCodeRawBodyViewOptions,
     kSubTypeYml: kCodeRawBodyViewOptions,
-    kSubTypeXNdjson: kPreviewSSERawBodyViewOptions,
-    kSubTypeNdjson: kPreviewSSERawBodyViewOptions,
-    kSubTypeJsonSeq: kPreviewSSERawBodyViewOptions,
-    kSubTypeXLdjson: kPreviewSSERawBodyViewOptions,
-    kSubTypeLdjson: kPreviewSSERawBodyViewOptions,
-    kSubTypeXJsonStream: kPreviewSSERawBodyViewOptions,
-    kSubTypeJsonStream: kPreviewSSERawBodyViewOptions,
-    kSubTypeJsonstream: kPreviewSSERawBodyViewOptions,
-    kSubTypeStreamJson: kPreviewSSERawBodyViewOptions,
+    kSubTypeXNdjson: kSSERawBodyViewOptions,
+    kSubTypeNdjson: kSSERawBodyViewOptions,
+    kSubTypeJsonSeq: kSSERawBodyViewOptions,
+    kSubTypeXLdjson: kSSERawBodyViewOptions,
+    kSubTypeLdjson: kSSERawBodyViewOptions,
+    kSubTypeXJsonStream: kSSERawBodyViewOptions,
+    kSubTypeJsonStream: kSSERawBodyViewOptions,
+    kSubTypeJsonstream: kSSERawBodyViewOptions,
+    kSubTypeStreamJson: kSSERawBodyViewOptions,
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
@@ -231,7 +232,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeTextXml: kCodeRawBodyViewOptions,
     kSubTypeTextYaml: kCodeRawBodyViewOptions,
     kSubTypeTextYml: kCodeRawBodyViewOptions,
-    kSubTypeEventStream: kPreviewSSERawBodyViewOptions,
+    kSubTypeEventStream: kSSERawBodyViewOptions,
   },
 };
 

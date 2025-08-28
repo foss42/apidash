@@ -6,7 +6,8 @@ class OllamaModel extends OpenAIModel {
   static final instance = OllamaModel();
 
   @override
-  ModelRequestData get defaultRequestData => kDefaultModelRequestData.copyWith(
+  AIRequestModel get defaultAIRequestModel => kDefaultAiRequestModel.copyWith(
+    modelApiProvider: ModelAPIProvider.ollama,
     url: kOllamaUrl,
     modelConfigs: [kDefaultModelConfigTemperature, kDefaultModelConfigTopP],
   );

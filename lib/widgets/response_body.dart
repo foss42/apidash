@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
@@ -19,7 +17,6 @@ class ResponseBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responseModel = selectedRequestModel?.httpResponseModel;
-
     if (responseModel == null) {
       return const ErrorMessage(
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
@@ -28,7 +25,6 @@ class ResponseBody extends StatelessWidget {
     final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
     var body = responseModel.body;
     var formattedBody = responseModel.formattedBody;
-
     if (body == null) {
       return const ErrorMessage(
           message: '$kMsgNullBody $kUnexpectedRaiseIssue');
@@ -46,7 +42,6 @@ class ResponseBody extends StatelessWidget {
 
     final mediaType =
         responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
-
     // Fix #415: Treat null Content-type as plain text instead of Error message
     // if (mediaType == null) {
     //   return ErrorMessage(
@@ -54,8 +49,9 @@ class ResponseBody extends StatelessWidget {
     //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     // }
 
-    var responseBodyView = selectedRequestModel?.apiType == APIType.ai
-        ? ([ResponseBodyView.answer, ResponseBodyView.raw], 'text')
+    var responseBodyView = (selectedRequestModel?.apiType == APIType.ai &&
+            (responseModel.sseOutput?.isNotEmpty ?? false))
+        ? (kAnswerRawBodyViewOptions, kSubTypePlain)
         : getResponseBodyViewOptions(mediaType);
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
@@ -63,18 +59,6 @@ class ResponseBody extends StatelessWidget {
     if (formattedBody == null) {
       options = [...options];
       options.remove(ResponseBodyView.code);
-    }
-
-    if (responseModel.sseOutput?.isNotEmpty ?? false) {
-      return ResponseBodySuccess(
-        key: Key("${selectedRequestModel!.id}-response"),
-        mediaType: MediaType('text', 'event-stream'),
-        options: [ResponseBodyView.sse, ResponseBodyView.raw],
-        bytes: utf8.encode((responseModel.sseOutput!).toString()),
-        body: jsonEncode(responseModel.sseOutput!),
-        formattedBody: responseModel.sseOutput!.join('\n'),
-        selectedModel: selectedRequestModel?.aiRequestModel?.model,
-      );
     }
 
     return ResponseBodySuccess(
@@ -85,7 +69,8 @@ class ResponseBody extends StatelessWidget {
       body: body,
       formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
-      selectedModel: selectedRequestModel?.aiRequestModel?.model,
+      sseOutput: responseModel.sseOutput,
+      aiRequestModel: selectedRequestModel?.aiRequestModel,
     );
   }
 }

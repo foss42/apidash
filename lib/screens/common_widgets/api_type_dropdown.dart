@@ -1,9 +1,7 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:genai/genai.dart';
 
 class APITypeDropdown extends ConsumerWidget {
   const APITypeDropdown({super.key});

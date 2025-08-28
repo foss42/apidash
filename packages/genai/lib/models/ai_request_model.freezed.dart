@@ -21,8 +21,17 @@ AIRequestModel _$AIRequestModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AIRequestModel {
-  ModelAPIProvider? get modelProvider => throw _privateConstructorUsedError;
-  ModelRequestData? get modelRequestData => throw _privateConstructorUsedError;
+  ModelAPIProvider? get modelApiProvider => throw _privateConstructorUsedError;
+  String get url => throw _privateConstructorUsedError;
+  String? get model => throw _privateConstructorUsedError;
+  String? get apiKey => throw _privateConstructorUsedError;
+  @JsonKey(name: "system_prompt")
+  String get systemPrompt => throw _privateConstructorUsedError;
+  @JsonKey(name: "user_prompt")
+  String get userPrompt => throw _privateConstructorUsedError;
+  @JsonKey(name: "model_configs")
+  List<ModelConfig> get modelConfigs => throw _privateConstructorUsedError;
+  bool? get stream => throw _privateConstructorUsedError;
 
   /// Serializes this AIRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,11 +51,15 @@ abstract class $AIRequestModelCopyWith<$Res> {
   ) = _$AIRequestModelCopyWithImpl<$Res, AIRequestModel>;
   @useResult
   $Res call({
-    ModelAPIProvider? modelProvider,
-    ModelRequestData? modelRequestData,
+    ModelAPIProvider? modelApiProvider,
+    String url,
+    String? model,
+    String? apiKey,
+    @JsonKey(name: "system_prompt") String systemPrompt,
+    @JsonKey(name: "user_prompt") String userPrompt,
+    @JsonKey(name: "model_configs") List<ModelConfig> modelConfigs,
+    bool? stream,
   });
-
-  $ModelRequestDataCopyWith<$Res>? get modelRequestData;
 }
 
 /// @nodoc
@@ -64,36 +77,52 @@ class _$AIRequestModelCopyWithImpl<$Res, $Val extends AIRequestModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? modelProvider = freezed,
-    Object? modelRequestData = freezed,
+    Object? modelApiProvider = freezed,
+    Object? url = null,
+    Object? model = freezed,
+    Object? apiKey = freezed,
+    Object? systemPrompt = null,
+    Object? userPrompt = null,
+    Object? modelConfigs = null,
+    Object? stream = freezed,
   }) {
     return _then(
       _value.copyWith(
-            modelProvider: freezed == modelProvider
-                ? _value.modelProvider
-                : modelProvider // ignore: cast_nullable_to_non_nullable
+            modelApiProvider: freezed == modelApiProvider
+                ? _value.modelApiProvider
+                : modelApiProvider // ignore: cast_nullable_to_non_nullable
                       as ModelAPIProvider?,
-            modelRequestData: freezed == modelRequestData
-                ? _value.modelRequestData
-                : modelRequestData // ignore: cast_nullable_to_non_nullable
-                      as ModelRequestData?,
+            url: null == url
+                ? _value.url
+                : url // ignore: cast_nullable_to_non_nullable
+                      as String,
+            model: freezed == model
+                ? _value.model
+                : model // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            apiKey: freezed == apiKey
+                ? _value.apiKey
+                : apiKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            systemPrompt: null == systemPrompt
+                ? _value.systemPrompt
+                : systemPrompt // ignore: cast_nullable_to_non_nullable
+                      as String,
+            userPrompt: null == userPrompt
+                ? _value.userPrompt
+                : userPrompt // ignore: cast_nullable_to_non_nullable
+                      as String,
+            modelConfigs: null == modelConfigs
+                ? _value.modelConfigs
+                : modelConfigs // ignore: cast_nullable_to_non_nullable
+                      as List<ModelConfig>,
+            stream: freezed == stream
+                ? _value.stream
+                : stream // ignore: cast_nullable_to_non_nullable
+                      as bool?,
           )
           as $Val,
     );
-  }
-
-  /// Create a copy of AIRequestModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ModelRequestDataCopyWith<$Res>? get modelRequestData {
-    if (_value.modelRequestData == null) {
-      return null;
-    }
-
-    return $ModelRequestDataCopyWith<$Res>(_value.modelRequestData!, (value) {
-      return _then(_value.copyWith(modelRequestData: value) as $Val);
-    });
   }
 }
 
@@ -107,12 +136,15 @@ abstract class _$$AIRequestModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    ModelAPIProvider? modelProvider,
-    ModelRequestData? modelRequestData,
+    ModelAPIProvider? modelApiProvider,
+    String url,
+    String? model,
+    String? apiKey,
+    @JsonKey(name: "system_prompt") String systemPrompt,
+    @JsonKey(name: "user_prompt") String userPrompt,
+    @JsonKey(name: "model_configs") List<ModelConfig> modelConfigs,
+    bool? stream,
   });
-
-  @override
-  $ModelRequestDataCopyWith<$Res>? get modelRequestData;
 }
 
 /// @nodoc
@@ -129,19 +161,49 @@ class __$$AIRequestModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? modelProvider = freezed,
-    Object? modelRequestData = freezed,
+    Object? modelApiProvider = freezed,
+    Object? url = null,
+    Object? model = freezed,
+    Object? apiKey = freezed,
+    Object? systemPrompt = null,
+    Object? userPrompt = null,
+    Object? modelConfigs = null,
+    Object? stream = freezed,
   }) {
     return _then(
       _$AIRequestModelImpl(
-        modelProvider: freezed == modelProvider
-            ? _value.modelProvider
-            : modelProvider // ignore: cast_nullable_to_non_nullable
+        modelApiProvider: freezed == modelApiProvider
+            ? _value.modelApiProvider
+            : modelApiProvider // ignore: cast_nullable_to_non_nullable
                   as ModelAPIProvider?,
-        modelRequestData: freezed == modelRequestData
-            ? _value.modelRequestData
-            : modelRequestData // ignore: cast_nullable_to_non_nullable
-                  as ModelRequestData?,
+        url: null == url
+            ? _value.url
+            : url // ignore: cast_nullable_to_non_nullable
+                  as String,
+        model: freezed == model
+            ? _value.model
+            : model // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        apiKey: freezed == apiKey
+            ? _value.apiKey
+            : apiKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        systemPrompt: null == systemPrompt
+            ? _value.systemPrompt
+            : systemPrompt // ignore: cast_nullable_to_non_nullable
+                  as String,
+        userPrompt: null == userPrompt
+            ? _value.userPrompt
+            : userPrompt // ignore: cast_nullable_to_non_nullable
+                  as String,
+        modelConfigs: null == modelConfigs
+            ? _value._modelConfigs
+            : modelConfigs // ignore: cast_nullable_to_non_nullable
+                  as List<ModelConfig>,
+        stream: freezed == stream
+            ? _value.stream
+            : stream // ignore: cast_nullable_to_non_nullable
+                  as bool?,
       ),
     );
   }
@@ -151,20 +213,55 @@ class __$$AIRequestModelImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _$AIRequestModelImpl extends _AIRequestModel {
-  const _$AIRequestModelImpl({this.modelProvider, this.modelRequestData})
-    : super._();
+  const _$AIRequestModelImpl({
+    this.modelApiProvider,
+    this.url = "",
+    this.model = null,
+    this.apiKey = null,
+    @JsonKey(name: "system_prompt") this.systemPrompt = "",
+    @JsonKey(name: "user_prompt") this.userPrompt = "",
+    @JsonKey(name: "model_configs")
+    final List<ModelConfig> modelConfigs = const <ModelConfig>[],
+    this.stream = null,
+  }) : _modelConfigs = modelConfigs,
+       super._();
 
   factory _$AIRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AIRequestModelImplFromJson(json);
 
   @override
-  final ModelAPIProvider? modelProvider;
+  final ModelAPIProvider? modelApiProvider;
   @override
-  final ModelRequestData? modelRequestData;
+  @JsonKey()
+  final String url;
+  @override
+  @JsonKey()
+  final String? model;
+  @override
+  @JsonKey()
+  final String? apiKey;
+  @override
+  @JsonKey(name: "system_prompt")
+  final String systemPrompt;
+  @override
+  @JsonKey(name: "user_prompt")
+  final String userPrompt;
+  final List<ModelConfig> _modelConfigs;
+  @override
+  @JsonKey(name: "model_configs")
+  List<ModelConfig> get modelConfigs {
+    if (_modelConfigs is EqualUnmodifiableListView) return _modelConfigs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_modelConfigs);
+  }
+
+  @override
+  @JsonKey()
+  final bool? stream;
 
   @override
   String toString() {
-    return 'AIRequestModel(modelProvider: $modelProvider, modelRequestData: $modelRequestData)';
+    return 'AIRequestModel(modelApiProvider: $modelApiProvider, url: $url, model: $model, apiKey: $apiKey, systemPrompt: $systemPrompt, userPrompt: $userPrompt, modelConfigs: $modelConfigs, stream: $stream)';
   }
 
   @override
@@ -172,15 +269,35 @@ class _$AIRequestModelImpl extends _AIRequestModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AIRequestModelImpl &&
-            (identical(other.modelProvider, modelProvider) ||
-                other.modelProvider == modelProvider) &&
-            (identical(other.modelRequestData, modelRequestData) ||
-                other.modelRequestData == modelRequestData));
+            (identical(other.modelApiProvider, modelApiProvider) ||
+                other.modelApiProvider == modelApiProvider) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.model, model) || other.model == model) &&
+            (identical(other.apiKey, apiKey) || other.apiKey == apiKey) &&
+            (identical(other.systemPrompt, systemPrompt) ||
+                other.systemPrompt == systemPrompt) &&
+            (identical(other.userPrompt, userPrompt) ||
+                other.userPrompt == userPrompt) &&
+            const DeepCollectionEquality().equals(
+              other._modelConfigs,
+              _modelConfigs,
+            ) &&
+            (identical(other.stream, stream) || other.stream == stream));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, modelProvider, modelRequestData);
+  int get hashCode => Object.hash(
+    runtimeType,
+    modelApiProvider,
+    url,
+    model,
+    apiKey,
+    systemPrompt,
+    userPrompt,
+    const DeepCollectionEquality().hash(_modelConfigs),
+    stream,
+  );
 
   /// Create a copy of AIRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -201,8 +318,14 @@ class _$AIRequestModelImpl extends _AIRequestModel {
 
 abstract class _AIRequestModel extends AIRequestModel {
   const factory _AIRequestModel({
-    final ModelAPIProvider? modelProvider,
-    final ModelRequestData? modelRequestData,
+    final ModelAPIProvider? modelApiProvider,
+    final String url,
+    final String? model,
+    final String? apiKey,
+    @JsonKey(name: "system_prompt") final String systemPrompt,
+    @JsonKey(name: "user_prompt") final String userPrompt,
+    @JsonKey(name: "model_configs") final List<ModelConfig> modelConfigs,
+    final bool? stream,
   }) = _$AIRequestModelImpl;
   const _AIRequestModel._() : super._();
 
@@ -210,9 +333,24 @@ abstract class _AIRequestModel extends AIRequestModel {
       _$AIRequestModelImpl.fromJson;
 
   @override
-  ModelAPIProvider? get modelProvider;
+  ModelAPIProvider? get modelApiProvider;
   @override
-  ModelRequestData? get modelRequestData;
+  String get url;
+  @override
+  String? get model;
+  @override
+  String? get apiKey;
+  @override
+  @JsonKey(name: "system_prompt")
+  String get systemPrompt;
+  @override
+  @JsonKey(name: "user_prompt")
+  String get userPrompt;
+  @override
+  @JsonKey(name: "model_configs")
+  List<ModelConfig> get modelConfigs;
+  @override
+  bool? get stream;
 
   /// Create a copy of AIRequestModel
   /// with the given fields replaced by the non-null parameter values.

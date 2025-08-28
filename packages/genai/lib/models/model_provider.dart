@@ -2,9 +2,9 @@ import 'package:better_networking/better_networking.dart';
 import '../models/models.dart';
 
 abstract class ModelProvider {
-  ModelRequestData get defaultRequestData => throw UnimplementedError();
+  AIRequestModel get defaultAIRequestModel => throw UnimplementedError();
 
-  HttpRequestModel? createRequest(ModelRequestData? requestData) {
+  HttpRequestModel? createRequest(AIRequestModel? aiRequestModel) {
     throw UnimplementedError();
   }
 

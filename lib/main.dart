@@ -1,7 +1,6 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genai/genai.dart';
 import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
@@ -25,9 +24,8 @@ void main() async {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
 
-  //Load all LLMs
-  // await LLMManager.fetchAvailableLLMs();
-  await LLMManager.loadAvailableLLMs();
+  // TODO: Load all models at init
+  // await ModelManager.loadAvailableLLMs();
 
   runApp(
     ProviderScope(

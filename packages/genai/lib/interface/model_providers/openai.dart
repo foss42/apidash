@@ -6,33 +6,37 @@ class OpenAIModel extends ModelProvider {
   static final instance = OpenAIModel();
 
   @override
-  ModelRequestData get defaultRequestData =>
-      kDefaultModelRequestData.copyWith(url: kOpenAIUrl);
+  AIRequestModel get defaultAIRequestModel => kDefaultAiRequestModel.copyWith(
+    modelApiProvider: ModelAPIProvider.openai,
+    url: kOpenAIUrl,
+  );
 
   @override
-  HttpRequestModel? createRequest(ModelRequestData? requestData) {
-    if (requestData == null) {
+  HttpRequestModel? createRequest(AIRequestModel? aiRequestModel) {
+    if (aiRequestModel == null) {
       return null;
     }
     return HttpRequestModel(
       method: HTTPVerb.post,
-      url: requestData.url,
-      authModel: AuthModel(
-        type: APIAuthType.bearer,
-        bearer: AuthBearerModel(token: requestData.apiKey),
-      ),
+      url: aiRequestModel.url,
+      authModel: aiRequestModel.apiKey == null
+          ? null
+          : AuthModel(
+              type: APIAuthType.bearer,
+              bearer: AuthBearerModel(token: aiRequestModel.apiKey!),
+            ),
       body: kJsonEncoder.convert({
-        "model": requestData.model,
+        "model": aiRequestModel.model,
         "messages": [
-          {"role": "system", "content": requestData.systemPrompt},
-          if (requestData.userPrompt.isNotEmpty) ...{
-            {"role": "user", "content": requestData.userPrompt},
+          {"role": "system", "content": aiRequestModel.systemPrompt},
+          if (aiRequestModel.userPrompt.isNotEmpty) ...{
+            {"role": "user", "content": aiRequestModel.userPrompt},
           } else ...{
             {"role": "user", "content": "Generate"},
           },
         ],
-        ...requestData.getModelConfigMap(),
-        if (requestData.stream ?? false) ...{'stream': true},
+        ...aiRequestModel.getModelConfigMap(),
+        if (aiRequestModel.stream ?? false) ...{'stream': true},
       }),
     );
   }

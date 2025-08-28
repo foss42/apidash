@@ -1,4 +1,3 @@
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/widgets/llm_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -115,18 +114,19 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              ListTile(
-                hoverColor: kColorTransparent,
-                title: const Text('Default Large Language Model (LLM)'),
-                trailing: DefaultLLMSelectorButton(
-                  defaultLLM: settings.defaultLLMSaveObject,
-                  onDefaultLLMUpdated: (d) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .update(defaultLLMSaveObject: d);
-                  },
-                ),
-              ),
+              // TODO: Fix it
+              // ListTile(
+              //   hoverColor: kColorTransparent,
+              //   title: const Text('Default Large Language Model (LLM)'),
+              //   trailing: DefaultLLMSelectorButton(
+              //     defaultLLM: settings.defaultLLMSaveObject,
+              //     onDefaultLLMUpdated: (d) {
+              //       ref
+              //           .read(settingsProvider.notifier)
+              //           .update(defaultLLMSaveObject: d);
+              //     },
+              //   ),
+              // ),
               CheckboxListTile(
                 title: const Text("Save Responses"),
                 subtitle:

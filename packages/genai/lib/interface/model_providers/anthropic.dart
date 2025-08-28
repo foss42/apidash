@@ -6,32 +6,36 @@ class AnthropicModel extends ModelProvider {
   static final instance = AnthropicModel();
 
   @override
-  ModelRequestData get defaultRequestData =>
-      kDefaultModelRequestData.copyWith(url: kAnthropicUrl);
+  AIRequestModel get defaultAIRequestModel => kDefaultAiRequestModel.copyWith(
+    modelApiProvider: ModelAPIProvider.anthropic,
+    url: kAnthropicUrl,
+  );
 
   @override
-  HttpRequestModel? createRequest(ModelRequestData? requestData) {
-    if (requestData == null) {
+  HttpRequestModel? createRequest(AIRequestModel? aiRequestModel) {
+    if (aiRequestModel == null) {
       return null;
     }
     return HttpRequestModel(
       method: HTTPVerb.post,
-      url: requestData.url,
+      url: aiRequestModel.url,
       headers: const [
         NameValueModel(name: "anthropic-version", value: "2023-06-01"),
       ],
-      authModel: AuthModel(
-        type: APIAuthType.apiKey,
-        apikey: AuthApiKeyModel(key: requestData.apiKey),
-      ),
+      authModel: aiRequestModel.apiKey == null
+          ? null
+          : AuthModel(
+              type: APIAuthType.apiKey,
+              apikey: AuthApiKeyModel(key: aiRequestModel.apiKey!),
+            ),
       body: kJsonEncoder.convert({
-        "model": requestData.model,
+        "model": aiRequestModel.model,
         "messages": [
-          {"role": "system", "content": requestData.systemPrompt},
-          {"role": "user", "content": requestData.userPrompt},
+          {"role": "system", "content": aiRequestModel.systemPrompt},
+          {"role": "user", "content": aiRequestModel.userPrompt},
         ],
-        ...requestData.getModelConfigMap(),
-        if (requestData.stream ?? false) ...{'stream': true},
+        ...aiRequestModel.getModelConfigMap(),
+        if (aiRequestModel.stream ?? false) ...{'stream': true},
       }),
     );
   }

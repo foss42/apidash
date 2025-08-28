@@ -1,4 +1,3 @@
-import 'package:apidash/screens/history/history_widgets/ai_history_page.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../../common_widgets/common_widgets.dart';
+import 'ai_history_page.dart';
 import 'his_scripts_tab.dart';
 
 class HistoryRequestPane extends ConsumerWidget {

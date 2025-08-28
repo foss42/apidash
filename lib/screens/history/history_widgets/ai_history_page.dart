@@ -1,12 +1,9 @@
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/providers/history_providers.dart';
-import 'package:apidash/widgets/editor.dart';
-import 'package:apidash_design_system/tokens/measurements.dart';
-import 'package:apidash_design_system/widgets/textfield_outlined.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genai/llm_config.dart';
-import 'package:genai/widgets/ai_config_widgets.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/editor.dart';
 
 class HisAIRequestPromptSection extends ConsumerWidget {
   const HisAIRequestPromptSection({super.key});
@@ -15,11 +12,10 @@ class HisAIRequestPromptSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
-
-    final aiReqM = selectedHistoryModel.aiRequestModel!;
-    final payload = aiReqM.payload;
-    final systemPrompt = payload.systemPrompt;
-    final userPrompt = payload.userPrompt;
+    final aiReqM = selectedHistoryModel.aiRequestModel;
+    if (aiReqM == null) {
+      return kSizedBoxEmpty;
+    }
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -41,7 +37,7 @@ class HisAIRequestPromptSection extends ConsumerWidget {
                     "${selectedHistoryModel.historyId}-aireq-sysprompt-body"),
                 fieldKey:
                     "${selectedHistoryModel.historyId}-aireq-sysprompt-body",
-                initialValue: systemPrompt,
+                initialValue: aiReqM.systemPrompt,
                 readOnly: true,
               ),
             ),
@@ -62,7 +58,7 @@ class HisAIRequestPromptSection extends ConsumerWidget {
                     "${selectedHistoryModel.historyId}-aireq-userprompt-body"),
                 fieldKey:
                     "${selectedHistoryModel.historyId}-aireq-userprompt-body",
-                initialValue: userPrompt,
+                initialValue: aiReqM.userPrompt,
                 readOnly: true,
               ),
             ),
@@ -80,12 +76,10 @@ class HisAIRequestAuthorizationSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
-
-    final aiReqM = selectedHistoryModel.aiRequestModel!;
-
-    final payload = aiReqM.payload;
-
-    final cred = payload.credential;
+    final aiReqM = selectedHistoryModel.aiRequestModel;
+    if (aiReqM == null) {
+      return kSizedBoxEmpty;
+    }
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -99,7 +93,7 @@ class HisAIRequestAuthorizationSection extends ConsumerWidget {
                     "${selectedHistoryModel.historyId}-aireq-authvalue-body"),
                 fieldKey:
                     "${selectedHistoryModel.historyId}-aireq-authvalue-body",
-                initialValue: cred,
+                initialValue: aiReqM.apiKey,
                 readOnly: true,
               ),
             ),
@@ -117,55 +111,48 @@ class HisAIRequestConfigSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
-
-    final aiReqM = selectedHistoryModel.aiRequestModel!;
-
-    final payload = aiReqM.payload;
-
+    final aiReqM = selectedHistoryModel.aiRequestModel;
+    if (aiReqM == null) {
+      return kSizedBoxEmpty;
+    }
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
         key: ValueKey(selectedHistoryModel.historyId),
         children: [
-          ...payload.configMap.values.map(
+          ...aiReqM.modelConfigs.map(
             (el) => ListTile(
-              title: Text(el.configName),
+              title: Text(el.name),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    el.configDescription,
+                    el.description,
                   ),
                   SizedBox(height: 5),
-                  if (el.configType == LLMModelConfigurationType.boolean) ...[
-                    BooleanAIConfig(
-                      readonly: true,
-                      configuration: el,
-                      onConfigUpdated: (x) {},
-                    ),
-                  ] else if (el.configType ==
-                      LLMModelConfigurationType.numeric) ...[
-                    WritableAIConfig(
-                      configuration: el,
-                      onConfigUpdated: (x) {},
-                      readonly: true,
-                      numeric: true,
-                    ),
-                  ] else if (el.configType ==
-                      LLMModelConfigurationType.text) ...[
-                    WritableAIConfig(
-                      configuration: el,
-                      onConfigUpdated: (x) {},
-                      readonly: true,
-                    ),
-                  ] else if (el.configType ==
-                      LLMModelConfigurationType.slider) ...[
-                    SliderAIConfig(
-                      configuration: el,
-                      onSliderUpdated: (x) {},
-                      readonly: true,
-                    ),
-                  ],
+                  switch (el.type) {
+                    ConfigType.boolean => AIConfigBool(
+                        readonly: true,
+                        configuration: el,
+                        onConfigUpdated: (x) {},
+                      ),
+                    ConfigType.numeric => AIConfigField(
+                        readonly: true,
+                        configuration: el,
+                        onConfigUpdated: (x) {},
+                        numeric: true,
+                      ),
+                    ConfigType.text => AIConfigField(
+                        readonly: true,
+                        configuration: el,
+                        onConfigUpdated: (x) {},
+                      ),
+                    ConfigType.slider => AIConfigSlider(
+                        readonly: true,
+                        configuration: el,
+                        onSliderUpdated: (x) {},
+                      ),
+                  },
                   SizedBox(height: 10),
                 ],
               ),

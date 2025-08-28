@@ -1,36 +1,38 @@
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/widgets/editor.dart';
-import 'package:apidash_design_system/widgets/textfield_outlined.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genai/genai.dart';
-import 'package:genai/widgets/ai_config_widgets.dart';
 
-class AIRequestConfigSection extends ConsumerStatefulWidget {
+class AIRequestConfigSection extends ConsumerWidget {
   const AIRequestConfigSection({super.key});
 
   @override
-  ConsumerState<AIRequestConfigSection> createState() =>
-      _AIRequestConfigSectionState();
-}
-
-class _AIRequestConfigSectionState
-    extends ConsumerState<AIRequestConfigSection> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final reqM = ref.read(collectionStateNotifierProvider)![selectedId]!;
-    final aiReqM = reqM.aiRequestModel!;
-    final payload = aiReqM.payload;
+    final modelConfigs = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.aiRequestModel?.modelConfigs));
+    final requestModel = ref
+        .read(collectionStateNotifierProvider.notifier)
+        .getRequestModel(selectedId!);
+    final aiReqM = requestModel?.aiRequestModel;
+    if (aiReqM == null || modelConfigs == null) {
+      return kSizedBoxEmpty;
+    }
 
-    updateRequestModel(LLMModelConfiguration el) {
-      final aim = ref
-          .read(collectionStateNotifierProvider)![selectedId]!
-          .aiRequestModel!;
-      aim.payload.configMap[el.configId] = el;
-      ref.read(collectionStateNotifierProvider.notifier).update(
-            aiRequestModel: aim.updatePayload(aim.payload),
-          );
+    updateRequestModel(ModelConfig modelConfig) {
+      final aiRequestModel = ref
+          .read(collectionStateNotifierProvider.notifier)
+          .getRequestModel(selectedId)
+          ?.aiRequestModel;
+      final idx = aiRequestModel?.getModelConfigIdx(modelConfig.id);
+      if (idx != null && aiRequestModel != null) {
+        var l = [...aiRequestModel.modelConfigs];
+        l[idx] = modelConfig;
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              aiRequestModel: aiRequestModel.copyWith(modelConfigs: l),
+            );
+      }
     }
 
     return SingleChildScrollView(
@@ -38,53 +40,43 @@ class _AIRequestConfigSectionState
       child: Column(
         key: ValueKey(selectedId),
         children: [
-          ...payload.configMap.values.map(
+          ...modelConfigs.map(
             (el) => ListTile(
-              title: Text(el.configName),
+              title: Text(el.name),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    el.configDescription,
+                    el.description,
                   ),
                   SizedBox(height: 5),
-                  if (el.configType == LLMModelConfigurationType.boolean) ...[
-                    BooleanAIConfig(
-                      configuration: el,
-                      onConfigUpdated: (x) {
-                        updateRequestModel(el);
-                        setState(() {});
-                      },
-                    ),
-                  ] else if (el.configType ==
-                      LLMModelConfigurationType.numeric) ...[
-                    WritableAIConfig(
-                      configuration: el,
-                      onConfigUpdated: (x) {
-                        updateRequestModel(el);
-                        setState(() {});
-                      },
-                      numeric: true,
-                    ),
-                  ] else if (el.configType ==
-                      LLMModelConfigurationType.text) ...[
-                    WritableAIConfig(
-                      configuration: el,
-                      onConfigUpdated: (x) {
-                        updateRequestModel(el);
-                        setState(() {});
-                      },
-                    ),
-                  ] else if (el.configType ==
-                      LLMModelConfigurationType.slider) ...[
-                    SliderAIConfig(
-                      configuration: el,
-                      onSliderUpdated: (x) {
-                        updateRequestModel(x);
-                        setState(() {});
-                      },
-                    ),
-                  ],
+                  switch (el.type) {
+                    ConfigType.boolean => AIConfigBool(
+                        configuration: el,
+                        onConfigUpdated: (x) {
+                          updateRequestModel(x);
+                        },
+                      ),
+                    ConfigType.numeric => AIConfigField(
+                        configuration: el,
+                        onConfigUpdated: (x) {
+                          updateRequestModel(x);
+                        },
+                        numeric: true,
+                      ),
+                    ConfigType.text => AIConfigField(
+                        configuration: el,
+                        onConfigUpdated: (x) {
+                          updateRequestModel(x);
+                        },
+                      ),
+                    ConfigType.slider => AIConfigSlider(
+                        configuration: el,
+                        onSliderUpdated: (x) {
+                          updateRequestModel(x);
+                        },
+                      ),
+                  },
                   SizedBox(height: 10),
                 ],
               ),

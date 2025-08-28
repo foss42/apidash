@@ -1,10 +1,10 @@
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/aireq_authorization.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/aireq_configs.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/aireq_prompt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'aireq_authorization.dart';
+import 'aireq_configs.dart';
+import 'aireq_prompt.dart';
 
 class EditAIRequestPane extends ConsumerWidget {
   const EditAIRequestPane({super.key});

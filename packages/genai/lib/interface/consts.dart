@@ -17,7 +17,7 @@ const kGeminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 const kOpenAIUrl = 'https://api.openai.com/v1/chat/completions';
 const kOllamaUrl = '$kBaseOllamaUrl/v1/chat/completions';
 
-final kDefaultModelRequestData = ModelRequestData(
+final kDefaultAiRequestModel = AIRequestModel(
   url: '',
   model: '',
   apiKey: '',

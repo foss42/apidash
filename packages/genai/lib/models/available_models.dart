@@ -5,6 +5,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
 import '../interface/interface.dart';
+import 'ai_request_model.dart';
 part 'available_models.freezed.dart';
 part 'available_models.g.dart';
 
@@ -34,6 +35,8 @@ class AvailableModels with _$AvailableModels {
 
 @freezed
 class AIModelProvider with _$AIModelProvider {
+  const AIModelProvider._();
+
   const factory AIModelProvider({
     @JsonKey(name: "provider_id") ModelAPIProvider? providerId,
     @JsonKey(name: "provider_name") String? providerName,
@@ -43,6 +46,14 @@ class AIModelProvider with _$AIModelProvider {
 
   factory AIModelProvider.fromJson(Map<String, dynamic> json) =>
       _$AIModelProviderFromJson(json);
+
+  AIRequestModel? toAiRequestModel({Model? model}) {
+    var aiRequest = kModelProvidersMap[providerId]?.defaultAIRequestModel;
+    if (model != null) {
+      aiRequest = aiRequest?.copyWith(model: model.id);
+    }
+    return aiRequest;
+  }
 }
 
 @freezed
