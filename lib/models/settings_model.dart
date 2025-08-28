@@ -145,7 +145,9 @@ class SettingsModel {
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final isDashBotEnabled = data["isDashBotEnabled"] as bool?;
-    final defaultAIModel = data["defaultAIModel"] as Map<String, Object?>?;
+    final defaultAIModel = data["defaultAIModel"] == null
+        ? null
+        : Map<String, Object?>.from(data["defaultAIModel"]);
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -184,7 +186,7 @@ class SettingsModel {
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
-      'defaultLLMSaveObject': defaultAIModel,
+      "defaultAIModel": defaultAIModel,
     };
   }
 
