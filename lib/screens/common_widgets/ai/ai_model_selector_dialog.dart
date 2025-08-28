@@ -31,7 +31,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(aiApiCredentialProvider);
+    // ref.watch(aiApiCredentialProvider);
     final width = MediaQuery.of(context).size.width * 0.8;
     return FutureBuilder(
       future: aM,
@@ -147,8 +147,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     if (aiModelProvider == null) {
       return Center(child: Text("Please select an AI API Provider"));
     }
-    final currentCredential =
-        ref.watch(aiApiCredentialProvider)[aiModelProvider.providerId!] ?? "";
+    // final currentCredential =
+    //     ref.watch(aiApiCredentialProvider)[aiModelProvider.providerId!] ?? "";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
@@ -163,12 +163,15 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
-              ref.read(aiApiCredentialProvider.notifier).state = {
-                ...ref.read(aiApiCredentialProvider),
-                aiModelProvider.providerId!: x
-              };
+              // ref.read(aiApiCredentialProvider.notifier).state = {
+              //   ...ref.read(aiApiCredentialProvider),
+              //   aiModelProvider.providerId!: x
+              // };
+              setState(() {
+                newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
+              });
             },
-            value: currentCredential,
+            value: newAIRequestModel?.apiKey ?? "",
           ),
           kVSpacer10,
         ],
