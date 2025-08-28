@@ -15,7 +15,7 @@ class AIModelSelector extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     AIRequestModel? aiRequestModel;
-    if (readOnlyModel != null) {
+    if (readOnlyModel == null) {
       ref.watch(selectedIdStateProvider);
       aiRequestModel = ref.watch(selectedRequestModelProvider
           .select((value) => value?.aiRequestModel));

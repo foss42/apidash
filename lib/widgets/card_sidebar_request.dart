@@ -11,7 +11,7 @@ class SidebarRequestCard extends StatelessWidget {
     super.key,
     required this.id,
     required this.apiType,
-    required this.method,
+    this.method,
     this.name,
     this.url,
     this.selectedId,
@@ -30,7 +30,7 @@ class SidebarRequestCard extends StatelessWidget {
   final APIType apiType;
   final String? name;
   final String? url;
-  final HTTPVerb method;
+  final HTTPVerb? method;
   final String? selectedId;
   final String? editRequestId;
   final void Function()? onTap;

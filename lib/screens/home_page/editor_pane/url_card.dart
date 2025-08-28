@@ -102,6 +102,10 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.aiRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.url));
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;

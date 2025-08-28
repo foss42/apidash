@@ -193,7 +193,7 @@ class RequestItem extends ConsumerWidget {
     return SidebarRequestCard(
       id: id,
       apiType: requestModel.apiType,
-      method: requestModel.httpRequestModel!.method,
+      method: requestModel.httpRequestModel?.method,
       name: requestModel.name,
       url: requestModel.httpRequestModel?.url,
       selectedId: selectedId,

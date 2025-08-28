@@ -17,6 +17,7 @@ class ResponseBodySuccess extends StatefulWidget {
     this.formattedBody,
     this.highlightLanguage,
     this.sseOutput,
+    this.isAIResponse = false,
     this.aiRequestModel,
   });
   final MediaType mediaType;
@@ -26,6 +27,7 @@ class ResponseBodySuccess extends StatefulWidget {
   final String? formattedBody;
   final List<String>? sseOutput;
   final String? highlightLanguage;
+  final bool isAIResponse;
   final AIRequestModel? aiRequestModel;
 
   @override
@@ -137,7 +139,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       ),
                     ),
                   ),
-                ResponseBodyView.raw || ResponseBodyView.answer => Expanded(
+                ResponseBodyView.answer => Expanded(
                     child: Container(
                       width: double.maxFinite,
                       padding: kP8,
@@ -145,6 +147,21 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       child: SingleChildScrollView(
                         child: SelectableText(
                           widget.formattedBody ?? widget.body,
+                          style: kCodeStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.raw => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          widget.isAIResponse
+                              ? widget.body
+                              : (widget.formattedBody ?? widget.body),
                           style: kCodeStyle,
                         ),
                       ),

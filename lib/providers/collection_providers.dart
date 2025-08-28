@@ -241,34 +241,54 @@ class CollectionStateNotifier
     }
     var currentModel = state![rId]!;
     var currentHttpRequestModel = currentModel.httpRequestModel;
-    final newModel = currentModel.copyWith(
-      apiType: apiType ?? currentModel.apiType,
-      name: name ?? currentModel.name,
-      description: description ?? currentModel.description,
-      requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-      httpRequestModel: currentHttpRequestModel?.copyWith(
-        method: method ?? currentHttpRequestModel.method,
-        url: url ?? currentHttpRequestModel.url,
-        headers: headers ?? currentHttpRequestModel.headers,
-        params: params ?? currentHttpRequestModel.params,
-        authModel: authModel ?? currentHttpRequestModel.authModel,
-        isHeaderEnabledList:
-            isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
-        isParamEnabledList:
-            isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
-        bodyContentType:
-            bodyContentType ?? currentHttpRequestModel.bodyContentType,
-        body: body ?? currentHttpRequestModel.body,
-        query: query ?? currentHttpRequestModel.query,
-        formData: formData ?? currentHttpRequestModel.formData,
-      ),
-      responseStatus: responseStatus ?? currentModel.responseStatus,
-      message: message ?? currentModel.message,
-      httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
-      preRequestScript: preRequestScript ?? currentModel.preRequestScript,
-      postRequestScript: postRequestScript ?? currentModel.postRequestScript,
-      aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
-    );
+
+    RequestModel newModel;
+
+    if (apiType != null && currentModel.apiType != apiType) {
+      newModel = switch (apiType) {
+        APIType.rest || APIType.graphql => currentModel.copyWith(
+            apiType: apiType,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: const HttpRequestModel(),
+            aiRequestModel: null),
+        APIType.ai => currentModel.copyWith(
+            apiType: apiType,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: null,
+            aiRequestModel: const AIRequestModel()),
+      };
+    } else {
+      newModel = currentModel.copyWith(
+        apiType: apiType ?? currentModel.apiType,
+        name: name ?? currentModel.name,
+        description: description ?? currentModel.description,
+        requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+        httpRequestModel: currentHttpRequestModel?.copyWith(
+          method: method ?? currentHttpRequestModel.method,
+          url: url ?? currentHttpRequestModel.url,
+          headers: headers ?? currentHttpRequestModel.headers,
+          params: params ?? currentHttpRequestModel.params,
+          authModel: authModel ?? currentHttpRequestModel.authModel,
+          isHeaderEnabledList: isHeaderEnabledList ??
+              currentHttpRequestModel.isHeaderEnabledList,
+          isParamEnabledList:
+              isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+          bodyContentType:
+              bodyContentType ?? currentHttpRequestModel.bodyContentType,
+          body: body ?? currentHttpRequestModel.body,
+          query: query ?? currentHttpRequestModel.query,
+          formData: formData ?? currentHttpRequestModel.formData,
+        ),
+        responseStatus: responseStatus ?? currentModel.responseStatus,
+        message: message ?? currentModel.message,
+        httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+        preRequestScript: preRequestScript ?? currentModel.preRequestScript,
+        postRequestScript: postRequestScript ?? currentModel.postRequestScript,
+        aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+      );
+    }
 
     var map = {...state!};
     map[rId] = newModel;
@@ -285,7 +305,8 @@ class CollectionStateNotifier
     }
 
     RequestModel? requestModel = state![requestId];
-    if (requestModel?.httpRequestModel == null) {
+    if (requestModel?.httpRequestModel == null &&
+        requestModel?.aiRequestModel == null) {
       return;
     }
 

@@ -49,8 +49,7 @@ class ResponseBody extends StatelessWidget {
     //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     // }
 
-    var responseBodyView = (selectedRequestModel?.apiType == APIType.ai &&
-            (responseModel.sseOutput?.isNotEmpty ?? false))
+    var responseBodyView = selectedRequestModel?.apiType == APIType.ai
         ? (kAnswerRawBodyViewOptions, kSubTypePlain)
         : getResponseBodyViewOptions(mediaType);
     var options = responseBodyView.$1;
@@ -70,6 +69,7 @@ class ResponseBody extends StatelessWidget {
       formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
       sseOutput: responseModel.sseOutput,
+      isAIResponse: selectedRequestModel?.apiType == APIType.ai,
       aiRequestModel: selectedRequestModel?.aiRequestModel,
     );
   }
