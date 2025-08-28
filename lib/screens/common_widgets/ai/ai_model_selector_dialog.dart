@@ -22,6 +22,10 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   @override
   void initState() {
     super.initState();
+    selectedProvider = widget.aiRequestModel?.modelApiProvider;
+    if (selectedProvider != null && widget.aiRequestModel?.model != null) {
+      newAIRequestModel = widget.aiRequestModel?.copyWith();
+    }
     aM = ModelManager.fetchAvailableModels();
   }
 

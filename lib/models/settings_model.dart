@@ -18,8 +18,7 @@ class SettingsModel {
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
-    // TODO: Fix it
-    // this.defaultLLMSaveObject,
+    this.defaultAIModel,
   });
 
   final bool isDark;
@@ -35,8 +34,7 @@ class SettingsModel {
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
-  // TODO: Fix it
-  // final LLMSaveObject? defaultLLMSaveObject;
+  final Map<String, Object?>? defaultAIModel;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -52,9 +50,7 @@ class SettingsModel {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
-    // TODO: Fix it
-    // LLMSaveObject? def,
-    // LLMSaveObject? defaultLLMSaveObject,
+    Map<String, Object?>? defaultAIModel,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -72,8 +68,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
-      // TODO: Fix it
-      // defaultLLMSaveObject: defaultLLMSaveObject ?? this.defaultLLMSaveObject,
+      defaultAIModel: defaultAIModel ?? this.defaultAIModel,
     );
   }
 
@@ -94,8 +89,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
-      // TODO: Fix it
-      // defaultLLMSaveObject: defaultLLMSaveObject,
+      defaultAIModel: defaultAIModel,
     );
   }
 
@@ -151,14 +145,7 @@ class SettingsModel {
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final isDashBotEnabled = data["isDashBotEnabled"] as bool?;
-
-    // TODO: Fix it
-    // LLMSaveObject? defaultLLMSaveObject;
-    // if (data["defaultLLMSaveObject"] != null) {
-    //   defaultLLMSaveObject =
-    //       LLMSaveObject.fromJSON(data["defaultLLMSaveObject"]);
-    // }
-
+    final defaultAIModel = data["defaultAIModel"] as Map<String, Object?>?;
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -176,8 +163,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
-      // TODO: Fix it
-      // defaultLLMSaveObject: defaultLLMSaveObject,
+      defaultAIModel: defaultAIModel,
     );
   }
 
@@ -198,8 +184,7 @@ class SettingsModel {
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
-      // TODO: Fix it
-      // 'defaultLLMSaveObject': defaultLLMSaveObject?.toJSON(),
+      'defaultLLMSaveObject': defaultAIModel,
     };
   }
 
@@ -225,10 +210,8 @@ class SettingsModel {
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
-        other.isDashBotEnabled == isDashBotEnabled;
-    // TODO: Fix it
-    // &&
-    // other.defaultLLMSaveObject == defaultLLMSaveObject;
+        other.isDashBotEnabled == isDashBotEnabled &&
+        other.defaultAIModel == defaultAIModel;
   }
 
   @override
@@ -248,8 +231,7 @@ class SettingsModel {
       workspaceFolderPath,
       isSSLDisabled,
       isDashBotEnabled,
-      // TODO: Fix it
-      // defaultLLMSaveObject,
+      defaultAIModel,
     );
   }
 }

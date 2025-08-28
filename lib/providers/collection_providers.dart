@@ -245,6 +245,7 @@ class CollectionStateNotifier
     RequestModel newModel;
 
     if (apiType != null && currentModel.apiType != apiType) {
+      final defaultModel = ref.read(settingsProvider).defaultAIModel;
       newModel = switch (apiType) {
         APIType.rest || APIType.graphql => currentModel.copyWith(
             apiType: apiType,
@@ -257,7 +258,9 @@ class CollectionStateNotifier
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
             httpRequestModel: null,
-            aiRequestModel: const AIRequestModel()),
+            aiRequestModel: defaultModel == null
+                ? const AIRequestModel()
+                : AIRequestModel.fromJson(defaultModel)),
       };
     } else {
       newModel = currentModel.copyWith(

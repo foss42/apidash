@@ -34,8 +34,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
-    // TODO: Fix it
-    // LLMSaveObject? defaultLLMSaveObject,
+    Map<String, Object?>? defaultAIModel,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -51,8 +50,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
-      // TODO: Fix it
-      // defaultLLMSaveObject: defaultLLMSaveObject,
+      defaultAIModel: defaultAIModel,
     );
     await setSettingsToSharedPrefs(state);
   }
