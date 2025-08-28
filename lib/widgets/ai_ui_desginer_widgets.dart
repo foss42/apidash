@@ -42,70 +42,85 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
   String generatedSDUI = '{}';
 
   Future<String?> generateSDUICode(String apiResponse) async {
-    setState(() {
-      index = 1; //Induce Loading
-    });
-    //STEP 1: RESPONSE_ANALYSER (call the Semantic Analysis & IRGen Bots in parallel)
-    final step1Res = await Future.wait([
-      APIDashAgentCaller.instance.call(
-        ResponseSemanticAnalyser(),
-        ref: ref,
-        input: AgentInputs(query: apiResponse),
-      ),
-      APIDashAgentCaller.instance.call(
-        IntermediateRepresentationGen(),
+    try {
+      setState(() {
+        index = 1; //Induce Loading
+      });
+      //STEP 1: RESPONSE_ANALYSER (call the Semantic Analysis & IRGen Bots in parallel)
+      final step1Res = await Future.wait([
+        APIDashAgentCaller.instance.call(
+          ResponseSemanticAnalyser(),
+          ref: ref,
+          input: AgentInputs(query: apiResponse),
+        ),
+        APIDashAgentCaller.instance.call(
+          IntermediateRepresentationGen(),
+          ref: ref,
+          input: AgentInputs(variables: {
+            'VAR_API_RESPONSE': apiResponse,
+          }),
+        ),
+      ]);
+      final SA = step1Res[0]?['SEMANTIC_ANALYSIS'];
+      final IR = step1Res[1]?['INTERMEDIATE_REPRESENTATION'];
+
+      if (SA == null || IR == null) {
+        setState(() {
+          index = 0;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Preview Generation Failed!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.redAccent,
+        ));
+        return null;
+      }
+
+      print("Semantic Analysis: $SA");
+      print("Intermediate Representation: $IR");
+
+      //STEP 2: STAC_GEN (Generate the SDUI Code)
+
+      final sduiCode = await APIDashAgentCaller.instance.call(
+        StacGenBot(),
         ref: ref,
         input: AgentInputs(variables: {
-          'VAR_API_RESPONSE': apiResponse,
+          'VAR_RAW_API_RESPONSE': apiResponse,
+          'VAR_INTERMEDIATE_REPR': IR,
+          'VAR_SEMANTIC_ANALYSIS': SA,
         }),
-      ),
-    ]);
-    final SA = step1Res[0]?['SEMANTIC_ANALYSIS'];
-    final IR = step1Res[1]?['INTERMEDIATE_REPRESENTATION'];
-
-    if (SA == null || IR == null) {
-      setState(() {
-        index = 0;
-      });
+      );
+      final stacCode = sduiCode?['STAC']?.toString();
+      if (stacCode == null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Preview Generation Failed!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.redAccent,
+        ));
+        setState(() {
+          index = 0;
+        });
+        return null;
+      }
+      return sduiCode['STAC'].toString();
+    } catch (e) {
+      String errMsg = 'Unexpected Error Occured';
+      if (e.toString().contains('NO_DEFAULT_LLM')) {
+        errMsg = "Please Select Default AI Model in Settings";
+      }
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-          "Preview Generation Failed!",
+          errMsg,
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.redAccent,
       ));
-      return null;
+      Navigator.pop(context);
     }
-
-    print("Semantic Analysis: $SA");
-    print("Intermediate Representation: $IR");
-
-    //STEP 2: STAC_GEN (Generate the SDUI Code)
-
-    final sduiCode = await APIDashAgentCaller.instance.call(
-      StacGenBot(),
-      ref: ref,
-      input: AgentInputs(variables: {
-        'VAR_RAW_API_RESPONSE': apiResponse,
-        'VAR_INTERMEDIATE_REPR': IR,
-        'VAR_SEMANTIC_ANALYSIS': SA,
-      }),
-    );
-    final stacCode = sduiCode?['STAC']?.toString();
-    if (stacCode == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Preview Generation Failed!",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.redAccent,
-      ));
-      setState(() {
-        index = 0;
-      });
-      return null;
-    }
-    return sduiCode['STAC'].toString();
   }
 
   Future<void> modifySDUICode(String modificationRequest) async {

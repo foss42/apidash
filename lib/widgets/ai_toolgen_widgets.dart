@@ -80,60 +80,75 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
   String? generatedToolCode = '';
 
   generateAPITool() async {
-    setState(() {
-      generatedToolCode = null;
-    });
-    final toolfuncRes = await APIDashAgentCaller.instance.call(
-      APIToolFunctionGenerator(),
-      ref: ref,
-      input: AgentInputs(variables: {
-        'REQDATA': widget.requestDesc.generateREQDATA,
-        'TARGET_LANGUAGE': selectedLanguage,
-      }),
-    );
-    if (toolfuncRes == null) {
+    try {
       setState(() {
-        generatedToolCode = '';
+        generatedToolCode = null;
       });
+      final toolfuncRes = await APIDashAgentCaller.instance.call(
+        APIToolFunctionGenerator(),
+        ref: ref,
+        input: AgentInputs(variables: {
+          'REQDATA': widget.requestDesc.generateREQDATA,
+          'TARGET_LANGUAGE': selectedLanguage,
+        }),
+      );
+      if (toolfuncRes == null) {
+        setState(() {
+          generatedToolCode = '';
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "API Tool generation failed!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.redAccent,
+        ));
+        return;
+      }
+
+      String toolCode = toolfuncRes!['FUNC'];
+
+      final toolres = await APIDashAgentCaller.instance.call(
+        ApiToolBodyGen(),
+        ref: ref,
+        input: AgentInputs(variables: {
+          'TEMPLATE': APIToolGenTemplateSelector.getTemplate(
+                  selectedLanguage, selectedAgent)
+              .substitutePromptVariable('FUNC', toolCode),
+        }),
+      );
+      if (toolres == null) {
+        setState(() {
+          generatedToolCode = '';
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "API Tool generation failed!",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.redAccent,
+        ));
+        return;
+      }
+      String toolDefinition = toolres!['TOOL'];
+
+      setState(() {
+        generatedToolCode = toolDefinition;
+      });
+    } catch (e) {
+      String errMsg = 'Unexpected Error Occured';
+      if (e.toString().contains('NO_DEFAULT_LLM')) {
+        errMsg = "Please Select Default AI Model in Settings";
+      }
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
-          "API Tool generation failed!",
+          errMsg,
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.redAccent,
       ));
-      return;
+      Navigator.pop(context);
     }
-
-    String toolCode = toolfuncRes!['FUNC'];
-
-    final toolres = await APIDashAgentCaller.instance.call(
-      ApiToolBodyGen(),
-      ref: ref,
-      input: AgentInputs(variables: {
-        'TEMPLATE': APIToolGenTemplateSelector.getTemplate(
-                selectedLanguage, selectedAgent)
-            .substitutePromptVariable('FUNC', toolCode),
-      }),
-    );
-    if (toolres == null) {
-      setState(() {
-        generatedToolCode = '';
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "API Tool generation failed!",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.redAccent,
-      ));
-      return;
-    }
-    String toolDefinition = toolres!['TOOL'];
-
-    setState(() {
-      generatedToolCode = toolDefinition;
-    });
   }
 
   @override
