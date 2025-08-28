@@ -8,15 +8,18 @@ import 'package:apidash/consts.dart';
 import 'button_share.dart';
 
 class ResponseBodySuccess extends StatefulWidget {
-  const ResponseBodySuccess(
-      {super.key,
-      required this.mediaType,
-      required this.body,
-      required this.options,
-      required this.bytes,
-      this.formattedBody,
-      this.sseOutput,
-      this.highlightLanguage});
+  const ResponseBodySuccess({
+    super.key,
+    required this.mediaType,
+    required this.body,
+    required this.options,
+    required this.bytes,
+    this.formattedBody,
+    this.highlightLanguage,
+    this.sseOutput,
+    this.isAIResponse = false,
+    this.aiRequestModel,
+  });
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
@@ -24,6 +27,8 @@ class ResponseBodySuccess extends StatefulWidget {
   final String? formattedBody;
   final List<String>? sseOutput;
   final String? highlightLanguage;
+  final bool isAIResponse;
+  final AIRequestModel? aiRequestModel;
 
   @override
   State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
@@ -134,7 +139,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       ),
                     ),
                   ),
-                ResponseBodyView.raw => Expanded(
+                ResponseBodyView.answer => Expanded(
                     child: Container(
                       width: double.maxFinite,
                       padding: kP8,
@@ -147,6 +152,21 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       ),
                     ),
                   ),
+                ResponseBodyView.raw => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          widget.isAIResponse
+                              ? widget.body
+                              : (widget.formattedBody ?? widget.body),
+                          style: kCodeStyle,
+                        ),
+                      ),
+                    ),
+                  ),
                 ResponseBodyView.sse => Expanded(
                     child: Container(
                       width: double.maxFinite,
@@ -154,6 +174,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       decoration: textContainerdecoration,
                       child: SSEDisplay(
                         sseOutput: widget.sseOutput,
+                        aiRequestModel: widget.aiRequestModel,
                       ),
                     ),
                   ),

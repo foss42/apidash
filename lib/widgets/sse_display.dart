@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
 class SSEDisplay extends StatelessWidget {
+  final AIRequestModel? aiRequestModel;
   final List<String>? sseOutput;
   const SSEDisplay({
     super.key,
     this.sseOutput,
+    this.aiRequestModel,
   });
 
   @override
@@ -24,9 +27,38 @@ class SSEDisplay extends StatelessWidget {
       );
     }
 
+    if (aiRequestModel != null) {
+      // For RAW Text output (only AI Requests)
+      String out = "";
+      for (String x in sseOutput!) {
+        x = x.trim();
+        if (x.isEmpty || x.contains('[DONE]')) {
+          continue;
+        }
+
+        // Start with JSON
+        final pos = x.indexOf('{');
+        if (pos == -1) continue;
+        x = x.substring(pos);
+
+        Map? dec;
+        try {
+          dec = jsonDecode(x);
+          final z = aiRequestModel?.getFormattedStreamOutput(dec!);
+          out += z ?? '<?>';
+        } catch (e) {
+          debugPrint("SSEDisplay -> Error in JSONDEC $e");
+        }
+      }
+      return SingleChildScrollView(
+        child: Text(out),
+      );
+    }
+
     return ListView(
       padding: kP1,
-      children: sseOutput!.reversed.where((e) => e != '').map<Widget>((chunk) {
+      children:
+          sseOutput!.reversed.where((e) => e.trim() != '').map<Widget>((chunk) {
         Map<String, dynamic>? parsedJson;
         try {
           parsedJson = jsonDecode(chunk);

@@ -28,6 +28,7 @@ const kP6 = EdgeInsets.all(6);
 const kP8 = EdgeInsets.all(8);
 const kP10 = EdgeInsets.all(10);
 const kP12 = EdgeInsets.all(12);
+const kP20 = EdgeInsets.all(20);
 const kPs8 = EdgeInsets.only(left: 8);
 const kPs2 = EdgeInsets.only(left: 2);
 const kPe4 = EdgeInsets.only(right: 4);

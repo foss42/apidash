@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../../common_widgets/common_widgets.dart';
+import 'ai_history_page.dart';
 import 'his_scripts_tab.dart';
 
 class HistoryRequestPane extends ConsumerWidget {
@@ -22,23 +23,39 @@ class HistoryRequestPane extends ConsumerWidget {
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
     final apiType = ref.watch(selectedHistoryRequestModelProvider
         .select((value) => value?.metaData.apiType));
-    final headersMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.headersMap)) ??
+
+    final headersMap = ref.watch(selectedHistoryRequestModelProvider.select(
+          (value) {
+            if (apiType == APIType.ai) return <String, String>{};
+            return value?.httpRequestModel!.headersMap;
+          },
+        )) ??
         {};
     final headerLength = headersMap.length;
 
-    final paramsMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.paramsMap)) ??
+    final paramsMap = ref.watch(selectedHistoryRequestModelProvider.select(
+          (value) {
+            if (apiType == APIType.ai) return <String, String>{};
+            return value?.httpRequestModel!.paramsMap;
+          },
+        )) ??
         {};
     final paramLength = paramsMap.length;
 
-    final hasBody = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasBody)) ??
+    final hasBody = ref.watch(selectedHistoryRequestModelProvider.select(
+          (value) {
+            if (apiType == APIType.ai) return false;
+            return value?.httpRequestModel!.hasBody;
+          },
+        )) ??
         false;
 
-    final hasQuery = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasQuery)) ??
-        false;
+    final hasQuery =
+        ref.watch(selectedHistoryRequestModelProvider.select((value) {
+              if (apiType == APIType.ai) return false;
+              return value?.httpRequestModel!.hasQuery;
+            })) ??
+            false;
 
     final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
             .select((value) => value?.preRequestScript?.length)) ??
@@ -125,6 +142,27 @@ class HistoryRequestPane extends ConsumerWidget {
             ),
             const HisRequestBody(),
             const HistoryScriptsTab(),
+          ],
+        ),
+      APIType.ai => RequestPane(
+          key: const Key("history-request-pane-ai"),
+          selectedId: selectedId,
+          codePaneVisible: codePaneVisible,
+          onPressedCodeButton: () {
+            ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+                !codePaneVisible;
+          },
+          showViewCodeButton: !isCompact,
+          showIndicators: [
+            false,
+            false,
+            false,
+          ],
+          tabLabels: const ["Prompts", "Authorization", "Configuration"],
+          children: [
+            const HisAIRequestPromptSection(),
+            const HisAIRequestAuthorizationSection(),
+            const HisAIRequestConfigSection(),
           ],
         ),
       _ => kSizedBoxEmpty,
