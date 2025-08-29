@@ -1,4 +1,3 @@
-import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';

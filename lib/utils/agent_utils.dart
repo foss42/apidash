@@ -1,3 +1,4 @@
+import 'package:apidash/apitoolgen/tool_templates.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/agents.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -63,4 +64,40 @@ Future<String?> modifySDUICodeUsingPrompt({
   );
   final SDUI = res?['STAC'];
   return SDUI;
+}
+
+Future<String?> generateAPIToolUsingRequestData({
+  required WidgetRef ref,
+  required String requestData,
+  required String targetLanguage,
+  required String selectedAgent,
+}) async {
+  final toolfuncRes = await APIDashAgentCaller.instance.call(
+    APIToolFunctionGenerator(),
+    ref: ref,
+    input: AgentInputs(variables: {
+      'REQDATA': requestData,
+      'TARGET_LANGUAGE': targetLanguage,
+    }),
+  );
+  if (toolfuncRes == null) {
+    return null;
+  }
+
+  String toolCode = toolfuncRes!['FUNC'];
+
+  final toolres = await APIDashAgentCaller.instance.call(
+    ApiToolBodyGen(),
+    ref: ref,
+    input: AgentInputs(variables: {
+      'TEMPLATE':
+          APIToolGenTemplateSelector.getTemplate(targetLanguage, selectedAgent)
+              .substitutePromptVariable('FUNC', toolCode),
+    }),
+  );
+  if (toolres == null) {
+    return null;
+  }
+  String toolDefinition = toolres!['TOOL'];
+  return toolDefinition;
 }

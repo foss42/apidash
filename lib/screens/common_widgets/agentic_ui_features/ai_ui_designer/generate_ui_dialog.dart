@@ -75,6 +75,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         backgroundColor: Colors.redAccent,
       ));
       Navigator.pop(context);
+      return null;
     }
   }
 

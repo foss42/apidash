@@ -52,6 +52,7 @@ API_RESPONSE: ```json
 ```
 
 Return only the Schema and nothing else and MAKE SURE TO USE the Actual VALUES instead of text placeholders. this is very important
+If you notice the content is too long then please include a Single Child Scroll Viewbut make sure you are handing cases wherein multiple scroll views are used and stuff
   """;
 
 class IntermediateRepresentationGen extends APIDashAIAgent {
