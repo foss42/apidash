@@ -1,8 +1,6 @@
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genai/agentic_engine/agent_service.dart';
-import 'package:genai/agentic_engine/blueprint.dart';
-import 'package:genai/genai.dart';
 
 class APIDashAgentCaller {
   static APIDashAgentCaller instance = APIDashAgentCaller();

@@ -1,5 +1,5 @@
-import 'package:apidash/screens/home_page/editor_pane/agentic_ui_elements/tool_generation/ai_toolgen_widgets.dart';
-import 'package:apidash/screens/home_page/editor_pane/agentic_ui_elements/ai_ui_designer/ai_ui_desginer_widgets.dart';
+import 'package:apidash/screens/home_page/editor_pane/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
+import 'package:apidash/screens/home_page/editor_pane/agentic_ui_features/tool_generation/ai_toolgen_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
