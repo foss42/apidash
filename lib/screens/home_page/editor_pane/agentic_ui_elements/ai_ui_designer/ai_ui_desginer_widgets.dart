@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:apidash/consts.dart';
+import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genai/agentic_engine/blueprint.dart';
 import 'package:stac/stac.dart' as stac;
-import '../services/agentic_services/agents/agents.dart';
+import '../../../../../services/agentic_services/agents/agents.dart';
 
 void showCustomDialog(BuildContext context, Widget dialogContent) {
   showDialog(
@@ -493,6 +494,36 @@ class StacRenderer extends StatelessWidget {
       homeBuilder: (context) => Material(
         color: Colors.transparent,
         child: stac.Stac.fromJson(jsonDecode(stacRepresentation), context),
+      ),
+    );
+  }
+}
+
+class AIGenerateUIButton extends ConsumerWidget {
+  const AIGenerateUIButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FilledButton.tonalIcon(
+      style: FilledButton.styleFrom(
+        padding: kPh12,
+        minimumSize: const Size(44, 44),
+      ),
+      onPressed: () {
+        final model = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpResponseModel));
+        showCustomDialog(
+          context,
+          GenerateUIDialog(content: model?.formattedBody ?? ""),
+        );
+      },
+      icon: Icon(
+        Icons.generating_tokens,
+      ),
+      label: const SizedBox(
+        child: Text(
+          kLabelGenerateUI,
+        ),
       ),
     );
   }

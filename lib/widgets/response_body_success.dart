@@ -1,10 +1,5 @@
-import 'dart:convert';
-
-import 'package:apidash/apitoolgen/request_consolidator.dart';
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/widgets/ai_toolgen_widgets.dart';
-import 'package:apidash/widgets/ai_ui_desginer_widgets.dart';
-
+import 'package:apidash/screens/home_page/editor_pane/agentic_ui_elements/tool_generation/ai_toolgen_widgets.dart';
+import 'package:apidash/screens/home_page/editor_pane/agentic_ui_elements/ai_ui_designer/ai_ui_desginer_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -12,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:genai/genai.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'button_share.dart';
 
-class ResponseBodySuccess extends ConsumerStatefulWidget {
+class ResponseBodySuccess extends StatefulWidget {
   const ResponseBodySuccess({
     super.key,
     required this.mediaType,
@@ -42,11 +35,10 @@ class ResponseBodySuccess extends ConsumerStatefulWidget {
   final bool isPartOfHistory;
 
   @override
-  ConsumerState<ResponseBodySuccess> createState() =>
-      _ResponseBodySuccessState();
+  State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
 }
 
-class _ResponseBodySuccessState extends ConsumerState<ResponseBodySuccess> {
+class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   int segmentIdx = 0;
 
   @override
@@ -77,46 +69,9 @@ class _ResponseBodySuccessState extends ConsumerState<ResponseBodySuccess> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    FilledButton.tonalIcon(
-                      style: FilledButton.styleFrom(
-                        padding: kPh12,
-                        minimumSize: const Size(44, 44),
-                      ),
-                      onPressed: () async {
-                        GenerateToolDialog.show(context, ref);
-                      },
-                      icon: Icon(
-                        Icons.token_outlined,
-                      ),
-                      label: const SizedBox(
-                        child: Text(
-                          "Generate Tool",
-                        ),
-                      ),
-                    ),
+                    GenerateToolButton(),
                     kHSpacer10,
-                    FilledButton.tonalIcon(
-                      style: FilledButton.styleFrom(
-                        padding: kPh12,
-                        minimumSize: const Size(44, 44),
-                      ),
-                      onPressed: () {
-                        final model = ref.watch(selectedRequestModelProvider
-                            .select((value) => value?.httpResponseModel));
-                        showCustomDialog(
-                          context,
-                          GenerateUIDialog(content: model?.formattedBody ?? ""),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.generating_tokens,
-                      ),
-                      label: const SizedBox(
-                        child: Text(
-                          kLabelGenerateUI,
-                        ),
-                      ),
-                    ),
+                    AIGenerateUIButton(),
                     kHSpacer10,
                   ],
                 ),

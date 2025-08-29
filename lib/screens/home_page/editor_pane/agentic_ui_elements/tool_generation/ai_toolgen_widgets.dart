@@ -7,7 +7,7 @@ import 'package:apidash/screens/common_widgets/ai/ai_model_selector_button.dart'
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/apitool_bodygen.dart';
 import 'package:apidash/services/agentic_services/agents/apitool_funcgen.dart';
-import 'package:apidash/widgets/ai_ui_desginer_widgets.dart';
+import 'package:apidash/screens/home_page/editor_pane/agentic_ui_elements/ai_ui_designer/ai_ui_desginer_widgets.dart';
 import 'package:apidash/widgets/button_copy.dart';
 import 'package:apidash/widgets/previewer_code.dart';
 import 'package:apidash/widgets/widget_sending.dart';
@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:genai/agentic_engine/blueprint.dart';
 
-import '../providers/providers.dart';
+import '../../../../../providers/providers.dart';
 
 class GenerateToolDialog extends ConsumerStatefulWidget {
   final APIDashRequestDescription requestDesc;
@@ -422,6 +422,31 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
           ),
           kVSpacer5,
         ],
+      ),
+    );
+  }
+}
+
+class GenerateToolButton extends ConsumerWidget {
+  const GenerateToolButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FilledButton.tonalIcon(
+      style: FilledButton.styleFrom(
+        padding: kPh12,
+        minimumSize: const Size(44, 44),
+      ),
+      onPressed: () async {
+        GenerateToolDialog.show(context, ref);
+      },
+      icon: Icon(
+        Icons.token_outlined,
+      ),
+      label: const SizedBox(
+        child: Text(
+          "Generate Tool",
+        ),
       ),
     );
   }
