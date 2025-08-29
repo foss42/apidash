@@ -231,6 +231,8 @@ This feature is fully built on top of the agentic foundation established by `gen
 
 ![Tool Generation](./images/toolgen.png)
 
+[add generated tool code output]
+
 ---
 
 ### Implemented the API Schema to Flutter UI Generator
@@ -243,12 +245,32 @@ A Proof of Concept (PoC) for this functionality had already been demonstrated du
 
 This marks a significant milestone, as the AI UI Designer bridges the gap between raw API responses and usable frontend components—removing boilerplate work and streamlining the developer workflow.
 
-
 ![API Response](./images/apischema.png)
 
 With the AI UI Designer, the response returned from the above API can be automatically converted into a Flutter widget. This widget is generated and rendered using the Server-Driven UI (SDUI) approach, powered by the [Stac](https://stac.dev/) package.
 
+[add video recording here]
+
+after some modifications using natural language, we can get it to look like this,
 ![Generated Widget](./images/gencomp.png)
+
+### Additional Examples of Generated UI Components
+
+[api request details 1]
+[image 1]
+[exported flutter code]
+
+[api request details 2]
+[image 2]
+
+[api request details 3]
+[image 3]
+
+[api request details 4]
+[image 4]
+
+[api request details 5]
+[image 5]
 
 ---
 
@@ -266,8 +288,9 @@ With the AI UI Designer, the response returned from the above API can be automat
 `genai` package foundations|[#859](https://github.com/foss42/apidash/pull/859)||Closed|Mentor requested for a new PR after making some changes|
 |SSE Feature Foundations|[#860](https://github.com/foss42/apidash/pull/860)||Closed|Mentor requested changes and rebase to main branch|
 |SSE & Streaming Support|[#861](https://github.com/foss42/apidash/pull/861)|[#116](https://github.com/foss42/apidash/issues/116)|Merged||
-|`genai` & AI Requests Feature|[#870](https://github.com/foss42/apidash/pull/870)|[#871](https://github.com/foss42/apidash/issues/871)|Open|Under Review
-|AI UI Designer & Tool Generator|[#874](https://github.com/foss42/apidash/pull/874)|[#617](https://github.com/foss42/apidash/issues/617)|Open|Under Review
+|`genai` & AI Requests Feature|[#870](https://github.com/foss42/apidash/pull/870)|[#871](https://github.com/foss42/apidash/issues/871)|Merged||
+Foundations: Agents & AI UI Designer + Tool Generation |[#874](https://github.com/foss42/apidash/pull/874)||Closed|Mentor requested to make a new PR that was based on top of main branch code|
+|AI UI Designer & Tool Generator|[#880](https://github.com/foss42/apidash/pull/880)|[#617](https://github.com/foss42/apidash/issues/617)|Open|Under Review
 |Final Report Documentation|[#878](https://github.com/foss42/apidash/pull/878)||Open|Under Review
 ---
 
