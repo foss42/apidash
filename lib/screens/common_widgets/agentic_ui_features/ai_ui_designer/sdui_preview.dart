@@ -1,4 +1,4 @@
-import 'package:apidash/screens/home_page/editor_pane/agentic_ui_features/ai_ui_designer/sdui_renderer.dart';
+import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/sdui_renderer.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/stac2flutter.dart';
 import 'package:apidash_core/apidash_core.dart';
