@@ -231,7 +231,41 @@ This feature is fully built on top of the agentic foundation established by `gen
 
 ![Tool Generation](./images/toolgen.png)
 
-[add generated tool code output]
+Here's the generated tool code
+```python
+import requests
+def func():
+    """
+    Retrieves a list of users from the reqres.in API.
+    """
+    url = "https://reqres.in/api/users"
+    headers = {
+        "X-Api-Key": "reqres-free-v1"
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed: {e}")
+        return None
+
+api_tool = {
+    "function": func,
+    "definition": {
+        "name": "GetUsers",
+        "description": "Retrieves a list of users from the reqres.in API.",
+        "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": False
+        }
+    }
+}
+
+__all__ = ["api_tool"]
+```
 
 ---
 
@@ -249,16 +283,68 @@ This marks a significant milestone, as the AI UI Designer bridges the gap betwee
 
 With the AI UI Designer, the response returned from the above API can be automatically converted into a Flutter widget. This widget is generated and rendered using the Server-Driven UI (SDUI) approach, powered by the [Stac](https://stac.dev/) package.
 
-[add video recording here]
 
 after some modifications using natural language, we can get it to look like this,
 ![Generated Widget](./images/gencomp.png)
 
 ### Additional Examples of Generated UI Components
 
-[api request details 1]
-[image 1]
-[exported flutter code]
+Here's the Entire Creation Flow
+![Generated Widget](./images/demovid.gif)
+
+#### Example 1
+`GET` https://rickandmortyapi.com/api/character/[1,2,3,4,5,6,7]
+```json
+[
+  {
+    "id": 1,
+    "name": "Rick Sanchez",
+    "status": "Alive",
+    "species": "Human",
+    "type": "",
+    "gender": "Male",
+    "origin": {
+      "name": "Earth (C-137)",
+      "url": "https://rickandmortyapi.com/api/location/1"
+    },
+    "location": {
+      "name": "Citadel of Ricks",
+      "url": "https://rickandmortyapi.com/api/location/3"
+    },
+    "image": "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+    "episode": [
+      "https://rickandmortyapi.com/api/episode/1",
+      "https://rickandmortyapi.com/api/episode/2",
+      "https://rickandmortyapi.com/api/episode/3",
+    ],
+    "url": "https://rickandmortyapi.com/api/character/1",
+    "created": "2017-11-04T18:48:46.250Z"
+  },
+  {
+    "id": 2,
+    "name": "Morty Smith",
+    "status": "Alive",
+    "species": "Human",
+    "type": "",
+    "gender": "Male",
+    "origin": {
+      "name": "unknown",
+      "url": ""
+    },
+    "location": {
+      "name": "Citadel of Ricks",
+      "url": "https://rickandmortyapi.com/api/location/3"
+    },
+    "image": "https://rickandmortyapi.com/api/character/avatar/2.jpeg",
+    "url": "https://rickandmortyapi.com/api/character/2",
+    "created": "2017-11-04T18:50:21.651Z"
+  },
+  ...
+]
+```
+The Generated Component Preview looks like 
+![Generated Widget](./images/aiuiexample1.png)
+
 
 [api request details 2]
 [image 2]
