@@ -40,9 +40,6 @@ class ResponseBody extends StatelessWidget {
         showIssueButton: false,
       );
     }
-    if (isSSE) {
-      body = responseModel.sseOutput!.join();
-    }
 
     final mediaType =
         responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
@@ -74,6 +71,7 @@ class ResponseBody extends StatelessWidget {
         formattedBody: responseModel.sseOutput!.join('\n'),
         aiRequestModel: selectedRequestModel?.aiRequestModel,
         isPartOfHistory: isPartOfHistory,
+        sseOutput: responseModel.sseOutput,
       );
     }
 
