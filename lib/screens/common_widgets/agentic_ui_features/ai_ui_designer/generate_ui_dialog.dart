@@ -164,9 +164,18 @@ class AIGenerateUIButton extends ConsumerWidget {
       onPressed: () {
         final model = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpResponseModel));
+        if (model == null) return;
+
+        String data = "";
+        if (model.sseOutput != null) {
+          data = model.sseOutput!.join('');
+        } else {
+          data = model.formattedBody ?? "<>";
+        }
+
         showCustomDialog(
           context,
-          GenerateUIDialog(content: model?.formattedBody ?? ""),
+          GenerateUIDialog(content: data),
         );
       },
       icon: Icon(

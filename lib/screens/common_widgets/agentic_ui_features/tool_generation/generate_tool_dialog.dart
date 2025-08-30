@@ -44,11 +44,14 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
   });
 
   static show(BuildContext context, WidgetRef ref) {
-    final requestModel = ref.watch(selectedRequestModelProvider
+    final aiRequestModel = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.aiRequestModel));
+    HttpRequestModel? requestModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel));
     final responseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
 
+    if (aiRequestModel == null && requestModel == null) return;
     if (requestModel == null) return;
     if (responseModel == null) return;
 
@@ -56,12 +59,8 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
     Map? bodyJSON;
     List<Map>? bodyFormData;
 
-    if (requestModel.bodyContentType == ContentType.formdata) {
-      bodyFormData = requestModel.formDataMapList;
-    } else if (requestModel.bodyContentType == ContentType.json) {
-      bodyJSON = jsonDecode(requestModel.body.toString());
-    } else {
-      bodyTXT = requestModel.body!;
+    if (aiRequestModel != null) {
+      requestModel = aiRequestModel.httpRequestModel!;
     }
 
     final reqDesModel = APIDashRequestDescription(
