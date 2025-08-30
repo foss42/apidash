@@ -126,7 +126,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
           ),
         if (index == 1)
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.6,
+            // width: MediaQuery.of(context).size.width * 0.6,
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 40.0),

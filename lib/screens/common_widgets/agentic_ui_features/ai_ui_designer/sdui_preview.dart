@@ -2,6 +2,7 @@ import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designe
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/stac2flutter.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:apidash_design_system/widgets/textfield_outlined.dart';
 import 'package:flutter/material.dart';
@@ -64,17 +65,27 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.6, // Large dialog
+      // width: MediaQuery.of(context).size.width * 0.6, // Large dialog
       padding: EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Generated Component",
-            style: TextStyle(
-              fontSize: 20,
-            ),
+          Row(
+            children: [
+              Text(
+                "Generated Component",
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              Spacer(),
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.close)),
+            ],
           ),
           kVSpacer20,
           Expanded(
@@ -84,19 +95,22 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.white),
                 ),
-                child: StacRenderer(
-                  stacRepresentation: widget.sduiCode,
-                  onError: () {
-                    Future.delayed(Duration(milliseconds: 200), () {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          "Failed to Display Preview",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.redAccent,
-                      ));
-                    });
-                  },
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: StacRenderer(
+                    stacRepresentation: widget.sduiCode,
+                    onError: () {
+                      Future.delayed(Duration(milliseconds: 200), () {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                            "Failed to Display Preview",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.redAccent,
+                        ));
+                      });
+                    },
+                  ),
                 ),
               ),
             ),

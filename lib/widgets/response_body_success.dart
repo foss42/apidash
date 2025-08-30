@@ -69,10 +69,9 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    GenerateToolButton(),
-                    kHSpacer10,
-                    AIGenerateUIButton(),
-                    kHSpacer10,
+                    Expanded(child: GenerateToolButton()),
+                    SizedBox(width: 10),
+                    Expanded(child: AIGenerateUIButton()),
                   ],
                 ),
               kVSpacer10,

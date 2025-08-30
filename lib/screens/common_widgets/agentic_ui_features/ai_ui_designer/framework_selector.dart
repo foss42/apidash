@@ -37,7 +37,7 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
     );
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.6, // Large dialog
+      // width: MediaQuery.of(context).size.width * 0.6, // Large dialog
       padding: EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
