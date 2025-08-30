@@ -24,6 +24,7 @@ Your task is to analyze the given API response (`API_RESPONSE`) and return a **U
 - Use Cards to group related info
 - Add short labels to explain each component's purpose
 - Only use allowed elements — no custom widgets or other components
+- if there are actual image links in the incoming data, please use them
 
 You must **include alignment information** where relevant, using the following format:
 [ElementType] Label (alignment: ..., mainAxis: ..., crossAxis: ...)
