@@ -346,8 +346,98 @@ The Generated Component Preview looks like
 ![Generated Widget](./images/aiuiexample1.png)
 
 
-[api request details 2]
-[image 2]
+#### Example 2
+`GET` https://api.nasa.gov/planetary/apod?date=&start_date=&end_date=&count=&thumbs
+```json
+{
+  "copyright": "Marina Prol",
+  "date": "2025-08-30",
+  "explanation": "A young crescent moon can be hard to see. That's because when the Moon shows its crescent phase (young or old) it can never be far from the Sun in planet Earth's sky. But even though the sky is still bright, a slender sunlit lunar crescent is clearly visible in this early evening skyscape. The telephoto snapshot was captured on August 24, with the Moon very near the western horizon at sunset. Seen in a narrow crescent phase about 1.5 days old, the visible sunlit portion is a mere two percent of the surface of the Moon's familiar nearside. At the Canary Islands Space Centre, a steerable radio dish for communication with spacecraft is tilted in the direction of the two percent Moon. The sunset sky's pastel pinkish coloring is partly due to fine sand and dust from the Sahara Desert blown by the prevailing winds.",
+  "hdurl": "https://apod.nasa.gov/apod/image/2508/IMG_4081.jpeg",
+  "media_type": "image",
+  "service_version": "v1",
+  "title": "A Two Percent Moon",
+  "url": "https://apod.nasa.gov/apod/image/2508/IMG_4081_1024.jpeg"
+}
+```
+Generated UI:
+![Generated Widget](./images/exmp2.png)
+Exported Flutter Code:
+```dart
+class SDUIWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF333333),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF222222),
+        title: const Text(
+          "Astronomy Picture of the Day",
+          style: TextStyle(
+            color: Color(0xFFFFDA63),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Card(
+              color: const Color(0xFF121212),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Image.network(
+                    "https://apod.nasa.gov/apod/image/2508/IMG_4081_1024.jpeg",
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.contain,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                    child: Text(
+                      "A Two Percent Moon",
+                      style: TextStyle(
+                        color: Color(0xFFFFDA63),
+                        fontSize: 24,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Card(
+              color: const Color(0xFF121212),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                      child: Text(
+                        "A young crescent moon can be hard to see. That's because when the Moon shows its crescent phase (young or old) it can never be far from the Sun in planet Earth's sky. But even though the sky is still bright, a slender sunlit lunar crescent is clearly visible in this early evening skyscape. The telephoto snapshot was captured on August 24, with the Moon very near the western horizon at sunset. Seen in a narrow crescent phase about 1.5 days old, the visible sunlit portion is a mere two percent of the surface of the Moon's familiar nearside. At the Canary Islands Space Centre, a steerable radio dish for communication with spacecraft is tilted in the direction of the two percent Moon. The sunset sky's pastel pinkish coloring is partly due to fine sand and dust from the Sahara Desert blown by the prevailing winds.",
+                        style: TextStyle(
+                          color: Color(0xFFFFFACD),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
 
 [api request details 3]
 [image 3]
@@ -375,11 +465,11 @@ The Generated Component Preview looks like
 |SSE Feature Foundations|[#860](https://github.com/foss42/apidash/pull/860)||Closed|Mentor requested changes and rebase to main branch|
 |SSE & Streaming Support|[#861](https://github.com/foss42/apidash/pull/861)|[#116](https://github.com/foss42/apidash/issues/116)|Merged||
 |`genai` & AI Requests Feature|[#870](https://github.com/foss42/apidash/pull/870)|[#871](https://github.com/foss42/apidash/issues/871)|Merged||
+|`genai` package: Testing|[#882](https://github.com/foss42/apidash/pull/882)||Open|Under Review
 Foundations: Agents & AI UI Designer + Tool Generation |[#874](https://github.com/foss42/apidash/pull/874)||Closed|Mentor requested to make a new PR that was based on top of main branch code|
 |AI UI Designer & Tool Generator|[#880](https://github.com/foss42/apidash/pull/880)|[#617](https://github.com/foss42/apidash/issues/617)|Open|Under Review
 |Final Report Documentation|[#878](https://github.com/foss42/apidash/pull/878)||Open|Under Review
 ---
-
 
 ## Challenges Faced
 
