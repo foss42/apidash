@@ -39,11 +39,12 @@ class _ToolRequirementSelectorPageState
     final lightMode = Theme.of(context).brightness == Brightness.light;
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.4, // Large dialog
+      constraints: BoxConstraints.expand(),
       padding: EdgeInsets.all(30),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             "Generate API Tool",
@@ -124,7 +125,11 @@ class _ToolRequirementSelectorPageState
             isOutlined: true,
           ),
           kVSpacer20,
-          Row(
+          Wrap(
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            runAlignment: WrapAlignment.center,
+            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FilledButton.tonalIcon(
                 style: FilledButton.styleFrom(
@@ -161,34 +166,37 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     return Opacity(
       opacity: 0.8,
-      child: Row(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 3),
-            child: Text(
-              "with",
-              style: TextStyle(
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.black54
-                      : Colors.white60,
-                  fontSize: 15),
+      child: Container(
+        width: 200,
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 3),
+              child: Text(
+                "with",
+                style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black54
+                        : Colors.white60,
+                    fontSize: 15),
+              ),
             ),
-          ),
-          SizedBox(width: 5),
-          AIModelSelectorButton(
-            aiRequestModel:
-                AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
-            onModelUpdated: (d) {
-              ref.read(settingsProvider.notifier).update(
-                  defaultAIModel: d.copyWith(
-                      modelConfigs: [],
-                      stream: null,
-                      systemPrompt: '',
-                      userPrompt: '').toJson());
-            },
-          ),
-          kVSpacer5,
-        ],
+            SizedBox(width: 5),
+            AIModelSelectorButton(
+              aiRequestModel:
+                  AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
+              onModelUpdated: (d) {
+                ref.read(settingsProvider.notifier).update(
+                    defaultAIModel: d.copyWith(
+                        modelConfigs: [],
+                        stream: null,
+                        systemPrompt: '',
+                        userPrompt: '').toJson());
+              },
+            ),
+            kVSpacer5,
+          ],
+        ),
       ),
     );
   }

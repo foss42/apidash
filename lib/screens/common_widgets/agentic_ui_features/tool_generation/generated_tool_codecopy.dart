@@ -38,7 +38,6 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
     return Container(
       color: const Color.fromARGB(26, 123, 123, 123),
       padding: EdgeInsets.all(20),
-      width: MediaQuery.of(context).size.width * 0.50,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [

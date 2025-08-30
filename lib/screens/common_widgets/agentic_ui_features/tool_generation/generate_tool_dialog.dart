@@ -98,6 +98,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
     try {
       setState(() {
         generatedToolCode = null;
+        index = 1;
       });
       final res = await generateAPIToolUsingRequestData(
         ref: ref,
@@ -108,6 +109,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       if (res == null) {
         setState(() {
           generatedToolCode = '';
+          index = 0;
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
@@ -120,8 +122,12 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       }
       setState(() {
         generatedToolCode = res;
+        index = 1;
       });
     } catch (e) {
+      setState(() {
+        index = 0;
+      });
       String errMsg = 'Unexpected Error Occured';
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = "Please Select Default AI Model in Settings";
@@ -139,26 +145,65 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 600,
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Row(
-        children: [
-          Expanded(child: ToolRequirementSelectorPage(
-            onGenerateCallback: (agent, lang) {
-              setState(() {
-                selectedLanguage = lang;
-                selectedAgent = agent;
-              });
-              generateAPITool();
-            },
-          )),
-          GeneratedToolCodeCopyPage(
-            toolCode: generatedToolCode,
-            language: selectedLanguage.trim(),
+    return LayoutBuilder(builder: (context, constraints) {
+      final dialogWidth = constraints.maxWidth;
+      final isExpandedWindow = dialogWidth > WindowWidth.expanded.value;
+      final isLargeWindow = dialogWidth > WindowWidth.large.value;
+      final isExtraLargeWindow = dialogWidth > WindowWidth.large.value;
+
+      if (isExtraLargeWindow || isLargeWindow || isExpandedWindow) {
+        return Container(
+          height: 600,
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: Row(
+            children: [
+              Flexible(
+                  flex: 2,
+                  child: ToolRequirementSelectorPage(
+                    onGenerateCallback: (agent, lang) {
+                      setState(() {
+                        selectedLanguage = lang;
+                        selectedAgent = agent;
+                      });
+                      generateAPITool();
+                    },
+                  )),
+              Expanded(
+                flex: 3,
+                child: GeneratedToolCodeCopyPage(
+                  toolCode: generatedToolCode,
+                  language: selectedLanguage.trim(),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
+      } else {
+        return Container(
+          height: 600,
+          // width: MediaQuery.of(context).size.width * 0.8,
+          child: IndexedStack(
+            index: index,
+            children: [
+              Center(
+                child: ToolRequirementSelectorPage(
+                  onGenerateCallback: (agent, lang) {
+                    setState(() {
+                      selectedLanguage = lang;
+                      selectedAgent = agent;
+                    });
+                    generateAPITool();
+                  },
+                ),
+              ),
+              GeneratedToolCodeCopyPage(
+                toolCode: generatedToolCode,
+                language: selectedLanguage.trim(),
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 }
