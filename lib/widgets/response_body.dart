@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
@@ -10,9 +12,11 @@ class ResponseBody extends StatelessWidget {
   const ResponseBody({
     super.key,
     this.selectedRequestModel,
+    this.isPartOfHistory = false,
   });
 
   final RequestModel? selectedRequestModel;
+  final bool isPartOfHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +40,6 @@ class ResponseBody extends StatelessWidget {
         showIssueButton: false,
       );
     }
-    if (isSSE) {
-      body = responseModel.sseOutput!.join();
-    }
 
     final mediaType =
         responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
@@ -60,6 +61,20 @@ class ResponseBody extends StatelessWidget {
       options.remove(ResponseBodyView.code);
     }
 
+    if (responseModel.sseOutput?.isNotEmpty ?? false) {
+      return ResponseBodySuccess(
+        key: Key("${selectedRequestModel!.id}-response"),
+        mediaType: MediaType('text', 'event-stream'),
+        options: [ResponseBodyView.sse, ResponseBodyView.raw],
+        bytes: utf8.encode((responseModel.sseOutput!).toString()),
+        body: jsonEncode(responseModel.sseOutput!),
+        formattedBody: responseModel.sseOutput!.join('\n'),
+        aiRequestModel: selectedRequestModel?.aiRequestModel,
+        isPartOfHistory: isPartOfHistory,
+        sseOutput: responseModel.sseOutput,
+      );
+    }
+
     return ResponseBodySuccess(
       key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
@@ -71,6 +86,7 @@ class ResponseBody extends StatelessWidget {
       sseOutput: responseModel.sseOutput,
       isAIResponse: selectedRequestModel?.apiType == APIType.ai,
       aiRequestModel: selectedRequestModel?.aiRequestModel,
+      isPartOfHistory: isPartOfHistory,
     );
   }
 }
