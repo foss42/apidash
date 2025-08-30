@@ -7,7 +7,7 @@ import 'package:genai/interface/consts.dart';
 import 'package:genai/utils/ai_request_utils.dart';
 import 'package:better_networking/better_networking.dart';
 
-const kTestingAPIKey = "AIzaSyAtmGxNxlbh_MokoDbMjHKDSW-gU6GCMOU";
+const kTestingAPIKey = "XXXXXXXXXXXX";
 
 void main() {
   group('ai_request_utils', () {
