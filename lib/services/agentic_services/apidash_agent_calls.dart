@@ -1,6 +1,6 @@
-import 'package:apidash/apitoolgen/tool_templates.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/agents.dart';
+import 'package:apidash/templates/tool_templates.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
