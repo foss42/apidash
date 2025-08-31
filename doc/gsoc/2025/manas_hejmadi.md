@@ -292,7 +292,8 @@ after some modifications using natural language, we can get it to look like this
 ### Additional Examples of Generated UI Components
 
 Here's the Entire Creation Flow
-![Generated Widget](./images/demovid.gif)
+
+https://github.com/user-attachments/assets/a4074f28-2aaa-471a-b9bb-623d731b7515
 
 #### Example 1
 `GET` https://rickandmortyapi.com/api/character/[1,2,3,4,5,6,7]
@@ -509,6 +510,7 @@ class SDUIWidget extends StatelessWidget {
 ]
 ```
 Generated UI:
+
 ![](./images/pincodetable.png)
 
 #### Example 4
@@ -552,7 +554,9 @@ Generated UI:
 ```
 Generated UI:
 
-Exported Source Code: https://pastebin.com/vf0mFvJr
+https://github.com/user-attachments/assets/5ac6794e-c92d-41f3-9e6e-4ffa544827b1
+
+Exported Source Code: [Link](https://pastebin.com/vf0mFvJr)
 
 #### Example 5
 `GET` https://api.dictionaryapi.dev/api/v2/entries/en/flutter
@@ -601,7 +605,9 @@ Exported Source Code: https://pastebin.com/vf0mFvJr
 ```
 Generated UI:
 
-Exported Source Code: https://pastebin.com/vdyXAjwm
+https://github.com/user-attachments/assets/3f30c855-6a83-4172-bce4-4cd8ecf8c236
+
+Exported Source Code: [Link](https://pastebin.com/vdyXAjwm)
 
 ---
 
