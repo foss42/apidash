@@ -31,13 +31,13 @@ void main() {
     });
 
     test('map getter returns map of providers', () {
-      final provider = AIModelProvider(
+      const provider = AIModelProvider(
         providerId: ModelAPIProvider.openai,
         providerName: "OpenAI",
-        models: [const Model(id: "gpt-4", name: "GPT-4")],
+        models: [Model(id: "gpt-4", name: "GPT-4")],
       );
 
-      final available = AvailableModels(
+      const available = AvailableModels(
         version: 1.0,
         modelProviders: [provider],
       );
@@ -56,7 +56,7 @@ void main() {
           providerName: "OpenAI",
         );
 
-        const model = const Model(id: "gpt-4", name: "GPT-4");
+        const model = Model(id: "gpt-4", name: "GPT-4");
         final req = provider.toAiRequestModel(model: model);
 
         expect(req?.model, "gpt-4");
