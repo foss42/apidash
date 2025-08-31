@@ -440,15 +440,166 @@ class SDUIWidget extends StatelessWidget {
 }
 ```
 
+#### Example 3
+`GET`: https://api.postalpincode.in/pincode/560078
+```json
+[
+  {
+    "Message": "Number of pincode(s) found:4",
+    "Status": "Success",
+    "PostOffice": [
+      {
+        "Name": "J P Nagar",
+        "Description": null,
+        "BranchType": "Sub Post Office",
+        "DeliveryStatus": "Delivery",
+        "Circle": "Karnataka",
+        "District": "Bangalore",
+        "Division": "Bangalore South",
+        "Region": "Bangalore HQ",
+        "Block": "Bangalore South",
+        "State": "Karnataka",
+        "Country": "India",
+        "Pincode": "560078"
+      },
+      {
+        "Name": "JP Nagar III Phase",
+        "Description": null,
+        "BranchType": "Sub Post Office",
+        "DeliveryStatus": "Non-Delivery",
+        "Circle": "Karnataka",
+        "District": "Bangalore",
+        "Division": "Bangalore South",
+        "Region": "Bangalore HQ",
+        "Block": "Bangalore South",
+        "State": "Karnataka",
+        "Country": "India",
+        "Pincode": "560078"
+      },
+      {
+        "Name": "Kumaraswamy Layout",
+        "Description": null,
+        "BranchType": "Sub Post Office",
+        "DeliveryStatus": "Non-Delivery",
+        "Circle": "Karnataka",
+        "District": "Bangalore",
+        "Division": "Bangalore South",
+        "Region": "Bangalore HQ",
+        "Block": "Bangalore South",
+        "State": "Karnataka",
+        "Country": "India",
+        "Pincode": "560078"
+      },
+      {
+        "Name": "Yelachenahalli",
+        "Description": null,
+        "BranchType": "Sub Post Office",
+        "DeliveryStatus": "Non-Delivery",
+        "Circle": "Karnataka",
+        "District": "Bangalore",
+        "Division": "Bangalore South",
+        "Region": "Bangalore HQ",
+        "Block": "Bangalore South",
+        "State": "Karnataka",
+        "Country": "India",
+        "Pincode": "560078"
+      }
+    ]
+  }
+]
+```
+Generated UI:
 
-[api request details 3]
-[image 3]
 
-[api request details 4]
-[image 4]
+#### Example 4
+`GET` https://dogapi.dog/api/v2/breeds
+```json
+{
+  "data": [
+    {
+      "id": "667c7359-a739-4f2b-abb4-98867671e375",
+      "type": "breed",
+      "attributes": {
+        "name": "Alaskan Klee Kai",
+        "description": "The Alaskan Klee Kai is a small to medium-sized breed of dog that was developed in Alaska in the 1970s. It is an active and intelligent breed that is loyal and friendly. The Alaskan Klee Kai stands between 13-17 inches at the shoulder and has a double-coat that can come in various colors and patterns.",
+        "life": {
+          "max": 15,
+          "min": 12
+        },
+        "male_weight": {
+          "max": 7,
+          "min": 6
+        },
+        "female_weight": {
+          "max": 7,
+          "min": 6
+        },
+        "hypoallergenic": false
+      },
+      "relationships": {
+        "group": {
+          "data": {
+            "id": "8000793f-a1ae-4ec4-8d55-ef83f1f644e5",
+            "type": "group"
+          }
+        }
+      }
+    },
+   	...
+  ],
+  ...
+}
+```
+Generated UI:
 
-[api request details 5]
-[image 5]
+Exported Source Code: https://pastebin.com/vf0mFvJr
+
+#### Example 5
+`GET` https://api.dictionaryapi.dev/api/v2/entries/en/flutter
+```json
+[
+  {
+    "word": "flutter",
+    "phonetic": "/ˈflʌtə/",
+    "phonetics": [
+      {
+        "text": "/ˈflʌtə/",
+        "audio": ""
+      },
+    ],
+    "meanings": [
+      {
+        "partOfSpeech": "noun",
+        "definitions": [
+          {
+            "definition": "The act of fluttering; quick and irregular motion.",
+            "synonyms": [],
+            "antonyms": [],
+            "example": "the flutter of a fan"
+          },
+          {
+            "definition": "A state of agitation.",
+            "synonyms": [],
+            "antonyms": []
+          },
+          ...
+        ],
+        "synonyms": [],
+        "antonyms": []
+      },
+      ...
+    ],
+    "license": {
+      "name": "CC BY-SA 3.0",
+      "url": "https://creativecommons.org/licenses/by-sa/3.0"
+    },
+    "sourceUrls": [
+      "https://en.wiktionary.org/wiki/flutter"
+    ]
+  }
+]
+```
+Exported Source Code: https://pastebin.com/vdyXAjwm
 
 ---
 
