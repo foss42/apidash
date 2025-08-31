@@ -15,7 +15,7 @@
 
 ## Project Description
 
-The primary objective of this project was to extend the ApiDash client with new generative AI capabilities that go far beyond the scope of traditional API testing clients. This will position apidash as an OpenSource AI-Native API Testing client.
+The primary objective of this project was to extend the apidash client with new generative AI capabilities that go far beyond the scope of traditional API testing clients. This will position apidash as an OpenSource AI-Native API Testing client.
 
 Our initial vision was to develop an AI-powered agent capable of transforming raw API responses into structured UI schemas and fully functional UI components that could be directly exported and used in frontend applications. Additionally, we wanted to enable dynamic customization of UI components through natural language prompts, allowing developers to customise the design and layout according to their personal preference. This UI code could then be exported and used directly in their Flutter projects. 
 
@@ -116,6 +116,8 @@ This way, everything stays unified and we reduce the amount of duplication
 ### Added Agents and AI Requests Support
 
 `Associated Pull Request`: [#870](https://github.com/foss42/apidash/pull/870)
+
+`Package Link`: https://pub.dev/packages/genai
 
 With the rapid rise of Generative AI, it became clear that API Dash required a dedicated AI request interface with support for agentic systems. Based on this need, my mentors tasked me with developing a comprehensive AI Requests feature
 
@@ -287,6 +289,7 @@ With the AI UI Designer, the response returned from the above API can be automat
 
 
 after some modifications using natural language, we can get it to look like this,
+
 ![Generated Widget](./images/gencomp.png)
 
 ### Additional Examples of Generated UI Components
@@ -346,6 +349,7 @@ https://github.com/user-attachments/assets/a4074f28-2aaa-471a-b9bb-623d731b7515
 ]
 ```
 The Generated Component Preview looks like 
+
 ![Generated Widget](./images/aiuiexample1.png)
 
 
@@ -364,7 +368,9 @@ The Generated Component Preview looks like
 }
 ```
 Generated UI:
+
 ![Generated Widget](./images/exmp2.png)
+
 Exported Flutter Code:
 ```dart
 class SDUIWidget extends StatelessWidget {
@@ -629,7 +635,7 @@ Exported Source Code: [Link](https://pastebin.com/vdyXAjwm)
 |`genai` package: Testing|[#882](https://github.com/foss42/apidash/pull/882)||Merged||
 Foundations: Agents & AI UI Designer + Tool Generation |[#874](https://github.com/foss42/apidash/pull/874)||Closed|Mentor requested to make a new PR that was based on top of main branch code|
 |AI UI Designer & Tool Generator|[#880](https://github.com/foss42/apidash/pull/880)|[#617](https://github.com/foss42/apidash/issues/617), [#884](https://github.com/foss42/apidash/issues/884)|Merged||
-|Final Report Documentation|[#878](https://github.com/foss42/apidash/pull/878)||Open|Under Review
+|Final Report Documentation|[#878](https://github.com/foss42/apidash/pull/878)||Merged||
 ---
 
 ## Challenges Faced
