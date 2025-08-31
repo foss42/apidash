@@ -26,9 +26,8 @@ class ResponseBody extends StatelessWidget {
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
-    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
     var body = responseModel.body;
-    var formattedBody = responseModel.formattedBody;
+
     if (body == null) {
       return const ErrorMessage(
           message: '$kMsgNullBody $kUnexpectedRaiseIssue');
@@ -56,23 +55,14 @@ class ResponseBody extends StatelessWidget {
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
 
+    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
+    var formattedBody = isSSE
+        ? responseModel.sseOutput!.join('\n')
+        : responseModel.formattedBody;
+
     if (formattedBody == null) {
       options = [...options];
       options.remove(ResponseBodyView.code);
-    }
-
-    if (responseModel.sseOutput?.isNotEmpty ?? false) {
-      return ResponseBodySuccess(
-        key: Key("${selectedRequestModel!.id}-response"),
-        mediaType: MediaType('text', 'event-stream'),
-        options: [ResponseBodyView.sse, ResponseBodyView.raw],
-        bytes: utf8.encode((responseModel.sseOutput!).toString()),
-        body: jsonEncode(responseModel.sseOutput!),
-        formattedBody: responseModel.sseOutput!.join('\n'),
-        aiRequestModel: selectedRequestModel?.aiRequestModel,
-        isPartOfHistory: isPartOfHistory,
-        sseOutput: responseModel.sseOutput,
-      );
     }
 
     return ResponseBodySuccess(
