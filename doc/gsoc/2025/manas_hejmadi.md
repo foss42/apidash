@@ -275,7 +275,7 @@ __all__ = ["api_tool"]
 
 ### Implemented the API Schema to Flutter UI Generator
 
-With the foundational infrastructure in place, I was finally ready to implement the original goal of my GSoC project: the AI UI Designer.
+With the foundational infrastructure in place, I was finally getting closer to my GSoC goal of building the AI UI Designer.
 
 The purpose of this feature is straightforward yet powerful—take API responses and automatically transform them into suitable UI components, while also providing the ability to modify the design through natural language instructions. Additionally, the generated UI can be exported as Flutter code, enabling seamless integration into frontend applications.
 
@@ -285,12 +285,16 @@ This marks a significant milestone, as the AI UI Designer bridges the gap betwee
 
 ![API Response](./images/apischema.png)
 
-With the AI UI Designer, the response returned from the above API can be automatically converted into a Flutter widget. This widget is generated and rendered using the Server-Driven UI (SDUI) approach, powered by the [Stac](https://stac.dev/) package.
+With the AI UI Designer, the response returned from the above API can be automatically converted into a Flutter widget. This widget is generated and rendered using the Server-Driven UI (SDUI) approach, powered by the [Stac](https://pub.dev/packages/stac) package.
 
-
-after some modifications using natural language, we can get it to look like this,
+This is what the generated component looks like:
 
 ![Generated Widget](./images/gencomp.png)
+
+The prompts that were used to achieve this final result:
+
+> 1. Use a ListTile based layout instead of cards and add uniform padding
+> 2. Make the page background as light yellow and change the appbar's background color to black and foreground color to white
 
 ### Additional Examples of Generated UI Components
 
@@ -648,12 +652,12 @@ To fix this, I implemented a manual chunking mechanism where all incoming packet
 The core feature of the AI UI Designer is an in-app dynamic component renderer. Implementing this is challenging because Dart does not support full runtime reflection for Flutter widgets. In other words, a Flutter program cannot directly execute or render dynamically generated Flutter code at runtime.
 I experimented with the available reflection mechanisms in Dart, but they are limited to the language itself and do not extend to Flutter’s widget tree. As a result, I was only able to render very basic elements such as Text widgets. Anything more complex was practically impossible to achieve with Dart’s restricted reflection capabilities.
 
-Next, I considered using the Dart SDK to build the code into a Flutter Web app and display it to the user through a localhost iframe. However, this would require bundling the Dart SDK with the application, making it significantly heavier. Moreover, it would involve writing platform channel code for macOS, Windows, and other platforms, which would be highly impractical.
+Next, I considered using the Dart SDK to build the code into a Flutter Web app and display it to the user through a localhost iframe. But, as API Dash is a privacy-first API client that prohibits sending user requests to any external servers (with the exception of user specified AI API calls). Even routing requests to our own servers is restricted, which made this solution impractical to implement.
 
 Disappointed with these limitations, I devised a new approach: instead of attempting in-app rendering, I generated the Flutter code and sent it to an external service that could immediately build and deploy it as a Flutter web application, which could then be displayed within an iframe. I implemented this as a project called [FlutRun](https://github.com/synapsecode/AI_UI_designer_prototype) and successfully demonstrated it to the mentors.
 However, this approach was also rejected, as ApiDash is a privacy-first API client that prohibits sending user requests to any external servers (with the exception of LLM calls). Even routing requests to our own servers is restricted, which made this solution impractical to implement.
 
-Lastly, after some research and discussions with my mentors, I was introduced to the concept of <b>Server-Driven User Interfaces (SDUI)</b>. The core idea is to represent UI as a parseable structure (such as JSON) and then dynamically render it using a rendering pipeline written in Flutter. This approach proved to be both practical and efficient. In fact, I came across the Stac package, which implemented this concept seamlessly, and that ultimately became the solution we adopted.
+Lastly, after some research and discussions with my mentors, I was introduced to the concept of **Server-Driven User Interfaces (SDUI)**. The core idea is to represent UI as a parseable structure (such as JSON) and then dynamically render it using a rendering pipeline written in Flutter. This approach proved to be both practical and efficient. In fact, I came across the Stac package, which implemented this concept seamlessly, and that ultimately became the solution we adopted.
 
 #### Lack of Error Handling in Stac 
 Stac (the JSON-based representation of Flutter UIs) is opinionated and differs slightly from native Flutter code. As a result, when LLMs generate Stac code, they often produce small mistakes.
@@ -681,16 +685,14 @@ Our temporary solution is to restrict the feature to a smaller subset of Stac. H
 ---
 
 ## Future Work
-- <b>Error Handling in Stac</b>
-  Stac’s current error handling is limited, making debugging and reliability difficult. A future step would be to improve structured error messages and fallback behaviors for invalid or incomplete code paths. If upstream support remains insufficient, forking Stac to build robust error recovery (such as auto-corrections, retries, or clearer debug traces) may be necessary.
+- **Error Handling in Stac**
+Stac’s current error handling is limited, making debugging and reliability difficult. A future step would be to improve structured error messages and fallback behaviors for invalid or incomplete code paths.
 
-- <b>Expanding Restricted Stac SDUI Widget Library</b>
+- **Expanding Restricted Stac SDUI Widget Library**
+At present, the Stac-driven UI generation supports only a subset of widget types. This restricts the richness of UIs generated from complex API responses. Future work can focus on extending the widget library to cover advanced layout controls, interactive inputs, and custom components. This expansion will allow the system to handle more nuanced use cases and generate production-grade UIs directly from structured data.
 
-  At present, the Stac-driven UI generation supports only a subset of widget types. This restricts the richness of UIs generated from complex API responses. Future work will focus on extending the Stac SDUI widget library to cover advanced layout controls, interactive inputs, and custom components. This expansion will allow the system to handle more nuanced use cases and generate production-grade UIs directly from structured data.
-  Stac's maintainers have proposed a `Custom DSL` and a `flutter-code to stac generator` so this issue could be solved in the near future.
-
-- <b> Integration Tests for AI Features </b>
-  Automated testing remains critical to ensure reliability and prevent regressions in AI-driven workflows. Integration tests will be built for tool generation and AI UI Designer
+- **Integration Tests for AI Features**
+Automated testing remains critical to ensure reliability and prevent regressions in AI-driven workflows. Integration tests will be built for tool generation and AI UI Designer
 
 ---
 
