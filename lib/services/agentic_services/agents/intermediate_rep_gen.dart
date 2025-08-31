@@ -56,7 +56,7 @@ Return only the Schema and nothing else and MAKE SURE TO USE the Actual VALUES i
 If you notice the content is too long then please include a Single Child Scroll Viewbut make sure you are handing cases wherein multiple scroll views are used and stuff
   """;
 
-class IntermediateRepresentationGen extends APIDashAIAgent {
+class IntermediateRepresentationGen extends AIAgent {
   @override
   String get agentName => 'INTERMEDIATE_REP_GEN';
 

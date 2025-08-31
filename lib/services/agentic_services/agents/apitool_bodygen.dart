@@ -30,7 +30,7 @@ Here's the Template:
 ```
 """;
 
-class ApiToolBodyGen extends APIDashAIAgent {
+class ApiToolBodyGen extends AIAgent {
   @override
   String get agentName => 'APITOOL_BODYGEN';
 

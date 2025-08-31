@@ -1,4 +1,4 @@
-abstract class APIDashAIAgent {
+abstract class AIAgent {
   String get agentName;
   String getSystemPrompt();
   Future<bool> validator(String aiResponse);

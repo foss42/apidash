@@ -15,7 +15,7 @@ class GenAIAgenticService {
   }
 
   static Future<String?> _orchestrator(
-    APIDashAIAgent agent,
+    AIAgent agent,
     AIRequestModel baseAIRequestObject, {
     String? query,
     Map? variables,
@@ -37,7 +37,7 @@ class GenAIAgenticService {
   }
 
   static Future<dynamic> _governor(
-    APIDashAIAgent agent,
+    AIAgent agent,
     AIRequestModel baseAIRequestObject, {
     String? query,
     Map? variables,
@@ -75,7 +75,7 @@ class GenAIAgenticService {
   }
 
   static Future<dynamic> callAgent(
-    APIDashAIAgent agent,
+    AIAgent agent,
     AIRequestModel baseAIRequestObject, {
     String? query,
     Map? variables,

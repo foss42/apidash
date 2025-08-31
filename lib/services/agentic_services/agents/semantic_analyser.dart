@@ -16,7 +16,7 @@ Describe:
 Do **not** use formatting of any kind. Do **not** start or end the response with any extra commentary or boilerplate. Just return the pure semantic explanation of the data in a clean paragraph, ready for use by another LLM.
   """;
 
-class ResponseSemanticAnalyser extends APIDashAIAgent {
+class ResponseSemanticAnalyser extends AIAgent {
   @override
   String get agentName => 'RESP_SEMANTIC_ANALYSER';
 

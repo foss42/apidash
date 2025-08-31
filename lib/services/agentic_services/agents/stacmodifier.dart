@@ -30,7 +30,7 @@ use the CLIENT_REQUEST to modify the PREVIOUS_CODE while following the existing 
 ONLY FLutter-SDUI Representation NOTHING ELSE. DO NOT START OR END WITH TEXT, ONLY FLutter-SDUI Representatiin.
 """;
 
-class StacModifierBot extends APIDashAIAgent {
+class StacModifierBot extends AIAgent {
   @override
   String get agentName => 'STAC_MODIFIER';
 

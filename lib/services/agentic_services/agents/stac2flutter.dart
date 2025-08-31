@@ -16,7 +16,7 @@ Output ONLY Code Representation NOTHING ELSE. DO NOT START OR END WITH TEXT, ONL
 DO NOT WRITE CODE TO PARSE SDUI, ACTUALLY CONVERT IT TO REAL DART CODE
 """;
 
-class StacToFlutterBot extends APIDashAIAgent {
+class StacToFlutterBot extends AIAgent {
   @override
   String get agentName => 'STAC_2_FLUTTER';
 

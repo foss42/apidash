@@ -39,7 +39,7 @@ Output:
 - Do not add explanations, comments, or surrounding text. Code only.
 """;
 
-class APIToolFunctionGenerator extends APIDashAIAgent {
+class APIToolFunctionGenerator extends AIAgent {
   @override
   String get agentName => 'APITOOL_FUNCGEN';
 

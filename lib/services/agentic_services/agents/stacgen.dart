@@ -60,7 +60,7 @@ you would do in Flutter but in this Stac Representation
 
 """;
 
-class StacGenBot extends APIDashAIAgent {
+class StacGenBot extends AIAgent {
   @override
   String get agentName => 'STAC_GEN';
 

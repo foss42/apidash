@@ -6,7 +6,7 @@ class APIDashAgentCaller {
   static APIDashAgentCaller instance = APIDashAgentCaller();
 
   Future<dynamic> call(
-    APIDashAIAgent agent, {
+    AIAgent agent, {
     required WidgetRef ref,
     required AgentInputs input,
   }) async {
