@@ -4,7 +4,6 @@ version: 0.0.1
 homepage: https://github.com/foss42/apidash/tree/main/packages/genai
 
 topics:
-  - genai
   - ai
   - ollama
   - gemini
