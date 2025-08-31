@@ -605,7 +605,7 @@ Exported Source Code: [Link](https://pastebin.com/vf0mFvJr)
 ```
 Generated UI:
 
-https://github.com/user-attachments/assets/3f30c855-6a83-4172-bce4-4cd8ecf8c236
+https://github.com/user-attachments/assets/673cddf0-8016-48ee-9217-d6f1ed9f826d
 
 Exported Source Code: [Link](https://pastebin.com/vdyXAjwm)
 
@@ -658,8 +658,9 @@ This limitation is significant because I wanted to implement a reset feature: if
 
 The only real workaround right now would be to fork Stac and patch it manually—something I’m still debating. For the time being, we’ve mitigated the issue by tuning the system prompt and restricting generations to a small, well-understood subset of Stac. This approach has been working decently so far.
   Have also discussed with the maintainer's of Stac regarding this issue:
+  
   ![Stac Discussion](./images/stacreq.png)
-    ![Stac Discussion](./images/stacreq2.png)
+  ![Stac Discussion](./images/stacreq2.png)
 
 #### Stac Code Clipping
 When the API response is highly complex, agents may generate a verbose UI specification. This can cause the resulting Stac JSON to become so large that it exceeds the LLM’s output context window, resulting in clipped (incomplete) JSON.
