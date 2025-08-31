@@ -498,6 +498,9 @@ The challenge is that the Stac framework surfaces these mistakes only as console
 This limitation is significant because I wanted to implement a reset feature: if the LLM generates invalid Stac code, the app should be able to roll back to the last known good state. With the current design, this isn’t feasible. I even reached out to the Stac founders, who confirmed that proper error bubbling is planned but won’t be available anytime soon.
 
 The only real workaround right now would be to fork Stac and patch it manually—something I’m still debating. For the time being, we’ve mitigated the issue by tuning the system prompt and restricting generations to a small, well-understood subset of Stac. This approach has been working decently so far.
+  Have also discussed with the maintainer's of Stac regarding this issue:
+  ![Stac Discussion](./images/stacreq.png)
+    ![Stac Discussion](./images/stacreq2.png)
 
 #### Stac Code Clipping
 When the API response is highly complex, agents may generate a verbose UI specification. This can cause the resulting Stac JSON to become so large that it exceeds the LLM’s output context window, resulting in clipped (incomplete) JSON.
@@ -518,6 +521,7 @@ Our temporary solution is to restrict the feature to a smaller subset of Stac. H
 - <b>Expanding Restricted Stac SDUI Widget Library</b>
 
   At present, the Stac-driven UI generation supports only a subset of widget types. This restricts the richness of UIs generated from complex API responses. Future work will focus on extending the Stac SDUI widget library to cover advanced layout controls, interactive inputs, and custom components. This expansion will allow the system to handle more nuanced use cases and generate production-grade UIs directly from structured data.
+  Stac's maintainers have proposed a `Custom DSL` and a `flutter-code to stac generator` so this issue could be solved in the near future.
 
 - <b> Integration Tests for AI Features </b>
   Automated testing remains critical to ensure reliability and prevent regressions in AI-driven workflows. Integration tests will be built for tool generation and AI UI Designer
