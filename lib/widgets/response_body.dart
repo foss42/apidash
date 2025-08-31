@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
