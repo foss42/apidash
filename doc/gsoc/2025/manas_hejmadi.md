@@ -140,18 +140,20 @@ As a result, developers can easily build features that leverage generative AI wi
 
 Example of simplified usage (model-agnostic, works with any LLM out of the box)
 ```dart
-final LLMModel model = LLMProvider.gemini.getLLMByIdentifier('gemini-2.0-flash');
-final ModelController controller = model.provider.modelController;
-
-final payload = controller.inputPayload
-  ..systemPrompt = 'Say YES or NO'
-  ..userPrompt = 'The sun sets in the west'
-  ..credential = 'AIza....';
-
-final genAIRequest = controller.createRequest(model, payload);
-final answer = await GenerativeAI.executeGenAIRequest(model, genAIRequest);
-
-print(answer);
+final request = AIRequestModel(
+  modelApiProvider: ModelAPIProvider.gemini, // or openai, anthropic, etc.
+  model: "gemini-2.0-flash",
+  apiKey: "<YOUR_API_KEY>",
+  url: kGeminiUrl,
+  systemPrompt: "You are a helpful assistant.",
+  userPrompt: "Explain quantum entanglement simply.",
+  stream: false, // set true for streaming
+);
+await callGenerativeModel(
+  request,
+  onAnswer: (ans) => print("AI Output: $ans"),
+  onError: (err) => print("Error: $err"),
+);
 ```
 
 #### Agentic Infrastructure
@@ -162,7 +164,7 @@ When developing AI-powered features in any application, the process typically in
 
 The core idea is straightforward: an AI agent in apidash is simply a Dart file containing a class that extends the base class `APIDashAIAgent`, defined as:
 ```dart
-abstract class APIDashAIAgent {
+abstract class AIAgent {
   String get agentName;
   String getSystemPrompt();
   Future<bool> validator(String aiResponse);
@@ -179,7 +181,7 @@ These agents operate within an orchestrator and governor framework that manages 
 ```dart
 //simple_func_agent.dart
 
-class SimpleFuncGenerator extends APIDashAIAgent {
+class SimpleFuncGenerator extends AIAgent {
   @override
   String get agentName => 'SIMPLE_FUNCGEN';
 
@@ -465,9 +467,9 @@ class SDUIWidget extends StatelessWidget {
 |SSE Feature Foundations|[#860](https://github.com/foss42/apidash/pull/860)||Closed|Mentor requested changes and rebase to main branch|
 |SSE & Streaming Support|[#861](https://github.com/foss42/apidash/pull/861)|[#116](https://github.com/foss42/apidash/issues/116)|Merged||
 |`genai` & AI Requests Feature|[#870](https://github.com/foss42/apidash/pull/870)|[#871](https://github.com/foss42/apidash/issues/871)|Merged||
-|`genai` package: Testing|[#882](https://github.com/foss42/apidash/pull/882)||Open|Under Review
+|`genai` package: Testing|[#882](https://github.com/foss42/apidash/pull/882)||Merged||
 Foundations: Agents & AI UI Designer + Tool Generation |[#874](https://github.com/foss42/apidash/pull/874)||Closed|Mentor requested to make a new PR that was based on top of main branch code|
-|AI UI Designer & Tool Generator|[#880](https://github.com/foss42/apidash/pull/880)|[#617](https://github.com/foss42/apidash/issues/617)|Open|Under Review
+|AI UI Designer & Tool Generator|[#880](https://github.com/foss42/apidash/pull/880)|[#617](https://github.com/foss42/apidash/issues/617), [#884](https://github.com/foss42/apidash/issues/884)|Open|Under Review
 |Final Report Documentation|[#878](https://github.com/foss42/apidash/pull/878)||Open|Under Review
 ---
 
