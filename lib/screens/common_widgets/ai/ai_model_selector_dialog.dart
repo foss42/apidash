@@ -171,6 +171,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
+            // value: currentCredential,
           ),
           kVSpacer10,
         ],
