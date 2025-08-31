@@ -119,7 +119,7 @@ This way, everything stays unified and we reduce the amount of duplication
 
 `Package Link`: https://pub.dev/packages/genai
 
-With the rapid rise of Generative AI, it became clear that API Dash required a dedicated AI request interface with support for agentic systems. Based on this need, my mentors tasked me with developing a comprehensive AI Requests feature
+Since my project involved sending AI API requests, the next step involved adding support for AI requests and an interface for building agentic systems in Dart & Flutter. Hence, I started developing a comprehensive AI Requests feature.
 
 The user initiates a new request by selecting “AI”, then chooses a model and provides the required credentials through the Authorization tab. The request can be further configured by specifying system and user prompts and adjusting parameters such as `temperature`, `topP`, and `streaming or non-streaming mode`. Upon submission, the response is generated and presented either as cleaned plaintext/Markdown or in raw format, based on the user’s selection.
 
@@ -652,10 +652,10 @@ To fix this, I implemented a manual chunking mechanism where all incoming packet
 The core feature of the AI UI Designer is an in-app dynamic component renderer. Implementing this is challenging because Dart does not support full runtime reflection for Flutter widgets. In other words, a Flutter program cannot directly execute or render dynamically generated Flutter code at runtime.
 I experimented with the available reflection mechanisms in Dart, but they are limited to the language itself and do not extend to Flutter’s widget tree. As a result, I was only able to render very basic elements such as Text widgets. Anything more complex was practically impossible to achieve with Dart’s restricted reflection capabilities.
 
-Next, I considered using the Dart SDK to build the code into a Flutter Web app and display it to the user through a localhost iframe. But, as API Dash is a privacy-first API client that prohibits sending user requests to any external servers (with the exception of user specified AI API calls). Even routing requests to our own servers is restricted, which made this solution impractical to implement.
+Next, I considered using the Dart SDK to build the code into a Flutter Web app and display it to the user through a localhost iframe. However, this would require bundling the Dart SDK with the application, making it significantly heavier. Moreover, it would involve writing platform channel code for macOS, Windows, and other platforms, which would be highly impractical. 
 
 Disappointed with these limitations, I devised a new approach: instead of attempting in-app rendering, I generated the Flutter code and sent it to an external service that could immediately build and deploy it as a Flutter web application, which could then be displayed within an iframe. I implemented this as a project called [FlutRun](https://github.com/synapsecode/AI_UI_designer_prototype) and successfully demonstrated it to the mentors.
-However, this approach was also rejected, as ApiDash is a privacy-first API client that prohibits sending user requests to any external servers (with the exception of LLM calls). Even routing requests to our own servers is restricted, which made this solution impractical to implement.
+As API Dash is a privacy-first API client that prohibits sending user requests to any external servers (with the exception of user specified AI API calls), even routing requests to our own servers is restricted which made this solution impractical to implement.
 
 Lastly, after some research and discussions with my mentors, I was introduced to the concept of **Server-Driven User Interfaces (SDUI)**. The core idea is to represent UI as a parseable structure (such as JSON) and then dynamically render it using a rendering pipeline written in Flutter. This approach proved to be both practical and efficient. In fact, I came across the Stac package, which implemented this concept seamlessly, and that ultimately became the solution we adopted.
 
