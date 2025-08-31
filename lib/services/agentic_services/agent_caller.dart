@@ -16,7 +16,7 @@ class APIDashAgentCaller {
       throw Exception('NO_DEFAULT_LLM');
     }
     final baseAIRequestObject = AIRequestModel.fromJson(defaultAIModel);
-    final ans = await GenAIAgenticService.callAgent(
+    final ans = await AIAgentService.callAgent(
       agent,
       baseAIRequestObject,
       query: input.query,

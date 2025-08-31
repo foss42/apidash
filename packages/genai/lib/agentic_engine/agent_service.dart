@@ -1,7 +1,7 @@
 import 'package:genai/agentic_engine/blueprint.dart';
 import 'package:genai/genai.dart';
 
-class GenAIAgenticService {
+class AIAgentService {
   static Future<String?> _call_provider({
     required AIRequestModel baseAIRequestObject,
     required String systemPrompt,
@@ -58,7 +58,7 @@ class GenAIAgenticService {
           }
         }
       } catch (e) {
-        "APIDashAIService::Governor: Exception Occured: $e";
+        "AIAgentService::Governor: Exception Occured: $e";
       }
       // Exponential Backoff
       if (RETRY_COUNT < backoffDelays.length) {
