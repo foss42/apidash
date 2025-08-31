@@ -9,25 +9,25 @@
 4. **Project**: AI-Based API Response to Dynamic UI and Tool Generator
 
 #### Quick Links
-- [GSoC Project Page](https://summerofcode.withgoogle.com/myprojects/details/hhUUM8wl)
+- [GSoC Project Page](https://summerofcode.withgoogle.com/programs/2025/projects/hhUUM8wl)
 - [Code Repository](https://github.com/foss42/apidash)
 - [Discussion Logs](https://github.com/foss42/apidash/discussions/852)
 
 ## Project Description
 
-The primary objective of this project was to extend the apidash client with new generative AI capabilities that go far beyond the scope of traditional API testing clients. This will position apidash as an OpenSource AI-Native API Testing client.
+The primary objective of this project was to extend the API Dash client with new generative AI capabilities that go far beyond the scope of traditional API testing clients. This will position API Dash as an OpenSource AI-Native API Testing client.
 
 Our initial vision was to develop an AI-powered agent capable of transforming raw API responses into structured UI schemas and fully functional UI components that could be directly exported and used in frontend applications. Additionally, we wanted to enable dynamic customization of UI components through natural language prompts, allowing developers to customise the design and layout according to their personal preference. This UI code could then be exported and used directly in their Flutter projects. 
 
-As mentioned in the project proposal, we were also aiming to create a one-click `API Request to Tool` generation pipeline, allowing external AI agents to independently interact with APIs. This is a crucial requirement for modern agentic workflows and the idea was that apidash must be ready to serve these needs.
+As mentioned in the project proposal, we were also aiming to create a one-click `API Request to Tool` generation pipeline, allowing external AI agents to independently interact with APIs. This is a crucial requirement for modern agentic workflows and the idea was that API Dash must be ready to serve these needs.
 
 However, during the planning phase it became clear that these ambitious features required strong foundational infrastructure to work at a production level. Under the guidance of my mentors, we identified and implemented several core architectural improvements, such as:
 
 - Refactoring the networking layer into a modular, standalone package to enhance testability and maintainability.
 - Adding streaming support via Server-Sent Events (SSE) to enable real-time AI interactions.
-- Introducing AI request handling and a dedicated AI primitives package. This ensures that any future apidash feature that would need generative ai, can directly import this primitives package instead of implementing everything again. this saves both time and effort.
+- Introducing AI request handling and a dedicated AI primitives package. This ensures that any future API Dash feature that would need generative ai, can directly import this primitives package instead of implementing everything again. this saves both time and effort.
 
-All in all, these completion of these improvements will establish apidash as a modern, industry ready platform for developers and AI-driven workflows alike.
+All in all, these completion of these improvements will establish API Dash as a modern, industry ready platform for developers and AI-driven workflows alike.
 
 
 ## Feature Description
@@ -38,8 +38,8 @@ All in all, these completion of these improvements will establish apidash as a m
 
 `Associated Pull Request`: [#857](https://github.com/foss42/apidash/pull/857)
 
-Initially, the entire networking constructs that apidash relied on was fully written inside a module named `apidash_core`. 
-The networking code was fairly advanced including support for GraphQL, request cancellations and a lot of other good features. However, as it was tightly coupled with apidash, we were unable to allow the rest of the flutter developer community to use these features. We believe in giving back to the open source community whenever we can and hence the mentors and I decided to refactor everything into a new package. 
+Initially, the entire networking constructs that API Dash relied on was fully written inside a module named `apidash_core`. 
+The networking code was fairly advanced including support for GraphQL, request cancellations and a lot of other good features. However, as it was tightly coupled with API Dash, we were unable to allow the rest of the flutter developer community to use these features. We believe in giving back to the open source community whenever we can and hence the mentors and I decided to refactor everything into a new package. 
 During discussions, I came up with the name `better_networking` and we envisioned it to  be the go-to package for everything related to networking for a flutter application.
 
 This is an example of how better_networking simplifies request handling
@@ -81,12 +81,12 @@ Code coverage after Refactor:
 
 ![Code Coverage Report](./images/sse_ex1.png)
 
-SSE Support was a long pending [issue](https://github.com/foss42/apidash/issues/116) (since 2024). Once I was done with the `better_networking` package creation, the mentors asked me to look into how i can implement SSE within the package and by extension into apidash. After doing some research and a review into the existing PRs by other contributors for this feature, I noticed that everyone created new Request and Response Models for SSE in code. 
+SSE Support was a long pending [issue](https://github.com/foss42/apidash/issues/116) (since 2024). Once I completed the initial version of better_networking, the mentors asked me to look if SSE support can be added within the package and by extension into API Dash, as AI responses are usually transmitted in this format. After doing some research and a review into the existing PRs by other contributors for this feature, I noticed that everyone created new Request and Response Models for SSE in code.
 
 However, I did not agree with this approach as SSE is just a different content-type is not a fundamentally separate request type like GraphQL. 
-To demonstrate this, I wrote up a quick demo with SSE baked into the existing apidash foundations.
+To demonstrate this, I wrote up a quick demo with SSE baked into the existing API Dash foundations.
 
-This new mechanism is very simple and elegant. Basically, every request in apidash is executed in streaming mode using `StreamedResponse` in dart. If the response headers specify a content-type marked as streaming, the listener remains active and statefully saves all incoming values into the sseOutput attribute of the response model. If the content-type does not match any supported streaming type, the listener terminates and the output is returned immediately. In this way, the existing request/response model can handle both Streaming and Normal HTTP Requests
+This new mechanism is very simple and elegant. Basically, every request in API Dash is executed in streaming mode using `StreamedResponse` in dart. If the response headers specify a content-type marked as streaming, the listener remains active and statefully saves all incoming values into the sseOutput attribute of the response model. If the content-type does not match any supported streaming type, the listener terminates and the output is returned immediately. In this way, the existing request/response model can handle both Streaming and Normal HTTP Requests
 
 This is an example of how I rewrote the original implementation of `sendHttpRequest` in terms of this new SSE handler
 ```dart
@@ -130,13 +130,13 @@ The user initiates a new request by selecting “AI”, then chooses a model and
 My initial implementation used tightly coupled LLM providers (e.g., gemini, openai) with specific models (e.g., gemini-2.0-flash) through hardcoded enums. These enums were directly referenced in code, which on closer review proved unsustainable. Given the rapid pace of innovation in LLMs, models become obsolete quickly, and maintaining hardcoded enums would require frequent code changes and was looking quite impractical.
 Furthermore, using hardcoded enums prevents runtime dynamic loading, restricting users to only the models we explicitly provide. This limits flexibility and creates a poor experience, especially for advanced users who may need access to less common or custom models.
 
-To address this, we adopted a remote model fetch system, where model identifiers are stored in a `models.json` file within the public apidash repository. Clients fetch this file at runtime, enabling over-the-air updates to model availability. In addition, we added support for custom model identifiers directly within the ModelSelector, giving users full flexibility to configure their own models.
+To address this, we adopted a remote model fetch system, where model identifiers are stored in a `models.json` file within the public API Dash repository. Clients fetch this file at runtime, enabling over-the-air updates to model availability. In addition, we added support for custom model identifiers directly within the ModelSelector, giving users full flexibility to configure their own models.
 
 Currently, we support several standard providers—such as Google Gemini, OpenAI, Anthropic, and Ollama—which offers a strong baseline of options while still allowing advanced customization.
 
 ![LLM Provider Selector](./images/modelselector1.png)
 
-The AI Requests feature is built on top of the foundational genai package, which serves as the core layer for all AI-related functionality within apidash.
+The AI Requests feature is built on top of the foundational genai package, which serves as the core layer for all AI-related functionality within API Dash.
 This package provides the complete set of API callers, methods, and formatters required to abstract away the complexities of interacting with AI tool APIs. By exposing a generalized interface across multiple providers, it eliminates the need to handle provider-specific details directly.
 As a result, developers can easily build features that leverage generative AI without worrying about low-level implementation details—leaving the intricacies of API communication and formatting to the genai package.
 
@@ -164,7 +164,7 @@ await callGenerativeModel(
 
 When developing AI-powered features in any application, the process typically involves steps such as system prompting, data validation, and output formatting. However, repeating this workflow for multiple features while taking care of errors and retry logic quickly becomes very cumbersom. To simplify this, we designed a well-defined architecture for building AI agents directly within code.
 
-The core idea is straightforward: an AI agent in apidash is simply a Dart file containing a class that extends the base class `APIDashAIAgent`, defined as:
+The core idea is straightforward: an AI agent in API Dash is simply a Dart file containing a class that extends the base class `APIDashAIAgent`, defined as:
 ```dart
 abstract class AIAgent {
   String get agentName;
@@ -279,7 +279,7 @@ With the foundational infrastructure in place, I was finally ready to implement 
 
 The purpose of this feature is straightforward yet powerful—take API responses and automatically transform them into suitable UI components, while also providing the ability to modify the design through natural language instructions. Additionally, the generated UI can be exported as Flutter code, enabling seamless integration into frontend applications.
 
-A Proof of Concept (PoC) for this functionality had already been demonstrated during the initial phase of GSoC. The remaining work involved converting the PoC into production-ready code, addressing error handling, improving stability, and ensuring it could scale as a fully integrated feature within apidash.
+A Proof of Concept (PoC) for this functionality had already been demonstrated during the initial phase of GSoC. The remaining work involved converting the PoC into production-ready code, addressing error handling, improving stability, and ensuring it could scale as a fully integrated feature within API Dash.
 
 This marks a significant milestone, as the AI UI Designer bridges the gap between raw API responses and usable frontend components—removing boilerplate work and streamlining the developer workflow.
 
@@ -641,7 +641,7 @@ Foundations: Agents & AI UI Designer + Tool Generation |[#874](https://github.co
 ## Challenges Faced
 
 #### Incomplete Responses after SSE implmentation
-After migrating to SSE, apidash was designed to first listen to a stream and return immediately if the content type wasn’t streaming-related. This worked fine until I discovered an edge case with very long responses: the HTTP protocol splits such responses into multiple packets. Because of the initial stream design, only the first packet was returned, resulting in incomplete outputs.
+After migrating to SSE, API Dash was designed to first listen to a stream and return immediately if the content type wasn’t streaming-related. This worked fine until I discovered an edge case with very long responses: the HTTP protocol splits such responses into multiple packets. Because of the initial stream design, only the first packet was returned, resulting in incomplete outputs.
 To fix this, I implemented a manual chunking mechanism where all incoming packets are collected until the stream ends, after which they are concatenated into the complete response. This resolved the issue and ensured correctness for long streaming outputs.
 
 #### Component Rendering Dilemma
@@ -702,6 +702,6 @@ Our temporary solution is to restrict the feature to a smaller subset of Stac. H
 ---
 
 ## Conclusion
-Google Summer of Code 2025 with apidash has been a truly amazing experience. My work throughout this project centered on building the core infrastructure that will be the heart of apidash's next-gen features, and I believe I have successfully laid a strong foundation. I look forward to seeing future contributors build upon it and take the project even further.
+Google Summer of Code 2025 with API Dash has been a truly amazing experience. My work throughout this project centered on building the core infrastructure that will be the heart of API Dash's next-gen features, and I believe I have successfully laid a strong foundation. I look forward to seeing future contributors build upon it and take the project even further.
 
 ---
