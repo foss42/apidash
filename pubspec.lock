@@ -537,10 +537,10 @@ packages:
     dependency: "direct main"
     description:
       name: flex_color_scheme
-      sha256: "3344f8f6536c6ce0473b98e9f084ef80ca89024ad3b454f9c32cf840206f4387"
+      sha256: "034d5720747e6af39b2ad090d82dd92d33fde68e7964f1814b714c9d49ddbd64"
       url: "https://pub.dev"
     source: hosted
-    version: "8.2.0"
+    version: "8.3.0"
   flex_seed_scheme:
     dependency: transitive
     description:
@@ -2036,4 +2036,4 @@ packages:
     version: "2.2.2"
 sdks:
   dart: ">=3.8.0 <3.999.0"
-  flutter: ">=3.29.0"
+  flutter: ">=3.35.0"
