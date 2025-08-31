@@ -509,7 +509,7 @@ class SDUIWidget extends StatelessWidget {
 ]
 ```
 Generated UI:
-
+![](./images/pincodetable.png)
 
 #### Example 4
 `GET` https://dogapi.dog/api/v2/breeds
@@ -599,6 +599,8 @@ Exported Source Code: https://pastebin.com/vf0mFvJr
   }
 ]
 ```
+Generated UI:
+
 Exported Source Code: https://pastebin.com/vdyXAjwm
 
 ---
@@ -620,7 +622,7 @@ Exported Source Code: https://pastebin.com/vdyXAjwm
 |`genai` & AI Requests Feature|[#870](https://github.com/foss42/apidash/pull/870)|[#871](https://github.com/foss42/apidash/issues/871)|Merged||
 |`genai` package: Testing|[#882](https://github.com/foss42/apidash/pull/882)||Merged||
 Foundations: Agents & AI UI Designer + Tool Generation |[#874](https://github.com/foss42/apidash/pull/874)||Closed|Mentor requested to make a new PR that was based on top of main branch code|
-|AI UI Designer & Tool Generator|[#880](https://github.com/foss42/apidash/pull/880)|[#617](https://github.com/foss42/apidash/issues/617), [#884](https://github.com/foss42/apidash/issues/884)|Open|Under Review
+|AI UI Designer & Tool Generator|[#880](https://github.com/foss42/apidash/pull/880)|[#617](https://github.com/foss42/apidash/issues/617), [#884](https://github.com/foss42/apidash/issues/884)|Merged||
 |Final Report Documentation|[#878](https://github.com/foss42/apidash/pull/878)||Open|Under Review
 ---
 
