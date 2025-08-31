@@ -1,13 +1,13 @@
 import 'package:apidash/templates/templates.dart';
 import 'package:apidash_core/apidash_core.dart';
 
-class ApiToolBodyGen extends AIAgent {
+class StacToFlutterBot extends AIAgent {
   @override
-  String get agentName => 'APITOOL_BODYGEN';
+  String get agentName => 'STAC_TO_FLUTTER';
 
   @override
   String getSystemPrompt() {
-    return kPromptAPIToolBodyGen;
+    return kPromptStacToFlutter;
   }
 
   @override
@@ -19,14 +19,12 @@ class ApiToolBodyGen extends AIAgent {
   @override
   Future outputFormatter(String validatedResponse) async {
     validatedResponse = validatedResponse
-        .replaceAll('```python', '')
-        .replaceAll('```python\n', '')
-        .replaceAll('```javascript', '')
-        .replaceAll('```javascript\n', '')
+        .replaceAll('```dart', '')
+        .replaceAll('```dart\n', '')
         .replaceAll('```', '');
 
     return {
-      'TOOL': validatedResponse,
+      'CODE': validatedResponse,
     };
   }
 }

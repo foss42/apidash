@@ -1,6 +1,6 @@
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/sdui_renderer.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
-import 'package:apidash/services/agentic_services/agents/stac2flutter.dart';
+import 'package:apidash/services/agentic_services/agents/stac_to_flutter.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
