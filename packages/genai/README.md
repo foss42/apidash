@@ -1,83 +1,180 @@
 # genai
 
-`genai` is a lightweight and extensible Dart package designed to simplify AI requests and agentic operations. It provides an easy to use and seamless interface for various AI Providers such as (openai, gemini, antrhopic etc).
+A **unified Dart/Flutter package** for working with multiple Generative AI providers (Google Gemini, OpenAI, Anthropic, Azure OpenAI, Ollama, etc.) using a **single request model**.
 
-## 🔧 Features
+* ✅ Supports **normal & streaming** responses
+* ✅ Unified `AIRequestModel` across providers
+* ✅ Configurable parameters (temperature, top-p, max tokens, etc.)
+* ✅ Simple request utilities (`executeGenAIRequest`, `streamGenAIRequest`)
+* ✅ Extensible — add your own provider easily
 
-- **Unified request modeling** via `HttpRequestModel`
-- **Consistent response handling** with `HttpResponseModel`
-- **Streamed response support** (e.g., SSE)
-- **Client management** with cancellation and lifecycle control
-- **Built-in utilities** for parsing headers and content types
-- **Support for both REST and GraphQL APIs**
+---
 
-## 📦 Installation
+## 🚀 Installation
 
-To install the `genai` package, add it to your `pubspec.yaml`:
+Add `genai` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  genai: ^<latest-version>
+  genai: ^0.1.0
 ```
 
-Then run the following command in your terminal to fetch the package:
+Then run:
 
 ```bash
 flutter pub get
 ```
 
-## 🚀 Quick Start
+---
 
-### Response Mode (Callback Style)
+## ⚡ Quick Start
+
+### 1. Import the package
 
 ```dart
-final LLMModel geminiModel = LLMProvider.gemini.getLLMByIdentifier('gemini-2.0-flash');
-GenerativeAI.callGenerativeModel(
-    geminiModel,
-    onAnswer: (x) {
-        print(x);
-    },
-    onError: (e){...},
-    systemPrompt: 'Give a 100 word summary of the provided word',
-    userPrompt: 'Pizza',
-    credential: 'AIza.....',
+import 'package:genai/genai.dart';
+```
+
+### 2. Create a request
+
+```dart
+final request = AIRequestModel(
+  modelApiProvider: ModelAPIProvider.gemini, // or openai, anthropic, etc.
+  model: "gemini-2.0-flash",
+  apiKey: "<YOUR_API_KEY>",
+  url: kGeminiUrl,
+  systemPrompt: "You are a helpful assistant.",
+  userPrompt: "Explain quantum entanglement simply.",
+  stream: false, // set true for streaming
 );
 ```
 
-### Streaming Mode (Callback Style)
+### 3. Run a non-streaming request
 
 ```dart
-final LLMModel geminiModel = LLMProvider.gemini.getLLMByIdentifier('gemini-2.0-flash');
-final ModelController controller = model.provider.modelController;
-GenerativeAI.callGenerativeModel(
-    geminiModel,
-    onAnswer: (x) {
-        stdout.write(x); //get each word in the stream
-    },
-    onError: (e){},
-    systemPrompt: 'Give a 100 word summary of the provided word',
-    userPrompt: 'Pizza',
-    credential: 'AIza.....',
-    stream: true, //pass this to enable streaming
+final answer = await executeGenAIRequest(request);
+print("AI Answer: $answer");
+```
+
+### 4. Run a streaming request (SSE)
+
+```dart
+final stream = await streamGenAIRequest(request.copyWith(stream: true));
+stream.listen((chunk) {
+  print("AI Stream Chunk: $chunk");
+}, onError: (err) {
+  print("Stream Error: $err");
+});
+```
+
+### 5. Auto-handle both (recommended)
+
+```dart
+await callGenerativeModel(
+  request,
+  onAnswer: (ans) => print("AI Output: $ans"),
+  onError: (err) => print("Error: $err"),
 );
 ```
 
-### Procedural(Manual) Request Building
+---
+
+## ⚙️ Configuration
+
+Each request accepts `modelConfigs` to fine-tune output.
+
+Available configs (defaults provided):
+
+* `temperature` → controls randomness
+* `top_p` / `topP` → nucleus sampling probability
+* `max_tokens` / `maxOutputTokens` → maximum length of output
+* `stream` → enables streaming
+
+Example:
 
 ```dart
-final LLMModel model = LLMProvider.gemini.getLLMByIdentifier('gemini-2.0-flash');
-final ModelController controller = model.provider.modelController;
+final request = request.copyWith(
+  modelConfigs: [
+    kDefaultModelConfigTemperature.copyWith(
+      value: ConfigSliderValue(value: (0, 0.8, 1)),
+    ),
+    kDefaultGeminiModelConfigMaxTokens.copyWith(
+      value: ConfigNumericValue(value: 2048),
+    ),
+  ],
+);
+```
 
-final payload = controller.inputPayload
-  ..systemPrompt = 'Say YES or NO'
-  ..userPrompt = 'The sun sets in the west'
-  ..credential = 'AIza....';
+---
 
-final genAIRequest = controller.createRequest(model, payload);
-final answer = await GenerativeAI.executeGenAIRequest(model, genAIRequest);
+## 📡 Supported Providers
 
+| Provider     | Enum Value                     | Default URL                                               |
+| ------------ | ------------------------------ | --------------------------------------------------------- |
+| OpenAI       | `ModelAPIProvider.openai`      | `https://api.openai.com/v1/chat/completions`              |
+| Gemini       | `ModelAPIProvider.gemini`      | `https://generativelanguage.googleapis.com/v1beta/models` |
+| Anthropic    | `ModelAPIProvider.anthropic`   | `https://api.anthropic.com/v1/messages`                   |
+| Azure OpenAI | `ModelAPIProvider.azureopenai` | Provided by Azure deployment                              |
+| Ollama       | `ModelAPIProvider.ollama`      | `$kBaseOllamaUrl/v1/chat/completions`                     |
+
+---
+
+## 🛠️ Advanced Streaming (Word-by-Word)
+
+```dart
+final stream = await streamGenAIRequest(request.copyWith(stream: true));
+
+processGenAIStreamOutput(
+  stream,
+  (word) => print("Word: $word"), // called for each word
+  (err) => print("Error: $err"),
+);
+```
+
+---
+
+## 🔒 Authentication
+
+* **OpenAI / Anthropic / Azure OpenAI** → API key passed as HTTP header.
+* **Gemini** → API key passed as query param `?key=YOUR_API_KEY`.
+* **Ollama** → local server, no key required.
+
+Just set `apiKey` in your `AIRequestModel`.
+
+---
+
+## 📦 Extending with New Providers
+
+Want to add a new AI provider?
+
+1. Extend `ModelProvider`
+2. Implement:
+
+   * `defaultAIRequestModel`
+   * `createRequest()`
+   * `outputFormatter()`
+   * `streamOutputFormatter()`
+3. Register in `kModelProvidersMap`
+
+That’s it — it plugs into the same unified request flow.
+
+---
+
+## ✅ Example: Gemini
+
+```dart
+final request = GeminiModel.instance.defaultAIRequestModel.copyWith(
+  model: "gemini-pro",
+  apiKey: "<YOUR_KEY>",
+  userPrompt: "Write me a haiku about Flutter.",
+);
+
+final answer = await executeGenAIRequest(request);
 print(answer);
 ```
+
+---
+
 
 ## 🤝 Contributing
 
