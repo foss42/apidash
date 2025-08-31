@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:apidash/apitoolgen/request_consolidator.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
-import 'package:apidash/utils/agent_utils.dart';
+import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';

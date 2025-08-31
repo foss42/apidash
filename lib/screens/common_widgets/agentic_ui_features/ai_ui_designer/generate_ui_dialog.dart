@@ -1,6 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/utils/agent_utils.dart';
+import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
