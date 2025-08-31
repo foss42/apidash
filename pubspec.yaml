@@ -27,7 +27,7 @@ dependencies:
   flutter_highlight: ^0.7.0
   flutter_highlighter: ^0.1.0
   flutter_hooks: ^0.21.2
-  flutter_js: ^0.8.2
+  flutter_js: ^0.8.5
   flutter_markdown: ^0.7.6+2
   flutter_portal: ^1.1.4
   flutter_riverpod: ^2.5.1
