@@ -145,7 +145,9 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               ? null
               : (OAuth2GrantType? newGrantType) {
                   if (newGrantType != null && newGrantType != _grantType) {
-                    _grantType = newGrantType;
+                    setState(() {
+                      _grantType = newGrantType;
+                    });
 
                     _updateOAuth2();
                   }
