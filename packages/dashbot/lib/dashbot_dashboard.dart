@@ -2,6 +2,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:dashbot/core/utils/dashbot_icons.dart';
 
 import 'core/providers/dashbot_window_notifier.dart';
+import 'core/providers/dashbot_request_provider.dart';
 import 'core/routes/dashbot_router.dart';
 import 'core/routes/dashbot_routes.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +17,7 @@ class DashbotWindow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final windowState = ref.watch(dashbotWindowNotifierProvider);
     final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
-    // final RequestModel? currentRequest = ref.watch(
-    //   selectedRequestModelProvider,
-    // );
+    final dashbotCtx = ref.watch(dashbotRequestContextProvider);
 
     return Stack(
       children: [
@@ -64,10 +63,16 @@ class DashbotWindow extends ConsumerWidget {
                                 children: [
                                   kHSpacer20,
                                   DashbotIcons.getDashbotIcon1(width: 38),
-
+                                  // TODO: remove the show active request name/model in prod
                                   kHSpacer12,
                                   Text(
-                                    'DashBot',
+                                    dashbotCtx
+                                                ?.aiRequestModel
+                                                ?.modelApiProvider
+                                                ?.name ==
+                                            null
+                                        ? 'DashBot'
+                                        : 'DashBot · ${dashbotCtx?.aiRequestModel?.modelApiProvider?.name}',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

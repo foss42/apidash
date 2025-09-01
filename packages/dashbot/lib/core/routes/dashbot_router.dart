@@ -1,4 +1,5 @@
 import 'package:dashbot/features/chat/view/pages/dashbot_chat_page.dart';
+import 'package:dashbot/features/chat/models/chat_models.dart';
 
 import 'dashbot_routes.dart';
 import '../common/pages/dashbot_default_page.dart';
@@ -12,10 +13,11 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
     case (DashbotRoutes.dashbotDefault):
       return MaterialPageRoute(builder: (context) => DashbotDefaultPage());
     case (DashbotRoutes.dashbotChat):
-      final args = settings.arguments as Map<String, dynamic>?;
-      final initialPrompt = args?['initialPrompt'] as String;
+      final arg = settings.arguments;
+      ChatMessageType? initialTask;
+      if (arg is ChatMessageType) initialTask = arg;
       return MaterialPageRoute(
-        builder: (context) => ChatScreen(initialPrompt: initialPrompt),
+        builder: (context) => ChatScreen(initialTask: initialTask),
       );
     default:
       return MaterialPageRoute(builder: (context) => DashbotDefaultPage());
