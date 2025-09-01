@@ -10,9 +10,11 @@ class ResponseBody extends StatelessWidget {
   const ResponseBody({
     super.key,
     this.selectedRequestModel,
+    this.isPartOfHistory = false,
   });
 
   final RequestModel? selectedRequestModel;
+  final bool isPartOfHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +24,8 @@ class ResponseBody extends StatelessWidget {
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
-    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
     var body = responseModel.body;
-    var formattedBody = responseModel.formattedBody;
+
     if (body == null) {
       return const ErrorMessage(
           message: '$kMsgNullBody $kUnexpectedRaiseIssue');
@@ -35,9 +36,6 @@ class ResponseBody extends StatelessWidget {
         showIcon: false,
         showIssueButton: false,
       );
-    }
-    if (isSSE) {
-      body = responseModel.sseOutput!.join();
     }
 
     final mediaType =
@@ -55,6 +53,11 @@ class ResponseBody extends StatelessWidget {
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
 
+    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
+    var formattedBody = isSSE
+        ? responseModel.sseOutput!.join('\n')
+        : responseModel.formattedBody;
+
     if (formattedBody == null) {
       options = [...options];
       options.remove(ResponseBodyView.code);
@@ -71,6 +74,7 @@ class ResponseBody extends StatelessWidget {
       sseOutput: responseModel.sseOutput,
       isAIResponse: selectedRequestModel?.apiType == APIType.ai,
       aiRequestModel: selectedRequestModel?.aiRequestModel,
+      isPartOfHistory: isPartOfHistory,
     );
   }
 }

@@ -66,6 +66,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   share_plus: ^10.1.4
   shared_preferences: ^2.5.2
+  stac: ^0.11.0
   url_launcher: ^6.2.5
   uuid: ^4.5.0
   vector_graphics_compiler: ^1.1.9+1
@@ -81,6 +82,7 @@ dependency_overrides:
   extended_text_field: ^16.0.0
   pdf_widget_wrapper: ^1.0.4
   web: ^1.1.1
+  freezed_annotation: ^2.0.3
 
 dev_dependencies:
   flutter_test:

@@ -2,11 +2,11 @@
 
 A **unified Dart/Flutter package** for working with multiple Generative AI providers (Google Gemini, OpenAI, Anthropic, Azure OpenAI, Ollama, etc.) using a **single request model**.
 
-* ✅ Supports **normal & streaming** responses
-* ✅ Unified `AIRequestModel` across providers
-* ✅ Configurable parameters (temperature, top-p, max tokens, etc.)
-* ✅ Simple request utilities (`executeGenAIRequest`, `streamGenAIRequest`)
-* ✅ Extensible — add your own provider easily
+- ✅ Supports **normal & streaming** responses
+- ✅ Unified `AIRequestModel` across providers
+- ✅ Configurable parameters (temperature, top-p, max tokens, etc.)
+- ✅ Simple request utilities (`executeGenAIRequest`, `streamGenAIRequest`)
+- ✅ Extensible — add your own provider easily
 
 ---
 
@@ -85,10 +85,10 @@ Each request accepts `modelConfigs` to fine-tune output.
 
 Available configs (defaults provided):
 
-* `temperature` → controls randomness
-* `top_p` / `topP` → nucleus sampling probability
-* `max_tokens` / `maxOutputTokens` → maximum length of output
-* `stream` → enables streaming
+- `temperature` → controls randomness
+- `top_p` / `topP` → nucleus sampling probability
+- `max_tokens` / `maxOutputTokens` → maximum length of output
+- `stream` → enables streaming
 
 Example:
 
@@ -135,9 +135,9 @@ processGenAIStreamOutput(
 
 ## 🔒 Authentication
 
-* **OpenAI / Anthropic / Azure OpenAI** → API key passed as HTTP header.
-* **Gemini** → API key passed as query param `?key=YOUR_API_KEY`.
-* **Ollama** → local server, no key required.
+- **OpenAI / Anthropic / Azure OpenAI** → API key passed as HTTP header.
+- **Gemini** → API key passed as query param `?key=YOUR_API_KEY`.
+- **Ollama** → local server, no key required.
 
 Just set `apiKey` in your `AIRequestModel`.
 
@@ -150,10 +150,11 @@ Want to add a new AI provider?
 1. Extend `ModelProvider`
 2. Implement:
 
-   * `defaultAIRequestModel`
-   * `createRequest()`
-   * `outputFormatter()`
-   * `streamOutputFormatter()`
+   - `defaultAIRequestModel`
+   - `createRequest()`
+   - `outputFormatter()`
+   - `streamOutputFormatter()`
+
 3. Register in `kModelProvidersMap`
 
 That’s it — it plugs into the same unified request flow.
@@ -175,13 +176,13 @@ print(answer);
 
 ---
 
-
 ## 🤝 Contributing
 
 We welcome contributions to the `genai` package! If you'd like to contribute, please fork the repository and submit a pull request. For major changes or new features, it's a good idea to open an issue first to discuss your ideas.
 
-## Maintainer
+## Maintainer(s)
 
+- Ankit Mahato ([GitHub](https://github.com/animator), [LinkedIn](https://www.linkedin.com/in/ankitmahato/), [X](https://x.com/ankitmahato))
 - Ashita Prasad ([GitHub](https://github.com/ashitaprasad), [LinkedIn](https://www.linkedin.com/in/ashitaprasad/), [X](https://x.com/ashitaprasad))
 - Manas Hejmadi (contributor) ([GitHub](https://github.com/synapsecode))
 

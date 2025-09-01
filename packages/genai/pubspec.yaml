@@ -1,8 +1,14 @@
 name: genai
-description: "Generative AI capabilities for flutter applications"
+description: "A unified Dart/Flutter package for working with multiple Generative AI providers (Google Gemini, OpenAI, Anthropic, Azure OpenAI, Ollama, etc.) using a single request model."
 version: 0.0.1
-homepage:
-publish_to: none
+homepage: https://github.com/foss42/apidash/tree/main/packages/genai
+
+topics:
+  - ai
+  - ollama
+  - gemini
+  - claude
+  - openai
 
 environment:
   sdk: ^3.8.0
@@ -11,8 +17,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_networking:
-    path: ../better_networking
+  better_networking: ^0.0.2
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
   nanoid: ^1.0.0
