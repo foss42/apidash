@@ -4,6 +4,7 @@ import '../../../../core/routes/dashbot_routes.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../chat/models/chat_models.dart';
 
 class DashbotHomePage extends ConsumerStatefulWidget {
   const DashbotHomePage({super.key});
@@ -13,13 +14,6 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 }
 
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
-  void navigateToChat(String prompt) {
-    Navigator.of(context).pushNamed(
-      DashbotRoutes.dashbotChat,
-      arguments: {'initialPrompt': prompt},
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -59,7 +53,12 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               //   child: const Text("🤖 Chat with Dashbot"),
               // ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.explainResponse,
+                  );
+                },
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -101,7 +100,12 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.generateTest,
+                  );
+                },
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
