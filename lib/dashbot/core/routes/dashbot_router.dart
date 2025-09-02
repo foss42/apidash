@@ -1,5 +1,5 @@
-import 'package:dashbot/features/chat/view/pages/dashbot_chat_page.dart';
-import 'package:dashbot/features/chat/models/chat_models.dart';
+import '../../features/chat/view/pages/dashbot_chat_page.dart';
+import '../../features/chat/models/chat_models.dart';
 
 import 'dashbot_routes.dart';
 import '../common/pages/dashbot_default_page.dart';

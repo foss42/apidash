@@ -1,5 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:dashbot/core/utils/dashbot_icons.dart';
+import 'core/utils/dashbot_icons.dart';
 
 import 'core/providers/dashbot_window_notifier.dart';
 import 'core/providers/dashbot_request_provider.dart';

@@ -1,6 +1,6 @@
-import 'package:dashbot/features/chat/models/chat_models.dart';
-import 'package:dashbot/features/chat/view/widgets/chat_bubble.dart';
-import 'package:dashbot/features/chat/viewmodel/chat_viewmodel.dart';
+import '../../models/chat_models.dart';
+import '../widgets/chat_bubble.dart';
+import '../../viewmodel/chat_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

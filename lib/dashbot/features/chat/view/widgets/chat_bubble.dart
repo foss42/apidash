@@ -1,5 +1,5 @@
 import 'package:apidash_design_system/tokens/tokens.dart';
-import 'package:dashbot/core/utils/dashbot_icons.dart';
+import '../../../../core/utils/dashbot_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';

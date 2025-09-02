@@ -1,4 +1,4 @@
-import 'package:dashbot/core/utils/dashbot_icons.dart';
+import '../../../../core/utils/dashbot_icons.dart';
 
 import '../../../../core/routes/dashbot_routes.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';

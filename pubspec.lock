@@ -104,12 +104,12 @@ packages:
     source: hosted
     version: "2.2.9"
   better_networking:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       path: "packages/better_networking"
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.2"
   bidi:
     dependency: transitive
     description:
@@ -198,6 +198,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.10.1"
+  cached_network_image:
+    dependency: transitive
+    description:
+      name: cached_network_image
+      sha256: "7c1183e361e5c8b0a0f21a28401eecdbde252441106a9816400dd4c2b2424916"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
+  cached_network_image_platform_interface:
+    dependency: transitive
+    description:
+      name: cached_network_image_platform_interface
+      sha256: "35814b016e37fbdc91f7ae18c8caf49ba5c88501813f73ce8a07027a395e2829"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.1"
+  cached_network_image_web:
+    dependency: transitive
+    description:
+      name: cached_network_image_web
+      sha256: "980842f4e8e2535b8dbd3d5ca0b1f0ba66bf61d14cc3a17a9b4788a3685ba062"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.1"
   carousel_slider:
     dependency: "direct main"
     description:
@@ -577,6 +601,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_cache_manager:
+    dependency: transitive
+    description:
+      name: flutter_cache_manager
+      sha256: "400b6592f16a4409a7f2bb929a9a7e38c72cceb8ffb99ee57bbf2cb2cecf8386"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1"
   flutter_code_editor:
     dependency: "direct main"
     description:
@@ -1188,6 +1220,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  octo_image:
+    dependency: transitive
+    description:
+      name: octo_image
+      sha256: "34faa6639a78c7e3cbe79be6f9f96535867e879748ade7d17c9b1ae7536293bd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   ollama_dart:
     dependency: "direct main"
     description:
@@ -1688,14 +1728,54 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
+  sqflite:
+    dependency: transitive
+    description:
+      name: sqflite
+      sha256: e2297b1da52f127bc7a3da11439985d9b536f75070f3325e62ada69a5c585d03
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.2"
+  sqflite_android:
+    dependency: transitive
+    description:
+      name: sqflite_android
+      sha256: ecd684501ebc2ae9a83536e8b15731642b9570dc8623e0073d227d0ee2bfea88
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.2+2"
+  sqflite_common:
+    dependency: transitive
+    description:
+      name: sqflite_common
+      sha256: "6ef422a4525ecc601db6c0a2233ff448c731307906e92cabc9ba292afaae16a6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.6"
+  sqflite_darwin:
+    dependency: transitive
+    description:
+      name: sqflite_darwin
+      sha256: "279832e5cde3fe99e8571879498c9211f3ca6391b0d818df4e17d9fff5c6ccb3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.2"
+  sqflite_platform_interface:
+    dependency: transitive
+    description:
+      name: sqflite_platform_interface
+      sha256: "8dd4515c7bdcae0a785b0062859336de775e8c65db81ae33dd5445f35be61920"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
   stac:
     dependency: "direct main"
     description:
       name: stac
-      sha256: "9c24c0cb546ab04bf324c17451ad31181cb98e284a489f690a6f381b7a77e47a"
+      sha256: "83d003eb881f7592f27de8ab518a9cf683c641d8643f09d654aa6637a8ae6495"
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.0"
+    version: "1.0.0-dev.6"
   stac_framework:
     dependency: transitive
     description:
@@ -1704,6 +1784,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"
+  stac_logger:
+    dependency: transitive
+    description:
+      name: stac_logger
+      sha256: bc3c1cc486d59d2378c1e18bfd9bfa078be564b58d4ae2b3898633c05a02df26
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   stack_trace:
     dependency: transitive
     description:
@@ -2098,5 +2186,5 @@ packages:
     source: hosted
     version: "2.2.2"
 sdks:
-  dart: ">=3.8.0 <3.999.0"
+  dart: ">=3.9.0 <3.999.0"
   flutter: ">=3.35.0"

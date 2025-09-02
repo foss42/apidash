@@ -1,6 +1,6 @@
 import 'package:apidash_design_system/apidash_design_system.dart'
     show kVSpacer20, kVSpacer16, kVSpacer10;
-import 'package:dashbot/core/utils/dashbot_icons.dart';
+import '../../utils/dashbot_icons.dart';
 import 'package:flutter/material.dart';
 
 class DashbotDefaultPage extends StatelessWidget {
