@@ -1,7 +1,7 @@
 import 'dart:async';
-
+import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genai/genai.dart' as genai;
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
@@ -20,11 +20,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   ChatRemoteRepository get _repo => _ref.read(chatRepositoryProvider);
   // Currently selected request and AI model are read from app providers
   RequestModel? get _currentRequest => _ref.read(selectedRequestModelProvider);
-  genai.AIRequestModel? get _selectedAIModel {
+  AIRequestModel? get _selectedAIModel {
     final json = _ref.read(settingsProvider).defaultAIModel;
     if (json == null) return null;
     try {
-      return genai.AIRequestModel.fromJson(json);
+      return AIRequestModel.fromJson(json);
     } catch (_) {
       return null;
     }
@@ -40,9 +40,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     ChatMessageType type = ChatMessageType.general,
     bool countAsUser = true,
   }) async {
+    debugPrint(
+        '[Chat] sendMessage start: type=$type, countAsUser=$countAsUser');
     final ai = _selectedAIModel;
     if (text.trim().isEmpty && countAsUser) return;
     if (ai == null) {
+      debugPrint('[Chat] No AI model configured');
       _appendSystem(
         'AI model is not configured. Please set one in AI Request tab.',
         type,
@@ -51,6 +54,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
 
     final requestId = _currentRequest?.id ?? 'global';
+    debugPrint('[Chat] using requestId=$requestId');
 
     if (countAsUser) {
       _addMessage(
@@ -66,26 +70,38 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
 
     final systemPrompt = _composeSystemPrompt(_currentRequest, type);
+    final userPrompt = (text.trim().isEmpty && !countAsUser)
+        ? 'Please complete the task based on the provided context.'
+        : text;
     final enriched = ai.copyWith(
       systemPrompt: systemPrompt,
-      userPrompt: text,
+      userPrompt: userPrompt,
       stream: true,
     );
+    debugPrint(
+        '[Chat] prompts prepared: system=${systemPrompt.length} chars, user=${userPrompt.length} chars');
 
     // start stream
     _sub?.cancel();
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
+    bool receivedAnyChunk = false;
     _sub = _repo.streamChat(request: enriched).listen(
       (chunk) {
+        receivedAnyChunk = true;
+        if (chunk.isEmpty) return;
+        debugPrint('[Chat] chunk(${chunk.length})');
         state = state.copyWith(
           currentStreamingResponse: state.currentStreamingResponse + (chunk),
         );
       },
       onError: (e) {
+        debugPrint('[Chat] stream error: $e');
         state = state.copyWith(isGenerating: false);
         _appendSystem('Error: $e', type);
       },
-      onDone: () {
+      onDone: () async {
+        debugPrint(
+            '[Chat] stream done. total=${state.currentStreamingResponse.length}, anyChunk=$receivedAnyChunk');
         if (state.currentStreamingResponse.isNotEmpty) {
           _addMessage(
             requestId,
@@ -97,6 +113,31 @@ class ChatViewmodel extends StateNotifier<ChatState> {
               messageType: type,
             ),
           );
+        } else if (!receivedAnyChunk) {
+          // Fallback to non-streaming request
+          debugPrint(
+              '[Chat] no streamed content; attempting non-streaming fallback');
+          try {
+            final fallback =
+                await _repo.sendChat(request: enriched.copyWith(stream: false));
+            if (fallback != null && fallback.isNotEmpty) {
+              _addMessage(
+                requestId,
+                ChatMessage(
+                  id: nanoid(),
+                  content: fallback,
+                  role: MessageRole.system,
+                  timestamp: DateTime.now(),
+                  messageType: type,
+                ),
+              );
+            } else {
+              _appendSystem('No response received from the AI.', type);
+            }
+          } catch (err) {
+            debugPrint('[Chat] fallback error: $err');
+            _appendSystem('Error: $err', type);
+          }
         }
         state = state.copyWith(
           isGenerating: false,

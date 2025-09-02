@@ -1,16 +1,5 @@
 import '../view/widgets/chat_bubble.dart';
 
-// Create a Message class that extends the existing ChatMessage for compatibility
-class Message extends ChatMessage {
-  const Message({
-    required super.id,
-    required super.content,
-    required super.role,
-    required super.timestamp,
-    required super.messageType,
-  });
-}
-
 class ChatState {
   final Map<String, List<ChatMessage>> chatSessions; // requestId -> messages
   final bool isGenerating;
@@ -108,12 +97,12 @@ class NetworkFailure extends ChatFailure {
 
 class AIModelNotConfiguredFailure extends ChatFailure {
   const AIModelNotConfiguredFailure()
-    : super("Please configure an AI model in the AI Request tab");
+      : super("Please configure an AI model in the AI Request tab");
 }
 
 class APIKeyMissingFailure extends ChatFailure {
   const APIKeyMissingFailure(String provider)
-    : super("API key missing for $provider");
+      : super("API key missing for $provider");
 }
 
 class NoRequestSelectedFailure extends ChatFailure {
@@ -126,7 +115,7 @@ class InvalidRequestContextFailure extends ChatFailure {
 
 class RateLimitFailure extends ChatFailure {
   const RateLimitFailure()
-    : super("Rate limit exceeded. Please try again later.");
+      : super("Rate limit exceeded. Please try again later.");
 }
 
 class StreamingFailure extends ChatFailure {
