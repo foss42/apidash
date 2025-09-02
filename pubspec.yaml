@@ -14,8 +14,6 @@ dependencies:
     path: packages/apidash_core
   apidash_design_system:
     path: packages/apidash_design_system
-  dashbot:
-    path: packages/dashbot
   carousel_slider: ^5.0.0
   code_builder: ^4.10.0
   csv: ^6.0.0
@@ -105,3 +103,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/dashbot/

@@ -14,7 +14,6 @@ class DashbotDefaultPage extends StatelessWidget {
       children: [
         kVSpacer16,
         DashbotIcons.getDashbotIcon1(width: 60),
-
         kVSpacer20,
         Text(
           'Hello there!',
@@ -22,7 +21,7 @@ class DashbotDefaultPage extends StatelessWidget {
         ),
         kVSpacer10,
         Text(
-          'Request not made yet',
+          'Seems like you haven\'t made any Requests yet',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
@@ -32,7 +31,7 @@ class DashbotDefaultPage extends StatelessWidget {
         Text(
           "Why not go ahead and make one?",
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
         ),
       ],
     );

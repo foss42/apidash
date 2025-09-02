@@ -405,13 +405,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  dashbot:
-    dependency: "direct main"
-    description:
-      path: "packages/dashbot"
-      relative: true
-    source: path
-    version: "0.0.1"
   data_table_2:
     dependency: "direct main"
     description:
@@ -720,14 +713,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  fpdart:
-    dependency: transitive
-    description:
-      name: fpdart
-      sha256: "1b84ce64453974159f08046f5d05592020d1fcb2099d7fe6ec58da0e7337af77"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.1"
   freezed:
     dependency: "direct dev"
     description:
@@ -1464,14 +1449,6 @@ packages:
     description:
       name: riverpod
       sha256: "59062512288d3056b2321804332a13ffdd1bf16df70dcc8e506e411280a72959"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.6.1"
-  riverpod_annotation:
-    dependency: transitive
-    description:
-      name: riverpod_annotation
-      sha256: e14b0bf45b71326654e2705d462f21b958f987087be850afd60578fcd502d1b8
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"

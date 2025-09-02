@@ -130,15 +130,7 @@ class Dashboard extends ConsumerWidget {
       floatingActionButton: isDashBotEnabled
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              onPressed: () => showDashbotWindow(
-                context,
-                ref,
-                overrides: [
-                  dashbotRequestContextProvider.overrideWith(
-                    (ref) => ref.watch(appDashbotRequestContextProvider),
-                  ),
-                ],
-              ),
+              onPressed: () => showDashbotWindow(context, ref),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 6.0,

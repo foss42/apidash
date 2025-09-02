@@ -1,8 +1,9 @@
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'core/utils/dashbot_icons.dart';
 
 import 'core/providers/dashbot_window_notifier.dart';
-import 'core/providers/dashbot_request_provider.dart';
 import 'core/routes/dashbot_router.dart';
 import 'core/routes/dashbot_routes.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,11 @@ class DashbotWindow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final windowState = ref.watch(dashbotWindowNotifierProvider);
     final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
-    final dashbotCtx = ref.watch(dashbotRequestContextProvider);
+    final defaultModelJson = ref.watch(settingsProvider).defaultAIModel;
+    final dashbotCtx = defaultModelJson == null
+        ? const AIRequestModel()
+        : AIRequestModel.fromJson(defaultModelJson);
+    final currentRequest = ref.watch(selectedRequestModelProvider);
 
     return Stack(
       children: [
@@ -66,13 +71,9 @@ class DashbotWindow extends ConsumerWidget {
                                   // TODO: remove the show active request name/model in prod
                                   kHSpacer12,
                                   Text(
-                                    dashbotCtx
-                                                ?.aiRequestModel
-                                                ?.modelApiProvider
-                                                ?.name ==
-                                            null
+                                    dashbotCtx.modelApiProvider?.name == null
                                         ? 'DashBot'
-                                        : 'DashBot · ${dashbotCtx?.aiRequestModel?.modelApiProvider?.name}',
+                                        : 'DashBot · ${dashbotCtx.modelApiProvider?.name}',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -96,10 +97,9 @@ class DashbotWindow extends ConsumerWidget {
                       ),
                       Expanded(
                         child: Navigator(
-                          initialRoute: DashbotRoutes.dashbotHome,
-                          // currentRequest?.responseStatus == null
-                          //     ? DashbotRoutes.dashbotDefault
-                          //     : DashbotRoutes.dashbotHome,
+                          initialRoute: currentRequest?.responseStatus == null
+                              ? DashbotRoutes.dashbotDefault
+                              : DashbotRoutes.dashbotHome,
                           onGenerateRoute: generateRoute,
                         ),
                       ),

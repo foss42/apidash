@@ -37,17 +37,16 @@ class ChatBubble extends StatelessWidget {
       );
     }
     return Align(
-      alignment:
-          role == MessageRole.user
-              ? Alignment.centerRight
-              : Alignment.centerLeft,
+      alignment: role == MessageRole.user
+          ? Alignment.centerRight
+          : Alignment.centerLeft,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (role == MessageRole.system) ...[
             kVSpacer6,
-            Image.asset("assets/dashbot_icon_1.png", width: 42),
+            DashbotIcons.getDashbotIcon1(width: 42),
             kVSpacer8,
           ],
           Container(
@@ -57,10 +56,9 @@ class ChatBubble extends StatelessWidget {
               maxWidth: MediaQuery.of(context).size.width * 0.75,
             ),
             decoration: BoxDecoration(
-              color:
-                  role == MessageRole.user
-                      ? Theme.of(context).colorScheme.primaryContainer
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: role == MessageRole.user
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(16.0),
             ),
             child: MarkdownBody(
@@ -70,11 +68,10 @@ class ChatBubble extends StatelessWidget {
                 Theme.of(context),
               ).copyWith(
                 p: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color:
-                      role == MessageRole.user
+                      color: role == MessageRole.user
                           ? Theme.of(context).colorScheme.surfaceBright
                           : Theme.of(context).colorScheme.onSurface,
-                ),
+                    ),
               ),
             ),
           ),

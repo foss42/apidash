@@ -1,15 +1,9 @@
 import '../model/dashbot_window_model.dart';
 import 'package:flutter/material.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-part 'dashbot_window_notifier.g.dart';
-
-@Riverpod(keepAlive: true)
-class DashbotWindowNotifier extends _$DashbotWindowNotifier {
-  @override
-  DashbotWindowModel build() {
-    return const DashbotWindowModel();
-  }
+class DashbotWindowNotifier extends StateNotifier<DashbotWindowModel> {
+  DashbotWindowNotifier() : super(const DashbotWindowModel());
 
   void updatePosition(double dx, double dy, Size screenSize) {
     state = state.copyWith(
@@ -34,3 +28,8 @@ class DashbotWindowNotifier extends _$DashbotWindowNotifier {
     state = state.copyWith(isActive: !state.isActive);
   }
 }
+
+final dashbotWindowNotifierProvider =
+    StateNotifierProvider<DashbotWindowNotifier, DashbotWindowModel>((ref) {
+  return DashbotWindowNotifier();
+});

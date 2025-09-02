@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genai/genai.dart' as genai;
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
 
 import '../../../core/constants/dashbot_prompts.dart' as dash;
-import '../../../core/model/dashbot_request_context.dart';
-import '../../../core/providers/dashbot_request_provider.dart';
 import '../view/widgets/chat_bubble.dart';
 import '../models/chat_models.dart';
 import '../repository/chat_remote_repository.dart';
@@ -17,11 +18,20 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   StreamSubscription<String>? _sub;
 
   ChatRemoteRepository get _repo => _ref.read(chatRepositoryProvider);
-  DashbotRequestContext? get _ctx => _ref.read(dashbotRequestContextProvider);
+  // Currently selected request and AI model are read from app providers
+  RequestModel? get _currentRequest => _ref.read(selectedRequestModelProvider);
+  genai.AIRequestModel? get _selectedAIModel {
+    final json = _ref.read(settingsProvider).defaultAIModel;
+    if (json == null) return null;
+    try {
+      return genai.AIRequestModel.fromJson(json);
+    } catch (_) {
+      return null;
+    }
+  }
 
   List<ChatMessage> get currentMessages {
-    final id = _ctx?.requestId;
-    if (id == null) return const [];
+    final id = _currentRequest?.id ?? 'global';
     return state.chatSessions[id] ?? const [];
   }
 
@@ -30,8 +40,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     ChatMessageType type = ChatMessageType.general,
     bool countAsUser = true,
   }) async {
-    final ctx = _ctx;
-    final ai = ctx?.aiRequestModel;
+    final ai = _selectedAIModel;
     if (text.trim().isEmpty && countAsUser) return;
     if (ai == null) {
       _appendSystem(
@@ -41,7 +50,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       return;
     }
 
-    final requestId = ctx?.requestId ?? 'global';
+    final requestId = _currentRequest?.id ?? 'global';
 
     if (countAsUser) {
       _addMessage(
@@ -56,7 +65,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     }
 
-    final systemPrompt = _composeSystemPrompt(ctx, type);
+    final systemPrompt = _composeSystemPrompt(_currentRequest, type);
     final enriched = ai.copyWith(
       systemPrompt: systemPrompt,
       userPrompt: text,
@@ -66,39 +75,36 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     // start stream
     _sub?.cancel();
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
-    _sub = _repo
-        .streamChat(request: enriched)
-        .listen(
-          (chunk) {
-            state = state.copyWith(
-              currentStreamingResponse:
-                  state.currentStreamingResponse + (chunk),
-            );
-          },
-          onError: (e) {
-            state = state.copyWith(isGenerating: false);
-            _appendSystem('Error: $e', type);
-          },
-          onDone: () {
-            if (state.currentStreamingResponse.isNotEmpty) {
-              _addMessage(
-                requestId,
-                ChatMessage(
-                  id: nanoid(),
-                  content: state.currentStreamingResponse,
-                  role: MessageRole.system,
-                  timestamp: DateTime.now(),
-                  messageType: type,
-                ),
-              );
-            }
-            state = state.copyWith(
-              isGenerating: false,
-              currentStreamingResponse: '',
-            );
-          },
-          cancelOnError: true,
+    _sub = _repo.streamChat(request: enriched).listen(
+      (chunk) {
+        state = state.copyWith(
+          currentStreamingResponse: state.currentStreamingResponse + (chunk),
         );
+      },
+      onError: (e) {
+        state = state.copyWith(isGenerating: false);
+        _appendSystem('Error: $e', type);
+      },
+      onDone: () {
+        if (state.currentStreamingResponse.isNotEmpty) {
+          _addMessage(
+            requestId,
+            ChatMessage(
+              id: nanoid(),
+              content: state.currentStreamingResponse,
+              role: MessageRole.system,
+              timestamp: DateTime.now(),
+              messageType: type,
+            ),
+          );
+        }
+        state = state.copyWith(
+          isGenerating: false,
+          currentStreamingResponse: '',
+        );
+      },
+      cancelOnError: true,
+    );
   }
 
   void cancel() {
@@ -118,7 +124,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   void _appendSystem(String text, ChatMessageType type) {
-    final id = _ctx?.requestId ?? 'global';
+    final id = _currentRequest?.id ?? 'global';
     _addMessage(
       id,
       ChatMessage(
@@ -132,12 +138,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   String _composeSystemPrompt(
-    DashbotRequestContext? ctx,
+    RequestModel? req,
     ChatMessageType type,
   ) {
     final history = _buildHistoryBlock();
-    final contextBlock = _buildContextBlock(ctx);
-    final task = _buildTaskPrompt(ctx, type);
+    final contextBlock = _buildContextBlock(req);
+    final task = _buildTaskPrompt(req, type);
     return [
       if (task != null) task,
       if (contextBlock != null) contextBlock,
@@ -146,7 +152,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   String _buildHistoryBlock({int maxTurns = 8}) {
-    final id = _ctx?.requestId ?? 'global';
+    final id = _currentRequest?.id ?? 'global';
     final messages = state.chatSessions[id] ?? const [];
     if (messages.isEmpty) return '';
     final start = messages.length > maxTurns ? messages.length - maxTurns : 0;
@@ -162,35 +168,35 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     return buf.toString();
   }
 
-  String? _buildContextBlock(DashbotRequestContext? ctx) {
-    final http = ctx?.httpRequestModel;
-    if (ctx == null || http == null) return null;
+  String? _buildContextBlock(RequestModel? req) {
+    final http = req?.httpRequestModel;
+    if (req == null || http == null) return null;
     final headers = http.headersMap.entries
         .map((e) => '"${e.key}": "${e.value}"')
         .join(', ');
     return '''<request_context>
-	Request Name: ${ctx.requestName ?? ''}
+  Request Name: ${req.name}
 	URL: ${http.url}
 	Method: ${http.method.name.toUpperCase()}
-	Status: ${ctx.responseStatus ?? ''}
+  Status: ${req.responseStatus ?? ''}
 	Content-Type: ${http.bodyContentType.name}
 	Headers: { $headers }
 	Body: ${http.body ?? ''}
-	Response: ${ctx.httpResponseModel?.body ?? ''}
+  Response: ${req.httpResponseModel?.body ?? ''}
 	</request_context>''';
   }
 
-  String? _buildTaskPrompt(DashbotRequestContext? ctx, ChatMessageType type) {
-    if (ctx == null) return null;
-    final http = ctx.httpRequestModel;
-    final resp = ctx.httpResponseModel;
+  String? _buildTaskPrompt(RequestModel? req, ChatMessageType type) {
+    if (req == null) return null;
+    final http = req.httpRequestModel;
+    final resp = req.httpResponseModel;
     final prompts = dash.DashbotPrompts();
     switch (type) {
       case ChatMessageType.explainResponse:
         return prompts.explainApiResponsePrompt(
           url: http?.url,
           method: http?.method.name.toUpperCase(),
-          responseStatus: ctx.responseStatus,
+          responseStatus: req.responseStatus,
           bodyContentType: http?.bodyContentType.name,
           message: resp?.body,
           headersMap: http?.headersMap,
@@ -200,7 +206,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         return prompts.debugApiErrorPrompt(
           url: http?.url,
           method: http?.method.name.toUpperCase(),
-          responseStatus: ctx.responseStatus,
+          responseStatus: req.responseStatus,
           bodyContentType: http?.bodyContentType.name,
           message: resp?.body,
           headersMap: http?.headersMap,
