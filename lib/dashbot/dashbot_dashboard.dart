@@ -1,4 +1,5 @@
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/ai/ai.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'core/utils/dashbot_icons.dart';
@@ -14,15 +15,26 @@ class DashbotWindow extends ConsumerWidget {
 
   const DashbotWindow({super.key, required this.onClose});
 
+  static final GlobalKey<NavigatorState> _dashbotNavigatorKey =
+      GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final windowState = ref.watch(dashbotWindowNotifierProvider);
     final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
-    final defaultModelJson = ref.watch(settingsProvider).defaultAIModel;
-    final dashbotCtx = defaultModelJson == null
-        ? const AIRequestModel()
-        : AIRequestModel.fromJson(defaultModelJson);
+    final settings = ref.watch(settingsProvider);
     final currentRequest = ref.watch(selectedRequestModelProvider);
+
+    ref.listen(
+      selectedRequestModelProvider,
+      (current, next) {
+        if (next?.responseStatus != null) {
+          _dashbotNavigatorKey.currentState?.pushNamed(
+            DashbotRoutes.dashbotHome,
+          );
+        }
+      },
+    );
 
     return Stack(
       children: [
@@ -71,15 +83,28 @@ class DashbotWindow extends ConsumerWidget {
                                   // TODO: remove the show active request name/model in prod
                                   kHSpacer12,
                                   Text(
-                                    dashbotCtx.modelApiProvider?.name == null
-                                        ? 'DashBot'
-                                        : 'DashBot · ${dashbotCtx.modelApiProvider?.name}',
+                                    'DashBot',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color:
                                           Theme.of(context).colorScheme.surface,
                                     ),
+                                  ),
+                                  kHSpacer4,
+                                  AIModelSelectorButton(
+                                    aiRequestModel: AIRequestModel.fromJson(
+                                        settings.defaultAIModel ?? {}),
+                                    onModelUpdated: (d) {
+                                      ref
+                                          .read(settingsProvider.notifier)
+                                          .update(
+                                              defaultAIModel: d.copyWith(
+                                                  modelConfigs: [],
+                                                  stream: null,
+                                                  systemPrompt: '',
+                                                  userPrompt: '').toJson());
+                                    },
                                   ),
                                 ],
                               ),
@@ -97,6 +122,7 @@ class DashbotWindow extends ConsumerWidget {
                       ),
                       Expanded(
                         child: Navigator(
+                          key: _dashbotNavigatorKey,
                           initialRoute: currentRequest?.responseStatus == null
                               ? DashbotRoutes.dashbotDefault
                               : DashbotRoutes.dashbotHome,

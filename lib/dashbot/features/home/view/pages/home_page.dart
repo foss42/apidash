@@ -22,14 +22,14 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   Widget build(BuildContext context) {
     final currentRequest = ref.watch(selectedRequestModelProvider);
 
-    // ref.listen(
-    //   selectedRequestModelProvider,
-    //   (current, next) {
-    //     if (current?.id != next?.id) {
-    //       Navigator.pop(context);
-    //     }
-    //   },
-    // );
+    ref.listen(
+      selectedRequestModelProvider,
+      (current, next) {
+        if (current?.id != next?.id) {
+          Navigator.pop(context);
+        }
+      },
+    );
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(

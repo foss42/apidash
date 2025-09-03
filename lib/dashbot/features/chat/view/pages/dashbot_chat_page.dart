@@ -1,3 +1,5 @@
+import 'package:apidash/providers/collection_providers.dart';
+
 import '../../models/chat_models.dart';
 import '../widgets/chat_bubble.dart';
 import '../../viewmodel/chat_viewmodel.dart';
@@ -32,6 +34,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(
+      selectedRequestModelProvider,
+      (current, next) {
+        if (current?.id != next?.id) {
+          Navigator.pop(context);
+        }
+      },
+    );
     return Scaffold(
       body: Column(
         children: [
@@ -77,10 +87,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   child: TextField(
                     controller: _textController,
                     decoration: InputDecoration(
-                      hintText:
-                          ref.watch(chatViewmodelProvider).isGenerating
-                              ? 'Generating...'
-                              : 'Ask anything',
+                      hintText: ref.watch(chatViewmodelProvider).isGenerating
+                          ? 'Generating...'
+                          : 'Ask anything',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
@@ -105,18 +114,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.send_rounded),
-                  onPressed:
-                      ref.watch(chatViewmodelProvider).isGenerating
-                          ? null
-                          : () {
-                            final vm = ref.read(chatViewmodelProvider.notifier);
-                            final text = _textController.text;
-                            _textController.clear();
-                            vm.sendMessage(
-                              text: text,
-                              type: ChatMessageType.general,
-                            );
-                          },
+                  onPressed: ref.watch(chatViewmodelProvider).isGenerating
+                      ? null
+                      : () {
+                          final vm = ref.read(chatViewmodelProvider.notifier);
+                          final text = _textController.text;
+                          _textController.clear();
+                          vm.sendMessage(
+                            text: text,
+                            type: ChatMessageType.general,
+                          );
+                        },
                   tooltip: 'Send message',
                 ),
               ],
