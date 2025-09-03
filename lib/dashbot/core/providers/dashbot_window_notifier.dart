@@ -16,7 +16,7 @@ class DashbotWindowNotifier extends StateNotifier<DashbotWindowModel> {
     final newWidth =
         (state.width - dx).clamp(300, screenSize.width - state.right);
     final newHeight =
-        (state.height - dy).clamp(350, screenSize.height - state.bottom);
+        (state.height - dy).clamp(460, screenSize.height - state.bottom);
 
     state = state.copyWith(
       width: newWidth.toDouble(),
