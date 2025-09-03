@@ -450,6 +450,7 @@ const kLabelDownload = "Download";
 const kLabelSaving = "Saving";
 const kLabelSaved = "Saved";
 const kLabelCode = "Code";
+const kLabelDashBot = "DashBot";
 const kLabelDuplicate = "Duplicate";
 const kLabelSelect = "Select";
 const kLabelContinue = "Continue";

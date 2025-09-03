@@ -93,17 +93,23 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                   );
                 },
               ),
-              if (currentRequest?.httpResponseModel?.statusCode != null &&
-                  currentRequest?.httpResponseModel?.statusCode == 200) ...[
+            ],
+          ),
+          if (currentRequest?.httpResponseModel?.statusCode != null &&
+              currentRequest?.httpResponseModel?.statusCode == 200) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: const [
                 Expanded(
                   child: GenerateToolButton(),
                 ),
+                SizedBox(width: 8),
                 Expanded(
                   child: AIGenerateUIButton(),
                 ),
               ],
-            ],
-          ),
+            ),
+          ],
         ],
       ),
     );
