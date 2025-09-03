@@ -9,6 +9,7 @@ import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../chat/models/chat_models.dart';
+import '../widgets/home_screen_task_button.dart';
 
 class DashbotHomePage extends ConsumerStatefulWidget {
   const DashbotHomePage({super.key});
@@ -48,97 +49,49 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              // TextButton(
-              //   onPressed: () {
-              // Navigator.of(context).pushNamed(
-              //   DashbotRoutes.dashbotChat,
-              // );
-              //   },
-              //   style: TextButton.styleFrom(
-              //     side: BorderSide(
-              //       color: Theme.of(context).colorScheme.primary,
-              //     ),
-              //     padding: const EdgeInsets.symmetric(
-              //       vertical: 0,
-              //       horizontal: 16,
-              //     ),
-              //   ),
-              //   child: const Text("🤖 Chat with Dashbot"),
-              // ),
-              TextButton(
+              HomeScreenTaskButton(
+                label: "🤖 Chat with Dashbot",
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                  );
+                },
+              ),
+              HomeScreenTaskButton(
+                label: "🔎 Explain me this response",
                 onPressed: () {
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.explainResponse,
                   );
                 },
-                style: TextButton.styleFrom(
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 16,
-                  ),
-                ),
-                child: const Text("🔎 Explain me this response"),
               ),
-              TextButton(
+              HomeScreenTaskButton(
+                label: "🐞 Help me debug this error",
                 onPressed: () {
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.debugError,
                   );
                 },
-                style: TextButton.styleFrom(
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 16,
-                  ),
-                ),
-                child: const Text("🐞 Help me debug this error"),
               ),
-              TextButton(
+              HomeScreenTaskButton(
+                label: "📄 Generate documentation",
                 onPressed: () {
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.general,
                   );
                 },
-                style: TextButton.styleFrom(
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 16,
-                  ),
-                ),
-                child: const Text(
-                  "📄 Generate documentation",
-                  textAlign: TextAlign.center,
-                ),
               ),
-              TextButton(
+              HomeScreenTaskButton(
+                label: "📝 Generate Tests",
                 onPressed: () {
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.generateTest,
                   );
                 },
-                style: TextButton.styleFrom(
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 0,
-                    horizontal: 16,
-                  ),
-                ),
-                child: const Text("📝 Generate Tests"),
               ),
               if (currentRequest?.httpResponseModel?.statusCode != null &&
                   currentRequest?.httpResponseModel?.statusCode == 200) ...[
