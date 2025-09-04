@@ -4,6 +4,8 @@ import 'core/routes/dashbot_router.dart';
 import 'core/routes/dashbot_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/providers/dashbot_window_notifier.dart';
+import 'core/utils/show_dashbot.dart';
 
 class DashbotTab extends ConsumerStatefulWidget {
   const DashbotTab({super.key});
@@ -54,6 +56,49 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
           ),
           child: Column(
             children: [
+              Padding(
+                padding: kP8,
+                child: Align(
+                  alignment: AlignmentGeometry.centerRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.close_fullscreen,
+                        ),
+                        onPressed: () {
+                          ref
+                              .read(dashbotWindowNotifierProvider.notifier)
+                              .togglePopped();
+
+                          final newState =
+                              ref.read(dashbotWindowNotifierProvider);
+                          if (newState.isPopped) {
+                            showDashbotWindow(context, ref);
+                          }
+                        },
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          final isActive =
+                              ref.read(dashbotWindowNotifierProvider).isActive;
+
+                          ref
+                              .read(dashbotWindowNotifierProvider.notifier)
+                              .togglePopped();
+                          if (isActive) {
+                            ref
+                                .read(dashbotWindowNotifierProvider.notifier)
+                                .toggleActive();
+                          }
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               Expanded(
                 child: Navigator(
                   key: _navKey,

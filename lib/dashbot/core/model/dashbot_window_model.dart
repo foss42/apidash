@@ -12,7 +12,7 @@ class DashbotWindowModel {
     this.right = 50,
     this.bottom = 100,
     this.isActive = false,
-    this.isPopped = false,
+    this.isPopped = true,
   });
 
   DashbotWindowModel copyWith({

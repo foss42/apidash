@@ -25,6 +25,16 @@ class DashbotWindow extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final currentRequest = ref.watch(selectedRequestModelProvider);
 
+    // Close the overlay when the window is not popped anymore
+    ref.listen(
+      dashbotWindowNotifierProvider.select((s) => s.isPopped),
+      (prev, next) {
+        if (prev == true && next == false) {
+          onClose();
+        }
+      },
+    );
+
     ref.listen(
       selectedRequestModelProvider,
       (current, next) {
@@ -107,6 +117,20 @@ class DashbotWindow extends ConsumerWidget {
                                     },
                                   ),
                                 ],
+                              ),
+                              Spacer(),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.open_in_new,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                onPressed: () {
+                                  ref
+                                      .read(dashbotWindowNotifierProvider
+                                          .notifier)
+                                      .togglePopped();
+                                },
                               ),
                               IconButton(
                                 icon: Icon(
