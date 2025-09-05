@@ -107,23 +107,7 @@ class ChatBubble extends ConsumerWidget {
           if (role == MessageRole.system) ...[
             if (action != null) ...[
               const SizedBox(height: 4),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  final chatViewmodel =
-                      ref.read(chatViewmodelProvider.notifier);
-                  await chatViewmodel.applyAutoFix(action!);
-                  debugPrint('Auto-fix applied successfully!');
-                },
-                icon: const Icon(Icons.auto_fix_high, size: 16),
-                label: const Text('Auto Fix'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  textStyle: Theme.of(context).textTheme.labelSmall,
-                ),
-              ),
+              _buildActionButton(context, ref, action!),
             ],
             const SizedBox(height: 4),
             IconButton(
@@ -137,6 +121,32 @@ class ChatBubble extends ConsumerWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+      BuildContext context, WidgetRef ref, ChatAction action) {
+    final isTestAction = action.action == 'other' && action.target == 'test';
+
+    return ElevatedButton.icon(
+      onPressed: () async {
+        final chatViewmodel = ref.read(chatViewmodelProvider.notifier);
+        await chatViewmodel.applyAutoFix(action);
+        if (isTestAction) {
+          debugPrint('Test added to post-request script successfully!');
+        } else {
+          debugPrint('Auto-fix applied successfully!');
+        }
+      },
+      icon: Icon(isTestAction ? Icons.playlist_add_check : Icons.auto_fix_high,
+          size: 16),
+      label: Text(isTestAction ? 'Add Test' : 'Auto Fix'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        textStyle: Theme.of(context).textTheme.labelSmall,
       ),
     );
   }

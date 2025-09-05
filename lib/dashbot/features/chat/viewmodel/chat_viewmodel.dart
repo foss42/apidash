@@ -153,8 +153,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
                 if (parsed.containsKey('action') && parsed['action'] != null) {
                   fallbackAction = ChatAction.fromJson(
                       parsed['action'] as Map<String, dynamic>);
-                  debugPrint(
-                      '[Chat] Fallback parsed action: ${fallbackAction.toJson()}');
                 }
               } catch (e) {
                 debugPrint('[Chat] Fallback error parsing action: $e');
@@ -219,6 +217,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           break;
         case 'update_method':
           await _applyMethodUpdate(action);
+          break;
+        case 'other':
+          await _applyOtherAction(action);
           break;
         default:
           debugPrint('[Chat] Unsupported action: ${action.action}');
@@ -331,6 +332,44 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       orElse: () => HTTPVerb.get,
     );
     collectionNotifier.update(method: method, id: requestId);
+  }
+
+  Future<void> _applyOtherAction(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null) return;
+
+    switch (action.target) {
+      case 'test':
+        await _applyTestToPostScript(action);
+        break;
+      default:
+        debugPrint('[Chat] Unsupported other action target: ${action.target}');
+    }
+  }
+
+  Future<void> _applyTestToPostScript(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null) return;
+
+    final collectionNotifier =
+        _ref.read(collectionStateNotifierProvider.notifier);
+    final testCode = action.value as String;
+
+    // Get the current post-request script (if any)
+    final currentRequest = _currentRequest;
+    final currentPostScript = currentRequest?.postRequestScript ?? '';
+
+    // Append the test code to the existing post-request script
+    final newPostScript = currentPostScript.isEmpty
+        ? testCode
+        : '$currentPostScript\n\n// Generated Test\n$testCode';
+
+    collectionNotifier.update(postRequestScript: newPostScript, id: requestId);
+
+    debugPrint('[Chat] Test code added to post-request script');
+    _appendSystem(
+        'Test code has been successfully added to the post-request script.',
+        ChatMessageType.generateTest);
   }
 
   // Helpers

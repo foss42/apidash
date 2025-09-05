@@ -103,7 +103,7 @@ class ChatAction {
   const ChatAction({
     required this.action,
     required this.target,
-    required this.field,
+    this.field = '', // Default to empty string
     this.path,
     this.value,
   });
@@ -112,7 +112,8 @@ class ChatAction {
     return ChatAction(
       action: json['action'] as String,
       target: json['target'] as String,
-      field: json['field'] as String,
+      field: json['field'] as String? ??
+          '', // Default to empty string if not provided
       path: json['path'] as String?,
       value: json['value'],
     );
