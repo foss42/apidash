@@ -30,7 +30,7 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     final name = getRequestTitleFromUrl(
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
     final TabController requestTabController =
-        useTabController(initialLength: 3, vsync: this);
+        useTabController(initialLength: 4, vsync: this);
     return DrawerSplitView(
       scaffoldKey: kHomeScaffoldKey,
       title: Row(
