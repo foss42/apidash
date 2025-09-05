@@ -81,6 +81,8 @@ dependency_overrides:
   pdf_widget_wrapper: ^1.0.4
   web: ^1.1.1
   freezed_annotation: ^2.0.3
+  better_networking:
+    path: packages/better_networking
 
 dev_dependencies:
   flutter_test:

@@ -375,6 +375,18 @@ Generated UI:
 
 ![Generated Widget](./images/exmp2.png)
 
+Modification Prompts:
+```
+- separate the single card layout into (image+title) in one card and
+description in another card
+- Resize the image to be 300x300 with a fit of "contain"
+- implement dark theme in the whole page with the cards being darker
+- app bar must be dark themed with yellow font colour
+- the title "A Two Percent Moon" should be centered and yellow coloured
+- description text can be light yellow coloured with decent padding
+remove any copyright
+```
+
 Exported Flutter Code:
 ```dart
 class SDUIWidget extends StatelessWidget {
@@ -451,6 +463,8 @@ class SDUIWidget extends StatelessWidget {
 }
 ```
 
+Click here to view the [Complete Process Demo](https://youtu.be/QCW9Vt_PcYE)
+
 #### Example 3
 `GET`: https://api.postalpincode.in/pincode/560078
 ```json
@@ -523,6 +537,21 @@ Generated UI:
 
 ![](./images/pincodetable.png)
 
+Modification Prompts Used:
+```- remove any scrollviews
+- use a Table for the data (name, branch type, delivery status, district, state only)
+- add padding to each text element in table cells
+- bold the names of the city areas except "Bangalore"
+- make the font size 3x and dark green and bold
+- add a right and left margin to table of 20px
+- vertically center everything
+- light green background
+- bold the names of the areas except "Bangalore"
+- increase the font size of table cell contents by 25%
+```
+
+Click here to view the [Complete Process Demo](https://youtu.be/T3-yp6ZHltA)
+
 #### Example 4
 `GET` https://dogapi.dog/api/v2/breeds
 ```json
@@ -566,58 +595,78 @@ Generated UI:
 
 https://github.com/user-attachments/assets/5ac6794e-c92d-41f3-9e6e-4ffa544827b1
 
+Modification Prompts Used:
+```
+- remove scrollview
+- convert into 3x3 gridview with all children having childAspectRatio of 1.3
+- make the elements in each card of grid view fit its entire card
+and make background as dark theme
+- Add some padding for each card and also change the background color of the cards to a random one between light yellow, light green, light blue, light purple and light red
+- for each text item inside the cards, wrap it with its own card with slightly dark and transparent background color , let font colour be white
+- dont separare the cards for the key and value, kep it together and add padding to the inner cards also
+```
+
 Exported Source Code: [Link](./codes/example4.dart)
 
+Click here to view the [Complete Process Demo](https://youtu.be/ZXADJOCR9L8)
+
 #### Example 5
-`GET` https://api.dictionaryapi.dev/api/v2/entries/en/flutter
+`GET` https://emojihub.yurace.pro/api/search?q=dog
 ```json
 [
   {
-    "word": "flutter",
-    "phonetic": "/ˈflʌtə/",
-    "phonetics": [
-      {
-        "text": "/ˈflʌtə/",
-        "audio": ""
-      },
+    "name": "dog face",
+    "category": "animals and nature",
+    "group": "animal mammal",
+    "htmlCode": [
+      "&#128054;"
     ],
-    "meanings": [
-      {
-        "partOfSpeech": "noun",
-        "definitions": [
-          {
-            "definition": "The act of fluttering; quick and irregular motion.",
-            "synonyms": [],
-            "antonyms": [],
-            "example": "the flutter of a fan"
-          },
-          {
-            "definition": "A state of agitation.",
-            "synonyms": [],
-            "antonyms": []
-          },
-          ...
-        ],
-        "synonyms": [],
-        "antonyms": []
-      },
-      ...
+    "unicode": [
+      "U+1F436"
+    ]
+  },
+  {
+    "name": "dog",
+    "category": "animals and nature",
+    "group": "animal mammal",
+    "htmlCode": [
+      "&#128021;"
     ],
-    "license": {
-      "name": "CC BY-SA 3.0",
-      "url": "https://creativecommons.org/licenses/by-sa/3.0"
-    },
-    "sourceUrls": [
-      "https://en.wiktionary.org/wiki/flutter"
+    "unicode": [
+      "U+1F415"
+    ]
+  },
+  {
+    "name": "hot dog",
+    "category": "food and drink",
+    "group": "food prepared",
+    "htmlCode": [
+      "&#127789;"
+    ],
+    "unicode": [
+      "U+1F32D"
     ]
   }
 ]
 ```
 Generated UI:
 
-https://github.com/user-attachments/assets/673cddf0-8016-48ee-9217-d6f1ed9f826d
+![](./images/example5ui.png)
+
 
 Exported Source Code: [Link](./codes/example5.dart)
+
+Modification Prompts Used:
+```
+- remove the HTML code and convert the whole thing into a table with headers (name, Category, group, emoji). Also add a scaffold with light yellow background color & convert the unicode into EMOJIs
+- increase the font size by 2.5x & put the table in the center horizontally and vertically
+- let the table be bigger and not width constrained
+- add padding for each table cell of 10px
+- the shading added to the table header must be yellow color
+- add a big size text boldened that says "Dog Emojis" Above the table, centered, spaced by 20px on the bottom
+```
+
+Click here to view the [Complete Process Demo](https://youtu.be/HBFjmSUHSxM)
 
 ---
 
