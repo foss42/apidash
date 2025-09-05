@@ -40,6 +40,7 @@ class ChatMessage {
   final MessageRole role;
   final DateTime timestamp;
   final ChatMessageType? messageType;
+  final ChatAction? action;
 
   const ChatMessage({
     required this.id,
@@ -47,6 +48,7 @@ class ChatMessage {
     required this.role,
     required this.timestamp,
     this.messageType,
+    this.action,
   });
 
   ChatMessage copyWith({
@@ -55,6 +57,7 @@ class ChatMessage {
     MessageRole? role,
     DateTime? timestamp,
     ChatMessageType? messageType,
+    ChatAction? action,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -62,6 +65,7 @@ class ChatMessage {
       role: role ?? this.role,
       timestamp: timestamp ?? this.timestamp,
       messageType: messageType ?? this.messageType,
+      action: action ?? this.action,
     );
   }
 }
@@ -81,6 +85,43 @@ class ChatResponse {
 }
 
 enum ChatMessageType { explainResponse, debugError, generateTest, general }
+
+// Action model for auto-fix functionality
+class ChatAction {
+  final String action;
+  final String target;
+  final String field;
+  final String? path;
+  final dynamic value;
+
+  const ChatAction({
+    required this.action,
+    required this.target,
+    required this.field,
+    this.path,
+    this.value,
+  });
+
+  factory ChatAction.fromJson(Map<String, dynamic> json) {
+    return ChatAction(
+      action: json['action'] as String,
+      target: json['target'] as String,
+      field: json['field'] as String,
+      path: json['path'] as String?,
+      value: json['value'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'action': action,
+      'target': target,
+      'field': field,
+      'path': path,
+      'value': value,
+    };
+  }
+}
 
 // Failure classes using fpdart Either pattern
 abstract class ChatFailure implements Exception {

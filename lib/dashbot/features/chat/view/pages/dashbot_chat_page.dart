@@ -65,9 +65,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       );
                     }
                     final message = msgs[index];
+                    debugPrint(
+                        '[ChatPage] Message action: ${message.action?.toJson()}');
                     return ChatBubble(
                       message: message.content,
                       role: message.role,
+                      action: message.action,
                     );
                   },
                 );

@@ -4,22 +4,33 @@ import '../../../../core/utils/dashbot_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../viewmodel/chat_viewmodel.dart';
 import '../../models/chat_models.dart';
 
-class ChatBubble extends StatelessWidget {
+class ChatBubble extends ConsumerWidget {
   final String message;
   final MessageRole role;
   final String? promptOverride;
+  final ChatAction? action;
 
   const ChatBubble({
     super.key,
     required this.message,
     required this.role,
     this.promptOverride,
+    this.action,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (action != null) {
+      debugPrint('[ChatBubble] Action received: ${action!.toJson()}');
+    } else {
+      final preview =
+          message.length > 100 ? '${message.substring(0, 100)}...' : message;
+      debugPrint('[ChatBubble] No action received for message: $preview');
+    }
     if (promptOverride != null &&
         role == MessageRole.user &&
         message == promptOverride) {
@@ -94,6 +105,27 @@ class ChatBubble extends StatelessWidget {
             ),
           ),
           if (role == MessageRole.system) ...[
+            if (action != null) ...[
+              const SizedBox(height: 4),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final chatViewmodel =
+                      ref.read(chatViewmodelProvider.notifier);
+                  await chatViewmodel.applyAutoFix(action!);
+                  debugPrint('Auto-fix applied successfully!');
+                },
+                icon: const Icon(Icons.auto_fix_high, size: 16),
+                label: const Text('Auto Fix'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  textStyle: Theme.of(context).textTheme.labelSmall,
+                ),
+              ),
+            ],
+            const SizedBox(height: 4),
             IconButton(
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: message));

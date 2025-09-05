@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
 
+import '../../../core/utils/safe_parse_json_message.dart';
 import '../../../core/constants/dashbot_prompts.dart' as dash;
 import '../models/chat_models.dart';
 import '../repository/chat_remote_repository.dart';
@@ -31,7 +32,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
   List<ChatMessage> get currentMessages {
     final id = _currentRequest?.id ?? 'global';
-    return state.chatSessions[id] ?? const [];
+    debugPrint('[Chat] Getting messages for request ID: $id');
+    final messages = state.chatSessions[id] ?? const [];
+    debugPrint('[Chat] Found ${messages.length} messages');
+    return messages;
   }
 
   Future<void> sendMessage({
@@ -102,6 +106,27 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         debugPrint(
             '[Chat] stream done. total=${state.currentStreamingResponse.length}, anyChunk=$receivedAnyChunk');
         if (state.currentStreamingResponse.isNotEmpty) {
+          ChatAction? parsedAction;
+          try {
+            debugPrint(
+                '[Chat] Attempting to parse response: ${state.currentStreamingResponse}');
+            final Map<String, dynamic> parsed =
+                MessageJson.safeParse(state.currentStreamingResponse);
+            debugPrint('[Chat] Parsed JSON: $parsed');
+            if (parsed.containsKey('action') && parsed['action'] != null) {
+              debugPrint('[Chat] Action object found: ${parsed['action']}');
+              parsedAction =
+                  ChatAction.fromJson(parsed['action'] as Map<String, dynamic>);
+              debugPrint('[Chat] Parsed action: ${parsedAction.toJson()}');
+            } else {
+              debugPrint('[Chat] No action found in response');
+            }
+          } catch (e) {
+            debugPrint('[Chat] Error parsing action: $e');
+            debugPrint('[Chat] Error details: ${e.toString()}');
+            // If parsing fails, continue without action
+          }
+
           _addMessage(
             requestId,
             ChatMessage(
@@ -110,6 +135,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
               role: MessageRole.system,
               timestamp: DateTime.now(),
               messageType: type,
+              action: parsedAction,
             ),
           );
         } else if (!receivedAnyChunk) {
@@ -120,6 +146,20 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             final fallback =
                 await _repo.sendChat(request: enriched.copyWith(stream: false));
             if (fallback != null && fallback.isNotEmpty) {
+              ChatAction? fallbackAction;
+              try {
+                final Map<String, dynamic> parsed =
+                    MessageJson.safeParse(fallback);
+                if (parsed.containsKey('action') && parsed['action'] != null) {
+                  fallbackAction = ChatAction.fromJson(
+                      parsed['action'] as Map<String, dynamic>);
+                  debugPrint(
+                      '[Chat] Fallback parsed action: ${fallbackAction.toJson()}');
+                }
+              } catch (e) {
+                debugPrint('[Chat] Fallback error parsing action: $e');
+              }
+
               _addMessage(
                 requestId,
                 ChatMessage(
@@ -128,6 +168,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
                   role: MessageRole.system,
                   timestamp: DateTime.now(),
                   messageType: type,
+                  action: fallbackAction,
                 ),
               );
             } else {
@@ -152,8 +193,150 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     state = state.copyWith(isGenerating: false);
   }
 
+  Future<void> applyAutoFix(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null) return;
+
+    try {
+      switch (action.action) {
+        case 'update_field':
+          await _applyFieldUpdate(action);
+          break;
+        case 'add_header':
+          await _applyHeaderUpdate(action, isAdd: true);
+          break;
+        case 'update_header':
+          await _applyHeaderUpdate(action, isAdd: false);
+          break;
+        case 'delete_header':
+          await _applyHeaderDelete(action);
+          break;
+        case 'update_body':
+          await _applyBodyUpdate(action);
+          break;
+        case 'update_url':
+          await _applyUrlUpdate(action);
+          break;
+        case 'update_method':
+          await _applyMethodUpdate(action);
+          break;
+        default:
+          debugPrint('[Chat] Unsupported action: ${action.action}');
+      }
+    } catch (e) {
+      debugPrint('[Chat] Error applying auto-fix: $e');
+      _appendSystem('Failed to apply auto-fix: $e', ChatMessageType.general);
+    }
+  }
+
+  Future<void> _applyFieldUpdate(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null) return;
+
+    final collectionNotifier =
+        _ref.read(collectionStateNotifierProvider.notifier);
+
+    switch (action.field) {
+      case 'url':
+        collectionNotifier.update(url: action.value as String, id: requestId);
+        break;
+      case 'method':
+        final method = HTTPVerb.values.firstWhere(
+          (m) => m.name.toLowerCase() == (action.value as String).toLowerCase(),
+          orElse: () => HTTPVerb.get,
+        );
+        collectionNotifier.update(method: method, id: requestId);
+        break;
+      case 'params':
+        if (action.value is Map<String, dynamic>) {
+          final params = (action.value as Map<String, dynamic>)
+              .entries
+              .map(
+                  (e) => NameValueModel(name: e.key, value: e.value.toString()))
+              .toList();
+          collectionNotifier.update(params: params, id: requestId);
+        }
+        break;
+    }
+  }
+
+  Future<void> _applyHeaderUpdate(ChatAction action,
+      {required bool isAdd}) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null || action.path == null) return;
+
+    final collectionNotifier =
+        _ref.read(collectionStateNotifierProvider.notifier);
+    final currentRequest = _currentRequest;
+    if (currentRequest?.httpRequestModel == null) return;
+
+    final headers = List<NameValueModel>.from(
+        currentRequest!.httpRequestModel!.headers ?? []);
+
+    if (isAdd) {
+      headers.add(
+          NameValueModel(name: action.path!, value: action.value as String));
+    } else {
+      final index = headers.indexWhere((h) => h.name == action.path);
+      if (index != -1) {
+        headers[index] = headers[index].copyWith(value: action.value as String);
+      }
+    }
+
+    collectionNotifier.update(headers: headers, id: requestId);
+  }
+
+  Future<void> _applyHeaderDelete(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null || action.path == null) return;
+
+    final collectionNotifier =
+        _ref.read(collectionStateNotifierProvider.notifier);
+    final currentRequest = _currentRequest;
+    if (currentRequest?.httpRequestModel == null) return;
+
+    final headers = List<NameValueModel>.from(
+        currentRequest!.httpRequestModel!.headers ?? []);
+    headers.removeWhere((h) => h.name == action.path);
+
+    collectionNotifier.update(headers: headers, id: requestId);
+  }
+
+  Future<void> _applyBodyUpdate(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null) return;
+
+    final collectionNotifier =
+        _ref.read(collectionStateNotifierProvider.notifier);
+    collectionNotifier.update(body: action.value as String, id: requestId);
+  }
+
+  Future<void> _applyUrlUpdate(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null) return;
+
+    final collectionNotifier =
+        _ref.read(collectionStateNotifierProvider.notifier);
+    collectionNotifier.update(url: action.value as String, id: requestId);
+  }
+
+  Future<void> _applyMethodUpdate(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    if (requestId == null) return;
+
+    final collectionNotifier =
+        _ref.read(collectionStateNotifierProvider.notifier);
+    final method = HTTPVerb.values.firstWhere(
+      (m) => m.name.toLowerCase() == (action.value as String).toLowerCase(),
+      orElse: () => HTTPVerb.get,
+    );
+    collectionNotifier.update(method: method, id: requestId);
+  }
+
   // Helpers
   void _addMessage(String requestId, ChatMessage m) {
+    debugPrint(
+        '[Chat] Adding message to request ID: $requestId, action: ${m.action?.toJson()}');
     final msgs = state.chatSessions[requestId] ?? const [];
     state = state.copyWith(
       chatSessions: {
@@ -161,6 +344,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         requestId: [...msgs, m],
       },
     );
+    debugPrint(
+        '[Chat] Message added, total messages for $requestId: ${(state.chatSessions[requestId]?.length ?? 0)}');
   }
 
   void _appendSystem(String text, ChatMessageType type) {
