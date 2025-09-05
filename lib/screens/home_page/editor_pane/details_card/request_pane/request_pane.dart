@@ -23,7 +23,7 @@ class EditRequestPane extends ConsumerWidget {
     final isPopped =
         ref.watch(dashbotWindowNotifierProvider.select((s) => s.isPopped));
 
-    // When Dashbot window is popped, compact segmented layout like History page should be shown
+    // When Dashbot window is not popped, show compact segmented layout like History page
     if (isPopped == false && apiType == APIType.rest) {
       return DefaultTabController(
         length: 3,
@@ -47,6 +47,42 @@ class EditRequestPane extends ConsumerWidget {
                     controller: controller,
                     children: const [
                       EditRestRequestPane(),
+                      ResponsePane(),
+                      CodePane(),
+                    ],
+                  ),
+                ),
+                kVSpacer8,
+              ],
+            );
+          },
+        ),
+      );
+    }
+
+    if (isPopped == false && apiType == APIType.graphql) {
+      return DefaultTabController(
+        length: 3,
+        child: Builder(
+          builder: (context) {
+            final controller = DefaultTabController.of(context);
+            return Column(
+              children: [
+                kVSpacer10,
+                SegmentedTabbar(
+                  controller: controller,
+                  tabs: const [
+                    Tab(text: kLabelRequest),
+                    Tab(text: kLabelResponse),
+                    Tab(text: kLabelCode),
+                  ],
+                ),
+                kVSpacer10,
+                Expanded(
+                  child: TabBarView(
+                    controller: controller,
+                    children: const [
+                      EditGraphQLRequestPane(),
                       ResponsePane(),
                       CodePane(),
                     ],
