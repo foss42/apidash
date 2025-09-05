@@ -611,55 +611,62 @@ Exported Source Code: [Link](./codes/example4.dart)
 Click here to view the [Complete Process Demo](https://youtu.be/ZXADJOCR9L8)
 
 #### Example 5
-`GET` https://api.dictionaryapi.dev/api/v2/entries/en/flutter
+`GET` https://emojihub.yurace.pro/api/search?q=dog
 ```json
 [
   {
-    "word": "flutter",
-    "phonetic": "/ˈflʌtə/",
-    "phonetics": [
-      {
-        "text": "/ˈflʌtə/",
-        "audio": ""
-      },
+    "name": "dog face",
+    "category": "animals and nature",
+    "group": "animal mammal",
+    "htmlCode": [
+      "&#128054;"
     ],
-    "meanings": [
-      {
-        "partOfSpeech": "noun",
-        "definitions": [
-          {
-            "definition": "The act of fluttering; quick and irregular motion.",
-            "synonyms": [],
-            "antonyms": [],
-            "example": "the flutter of a fan"
-          },
-          {
-            "definition": "A state of agitation.",
-            "synonyms": [],
-            "antonyms": []
-          },
-          ...
-        ],
-        "synonyms": [],
-        "antonyms": []
-      },
-      ...
+    "unicode": [
+      "U+1F436"
+    ]
+  },
+  {
+    "name": "dog",
+    "category": "animals and nature",
+    "group": "animal mammal",
+    "htmlCode": [
+      "&#128021;"
     ],
-    "license": {
-      "name": "CC BY-SA 3.0",
-      "url": "https://creativecommons.org/licenses/by-sa/3.0"
-    },
-    "sourceUrls": [
-      "https://en.wiktionary.org/wiki/flutter"
+    "unicode": [
+      "U+1F415"
+    ]
+  },
+  {
+    "name": "hot dog",
+    "category": "food and drink",
+    "group": "food prepared",
+    "htmlCode": [
+      "&#127789;"
+    ],
+    "unicode": [
+      "U+1F32D"
     ]
   }
 ]
 ```
 Generated UI:
 
-https://github.com/user-attachments/assets/673cddf0-8016-48ee-9217-d6f1ed9f826d
+![](./images/example5ui.png)
+
 
 Exported Source Code: [Link](./codes/example5.dart)
+
+Modification Prompts Used:
+```
+- remove the HTML code and convert the whole thing into a table with headers (name, Category, group, emoji). Also add a scaffold with light yellow background color & convert the unicode into EMOJIs
+- increase the font size by 2.5x & put the table in the center horizontally and vertically
+- let the table be bigger and not width constrained
+- add padding for each table cell of 10px
+- the shading added to the table header must be yellow color
+- add a big size text boldened that says "Dog Emojis" Above the table, centered, spaced by 20px on the bottom
+```
+
+Click here to view the [Complete Process Demo](https://youtu.be/HBFjmSUHSxM)
 
 ---
 
