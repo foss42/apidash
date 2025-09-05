@@ -444,6 +444,16 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           headersMap: http?.headersMap,
           body: http?.body,
         );
+      case ChatMessageType.generateDoc:
+        return prompts.generateDocumentationPrompt(
+          url: http?.url,
+          method: http?.method.name.toUpperCase(),
+          responseStatus: req.responseStatus,
+          bodyContentType: http?.bodyContentType.name,
+          message: resp?.body,
+          headersMap: http?.headersMap,
+          body: http?.body,
+        );
       case ChatMessageType.general:
         return prompts.generalInteractionPrompt();
     }

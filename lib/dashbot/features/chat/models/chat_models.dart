@@ -84,7 +84,13 @@ class ChatResponse {
   }
 }
 
-enum ChatMessageType { explainResponse, debugError, generateTest, general }
+enum ChatMessageType {
+  explainResponse,
+  debugError,
+  generateTest,
+  generateDoc,
+  general
+}
 
 // Action model for auto-fix functionality
 class ChatAction {

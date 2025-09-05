@@ -1,5 +1,3 @@
-import 'package:apidash/providers/collection_providers.dart';
-
 import '../../models/chat_models.dart';
 import '../widgets/chat_bubble.dart';
 import '../../viewmodel/chat_viewmodel.dart';
@@ -34,14 +32,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(
-      selectedRequestModelProvider,
-      (current, next) {
-        if (current?.id != next?.id) {
-          Navigator.pop(context);
-        }
-      },
-    );
+    // ref.listen(
+    //   selectedRequestModelProvider,
+    //   (current, next) {
+    //     if (current?.id != next?.id) {
+    //       Navigator.pop(context);
+    //     }
+    //   },
+    // );
     return Scaffold(
       body: Column(
         children: [
