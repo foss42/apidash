@@ -7,7 +7,6 @@ import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
 
 import '../../../core/constants/dashbot_prompts.dart' as dash;
-import '../view/widgets/chat_bubble.dart';
 import '../models/chat_models.dart';
 import '../repository/chat_remote_repository.dart';
 
@@ -47,7 +46,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     if (ai == null) {
       debugPrint('[Chat] No AI model configured');
       _appendSystem(
-        'AI model is not configured. Please set one in AI Request tab.',
+        'AI model is not configured. Please set one.',
         type,
       );
       return;
@@ -261,7 +260,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           body: http?.body,
         );
       case ChatMessageType.general:
-        return null;
+        return prompts.generalInteractionPrompt();
     }
   }
 }

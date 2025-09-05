@@ -1,4 +1,5 @@
-import '../view/widgets/chat_bubble.dart';
+/// Role of a chat message author.
+enum MessageRole { user, system }
 
 class ChatState {
   final Map<String, List<ChatMessage>> chatSessions; // requestId -> messages

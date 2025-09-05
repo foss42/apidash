@@ -1,8 +1,10 @@
+import 'package:apidash/dashbot/core/utils/safe_parse_json_message.dart';
 import 'package:apidash_design_system/tokens/tokens.dart';
 import '../../../../core/utils/dashbot_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import '../../models/chat_models.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
@@ -36,6 +38,22 @@ class ChatBubble extends StatelessWidget {
         ),
       );
     }
+    // Parse agent JSON when role is system and show only the "explnation" field.
+    String renderedMessage = message;
+    if (role == MessageRole.system) {
+      try {
+        final Map<String, dynamic> parsed = MessageJson.safeParse(message);
+        if (parsed.containsKey('explnation')) {
+          final exp = parsed['explnation'];
+          if (exp is String && exp.isNotEmpty) {
+            renderedMessage = exp;
+          }
+        }
+      } catch (_) {
+        // Fallback to raw message
+      }
+    }
+
     return Align(
       alignment: role == MessageRole.user
           ? Alignment.centerRight
@@ -62,7 +80,7 @@ class ChatBubble extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
             ),
             child: MarkdownBody(
-              data: message.isEmpty ? " " : message,
+              data: renderedMessage.isEmpty ? " " : renderedMessage,
               selectable: true,
               styleSheet: MarkdownStyleSheet.fromTheme(
                 Theme.of(context),
@@ -91,5 +109,3 @@ class ChatBubble extends StatelessWidget {
     );
   }
 }
-
-enum MessageRole { user, system }
