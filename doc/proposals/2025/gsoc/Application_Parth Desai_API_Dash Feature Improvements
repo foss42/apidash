@@ -1,0 +1,120 @@
+About
+Full Name: Parth Desai
+Contact info (email, phone, etc.):
+Email: parthdesai635@gmail.com
+Phone: +91-9867549332
+Home page (if any): https://parth-desai-portfolio.vercel.app/
+GitHub profile link: https://github.com/parth0301
+LinkedIn: https://www.linkedin.com/in/parthdesai03/
+Time zone: Indian Standard Time
+Link to a resume (PDF, publicly accessible via link and not behind any login-wall):
+https://drive.google.com/file/d/1PYMK0j1OhCeJvxXHFSunXoL6M1c9whh1/view?usp=sharing
+University Info
+University name: K. J. Somaiya School of Engineering, Mumbai
+Program you are enrolled in (Degree & Major/Minor): BTech, Information Technology
+Year: 4th Year
+Expected graduation date: 06/2026
+Motivation & Past Experience
+Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
+Yes, I have contributed to FOSS projects:
+
+#684: Fixed UI alignment issues to improve visual consistency across the app.
+#725: Made enhancements to the UI.
+#794: Replaced the underlying HTTP client from http to dio, enabling better error handling and extensibility.
+
+What is your one project/achievement that you are most proud of? Why?
+One project I’m proud of is the OEMS (Order Execution Management System), which I built in C++. It was a challenging backend system involving low-level networking, WebSockets, multi-threading, and real-time data streaming. I learned a lot about performance optimization and robust backend design through this project.
+
+What kind of problems or challenges motivate you the most to solve them?
+I’m most motivated by problems that involve developer experience, performance bottlenecks, and clean abstractions. I enjoy creating tools that improve developer workflows, exploring AI-powered enhancements, and optimizing real-time systems.
+
+Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
+Yes, I plan to dedicate myself full-time to GSoC and ensure consistent progress throughout the coding period.
+
+Do you mind regularly syncing up with the project mentors?
+Not at all — I value regular sync-ups and feedback to stay aligned with project goals and to produce high-quality work.
+
+What interests you the most about API Dash?
+API Dash is a clean, elegant tool built with a strong focus on developer productivity. I love its minimalist UI, open-source ethos, and the potential it has to become a one-stop tool for API testing with AI-enhanced features.
+
+Can you mention some areas where the project can be improved?
+
+Adding support for protocols beyond REST/GraphQL (like gRPC or WebSockets).
+Making the API explorer more interactive and intuitive.
+Providing a plugin system or richer AI assistance during request creation.
+Project Proposal Information
+Proposal Title: API Explorer: A Curated & Customizable API Library for API Dash
+
+Abstract:
+API Dash lacks a built-in feature for discovering, managing, and importing publicly available APIs efficiently. Developers often manually set up API requests, which leads to repetitive, error-prone setups and increases onboarding time.
+
+Solution:
+The API Explorer aims to address this by allowing developers to browse, save, import, and generate pre-filled API requests using various formats (OpenAPI, Postman, etc.). Key features include:
+
+Discover curated API templates categorized by domain (e.g., Finance, AI, Weather).
+Upload OpenAPI/Postman/HTML documentation files and auto-generate corresponding API templates.
+Save custom user-defined API templates for future use.
+View endpoint metadata (parameters, authentication methods, response samples).
+AI-assisted filling of incomplete documentation and auto-suggesting missing fields.
+Convert an existing API request into a reusable template via one-click export.
+Seamless integration into the Request Tab, allowing quick import and testing.
+Future extensibility with plugin support or integrations with public API marketplaces.
+Detailed Description:
+The API Explorer will be developed as a modular and extensible component within API Dash. It will include a frontend section (likely under a new tab) to explore API templates and a backend engine to parse uploaded OpenAPI specs or Postman collections. The templates will be stored either locally or optionally synced with GitHub gists/cloud. Each template will display metadata like endpoint name, method, headers, body format, query/path parameters, and examples. There will be options to import templates directly into the Request Tab and export request setups as shareable JSON templates. AI features will use LLM-powered completions (possibly via an optional local/integrated model or OpenAI plugin) to suggest missing headers, descriptions, or parameter values.
+
+Users can also tag and organize their saved templates, making this not just a tool for immediate use, but also a personal API library over time.
+
+Weekly Timeline
+Preparation
+Collaborate with mentors to confirm the API Explorer’s scope and UX.
+Review the API Dash codebase, focusing on how requests are stored, imported, and exported.
+Research supported import formats (OpenAPI 3.0+, Postman, cURL, etc.).
+Set up the development and testing environment.
+
+Week 1: Core Architecture Setup
+Create a basic UI skeleton for the API Explorer tab/component.
+Define a JSON template schema compatible with OpenAPI and Postman.
+Implement file upload and parsing modules for OpenAPI and Postman.
+Display parsed endpoints in a simple list view.
+
+Week 2: Template Viewer & Import Integration
+Build a full-featured UI for browsing and previewing parsed APIs.
+Add an “Import to Request Tab” option for pre-filled API calls.
+Enable filtering by tags, domain, or authentication type.
+Introduce local storage/database support for saving templates.
+
+Week 3: User-defined Templates & Exporting
+Allow users to save requests as templates from the Request Tab.
+Support exporting templates as JSON for sharing/backup.
+Provide UI to manage templates (edit, rename, delete, categorize).
+Highlight required vs optional fields in templates.
+
+Week 4: Advanced Parsing & AI Enhancements (Phase 1)
+Parse and display additional metadata (examples, descriptions, status codes).
+Add a basic AI module to auto-generate missing descriptions.
+Extract authentication metadata from OpenAPI/Postman and show it in UI.
+Test complex nested parameters and edge cases.
+
+Week 5: AI Enhancements (Phase 2) & Bulk Import
+Provide AI suggestions for headers, authentication, and query values.
+Support bulk import via ZIP files containing multiple specs.
+Enhance UI with tabs for Preview, Metadata, and Raw JSON.
+Add responsive design and light/dark mode support.
+
+Week 6: Template Organization & Tagging
+Implement a tagging and categorization system for templates.
+Add search and filtering features in the API Explorer.
+Support pagination or lazy loading for large collections.
+Optimize performance.
+
+Week 7: Testing, Validation & Documentation
+Write unit and integration tests for parsers and UI components.
+Validate edge cases in OpenAPI/Postman imports (nested objects, arrays).
+Draft user documentation for the API Explorer.
+Create demo templates for well-known APIs (e.g., OpenAI, Stripe, Twilio).
+
+Week 8: Final Review & Polishing
+Fix bugs, refactor, and clean up the codebase.
+Refine UX based on mentor feedback.
+Prepare a final merge-ready PR.
+Deliver the GSoC final report and a recorded demo.
