@@ -10,6 +10,7 @@ import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
 import 'history/history_page.dart';
 import 'settings_page.dart';
+import 'terminal/terminal_page.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -70,6 +71,19 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 4,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 4;
+                      },
+                      icon: const Icon(Icons.terminal),
+                      selectedIcon: const Icon(Icons.terminal),
+                    ),
+                    Text(
+                      'Terminal',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
@@ -121,6 +135,7 @@ class Dashboard extends ConsumerWidget {
                   EnvironmentPage(),
                   HistoryPage(),
                   SettingsPage(),
+                  TerminalPage(),
                 ],
               ),
             )
