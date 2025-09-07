@@ -7,6 +7,7 @@ import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
+import '../models/terminal_models.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -347,6 +348,22 @@ class CollectionStateNotifier
           executionRequestModel.httpRequestModel!);
     }
 
+    // Terminal: start network log
+    final terminal = ref.read(terminalStateProvider.notifier);
+    final logId = terminal.startNetwork(
+      apiType: executionRequestModel.apiType,
+      method: (executionRequestModel.apiType == APIType.ai)
+          ? executionRequestModel.aiRequestModel!.httpRequestModel!.method
+          : executionRequestModel.httpRequestModel!.method,
+      url: (executionRequestModel.apiType == APIType.ai)
+          ? executionRequestModel.aiRequestModel!.httpRequestModel!.url
+          : executionRequestModel.httpRequestModel!.url,
+      requestId: requestId,
+      requestHeaders: substitutedHttpRequestModel.enabledHeadersMap,
+      requestBodyPreview: substitutedHttpRequestModel.body,
+      isStreaming: true,
+    );
+
     // Set model to working and streaming
     state = {
       ...state!,
@@ -398,6 +415,17 @@ class CollectionStateNotifier
           ...state!,
           requestId: newRequestModel,
         };
+        // Terminal: append chunk preview
+        if (response != null && response.body.isNotEmpty) {
+          terminal.addNetworkChunk(
+            logId,
+            BodyChunk(
+              ts: DateTime.now(),
+              text: response.body,
+              sizeBytes: response.body.codeUnits.length,
+            ),
+          );
+        }
         unsave();
 
         if (historyModel != null && httpResponseModel != null) {
@@ -425,6 +453,7 @@ class CollectionStateNotifier
       if (!completer.isCompleted) {
         completer.complete((null, null, 'StreamError: $e'));
       }
+      terminal.failNetwork(logId, 'StreamError: $e');
     });
 
     final (response, duration, errorMessage) = await completer.future;
@@ -436,6 +465,7 @@ class CollectionStateNotifier
         isWorking: false,
         isStreaming: false,
       );
+      terminal.failNetwork(logId, errorMessage ?? 'Unknown error');
     } else {
       final statusCode = response.statusCode;
       httpResponseModel = baseHttpResponseModel.fromResponse(
@@ -459,6 +489,14 @@ class CollectionStateNotifier
         message: kResponseCodeReasons[statusCode],
         httpResponseModel: httpResponseModel,
         isWorking: false,
+      );
+
+      terminal.completeNetwork(
+        logId,
+        statusCode: statusCode,
+        responseHeaders: response.headers,
+        responseBodyPreview: httpResponseModel?.body,
+        duration: duration,
       );
 
       String newHistoryId = getNewUuid();
