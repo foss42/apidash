@@ -104,12 +104,12 @@ packages:
     source: hosted
     version: "2.2.9"
   better_networking:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       path: "packages/better_networking"
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.2"
   bidi:
     dependency: transitive
     description:
