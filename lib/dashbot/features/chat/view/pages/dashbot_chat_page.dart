@@ -1,0 +1,138 @@
+import '../../models/chat_models.dart';
+import '../widgets/chat_bubble.dart';
+import '../../viewmodel/chat_viewmodel.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class ChatScreen extends ConsumerStatefulWidget {
+  final ChatMessageType? initialTask;
+  const ChatScreen({super.key, this.initialTask});
+
+  @override
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Kick off task-specific prompt after first frame
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final task = widget.initialTask;
+      if (task != null) {
+        final vm = ref.read(chatViewmodelProvider.notifier);
+        vm.sendMessage(text: '', type: task, countAsUser: false);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // ref.listen(
+    //   selectedRequestModelProvider,
+    //   (current, next) {
+    //     if (current?.id != next?.id) {
+    //       Navigator.pop(context);
+    //     }
+    //   },
+    // );
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            child: Consumer(
+              builder: (context, ref, _) {
+                final state = ref.watch(chatViewmodelProvider);
+                final vm = ref.read(chatViewmodelProvider.notifier);
+                final msgs = vm.currentMessages;
+                if (msgs.isEmpty && !state.isGenerating) {
+                  return const Center(child: Text('Ask me anything!'));
+                }
+                return ListView.builder(
+                  itemCount: msgs.length + (state.isGenerating ? 1 : 0),
+                  padding: const EdgeInsets.all(16.0),
+                  itemBuilder: (context, index) {
+                    if (state.isGenerating && index == msgs.length) {
+                      return ChatBubble(
+                        message: state.currentStreamingResponse,
+                        role: MessageRole.system,
+                      );
+                    }
+                    final message = msgs[index];
+                    debugPrint(
+                        '[ChatPage] Message action: ${message.action?.toJson()}');
+                    return ChatBubble(
+                      message: message.content,
+                      role: message.role,
+                      action: message.action,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          Divider(
+            color: Theme.of(context).colorScheme.surfaceContainerHigh,
+            height: 5,
+            thickness: 6,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      hintText: ref.watch(chatViewmodelProvider).isGenerating
+                          ? 'Generating...'
+                          : 'Ask anything',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(context).colorScheme.surface,
+                    ),
+                    enabled: !ref.watch(chatViewmodelProvider).isGenerating,
+                    onSubmitted: (_) {
+                      final vm = ref.read(chatViewmodelProvider.notifier);
+                      if (!ref.read(chatViewmodelProvider).isGenerating) {
+                        final text = _textController.text;
+                        _textController.clear();
+                        vm.sendMessage(
+                          text: text,
+                          type: ChatMessageType.general,
+                        );
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.send_rounded),
+                  onPressed: ref.watch(chatViewmodelProvider).isGenerating
+                      ? null
+                      : () {
+                          final vm = ref.read(chatViewmodelProvider.notifier);
+                          final text = _textController.text;
+                          _textController.clear();
+                          vm.sendMessage(
+                            text: text,
+                            type: ChatMessageType.general,
+                          );
+                        },
+                  tooltip: 'Send message',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

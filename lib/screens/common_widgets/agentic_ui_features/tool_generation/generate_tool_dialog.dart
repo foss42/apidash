@@ -9,31 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'generated_tool_codecopy.dart';
 import 'tool_requirements_selector.dart';
 
-class GenerateToolButton extends ConsumerWidget {
-  const GenerateToolButton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FilledButton.tonalIcon(
-      style: FilledButton.styleFrom(
-        padding: kPh12,
-        minimumSize: const Size(44, 44),
-      ),
-      onPressed: () async {
-        GenerateToolDialog.show(context, ref);
-      },
-      icon: Icon(
-        Icons.token_outlined,
-      ),
-      label: const SizedBox(
-        child: Text(
-          "Generate Tool",
-        ),
-      ),
-    );
-  }
-}
-
 class GenerateToolDialog extends ConsumerStatefulWidget {
   final APIDashRequestDescription requestDesc;
   const GenerateToolDialog({
