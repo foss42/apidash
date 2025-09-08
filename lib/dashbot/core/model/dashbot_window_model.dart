@@ -7,8 +7,8 @@ class DashbotWindowModel {
   final bool isPopped;
 
   const DashbotWindowModel({
-    this.width = 375,
-    this.height = 460,
+    this.width = 400,
+    this.height = 475,
     this.right = 50,
     this.bottom = 100,
     this.isActive = false,

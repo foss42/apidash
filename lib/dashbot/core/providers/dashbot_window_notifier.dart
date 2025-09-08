@@ -14,7 +14,7 @@ class DashbotWindowNotifier extends StateNotifier<DashbotWindowModel> {
 
   void updateSize(double dx, double dy, Size screenSize) {
     final newWidth =
-        (state.width - dx).clamp(375, screenSize.width - state.right);
+        (state.width - dx).clamp(400, screenSize.width - state.right);
     final newHeight =
         (state.height - dy).clamp(460, screenSize.height - state.bottom);
 
