@@ -72,7 +72,21 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     }
 
-    final systemPrompt = _composeSystemPrompt(_currentRequest, type);
+    // Special handling: generateCode flow has two steps
+    String? systemPrompt;
+    if (type == ChatMessageType.generateCode) {
+      // If the user message includes a language (heuristic), go straight to code gen; else show intro + language choices
+      final detectedLang = _detectLanguageFromText(text);
+      systemPrompt = _composeSystemPrompt(
+        _currentRequest,
+        detectedLang == null
+            ? ChatMessageType.generateCode
+            : ChatMessageType.generateCode,
+        overrideLanguage: detectedLang,
+      );
+    } else {
+      systemPrompt = _composeSystemPrompt(_currentRequest, type);
+    }
     final userPrompt = (text.trim().isEmpty && !countAsUser)
         ? 'Please complete the task based on the provided context.'
         : text;
@@ -403,11 +417,13 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
   String _composeSystemPrompt(
     RequestModel? req,
-    ChatMessageType type,
-  ) {
+    ChatMessageType type, {
+    String? overrideLanguage,
+  }) {
     final history = _buildHistoryBlock();
     final contextBlock = _buildContextBlock(req);
-    final task = _buildTaskPrompt(req, type);
+    final task =
+        _buildTaskPrompt(req, type, overrideLanguage: overrideLanguage);
     return [
       if (task != null) task,
       if (contextBlock != null) contextBlock,
@@ -450,7 +466,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 	</request_context>''';
   }
 
-  String? _buildTaskPrompt(RequestModel? req, ChatMessageType type) {
+  String? _buildTaskPrompt(RequestModel? req, ChatMessageType type,
+      {String? overrideLanguage}) {
     if (req == null) return null;
     final http = req.httpRequestModel;
     final resp = req.httpResponseModel;
@@ -493,9 +510,46 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           headersMap: http?.headersMap,
           body: http?.body,
         );
+      case ChatMessageType.generateCode:
+        // If a language is provided, go for code generation; else ask for language first
+        if (overrideLanguage == null || overrideLanguage.isEmpty) {
+          return prompts.codeGenerationIntroPrompt(
+            url: http?.url,
+            method: http?.method.name.toUpperCase(),
+            headersMap: http?.headersMap,
+            body: http?.body,
+            bodyContentType: http?.bodyContentType.name,
+            paramsMap: http?.paramsMap,
+            authType: http?.authModel?.type.name,
+          );
+        } else {
+          return prompts.generateCodePrompt(
+            url: http?.url,
+            method: http?.method.name.toUpperCase(),
+            headersMap: http?.headersMap,
+            body: http?.body,
+            bodyContentType: http?.bodyContentType.name,
+            paramsMap: http?.paramsMap,
+            authType: http?.authModel?.type.name,
+            language: overrideLanguage,
+          );
+        }
       case ChatMessageType.general:
         return prompts.generalInteractionPrompt();
     }
+  }
+
+  // Very light heuristic to detect language keywords in user text
+  String? _detectLanguageFromText(String text) {
+    final t = text.toLowerCase();
+    if (t.contains('python')) return 'Python (requests)';
+    if (t.contains('dart')) return 'Dart (http)';
+    if (t.contains('golang') || t.contains('go ')) return 'Go (net/http)';
+    if (t.contains('javascript') || t.contains('js') || t.contains('fetch')) {
+      return 'JavaScript (fetch)';
+    }
+    if (t.contains('curl')) return 'cURL';
+    return null;
   }
 }
 

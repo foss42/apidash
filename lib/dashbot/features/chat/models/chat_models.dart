@@ -89,6 +89,7 @@ enum ChatMessageType {
   debugError,
   generateTest,
   generateDoc,
+  generateCode,
   general
 }
 
