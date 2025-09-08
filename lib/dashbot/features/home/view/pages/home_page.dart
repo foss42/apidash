@@ -93,6 +93,15 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                   );
                 },
               ),
+              HomeScreenTaskButton(
+                label: "🧩 Generate Code",
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.generateCode,
+                  );
+                },
+              ),
               if (currentRequest?.httpResponseModel?.statusCode != null &&
                   currentRequest?.httpResponseModel?.statusCode == 200) ...[
                 HomeScreenTaskButton(

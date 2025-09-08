@@ -7,6 +7,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../viewmodel/chat_viewmodel.dart';
 import '../../models/chat_models.dart';
+import 'common_languages_picker.dart';
 
 class ChatBubble extends ConsumerWidget {
   final String message;
@@ -107,7 +108,7 @@ class ChatBubble extends ConsumerWidget {
           if (role == MessageRole.system) ...[
             if (action != null) ...[
               const SizedBox(height: 4),
-              _buildActionButton(context, ref, action!),
+              _buildActionWidget(context, ref, action!),
             ],
             const SizedBox(height: 4),
             IconButton(
@@ -125,9 +126,72 @@ class ChatBubble extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButton(
+  Widget _buildActionWidget(
       BuildContext context, WidgetRef ref, ChatAction action) {
     final isTestAction = action.action == 'other' && action.target == 'test';
+    final isCodeResult = action.action == 'other' && action.target == 'code';
+    if (isCodeResult) {
+      final code = (action.value is String) ? action.value as String : '';
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
+            ),
+            child: SelectableText(
+              code.isEmpty ? '// No code returned' : code,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontFamily: 'monospace',
+                  ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              TextButton.icon(
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: code));
+                },
+                icon: const Icon(Icons.copy_rounded, size: 16),
+                label: const Text('Copy code'),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+    final isShowLanguages =
+        action.action == 'show_languages' && action.target == 'codegen';
+
+    if (isShowLanguages) {
+      final dynamic val = action.value;
+      final List<String> langs = val is List
+          ? val.whereType<String>().toList()
+          : const [
+              'JavaScript (fetch)',
+              'Python (requests)',
+              'Dart (http)',
+              'Go (net/http)',
+              'cURL',
+            ];
+      return CommonLanguagesPicker(
+        languages: langs,
+        onSelected: (lang) {
+          final vm = ref.read(chatViewmodelProvider.notifier);
+          vm.sendMessage(
+            text: 'Please generate code in $lang',
+            type: ChatMessageType.generateCode,
+          );
+        },
+      );
+    }
 
     return ElevatedButton.icon(
       onPressed: () async {
