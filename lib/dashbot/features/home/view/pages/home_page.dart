@@ -93,23 +93,37 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                   );
                 },
               ),
-            ],
-          ),
-          if (currentRequest?.httpResponseModel?.statusCode != null &&
-              currentRequest?.httpResponseModel?.statusCode == 200) ...[
-            const SizedBox(height: 12),
-            Row(
-              children: const [
-                Expanded(
-                  child: GenerateToolButton(),
+              if (currentRequest?.httpResponseModel?.statusCode != null &&
+                  currentRequest?.httpResponseModel?.statusCode == 200) ...[
+                HomeScreenTaskButton(
+                  label: "🛠️ Generate Tool",
+                  onPressed: () {
+                    GenerateToolDialog.show(context, ref);
+                  },
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: AIGenerateUIButton(),
+                HomeScreenTaskButton(
+                  label: "📱 Generate UI",
+                  onPressed: () {
+                    final model = ref.watch(selectedRequestModelProvider
+                        .select((value) => value?.httpResponseModel));
+                    if (model == null) return;
+
+                    String data = "";
+                    if (model.sseOutput != null) {
+                      data = model.sseOutput!.join('');
+                    } else {
+                      data = model.formattedBody ?? "<>";
+                    }
+
+                    showCustomDialog(
+                      context,
+                      GenerateUIDialog(content: data),
+                    );
+                  },
                 ),
               ],
-            ),
-          ],
+            ],
+          ),
         ],
       ),
     );

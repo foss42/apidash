@@ -1,8 +1,5 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash/widgets/widget_sending.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'framework_selector.dart';
@@ -147,45 +144,6 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
             sduiCode: generatedSDUI,
           )
       ],
-    );
-  }
-}
-
-class AIGenerateUIButton extends ConsumerWidget {
-  const AIGenerateUIButton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FilledButton.tonalIcon(
-      style: FilledButton.styleFrom(
-        padding: kPh12,
-        minimumSize: const Size(44, 44),
-      ),
-      onPressed: () {
-        final model = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel));
-        if (model == null) return;
-
-        String data = "";
-        if (model.sseOutput != null) {
-          data = model.sseOutput!.join('');
-        } else {
-          data = model.formattedBody ?? "<>";
-        }
-
-        showCustomDialog(
-          context,
-          GenerateUIDialog(content: data),
-        );
-      },
-      icon: Icon(
-        Icons.generating_tokens,
-      ),
-      label: const SizedBox(
-        child: Text(
-          kLabelGenerateUI,
-        ),
-      ),
     );
   }
 }
