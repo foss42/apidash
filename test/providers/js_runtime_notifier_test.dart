@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:apidash/services/flutter_js_service.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/utils/pre_post_script_utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Base HTTP Request Model for GET request
 const HttpRequestModel baseGetRequest = HttpRequestModel(
@@ -40,6 +40,38 @@ const HttpRequestModel baseGraphQLRequest = HttpRequestModel(
   query: r'query GetUser($id: ID!) { user(id: $id) { name email } }',
   body: '{"variables": {"id": "123"}}',
 );
+
+// Local test helper wrappers replicating the old top-level API but using the notifier.
+// NOTE: File migrated from pre_post_script_utils_test.dart after refactor to provider-based runtime.
+late ProviderContainer _testContainer;
+
+Future<RequestModel> handlePreRequestScript(
+  RequestModel requestModel,
+  EnvironmentModel? originalEnvironmentModel,
+  void Function(EnvironmentModel, List<EnvironmentVariableModel>)? updateEnv,
+) async {
+  return _testContainer
+      .read(jsRuntimeNotifierProvider.notifier)
+      .handlePreRequestScript(
+        requestModel,
+        originalEnvironmentModel,
+        updateEnv,
+      );
+}
+
+Future<RequestModel> handlePostResponseScript(
+  RequestModel requestModel,
+  EnvironmentModel? originalEnvironmentModel,
+  void Function(EnvironmentModel, List<EnvironmentVariableModel>)? updateEnv,
+) async {
+  return _testContainer
+      .read(jsRuntimeNotifierProvider.notifier)
+      .handlePostResponseScript(
+        requestModel,
+        originalEnvironmentModel,
+        updateEnv,
+      );
+}
 
 // HTTP Response Model for successful login
 const HttpResponseModel successLoginResponse = HttpResponseModel(
@@ -306,7 +338,10 @@ RequestModel requestWithDataProcessingScript = RequestModel(
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUpAll(() {
-    initializeJsRuntime();
+    _testContainer = ProviderContainer();
+  });
+  tearDownAll(() {
+    _testContainer.dispose();
   });
 
   //TODO: For Pre-request Script add individual tests for every `ad` object methods
@@ -1257,11 +1292,8 @@ void main() {
 
   group('Pre-request Script - Request Modification Tests', () {
     test('should modify headers correctly', () async {
-      List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
+          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {}
 
       final result = await handlePreRequestScript(
         requestWithHeaderModificationScript,
