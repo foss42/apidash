@@ -7,7 +7,6 @@ import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
-import '../models/terminal_models.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -321,7 +320,9 @@ class CollectionStateNotifier
     RequestModel executionRequestModel = requestModel!.copyWith();
 
     if (!requestModel.preRequestScript.isNullOrEmpty()) {
-      executionRequestModel = await handlePreRequestScript(
+      executionRequestModel = await ref
+          .read(jsRuntimeNotifierProvider.notifier)
+          .handlePreRequestScript(
         executionRequestModel,
         originalEnvironmentModel,
         (envModel, updatedValues) {
@@ -525,7 +526,9 @@ class CollectionStateNotifier
           .addHistoryRequest(historyModel!);
 
       if (!requestModel.postRequestScript.isNullOrEmpty()) {
-        newRequestModel = await handlePostResponseScript(
+        newRequestModel = await ref
+            .read(jsRuntimeNotifierProvider.notifier)
+            .handlePostResponseScript(
           newRequestModel,
           originalEnvironmentModel,
           (envModel, updatedValues) {

@@ -5,3 +5,4 @@ export 'history_providers.dart';
 export 'terminal_providers.dart';
 export 'settings_providers.dart';
 export 'ui_providers.dart';
+export 'js_runtime_notifier.dart';
