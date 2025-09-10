@@ -6,7 +6,7 @@ import 'system_log_data.dart';
 class TerminalEntry {
   TerminalEntry({
     required this.id,
-    required this.ts,
+    DateTime? ts,
     required this.source,
     required this.level,
     this.requestId,
@@ -15,7 +15,7 @@ class TerminalEntry {
     this.network,
     this.js,
     this.system,
-  });
+  }) : ts = ts ?? DateTime.now();
 
   final String id;
   final DateTime ts;

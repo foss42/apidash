@@ -63,7 +63,6 @@ class TerminalController extends StateNotifier<TerminalState> {
     final id = _newId();
     final entry = TerminalEntry(
       id: id,
-      ts: DateTime.now(),
       source: TerminalSource.network,
       level: TerminalLevel.info,
       requestId: requestId,
@@ -143,7 +142,6 @@ class TerminalController extends StateNotifier<TerminalState> {
   }) {
     append(TerminalEntry(
       id: _newId(),
-      ts: DateTime.now(),
       source: TerminalSource.js,
       level: switch (level) {
         'warn' => TerminalLevel.warn,
@@ -170,7 +168,6 @@ class TerminalController extends StateNotifier<TerminalState> {
   }) {
     append(TerminalEntry(
       id: _newId(),
-      ts: DateTime.now(),
       source: TerminalSource.system,
       level: level,
       tags: tags,
