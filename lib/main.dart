@@ -19,7 +19,6 @@ void main() async {
 
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
-  initializeJsRuntime();
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,
