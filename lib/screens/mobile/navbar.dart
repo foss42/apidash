@@ -63,7 +63,7 @@ class BottomNavBar extends ConsumerWidget {
                     buttonIdx: 4,
                     selectedIcon: Icons.terminal,
                     icon: Icons.terminal,
-                    label: 'Terminal',
+                    label: 'Logs',
                   ),
                 ),
                 Expanded(

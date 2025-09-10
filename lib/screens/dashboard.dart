@@ -81,7 +81,7 @@ class Dashboard extends ConsumerWidget {
                       selectedIcon: const Icon(Icons.terminal),
                     ),
                     Text(
-                      'Terminal',
+                      'Logs',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ],
