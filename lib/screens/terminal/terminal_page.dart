@@ -15,10 +15,11 @@ class TerminalPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Terminal')),
       body: ListView.separated(
+        // reverse: true,
         itemCount: entries.length,
         separatorBuilder: (_, __) => const Divider(height: 1),
         itemBuilder: (ctx, i) {
-          final e = entries[i];
+          final e = entries[entries.length - 1 - i];
           final title = _titleFor(e);
           final subtitle = _subtitleFor(e);
           final icon = _iconFor(e);
