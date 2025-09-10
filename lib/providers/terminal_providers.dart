@@ -174,4 +174,49 @@ class TerminalController extends StateNotifier<TerminalState> {
       system: SystemLogData(category: category, message: message, stack: stack),
     ));
   }
+
+  // Serialization
+  String serializeAll({List<TerminalEntry>? entries}) {
+    final list = entries ?? state.entries;
+    final buf = StringBuffer();
+    for (final e in list) {
+      final time = e.ts.toIso8601String();
+      final title = titleFor(e);
+      final sub = subtitleFor(e);
+      buf.writeln('[$time] ${e.level.name.toUpperCase()} - $title');
+      if (sub != null && sub.isNotEmpty) {
+        buf.writeln('  $sub');
+      }
+    }
+    return buf.toString();
+  }
+
+  String titleFor(TerminalEntry e) {
+    switch (e.source) {
+      case TerminalSource.network:
+        final n = e.network!;
+        final status = n.responseStatus != null ? ' — ${n.responseStatus}' : '';
+        return '${n.method.name.toUpperCase()} ${n.url}$status';
+      case TerminalSource.js:
+        final j = e.js!;
+        return 'JS ${j.level}';
+      case TerminalSource.system:
+        return 'System';
+    }
+  }
+
+  String? subtitleFor(TerminalEntry e) {
+    switch (e.source) {
+      case TerminalSource.network:
+        final n = e.network!;
+        if (n.errorMessage != null) return n.errorMessage;
+        return n.responseBodyPreview ?? n.requestBodyPreview;
+      case TerminalSource.js:
+        final j = e.js!;
+        return j.args.join(' ');
+      case TerminalSource.system:
+        final s = e.system!;
+        return s.message;
+    }
+  }
 }

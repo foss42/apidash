@@ -111,7 +111,9 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
           // Copy all button
           CopyButton(
             showLabel: false,
-            toCopy: _serializeAllLogs(allEntries),
+            toCopy: ref
+                .read(terminalStateProvider.notifier)
+                .serializeAll(entries: allEntries),
           ),
         ],
       ),
@@ -123,55 +125,13 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
     bool matches(TerminalEntry e) {
       if (!_selectedLevels.contains(e.level)) return false;
       if (q.isEmpty) return true;
-      final title = _titleFor(e).toLowerCase();
-      final sub = (_subtitleFor(e) ?? '').toLowerCase();
+      final controller = ref.read(terminalStateProvider.notifier);
+      final title = controller.titleFor(e).toLowerCase();
+      final sub = (controller.subtitleFor(e) ?? '').toLowerCase();
       return title.contains(q) || sub.contains(q);
     }
 
     return entries.where(matches).toList(growable: false);
-  }
-
-  String _serializeAllLogs(List<TerminalEntry> entries) {
-    final buf = StringBuffer();
-    for (final e in entries) {
-      final time = e.ts.toIso8601String();
-      final title = _titleFor(e);
-      final sub = _subtitleFor(e);
-      buf.writeln('[$time] ${e.level.name.toUpperCase()} - $title');
-      if (sub != null && sub.isNotEmpty) {
-        buf.writeln('  $sub');
-      }
-    }
-    return buf.toString();
-  }
-
-  String _titleFor(TerminalEntry e) {
-    switch (e.source) {
-      case TerminalSource.network:
-        final n = e.network!;
-        final status = n.responseStatus != null ? ' — ${n.responseStatus}' : '';
-        return '${n.method.name.toUpperCase()} ${n.url}$status';
-      case TerminalSource.js:
-        final j = e.js!;
-        return 'JS ${j.level}';
-      case TerminalSource.system:
-        return 'System';
-    }
-  }
-
-  String? _subtitleFor(TerminalEntry e) {
-    switch (e.source) {
-      case TerminalSource.network:
-        final n = e.network!;
-        if (n.errorMessage != null) return n.errorMessage;
-        return n.responseBodyPreview ?? n.requestBodyPreview;
-      case TerminalSource.js:
-        final j = e.js!;
-        return j.args.join(' ');
-      case TerminalSource.system:
-        final s = e.system!;
-        return s.message;
-    }
   }
 }
 
