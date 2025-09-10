@@ -3,6 +3,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+// Terminal enums moved here from models to avoid circular imports and simplify usage
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -84,6 +85,15 @@ enum HistoryRetentionPeriod {
   final String label;
   final IconData icon;
 }
+
+/// Source category of a terminal entry
+enum TerminalSource { network, js, system }
+
+/// Severity level of a terminal entry
+enum TerminalLevel { debug, info, warn, error }
+
+/// Phase of a network log lifecycle
+enum NetworkPhase { started, progress, completed, failed }
 
 enum ItemMenuOption {
   edit("Rename"),

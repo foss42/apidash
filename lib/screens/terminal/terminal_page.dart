@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/terminal_models.dart';
+import '../../models/terminal/models.dart';
+import '../../consts.dart';
 import '../../providers/terminal_providers.dart';
 
 class TerminalPage extends ConsumerWidget {
@@ -23,9 +24,11 @@ class TerminalPage extends ConsumerWidget {
           final icon = _iconFor(e);
           return ListTile(
             leading: Icon(icon),
-            title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-            subtitle: Text(subtitle ?? '',
-                maxLines: 2, overflow: TextOverflow.ellipsis),
+            title: SelectableText(title, maxLines: 1),
+            subtitle: SelectableText(
+              subtitle ?? '',
+              maxLines: 2,
+            ),
             dense: true,
           );
         },

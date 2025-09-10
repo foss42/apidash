@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:apidash_core/apidash_core.dart';
-import '../models/terminal_models.dart';
+import '../models/terminal/models.dart';
+import '../consts.dart';
 
 final terminalStateProvider =
     StateNotifierProvider<TerminalController, TerminalState>((ref) {
