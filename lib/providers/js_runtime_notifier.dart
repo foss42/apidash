@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
-import 'dart:developer';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_js/flutter_js.dart';
@@ -76,12 +75,10 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
         executedScriptCount: state.executedScriptCount + 1,
         lastError: res.isError ? res.stringResult : state.lastError,
       );
-      log(res.stringResult);
       return res;
     } on PlatformException catch (e) {
       final msg = 'Platform ERROR: ${e.details}';
       state = state.copyWith(lastError: msg);
-      log(msg);
       rethrow;
     }
   }
@@ -122,13 +119,16 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     HttpRequestModel resultingRequest = httpRequest!;
     Map<String, dynamic> resultingEnvironment = Map.from(activeEnvironment);
     try {
+      final term = ref.read(terminalStateProvider.notifier);
       final res = _runtime.evaluate(fullScript);
       state = state.copyWith(
         executedScriptCount: state.executedScriptCount + 1,
         lastError: res.isError ? res.stringResult : state.lastError,
       );
       if (res.isError) {
-        print('Pre-request script execution error: ${res.stringResult}');
+        term.logJs(
+            level: 'error',
+            args: ['Pre-request script error', res.stringResult]);
       } else if (res.stringResult.isNotEmpty) {
         final decoded = jsonDecode(res.stringResult);
         if (decoded is Map<String, dynamic>) {
@@ -138,7 +138,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
                 Map<String, Object?>.from(decoded['request'] as Map),
               );
             } catch (e) {
-              print('Error deserializing modified request from script: $e');
+              term.logJs(
+                  level: 'error',
+                  args: ['Deserialize modified request failed', e.toString()]);
             }
           }
           if (decoded['environment'] is Map) {
@@ -150,7 +152,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     } catch (e) {
       final msg = 'Dart-level error during pre-request script execution: $e';
       state = state.copyWith(lastError: msg);
-      print(msg);
+      ref
+          .read(terminalStateProvider.notifier)
+          .logJs(level: 'error', args: [msg]);
     }
     return (
       updatedRequest: resultingRequest,
@@ -196,23 +200,28 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     HttpResponseModel resultingResponse = httpResponse!;
     Map<String, dynamic> resultingEnvironment = Map.from(activeEnvironment);
     try {
+      final term = ref.read(terminalStateProvider.notifier);
       final res = _runtime.evaluate(fullScript);
       state = state.copyWith(
         executedScriptCount: state.executedScriptCount + 1,
         lastError: res.isError ? res.stringResult : state.lastError,
       );
       if (res.isError) {
-        print('Post-response script execution error: ${res.stringResult}');
+        term.logJs(
+            level: 'error',
+            args: ['Post-response script error', res.stringResult]);
       } else if (res.stringResult.isNotEmpty) {
         final decoded = jsonDecode(res.stringResult);
         if (decoded is Map<String, dynamic>) {
           if (decoded['response'] is Map) {
             try {
-              resultingResponse = HttpResponseModel.fromJson(
-                Map<String, Object?>.from(decoded['response'] as Map),
-              );
+              final raw = Map<String, Object?>.from(decoded['response'] as Map);
+              final sanitized = _sanitizeResponseJson(raw);
+              resultingResponse = HttpResponseModel.fromJson(sanitized);
             } catch (e) {
-              print('Error deserializing modified response from script: $e');
+              term.logJs(
+                  level: 'error',
+                  args: ['Deserialize modified response failed', e.toString()]);
             }
           }
           if (decoded['environment'] is Map) {
@@ -224,7 +233,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     } catch (e) {
       final msg = 'Dart-level error during post-response script execution: $e';
       state = state.copyWith(lastError: msg);
-      print(msg);
+      ref
+          .read(terminalStateProvider.notifier)
+          .logJs(level: 'error', args: [msg]);
     }
     return (
       updatedResponse: resultingResponse,
@@ -345,9 +356,24 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   void _handleConsole(String level, dynamic args) {
     try {
       final term = ref.read(terminalStateProvider.notifier);
-      final List<String> argList = (args is List)
-          ? args.map((e) => e.toString()).toList()
-          : [args.toString()];
+      List<String> argList = const <String>[];
+      if (args is List) {
+        argList = args.map((e) => e.toString()).toList();
+      } else if (args is String) {
+        // Try to parse JSON-stringified array from JS
+        try {
+          final decoded = jsonDecode(args);
+          if (decoded is List) {
+            argList = decoded.map((e) => e?.toString() ?? '').toList();
+          } else {
+            argList = [args];
+          }
+        } catch (_) {
+          argList = [args];
+        }
+      } else {
+        argList = [args.toString()];
+      }
       term.logJs(level: level, args: argList);
     } catch (e) {
       print('[JS ${level.toUpperCase()} HANDLER ERROR]: $args, Error: $e');
@@ -377,3 +403,48 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
 
 // Helper to properly escape strings for JS embedding
 String jsEscapeString(String s) => jsonEncode(s);
+
+Map<String, Object?> _sanitizeResponseJson(Map<String, Object?> input) {
+  final out = Map<String, Object?>.from(input);
+  // Ensure headers maps are <String,String>
+  if (out['headers'] is Map) {
+    final m = Map<String, String>.fromEntries(
+      (out['headers'] as Map)
+          .entries
+          .map((e) => MapEntry(e.key.toString(), e.value?.toString() ?? '')),
+    );
+    out['headers'] = m;
+  }
+  if (out['requestHeaders'] is Map) {
+    final m = Map<String, String>.fromEntries(
+      (out['requestHeaders'] as Map)
+          .entries
+          .map((e) => MapEntry(e.key.toString(), e.value?.toString() ?? '')),
+    );
+    out['requestHeaders'] = m;
+  }
+  // Ensure bodyBytes is List<int>
+  if (out['bodyBytes'] is List) {
+    out['bodyBytes'] = (out['bodyBytes'] as List)
+        .where((e) => e != null)
+        .map((e) => (e as num).toInt())
+        .toList();
+  }
+  // Ensure sseOutput is List<String>
+  if (out['sseOutput'] is List) {
+    out['sseOutput'] = (out['sseOutput'] as List)
+        .where((e) => e != null)
+        .map((e) => e.toString())
+        .toList();
+  }
+  // Ensure time is int microseconds if provided as number
+  if (out['time'] != null && out['time'] is! int) {
+    final t = out['time'];
+    if (t is num) out['time'] = t.toInt();
+  }
+  // Body should be string (keep as-is if null)
+  if (out['body'] != null && out['body'] is! String) {
+    out['body'] = out['body'].toString();
+  }
+  return out;
+}
