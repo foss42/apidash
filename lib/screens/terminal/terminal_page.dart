@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/terminal/models.dart';
 import '../../consts.dart';
 import '../../providers/terminal_providers.dart';
+import '../../providers/collection_providers.dart';
 import '../../widgets/button_copy.dart';
 import '../../widgets/field_search.dart';
 import '../../widgets/terminal_tiles.dart';
@@ -18,6 +19,7 @@ class TerminalPage extends ConsumerStatefulWidget {
 
 class _TerminalPageState extends ConsumerState<TerminalPage> {
   final TextEditingController _searchCtrl = TextEditingController();
+  bool _showTimestamps = false; // user toggle
 
   // Initially all levels will be selected
   final Set<TerminalLevel> _selectedLevels = {
@@ -36,6 +38,8 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(terminalStateProvider);
+    final collection = ref.watch(collectionStateNotifierProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final allEntries = state.entries;
     final filtered = _applyFilters(allEntries);
 
@@ -58,13 +62,46 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (ctx, i) {
                       final e = filtered[filtered.length - 1 - i];
+                      String requestName = '';
+                      if (e.source == TerminalSource.js) {
+                        if (selectedId != null) {
+                          final model = collection?[selectedId];
+                          if (model != null) {
+                            requestName =
+                                model.name.isNotEmpty ? model.name : model.id;
+                          } else {
+                            requestName = selectedId;
+                          }
+                        }
+                      } else if (e.requestId != null) {
+                        final model = collection?[e.requestId];
+                        if (model != null) {
+                          requestName =
+                              model.name.isNotEmpty ? model.name : model.id;
+                        } else {
+                          requestName = e.requestId!;
+                        }
+                      }
                       switch (e.source) {
                         case TerminalSource.js:
-                          return JsLogTile(entry: e);
+                          return JsLogTile(
+                            entry: e,
+                            showTimestamp: _showTimestamps,
+                            requestName:
+                                requestName.isNotEmpty ? requestName : null,
+                          );
                         case TerminalSource.network:
-                          return NetworkLogTile(entry: e);
+                          return NetworkLogTile(
+                            entry: e,
+                            showTimestamp: _showTimestamps,
+                            requestName:
+                                requestName.isNotEmpty ? requestName : null,
+                          );
                         case TerminalSource.system:
-                          return SystemLogTile(entry: e);
+                          return SystemLogTile(
+                            entry: e,
+                            showTimestamp: _showTimestamps,
+                          );
                       }
                     },
                   ),
@@ -95,6 +132,22 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                 ..clear()
                 ..addAll(set);
             }),
+          ),
+          const SizedBox(width: 4),
+          Tooltip(
+            message: 'Show timestamps',
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  value: _showTimestamps,
+                  onChanged: (v) =>
+                      setState(() => _showTimestamps = v ?? false),
+                ),
+                const Text('Timestamp', style: TextStyle(fontSize: 12)),
+              ],
+            ),
           ),
 
           const Spacer(),

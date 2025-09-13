@@ -4,8 +4,10 @@ import '../models/terminal/models.dart';
 import 'expandable_section.dart';
 
 class SystemLogTile extends StatelessWidget {
-  const SystemLogTile({super.key, required this.entry});
+  const SystemLogTile(
+      {super.key, required this.entry, this.showTimestamp = false});
   final TerminalEntry entry;
+  final bool showTimestamp;
   @override
   Widget build(BuildContext context) {
     assert(entry.system != null, 'System tile requires SystemLogData');
@@ -35,10 +37,17 @@ class SystemLogTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 2, right: 8),
-            child: Icon(icon, size: 18, color: iconColor),
-          ),
+          if (showTimestamp) ...[
+            Padding(
+              padding: const EdgeInsets.only(top: 2, right: 8),
+              child: Text(_formatTs(entry.ts), style: subStyle),
+            ),
+          ] else ...[
+            Padding(
+              padding: const EdgeInsets.only(top: 2, right: 8),
+              child: Icon(icon, size: 18, color: iconColor),
+            ),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,8 +67,14 @@ class SystemLogTile extends StatelessWidget {
 }
 
 class JsLogTile extends StatelessWidget {
-  const JsLogTile({super.key, required this.entry});
+  const JsLogTile(
+      {super.key,
+      required this.entry,
+      this.showTimestamp = false,
+      this.requestName});
   final TerminalEntry entry;
+  final bool showTimestamp;
+  final String? requestName;
   @override
   Widget build(BuildContext context) {
     assert(entry.js != null, 'JS tile requires JsLogData');
@@ -83,13 +98,29 @@ class JsLogTile extends StatelessWidget {
       case TerminalLevel.debug:
         break;
     }
+    final bodyParts = <String>[];
+    if (requestName != null && requestName!.isNotEmpty) {
+      bodyParts.add('[$requestName]');
+    }
+    // Add JS level/context prefix to disambiguate
+    if (j.context != null && j.context!.isNotEmpty) {
+      bodyParts.add('(${j.context})');
+    }
+    bodyParts.addAll(j.args);
+    final bodyText = bodyParts.join(' ');
     return Container(
       color: bg,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (icon != null) ...[
+          if (showTimestamp) ...[
+            Padding(
+              padding: const EdgeInsets.only(top: 2, right: 8),
+              child: Text(_formatTs(entry.ts),
+                  style: Theme.of(context).textTheme.bodySmall),
+            ),
+          ] else if (icon != null) ...[
             Padding(
               padding: const EdgeInsets.only(top: 2, right: 8),
               child: Icon(icon, size: 18, color: iconColor),
@@ -97,7 +128,7 @@ class JsLogTile extends StatelessWidget {
           ],
           Expanded(
             child: SelectableText(
-              j.args.join(' '),
+              bodyText,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
@@ -108,8 +139,14 @@ class JsLogTile extends StatelessWidget {
 }
 
 class NetworkLogTile extends StatefulWidget {
-  const NetworkLogTile({super.key, required this.entry});
+  const NetworkLogTile(
+      {super.key,
+      required this.entry,
+      this.showTimestamp = false,
+      this.requestName});
   final TerminalEntry entry;
+  final bool showTimestamp;
+  final String? requestName;
   @override
   State<NetworkLogTile> createState() => _NetworkLogTileState();
 }
@@ -123,6 +160,11 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
     final status = n.responseStatus != null ? '${n.responseStatus}' : null;
     final duration =
         n.duration != null ? '${n.duration!.inMilliseconds} ms' : null;
+    final title = [
+      if (widget.requestName != null && widget.requestName!.isNotEmpty)
+        '[${widget.requestName}]',
+      methodUrl,
+    ].join(' ');
     return Column(
       children: [
         InkWell(
@@ -131,9 +173,18 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
               children: [
+                if (widget.showTimestamp) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Text(
+                      _formatTs(widget.entry.ts),
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ],
                 Expanded(
                   child: Text(
-                    methodUrl,
+                    title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -219,4 +270,12 @@ class NetworkDetails extends StatelessWidget {
     final lines = map.entries.map((e) => '${e.key}: ${e.value}').join('\n');
     return SelectableText(lines);
   }
+}
+
+String _formatTs(DateTime ts) {
+  // Show only time (HH:mm:ss) for compactness
+  final h = ts.hour.toString().padLeft(2, '0');
+  final m = ts.minute.toString().padLeft(2, '0');
+  final s = ts.second.toString().padLeft(2, '0');
+  return '$h:$m:$s';
 }
