@@ -109,7 +109,7 @@ packages:
       path: "packages/better_networking"
       relative: true
     source: path
-    version: "0.0.2"
+    version: "0.0.3"
   bidi:
     dependency: transitive
     description:
