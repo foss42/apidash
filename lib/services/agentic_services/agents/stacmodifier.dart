@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apidash/templates/templates.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/material.dart';
 
 class StacModifierBot extends AIAgent {
   @override
@@ -18,7 +19,7 @@ class StacModifierBot extends AIAgent {
     try {
       jsonDecode(aiResponse);
     } catch (e) {
-      print("JSON PARSE ERROR: ${e}");
+      debugPrint("JSON PARSE ERROR: $e");
       return false;
     }
     return true;
