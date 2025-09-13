@@ -1,3 +1,5 @@
+import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
+import 'package:apidash/screens/common_widgets/agentic_ui_features/tool_generation/generate_tool_dialog.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -8,20 +10,30 @@ import 'package:apidash/consts.dart';
 import 'button_share.dart';
 
 class ResponseBodySuccess extends StatefulWidget {
-  const ResponseBodySuccess(
-      {super.key,
-      required this.mediaType,
-      required this.body,
-      required this.options,
-      required this.bytes,
-      this.formattedBody,
-      this.highlightLanguage});
+  const ResponseBodySuccess({
+    super.key,
+    required this.mediaType,
+    required this.body,
+    required this.options,
+    required this.bytes,
+    this.formattedBody,
+    this.highlightLanguage,
+    this.sseOutput,
+    this.isAIResponse = false,
+    this.aiRequestModel,
+    this.isPartOfHistory = false,
+  });
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
   final Uint8List bytes;
   final String? formattedBody;
+  final List<String>? sseOutput;
   final String? highlightLanguage;
+  final bool isAIResponse;
+  final AIRequestModel? aiRequestModel;
+  final bool isPartOfHistory;
+
   @override
   State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
 }
@@ -53,6 +65,16 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
           padding: kP10,
           child: Column(
             children: [
+              if (!widget.isPartOfHistory)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(child: GenerateToolButton()),
+                    SizedBox(width: 10),
+                    Expanded(child: AIGenerateUIButton()),
+                  ],
+                ),
+              kVSpacer10,
               Row(
                 children: [
                   (widget.options == kRawBodyViewOptions)
@@ -131,7 +153,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       ),
                     ),
                   ),
-                ResponseBodyView.raw => Expanded(
+                ResponseBodyView.answer => Expanded(
                     child: Container(
                       width: double.maxFinite,
                       padding: kP8,
@@ -141,6 +163,32 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           widget.formattedBody ?? widget.body,
                           style: kCodeStyle,
                         ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.raw => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          widget.isAIResponse
+                              ? widget.body
+                              : (widget.formattedBody ?? widget.body),
+                          style: kCodeStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.sse => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SSEDisplay(
+                        sseOutput: widget.sseOutput,
+                        aiRequestModel: widget.aiRequestModel,
                       ),
                     ),
                   ),

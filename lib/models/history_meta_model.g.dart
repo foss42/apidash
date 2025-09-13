@@ -34,6 +34,7 @@ Map<String, dynamic> _$$HistoryMetaModelImplToJson(
 
 const _$APITypeEnumMap = {
   APIType.rest: 'rest',
+  APIType.ai: 'ai',
   APIType.graphql: 'graphql',
 };
 
@@ -44,4 +45,5 @@ const _$HTTPVerbEnumMap = {
   HTTPVerb.put: 'put',
   HTTPVerb.patch: 'patch',
   HTTPVerb.delete: 'delete',
+  HTTPVerb.options: 'options',
 };

@@ -7,7 +7,11 @@ class ChatBubble extends StatelessWidget {
   final String message;
   final bool isUser;
 
-  const ChatBubble({super.key, required this.message, this.isUser = false});
+  const ChatBubble({
+    super.key,
+    required this.message,
+    this.isUser = false,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -27,6 +27,13 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       sendingTime: json['sendingTime'] == null
           ? null
           : DateTime.parse(json['sendingTime'] as String),
+      isStreaming: json['isStreaming'] as bool? ?? false,
+      preRequestScript: json['preRequestScript'] as String?,
+      postRequestScript: json['postRequestScript'] as String?,
+      aiRequestModel: json['aiRequestModel'] == null
+          ? null
+          : AIRequestModel.fromJson(
+              Map<String, Object?>.from(json['aiRequestModel'] as Map)),
     );
 
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
@@ -39,9 +46,13 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'responseStatus': instance.responseStatus,
       'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
+      'preRequestScript': instance.preRequestScript,
+      'postRequestScript': instance.postRequestScript,
+      'aiRequestModel': instance.aiRequestModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {
   APIType.rest: 'rest',
+  APIType.ai: 'ai',
   APIType.graphql: 'graphql',
 };

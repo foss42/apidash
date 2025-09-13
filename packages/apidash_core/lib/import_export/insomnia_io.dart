@@ -1,9 +1,8 @@
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter/material.dart';
 import 'package:insomnia_collection/insomnia_collection.dart';
-import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
-import '../utils/utils.dart';
 
 class InsomniaIO {
   List<(String?, HttpRequestModel)>? getHttpRequestModelList(String content) {

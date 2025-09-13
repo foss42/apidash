@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
+const kLearnScriptingUrl =
+    "$kGitUrl/blob/main/doc/user_guide/scripting_user_guide.md";
 const kIssueUrl = "$kGitUrl/issues";
 const kDefaultUri = "api.apidash.dev";
 
@@ -144,7 +146,8 @@ enum CodegenLanguage {
 enum ImportFormat {
   curl("cURL"),
   postman("Postman Collection v2.1"),
-  insomnia("Insomnia v4");
+  insomnia("Insomnia v4"),
+  har("Har v1.2");
 
   const ImportFormat(this.label);
   final String label;
@@ -156,6 +159,8 @@ enum ResponseBodyView {
   preview("Preview", Icons.visibility_rounded),
   code("Preview", Icons.code_rounded),
   raw("Raw", Icons.text_snippet_rounded),
+  answer("Answer", Icons.abc),
+  sse("SSE", Icons.stream),
   none("Preview", Icons.warning);
 
   const ResponseBodyView(this.label, this.icon);
@@ -179,6 +184,11 @@ const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.code,
   ResponseBodyView.raw
 ];
+const kSSERawBodyViewOptions = [ResponseBodyView.sse, ResponseBodyView.raw];
+const kAnswerRawBodyViewOptions = [
+  ResponseBodyView.answer,
+  ResponseBodyView.raw
+];
 
 const Map<String, Map<String, List<ResponseBodyView>>>
     kResponseBodyViewOptions = {
@@ -192,6 +202,15 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeYaml: kCodeRawBodyViewOptions,
     kSubTypeXYaml: kCodeRawBodyViewOptions,
     kSubTypeYml: kCodeRawBodyViewOptions,
+    kSubTypeXNdjson: kSSERawBodyViewOptions,
+    kSubTypeNdjson: kSSERawBodyViewOptions,
+    kSubTypeJsonSeq: kSSERawBodyViewOptions,
+    kSubTypeXLdjson: kSSERawBodyViewOptions,
+    kSubTypeLdjson: kSSERawBodyViewOptions,
+    kSubTypeXJsonStream: kSSERawBodyViewOptions,
+    kSubTypeJsonStream: kSSERawBodyViewOptions,
+    kSubTypeJsonstream: kSSERawBodyViewOptions,
+    kSubTypeStreamJson: kSSERawBodyViewOptions,
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
@@ -213,6 +232,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeTextXml: kCodeRawBodyViewOptions,
     kSubTypeTextYaml: kCodeRawBodyViewOptions,
     kSubTypeTextYml: kCodeRawBodyViewOptions,
+    kSubTypeEventStream: kSSERawBodyViewOptions,
   },
 };
 
@@ -434,6 +454,7 @@ const kLabelDuplicate = "Duplicate";
 const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
+const kLabelStop = "Stop";
 const kLabelOk = "Ok";
 const kLabelImport = "Import";
 const kUntitled = "untitled";
@@ -441,9 +462,11 @@ const kUntitled = "untitled";
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
-const kLabelURLParams = "URL Params";
+const kLabelURLParams = "Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
+const kLabelScripts = "Scripts";
+const kLabelAuth = "Auth";
 const kLabelQuery = "Query";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
@@ -463,6 +486,8 @@ const kHintContent = "Enter content";
 const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
+// TODO: CodeField widget does not allow this hint. To be solved.
+const kHintScript = "// Use Javacript to modify this request dynamically";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
@@ -485,3 +510,4 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+const kLabelGenerateUI = "Generate UI";

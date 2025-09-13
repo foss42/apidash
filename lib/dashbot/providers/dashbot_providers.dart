@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'package:apidash/services/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/dashbot_service.dart';
+import '../services/services.dart';
+
+final dashBotMinimizedProvider = StateProvider<bool>((ref) {
+  return true;
+});
 
 final chatMessagesProvider =
     StateNotifierProvider<ChatMessagesNotifier, List<Map<String, dynamic>>>(
@@ -17,19 +21,16 @@ class ChatMessagesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
     _loadMessages();
   }
 
-  static const _storageKey = 'chatMessages';
-
   Future<void> _loadMessages() async {
-    final prefs = await SharedPreferences.getInstance();
-    final messages = prefs.getString(_storageKey);
+    final messages = await hiveHandler.getDashbotMessages();
     if (messages != null) {
       state = List<Map<String, dynamic>>.from(json.decode(messages));
     }
   }
 
   Future<void> _saveMessages() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_storageKey, json.encode(state));
+    final messages = json.encode(state);
+    await hiveHandler.saveDashbotMessages(messages);
   }
 
   void addMessage(Map<String, dynamic> message) {

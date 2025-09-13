@@ -217,6 +217,9 @@ Map<String, dynamic> requestModelJson = {
   'responseStatus': 200,
   'message': null,
   'httpResponseModel': responseModelJson,
+  'preRequestScript': null,
+  'postRequestScript': null,
+  'aiRequestModel': null
 };
 
 /// Basic GET request model for apidash.dev
@@ -252,4 +255,10 @@ const requestModelPost13 = RequestModel(
   id: 'post13',
   apiType: APIType.rest,
   httpRequestModel: httpRequestModelPost13,
+);
+
+const requestModelOptions1 = RequestModel(
+  id: 'options1',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelOptions1,
 );

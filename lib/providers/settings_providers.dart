@@ -33,6 +33,8 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    bool? isDashBotEnabled,
+    Map<String, Object?>? defaultAIModel,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -47,6 +49,8 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      isDashBotEnabled: isDashBotEnabled,
+      defaultAIModel: defaultAIModel,
     );
     await setSettingsToSharedPrefs(state);
   }

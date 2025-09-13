@@ -281,8 +281,18 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                                   size: 18,
                                 ),
                                 onPressed: () async {
-                                  await _copy(
-                                      kJsonEncoder.convert(toJson(node)), sm);
+                                  final val = toJson(node);
+                                  String toCopy = '';
+                                  if (node.isClass ||
+                                      node.isArray ||
+                                      node.isRoot) {
+                                    toCopy = kJsonEncoder.convert(val);
+                                  } else {
+                                    toCopy = (val.values as Iterable)
+                                        .first
+                                        .toString();
+                                  }
+                                  await _copy(toCopy, sm);
                                 },
                               ),
                             )

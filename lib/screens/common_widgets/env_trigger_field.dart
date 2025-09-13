@@ -17,6 +17,8 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.decoration,
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
+    this.readOnly = false,
+    this.obscureText = false
   }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
@@ -32,6 +34,8 @@ class EnvironmentTriggerField extends StatefulWidget {
   final InputDecoration? decoration;
   final double? optionsWidthFactor;
   final AutocompleteNoTrigger? autocompleteNoTrigger;
+  final bool readOnly;
+  final bool obscureText;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -125,6 +129,9 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
           onTapOutside: (event) {
             _focusNode.unfocus();
           },
+          readOnly: widget.readOnly,
+          obscureText: widget.obscureText
+          
         );
       },
     );

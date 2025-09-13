@@ -28,6 +28,14 @@ class CodePane extends ConsumerWidget {
     final selectedRequestModel = isHistoryRequest
         ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
         : ref.watch(selectedRequestModelProvider);
+
+    // TODO: Add AI Request Codegen
+    if (selectedRequestModel?.apiType == APIType.ai) {
+      return const ErrorMessage(
+        message: "Code generation for AI Requests is currently not available.",
+      );
+    }
+
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 

@@ -357,4 +357,98 @@ void main() {
       expect(getVariableStatus(query, envMap, activeEnvironmentId), expected);
     });
   });
+
+  group("Testing auth model environment variable substitution", () {
+    test("Testing basic auth with environment variables", () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/test",
+        authModel: AuthModel(
+          type: APIAuthType.basic,
+          basic: AuthBasicAuthModel(
+            username: "{{basic_username}}admin",
+            password: "{{token}}pass",
+          ),
+        ),
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: [
+          EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          EnvironmentVariableModel(key: "basic_username", value: "testuser"),
+          EnvironmentVariableModel(key: "token", value: "secret"),
+        ],
+      };
+
+      const activeEnvironmentId = null;
+      final result = substituteHttpRequestModel(
+        httpRequestModel,
+        envMap,
+        activeEnvironmentId,
+      );
+
+      expect(result.authModel?.basic?.username, "testuseradmin");
+      expect(result.authModel?.basic?.password, "secretpass");
+      expect(result.url, "api.apidash.dev/test");
+    });
+
+    test("Testing bearer auth with environment variables", () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/test",
+        authModel: AuthModel(
+          type: APIAuthType.bearer,
+          bearer: AuthBearerModel(
+            token: "{{bearer_token}}",
+          ),
+        ),
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: [
+          EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          EnvironmentVariableModel(key: "bearer_token", value: "secret123"),
+        ],
+      };
+
+      const activeEnvironmentId = null;
+      final result = substituteHttpRequestModel(
+        httpRequestModel,
+        envMap,
+        activeEnvironmentId,
+      );
+
+      expect(result.authModel?.bearer?.token, "secret123");
+    });
+
+    test("Testing API key auth with environment variables", () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/test",
+        authModel: AuthModel(
+          type: APIAuthType.apiKey,
+          apikey: AuthApiKeyModel(
+            key: "{{api_key}}",
+            name: "{{header_name}}",
+            location: "header",
+          ),
+        ),
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: [
+          EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          EnvironmentVariableModel(key: "api_key", value: "key123"),
+          EnvironmentVariableModel(key: "header_name", value: "X-API-Key"),
+        ],
+      };
+
+      const activeEnvironmentId = null;
+      final result = substituteHttpRequestModel(
+        httpRequestModel,
+        envMap,
+        activeEnvironmentId,
+      );
+
+      expect(result.authModel?.apikey?.key, "key123");
+      expect(result.authModel?.apikey?.name, "X-API-Key");
+    });
+  });
 }

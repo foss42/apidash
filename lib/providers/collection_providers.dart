@@ -1,12 +1,12 @@
+import 'dart:async';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'providers.dart';
 import '../models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler;
-import '../utils/utils.dart'
-    show getNewUuid, collectionToHAR, substituteHttpRequestModel;
+import '../services/services.dart';
+import '../utils/utils.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -163,6 +163,8 @@ class CollectionStateNotifier
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
+      httpRequestModel: currentModel.httpRequestModel?.copyWith(),
+      aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpResponseModel: null,
       isWorking: false,
       sendingTime: null,
@@ -183,10 +185,14 @@ class CollectionStateNotifier
 
     var itemIds = ref.read(requestSequenceProvider);
     var currentModel = historyRequestModel;
+
     final newModel = RequestModel(
+      apiType: currentModel.metaData.apiType,
       id: newId,
       name: "${currentModel.metaData.name} (history)",
-      httpRequestModel: currentModel.httpRequestModel,
+      aiRequestModel: currentModel.aiRequestModel?.copyWith(),
+      httpRequestModel:
+          currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
@@ -205,9 +211,10 @@ class CollectionStateNotifier
   }
 
   void update({
+    APIType? apiType,
     String? id,
     HTTPVerb? method,
-    APIType? apiType,
+    AuthModel? authModel,
     String? url,
     String? name,
     String? description,
@@ -223,6 +230,9 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    String? preRequestScript,
+    String? postRequestScript,
+    AIRequestModel? aiRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -231,30 +241,57 @@ class CollectionStateNotifier
     }
     var currentModel = state![rId]!;
     var currentHttpRequestModel = currentModel.httpRequestModel;
-    final newModel = currentModel.copyWith(
-      apiType: apiType ?? currentModel.apiType,
-      name: name ?? currentModel.name,
-      description: description ?? currentModel.description,
-      requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-      httpRequestModel: currentHttpRequestModel?.copyWith(
-        method: method ?? currentHttpRequestModel.method,
-        url: url ?? currentHttpRequestModel.url,
-        headers: headers ?? currentHttpRequestModel.headers,
-        params: params ?? currentHttpRequestModel.params,
-        isHeaderEnabledList:
-            isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
-        isParamEnabledList:
-            isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
-        bodyContentType:
-            bodyContentType ?? currentHttpRequestModel.bodyContentType,
-        body: body ?? currentHttpRequestModel.body,
-        query: query ?? currentHttpRequestModel.query,
-        formData: formData ?? currentHttpRequestModel.formData,
-      ),
-      responseStatus: responseStatus ?? currentModel.responseStatus,
-      message: message ?? currentModel.message,
-      httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
-    );
+
+    RequestModel newModel;
+
+    if (apiType != null && currentModel.apiType != apiType) {
+      final defaultModel = ref.read(settingsProvider).defaultAIModel;
+      newModel = switch (apiType) {
+        APIType.rest || APIType.graphql => currentModel.copyWith(
+            apiType: apiType,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: const HttpRequestModel(),
+            aiRequestModel: null),
+        APIType.ai => currentModel.copyWith(
+            apiType: apiType,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: null,
+            aiRequestModel: defaultModel == null
+                ? const AIRequestModel()
+                : AIRequestModel.fromJson(defaultModel)),
+      };
+    } else {
+      newModel = currentModel.copyWith(
+        apiType: apiType ?? currentModel.apiType,
+        name: name ?? currentModel.name,
+        description: description ?? currentModel.description,
+        requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+        httpRequestModel: currentHttpRequestModel?.copyWith(
+          method: method ?? currentHttpRequestModel.method,
+          url: url ?? currentHttpRequestModel.url,
+          headers: headers ?? currentHttpRequestModel.headers,
+          params: params ?? currentHttpRequestModel.params,
+          authModel: authModel ?? currentHttpRequestModel.authModel,
+          isHeaderEnabledList: isHeaderEnabledList ??
+              currentHttpRequestModel.isHeaderEnabledList,
+          isParamEnabledList:
+              isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+          bodyContentType:
+              bodyContentType ?? currentHttpRequestModel.bodyContentType,
+          body: body ?? currentHttpRequestModel.body,
+          query: query ?? currentHttpRequestModel.query,
+          formData: formData ?? currentHttpRequestModel.formData,
+        ),
+        responseStatus: responseStatus ?? currentModel.responseStatus,
+        message: message ?? currentModel.message,
+        httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+        preRequestScript: preRequestScript ?? currentModel.preRequestScript,
+        postRequestScript: postRequestScript ?? currentModel.postRequestScript,
+        aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+      );
+    }
 
     var map = {...state!};
     map[rId] = newModel;
@@ -265,31 +302,62 @@ class CollectionStateNotifier
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
 
     if (requestId == null || state == null) {
       return;
     }
-    RequestModel? requestModel = state![requestId];
 
-    if (requestModel?.httpRequestModel == null) {
+    RequestModel? requestModel = state![requestId];
+    if (requestModel?.httpRequestModel == null &&
+        requestModel?.aiRequestModel == null) {
       return;
     }
 
-    APIType apiType = requestModel!.apiType;
-    HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+    final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
+    final EnvironmentModel? originalEnvironmentModel =
+        ref.read(activeEnvironmentModelProvider);
 
-    // set current model's isWorking to true and update state
-    var map = {...state!};
-    map[requestId] = requestModel.copyWith(
-      isWorking: true,
-      sendingTime: DateTime.now(),
-    );
-    state = map;
+    RequestModel executionRequestModel = requestModel!.copyWith();
 
+    if (!requestModel.preRequestScript.isNullOrEmpty()) {
+      executionRequestModel = await handlePreRequestScript(
+        executionRequestModel,
+        originalEnvironmentModel,
+        (envModel, updatedValues) {
+          ref
+              .read(environmentsStateNotifierProvider.notifier)
+              .updateEnvironment(
+                envModel.id,
+                name: envModel.name,
+                values: updatedValues,
+              );
+        },
+      );
+    }
+
+    APIType apiType = executionRequestModel.apiType;
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    var responseRec = await sendHttpRequest(
+    HttpRequestModel substitutedHttpRequestModel;
+
+    if (apiType == APIType.ai) {
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
+          executionRequestModel.aiRequestModel!.httpRequestModel!);
+    } else {
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
+          executionRequestModel.httpRequestModel!);
+    }
+
+    // Set model to working and streaming
+    state = {
+      ...state!,
+      requestId: requestModel.copyWith(
+        isWorking: true,
+        sendingTime: DateTime.now(),
+      ),
+    };
+    bool streamingMode = true; //Default: Streaming First
+
+    final stream = await streamHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
@@ -297,27 +365,104 @@ class CollectionStateNotifier
       noSSL: noSSL,
     );
 
-    late final RequestModel newRequestModel;
-    if (responseRec.$1 == null) {
-      newRequestModel = requestModel.copyWith(
+    HttpResponseModel? httpResponseModel;
+    HistoryRequestModel? historyModel;
+    RequestModel newRequestModel = requestModel;
+    bool isStreamingResponse = false;
+    final completer = Completer<(Response?, Duration?, String?)>();
+
+    StreamSubscription? sub;
+
+    sub = stream.listen((rec) async {
+      if (rec == null) return;
+
+      isStreamingResponse = rec.$1 ?? false;
+      final response = rec.$2;
+      final duration = rec.$3;
+      final errorMessage = rec.$4;
+
+      if (isStreamingResponse) {
+        httpResponseModel = httpResponseModel?.copyWith(
+          time: duration,
+          sseOutput: [
+            ...(httpResponseModel?.sseOutput ?? []),
+            if (response != null) response.body,
+          ],
+        );
+
+        newRequestModel = newRequestModel.copyWith(
+          httpResponseModel: httpResponseModel,
+          isStreaming: true,
+        );
+        state = {
+          ...state!,
+          requestId: newRequestModel,
+        };
+        unsave();
+
+        if (historyModel != null && httpResponseModel != null) {
+          historyModel =
+              historyModel!.copyWith(httpResponseModel: httpResponseModel!);
+          ref
+              .read(historyMetaStateNotifier.notifier)
+              .editHistoryRequest(historyModel!);
+        }
+      } else {
+        streamingMode = false;
+      }
+
+      if (!completer.isCompleted) {
+        completer.complete((response, duration, errorMessage));
+      }
+    }, onDone: () {
+      sub?.cancel();
+      state = {
+        ...state!,
+        requestId: newRequestModel.copyWith(isStreaming: false),
+      };
+      unsave();
+    }, onError: (e) {
+      if (!completer.isCompleted) {
+        completer.complete((null, null, 'StreamError: $e'));
+      }
+    });
+
+    final (response, duration, errorMessage) = await completer.future;
+
+    if (response == null) {
+      newRequestModel = newRequestModel.copyWith(
         responseStatus: -1,
-        message: responseRec.$3,
+        message: errorMessage,
         isWorking: false,
+        isStreaming: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
-        response: responseRec.$1!,
-        time: responseRec.$2!,
+      final statusCode = response.statusCode;
+      httpResponseModel = baseHttpResponseModel.fromResponse(
+        response: response,
+        time: duration,
+        isStreamingResponse: isStreamingResponse,
       );
-      int statusCode = responseRec.$1!.statusCode;
-      newRequestModel = requestModel.copyWith(
+
+      //AI-FORMATTING for Non Streaming Varaint
+      if (!streamingMode &&
+          apiType == APIType.ai &&
+          response.statusCode == 200) {
+        final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
+            kJsonDecoder
+                .convert(httpResponseModel?.body ?? "Error parsing body"));
+        httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+      }
+
+      newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
         httpResponseModel: httpResponseModel,
         isWorking: false,
       );
+
       String newHistoryId = getNewUuid();
-      HistoryRequestModel model = HistoryRequestModel(
+      historyModel = HistoryRequestModel(
         historyId: newHistoryId,
         metaData: HistoryMetaModel(
           historyId: newHistoryId,
@@ -330,15 +475,39 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: httpResponseModel,
+        aiRequestModel: executionRequestModel.aiRequestModel,
+        httpResponseModel: httpResponseModel!,
+        preRequestScript: requestModel.preRequestScript,
+        postRequestScript: requestModel.postRequestScript,
+        authModel: requestModel.httpRequestModel?.authModel,
       );
-      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
+
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .addHistoryRequest(historyModel!);
+
+      if (!requestModel.postRequestScript.isNullOrEmpty()) {
+        newRequestModel = await handlePostResponseScript(
+          newRequestModel,
+          originalEnvironmentModel,
+          (envModel, updatedValues) {
+            ref
+                .read(environmentsStateNotifierProvider.notifier)
+                .updateEnvironment(
+                  envModel.id,
+                  name: envModel.name,
+                  values: updatedValues,
+                );
+          },
+        );
+      }
     }
 
-    // update state with response data
-    map = {...state!};
-    map[requestId] = newRequestModel;
-    state = map;
+    // Final state update
+    state = {
+      ...state!,
+      requestId: newRequestModel,
+    };
 
     unsave();
   }
@@ -403,6 +572,7 @@ class CollectionStateNotifier
             : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
       );
     }
+
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;

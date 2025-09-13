@@ -14,8 +14,12 @@ class HistoryRequestModel with _$HistoryRequestModel {
   const factory HistoryRequestModel({
     required String historyId,
     required HistoryMetaModel metaData,
-    required HttpRequestModel httpRequestModel,
+    HttpRequestModel? httpRequestModel,
+    AIRequestModel? aiRequestModel,
     required HttpResponseModel httpResponseModel,
+    String? preRequestScript,
+    String? postRequestScript,
+    AuthModel? authModel,
   }) = _HistoryRequestModel;
 
   factory HistoryRequestModel.fromJson(Map<String, Object?> json) =>

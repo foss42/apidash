@@ -18,6 +18,8 @@ void main() {
     historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
     workspaceFolderPath: null,
     isSSLDisabled: true,
+    isDashBotEnabled: true,
+    defaultAIModel: {"model": "llama"},
   );
 
   test('Testing toJson()', () {
@@ -36,6 +38,8 @@ void main() {
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
+      "isDashBotEnabled": true,
+      "defaultAIModel": {"model": "llama"}
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -56,6 +60,8 @@ void main() {
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
+      "isDashBotEnabled": true,
+      "defaultAIModel": {"model": "llama"}
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -73,12 +79,15 @@ void main() {
       activeEnvironmentId: null,
       historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
       isSSLDisabled: false,
+      isDashBotEnabled: false,
+      defaultAIModel: {"model": "llama"},
     );
     expect(
         sm.copyWith(
           isDark: true,
           saveResponses: false,
           isSSLDisabled: false,
+          isDashBotEnabled: false,
         ),
         expectedResult);
   });
@@ -98,7 +107,11 @@ void main() {
   "activeEnvironmentId": null,
   "historyRetentionPeriod": "oneWeek",
   "workspaceFolderPath": null,
-  "isSSLDisabled": true
+  "isSSLDisabled": true,
+  "isDashBotEnabled": true,
+  "defaultAIModel": {
+    "model": "llama"
+  }
 }''';
     expect(sm.toString(), expectedResult);
   });
