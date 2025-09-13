@@ -1,3 +1,7 @@
+## 0.0.3
+
+- Loosen dart SDK constraints.
+
 ## 0.0.2
 
 - Improvement of various core features.
