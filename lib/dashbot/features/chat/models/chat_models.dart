@@ -40,7 +40,8 @@ class ChatMessage {
   final MessageRole role;
   final DateTime timestamp;
   final ChatMessageType? messageType;
-  final ChatAction? action;
+  // Multiple actions support. If provided, UI should render these.
+  final List<ChatAction>? actions;
 
   const ChatMessage({
     required this.id,
@@ -48,7 +49,7 @@ class ChatMessage {
     required this.role,
     required this.timestamp,
     this.messageType,
-    this.action,
+    this.actions,
   });
 
   ChatMessage copyWith({
@@ -57,7 +58,7 @@ class ChatMessage {
     MessageRole? role,
     DateTime? timestamp,
     ChatMessageType? messageType,
-    ChatAction? action,
+    List<ChatAction>? actions,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -65,7 +66,7 @@ class ChatMessage {
       role: role ?? this.role,
       timestamp: timestamp ?? this.timestamp,
       messageType: messageType ?? this.messageType,
-      action: action ?? this.action,
+      actions: actions ?? this.actions,
     );
   }
 }
@@ -93,6 +94,117 @@ enum ChatMessageType {
   general
 }
 
+// Enum definitions for action types and targets to reduce stringly-typed logic.
+enum ChatActionType {
+  updateField,
+  addHeader,
+  updateHeader,
+  deleteHeader,
+  updateBody,
+  updateUrl,
+  updateMethod,
+  showLanguages,
+  other,
+  noAction,
+  uploadAsset,
+}
+
+enum ChatActionTarget {
+  httpRequestModel,
+  codegen,
+  test,
+  code,
+  attachment,
+}
+
+ChatActionType _chatActionTypeFromString(String s) {
+  switch (s) {
+    case 'update_field':
+      return ChatActionType.updateField;
+    case 'add_header':
+      return ChatActionType.addHeader;
+    case 'update_header':
+      return ChatActionType.updateHeader;
+    case 'delete_header':
+      return ChatActionType.deleteHeader;
+    case 'update_body':
+      return ChatActionType.updateBody;
+    case 'update_url':
+      return ChatActionType.updateUrl;
+    case 'update_method':
+      return ChatActionType.updateMethod;
+    case 'show_languages':
+      return ChatActionType.showLanguages;
+    case 'upload_asset':
+      return ChatActionType.uploadAsset;
+    case 'no_action':
+      return ChatActionType.noAction;
+    case 'other':
+      return ChatActionType.other;
+    default:
+      return ChatActionType.other;
+  }
+}
+
+String chatActionTypeToString(ChatActionType t) {
+  switch (t) {
+    case ChatActionType.updateField:
+      return 'update_field';
+    case ChatActionType.addHeader:
+      return 'add_header';
+    case ChatActionType.updateHeader:
+      return 'update_header';
+    case ChatActionType.deleteHeader:
+      return 'delete_header';
+    case ChatActionType.updateBody:
+      return 'update_body';
+    case ChatActionType.updateUrl:
+      return 'update_url';
+    case ChatActionType.updateMethod:
+      return 'update_method';
+    case ChatActionType.showLanguages:
+      return 'show_languages';
+    case ChatActionType.other:
+      return 'other';
+    case ChatActionType.noAction:
+      return 'no_action';
+    case ChatActionType.uploadAsset:
+      return 'upload_asset';
+  }
+}
+
+ChatActionTarget _chatActionTargetFromString(String s) {
+  switch (s) {
+    case 'httpRequestModel':
+      return ChatActionTarget.httpRequestModel;
+    case 'codegen':
+      return ChatActionTarget.codegen;
+    case 'test':
+      return ChatActionTarget.test;
+    case 'code':
+      return ChatActionTarget.code;
+    case 'attachment':
+      return ChatActionTarget.attachment;
+    default:
+      return ChatActionTarget.httpRequestModel;
+  }
+}
+
+String chatActionTargetToString(ChatActionTarget t) {
+  switch (t) {
+    case ChatActionTarget.httpRequestModel:
+      return 'httpRequestModel';
+    case ChatActionTarget.codegen:
+      return 'codegen';
+    case ChatActionTarget.test:
+      return 'test';
+    case ChatActionTarget.code:
+      return 'code';
+    case ChatActionTarget.attachment:
+      return 'attachment';
+  }
+}
+
 // Action model for auto-fix functionality
 class ChatAction {
   final String action;
@@ -100,6 +212,8 @@ class ChatAction {
   final String field;
   final String? path;
   final dynamic value;
+  final ChatActionType actionType; // enum representation
+  final ChatActionTarget targetType; // enum representation
 
   const ChatAction({
     required this.action,
@@ -107,16 +221,21 @@ class ChatAction {
     this.field = '', // Default to empty string
     this.path,
     this.value,
+    required this.actionType,
+    required this.targetType,
   });
 
   factory ChatAction.fromJson(Map<String, dynamic> json) {
+    final actionStr = json['action'] as String? ?? 'other';
+    final targetStr = json['target'] as String? ?? 'httpRequestModel';
     return ChatAction(
-      action: json['action'] as String,
-      target: json['target'] as String,
-      field: json['field'] as String? ??
-          '', // Default to empty string if not provided
+      action: actionStr,
+      target: targetStr,
+      field: json['field'] as String? ?? '',
       path: json['path'] as String?,
       value: json['value'],
+      actionType: _chatActionTypeFromString(actionStr),
+      targetType: _chatActionTargetFromString(targetStr),
     );
   }
 
@@ -127,6 +246,8 @@ class ChatAction {
       'field': field,
       'path': path,
       'value': value,
+      'action_type': chatActionTypeToString(actionType),
+      'target_type': chatActionTargetToString(targetType),
     };
   }
 }

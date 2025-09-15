@@ -120,20 +120,22 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         debugPrint(
             '[Chat] stream done. total=${state.currentStreamingResponse.length}, anyChunk=$receivedAnyChunk');
         if (state.currentStreamingResponse.isNotEmpty) {
-          ChatAction? parsedAction;
+          List<ChatAction>? parsedActions;
           try {
             debugPrint(
                 '[Chat] Attempting to parse response: ${state.currentStreamingResponse}');
             final Map<String, dynamic> parsed =
                 MessageJson.safeParse(state.currentStreamingResponse);
             debugPrint('[Chat] Parsed JSON: $parsed');
-            if (parsed.containsKey('action') && parsed['action'] != null) {
-              debugPrint('[Chat] Action object found: ${parsed['action']}');
-              parsedAction =
-                  ChatAction.fromJson(parsed['action'] as Map<String, dynamic>);
-              debugPrint('[Chat] Parsed action: ${parsedAction.toJson()}');
-            } else {
-              debugPrint('[Chat] No action found in response');
+            if (parsed.containsKey('actions') && parsed['actions'] is List) {
+              parsedActions = (parsed['actions'] as List)
+                  .whereType<Map<String, dynamic>>()
+                  .map(ChatAction.fromJson)
+                  .toList();
+              debugPrint('[Chat] Parsed actions list: ${parsedActions.length}');
+            }
+            if (parsedActions == null || parsedActions.isEmpty) {
+              debugPrint('[Chat] No actions list found in response');
             }
           } catch (e) {
             debugPrint('[Chat] Error parsing action: $e');
@@ -149,7 +151,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
               role: MessageRole.system,
               timestamp: DateTime.now(),
               messageType: type,
-              action: parsedAction,
+              actions: parsedActions,
             ),
           );
         } else if (!receivedAnyChunk) {
@@ -160,13 +162,19 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             final fallback =
                 await _repo.sendChat(request: enriched.copyWith(stream: false));
             if (fallback != null && fallback.isNotEmpty) {
-              ChatAction? fallbackAction;
+              List<ChatAction>? fallbackActions;
               try {
                 final Map<String, dynamic> parsed =
                     MessageJson.safeParse(fallback);
-                if (parsed.containsKey('action') && parsed['action'] != null) {
-                  fallbackAction = ChatAction.fromJson(
-                      parsed['action'] as Map<String, dynamic>);
+                if (parsed.containsKey('actions') &&
+                    parsed['actions'] is List) {
+                  fallbackActions = (parsed['actions'] as List)
+                      .whereType<Map<String, dynamic>>()
+                      .map(ChatAction.fromJson)
+                      .toList();
+                }
+                if ((fallbackActions == null || fallbackActions.isEmpty)) {
+                  // no actions
                 }
               } catch (e) {
                 debugPrint('[Chat] Fallback error parsing action: $e');
@@ -180,7 +188,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
                   role: MessageRole.system,
                   timestamp: DateTime.now(),
                   messageType: type,
-                  action: fallbackAction,
+                  actions: fallbackActions,
                 ),
               );
             } else {
@@ -210,33 +218,39 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     if (requestId == null) return;
 
     try {
-      switch (action.action) {
-        case 'update_field':
+      switch (action.actionType) {
+        case ChatActionType.updateField:
           await _applyFieldUpdate(action);
           break;
-        case 'add_header':
+        case ChatActionType.addHeader:
           await _applyHeaderUpdate(action, isAdd: true);
           break;
-        case 'update_header':
+        case ChatActionType.updateHeader:
           await _applyHeaderUpdate(action, isAdd: false);
           break;
-        case 'delete_header':
+        case ChatActionType.deleteHeader:
           await _applyHeaderDelete(action);
           break;
-        case 'update_body':
+        case ChatActionType.updateBody:
           await _applyBodyUpdate(action);
           break;
-        case 'update_url':
+        case ChatActionType.updateUrl:
           await _applyUrlUpdate(action);
           break;
-        case 'update_method':
+        case ChatActionType.updateMethod:
           await _applyMethodUpdate(action);
           break;
-        case 'other':
+        case ChatActionType.other:
           await _applyOtherAction(action);
           break;
-        default:
-          debugPrint('[Chat] Unsupported action: ${action.action}');
+        case ChatActionType.showLanguages:
+          // UI handles selection;
+          break;
+        case ChatActionType.noAction:
+          break;
+        case ChatActionType.uploadAsset:
+          // Handled by UI upload button
+          break;
       }
     } catch (e) {
       debugPrint('[Chat] Error applying auto-fix: $e');
@@ -389,7 +403,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   // Helpers
   void _addMessage(String requestId, ChatMessage m) {
     debugPrint(
-        '[Chat] Adding message to request ID: $requestId, action: ${m.action?.toJson()}');
+        '[Chat] Adding message to request ID: $requestId, actions: ${m.actions?.map((e) => e.toJson()).toList()}');
     final msgs = state.chatSessions[requestId] ?? const [];
     state = state.copyWith(
       chatSessions: {
