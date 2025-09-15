@@ -283,7 +283,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
               .map(
                   (e) => NameValueModel(name: e.key, value: e.value.toString()))
               .toList();
-          collectionNotifier.update(params: params, id: requestId);
+          final enabled = List<bool>.filled(params.length, true);
+          collectionNotifier.update(
+            params: params,
+            isParamEnabledList: enabled,
+            id: requestId,
+          );
         }
         break;
     }
