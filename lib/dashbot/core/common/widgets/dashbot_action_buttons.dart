@@ -90,6 +90,34 @@ class DashbotAddTestButton extends ConsumerWidget with DashbotActionMixin {
   }
 }
 
+class DashbotApplyCurlButton extends ConsumerWidget with DashbotActionMixin {
+  @override
+  final ChatAction action;
+  const DashbotApplyCurlButton({super.key, required this.action});
+
+  String _labelForField(String? field) {
+    switch (field) {
+      case 'apply_to_selected':
+        return 'Apply to Selected';
+      case 'apply_to_new':
+        return 'Create New Request';
+      default:
+        return 'Apply';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final label = _labelForField(action.field);
+    return ElevatedButton(
+      onPressed: () async {
+        await ref.read(chatViewmodelProvider.notifier).applyAutoFix(action);
+      },
+      child: Text(label),
+    );
+  }
+}
+
 class DashbotGenerateLanguagePicker extends ConsumerWidget
     with DashbotActionMixin {
   @override
@@ -177,6 +205,8 @@ class DashbotActionWidgetFactory {
           return DashbotGenerateLanguagePicker(action: action);
         }
         break;
+      case ChatActionType.applyCurl:
+        return DashbotApplyCurlButton(action: action);
       case ChatActionType.updateField:
       case ChatActionType.addHeader:
       case ChatActionType.updateHeader:
@@ -202,6 +232,9 @@ class DashbotActionWidgetFactory {
     }
     if (action.action == 'show_languages' && action.target == 'codegen') {
       return DashbotGenerateLanguagePicker(action: action);
+    }
+    if (action.action == 'apply_curl') {
+      return DashbotApplyCurlButton(action: action);
     }
     if (action.action.contains('update') ||
         action.action.contains('add') ||

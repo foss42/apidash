@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
+import '../../../core/services/curl_import_service.dart';
 
 import '../../../core/utils/safe_parse_json_message.dart';
 import '../../../core/constants/dashbot_prompts.dart' as dash;
@@ -47,7 +49,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         '[Chat] sendMessage start: type=$type, countAsUser=$countAsUser');
     final ai = _selectedAIModel;
     if (text.trim().isEmpty && countAsUser) return;
-    if (ai == null) {
+    if (ai == null && type != ChatMessageType.importCurl) {
       debugPrint('[Chat] No AI model configured');
       _appendSystem(
         'AI model is not configured. Please set one.',
@@ -57,6 +59,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
 
     final requestId = _currentRequest?.id ?? 'global';
+    final existingMessages = state.chatSessions[requestId] ?? const [];
     debugPrint('[Chat] using requestId=$requestId');
 
     if (countAsUser) {
@@ -72,25 +75,54 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     }
 
-    // Special handling: generateCode flow has two steps
-    String? systemPrompt;
+    // If user pasted a cURL in import flow, handle locally without AI
+    final lastSystemImport = existingMessages.lastWhere(
+      (m) =>
+          m.role == MessageRole.system &&
+          m.messageType == ChatMessageType.importCurl,
+      orElse: () => ChatMessage(
+        id: '',
+        content: '',
+        role: MessageRole.system,
+        timestamp: DateTime.fromMillisecondsSinceEpoch(0),
+      ),
+    );
+    final importFlowActive = lastSystemImport.id.isNotEmpty;
+    if (text.trim().startsWith('curl ') &&
+        (type == ChatMessageType.importCurl || importFlowActive)) {
+      await handlePotentialCurlPaste(text);
+      return;
+    }
+
+    String systemPrompt;
     if (type == ChatMessageType.generateCode) {
-      // If the user message includes a language (heuristic), go straight to code gen; else show intro + language choices
       final detectedLang = _detectLanguageFromText(text);
       systemPrompt = _composeSystemPrompt(
         _currentRequest,
-        detectedLang == null
-            ? ChatMessageType.generateCode
-            : ChatMessageType.generateCode,
+        type,
         overrideLanguage: detectedLang,
       );
+    } else if (type == ChatMessageType.importCurl) {
+      final rqId = _currentRequest?.id ?? 'global';
+      _addMessage(
+        rqId,
+        ChatMessage(
+          id: nanoid(),
+          content:
+              '{"explnation":"Let\'s import a cURL request. Paste your complete cURL command below.","actions":[]}',
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importCurl,
+        ),
+      );
+      return;
     } else {
       systemPrompt = _composeSystemPrompt(_currentRequest, type);
     }
     final userPrompt = (text.trim().isEmpty && !countAsUser)
         ? 'Please complete the task based on the provided context.'
         : text;
-    final enriched = ai.copyWith(
+    final enriched = ai!.copyWith(
       systemPrompt: systemPrompt,
       userPrompt: userPrompt,
       stream: true,
@@ -240,6 +272,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         case ChatActionType.updateMethod:
           await _applyMethodUpdate(action);
           break;
+        case ChatActionType.applyCurl:
+          await _applyCurl(action);
+          break;
         case ChatActionType.other:
           await _applyOtherAction(action);
           break;
@@ -375,6 +410,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       case 'test':
         await _applyTestToPostScript(action);
         break;
+      case 'httpRequestModel':
+        if (action.actionType == ChatActionType.applyCurl) {
+          await _applyCurl(action);
+          break;
+        }
+        // Unsupported other action
+        debugPrint('[Chat] Unsupported other action target: ${action.target}');
+        break;
       default:
         debugPrint('[Chat] Unsupported other action target: ${action.target}');
     }
@@ -386,14 +429,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
     final collectionNotifier =
         _ref.read(collectionStateNotifierProvider.notifier);
-    final testCode = action.value as String;
-
-    // Get the current post-request script (if any)
-    final currentRequest = _currentRequest;
-    final currentPostScript = currentRequest?.postRequestScript ?? '';
-
-    // Append the test code to the existing post-request script
-    final newPostScript = currentPostScript.isEmpty
+    final testCode = action.value is String ? action.value as String : '';
+    final currentPostScript = _currentRequest?.postRequestScript ?? '';
+    final newPostScript = currentPostScript.trim().isEmpty
         ? testCode
         : '$currentPostScript\n\n// Generated Test\n$testCode';
 
@@ -403,6 +441,131 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     _appendSystem(
         'Test code has been successfully added to the post-request script.',
         ChatMessageType.generateTest);
+  }
+
+  // Parse a pasted cURL and present actions to apply to current or new request
+  Future<void> handlePotentialCurlPaste(String text) async {
+    // quick check
+    final trimmed = text.trim();
+    if (!trimmed.startsWith('curl ')) return;
+    try {
+      debugPrint('[cURL] Original: $trimmed');
+      final curl = CurlImportService.tryParseCurl(trimmed);
+      if (curl == null) {
+        _appendSystem(
+            '{"explnation":"Sorry, I couldn\'t parse that cURL command. Please verify it starts with `curl ` and is complete.","actions":[]}',
+            ChatMessageType.importCurl);
+        return;
+      }
+      final built = CurlImportService.buildResponseFromParsed(curl);
+      final msg = jsonDecode(built.jsonMessage) as Map<String, dynamic>;
+      final rqId = _currentRequest?.id ?? 'global';
+      _addMessage(
+        rqId,
+        ChatMessage(
+          id: nanoid(),
+          content: jsonEncode(msg),
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importCurl,
+          actions: (msg['actions'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map(ChatAction.fromJson)
+              .toList(),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[cURL] Exception: $e');
+      final safe = e.toString().replaceAll('"', "'");
+      _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
+          ChatMessageType.importCurl);
+    }
+  }
+
+  Future<void> _applyCurl(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    final collection = _ref.read(collectionStateNotifierProvider.notifier);
+    final payload = action.value is Map<String, dynamic>
+        ? (action.value as Map<String, dynamic>)
+        : <String, dynamic>{};
+
+    String methodStr = (payload['method'] as String?)?.toLowerCase() ?? 'get';
+    final method = HTTPVerb.values.firstWhere(
+      (m) => m.name == methodStr,
+      orElse: () => HTTPVerb.get,
+    );
+    final url = payload['url'] as String? ?? '';
+
+    final headersMap =
+        (payload['headers'] as Map?)?.cast<String, dynamic>() ?? {};
+    final headers = headersMap.entries
+        .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
+        .toList();
+
+    final body = payload['body'] as String?;
+    final formFlag = payload['form'] == true;
+    final formDataListRaw = (payload['formData'] as List?)?.cast<dynamic>();
+    final formData = formDataListRaw == null
+        ? <FormDataModel>[]
+        : formDataListRaw
+            .whereType<Map>()
+            .map((e) => FormDataModel(
+                  name: (e['name'] as String?) ?? '',
+                  value: (e['value'] as String?) ?? '',
+                  type: (() {
+                    final t = (e['type'] as String?) ?? 'text';
+                    try {
+                      return FormDataType.values
+                          .firstWhere((ft) => ft.name == t);
+                    } catch (_) {
+                      return FormDataType.text;
+                    }
+                  })(),
+                ))
+            .toList();
+
+    ContentType bodyContentType;
+    if (formFlag || formData.isNotEmpty) {
+      bodyContentType = ContentType.formdata;
+    } else if ((body ?? '').trim().isEmpty) {
+      bodyContentType = ContentType.text;
+    } else {
+      // Heuristic JSON detection
+      try {
+        jsonDecode(body!);
+        bodyContentType = ContentType.json;
+      } catch (_) {
+        bodyContentType = ContentType.text;
+      }
+    }
+
+    if (action.field == 'apply_to_selected') {
+      if (requestId == null) return;
+      collection.update(
+        method: method,
+        url: url,
+        headers: headers,
+        isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        body: body,
+        bodyContentType: bodyContentType,
+        formData: formData.isEmpty ? null : formData,
+      );
+      _appendSystem(
+          'Applied cURL to the selected request.', ChatMessageType.importCurl);
+    } else if (action.field == 'apply_to_new') {
+      final model = HttpRequestModel(
+        method: method,
+        url: url,
+        headers: headers,
+        isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        body: body,
+        bodyContentType: bodyContentType,
+        formData: formData.isEmpty ? null : formData,
+      );
+      collection.addRequestModel(model, name: 'Imported cURL');
+      _appendSystem(
+          'Created a new request from the cURL.', ChatMessageType.importCurl);
+    }
   }
 
   // Helpers
@@ -553,6 +716,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             language: overrideLanguage,
           );
         }
+      case ChatMessageType.importCurl:
+        // No AI prompt needed; handled locally.
+        return null;
       case ChatMessageType.general:
         return prompts.generalInteractionPrompt();
     }

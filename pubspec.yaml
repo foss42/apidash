@@ -44,6 +44,8 @@ dependencies:
     path: packages/json_explorer
   json_field_editor:
     path: packages/json_field_editor
+  curl_parser:
+    path: packages/curl_parser
   just_audio: ^0.9.46
   just_audio_mpv: ^0.1.7
   just_audio_windows: ^0.2.0

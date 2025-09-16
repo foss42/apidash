@@ -58,7 +58,16 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                 },
               ),
               HomeScreenTaskButton(
-                label: "🔎 Explain me this response",
+                label: "📥 Import cURL",
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.importCurl,
+                  );
+                },
+              ),
+              HomeScreenTaskButton(
+                label: "�🔎 Explain me this response",
                 onPressed: () {
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
