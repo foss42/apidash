@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:seed/seed.dart';
 import '../utils/string.dart';
 
-const kHeaderContentType = "Content-Type";
+const kHeaderContentType = 'Content-Type';
 
 /// A representation of a cURL command in Dart.
 ///
@@ -50,38 +50,23 @@ class Curl extends Equatable {
   ///
   /// The `uri` parameter is required, while the remaining parameters are optional.
   Curl({
+    required this.method,
     required this.uri,
-    this.method = 'GET',
     this.headers,
     this.data,
     this.cookie,
     this.user,
     this.referer,
     this.userAgent,
-    this.formData,
     this.form = false,
+    this.formData,
     this.insecure = false,
     this.location = false,
-  }) {
-    assert(
-        ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'].contains(method));
-    assert(['http', 'https'].contains(uri.scheme));
-    assert(form ? formData != null : formData == null);
-  }
+  });
 
-  /// Parses [curlString] into a [Curl] class instance.
-  ///
-  /// Like [parse] except that this function returns `null` where a
-  /// similar call to [parse] would throw a throwable.
-  ///
-  /// Example:
-  /// ```dart
-  /// print(Curl.tryParse('curl -X GET https://www.example.com/')); // Curl(method: 'GET', url: 'https://www.example.com/')
-  /// print(Curl.tryParse('1f')); // null
-  /// ```
   static Curl? tryParse(String curlString) {
     try {
-      return Curl.parse(curlString);
+      return parse(curlString);
     } catch (_) {
       return null;
     }
@@ -97,66 +82,104 @@ class Curl extends Equatable {
   static Curl parse(String curlString) {
     final parser = ArgParser(allowTrailingOptions: true);
 
-    // TODO: Add more options
-    // https://gist.github.com/eneko/dc2d8edd9a4b25c5b0725dd123f98b10
-    // Define the expected options
     parser.addOption('url');
     parser.addOption('request', abbr: 'X');
     parser.addMultiOption('header', abbr: 'H', splitCommas: false);
-    parser.addOption('data', abbr: 'd');
+    parser.addMultiOption('data', abbr: 'd', splitCommas: false);
+    parser.addMultiOption('data-raw', splitCommas: false);
+    parser.addMultiOption('data-binary', splitCommas: false);
+    parser.addMultiOption('data-urlencode', splitCommas: false);
     parser.addOption('cookie', abbr: 'b');
+    parser.addOption('cookie-jar', abbr: 'c');
     parser.addOption('user', abbr: 'u');
+    parser.addOption('oauth2-bearer');
     parser.addOption('referer', abbr: 'e');
     parser.addOption('user-agent', abbr: 'A');
     parser.addFlag('head', abbr: 'I');
     parser.addMultiOption('form', abbr: 'F');
     parser.addFlag('insecure', abbr: 'k');
     parser.addFlag('location', abbr: 'L');
+    // Common non-request flags (ignored values)
+    parser.addFlag('silent', abbr: 's');
+    parser.addFlag('compressed');
+    parser.addOption('output', abbr: 'o');
+    parser.addFlag('include', abbr: 'i');
+    parser.addFlag('globoff');
+    // Additional flags often present in user commands; parsed and ignored
+    parser.addFlag('verbose', abbr: 'v');
+    parser.addOption('connect-timeout');
+    parser.addOption('retry');
 
     if (!curlString.startsWith('curl ')) {
       throw Exception("curlString doesn't start with 'curl '");
     }
 
-    final splittedCurlString =
-        splitAsCommandLineArgs(curlString.replaceFirst('curl ', ''));
+    final tokens = splitAsCommandLineArgs(curlString.replaceFirst('curl ', ''));
 
-    final result = parser.parse(splittedCurlString);
+    // Filter out unrecognized flags before parsing to avoid ArgParser errors
+    final recognizedOptions = parser.options.keys.toSet();
+    final recognizedAbbrs = parser.options.values
+        .where((opt) => opt.abbr != null)
+        .map((opt) => '-${opt.abbr}')
+        .toSet();
 
-    // Extract the request headers
+    final filteredTokens = <String>[];
+    for (var i = 0; i < tokens.length; i++) {
+      final token = tokens[i];
+
+      if (token.startsWith('--')) {
+        final name = token.split('=').first.substring(2);
+        if (recognizedOptions.contains(name)) {
+          filteredTokens.add(token);
+        } else {
+          // Drop unknown long option; keep following token as positional
+          continue;
+        }
+      } else if (token.startsWith('-') && token != '-') {
+        if (recognizedAbbrs.contains(token)) {
+          filteredTokens.add(token);
+        } else {
+          // Drop unknown short option
+          continue;
+        }
+      } else {
+        // Positional arg (likely URL)
+        filteredTokens.add(token);
+      }
+    }
+
+    final result = parser.parse(filteredTokens);
+
+    // Headers
     Map<String, String>? headers;
     if (result['header'] != null) {
       final List<String> headersList = result['header'];
-      if (headersList.isNotEmpty == true) {
+      if (headersList.isNotEmpty) {
         headers = <String, String>{};
-        for (var headerString in headersList) {
-          final splittedHeaderString = headerString.split(RegExp(r':\s*'));
-          if (splittedHeaderString.length > 2) {
-            headers.addAll({
-              splittedHeaderString[0]: splittedHeaderString.sublist(1).join(":")
-            });
-          } else if (splittedHeaderString.length < 2) {
-            throw Exception('Failed to split the `$headerString` header');
+        for (final headerString in headersList) {
+          final parts = headerString.split(RegExp(r':\s*'));
+          if (parts.length > 2) {
+            headers[parts.first] = parts.sublist(1).join(':');
+          } else if (parts.length == 2) {
+            headers[parts[0]] = parts[1];
           } else {
-            headers.addAll({splittedHeaderString[0]: splittedHeaderString[1]});
+            throw Exception('Failed to split the `$headerString` header');
           }
         }
       }
     }
 
-    // Parse form data
+    // Form data
     List<FormDataModel>? formData;
     if (result['form'] is List<String> &&
         (result['form'] as List<String>).isNotEmpty) {
       formData = <FormDataModel>[];
-      for (final formEntry in result['form']) {
-        final pairs = formEntry.split('=');
+      for (final entry in result['form']) {
+        final pairs = entry.split('=');
         if (pairs.length != 2) {
-          throw Exception(
-              'Form data entry $formEntry is not in key=value format');
+          throw Exception('Form data entry $entry is not in key=value format');
         }
-
-        // Handling the file or text type
-        var formDataModel = pairs[1].startsWith('@')
+        final model = pairs[1].startsWith('@')
             ? FormDataModel(
                 name: pairs[0],
                 value: pairs[1].substring(1),
@@ -167,36 +190,80 @@ class Curl extends Equatable {
                 value: pairs[1],
                 type: FormDataType.text,
               );
-
-        formData.add(formDataModel);
+        formData.add(model);
       }
       headers ??= <String, String>{};
       if (!(headers.containsKey(kHeaderContentType) ||
           headers.containsKey(kHeaderContentType.toLowerCase()))) {
-        headers[kHeaderContentType] = "multipart/form-data";
+        headers[kHeaderContentType] = 'multipart/form-data';
       }
     }
 
-    // Handle URL and query parameters
-    final url = clean(result['url']) ?? clean(result.rest.firstOrNull);
+    // URL
+    String? url = clean(result['url']);
+    if (url == null) {
+      // Prefer the first URL-like positional token, else fallback to first
+      String? firstUrlLike;
+      for (final tok in result.rest) {
+        final s = clean(tok);
+        if (s == null) continue;
+        final lower = s.toLowerCase();
+        if (lower.startsWith('http://') || lower.startsWith('https://')) {
+          firstUrlLike = s;
+          break;
+        }
+      }
+      url = firstUrlLike ?? clean(result.rest.firstOrNull);
+    }
     if (url == null) {
       throw Exception('URL is null');
     }
     final uri = Uri.parse(url);
 
-    final method = result['head']
+    // Method
+    String method = result['head']
         ? 'HEAD'
         : ((result['request'] as String?)?.toUpperCase() ?? 'GET');
-    final String? data = result['data'];
+
+    // Data (preserve order)
+    final List<String> dataPieces = [];
+    void addDataList(dynamic v) {
+      if (v is List<String>) dataPieces.addAll(v);
+      if (v is String) dataPieces.add(v);
+    }
+
+    addDataList(result['data-urlencode']);
+    addDataList(result['data-raw']);
+    addDataList(result['data-binary']);
+    addDataList(result['data']);
+    final String? data = dataPieces.isNotEmpty ? dataPieces.join('&') : null;
+
     final String? cookie = result['cookie'];
     final String? user = result['user'];
+    final String? oauth2Bearer = result['oauth2-bearer'];
     final String? referer = result['referer'];
     final String? userAgent = result['user-agent'];
     final bool form = formData != null && formData.isNotEmpty;
     final bool insecure = result['insecure'] ?? false;
     final bool location = result['location'] ?? false;
 
-    // Extract the request URL
+    // Apply oauth2-bearer to headers if present and no Authorization provided
+    if (oauth2Bearer != null && oauth2Bearer.isNotEmpty) {
+      headers ??= <String, String>{};
+      final hasAuthHeader =
+          headers.keys.any((k) => k.toLowerCase() == 'authorization');
+      if (!hasAuthHeader) {
+        headers['Authorization'] = 'Bearer $oauth2Bearer';
+      }
+    }
+
+    // Default method to POST if body/form present and no explicit method
+    if ((data != null || form) &&
+        result['request'] == null &&
+        !result['head']) {
+      method = 'POST';
+    }
+
     return Curl(
       method: method,
       uri: uri,
@@ -227,49 +294,52 @@ class Curl extends Equatable {
 
     // Add the URL
     cmd += '"${Uri.encodeFull(uri.toString())}" ';
-    // Add the headers
+
+    void appendCont(String seg) {
+      cmd += '\\';
+      cmd += '\n ' + seg + ' ';
+    }
+
+    // Headers
     headers?.forEach((key, value) {
-      cmd += '\\\n -H "$key: $value" ';
+      appendCont('-H "$key: $value"');
     });
 
-    // Add the body
-    if (data?.isNotEmpty == true) {
-      cmd += "\\\n -d '$data' ";
-    }
-    // Add the cookie
-    if (cookie?.isNotEmpty == true) {
-      cmd += "\\\n -b '$cookie' ";
-    }
-    // Add the user
-    if (user?.isNotEmpty == true) {
-      cmd += "\\\n -u '$user' ";
-    }
-    // Add the referer
-    if (referer?.isNotEmpty == true) {
-      cmd += "\\\n -e '$referer' ";
-    }
-    // Add the user-agent
-    if (userAgent?.isNotEmpty == true) {
-      cmd += "\\\n -A '$userAgent' ";
-    }
-    // Add the form flag
+    // Form entries after headers
     if (form) {
       for (final formEntry in formData!) {
-        cmd += "\\\n -F ";
-        if (formEntry.type == FormDataType.file) {
-          cmd += '"${formEntry.name}=@${formEntry.value}" ';
-        } else {
-          cmd += '"${formEntry.name}=${formEntry.value}" ';
-        }
+        final seg = formEntry.type == FormDataType.file
+            ? '-F "${formEntry.name}=@${formEntry.value}"'
+            : '-F "${formEntry.name}=${formEntry.value}"';
+        appendCont(seg);
       }
     }
-    // Add the insecure flag
-    if (insecure) {
-      cmd += "-k ";
+
+    // Body immediately after headers/form
+    if (data?.isNotEmpty == true) {
+      appendCont("-d '$data'");
     }
-    // Add the location flag
+
+    // Cookie / user / referer / UA
+    if (cookie?.isNotEmpty == true) {
+      appendCont("-b '$cookie'");
+    }
+    if (user?.isNotEmpty == true) {
+      appendCont("-u '$user'");
+    }
+    if (referer?.isNotEmpty == true) {
+      appendCont("-e '$referer'");
+    }
+    if (userAgent?.isNotEmpty == true) {
+      appendCont("-A '$userAgent'");
+    }
+
+    // Flags at end
+    if (insecure) {
+      cmd += '-k ';
+    }
     if (location) {
-      cmd += "-L ";
+      cmd += '-L ';
     }
 
     return cmd.trim();
