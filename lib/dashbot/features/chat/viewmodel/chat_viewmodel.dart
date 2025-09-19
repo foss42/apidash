@@ -7,11 +7,13 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
 import '../../../core/services/curl_import_service.dart';
+import '../../../core/services/openapi_import_service.dart';
 
 import '../../../core/utils/safe_parse_json_message.dart';
 import '../../../core/constants/dashbot_prompts.dart' as dash;
 import '../models/chat_models.dart';
 import '../repository/chat_remote_repository.dart';
+import '../providers/attachments_provider.dart';
 
 class ChatViewmodel extends StateNotifier<ChatState> {
   ChatViewmodel(this._ref) : super(const ChatState());
@@ -49,7 +51,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         '[Chat] sendMessage start: type=$type, countAsUser=$countAsUser');
     final ai = _selectedAIModel;
     if (text.trim().isEmpty && countAsUser) return;
-    if (ai == null && type != ChatMessageType.importCurl) {
+    if (ai == null &&
+        type != ChatMessageType.importCurl &&
+        type != ChatMessageType.importOpenApi) {
       debugPrint('[Chat] No AI model configured');
       _appendSystem(
         'AI model is not configured. Please set one.',
@@ -115,6 +119,40 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           messageType: ChatMessageType.importCurl,
         ),
       );
+      return;
+    } else if (type == ChatMessageType.importOpenApi) {
+      final rqId = _currentRequest?.id ?? 'global';
+      final uploadAction = ChatAction.fromJson({
+        'action': 'upload_asset',
+        'target': 'attachment',
+        'field': 'openapi_spec',
+        'path': null,
+        'value': {
+          'purpose': 'OpenAPI specification',
+          'accepted_types': [
+            'application/json',
+            'application/yaml',
+            'application/x-yaml',
+            'text/yaml',
+            'text/x-yaml'
+          ]
+        },
+      });
+      _addMessage(
+        rqId,
+        ChatMessage(
+          id: nanoid(),
+          content:
+              '{"explnation":"Upload your OpenAPI (JSON or YAML) specification or paste it here.","actions":[${jsonEncode(uploadAction.toJson())}]}',
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importOpenApi,
+          actions: [uploadAction],
+        ),
+      );
+      if (_looksLikeOpenApi(text)) {
+        await handlePotentialOpenApiPaste(text);
+      }
       return;
     } else {
       systemPrompt = _composeSystemPrompt(_currentRequest, type);
@@ -275,6 +313,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         case ChatActionType.applyCurl:
           await _applyCurl(action);
           break;
+        case ChatActionType.applyOpenApi:
+          await _applyOpenApi(action);
+          break;
         case ChatActionType.other:
           await _applyOtherAction(action);
           break;
@@ -415,11 +456,122 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           await _applyCurl(action);
           break;
         }
+        if (action.actionType == ChatActionType.applyOpenApi ||
+            action.field == 'select_operation') {
+          await _applyOpenApi(action);
+          break;
+        }
         // Unsupported other action
         debugPrint('[Chat] Unsupported other action target: ${action.target}');
         break;
       default:
         debugPrint('[Chat] Unsupported other action target: ${action.target}');
+    }
+  }
+
+  Future<void> _applyOpenApi(ChatAction action) async {
+    final requestId = _currentRequest?.id;
+    final collection = _ref.read(collectionStateNotifierProvider.notifier);
+    final payload = action.value is Map<String, dynamic>
+        ? (action.value as Map<String, dynamic>)
+        : <String, dynamic>{};
+
+    String methodStr = (payload['method'] as String?)?.toLowerCase() ?? 'get';
+    final method = HTTPVerb.values.firstWhere(
+      (m) => m.name == methodStr,
+      orElse: () => HTTPVerb.get,
+    );
+    final url = payload['url'] as String? ?? '';
+
+    final headersMap =
+        (payload['headers'] as Map?)?.cast<String, dynamic>() ?? {};
+    final headers = headersMap.entries
+        .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
+        .toList();
+
+    final body = payload['body'] as String?;
+    final formFlag = payload['form'] == true;
+    final formDataListRaw = (payload['formData'] as List?)?.cast<dynamic>();
+    final formData = formDataListRaw == null
+        ? <FormDataModel>[]
+        : formDataListRaw
+            .whereType<Map>()
+            .map((e) => FormDataModel(
+                  name: (e['name'] as String?) ?? '',
+                  value: (e['value'] as String?) ?? '',
+                  type: (() {
+                    final t = (e['type'] as String?) ?? 'text';
+                    try {
+                      return FormDataType.values
+                          .firstWhere((ft) => ft.name == t);
+                    } catch (_) {
+                      return FormDataType.text;
+                    }
+                  })(),
+                ))
+            .toList();
+
+    ContentType bodyContentType;
+    if (formFlag || formData.isNotEmpty) {
+      bodyContentType = ContentType.formdata;
+    } else if ((body ?? '').trim().isEmpty) {
+      bodyContentType = ContentType.text;
+    } else {
+      try {
+        jsonDecode(body!);
+        bodyContentType = ContentType.json;
+      } catch (_) {
+        bodyContentType = ContentType.text;
+      }
+    }
+
+    if (action.field == 'apply_to_selected') {
+      if (requestId == null) return;
+      collection.update(
+        method: method,
+        url: url,
+        headers: headers,
+        isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        body: body,
+        bodyContentType: bodyContentType,
+        formData: formData.isEmpty ? null : formData,
+      );
+      _appendSystem('Applied OpenAPI operation to the selected request.',
+          ChatMessageType.importOpenApi);
+    } else if (action.field == 'apply_to_new') {
+      final model = HttpRequestModel(
+        method: method,
+        url: url,
+        headers: headers,
+        isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        body: body,
+        bodyContentType: bodyContentType,
+        formData: formData.isEmpty ? null : formData,
+      );
+      collection.addRequestModel(model, name: 'Imported OpenAPI');
+      _appendSystem('Created a new request from the OpenAPI operation.',
+          ChatMessageType.importOpenApi);
+    } else if (action.field == 'select_operation') {
+      // Present apply options for the selected operation
+      final applyMsg = OpenApiImportService.buildActionMessageFromPayload(
+        payload,
+        title: 'Selected ${action.path}. Where should I apply it?',
+      );
+      final rqId = _currentRequest?.id ?? 'global';
+      _addMessage(
+        rqId,
+        ChatMessage(
+          id: nanoid(),
+          content: jsonEncode(applyMsg),
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importOpenApi,
+          actions: (applyMsg['actions'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map(ChatAction.fromJson)
+              .toList(),
+        ),
+      );
     }
   }
 
@@ -479,6 +631,54 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final safe = e.toString().replaceAll('"', "'");
       _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
           ChatMessageType.importCurl);
+    }
+  }
+
+  Future<void> handleOpenApiAttachment(ChatAttachment att) async {
+    try {
+      final content = utf8.decode(att.data);
+      await handlePotentialOpenApiPaste(content);
+    } catch (e) {
+      final safe = e.toString().replaceAll('"', "'");
+      _appendSystem(
+          '{"explnation":"Failed to read attachment: $safe","actions":[]}',
+          ChatMessageType.importOpenApi);
+    }
+  }
+
+  Future<void> handlePotentialOpenApiPaste(String text) async {
+    final trimmed = text.trim();
+    if (!_looksLikeOpenApi(trimmed)) return;
+    try {
+      debugPrint('[OpenAPI] Original length: ${trimmed.length}');
+      final spec = OpenApiImportService.tryParseSpec(trimmed);
+      if (spec == null) {
+        _appendSystem(
+            '{"explnation":"Sorry, I couldn\'t parse that OpenAPI spec. Ensure it\'s valid JSON or YAML.","actions":[]}',
+            ChatMessageType.importOpenApi);
+        return;
+      }
+      final picker = OpenApiImportService.buildOperationPicker(spec);
+      final rqId = _currentRequest?.id ?? 'global';
+      _addMessage(
+        rqId,
+        ChatMessage(
+          id: nanoid(),
+          content: jsonEncode(picker),
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importOpenApi,
+          actions: (picker['actions'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map(ChatAction.fromJson)
+              .toList(),
+        ),
+      );
+    } catch (e) {
+      debugPrint('[OpenAPI] Exception: $e');
+      final safe = e.toString().replaceAll('"', "'");
+      _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
+          ChatMessageType.importOpenApi);
     }
   }
 
@@ -719,6 +919,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       case ChatMessageType.importCurl:
         // No AI prompt needed; handled locally.
         return null;
+      case ChatMessageType.importOpenApi:
+        // No AI prompt needed; handled locally.
+        return null;
       case ChatMessageType.general:
         return prompts.generalInteractionPrompt();
     }
@@ -735,6 +938,21 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
     if (t.contains('curl')) return 'cURL';
     return null;
+  }
+
+  bool _looksLikeOpenApi(String text) {
+    final t = text.trim();
+    if (t.isEmpty) return false;
+    if (t.startsWith('{')) {
+      try {
+        final m = jsonDecode(t);
+        if (m is Map &&
+            (m.containsKey('openapi') || m.containsKey('swagger'))) {
+          return true;
+        }
+      } catch (_) {}
+    }
+    return t.contains('openapi:') || t.contains('swagger:');
   }
 }
 

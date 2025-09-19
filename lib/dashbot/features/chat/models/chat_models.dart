@@ -92,6 +92,7 @@ enum ChatMessageType {
   generateDoc,
   generateCode,
   importCurl,
+  importOpenApi,
   general
 }
 
@@ -106,6 +107,7 @@ enum ChatActionType {
   updateMethod,
   showLanguages,
   applyCurl,
+  applyOpenApi,
   other,
   noAction,
   uploadAsset,
@@ -139,6 +141,8 @@ ChatActionType _chatActionTypeFromString(String s) {
       return ChatActionType.showLanguages;
     case 'apply_curl':
       return ChatActionType.applyCurl;
+    case 'apply_openapi':
+      return ChatActionType.applyOpenApi;
     case 'upload_asset':
       return ChatActionType.uploadAsset;
     case 'no_action':
@@ -170,6 +174,8 @@ String chatActionTypeToString(ChatActionType t) {
       return 'show_languages';
     case ChatActionType.applyCurl:
       return 'apply_curl';
+    case ChatActionType.applyOpenApi:
+      return 'apply_openapi';
     case ChatActionType.other:
       return 'other';
     case ChatActionType.noAction:

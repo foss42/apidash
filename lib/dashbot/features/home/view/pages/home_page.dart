@@ -67,7 +67,16 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                 },
               ),
               HomeScreenTaskButton(
-                label: "�🔎 Explain me this response",
+                label: "📄 Import OpenAPI",
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.importOpenApi,
+                  );
+                },
+              ),
+              HomeScreenTaskButton(
+                label: "🔎 Explain me this response",
                 onPressed: () {
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,

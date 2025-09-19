@@ -45,12 +45,17 @@ class DashbotUploadRequestButton extends ConsumerWidget
               mimeType: file.mimeType ?? 'application/octet-stream',
               data: bytes,
             );
-        // Notify model via a user message to incorporate attachment context.
-        ref.read(chatViewmodelProvider.notifier).sendMessage(
-              text:
-                  'Attached file ${att.name} (id=${att.id}, mime=${att.mimeType}, size=${att.sizeBytes}). You can request its content if needed.',
-              type: ChatMessageType.general,
-            );
+        if (action.field == 'openapi_spec') {
+          await ref
+              .read(chatViewmodelProvider.notifier)
+              .handleOpenApiAttachment(att);
+        } else {
+          ref.read(chatViewmodelProvider.notifier).sendMessage(
+                text:
+                    'Attached file ${att.name} (id=${att.id}, mime=${att.mimeType}, size=${att.sizeBytes}). You can request its content if needed.',
+                type: ChatMessageType.general,
+              );
+        }
       },
     );
   }
@@ -95,12 +100,14 @@ class DashbotApplyCurlButton extends ConsumerWidget with DashbotActionMixin {
   final ChatAction action;
   const DashbotApplyCurlButton({super.key, required this.action});
 
-  String _labelForField(String? field) {
+  String _labelForField(String? field, String? path) {
     switch (field) {
       case 'apply_to_selected':
         return 'Apply to Selected';
       case 'apply_to_new':
         return 'Create New Request';
+      case 'select_operation':
+        return path == null || path.isEmpty ? 'Select Operation' : path;
       default:
         return 'Apply';
     }
@@ -108,7 +115,7 @@ class DashbotApplyCurlButton extends ConsumerWidget with DashbotActionMixin {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final label = _labelForField(action.field);
+    final label = _labelForField(action.field, action.path);
     return ElevatedButton(
       onPressed: () async {
         await ref.read(chatViewmodelProvider.notifier).applyAutoFix(action);
@@ -159,6 +166,52 @@ class DashbotGenerateLanguagePicker extends ConsumerWidget
   }
 }
 
+class DashbotApplyOpenApiButton extends ConsumerWidget with DashbotActionMixin {
+  @override
+  final ChatAction action;
+  const DashbotApplyOpenApiButton({super.key, required this.action});
+
+  String _labelForField(String? field) {
+    switch (field) {
+      case 'apply_to_selected':
+        return 'Apply to Selected';
+      case 'apply_to_new':
+        return 'Create New Request';
+      default:
+        return 'Apply';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final label = _labelForField(action.field);
+    return ElevatedButton(
+      onPressed: () async {
+        await ref.read(chatViewmodelProvider.notifier).applyAutoFix(action);
+      },
+      child: Text(label),
+    );
+  }
+}
+
+class DashbotSelectOperationButton extends ConsumerWidget
+    with DashbotActionMixin {
+  @override
+  final ChatAction action;
+  const DashbotSelectOperationButton({super.key, required this.action});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final operationName = action.path ?? 'Unknown';
+    return OutlinedButton(
+      onPressed: () async {
+        await ref.read(chatViewmodelProvider.notifier).applyAutoFix(action);
+      },
+      child: Text(operationName, style: const TextStyle(fontSize: 12)),
+    );
+  }
+}
+
 class DashbotGeneratedCodeBlock extends StatelessWidget
     with DashbotActionMixin {
   @override
@@ -193,6 +246,9 @@ class DashbotActionWidgetFactory {
   static Widget? build(ChatAction action) {
     switch (action.actionType) {
       case ChatActionType.other:
+        if (action.field == 'select_operation') {
+          return DashbotSelectOperationButton(action: action);
+        }
         if (action.targetType == ChatActionTarget.test) {
           return DashbotAddTestButton(action: action);
         }
@@ -207,6 +263,8 @@ class DashbotActionWidgetFactory {
         break;
       case ChatActionType.applyCurl:
         return DashbotApplyCurlButton(action: action);
+      case ChatActionType.applyOpenApi:
+        return DashbotApplyOpenApiButton(action: action);
       case ChatActionType.updateField:
       case ChatActionType.addHeader:
       case ChatActionType.updateHeader:
@@ -235,6 +293,9 @@ class DashbotActionWidgetFactory {
     }
     if (action.action == 'apply_curl') {
       return DashbotApplyCurlButton(action: action);
+    }
+    if (action.action == 'apply_openapi') {
+      return DashbotApplyOpenApiButton(action: action);
     }
     if (action.action.contains('update') ||
         action.action.contains('add') ||
