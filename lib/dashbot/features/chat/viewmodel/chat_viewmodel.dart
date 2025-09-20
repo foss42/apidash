@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/file_utils.dart';
+import '../../../core/model/chat_attachment.dart';
 import '../../../core/services/curl_import_service.dart';
 import '../../../core/services/openapi_import_service.dart';
 
@@ -12,7 +13,6 @@ import '../../../core/utils/safe_parse_json_message.dart';
 import '../../../core/constants/dashbot_prompts.dart' as dash;
 import '../models/chat_models.dart';
 import '../repository/chat_remote_repository.dart';
-import '../providers/attachments_provider.dart';
 import '../providers/service_providers.dart';
 
 class ChatViewmodel extends StateNotifier<ChatState> {

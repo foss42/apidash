@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../features/chat/models/chat_models.dart';
 import '../../../features/chat/viewmodel/chat_viewmodel.dart';
-import '../../../features/chat/providers/attachments_provider.dart';
+import '../../providers/attachments_provider.dart';
 import 'package:file_selector/file_selector.dart';
 import '../../services/openapi_import_service.dart';
 import '../../../features/chat/view/widgets/openapi_operation_picker_dialog.dart';
