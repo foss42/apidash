@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
 import '../../../core/services/curl_import_service.dart';
@@ -15,15 +13,14 @@ import '../../../core/constants/dashbot_prompts.dart' as dash;
 import '../models/chat_models.dart';
 import '../repository/chat_remote_repository.dart';
 import '../providers/attachments_provider.dart';
+import '../providers/service_providers.dart';
 
 class ChatViewmodel extends StateNotifier<ChatState> {
   ChatViewmodel(this._ref) : super(const ChatState());
 
   final Ref _ref;
-  StreamSubscription<String>? _sub;
 
   ChatRemoteRepository get _repo => _ref.read(chatRepositoryProvider);
-  // Currently selected request and AI model are read from app providers
   RequestModel? get _currentRequest => _ref.read(selectedRequestModelProvider);
   AIRequestModel? get _selectedAIModel {
     final json = _ref.read(settingsProvider).defaultAIModel;
@@ -80,7 +77,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     }
 
-    // If user pasted a cURL in import flow, handle locally without AI
     final lastSystemImport = existingMessages.lastWhere(
       (m) =>
           m.role == MessageRole.system &&
@@ -99,13 +95,15 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       return;
     }
 
+    final promptBuilder = _ref.read(promptBuilderProvider);
     String systemPrompt;
     if (type == ChatMessageType.generateCode) {
-      final detectedLang = _detectLanguageFromText(text);
-      systemPrompt = _composeSystemPrompt(
+      final detectedLang = promptBuilder.detectLanguage(text);
+      systemPrompt = promptBuilder.buildSystemPrompt(
         _currentRequest,
         type,
         overrideLanguage: detectedLang,
+        history: currentMessages,
       );
     } else if (type == ChatMessageType.importCurl) {
       final rqId = _currentRequest?.id ?? 'global';
@@ -156,7 +154,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
       return;
     } else {
-      systemPrompt = _composeSystemPrompt(_currentRequest, type);
+      systemPrompt = promptBuilder.buildSystemPrompt(
+        _currentRequest,
+        type,
+        history: currentMessages,
+      );
     }
     final userPrompt = (text.trim().isEmpty && !countAsUser)
         ? 'Please complete the task based on the provided context.'
@@ -164,129 +166,61 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final enriched = ai!.copyWith(
       systemPrompt: systemPrompt,
       userPrompt: userPrompt,
-      stream: true,
+      stream: false,
     );
     debugPrint(
         '[Chat] prompts prepared: system=${systemPrompt.length} chars, user=${userPrompt.length} chars');
 
-    // start stream
-    _sub?.cancel();
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
-    bool receivedAnyChunk = false;
-    _sub = _repo.streamChat(request: enriched).listen(
-      (chunk) {
-        receivedAnyChunk = true;
-        if (chunk.isEmpty) return;
-        debugPrint('[Chat] chunk(${chunk.length})');
-        state = state.copyWith(
-          currentStreamingResponse: state.currentStreamingResponse + (chunk),
-        );
-      },
-      onError: (e) {
-        debugPrint('[Chat] stream error: $e');
-        state = state.copyWith(isGenerating: false);
-        _appendSystem('Error: $e', type);
-      },
-      onDone: () async {
-        debugPrint(
-            '[Chat] stream done. total=${state.currentStreamingResponse.length}, anyChunk=$receivedAnyChunk');
-        if (state.currentStreamingResponse.isNotEmpty) {
-          List<ChatAction>? parsedActions;
-          try {
-            debugPrint(
-                '[Chat] Attempting to parse response: ${state.currentStreamingResponse}');
-            final Map<String, dynamic> parsed =
-                MessageJson.safeParse(state.currentStreamingResponse);
-            debugPrint('[Chat] Parsed JSON: $parsed');
-            if (parsed.containsKey('actions') && parsed['actions'] is List) {
-              parsedActions = (parsed['actions'] as List)
-                  .whereType<Map<String, dynamic>>()
-                  .map(ChatAction.fromJson)
-                  .toList();
-              debugPrint('[Chat] Parsed actions list: ${parsedActions.length}');
-            }
-            if (parsedActions == null || parsedActions.isEmpty) {
-              debugPrint('[Chat] No actions list found in response');
-            }
-          } catch (e) {
-            debugPrint('[Chat] Error parsing action: $e');
-            debugPrint('[Chat] Error details: ${e.toString()}');
-            // If parsing fails, continue without action
+    try {
+      final response = await _repo.sendChat(request: enriched);
+      if (response != null && response.isNotEmpty) {
+        List<ChatAction>? actions;
+        try {
+          debugPrint('[Chat] Parsing non-streaming response');
+          final Map<String, dynamic> parsed = MessageJson.safeParse(response);
+          if (parsed.containsKey('actions') && parsed['actions'] is List) {
+            actions = (parsed['actions'] as List)
+                .whereType<Map<String, dynamic>>()
+                .map(ChatAction.fromJson)
+                .toList();
+            debugPrint('[Chat] Parsed actions list: ${actions.length}');
           }
-
-          _addMessage(
-            requestId,
-            ChatMessage(
-              id: nanoid(),
-              content: state.currentStreamingResponse,
-              role: MessageRole.system,
-              timestamp: DateTime.now(),
-              messageType: type,
-              actions: parsedActions,
-            ),
-          );
-        } else if (!receivedAnyChunk) {
-          // Fallback to non-streaming request
-          debugPrint(
-              '[Chat] no streamed content; attempting non-streaming fallback');
-          try {
-            final fallback =
-                await _repo.sendChat(request: enriched.copyWith(stream: false));
-            if (fallback != null && fallback.isNotEmpty) {
-              List<ChatAction>? fallbackActions;
-              try {
-                final Map<String, dynamic> parsed =
-                    MessageJson.safeParse(fallback);
-                if (parsed.containsKey('actions') &&
-                    parsed['actions'] is List) {
-                  fallbackActions = (parsed['actions'] as List)
-                      .whereType<Map<String, dynamic>>()
-                      .map(ChatAction.fromJson)
-                      .toList();
-                }
-                if ((fallbackActions == null || fallbackActions.isEmpty)) {
-                  // no actions
-                }
-              } catch (e) {
-                debugPrint('[Chat] Fallback error parsing action: $e');
-              }
-
-              _addMessage(
-                requestId,
-                ChatMessage(
-                  id: nanoid(),
-                  content: fallback,
-                  role: MessageRole.system,
-                  timestamp: DateTime.now(),
-                  messageType: type,
-                  actions: fallbackActions,
-                ),
-              );
-            } else {
-              _appendSystem('No response received from the AI.', type);
-            }
-          } catch (err) {
-            debugPrint('[Chat] fallback error: $err');
-            _appendSystem('Error: $err', type);
-          }
+        } catch (e) {
+          debugPrint('[Chat] Error parsing action: $e');
         }
-        state = state.copyWith(
-          isGenerating: false,
-          currentStreamingResponse: '',
+
+        _addMessage(
+          requestId,
+          ChatMessage(
+            id: nanoid(),
+            content: response,
+            role: MessageRole.system,
+            timestamp: DateTime.now(),
+            messageType: type,
+            actions: actions,
+          ),
         );
-      },
-      cancelOnError: true,
-    );
+      } else {
+        _appendSystem('No response received from the AI.', type);
+      }
+    } catch (e) {
+      debugPrint('[Chat] sendChat error: $e');
+      _appendSystem('Error: $e', type);
+    } finally {
+      state = state.copyWith(
+        isGenerating: false,
+        currentStreamingResponse: '',
+      );
+    }
   }
 
   void cancel() {
-    _sub?.cancel();
     state = state.copyWith(isGenerating: false);
   }
 
- void clearCurrentChat() {
+  void clearCurrentChat() {
     final id = _currentRequest?.id ?? 'global';
-    _sub?.cancel();
     final newSessions = {...state.chatSessions};
     newSessions[id] = [];
     state = state.copyWith(
@@ -297,49 +231,20 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   Future<void> applyAutoFix(ChatAction action) async {
-    final requestId = _currentRequest?.id;
-    if (requestId == null) return;
-
     try {
-      switch (action.actionType) {
-        case ChatActionType.updateField:
-          await _applyFieldUpdate(action);
-          break;
-        case ChatActionType.addHeader:
-          await _applyHeaderUpdate(action, isAdd: true);
-          break;
-        case ChatActionType.updateHeader:
-          await _applyHeaderUpdate(action, isAdd: false);
-          break;
-        case ChatActionType.deleteHeader:
-          await _applyHeaderDelete(action);
-          break;
-        case ChatActionType.updateBody:
-          await _applyBodyUpdate(action);
-          break;
-        case ChatActionType.updateUrl:
-          await _applyUrlUpdate(action);
-          break;
-        case ChatActionType.updateMethod:
-          await _applyMethodUpdate(action);
-          break;
-        case ChatActionType.applyCurl:
-          await _applyCurl(action);
-          break;
-        case ChatActionType.applyOpenApi:
-          await _applyOpenApi(action);
-          break;
-        case ChatActionType.other:
-          await _applyOtherAction(action);
-          break;
-        case ChatActionType.showLanguages:
-          // UI handles selection;
-          break;
-        case ChatActionType.noAction:
-          break;
-        case ChatActionType.uploadAsset:
-          // Handled by UI upload button
-          break;
+      final msg = await _ref.read(autoFixServiceProvider).apply(action);
+      if (msg != null && msg.isNotEmpty) {
+        // Message type depends on action context; choose sensible defaults
+        final t = (action.actionType == ChatActionType.applyCurl)
+            ? ChatMessageType.importCurl
+            : (action.actionType == ChatActionType.applyOpenApi)
+                ? ChatMessageType.importOpenApi
+                : ChatMessageType.general;
+        _appendSystem(msg, t);
+      }
+      // Only target-specific 'other' actions remain here
+      if (action.actionType == ChatActionType.other) {
+        await _applyOtherAction(action);
       }
     } catch (e) {
       debugPrint('[Chat] Error applying auto-fix: $e');
@@ -347,114 +252,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
   }
 
-  Future<void> _applyFieldUpdate(ChatAction action) async {
-    final requestId = _currentRequest?.id;
-    if (requestId == null) return;
+  // Field/URL/Method/Body updates are handled by AutoFixService
 
-    final collectionNotifier =
-        _ref.read(collectionStateNotifierProvider.notifier);
+  // Header updates are now handled by AutoFixService
 
-    switch (action.field) {
-      case 'url':
-        collectionNotifier.update(url: action.value as String, id: requestId);
-        break;
-      case 'method':
-        final method = HTTPVerb.values.firstWhere(
-          (m) => m.name.toLowerCase() == (action.value as String).toLowerCase(),
-          orElse: () => HTTPVerb.get,
-        );
-        collectionNotifier.update(method: method, id: requestId);
-        break;
-      case 'params':
-        if (action.value is Map<String, dynamic>) {
-          final params = (action.value as Map<String, dynamic>)
-              .entries
-              .map(
-                  (e) => NameValueModel(name: e.key, value: e.value.toString()))
-              .toList();
-          final enabled = List<bool>.filled(params.length, true);
-          collectionNotifier.update(
-            params: params,
-            isParamEnabledList: enabled,
-            id: requestId,
-          );
-        }
-        break;
-    }
-  }
-
-  Future<void> _applyHeaderUpdate(ChatAction action,
-      {required bool isAdd}) async {
-    final requestId = _currentRequest?.id;
-    if (requestId == null || action.path == null) return;
-
-    final collectionNotifier =
-        _ref.read(collectionStateNotifierProvider.notifier);
-    final currentRequest = _currentRequest;
-    if (currentRequest?.httpRequestModel == null) return;
-
-    final headers = List<NameValueModel>.from(
-        currentRequest!.httpRequestModel!.headers ?? []);
-
-    if (isAdd) {
-      headers.add(
-          NameValueModel(name: action.path!, value: action.value as String));
-    } else {
-      final index = headers.indexWhere((h) => h.name == action.path);
-      if (index != -1) {
-        headers[index] = headers[index].copyWith(value: action.value as String);
-      }
-    }
-
-    collectionNotifier.update(headers: headers, id: requestId);
-  }
-
-  Future<void> _applyHeaderDelete(ChatAction action) async {
-    final requestId = _currentRequest?.id;
-    if (requestId == null || action.path == null) return;
-
-    final collectionNotifier =
-        _ref.read(collectionStateNotifierProvider.notifier);
-    final currentRequest = _currentRequest;
-    if (currentRequest?.httpRequestModel == null) return;
-
-    final headers = List<NameValueModel>.from(
-        currentRequest!.httpRequestModel!.headers ?? []);
-    headers.removeWhere((h) => h.name == action.path);
-
-    collectionNotifier.update(headers: headers, id: requestId);
-  }
-
-  Future<void> _applyBodyUpdate(ChatAction action) async {
-    final requestId = _currentRequest?.id;
-    if (requestId == null) return;
-
-    final collectionNotifier =
-        _ref.read(collectionStateNotifierProvider.notifier);
-    collectionNotifier.update(body: action.value as String, id: requestId);
-  }
-
-  Future<void> _applyUrlUpdate(ChatAction action) async {
-    final requestId = _currentRequest?.id;
-    if (requestId == null) return;
-
-    final collectionNotifier =
-        _ref.read(collectionStateNotifierProvider.notifier);
-    collectionNotifier.update(url: action.value as String, id: requestId);
-  }
-
-  Future<void> _applyMethodUpdate(ChatAction action) async {
-    final requestId = _currentRequest?.id;
-    if (requestId == null) return;
-
-    final collectionNotifier =
-        _ref.read(collectionStateNotifierProvider.notifier);
-    final method = HTTPVerb.values.firstWhere(
-      (m) => m.name.toLowerCase() == (action.value as String).toLowerCase(),
-      orElse: () => HTTPVerb.get,
-    );
-    collectionNotifier.update(method: method, id: requestId);
-  }
+  // Body/URL/Method updates handled by AutoFixService
 
   Future<void> _applyOtherAction(ChatAction action) async {
     final requestId = _currentRequest?.id;
@@ -864,148 +666,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     );
   }
 
-  String _composeSystemPrompt(
-    RequestModel? req,
-    ChatMessageType type, {
-    String? overrideLanguage,
-  }) {
-    final history = _buildHistoryBlock();
-    final contextBlock = _buildContextBlock(req);
-    final task =
-        _buildTaskPrompt(req, type, overrideLanguage: overrideLanguage);
-    return [
-      if (task != null) task,
-      if (contextBlock != null) contextBlock,
-      if (history.isNotEmpty) history,
-    ].join('\n\n');
-  }
-
-  String _buildHistoryBlock({int maxTurns = 8}) {
-    final id = _currentRequest?.id ?? 'global';
-    final messages = state.chatSessions[id] ?? const [];
-    if (messages.isEmpty) return '';
-    final start = messages.length > maxTurns ? messages.length - maxTurns : 0;
-    final recent = messages.sublist(start);
-    final buf = StringBuffer('''<conversation_context>
-	Only use the following short chat history to maintain continuity. Do not repeat it back.
-	''');
-    for (final m in recent) {
-      final role = m.role == MessageRole.user ? 'user' : 'assistant';
-      buf.writeln('- $role: ${m.content}');
-    }
-    buf.writeln('</conversation_context>');
-    return buf.toString();
-  }
-
-  String? _buildContextBlock(RequestModel? req) {
-    final http = req?.httpRequestModel;
-    if (req == null || http == null) return null;
-    final headers = http.headersMap.entries
-        .map((e) => '"${e.key}": "${e.value}"')
-        .join(', ');
-    return '''<request_context>
-  Request Name: ${req.name}
-	URL: ${http.url}
-	Method: ${http.method.name.toUpperCase()}
-  Status: ${req.responseStatus ?? ''}
-	Content-Type: ${http.bodyContentType.name}
-	Headers: { $headers }
-	Body: ${http.body ?? ''}
-  Response: ${req.httpResponseModel?.body ?? ''}
-	</request_context>''';
-  }
-
-  String? _buildTaskPrompt(RequestModel? req, ChatMessageType type,
-      {String? overrideLanguage}) {
-    if (req == null) return null;
-    final http = req.httpRequestModel;
-    final resp = req.httpResponseModel;
-    final prompts = dash.DashbotPrompts();
-    switch (type) {
-      case ChatMessageType.explainResponse:
-        return prompts.explainApiResponsePrompt(
-          url: http?.url,
-          method: http?.method.name.toUpperCase(),
-          responseStatus: req.responseStatus,
-          bodyContentType: http?.bodyContentType.name,
-          message: resp?.body,
-          headersMap: http?.headersMap,
-          body: http?.body,
-        );
-      case ChatMessageType.debugError:
-        return prompts.debugApiErrorPrompt(
-          url: http?.url,
-          method: http?.method.name.toUpperCase(),
-          responseStatus: req.responseStatus,
-          bodyContentType: http?.bodyContentType.name,
-          message: resp?.body,
-          headersMap: http?.headersMap,
-          body: http?.body,
-        );
-      case ChatMessageType.generateTest:
-        return prompts.generateTestCasesPrompt(
-          url: http?.url,
-          method: http?.method.name.toUpperCase(),
-          headersMap: http?.headersMap,
-          body: http?.body,
-        );
-      case ChatMessageType.generateDoc:
-        return prompts.generateDocumentationPrompt(
-          url: http?.url,
-          method: http?.method.name.toUpperCase(),
-          responseStatus: req.responseStatus,
-          bodyContentType: http?.bodyContentType.name,
-          message: resp?.body,
-          headersMap: http?.headersMap,
-          body: http?.body,
-        );
-      case ChatMessageType.generateCode:
-        // If a language is provided, go for code generation; else ask for language first
-        if (overrideLanguage == null || overrideLanguage.isEmpty) {
-          return prompts.codeGenerationIntroPrompt(
-            url: http?.url,
-            method: http?.method.name.toUpperCase(),
-            headersMap: http?.headersMap,
-            body: http?.body,
-            bodyContentType: http?.bodyContentType.name,
-            paramsMap: http?.paramsMap,
-            authType: http?.authModel?.type.name,
-          );
-        } else {
-          return prompts.generateCodePrompt(
-            url: http?.url,
-            method: http?.method.name.toUpperCase(),
-            headersMap: http?.headersMap,
-            body: http?.body,
-            bodyContentType: http?.bodyContentType.name,
-            paramsMap: http?.paramsMap,
-            authType: http?.authModel?.type.name,
-            language: overrideLanguage,
-          );
-        }
-      case ChatMessageType.importCurl:
-        // No AI prompt needed; handled locally.
-        return null;
-      case ChatMessageType.importOpenApi:
-        // No AI prompt needed; handled locally.
-        return null;
-      case ChatMessageType.general:
-        return prompts.generalInteractionPrompt();
-    }
-  }
-
-  // Very light heuristic to detect language keywords in user text
-  String? _detectLanguageFromText(String text) {
-    final t = text.toLowerCase();
-    if (t.contains('python')) return 'Python (requests)';
-    if (t.contains('dart')) return 'Dart (http)';
-    if (t.contains('golang') || t.contains('go ')) return 'Go (net/http)';
-    if (t.contains('javascript') || t.contains('js') || t.contains('fetch')) {
-      return 'JavaScript (fetch)';
-    }
-    if (t.contains('curl')) return 'cURL';
-    return null;
-  }
+  // Prompt helper methods moved to PromptBuilder service.
 
   bool _looksLikeOpenApi(String text) {
     final t = text.trim();
@@ -1022,56 +683,28 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     return t.contains('openapi:') || t.contains('swagger:');
   }
 
-  String _inferBaseUrl(String url) {
-    try {
-      final u = Uri.parse(url);
-      if (u.hasScheme && u.host.isNotEmpty) {
-        final portPart = (u.hasPort && u.port != 0) ? ':${u.port}' : '';
-        return '${u.scheme}://${u.host}$portPart';
-      }
-    } catch (_) {}
-    final m = RegExp(r'^(https?:\/\/[^\/]+)').firstMatch(url);
-    return m?.group(1) ?? '';
-  }
+  String _inferBaseUrl(String url) =>
+      _ref.read(urlEnvServiceProvider).inferBaseUrl(url);
 
   Future<String> _ensureBaseUrlEnv(String baseUrl) async {
-    if (baseUrl.isEmpty) return 'BASE_URL';
-    String host = 'API';
-    try {
-      final u = Uri.parse(baseUrl);
-      if (u.hasAuthority && u.host.isNotEmpty) host = u.host;
-    } catch (_) {}
-    final slug = host
-        .replaceAll(RegExp(r'[^A-Za-z0-9]+'), '_')
-        .replaceAll(RegExp(r'_+'), '_')
-        .replaceAll(RegExp(r'^_|_$'), '')
-        .toUpperCase();
-    final key = 'BASE_URL_$slug';
-
-    final envNotifier = _ref.read(environmentsStateNotifierProvider.notifier);
-    final envs = _ref.read(environmentsStateNotifierProvider);
-    String? activeId = _ref.read(activeEnvironmentIdStateProvider);
-    activeId ??= kGlobalEnvironmentId;
-    final envModel = envs?[activeId];
-
-    if (envModel != null) {
-      final exists = envModel.values.any((v) => v.key == key);
-      if (!exists) {
-        final values = [...envModel.values];
-        values.add(
-            EnvironmentVariableModel(key: key, value: baseUrl, enabled: true));
-        envNotifier.updateEnvironment(activeId, values: values);
-      }
-    }
-    return key;
+    final svc = _ref.read(urlEnvServiceProvider);
+    return svc.ensureBaseUrlEnv(
+      baseUrl,
+      readEnvs: () => _ref.read(environmentsStateNotifierProvider),
+      readActiveEnvId: () => _ref.read(activeEnvironmentIdStateProvider),
+      updateEnv: (id, {values}) => _ref
+          .read(environmentsStateNotifierProvider.notifier)
+          .updateEnvironment(id, values: values),
+    );
   }
 
   Future<String> _maybeSubstituteBaseUrl(String url, String baseUrl) async {
-    if (baseUrl.isEmpty || !url.startsWith(baseUrl)) return url;
-    final key = await _ensureBaseUrlEnv(baseUrl);
-    final path = url.substring(baseUrl.length);
-    final normalized = path.startsWith('/') ? path : '/$path';
-    return '{{$key}}$normalized';
+    final svc = _ref.read(urlEnvServiceProvider);
+    return svc.maybeSubstituteBaseUrl(
+      url,
+      baseUrl,
+      ensure: (b) => _ensureBaseUrlEnv(b),
+    );
   }
 }
 
