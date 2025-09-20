@@ -9,17 +9,27 @@ import 'package:flutter/material.dart';
 Route<dynamic>? generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case (DashbotRoutes.dashbotHome):
-      return MaterialPageRoute(builder: (context) => DashbotHomePage());
+      return MaterialPageRoute(
+        settings: const RouteSettings(name: DashbotRoutes.dashbotHome),
+        builder: (context) => DashbotHomePage(),
+      );
     case (DashbotRoutes.dashbotDefault):
-      return MaterialPageRoute(builder: (context) => DashbotDefaultPage());
+      return MaterialPageRoute(
+        settings: const RouteSettings(name: DashbotRoutes.dashbotDefault),
+        builder: (context) => DashbotDefaultPage(),
+      );
     case (DashbotRoutes.dashbotChat):
       final arg = settings.arguments;
       ChatMessageType? initialTask;
       if (arg is ChatMessageType) initialTask = arg;
       return MaterialPageRoute(
+        settings: const RouteSettings(name: DashbotRoutes.dashbotChat),
         builder: (context) => ChatScreen(initialTask: initialTask),
       );
     default:
-      return MaterialPageRoute(builder: (context) => DashbotDefaultPage());
+      return MaterialPageRoute(
+        settings: const RouteSettings(name: DashbotRoutes.dashbotDefault),
+        builder: (context) => DashbotDefaultPage(),
+      );
   }
 }

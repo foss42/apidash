@@ -37,11 +37,14 @@ class DashbotWindow extends ConsumerWidget {
 
     ref.listen(
       selectedRequestModelProvider,
-      (current, next) {
-        if (next?.responseStatus != null) {
-          _dashbotNavigatorKey.currentState?.pushNamed(
-            DashbotRoutes.dashbotHome,
-          );
+      (prev, next) {
+        if (prev?.id == next?.id) return;
+        final initial = _dashbotNavigatorKey.currentState?.widget.initialRoute;
+        final atRoot = _dashbotNavigatorKey.currentState?.canPop() == false;
+        // Only push when navigator started on Default and is still at root
+        if (initial == DashbotRoutes.dashbotDefault && atRoot) {
+          _dashbotNavigatorKey.currentState
+              ?.pushNamed(DashbotRoutes.dashbotHome);
         }
       },
     );

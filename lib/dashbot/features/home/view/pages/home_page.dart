@@ -21,7 +21,11 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   @override
   Widget build(BuildContext context) {
-    final currentRequest = ref.watch(selectedRequestModelProvider);
+    final hasOkResponse = ref.watch(
+      selectedRequestModelProvider.select((req) =>
+          req?.httpResponseModel?.statusCode != null &&
+          req?.httpResponseModel?.statusCode == 200),
+    );
 
     // ref.listen(
     //   selectedRequestModelProvider,
@@ -120,8 +124,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                   );
                 },
               ),
-              if (currentRequest?.httpResponseModel?.statusCode != null &&
-                  currentRequest?.httpResponseModel?.statusCode == 200) ...[
+              if (hasOkResponse) ...[
                 HomeScreenTaskButton(
                   label: "🛠️ Generate Tool",
                   onPressed: () {

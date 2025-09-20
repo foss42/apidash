@@ -30,20 +30,23 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
     ref.listen(
       selectedRequestModelProvider,
       (prev, next) {
-        if (next?.responseStatus != null) {
+        if (prev?.id == next?.id) return;
+        final initial = _navKey.currentState?.widget.initialRoute;
+        final atRoot = _navKey.currentState?.canPop() == false;
+        if (initial == DashbotRoutes.dashbotDefault && atRoot) {
           _navKey.currentState?.pushNamed(DashbotRoutes.dashbotHome);
         }
       },
     );
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
         final canPop = _navKey.currentState?.canPop() ?? false;
         if (canPop) {
           _navKey.currentState?.pop();
-          return false;
         }
-        return true;
       },
       child: Padding(
         padding: kP10,

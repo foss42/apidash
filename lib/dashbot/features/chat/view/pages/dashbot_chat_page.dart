@@ -34,14 +34,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ref.listen(
-    //   selectedRequestModelProvider,
-    //   (current, next) {
-    //     if (current?.id != next?.id) {
-    //       Navigator.pop(context);
-    //     }
-    //   },
-    // );
     return Scaffold(
       body: Column(
         children: [

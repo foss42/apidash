@@ -6,11 +6,7 @@ import '../providers/dashbot_window_notifier.dart';
 
 /// Optionally pass provider overrides (e.g., dashbotRequestContextProvider)
 /// so the host app can feed live context into Dashbot.
-void showDashbotWindow(
-  BuildContext context,
-  WidgetRef ref, {
-  List<Override>? overrides,
-}) {
+void showDashbotWindow(BuildContext context, WidgetRef ref) {
   final isDashbotActive = ref.read(dashbotWindowNotifierProvider).isActive;
   final isDashbotPopped = ref.read(dashbotWindowNotifierProvider).isPopped;
   final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
@@ -21,7 +17,6 @@ void showDashbotWindow(
 
   entry = OverlayEntry(
     builder: (context) => ProviderScope(
-      overrides: overrides ?? const [],
       child: DashbotWindow(
         onClose: () {
           entry?.remove();
