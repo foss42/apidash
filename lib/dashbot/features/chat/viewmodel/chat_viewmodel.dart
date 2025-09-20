@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
-import 'package:nanoid/nanoid.dart';
+import 'package:apidash/utils/file_utils.dart';
 import '../../../core/services/curl_import_service.dart';
 import '../../../core/services/openapi_import_service.dart';
 
@@ -68,7 +68,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _addMessage(
         requestId,
         ChatMessage(
-          id: nanoid(),
+          id: getNewUuid(),
           content: text,
           role: MessageRole.user,
           timestamp: DateTime.now(),
@@ -110,7 +110,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _addMessage(
         rqId,
         ChatMessage(
-          id: nanoid(),
+          id: getNewUuid(),
           content:
               '{"explnation":"Let\'s import a cURL request. Paste your complete cURL command below.","actions":[]}',
           role: MessageRole.system,
@@ -140,7 +140,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _addMessage(
         rqId,
         ChatMessage(
-          id: nanoid(),
+          id: getNewUuid(),
           content:
               '{"explnation":"Upload your OpenAPI (JSON or YAML) specification or paste it here.","actions":[${jsonEncode(uploadAction.toJson())}]}',
           role: MessageRole.system,
@@ -193,7 +193,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         _addMessage(
           requestId,
           ChatMessage(
-            id: nanoid(),
+            id: getNewUuid(),
             content: response,
             role: MessageRole.system,
             timestamp: DateTime.now(),
@@ -392,7 +392,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _addMessage(
         rqId,
         ChatMessage(
-          id: nanoid(),
+          id: getNewUuid(),
           content: jsonEncode(applyMsg),
           role: MessageRole.system,
           timestamp: DateTime.now(),
@@ -446,7 +446,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _addMessage(
         rqId,
         ChatMessage(
-          id: nanoid(),
+          id: getNewUuid(),
           content: jsonEncode(msg),
           role: MessageRole.system,
           timestamp: DateTime.now(),
@@ -529,7 +529,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _addMessage(
         rqId,
         ChatMessage(
-          id: nanoid(),
+          id: getNewUuid(),
           content: jsonEncode(picker),
           role: MessageRole.system,
           timestamp: DateTime.now(),
@@ -657,7 +657,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     _addMessage(
       id,
       ChatMessage(
-        id: nanoid(),
+        id: getNewUuid(),
         content: text,
         role: MessageRole.system,
         timestamp: DateTime.now(),

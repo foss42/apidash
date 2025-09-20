@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nanoid/nanoid.dart';
+import 'package:apidash/utils/file_utils.dart';
 
 class ChatAttachment {
   final String id;
@@ -38,7 +38,7 @@ class AttachmentsNotifier extends StateNotifier<AttachmentsState> {
     required Uint8List data,
   }) {
     final att = ChatAttachment(
-      id: nanoid(),
+      id: getNewUuid(),
       name: name,
       mimeType: mimeType,
       sizeBytes: data.length,
