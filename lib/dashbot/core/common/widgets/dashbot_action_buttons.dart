@@ -4,6 +4,9 @@ import '../../../features/chat/models/chat_models.dart';
 import '../../../features/chat/viewmodel/chat_viewmodel.dart';
 import '../../../features/chat/providers/attachments_provider.dart';
 import 'package:file_selector/file_selector.dart';
+import '../../services/openapi_import_service.dart';
+import '../../../features/chat/view/widgets/openapi_operation_picker_dialog.dart';
+import 'package:openapi_spec/openapi_spec.dart';
 
 /// Base mixin for action widgets.
 mixin DashbotActionMixin {
@@ -212,6 +215,65 @@ class DashbotSelectOperationButton extends ConsumerWidget
   }
 }
 
+class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
+  @override
+  final ChatAction action;
+  const DashbotImportNowButton({super.key, required this.action});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FilledButton.icon(
+      icon: const Icon(Icons.playlist_add_check, size: 16),
+      label: const Text('Import Now'),
+      onPressed: () async {
+        try {
+          OpenApi? spec;
+          String? sourceName;
+          if (action.value is Map<String, dynamic>) {
+            final map = action.value as Map<String, dynamic>;
+            sourceName = map['sourceName'] as String?;
+            if (map['spec'] is OpenApi) {
+              spec = map['spec'] as OpenApi;
+            } else if (map['content'] is String) {
+              spec =
+                  OpenApiImportService.tryParseSpec(map['content'] as String);
+            }
+          }
+          if (spec == null) return;
+
+          final servers = spec.servers ?? const [];
+          final baseUrl = servers.isNotEmpty ? (servers.first.url ?? '/') : '/';
+
+          final selected = await showOpenApiOperationPickerDialog(
+            context: context,
+            spec: spec,
+            sourceName: sourceName,
+          );
+          if (selected == null || selected.isEmpty) return;
+
+          final notifier = ref.read(chatViewmodelProvider.notifier);
+          for (final s in selected) {
+            final payload = OpenApiImportService.payloadForOperation(
+              baseUrl: baseUrl,
+              path: s.path,
+              method: s.method,
+              op: s.op,
+            );
+            await notifier.applyAutoFix(ChatAction.fromJson({
+              'action': 'apply_openapi',
+              'actionType': 'apply_openapi',
+              'target': 'httpRequestModel',
+              'targetType': 'httpRequestModel',
+              'field': 'apply_to_new',
+              'value': payload,
+            }));
+          }
+        } catch (_) {}
+      },
+    );
+  }
+}
+
 class DashbotGeneratedCodeBlock extends StatelessWidget
     with DashbotActionMixin {
   @override
@@ -246,6 +308,9 @@ class DashbotActionWidgetFactory {
   static Widget? build(ChatAction action) {
     switch (action.actionType) {
       case ChatActionType.other:
+        if (action.action == 'import_now_openapi') {
+          return DashbotImportNowButton(action: action);
+        }
         if (action.field == 'select_operation') {
           return DashbotSelectOperationButton(action: action);
         }
@@ -265,6 +330,12 @@ class DashbotActionWidgetFactory {
         return DashbotApplyCurlButton(action: action);
       case ChatActionType.applyOpenApi:
         return DashbotApplyOpenApiButton(action: action);
+      case ChatActionType.noAction:
+        // If downstream requests, render an Import Now for OpenAPI contexts
+        if (action.action == 'import_now_openapi') {
+          return DashbotImportNowButton(action: action);
+        }
+        return null;
       case ChatActionType.updateField:
       case ChatActionType.addHeader:
       case ChatActionType.updateHeader:
@@ -273,8 +344,7 @@ class DashbotActionWidgetFactory {
       case ChatActionType.updateUrl:
       case ChatActionType.updateMethod:
         return DashbotAutoFixButton(action: action);
-      case ChatActionType.noAction:
-        return null;
+
       case ChatActionType.uploadAsset:
         if (action.targetType == ChatActionTarget.attachment) {
           return DashbotUploadRequestButton(action: action);

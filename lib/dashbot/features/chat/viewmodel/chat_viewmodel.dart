@@ -4,6 +4,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:nanoid/nanoid.dart';
 import '../../../core/services/curl_import_service.dart';
@@ -482,6 +483,20 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       orElse: () => HTTPVerb.get,
     );
     final url = payload['url'] as String? ?? '';
+    final baseUrl = payload['baseUrl'] as String? ?? _inferBaseUrl(url);
+    // Derive a human-readable route path for naming
+    String routePath;
+    if (baseUrl.isNotEmpty && url.startsWith(baseUrl)) {
+      routePath = url.substring(baseUrl.length);
+    } else {
+      try {
+        final u = Uri.parse(url);
+        routePath = u.path.isEmpty ? '/' : u.path;
+      } catch (_) {
+        routePath = url;
+      }
+    }
+    if (!routePath.startsWith('/')) routePath = '/$routePath';
 
     final headersMap =
         (payload['headers'] as Map?)?.cast<String, dynamic>() ?? {};
@@ -525,11 +540,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
     }
 
+    final withEnvUrl = await _maybeSubstituteBaseUrl(url, baseUrl);
     if (action.field == 'apply_to_selected') {
       if (requestId == null) return;
       collection.update(
         method: method,
-        url: url,
+        url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
         body: body,
@@ -541,14 +557,15 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } else if (action.field == 'apply_to_new') {
       final model = HttpRequestModel(
         method: method,
-        url: url,
+        url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
       );
-      collection.addRequestModel(model, name: 'Imported OpenAPI');
+      final displayName = '${method.name.toUpperCase()} $routePath';
+      collection.addRequestModel(model, name: displayName);
       _appendSystem('Created a new request from the OpenAPI operation.',
           ChatMessageType.importOpenApi);
     } else if (action.field == 'select_operation') {
@@ -674,6 +691,16 @@ class ChatViewmodel extends StateNotifier<ChatState> {
               .toList(),
         ),
       );
+      // If meta summary is present, generate insights via AI
+      try {
+        final meta = picker['meta'];
+        final summary = (meta is Map && meta['openapi_summary'] is String)
+            ? meta['openapi_summary'] as String
+            : '';
+        if (summary.isNotEmpty) {
+          await _generateOpenApiInsights(summary);
+        }
+      } catch (_) {}
     } catch (e) {
       debugPrint('[OpenAPI] Exception: $e');
       final safe = e.toString().replaceAll('"', "'");
@@ -695,6 +722,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       orElse: () => HTTPVerb.get,
     );
     final url = payload['url'] as String? ?? '';
+    final baseUrl = _inferBaseUrl(url);
 
     final headersMap =
         (payload['headers'] as Map?)?.cast<String, dynamic>() ?? {};
@@ -739,11 +767,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
     }
 
+    final withEnvUrl = await _maybeSubstituteBaseUrl(url, baseUrl);
     if (action.field == 'apply_to_selected') {
       if (requestId == null) return;
       collection.update(
         method: method,
-        url: url,
+        url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
         body: body,
@@ -755,7 +784,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } else if (action.field == 'apply_to_new') {
       final model = HttpRequestModel(
         method: method,
-        url: url,
+        url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
         body: body,
@@ -953,6 +982,81 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       } catch (_) {}
     }
     return t.contains('openapi:') || t.contains('swagger:');
+  }
+
+  String _inferBaseUrl(String url) {
+    try {
+      final u = Uri.parse(url);
+      if (u.hasScheme && u.host.isNotEmpty) {
+        final portPart = (u.hasPort && u.port != 0) ? ':${u.port}' : '';
+        return '${u.scheme}://${u.host}$portPart';
+      }
+    } catch (_) {}
+    final m = RegExp(r'^(https?:\/\/[^\/]+)').firstMatch(url);
+    return m?.group(1) ?? '';
+  }
+
+  Future<String> _ensureBaseUrlEnv(String baseUrl) async {
+    if (baseUrl.isEmpty) return 'BASE_URL';
+    String host = 'API';
+    try {
+      final u = Uri.parse(baseUrl);
+      if (u.hasAuthority && u.host.isNotEmpty) host = u.host;
+    } catch (_) {}
+    final slug = host
+        .replaceAll(RegExp(r'[^A-Za-z0-9]+'), '_')
+        .replaceAll(RegExp(r'_+'), '_')
+        .replaceAll(RegExp(r'^_|_$'), '')
+        .toUpperCase();
+    final key = 'BASE_URL_$slug';
+
+    final envNotifier = _ref.read(environmentsStateNotifierProvider.notifier);
+    final envs = _ref.read(environmentsStateNotifierProvider);
+    String? activeId = _ref.read(activeEnvironmentIdStateProvider);
+    activeId ??= kGlobalEnvironmentId;
+    final envModel = envs?[activeId];
+
+    if (envModel != null) {
+      final exists = envModel.values.any((v) => v.key == key);
+      if (!exists) {
+        final values = [...envModel.values];
+        values.add(
+            EnvironmentVariableModel(key: key, value: baseUrl, enabled: true));
+        envNotifier.updateEnvironment(activeId, values: values);
+      }
+    }
+    return key;
+  }
+
+  Future<String> _maybeSubstituteBaseUrl(String url, String baseUrl) async {
+    if (baseUrl.isEmpty || !url.startsWith(baseUrl)) return url;
+    final key = await _ensureBaseUrlEnv(baseUrl);
+    final path = url.substring(baseUrl.length);
+    final normalized = path.startsWith('/') ? path : '/$path';
+    return '{{$key}}$normalized';
+  }
+
+  Future<void> _generateOpenApiInsights(String summary) async {
+    final ai = _selectedAIModel;
+    if (ai == null) return;
+    try {
+      final sys = dash.DashbotPrompts().openApiInsightsPrompt(
+        specSummary: summary,
+      );
+      final res = await _repo.sendChat(
+        request: ai.copyWith(
+          systemPrompt: sys,
+          userPrompt:
+              'Provide concise, actionable insights about these endpoints.',
+          stream: false,
+        ),
+      );
+      if (res != null && res.isNotEmpty) {
+        _appendSystem(res, ChatMessageType.importOpenApi);
+      }
+    } catch (e) {
+      debugPrint('[Chat] Insights error: $e');
+    }
   }
 }
 

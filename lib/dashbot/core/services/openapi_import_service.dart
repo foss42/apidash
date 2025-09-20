@@ -85,12 +85,27 @@ class OpenApiImportService {
     return {
       'method': method.toUpperCase(),
       'url': url,
+      'baseUrl': baseUrl,
       'headers': headers,
       'body': body,
       'form': isForm,
       'formData': formData,
     };
   }
+
+  /// Public wrapper to build a request payload for a given operation.
+  static Map<String, dynamic> payloadForOperation({
+    required String baseUrl,
+    required String path,
+    required String method,
+    required Operation op,
+  }) =>
+      _payloadForOperation(
+        baseUrl: baseUrl,
+        path: path,
+        method: method,
+        op: op,
+      );
 
   /// Build an action message asking whether to apply to selected/new
   /// for a single chosen operation.
@@ -121,15 +136,12 @@ class OpenApiImportService {
   }
 
   /// Build a list of operations from the spec, and if multiple are found,
-  /// return a JSON with explnation and an actions array of type "other"
-  /// where each action value holds an actionPayload for that operation and
-  /// path/method in the path field for UI display. The Chat model will emit
-  /// a follow-up message once the user picks one.
+  /// return a JSON with a single "Import Now" style action to open
+  /// a selection dialog in the UI, avoiding rendering dozens of buttons.
   static Map<String, dynamic> buildOperationPicker(OpenApi spec) {
     final servers = spec.servers ?? const [];
-    final baseUrl = servers.isNotEmpty ? (servers.first.url ?? '/') : '/';
-    final actions = <Map<String, dynamic>>[];
-
+    int endpointsCount = 0;
+    final methods = <String>{};
     (spec.paths ?? const {}).forEach((path, item) {
       final ops = <String, Operation?>{
         'GET': item.get,
@@ -143,23 +155,12 @@ class OpenApiImportService {
       };
       ops.forEach((method, op) {
         if (op == null) return;
-        final payload = _payloadForOperation(
-          baseUrl: baseUrl,
-          path: path,
-          method: method,
-          op: op,
-        );
-        actions.add({
-          'action': 'other',
-          'target': 'httpRequestModel',
-          'field': 'select_operation',
-          'path': '$method $path',
-          'value': payload,
-        });
+        endpointsCount += 1;
+        methods.add(method);
       });
     });
 
-    if (actions.isEmpty) {
+    if (endpointsCount == 0) {
       return {
         'explnation':
             'No operations found in the OpenAPI spec. Please check the file.',
@@ -167,10 +168,33 @@ class OpenApiImportService {
       };
     }
 
+    // Build a short spec summary for downstream insights prompt
+    final title = spec.info.title.isNotEmpty ? spec.info.title : 'Untitled API';
+    final version = spec.info.version;
+    final server = servers.isNotEmpty ? servers.first.url : null;
+    final summary = StringBuffer()
+      ..writeln('- Title: $title (v$version)')
+      ..writeln('- Server: ${server ?? '/'}')
+      ..writeln('- Endpoints discovered: $endpointsCount')
+      ..writeln('- Methods: ${methods.join(', ')}');
+
     return {
-      'explnation':
-          'OpenAPI parsed. Select an operation to import as a request:',
-      'actions': actions,
+      'explnation': 'OpenAPI parsed. Click Import Now to choose operations.',
+      'actions': [
+        {
+          'action': 'import_now_openapi',
+          'target': 'httpRequestModel',
+          'field': '',
+          'path': null,
+          'value': {
+            'spec': spec,
+            'sourceName': title,
+          }
+        }
+      ],
+      'meta': {
+        'openapi_summary': summary.toString(),
+      }
     };
   }
 }
