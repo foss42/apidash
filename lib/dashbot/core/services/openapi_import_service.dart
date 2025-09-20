@@ -4,6 +4,132 @@ import 'package:openapi_spec/openapi_spec.dart';
 /// Service to parse OpenAPI specifications and produce
 /// a standard action message map understood by Dashbot.
 class OpenApiImportService {
+  /// Produce a concise, human-readable summary for a spec.
+  static String summaryForSpec(OpenApi spec) {
+    final servers = spec.servers ?? const [];
+    int endpointsCount = 0;
+    final methods = <String>{};
+    (spec.paths ?? const {}).forEach((_, item) {
+      final ops = <String, Operation?>{
+        'GET': item.get,
+        'POST': item.post,
+        'PUT': item.put,
+        'DELETE': item.delete,
+        'PATCH': item.patch,
+        'HEAD': item.head,
+        'OPTIONS': item.options,
+        'TRACE': item.trace,
+      };
+      ops.forEach((m, op) {
+        if (op == null) return;
+        endpointsCount += 1;
+        methods.add(m);
+      });
+    });
+
+    final title = spec.info.title.isNotEmpty ? spec.info.title : 'Untitled API';
+    final version = spec.info.version;
+    final server = servers.isNotEmpty ? servers.first.url : null;
+    final summary = StringBuffer()
+      ..writeln('- Title: $title (v$version)')
+      ..writeln('- Server: ${server ?? '/'}')
+      ..writeln('- Endpoints discovered: $endpointsCount')
+      ..writeln('- Methods: ${methods.join(', ')}');
+    return summary.toString();
+  }
+
+  /// Extract structured metadata from an OpenAPI spec for analytics/insights.
+  /// Returns a JSON-serializable map capturing key details like title, version,
+  /// servers, total endpoints, methods, tags and a concise list of routes.
+  static Map<String, dynamic> extractSpecMeta(OpenApi spec,
+      {int maxRoutes = 40}) {
+    final servers = (spec.servers ?? const [])
+        .map((s) => s.url)
+        .where((u) => (u ?? '').trim().isNotEmpty)
+        .map((u) => u!)
+        .toList(growable: false);
+    final title = spec.info.title.isNotEmpty ? spec.info.title : 'Untitled API';
+    final version = spec.info.version;
+
+    int endpointsCount = 0;
+    final methods = <String>{};
+    final tags = <String>{};
+    final routes = <Map<String, dynamic>>[];
+    final reqContentTypes = <String>{};
+    final respContentTypes = <String>{};
+
+    (spec.paths ?? const {}).forEach((path, item) {
+      final ops = <String, Operation?>{
+        'GET': item.get,
+        'POST': item.post,
+        'PUT': item.put,
+        'DELETE': item.delete,
+        'PATCH': item.patch,
+        'HEAD': item.head,
+        'OPTIONS': item.options,
+        'TRACE': item.trace,
+      };
+      final presentMethods = <String>[];
+      ops.forEach((method, op) {
+        if (op == null) return;
+        endpointsCount += 1;
+        methods.add(method);
+        presentMethods.add(method);
+        // tags
+        for (final t in op.tags ?? const []) {
+          final tt = t?.trim() ?? '';
+          if (tt.isNotEmpty) tags.add(tt);
+        }
+        // content types
+        final reqCts = op.requestBody?.content?.keys;
+        if (reqCts != null) reqContentTypes.addAll(reqCts);
+        final resps = op.responses ?? const {};
+        for (final r in resps.values) {
+          final ct = r.content?.keys;
+          if (ct != null) respContentTypes.addAll(ct);
+        }
+      });
+      if (presentMethods.isNotEmpty) {
+        routes.add({
+          'path': path,
+          'methods': presentMethods,
+        });
+      }
+    });
+
+    // Heuristic noteworthy route detection
+    final noteworthy = routes
+        .where((r) {
+          final p = (r['path'] as String).toLowerCase();
+          return p.contains('auth') ||
+              p.contains('login') ||
+              p.contains('status') ||
+              p.contains('health') ||
+              p.contains('user') ||
+              p.contains('search');
+        })
+        .take(10)
+        .toList();
+
+    // Trim routes list to keep payload light
+    final trimmedRoutes =
+        routes.length > maxRoutes ? routes.take(maxRoutes).toList() : routes;
+
+    return {
+      'title': title,
+      'version': version,
+      'servers': servers,
+      'baseUrl': servers.isNotEmpty ? servers.first : null,
+      'endpointsCount': endpointsCount,
+      'methods': methods.toList()..sort(),
+      'tags': tags.toList()..sort(),
+      'routes': trimmedRoutes,
+      'noteworthyRoutes': noteworthy,
+      'requestContentTypes': reqContentTypes.toList()..sort(),
+      'responseContentTypes': respContentTypes.toList()..sort(),
+    };
+  }
+
   /// Try to parse a JSON or YAML OpenAPI spec string.
   /// Returns null if parsing fails.
   static OpenApi? tryParseSpec(String source) {
@@ -135,10 +261,8 @@ class OpenApiImportService {
     };
   }
 
-  /// Build a list of operations from the spec, and if multiple are found,
-  /// return a JSON with a single "Import Now" style action to open
-  /// a selection dialog in the UI, avoiding rendering dozens of buttons.
-  static Map<String, dynamic> buildOperationPicker(OpenApi spec) {
+  static Map<String, dynamic> buildOperationPicker(OpenApi spec,
+      {String? insights}) {
     final servers = spec.servers ?? const [];
     int endpointsCount = 0;
     final methods = <String>{};
@@ -168,7 +292,6 @@ class OpenApiImportService {
       };
     }
 
-    // Build a short spec summary for downstream insights prompt
     final title = spec.info.title.isNotEmpty ? spec.info.title : 'Untitled API';
     final version = spec.info.version;
     final server = servers.isNotEmpty ? servers.first.url : null;
@@ -178,8 +301,13 @@ class OpenApiImportService {
       ..writeln('- Endpoints discovered: $endpointsCount')
       ..writeln('- Methods: ${methods.join(', ')}');
 
+    final explanation =
+        StringBuffer('OpenAPI parsed. Click Import Now to choose operations.')
+            .toString();
     return {
-      'explnation': 'OpenAPI parsed. Click Import Now to choose operations.',
+      'explnation': insights == null || insights.isEmpty
+          ? '$explanation\n\n${summary.toString()}'
+          : '$explanation\n\n${summary.toString()}\n\\n$insights',
       'actions': [
         {
           'action': 'import_now_openapi',
@@ -194,6 +322,7 @@ class OpenApiImportService {
       ],
       'meta': {
         'openapi_summary': summary.toString(),
+        'openapi_meta': extractSpecMeta(spec),
       }
     };
   }

@@ -675,7 +675,42 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             ChatMessageType.importOpenApi);
         return;
       }
-      final picker = OpenApiImportService.buildOperationPicker(spec);
+      // Build a short summary + structured meta for the insights prompt
+      final summary = OpenApiImportService.summaryForSpec(spec);
+
+      String? insights;
+      try {
+        final ai = _selectedAIModel;
+        if (ai != null) {
+          final meta = OpenApiImportService.extractSpecMeta(spec);
+          final sys = dash.DashbotPrompts()
+              .openApiInsightsPrompt(specSummary: summary, specMeta: meta);
+          final res = await _repo.sendChat(
+            request: ai.copyWith(
+              systemPrompt: sys,
+              userPrompt:
+                  'Provide concise, actionable insights about these endpoints.',
+              stream: false,
+            ),
+          );
+          if (res != null && res.isNotEmpty) {
+            // Ensure we only pass the explnation string to embed into explanation
+            try {
+              final map = MessageJson.safeParse(res);
+              if (map['explnation'] is String) insights = map['explnation'];
+            } catch (_) {
+              insights = res; // fallback raw text
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('[OpenAPI] insights error: $e');
+      }
+
+      final picker = OpenApiImportService.buildOperationPicker(
+        spec,
+        insights: insights,
+      );
       final rqId = _currentRequest?.id ?? 'global';
       _addMessage(
         rqId,
@@ -691,16 +726,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
               .toList(),
         ),
       );
-      // If meta summary is present, generate insights via AI
-      try {
-        final meta = picker['meta'];
-        final summary = (meta is Map && meta['openapi_summary'] is String)
-            ? meta['openapi_summary'] as String
-            : '';
-        if (summary.isNotEmpty) {
-          await _generateOpenApiInsights(summary);
-        }
-      } catch (_) {}
+      // Do not generate a separate insights prompt; summary is inline now.
     } catch (e) {
       debugPrint('[OpenAPI] Exception: $e');
       final safe = e.toString().replaceAll('"', "'");
@@ -1034,29 +1060,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final path = url.substring(baseUrl.length);
     final normalized = path.startsWith('/') ? path : '/$path';
     return '{{$key}}$normalized';
-  }
-
-  Future<void> _generateOpenApiInsights(String summary) async {
-    final ai = _selectedAIModel;
-    if (ai == null) return;
-    try {
-      final sys = dash.DashbotPrompts().openApiInsightsPrompt(
-        specSummary: summary,
-      );
-      final res = await _repo.sendChat(
-        request: ai.copyWith(
-          systemPrompt: sys,
-          userPrompt:
-              'Provide concise, actionable insights about these endpoints.',
-          stream: false,
-        ),
-      );
-      if (res != null && res.isNotEmpty) {
-        _appendSystem(res, ChatMessageType.importOpenApi);
-      }
-    } catch (e) {
-      debugPrint('[Chat] Insights error: $e');
-    }
   }
 }
 

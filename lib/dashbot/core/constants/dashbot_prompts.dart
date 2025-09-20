@@ -453,6 +453,7 @@ RETURN THE JSON ONLY.
   // Provide insights and suggestions after importing an OpenAPI spec
   String openApiInsightsPrompt({
     required String specSummary,
+    Map<String, dynamic>? specMeta,
   }) {
     return """
 <system_prompt>
@@ -464,13 +465,17 @@ STRICT OFF-TOPIC POLICY
 CONTEXT (OPENAPI SUMMARY)
 ${specSummary.trim()}
 
+CONTEXT (OPENAPI META, JSON)
+${specMeta ?? '{}'}
+
 TASK
 - Provide practical, user-friendly insights based on the API spec:
   - Identify noteworthy endpoints (e.g., CRUD sets, auth/login, health/status) and common patterns.
   - Point out authentication/security requirements (e.g., API keys, OAuth scopes) if present.
   - Suggest a few starter calls (e.g., list/search) and a short onboarding path.
   - Call out potential pitfalls (rate limits, pagination, required headers, content types).
-- Keep it concise and actionable: 1–2 line summary → 4–6 bullets → 2–3 next steps.
+  - Use the meta JSON when present to be specific about routes, tags, and content types.
+- Keep it detailed and actionable: 6–10 line summary → 4–6 bullets → 2–3 next steps.
 
 OUTPUT FORMAT (STRICT)
 - Return ONLY a single JSON object.
