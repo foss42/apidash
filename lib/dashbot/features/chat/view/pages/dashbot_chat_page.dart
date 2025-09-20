@@ -1,3 +1,5 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
+
 import '../../models/chat_models.dart';
 import '../widgets/chat_bubble.dart';
 import '../../viewmodel/chat_viewmodel.dart';
@@ -82,6 +84,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
+                ADIconButton(
+                  icon: Icons.clear_all_rounded,
+                  tooltip: 'Clear chat',
+                  onPressed: ref.watch(chatViewmodelProvider).isGenerating
+                      ? null
+                      : () {
+                          ref
+                              .read(chatViewmodelProvider.notifier)
+                              .clearCurrentChat();
+                        },
+                ),
                 Expanded(
                   child: TextField(
                     controller: _textController,

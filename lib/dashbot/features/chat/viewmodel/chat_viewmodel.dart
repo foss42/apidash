@@ -284,6 +284,18 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     state = state.copyWith(isGenerating: false);
   }
 
+ void clearCurrentChat() {
+    final id = _currentRequest?.id ?? 'global';
+    _sub?.cancel();
+    final newSessions = {...state.chatSessions};
+    newSessions[id] = [];
+    state = state.copyWith(
+      chatSessions: newSessions,
+      isGenerating: false,
+      currentStreamingResponse: '',
+    );
+  }
+
   Future<void> applyAutoFix(ChatAction action) async {
     final requestId = _currentRequest?.id;
     if (requestId == null) return;
