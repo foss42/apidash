@@ -3,6 +3,7 @@ import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designe
 import 'package:apidash/screens/common_widgets/agentic_ui_features/tool_generation/generate_tool_dialog.dart';
 
 import '../../../../core/utils/dashbot_icons.dart';
+import '../../../../core/providers/dashbot_window_notifier.dart';
 
 import '../../../../core/routes/dashbot_routes.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
@@ -127,13 +128,20 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               if (hasOkResponse) ...[
                 HomeScreenTaskButton(
                   label: "🛠️ Generate Tool",
-                  onPressed: () {
-                    GenerateToolDialog.show(context, ref);
+                  onPressed: () async {
+                    final notifier =
+                        ref.read(dashbotWindowNotifierProvider.notifier);
+                    notifier.hide();
+                    await GenerateToolDialog.show(context, ref);
+                    notifier.show();
                   },
                 ),
                 HomeScreenTaskButton(
                   label: "📱 Generate UI",
-                  onPressed: () {
+                  onPressed: () async {
+                    final notifier =
+                        ref.read(dashbotWindowNotifierProvider.notifier);
+                    notifier.hide();
                     final model = ref.watch(selectedRequestModelProvider
                         .select((value) => value?.httpResponseModel));
                     if (model == null) return;
@@ -145,10 +153,12 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                       data = model.formattedBody ?? "<>";
                     }
 
-                    showCustomDialog(
+                    await showCustomDialog(
                       context,
                       GenerateUIDialog(content: data),
+                      useRootNavigator: true,
                     );
+                    notifier.show();
                   },
                 ),
               ],

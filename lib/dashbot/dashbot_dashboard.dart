@@ -51,154 +51,166 @@ class DashbotWindow extends ConsumerWidget {
 
     return Stack(
       children: [
-        Positioned(
-          right: windowState.right,
-          bottom: windowState.bottom,
-          child: Material(
-            elevation: 8,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: windowState.width,
-              height: windowState.height,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      // This is to update position
-                      GestureDetector(
+        if (!windowState.isHidden)
+          Positioned(
+            right: windowState.right,
+            bottom: windowState.bottom,
+            child: Material(
+              elevation: 8,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: windowState.width,
+                height: windowState.height,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        // This is to update position
+                        GestureDetector(
+                          onPanUpdate: (details) {
+                            windowNotifier.updatePosition(
+                              details.delta.dx,
+                              details.delta.dy,
+                              MediaQuery.of(context).size,
+                            );
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer,
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(10),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    kHSpacer20,
+                                    DashbotIcons.getDashbotIcon1(width: 38),
+                                    kHSpacer12,
+                                    Text(
+                                      'DashBot',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
+                                      ),
+                                    ),
+                                    kHSpacer4,
+                                    AIModelSelectorButton(
+                                      aiRequestModel: AIRequestModel.fromJson(
+                                          settings.defaultAIModel ?? {}),
+                                      useRootNavigator: true,
+                                      onDialogOpen: () => ref
+                                          .read(dashbotWindowNotifierProvider
+                                              .notifier)
+                                          .hide(),
+                                      onDialogClose: () => ref
+                                          .read(dashbotWindowNotifierProvider
+                                              .notifier)
+                                          .show(),
+                                      onModelUpdated: (d) {
+                                        ref
+                                            .read(settingsProvider.notifier)
+                                            .update(
+                                                defaultAIModel: d.copyWith(
+                                                    modelConfigs: [],
+                                                    stream: null,
+                                                    systemPrompt: '',
+                                                    userPrompt: '').toJson());
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.open_in_new,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                  onPressed: () {
+                                    ref
+                                        .read(dashbotWindowNotifierProvider
+                                            .notifier)
+                                        .togglePopped();
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.close,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                  onPressed: onClose,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Navigator(
+                            key: _dashbotNavigatorKey,
+                            initialRoute: currentRequest?.responseStatus == null
+                                ? DashbotRoutes.dashbotDefault
+                                : DashbotRoutes.dashbotHome,
+                            onGenerateRoute: generateRoute,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // This is to update size
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      child: GestureDetector(
                         onPanUpdate: (details) {
-                          windowNotifier.updatePosition(
+                          windowNotifier.updateSize(
                             details.delta.dx,
                             details.delta.dy,
                             MediaQuery.of(context).size,
                           );
                         },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(10),
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.resizeUpLeft,
+                          child: Container(
+                            padding: EdgeInsets.only(top: 6, left: 1),
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                              ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer
+                                  .withValues(alpha: 0.7),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  kHSpacer20,
-                                  DashbotIcons.getDashbotIcon1(width: 38),
-                                  // TODO: remove the show active request name/model in prod
-                                  kHSpacer12,
-                                  Text(
-                                    'DashBot',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          Theme.of(context).colorScheme.surface,
-                                    ),
-                                  ),
-                                  kHSpacer4,
-                                  AIModelSelectorButton(
-                                    aiRequestModel: AIRequestModel.fromJson(
-                                        settings.defaultAIModel ?? {}),
-                                    onModelUpdated: (d) {
-                                      ref
-                                          .read(settingsProvider.notifier)
-                                          .update(
-                                              defaultAIModel: d.copyWith(
-                                                  modelConfigs: [],
-                                                  stream: null,
-                                                  systemPrompt: '',
-                                                  userPrompt: '').toJson());
-                                    },
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.open_in_new,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
-                                onPressed: () {
-                                  ref
-                                      .read(dashbotWindowNotifierProvider
-                                          .notifier)
-                                      .togglePopped();
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.close,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                ),
-                                onPressed: onClose,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Navigator(
-                          key: _dashbotNavigatorKey,
-                          initialRoute: currentRequest?.responseStatus == null
-                              ? DashbotRoutes.dashbotDefault
-                              : DashbotRoutes.dashbotHome,
-                          onGenerateRoute: generateRoute,
-                        ),
-                      ),
-                    ],
-                  ),
-                  // This is to update size
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    child: GestureDetector(
-                      onPanUpdate: (details) {
-                        windowNotifier.updateSize(
-                          details.delta.dx,
-                          details.delta.dy,
-                          MediaQuery.of(context).size,
-                        );
-                      },
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.resizeUpLeft,
-                        child: Container(
-                          padding: EdgeInsets.only(top: 6, left: 1),
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(8),
+                            child: Icon(
+                              Icons.drag_indicator_rounded,
+                              size: 16,
+                              color:
+                                  Theme.of(context).colorScheme.surfaceBright,
                             ),
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primaryContainer
-                                .withValues(alpha: 0.7),
-                          ),
-                          child: Icon(
-                            Icons.drag_indicator_rounded,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.surfaceBright,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

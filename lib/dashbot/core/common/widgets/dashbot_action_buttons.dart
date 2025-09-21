@@ -7,6 +7,7 @@ import 'package:file_selector/file_selector.dart';
 import '../../services/openapi_import_service.dart';
 import '../../../features/chat/view/widgets/openapi_operation_picker_dialog.dart';
 import 'package:openapi_spec/openapi_spec.dart';
+import '../../providers/dashbot_window_notifier.dart';
 
 /// Base mixin for action widgets.
 mixin DashbotActionMixin {
@@ -244,11 +245,15 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
           final servers = spec.servers ?? const [];
           final baseUrl = servers.isNotEmpty ? (servers.first.url ?? '/') : '/';
 
+          final overlayNotifier =
+              ref.read(dashbotWindowNotifierProvider.notifier);
+          overlayNotifier.hide();
           final selected = await showOpenApiOperationPickerDialog(
             context: context,
             spec: spec,
             sourceName: sourceName,
           );
+          overlayNotifier.show();
           if (selected == null || selected.isEmpty) return;
 
           final notifier = ref.read(chatViewmodelProvider.notifier);

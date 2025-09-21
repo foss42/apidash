@@ -5,6 +5,7 @@ class DashbotWindowModel {
   final double bottom;
   final bool isActive;
   final bool isPopped;
+  final bool isHidden;
 
   const DashbotWindowModel({
     this.width = 400,
@@ -13,6 +14,7 @@ class DashbotWindowModel {
     this.bottom = 100,
     this.isActive = false,
     this.isPopped = true,
+    this.isHidden = false,
   });
 
   DashbotWindowModel copyWith({
@@ -22,6 +24,7 @@ class DashbotWindowModel {
     double? bottom,
     bool? isActive,
     bool? isPopped,
+    bool? isHidden,
   }) {
     return DashbotWindowModel(
       width: width ?? this.width,
@@ -30,6 +33,7 @@ class DashbotWindowModel {
       bottom: bottom ?? this.bottom,
       isActive: isActive ?? this.isActive,
       isPopped: isPopped ?? this.isPopped,
+      isHidden: isHidden ?? this.isHidden,
     );
   }
 }

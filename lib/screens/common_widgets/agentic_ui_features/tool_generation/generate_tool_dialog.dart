@@ -16,7 +16,7 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
     required this.requestDesc,
   });
 
-  static show(BuildContext context, WidgetRef ref) {
+  static Future<T?> show<T>(BuildContext context, WidgetRef ref) {
     final aiRequestModel = ref.watch(
         selectedRequestModelProvider.select((value) => value?.aiRequestModel));
     HttpRequestModel? requestModel = ref.watch(selectedRequestModelProvider
@@ -24,9 +24,9 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
     final responseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
 
-    if (aiRequestModel == null && requestModel == null) return;
-    if (requestModel == null) return;
-    if (responseModel == null) return;
+    if (aiRequestModel == null && requestModel == null) return Future.value();
+    if (requestModel == null) return Future.value();
+    if (responseModel == null) return Future.value();
 
     String? bodyTXT;
     Map? bodyJSON;
@@ -47,11 +47,12 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
       bodyJSON: bodyJSON,
     );
 
-    showCustomDialog(
+    return showCustomDialog<T>(
       context,
       GenerateToolDialog(
         requestDesc: reqDesModel,
       ),
+      useRootNavigator: true,
     );
   }
 

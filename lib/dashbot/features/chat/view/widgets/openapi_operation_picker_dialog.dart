@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openapi_spec/openapi_spec.dart';
 
-
 typedef OpenApiOperationItem = ({String method, String path, Operation op});
 
 Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
@@ -44,6 +43,7 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
 
   return showDialog<List<OpenApiOperationItem>>(
     context: context,
+    useRootNavigator: true,
     builder: (ctx) {
       return StatefulBuilder(builder: (ctx, setState) {
         return AlertDialog(
@@ -56,7 +56,7 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
               children: [
                 ExpansionTile(
                   initiallyExpanded: true,
-                  title: const Text('Available operations'),
+                  title: const Text('Available routes'),
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),

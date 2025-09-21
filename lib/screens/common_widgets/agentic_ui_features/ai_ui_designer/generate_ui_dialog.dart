@@ -5,9 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'framework_selector.dart';
 import 'sdui_preview.dart';
 
-void showCustomDialog(BuildContext context, Widget dialogContent) {
-  showDialog(
+Future<T?> showCustomDialog<T>(BuildContext context, Widget dialogContent,
+    {bool useRootNavigator = true}) {
+  return showDialog<T>(
     context: context,
+    useRootNavigator: useRootNavigator,
     builder: (BuildContext context) {
       return Dialog(
         shape: RoundedRectangleBorder(
