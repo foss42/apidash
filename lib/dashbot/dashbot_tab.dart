@@ -64,12 +64,22 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                 child: Align(
                   alignment: AlignmentGeometry.centerRight,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.close_fullscreen,
-                        ),
+                      ADIconButton(
+                        icon: Icons.arrow_back_rounded,
+                        onPressed: () {
+                          final navState = _navKey.currentState;
+                          if (navState?.canPop() ?? false) {
+                            navState!.maybePop();
+                          } else {
+                            Navigator.maybePop(context);
+                          }
+                        },
+                      ),
+                      Spacer(),
+                      ADIconButton(
+                        icon: Icons.close_fullscreen,
                         onPressed: () {
                           ref
                               .read(dashbotWindowNotifierProvider.notifier)
@@ -82,7 +92,7 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                           }
                         },
                       ),
-                      IconButton(
+                      ADIconButton(
                         onPressed: () {
                           final isActive =
                               ref.read(dashbotWindowNotifierProvider).isActive;
@@ -96,7 +106,7 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                                 .toggleActive();
                           }
                         },
-                        icon: Icon(Icons.close),
+                        icon: Icons.close,
                       ),
                     ],
                   ),
