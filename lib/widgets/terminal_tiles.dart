@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_core/apidash_core.dart';
 import '../consts.dart';
 import '../models/terminal/models.dart';
+import '../utils/ui_utils.dart';
 import 'expandable_section.dart';
 
 class SystemLogTile extends StatelessWidget {
@@ -156,15 +159,18 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
   @override
   Widget build(BuildContext context) {
     final n = widget.entry.network!;
-    final methodUrl = '${n.method.name.toUpperCase()} ${n.url}';
     final status = n.responseStatus != null ? '${n.responseStatus}' : null;
     final duration =
         n.duration != null ? '${n.duration!.inMilliseconds} ms' : null;
-    final title = [
-      if (widget.requestName != null && widget.requestName!.isNotEmpty)
-        '[${widget.requestName}]',
-      methodUrl,
-    ].join(' ');
+    final bodyStyle = Theme.of(context).textTheme.bodyMedium;
+    final methodStyle = kCodeStyle.copyWith(
+      fontWeight: FontWeight.bold,
+      color: getAPIColor(
+        APIType.rest,
+        method: n.method,
+        brightness: Theme.of(context).brightness,
+      ),
+    );
     return Column(
       children: [
         InkWell(
@@ -183,11 +189,22 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
                   ),
                 ],
                 Expanded(
-                  child: Text(
-                    title,
+                  child: RichText(
+                    text: TextSpan(
+                      style: bodyStyle,
+                      children: [
+                        if (widget.requestName != null &&
+                            widget.requestName!.isNotEmpty) ...[
+                          TextSpan(text: '[${widget.requestName}] '),
+                        ],
+                        TextSpan(
+                            text: n.method.name.toUpperCase(),
+                            style: methodStyle),
+                        TextSpan(text: ' ${n.url}'),
+                      ],
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
                 const SizedBox(width: 12),
