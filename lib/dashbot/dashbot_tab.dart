@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/providers/dashbot_window_notifier.dart';
 import 'core/utils/show_dashbot.dart';
+import 'package:apidash/consts.dart';
 
 class DashbotTab extends ConsumerStatefulWidget {
   const DashbotTab({super.key});
@@ -78,36 +79,39 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                         },
                       ),
                       Spacer(),
-                      ADIconButton(
-                        icon: Icons.close_fullscreen,
-                        onPressed: () {
-                          ref
-                              .read(dashbotWindowNotifierProvider.notifier)
-                              .togglePopped();
-
-                          final newState =
-                              ref.read(dashbotWindowNotifierProvider);
-                          if (newState.isPopped) {
-                            showDashbotWindow(context, ref);
-                          }
-                        },
-                      ),
-                      ADIconButton(
-                        onPressed: () {
-                          final isActive =
-                              ref.read(dashbotWindowNotifierProvider).isActive;
-
-                          ref
-                              .read(dashbotWindowNotifierProvider.notifier)
-                              .togglePopped();
-                          if (isActive) {
+                      if (!kIsMobile) ...[
+                        ADIconButton(
+                          icon: Icons.close_fullscreen,
+                          onPressed: () {
                             ref
                                 .read(dashbotWindowNotifierProvider.notifier)
-                                .toggleActive();
-                          }
-                        },
-                        icon: Icons.close,
-                      ),
+                                .togglePopped();
+
+                            final newState =
+                                ref.read(dashbotWindowNotifierProvider);
+                            if (newState.isPopped) {
+                              showDashbotWindow(context, ref);
+                            }
+                          },
+                        ),
+                        ADIconButton(
+                          onPressed: () {
+                            final isActive = ref
+                                .read(dashbotWindowNotifierProvider)
+                                .isActive;
+
+                            ref
+                                .read(dashbotWindowNotifierProvider.notifier)
+                                .togglePopped();
+                            if (isActive) {
+                              ref
+                                  .read(dashbotWindowNotifierProvider.notifier)
+                                  .toggleActive();
+                            }
+                          },
+                          icon: Icons.close,
+                        ),
+                      ],
                     ],
                   ),
                 ),
