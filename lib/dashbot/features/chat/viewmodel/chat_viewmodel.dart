@@ -440,8 +440,74 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             ChatMessageType.importCurl);
         return;
       }
-      final built = CurlImportService.buildResponseFromParsed(curl);
-      final msg = jsonDecode(built.jsonMessage) as Map<String, dynamic>;
+      final currentCtx = _currentRequestContext();
+      // Prepare base message first (without AI insights)
+      var built = CurlImportService.buildResponseFromParsed(
+        curl,
+        current: currentCtx,
+      );
+      var msg = jsonDecode(built.jsonMessage) as Map<String, dynamic>;
+
+      // Ask AI for cURL insights
+      try {
+        final ai = _selectedAIModel;
+        if (ai != null) {
+          final summary = CurlImportService.summaryForPayload(
+            jsonDecode(built.jsonMessage)['actions'][0]['value']
+                as Map<String, dynamic>,
+          );
+          final diff = CurlImportService.diffForPayload(
+            jsonDecode(built.jsonMessage)['actions'][0]['value']
+                as Map<String, dynamic>,
+            currentCtx,
+          );
+          final sys = dash.DashbotPrompts().curlInsightsPrompt(
+            curlSummary: summary,
+            diff: diff,
+            current: currentCtx,
+          );
+          final res = await _repo.sendChat(
+            request: ai.copyWith(
+              systemPrompt: sys,
+              userPrompt:
+                  'Provide concise, actionable insights about this cURL import.',
+              stream: false,
+            ),
+          );
+          String? insights;
+          if (res != null && res.isNotEmpty) {
+            try {
+              final parsed = MessageJson.safeParse(res);
+              if (parsed['explnation'] is String) {
+                insights = parsed['explnation'];
+              }
+            } catch (_) {
+              insights = res;
+            }
+          }
+          if (insights != null && insights.isNotEmpty) {
+            // Rebuild message including insights in explanation
+            final payload = (msg['actions'] as List).isNotEmpty
+                ? (((msg['actions'] as List).first as Map)['value']
+                    as Map<String, dynamic>)
+                : <String, dynamic>{};
+            final enriched = CurlImportService.buildActionMessageFromPayload(
+              payload,
+              current: currentCtx,
+              insights: insights,
+            );
+            msg = enriched;
+            built = (
+              jsonMessage: jsonEncode(enriched),
+              actions: (enriched['actions'] as List)
+                  .whereType<Map<String, dynamic>>()
+                  .toList(),
+            );
+          }
+        }
+      } catch (e) {
+        debugPrint('[cURL] insights error: $e');
+      }
       final rqId = _currentRequest?.id ?? 'global';
       _addMessage(
         rqId,
@@ -463,6 +529,41 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
           ChatMessageType.importCurl);
     }
+  }
+
+  Map<String, dynamic>? _currentRequestContext() {
+    final rq = _currentRequest?.httpRequestModel;
+    if (rq == null) return null;
+    final headers = <String, String>{};
+    for (final h in rq.headers ?? const []) {
+      final k = (h.name).toString();
+      final v = (h.value ?? '').toString();
+      if (k.isNotEmpty) headers[k] = v;
+    }
+    final params = <String, String>{};
+    for (final p in rq.params ?? const []) {
+      final k = (p.name).toString();
+      final v = (p.value ?? '').toString();
+      if (k.isNotEmpty) params[k] = v;
+    }
+    final body = rq.body ?? '';
+    final formData = (rq.formData ?? const [])
+        .map((f) => {
+              'name': f.name,
+              'value': f.value,
+              'type': f.type.name,
+            })
+        .toList();
+    final isForm = rq.bodyContentType == ContentType.formdata;
+    return {
+      'method': rq.method.name.toUpperCase(),
+      'url': rq.url,
+      'headers': headers,
+      'params': params,
+      'body': body,
+      'form': isForm,
+      'formData': formData,
+    };
   }
 
   Future<void> handleOpenApiAttachment(ChatAttachment att) async {

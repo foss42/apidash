@@ -307,7 +307,7 @@ class OpenApiImportService {
     return {
       'explnation': insights == null || insights.isEmpty
           ? '$explanation\n\n${summary.toString()}'
-          : '$explanation\n\n${summary.toString()}\n\\n$insights',
+          : '$explanation\n\n${summary.toString()}\n $insights',
       'actions': [
         {
           'action': 'import_now_openapi',
