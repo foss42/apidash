@@ -1,7 +1,7 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/dashbot/core/constants/dashbot_prompts.dart' as dash;
 
-import '../../models/chat_models.dart';
+import '../../../features/chat/models/chat_models.dart';
 
 class PromptBuilder {
   String buildSystemPrompt(

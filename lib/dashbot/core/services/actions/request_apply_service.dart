@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:apidash_core/apidash_core.dart';
 
-import '../../models/chat_models.dart';
+import '../../../features/chat/models/chat_models.dart';
 import '../base/url_env_service.dart';
 
 class ApplyResult {

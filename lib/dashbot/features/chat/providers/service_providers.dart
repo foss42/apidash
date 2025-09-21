@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../services/agent/prompt_builder.dart';
-import '../services/base/url_env_service.dart';
-import '../services/actions/auto_fix_service.dart';
-import '../services/actions/request_apply_service.dart';
+import '../../../core/services/agent/prompt_builder.dart';
+import '../../../core/services/base/url_env_service.dart';
+import '../../../core/services/actions/auto_fix_service.dart';
+import '../../../core/services/actions/request_apply_service.dart';
 import '../../../../providers/providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 
