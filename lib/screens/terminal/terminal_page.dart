@@ -68,18 +68,18 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                           final model = collection?[selectedId];
                           if (model != null) {
                             requestName =
-                                model.name.isNotEmpty ? model.name : model.id;
+                                model.name.isNotEmpty ? model.name : 'Untitled';
                           } else {
-                            requestName = selectedId;
+                            requestName = 'Untitled';
                           }
                         }
                       } else if (e.requestId != null) {
                         final model = collection?[e.requestId];
                         if (model != null) {
                           requestName =
-                              model.name.isNotEmpty ? model.name : model.id;
+                              model.name.isNotEmpty ? model.name : 'Untitled';
                         } else {
-                          requestName = e.requestId!;
+                          requestName = 'Untitled';
                         }
                       }
                       switch (e.source) {
