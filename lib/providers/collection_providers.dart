@@ -353,12 +353,8 @@ class CollectionStateNotifier
     final terminal = ref.read(terminalStateProvider.notifier);
     final logId = terminal.startNetwork(
       apiType: executionRequestModel.apiType,
-      method: (executionRequestModel.apiType == APIType.ai)
-          ? executionRequestModel.aiRequestModel!.httpRequestModel!.method
-          : executionRequestModel.httpRequestModel!.method,
-      url: (executionRequestModel.apiType == APIType.ai)
-          ? executionRequestModel.aiRequestModel!.httpRequestModel!.url
-          : executionRequestModel.httpRequestModel!.url,
+      method: substitutedHttpRequestModel.method,
+      url: substitutedHttpRequestModel.url,
       requestId: requestId,
       requestHeaders: substitutedHttpRequestModel.enabledHeadersMap,
       requestBodyPreview: substitutedHttpRequestModel.body,
