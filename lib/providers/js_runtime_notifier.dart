@@ -43,6 +43,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
 
   final Ref ref;
   late final JavascriptRuntime _runtime;
+  String? _currentRequestId;
 
   void _initialize() {
     if (state.initialized) return;
@@ -90,6 +91,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       })> executePreRequestScript({
     required RequestModel currentRequestModel,
     required Map<String, dynamic> activeEnvironment,
+    required String requestId,
   }) async {
     if ((currentRequestModel.preRequestScript ?? '').trim().isEmpty) {
       return (
@@ -119,6 +121,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     HttpRequestModel resultingRequest = httpRequest!;
     Map<String, dynamic> resultingEnvironment = Map.from(activeEnvironment);
     try {
+      _currentRequestId = requestId;
       final term = ref.read(terminalStateProvider.notifier);
       final res = _runtime.evaluate(fullScript);
       state = state.copyWith(
@@ -128,7 +131,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       if (res.isError) {
         term.logJs(
             level: 'error',
-            args: ['Pre-request script error', res.stringResult]);
+            args: ['Pre-request script error', res.stringResult],
+            context: 'preRequest',
+            contextRequestId: requestId);
       } else if (res.stringResult.isNotEmpty) {
         final decoded = jsonDecode(res.stringResult);
         if (decoded is Map<String, dynamic>) {
@@ -140,7 +145,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
             } catch (e) {
               term.logJs(
                   level: 'error',
-                  args: ['Deserialize modified request failed', e.toString()]);
+                  args: ['Deserialize modified request failed', e.toString()],
+                  context: 'preRequest',
+                  contextRequestId: requestId);
             }
           }
           if (decoded['environment'] is Map) {
@@ -152,9 +159,13 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     } catch (e) {
       final msg = 'Dart-level error during pre-request script execution: $e';
       state = state.copyWith(lastError: msg);
-      ref
-          .read(terminalStateProvider.notifier)
-          .logJs(level: 'error', args: [msg]);
+      ref.read(terminalStateProvider.notifier).logJs(
+          level: 'error',
+          args: [msg],
+          context: 'preRequest',
+          contextRequestId: requestId);
+    } finally {
+      _currentRequestId = null;
     }
     return (
       updatedRequest: resultingRequest,
@@ -169,6 +180,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       })> executePostResponseScript({
     required RequestModel currentRequestModel,
     required Map<String, dynamic> activeEnvironment,
+    required String requestId,
   }) async {
     if ((currentRequestModel.postRequestScript ?? '').trim().isEmpty) {
       return (
@@ -200,6 +212,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     HttpResponseModel resultingResponse = httpResponse!;
     Map<String, dynamic> resultingEnvironment = Map.from(activeEnvironment);
     try {
+      _currentRequestId = requestId;
       final term = ref.read(terminalStateProvider.notifier);
       final res = _runtime.evaluate(fullScript);
       state = state.copyWith(
@@ -209,7 +222,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       if (res.isError) {
         term.logJs(
             level: 'error',
-            args: ['Post-response script error', res.stringResult]);
+            args: ['Post-response script error', res.stringResult],
+            context: 'postResponse',
+            contextRequestId: requestId);
       } else if (res.stringResult.isNotEmpty) {
         final decoded = jsonDecode(res.stringResult);
         if (decoded is Map<String, dynamic>) {
@@ -221,7 +236,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
             } catch (e) {
               term.logJs(
                   level: 'error',
-                  args: ['Deserialize modified response failed', e.toString()]);
+                  args: ['Deserialize modified response failed', e.toString()],
+                  context: 'postResponse',
+                  contextRequestId: requestId);
             }
           }
           if (decoded['environment'] is Map) {
@@ -233,17 +250,19 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     } catch (e) {
       final msg = 'Dart-level error during post-response script execution: $e';
       state = state.copyWith(lastError: msg);
-      ref
-          .read(terminalStateProvider.notifier)
-          .logJs(level: 'error', args: [msg]);
+      ref.read(terminalStateProvider.notifier).logJs(
+          level: 'error',
+          args: [msg],
+          context: 'postResponse',
+          contextRequestId: requestId);
+    } finally {
+      _currentRequestId = null;
     }
     return (
       updatedResponse: resultingResponse,
       updatedEnvironment: resultingEnvironment,
     );
   }
-
-  // High-level helpers (migrated from pre_post_script_utils) -----------------
 
   Future<RequestModel> handlePreRequestScript(
     RequestModel requestModel,
@@ -253,6 +272,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     final scriptResult = await executePreRequestScript(
       currentRequestModel: requestModel,
       activeEnvironment: originalEnvironmentModel?.toJson() ?? {},
+      requestId: requestModel.id,
     );
     final newRequestModel =
         requestModel.copyWith(httpRequestModel: scriptResult.updatedRequest);
@@ -304,6 +324,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     final scriptResult = await executePostResponseScript(
       currentRequestModel: requestModel,
       activeEnvironment: originalEnvironmentModel?.toJson() ?? {'values': []},
+      requestId: requestModel.id,
     );
     final newRequestModel =
         requestModel.copyWith(httpResponseModel: scriptResult.updatedResponse);
@@ -374,7 +395,8 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       } else {
         argList = [args.toString()];
       }
-      term.logJs(level: level, args: argList);
+      term.logJs(
+          level: level, args: argList, contextRequestId: _currentRequestId);
     } catch (e) {
       print('[JS ${level.toUpperCase()} HANDLER ERROR]: $args, Error: $e');
     }
@@ -391,9 +413,15 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
           level: 'fatal',
           args: [if (error != null) error, message],
           stack: stack,
+          context: 'global',
+          contextRequestId: _currentRequestId,
         );
       } else {
-        term.logJs(level: 'fatal', args: ['Malformed fatal payload', '$args']);
+        term.logJs(
+            level: 'fatal',
+            args: ['Malformed fatal payload', '$args'],
+            context: 'global',
+            contextRequestId: _currentRequestId);
       }
     } catch (e) {
       print('[JS FATAL ERROR decoding error]: $args, Error: $e');

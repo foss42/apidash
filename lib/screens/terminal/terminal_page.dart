@@ -39,7 +39,6 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(terminalStateProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
-    final selectedId = ref.watch(selectedIdStateProvider);
     final allEntries = state.entries;
     final filtered = _applyFilters(allEntries);
 
@@ -63,23 +62,18 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                     itemBuilder: (ctx, i) {
                       final e = filtered[filtered.length - 1 - i];
                       String requestName = '';
-                      if (e.source == TerminalSource.js) {
-                        if (selectedId != null) {
-                          final model = collection?[selectedId];
-                          if (model != null) {
-                            requestName =
-                                model.name.isNotEmpty ? model.name : 'Untitled';
-                          } else {
-                            requestName = 'Untitled';
-                          }
+                      if (e.source == TerminalSource.js &&
+                          e.requestId != null) {
+                        final model = collection?[e.requestId];
+                        if (model != null) {
+                          requestName =
+                              model.name.isNotEmpty ? model.name : 'Untitled';
                         }
                       } else if (e.requestId != null) {
                         final model = collection?[e.requestId];
                         if (model != null) {
                           requestName =
                               model.name.isNotEmpty ? model.name : 'Untitled';
-                        } else {
-                          requestName = 'Untitled';
                         }
                       }
                       switch (e.source) {
