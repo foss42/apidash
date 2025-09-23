@@ -1,3 +1,7 @@
+## 0.0.4-dev
+
+- Add OAuth support.
+
 ## 0.0.3
 
 - Loosen dart SDK constraints.

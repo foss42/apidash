@@ -17,7 +17,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_networking: ^0.0.3
+  better_networking:
+    path: ../better_networking
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
   nanoid: ^1.0.0

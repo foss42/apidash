@@ -106,11 +106,10 @@ packages:
   better_networking:
     dependency: transitive
     description:
-      name: better_networking
-      sha256: a23f061e02eee363c4e80fd0b7df529d9353eeb55bacfe2acd3b1d5e09c4016c
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.3"
+      path: "packages/better_networking"
+      relative: true
+    source: path
+    version: "0.0.4-dev"
   bidi:
     dependency: transitive
     description:
@@ -398,6 +397,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.0"
+  desktop_webview_window:
+    dependency: transitive
+    description:
+      name: desktop_webview_window
+      sha256: "57cf20d81689d5cbb1adfd0017e96b669398a669d927906073b0e42fc64111c0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.3"
   dio:
     dependency: transitive
     description:
@@ -414,14 +421,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  desktop_webview_window:
-    dependency: transitive
-    description:
-      name: desktop_webview_window
-      sha256: "57cf20d81689d5cbb1adfd0017e96b669398a669d927906073b0e42fc64111c0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.3"
   ed25519_edwards:
     dependency: transitive
     description:
@@ -689,18 +688,18 @@ packages:
     dependency: transitive
     description:
       name: flutter_web_auth_2
-      sha256: "2483d1fd3c45fe1262446e8d5f5490f01b864f2e7868ffe05b4727e263cc0182"
+      sha256: "9a9ac1b83b215ebc4926657f7d88b1d766ac66b1dd50d258b9f3ea31e627565e"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.0-alpha.3"
+    version: "5.0.0-alpha.4"
   flutter_web_auth_2_platform_interface:
     dependency: transitive
     description:
       name: flutter_web_auth_2_platform_interface
-      sha256: "45927587ebb2364cd273675ec95f6f67b81725754b416cef2b65cdc63fd3e853"
+      sha256: e25eb45c50b3eef5a80d0ae73c7ecf82e291c152387da8d2008bfd607ba43087
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.0-alpha.0"
+    version: "5.0.0-alpha.4"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
