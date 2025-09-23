@@ -1821,18 +1821,26 @@ packages:
     dependency: "direct main"
     description:
       name: stac
-      sha256: "83d003eb881f7592f27de8ab518a9cf683c641d8643f09d654aa6637a8ae6495"
+      sha256: f59683822e40cb45ab8e75f9c81d358a3ea77281be71eb15c8aadc9b61ce6264
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0-dev.6"
+    version: "1.0.0-dev.7"
+  stac_core:
+    dependency: transitive
+    description:
+      name: stac_core
+      sha256: "8f2b08d640ee4048e9e68d3a5e287ccc47dc8be3545ad480222e8398af3d5d38"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   stac_framework:
     dependency: transitive
     description:
       name: stac_framework
-      sha256: "54e1a14f01664443f3be3d158781c07e69ab0e04993495ddd0b6b1d68c84875b"
+      sha256: "0cfa8ccc20f32b4e614ba522d88564ac802cc15a8efa6329c9c17af2c568bc48"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.0"
   stac_logger:
     dependency: transitive
     description:
