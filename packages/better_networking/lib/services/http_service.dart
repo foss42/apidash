@@ -23,11 +23,11 @@ final httpClientManager = HttpClientManager();
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
   String requestId,
   APIType apiType,
-  AuthModel? authData,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
+  final authData = requestModel.authModel;
   if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
   }

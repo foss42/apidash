@@ -25,6 +25,7 @@ class RequestModel with _$RequestModel {
     @JsonKey(includeToJson: false) @Default(false) bool isStreaming,
     String? preRequestScript,
     String? postRequestScript,
+    AIRequestModel? aiRequestModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>

@@ -10,9 +10,11 @@ class ResponseBody extends StatelessWidget {
   const ResponseBody({
     super.key,
     this.selectedRequestModel,
+    this.isPartOfHistory = false,
   });
 
   final RequestModel? selectedRequestModel;
+  final bool isPartOfHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +24,8 @@ class ResponseBody extends StatelessWidget {
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
-    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
     var body = responseModel.body;
-    var formattedBody = responseModel.formattedBody;
+
     if (body == null) {
       return const ErrorMessage(
           message: '$kMsgNullBody $kUnexpectedRaiseIssue');
@@ -36,9 +37,6 @@ class ResponseBody extends StatelessWidget {
         showIssueButton: false,
       );
     }
-    if (isSSE) {
-      body = responseModel.sseOutput!.join();
-    }
 
     final mediaType =
         responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
@@ -49,9 +47,16 @@ class ResponseBody extends StatelessWidget {
     //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     // }
 
-    var responseBodyView = getResponseBodyViewOptions(mediaType);
+    var responseBodyView = selectedRequestModel?.apiType == APIType.ai
+        ? (kAnswerRawBodyViewOptions, kSubTypePlain)
+        : getResponseBodyViewOptions(mediaType);
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
+
+    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
+    var formattedBody = isSSE
+        ? responseModel.sseOutput!.join('\n')
+        : responseModel.formattedBody;
 
     if (formattedBody == null) {
       options = [...options];
@@ -65,8 +70,11 @@ class ResponseBody extends StatelessWidget {
       bytes: responseModel.bodyBytes!,
       body: body,
       formattedBody: formattedBody,
-      sseOutput: responseModel.sseOutput,
       highlightLanguage: highlightLanguage,
+      sseOutput: responseModel.sseOutput,
+      isAIResponse: selectedRequestModel?.apiType == APIType.ai,
+      aiRequestModel: selectedRequestModel?.aiRequestModel,
+      isPartOfHistory: isPartOfHistory,
     );
   }
 }

@@ -88,10 +88,16 @@ void main() {
       );
 
       // Find the token field
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(1));
+      final authField = find.byType(EnvAuthField);
+      expect(authField, findsOneWidget);
 
-      final tokenField = textFields.first;
+      // Find ExtendedTextField within the EnvAuthField using find.descendant
+      final tokenField = find.descendant(
+        of: authField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(tokenField, findsOneWidget);
+
       await tester.tap(tokenField);
       await tester.pumpAndSettle();
 
@@ -197,10 +203,16 @@ void main() {
       );
 
       // Enter token
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(1));
+      final authField = find.byType(EnvAuthField);
+      expect(authField, findsOneWidget);
 
-      final tokenField = textFields.first;
+      // Find ExtendedTextField within the EnvAuthField using find.descendant
+      final tokenField = find.descendant(
+        of: authField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(tokenField, findsOneWidget);
+
       await tester.tap(tokenField);
       await tester.pumpAndSettle();
 
@@ -254,10 +266,16 @@ void main() {
       );
 
       // Enter token with whitespace
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(1));
+      final authField = find.byType(EnvAuthField);
+      expect(authField, findsOneWidget);
 
-      final tokenField = textFields.first;
+      // Find ExtendedTextField within the EnvAuthField using find.descendant
+      final tokenField = find.descendant(
+        of: authField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(tokenField, findsOneWidget);
+
       await tester.tap(tokenField);
       await tester.pumpAndSettle();
 

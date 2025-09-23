@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +8,7 @@ import '../services/services.dart';
 import '../utils/utils.dart';
 import '../widgets/widgets.dart';
 import '../consts.dart';
+import 'common_widgets/common_widgets.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -111,6 +113,22 @@ class SettingsPage extends ConsumerWidget {
                     ref
                         .read(settingsProvider.notifier)
                         .update(defaultCodeGenLang: value);
+                  },
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Default Large Language Model (LLM)'),
+                trailing: AIModelSelectorButton(
+                  aiRequestModel:
+                      AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
+                  onModelUpdated: (d) {
+                    ref.read(settingsProvider.notifier).update(
+                        defaultAIModel: d.copyWith(
+                            modelConfigs: [],
+                            stream: null,
+                            systemPrompt: '',
+                            userPrompt: '').toJson());
                   },
                 ),
               ),

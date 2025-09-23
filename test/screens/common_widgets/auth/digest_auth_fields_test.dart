@@ -109,11 +109,20 @@ void main() {
         ),
       );
 
-      // Find the username field (first ExtendedTextField)
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(6));
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
 
-      final usernameField = textFields.first;
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
       await tester.pumpAndSettle();
 
@@ -156,11 +165,20 @@ void main() {
         ),
       );
 
-      // Find the password field (second ExtendedTextField)
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(6));
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
 
-      final passwordField = textFields.at(1);
+      // Find the second EnvAuthField (password field)
+      final secondAuthField = authFields.at(1);
+
+      // Find ExtendedTextField within the second EnvAuthField using find.descendant
+      final passwordField = find.descendant(
+        of: secondAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(passwordField, findsOneWidget);
+
       await tester.tap(passwordField);
       await tester.pumpAndSettle();
 
@@ -245,11 +263,20 @@ void main() {
         ),
       );
 
-      // Find the realm field (third ExtendedTextField)
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(6));
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
 
-      final realmField = textFields.at(2);
+      // Find the third EnvAuthField (realm field)
+      final thirdAuthField = authFields.at(2);
+
+      // Find ExtendedTextField within the third EnvAuthField using find.descendant
+      final realmField = find.descendant(
+        of: thirdAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(realmField, findsOneWidget);
+
       await tester.tap(realmField);
       await tester.pumpAndSettle();
 
@@ -370,7 +397,19 @@ void main() {
       );
 
       // Enter username
-      final usernameField = find.byType(ExtendedTextField).first;
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
+
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
       tester.testTextInput.enterText('testuser');
       await tester.pumpAndSettle();
@@ -435,10 +474,19 @@ void main() {
       );
 
       // Enter username with whitespace
-      final textFields = find.byType(ExtendedTextField);
-      expect(textFields, findsAtLeastNWidgets(6));
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
 
-      final usernameField = textFields.first;
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
       await tester.pumpAndSettle();
 

@@ -1,6 +1,8 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stac/stac.dart';
 import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
@@ -9,6 +11,12 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Stac.initialize();
+
+  //Load all LLMs
+  // await LLMManager.fetchAvailableLLMs();
+  await ModelManager.fetchAvailableModels();
+
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
   initializeJsRuntime();
@@ -22,6 +30,9 @@ void main() async {
   if (!initStatus) {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
+
+  // TODO: Load all models at init
+  // await ModelManager.loadAvailableLLMs();
 
   runApp(
     ProviderScope(
