@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, use_full_hex_values_for_flutter_colors
+
 import 'package:flutter/material.dart';
 
 void main() {

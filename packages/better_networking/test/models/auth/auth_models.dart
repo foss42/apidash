@@ -4,6 +4,8 @@ import 'package:better_networking/models/auth/auth_bearer_model.dart';
 import 'package:better_networking/models/auth/auth_api_key_model.dart';
 import 'package:better_networking/models/auth/auth_jwt_model.dart';
 import 'package:better_networking/models/auth/auth_digest_model.dart';
+import 'package:better_networking/models/auth/auth_oauth1_model.dart';
+import 'package:better_networking/models/auth/auth_oauth2_model.dart';
 import 'package:better_networking/consts.dart';
 
 /// Auth models for testing
@@ -94,6 +96,64 @@ const authDigestModel2 = AuthDigestModel(
   opaque: 'fedcba0987654321098765432109876543',
 );
 
+const authOAuth1Model1 = AuthOAuth1Model(
+  consumerKey: 'oauth1-consumer-key-123',
+  consumerSecret: 'oauth1-consumer-secret-456',
+  credentialsFilePath: '/path/to/oauth1/credentials.json',
+  accessToken: 'oauth1-access-token-789',
+  tokenSecret: 'oauth1-token-secret-012',
+  signatureMethod: OAuth1SignatureMethod.hmacSha1,
+  parameterLocation: 'header',
+  version: '1.0',
+  realm: 'oauth1-realm',
+  callbackUrl: 'https://example.com/callback',
+  verifier: 'oauth1-verifier-345',
+  nonce: 'oauth1-nonce-678',
+  timestamp: '1640995200',
+  includeBodyHash: false,
+);
+
+const authOAuth1Model2 = AuthOAuth1Model(
+  consumerKey: 'different-consumer-key',
+  consumerSecret: 'different-consumer-secret',
+  credentialsFilePath: '/different/path/credentials.json',
+  signatureMethod: OAuth1SignatureMethod.plaintext,
+  parameterLocation: 'query',
+  version: '1.0a',
+  includeBodyHash: true,
+);
+
+const authOAuth2Model1 = AuthOAuth2Model(
+  grantType: OAuth2GrantType.authorizationCode,
+  authorizationUrl: 'https://oauth.example.com/authorize',
+  accessTokenUrl: 'https://oauth.example.com/token',
+  clientId: 'oauth2-client-id-123',
+  clientSecret: 'oauth2-client-secret-456',
+  credentialsFilePath: '/path/to/oauth2/credentials.json',
+  redirectUrl: 'https://example.com/redirect',
+  scope: 'read write admin',
+  state: 'oauth2-state-789',
+  codeChallengeMethod: 'S256',
+  codeVerifier: 'oauth2-code-verifier-012',
+  codeChallenge: 'oauth2-code-challenge-345',
+  username: 'oauth2-username',
+  password: 'oauth2-password',
+  refreshToken: 'oauth2-refresh-token-678',
+  identityToken: 'oauth2-identity-token-901',
+  accessToken: 'oauth2-access-token-234',
+);
+
+const authOAuth2Model2 = AuthOAuth2Model(
+  grantType: OAuth2GrantType.clientCredentials,
+  authorizationUrl: 'https://different-oauth.example.com/auth',
+  accessTokenUrl: 'https://different-oauth.example.com/token',
+  clientId: 'different-client-id',
+  clientSecret: 'different-client-secret',
+  credentialsFilePath: '/different/oauth2/path.json',
+  scope: 'api:read',
+  codeChallengeMethod: 'plain',
+);
+
 const authModel1 = AuthModel(type: APIAuthType.basic, basic: authBasicModel1);
 
 const authModel2 = AuthModel(
@@ -111,6 +171,16 @@ const authModel4 = AuthModel(type: APIAuthType.jwt, jwt: authJwtModel1);
 const authModel5 = AuthModel(
   type: APIAuthType.digest,
   digest: authDigestModel1,
+);
+
+const authModel6 = AuthModel(
+  type: APIAuthType.oauth1,
+  oauth1: authOAuth1Model1,
+);
+
+const authModel7 = AuthModel(
+  type: APIAuthType.oauth2,
+  oauth2: authOAuth2Model1,
 );
 
 const authModelNone = AuthModel(type: APIAuthType.none);
@@ -169,6 +239,43 @@ final Map<String, dynamic> authDigestModelJson1 = {
   "opaque": "5ccc069c403ebaf9f0171e9517f40e41",
 };
 
+final Map<String, dynamic> authOAuth1ModelJson1 = {
+  "consumerKey": "oauth1-consumer-key-123",
+  "consumerSecret": "oauth1-consumer-secret-456",
+  "credentialsFilePath": "/path/to/oauth1/credentials.json",
+  "accessToken": "oauth1-access-token-789",
+  "tokenSecret": "oauth1-token-secret-012",
+  "signatureMethod": "hmacSha1",
+  "parameterLocation": "header",
+  "version": "1.0",
+  "realm": "oauth1-realm",
+  "callbackUrl": "https://example.com/callback",
+  "verifier": "oauth1-verifier-345",
+  "nonce": "oauth1-nonce-678",
+  "timestamp": "1640995200",
+  "includeBodyHash": false,
+};
+
+final Map<String, dynamic> authOAuth2ModelJson1 = {
+  "grantType": "authorizationCode",
+  "authorizationUrl": "https://oauth.example.com/authorize",
+  "accessTokenUrl": "https://oauth.example.com/token",
+  "clientId": "oauth2-client-id-123",
+  "clientSecret": "oauth2-client-secret-456",
+  "credentialsFilePath": "/path/to/oauth2/credentials.json",
+  "redirectUrl": "https://example.com/redirect",
+  "scope": "read write admin",
+  "state": "oauth2-state-789",
+  "codeChallengeMethod": "S256",
+  "codeVerifier": "oauth2-code-verifier-012",
+  "codeChallenge": "oauth2-code-challenge-345",
+  "username": "oauth2-username",
+  "password": "oauth2-password",
+  "refreshToken": "oauth2-refresh-token-678",
+  "identityToken": "oauth2-identity-token-901",
+  "accessToken": "oauth2-access-token-234",
+};
+
 final Map<String, dynamic> authModelJson1 = {
   "type": "basic",
   "apikey": null,
@@ -176,6 +283,8 @@ final Map<String, dynamic> authModelJson1 = {
   "basic": {"username": "john_doe", "password": "secure_password"},
   "jwt": null,
   "digest": null,
+  "oauth1": null,
+  "oauth2": null,
 };
 
 final Map<String, dynamic> authModelJson2 = {
@@ -188,6 +297,8 @@ final Map<String, dynamic> authModelJson2 = {
   "basic": null,
   "jwt": null,
   "digest": null,
+  "oauth1": null,
+  "oauth2": null,
 };
 
 final Map<String, dynamic> authModelJson3 = {
@@ -200,6 +311,63 @@ final Map<String, dynamic> authModelJson3 = {
   "basic": null,
   "jwt": null,
   "digest": null,
+  "oauth1": null,
+  "oauth2": null,
+};
+
+final Map<String, dynamic> authModelOAuth1Json = {
+  "type": "oauth1",
+  "apikey": null,
+  "bearer": null,
+  "basic": null,
+  "jwt": null,
+  "digest": null,
+  "oauth1": {
+    "consumerKey": "oauth1-consumer-key-123",
+    "consumerSecret": "oauth1-consumer-secret-456",
+    "credentialsFilePath": "/path/to/oauth1/credentials.json",
+    "accessToken": "oauth1-access-token-789",
+    "tokenSecret": "oauth1-token-secret-012",
+    "signatureMethod": "hmacSha1",
+    "parameterLocation": "header",
+    "version": "1.0",
+    "realm": "oauth1-realm",
+    "callbackUrl": "https://example.com/callback",
+    "verifier": "oauth1-verifier-345",
+    "nonce": "oauth1-nonce-678",
+    "timestamp": "1640995200",
+    "includeBodyHash": false,
+  },
+  "oauth2": null,
+};
+
+final Map<String, dynamic> authModelOAuth2Json = {
+  "type": "oauth2",
+  "apikey": null,
+  "bearer": null,
+  "basic": null,
+  "jwt": null,
+  "digest": null,
+  "oauth1": null,
+  "oauth2": {
+    "grantType": "authorizationCode",
+    "authorizationUrl": "https://oauth.example.com/authorize",
+    "accessTokenUrl": "https://oauth.example.com/token",
+    "clientId": "oauth2-client-id-123",
+    "clientSecret": "oauth2-client-secret-456",
+    "credentialsFilePath": "/path/to/oauth2/credentials.json",
+    "redirectUrl": "https://example.com/redirect",
+    "scope": "read write admin",
+    "state": "oauth2-state-789",
+    "codeChallengeMethod": "S256",
+    "codeVerifier": "oauth2-code-verifier-012",
+    "codeChallenge": "oauth2-code-challenge-345",
+    "username": "oauth2-username",
+    "password": "oauth2-password",
+    "refreshToken": "oauth2-refresh-token-678",
+    "identityToken": "oauth2-identity-token-901",
+    "accessToken": "oauth2-access-token-234",
+  },
 };
 
 final Map<String, dynamic> authModelNoneJson = {
@@ -209,4 +377,6 @@ final Map<String, dynamic> authModelNoneJson = {
   "basic": null,
   "jwt": null,
   "digest": null,
+  "oauth1": null,
+  "oauth2": null,
 };
