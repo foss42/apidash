@@ -1,6 +1,36 @@
 import 'dart:convert';
 import 'package:curl_parser/curl_parser.dart';
 
+/// NOTE: Unsupported cURL flags and rationale for current models
+///
+/// The `Curl` parser recognizes several flags that are not represented in
+/// our `HttpRequestModel` / `RequestModel`. Those models intentionally focus on
+/// the request description (method, URL, headers, params, body, form-data),
+/// not transport/runtime behavior or output concerns. As a result, these flags
+/// are currently ignored by `CurlImportService` and cannot be applied to the
+/// request model:
+///
+/// - `-k`, `--insecure`: TLS validation behavior (transport concern). No field
+///   exists to control certificate verification in `HttpRequestModel`.
+/// - `-L`, `--location`: redirect-following behavior (transport concern). Not
+///   a property of a single request; our model describes one request only.
+/// - `--compressed`: response compression negotiation/output. While this often
+///   implies adding `Accept-Encoding`, the parser does not expose this flag on
+///   `Curl`; and we avoid mutating headers implicitly without a model field.
+/// - `-i`, `--include`: include response headers in output (output concern).
+/// - `-o`, `--output`: write response body to a file (output concern).
+/// - `-s`, `--silent`: suppress CLI progress/errors (CLI UX concern).
+/// - `-v`, `--verbose`: verbose logging (CLI UX concern).
+/// - `--connect-timeout`: connection timeout (transport concern). No timeout
+///   fields exist on `HttpRequestModel`.
+/// - `--retry`: retry policy (transport concern). No retry fields exist on
+///   `HttpRequestModel`.
+/// - `-c`, `--cookie-jar`: persist response cookies to a file (output/state
+///   concern). Not part of request description.
+/// - `--globoff`: parsing behavior for the curl CLI; irrelevant post-parse.
+
+
+
 /// Service to parse cURL commands and produce
 /// a standard action message map understood by Dashbot.
 class CurlImportService {
