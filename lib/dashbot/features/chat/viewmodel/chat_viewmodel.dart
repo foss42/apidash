@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/file_utils.dart';
+import 'package:apidash/utils/utils.dart';
 import '../../../core/model/chat_attachment.dart';
 import '../../../core/services/curl_import_service.dart';
 import '../../../core/services/openapi_import_service.dart';
@@ -96,11 +97,19 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
 
     final promptBuilder = _ref.read(promptBuilderProvider);
+    // Prepare a substituted copy of current request for prompt context
+    final currentReq = _currentRequest;
+    final substitutedReq = (currentReq?.httpRequestModel != null)
+        ? currentReq!.copyWith(
+            httpRequestModel:
+                _getSubstitutedHttpRequestModel(currentReq.httpRequestModel!),
+          )
+        : currentReq;
     String systemPrompt;
     if (type == ChatMessageType.generateCode) {
       final detectedLang = promptBuilder.detectLanguage(text);
       systemPrompt = promptBuilder.buildSystemPrompt(
-        _currentRequest,
+        substitutedReq,
         type,
         overrideLanguage: detectedLang,
         history: currentMessages,
@@ -160,7 +169,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       return;
     } else {
       systemPrompt = promptBuilder.buildSystemPrompt(
-        _currentRequest,
+        substitutedReq,
         type,
         history: currentMessages,
       );
@@ -544,8 +553,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   Map<String, dynamic>? _currentRequestContext() {
-    final rq = _currentRequest?.httpRequestModel;
-    if (rq == null) return null;
+    final originalRq = _currentRequest?.httpRequestModel;
+    if (originalRq == null) return null;
+    final rq = _getSubstitutedHttpRequestModel(originalRq);
     final headers = <String, String>{};
     for (final h in rq.headers ?? const []) {
       final k = (h.name).toString();
@@ -824,6 +834,17 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       url,
       baseUrl,
       ensure: (b) => _ensureBaseUrlEnv(b),
+    );
+  }
+
+  HttpRequestModel _getSubstitutedHttpRequestModel(
+      HttpRequestModel httpRequestModel) {
+    final envMap = _ref.read(availableEnvironmentVariablesStateProvider);
+    final activeEnvId = _ref.read(activeEnvironmentIdStateProvider);
+    return substituteHttpRequestModel(
+      httpRequestModel,
+      envMap,
+      activeEnvId,
     );
   }
 }
