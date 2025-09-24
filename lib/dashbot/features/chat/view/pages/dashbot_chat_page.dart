@@ -1,3 +1,4 @@
+import 'package:apidash/dashbot/features/chat/view/widgets/dashbot_task_buttons.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 
 import '../../models/chat_models.dart';
@@ -17,6 +18,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
+  bool _showTaskSuggestions = false;
 
   @override
   void initState() {
@@ -34,6 +36,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(chatViewmodelProvider, (prev, next) {
+      if (next.isGenerating) {
+        _showTaskSuggestions = false;
+      }
+    });
+
     return Scaffold(
       body: Column(
         children: [
@@ -72,10 +80,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             height: 5,
             thickness: 6,
           ),
+          if (_showTaskSuggestions) DashbotTaskButtons(),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
+                ADIconButton(
+                  icon: Icons.help_outline_rounded,
+                  tooltip: 'Show tasks',
+                  onPressed: ref.watch(chatViewmodelProvider).isGenerating
+                      ? null
+                      : () => setState(
+                          () => _showTaskSuggestions = !_showTaskSuggestions),
+                ),
                 ADIconButton(
                   icon: Icons.clear_all_rounded,
                   tooltip: 'Clear chat',
