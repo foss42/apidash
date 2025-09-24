@@ -9,7 +9,7 @@ class DashbotWindowModel {
 
   const DashbotWindowModel({
     this.width = 400,
-    this.height = 500,
+    this.height = 515,
     this.right = 50,
     this.bottom = 100,
     this.isActive = false,
