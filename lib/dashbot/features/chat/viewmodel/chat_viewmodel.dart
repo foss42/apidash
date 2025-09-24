@@ -107,6 +107,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     } else if (type == ChatMessageType.importCurl) {
       final rqId = _currentRequest?.id ?? 'global';
+      // Briefly toggle loading to indicate processing of the import flow prompt
+      state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
       _addMessage(
         rqId,
         ChatMessage(
@@ -118,9 +120,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           messageType: ChatMessageType.importCurl,
         ),
       );
+      state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
       return;
     } else if (type == ChatMessageType.importOpenApi) {
       final rqId = _currentRequest?.id ?? 'global';
+      state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
       final uploadAction = ChatAction.fromJson({
         'action': 'upload_asset',
         'target': 'attachment',
@@ -152,6 +156,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       if (_looksLikeOpenApi(text)) {
         await handlePotentialOpenApiPaste(text);
       }
+      state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
       return;
     } else {
       systemPrompt = promptBuilder.buildSystemPrompt(
@@ -431,6 +436,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     // quick check
     final trimmed = text.trim();
     if (!trimmed.startsWith('curl ')) return;
+    // Show loading while parsing and generating insights
+    state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
       debugPrint('[cURL] Original: $trimmed');
       final curl = CurlImportService.tryParseCurl(trimmed);
@@ -528,6 +535,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final safe = e.toString().replaceAll('"', "'");
       _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
           ChatMessageType.importCurl);
+    } finally {
+      state = state.copyWith(
+        isGenerating: false,
+        currentStreamingResponse: '',
+      );
     }
   }
 
@@ -581,6 +593,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   Future<void> handlePotentialOpenApiPaste(String text) async {
     final trimmed = text.trim();
     if (!_looksLikeOpenApi(trimmed)) return;
+    // Show loading while parsing and generating insights
+    state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
       debugPrint('[OpenAPI] Original length: ${trimmed.length}');
       final spec = OpenApiImportService.tryParseSpec(trimmed);
@@ -647,6 +661,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final safe = e.toString().replaceAll('"', "'");
       _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
           ChatMessageType.importOpenApi);
+    } finally {
+      state = state.copyWith(
+        isGenerating: false,
+        currentStreamingResponse: '',
+      );
     }
   }
 

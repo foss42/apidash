@@ -4,9 +4,9 @@ Dashbot is your in-app helper for working with APIs inside API Dash. It explains
 
 
 ## Before You Start
-- Configure an AI model: Open the AI Request settings and set your preferred provider/model and API key. Dashbot needs this to generate answers. If not configured, you will see a message asking you to set it up.
-- Pick or create a request: Dashbot works best when a request is selected, especially for Explain, Debug, Tests, Docs, and Code.
-- Network access: Some features pull insights only from your current request and input. No external API calls are made by Dashbot itself (outside your configured AI provider).
+- **Configure an AI model** : Open the AI Request settings and set your preferred provider/model and API key. Dashbot needs this to generate answers. If not configured, you will see a message asking you to set it up.
+- **Pick or create a request** : Dashbot works best when a request is selected, especially for Explain, Debug, Tests, Docs, and Code.
+- **Network access** : Some features pull insights only from your current request and input. No external API calls are made by Dashbot itself (outside your configured AI provider).
 
 ## Open Dashbot
 - Floating window: Click the Dashbot button to open it as a floating panel.
