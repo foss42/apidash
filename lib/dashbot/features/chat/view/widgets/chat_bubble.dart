@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/chat_models.dart';
-import '../../../../core/common/widgets/dashbot_action_buttons.dart';
+import '../../../../core/common/widgets/dashbot_action.dart';
 
 class ChatBubble extends ConsumerWidget {
   final String message;
