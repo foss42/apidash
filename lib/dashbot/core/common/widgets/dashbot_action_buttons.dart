@@ -233,6 +233,9 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
         try {
           OpenApi? spec;
           String? sourceName;
+          final overlayNotifier =
+              ref.read(dashbotWindowNotifierProvider.notifier);
+          final chatNotifier = ref.read(chatViewmodelProvider.notifier);
           if (action.value is Map<String, dynamic>) {
             final map = action.value as Map<String, dynamic>;
             sourceName = map['sourceName'] as String?;
@@ -247,9 +250,6 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
 
           final servers = spec.servers ?? const [];
           final baseUrl = servers.isNotEmpty ? (servers.first.url ?? '/') : '/';
-
-          final overlayNotifier =
-              ref.read(dashbotWindowNotifierProvider.notifier);
           overlayNotifier.hide();
           final selected = await showOpenApiOperationPickerDialog(
             context: context,
@@ -258,8 +258,6 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
           );
           overlayNotifier.show();
           if (selected == null || selected.isEmpty) return;
-
-          final notifier = ref.read(chatViewmodelProvider.notifier);
           for (final s in selected) {
             final payload = OpenApiImportService.payloadForOperation(
               baseUrl: baseUrl,
@@ -267,7 +265,7 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
               method: s.method,
               op: s.op,
             );
-            await notifier.applyAutoFix(ChatAction.fromJson({
+            await chatNotifier.applyAutoFix(ChatAction.fromJson({
               'action': 'apply_openapi',
               'actionType': 'apply_openapi',
               'target': 'httpRequestModel',
@@ -372,7 +370,6 @@ class DashbotActionWidgetFactory {
       case ChatActionType.downloadDoc:
         return DashbotDownloadDocButton(action: action);
       case ChatActionType.noAction:
-        // If downstream requests, render an Import Now for OpenAPI contexts
         if (action.action == 'import_now_openapi') {
           return DashbotImportNowButton(action: action);
         }
