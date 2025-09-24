@@ -40,6 +40,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           kVSpacer16,
           DashbotIcons.getDashbotIcon1(width: 60),
@@ -165,6 +166,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               ),
             ],
           ),
+          kVSpacer20,
         ],
       ),
     );
