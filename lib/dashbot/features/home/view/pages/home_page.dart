@@ -23,20 +23,6 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   @override
   Widget build(BuildContext context) {
-    // final hasOkResponse = ref.watch(
-    //   selectedRequestModelProvider.select((req) =>
-    //       req?.httpResponseModel?.statusCode != null &&
-    //       req?.httpResponseModel?.statusCode == 200),
-    // );
-
-    // ref.listen(
-    //   selectedRequestModelProvider,
-    //   (current, next) {
-    //     if (current?.id != next?.id) {
-    //       Navigator.pop(context);
-    //     }
-    //   },
-    // );
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(

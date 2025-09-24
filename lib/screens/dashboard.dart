@@ -21,6 +21,8 @@ class Dashboard extends ConsumerWidget {
         ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
     final isDashBotActive = ref
         .watch(dashbotWindowNotifierProvider.select((value) => value.isActive));
+    final isDashBotPopped = ref
+        .watch(dashbotWindowNotifierProvider.select((value) => value.isPopped));
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -129,7 +131,9 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: isDashBotEnabled && !isDashBotActive
+      floatingActionButton: isDashBotEnabled &&
+              !isDashBotActive &&
+              isDashBotPopped
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               onPressed: () => showDashbotWindow(context, ref),
