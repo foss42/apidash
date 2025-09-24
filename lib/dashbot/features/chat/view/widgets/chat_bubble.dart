@@ -1,5 +1,5 @@
 import 'package:apidash/dashbot/core/utils/safe_parse_json_message.dart';
-import 'package:apidash_design_system/tokens/tokens.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import '../../../../core/utils/dashbot_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -122,14 +122,13 @@ class ChatBubble extends ConsumerWidget {
               ),
             ],
             const SizedBox(height: 4),
-            IconButton(
+            ADIconButton(
               onPressed: () {
-                Clipboard.setData(ClipboardData(text: message));
+                Clipboard.setData(ClipboardData(text: renderedMessage));
               },
-              icon: Icon(
-                Icons.copy_rounded,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              icon: Icons.copy_rounded,
+              tooltip: "Copy",
             ),
           ],
         ],
