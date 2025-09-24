@@ -144,6 +144,10 @@ class DashbotWindow extends ConsumerWidget {
                                         .read(dashbotWindowNotifierProvider
                                             .notifier)
                                         .togglePopped();
+                                    ref
+                                        .read(dashbotWindowNotifierProvider
+                                            .notifier)
+                                        .toggleActive();
                                   },
                                 ),
                                 IconButton(

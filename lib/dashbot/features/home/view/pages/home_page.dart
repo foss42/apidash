@@ -1,6 +1,7 @@
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/tool_generation/generate_tool_dialog.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../../core/utils/dashbot_icons.dart';
 import '../../../../core/providers/dashbot_window_notifier.dart';
@@ -22,11 +23,11 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   @override
   Widget build(BuildContext context) {
-    final hasOkResponse = ref.watch(
-      selectedRequestModelProvider.select((req) =>
-          req?.httpResponseModel?.statusCode != null &&
-          req?.httpResponseModel?.statusCode == 200),
-    );
+    // final hasOkResponse = ref.watch(
+    //   selectedRequestModelProvider.select((req) =>
+    //       req?.httpResponseModel?.statusCode != null &&
+    //       req?.httpResponseModel?.statusCode == 200),
+    // );
 
     // ref.listen(
     //   selectedRequestModelProvider,
@@ -54,32 +55,16 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              HomeScreenTaskButton(
-                label: "🤖 Chat with Dashbot",
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "📥 Import cURL",
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.importCurl,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "📄 Import OpenAPI",
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.importOpenApi,
-                  );
-                },
-              ),
+              if (kDebugMode) ...[
+                HomeScreenTaskButton(
+                  label: "🤖 Chat with Dashbot",
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      DashbotRoutes.dashbotChat,
+                    );
+                  },
+                ),
+              ],
               HomeScreenTaskButton(
                 label: "🔎 Explain me this response",
                 onPressed: () {
@@ -125,43 +110,59 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                   );
                 },
               ),
-              if (hasOkResponse) ...[
-                HomeScreenTaskButton(
-                  label: "🛠️ Generate Tool",
-                  onPressed: () async {
-                    final notifier =
-                        ref.read(dashbotWindowNotifierProvider.notifier);
-                    notifier.hide();
-                    await GenerateToolDialog.show(context, ref);
-                    notifier.show();
-                  },
-                ),
-                HomeScreenTaskButton(
-                  label: "📱 Generate UI",
-                  onPressed: () async {
-                    final notifier =
-                        ref.read(dashbotWindowNotifierProvider.notifier);
-                    notifier.hide();
-                    final model = ref.watch(selectedRequestModelProvider
-                        .select((value) => value?.httpResponseModel));
-                    if (model == null) return;
+              HomeScreenTaskButton(
+                label: "📥 Import cURL",
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.importCurl,
+                  );
+                },
+              ),
+              HomeScreenTaskButton(
+                label: "📄 Import OpenAPI",
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.importOpenApi,
+                  );
+                },
+              ),
+              HomeScreenTaskButton(
+                label: "🛠️ Generate Tool",
+                onPressed: () async {
+                  final notifier =
+                      ref.read(dashbotWindowNotifierProvider.notifier);
+                  notifier.hide();
+                  await GenerateToolDialog.show(context, ref);
+                  notifier.show();
+                },
+              ),
+              HomeScreenTaskButton(
+                label: "📱 Generate UI",
+                onPressed: () async {
+                  final notifier =
+                      ref.read(dashbotWindowNotifierProvider.notifier);
+                  notifier.hide();
+                  final model = ref.watch(selectedRequestModelProvider
+                      .select((value) => value?.httpResponseModel));
+                  if (model == null) return;
 
-                    String data = "";
-                    if (model.sseOutput != null) {
-                      data = model.sseOutput!.join('');
-                    } else {
-                      data = model.formattedBody ?? "<>";
-                    }
+                  String data = "";
+                  if (model.sseOutput != null) {
+                    data = model.sseOutput!.join('');
+                  } else {
+                    data = model.formattedBody ?? "<>";
+                  }
 
-                    await showCustomDialog(
-                      context,
-                      GenerateUIDialog(content: data),
-                      useRootNavigator: true,
-                    );
-                    notifier.show();
-                  },
-                ),
-              ],
+                  await showCustomDialog(
+                    context,
+                    GenerateUIDialog(content: data),
+                    useRootNavigator: true,
+                  );
+                  notifier.show();
+                },
+              ),
             ],
           ),
         ],

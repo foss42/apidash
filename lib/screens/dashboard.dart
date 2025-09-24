@@ -19,6 +19,8 @@ class Dashboard extends ConsumerWidget {
     final railIdx = ref.watch(navRailIndexStateProvider);
     final isDashBotEnabled =
         ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
+    final isDashBotActive = ref
+        .watch(dashbotWindowNotifierProvider.select((value) => value.isActive));
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -127,7 +129,7 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: isDashBotEnabled
+      floatingActionButton: isDashBotEnabled && !isDashBotActive
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               onPressed: () => showDashbotWindow(context, ref),
