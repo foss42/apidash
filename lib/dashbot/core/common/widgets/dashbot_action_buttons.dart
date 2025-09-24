@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../features/chat/models/chat_models.dart';
 import '../../../features/chat/viewmodel/chat_viewmodel.dart';
@@ -8,6 +9,8 @@ import '../../services/openapi_import_service.dart';
 import '../../../features/chat/view/widgets/openapi_operation_picker_dialog.dart';
 import 'package:openapi_spec/openapi_spec.dart';
 import '../../providers/dashbot_window_notifier.dart';
+import '../../../../utils/save_utils.dart';
+import '../../../../utils/utils.dart';
 
 /// Base mixin for action widgets.
 mixin DashbotActionMixin {
@@ -308,6 +311,37 @@ class DashbotGeneratedCodeBlock extends StatelessWidget
   }
 }
 
+class DashbotDownloadDocButton extends ConsumerWidget with DashbotActionMixin {
+  @override
+  final ChatAction action;
+  const DashbotDownloadDocButton({super.key, required this.action});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final docContent = (action.value is String) ? action.value as String : '';
+    final filename = action.path ?? 'api-documentation';
+
+    return ElevatedButton.icon(
+      icon: const Icon(Icons.download, size: 16),
+      label: const Text('Download Documentation'),
+      onPressed: docContent.isEmpty
+          ? null
+          : () async {
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              final contentBytes = Uint8List.fromList(docContent.codeUnits);
+
+              await saveToDownloads(
+                scaffoldMessenger,
+                content: contentBytes,
+                mimeType: 'text/markdown',
+                ext: 'md',
+                name: filename,
+              );
+            },
+    );
+  }
+}
+
 /// Factory to map an action to a widget.
 class DashbotActionWidgetFactory {
   static Widget? build(ChatAction action) {
@@ -335,6 +369,8 @@ class DashbotActionWidgetFactory {
         return DashbotApplyCurlButton(action: action);
       case ChatActionType.applyOpenApi:
         return DashbotApplyOpenApiButton(action: action);
+      case ChatActionType.downloadDoc:
+        return DashbotDownloadDocButton(action: action);
       case ChatActionType.noAction:
         // If downstream requests, render an Import Now for OpenAPI contexts
         if (action.action == 'import_now_openapi') {

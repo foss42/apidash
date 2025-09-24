@@ -108,6 +108,7 @@ enum ChatActionType {
   showLanguages,
   applyCurl,
   applyOpenApi,
+  downloadDoc,
   other,
   noAction,
   uploadAsset,
@@ -119,6 +120,7 @@ enum ChatActionTarget {
   test,
   code,
   attachment,
+  documentation,
 }
 
 ChatActionType _chatActionTypeFromString(String s) {
@@ -143,6 +145,8 @@ ChatActionType _chatActionTypeFromString(String s) {
       return ChatActionType.applyCurl;
     case 'apply_openapi':
       return ChatActionType.applyOpenApi;
+    case 'download_doc':
+      return ChatActionType.downloadDoc;
     case 'upload_asset':
       return ChatActionType.uploadAsset;
     case 'no_action':
@@ -176,6 +180,8 @@ String chatActionTypeToString(ChatActionType t) {
       return 'apply_curl';
     case ChatActionType.applyOpenApi:
       return 'apply_openapi';
+    case ChatActionType.downloadDoc:
+      return 'download_doc';
     case ChatActionType.other:
       return 'other';
     case ChatActionType.noAction:
@@ -197,6 +203,8 @@ ChatActionTarget _chatActionTargetFromString(String s) {
       return ChatActionTarget.code;
     case 'attachment':
       return ChatActionTarget.attachment;
+    case 'documentation':
+      return ChatActionTarget.documentation;
     default:
       return ChatActionTarget.httpRequestModel;
   }
@@ -214,6 +222,8 @@ String chatActionTargetToString(ChatActionTarget t) {
       return 'code';
     case ChatActionTarget.attachment:
       return 'attachment';
+    case ChatActionTarget.documentation:
+      return 'documentation';
   }
 }
 

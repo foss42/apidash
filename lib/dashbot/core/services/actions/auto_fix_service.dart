@@ -82,6 +82,7 @@ class AutoFixService {
       case ChatActionType.showLanguages:
       case ChatActionType.noAction:
       case ChatActionType.uploadAsset:
+      case ChatActionType.downloadDoc:
         return null;
     }
   }
