@@ -87,6 +87,10 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                                 .read(dashbotWindowNotifierProvider.notifier)
                                 .togglePopped();
 
+                            ref
+                                .read(dashbotWindowNotifierProvider.notifier)
+                                .toggleActive();
+
                             final newState =
                                 ref.read(dashbotWindowNotifierProvider);
                             if (newState.isPopped) {
