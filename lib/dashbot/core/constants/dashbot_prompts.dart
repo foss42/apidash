@@ -188,16 +188,23 @@ TASK
   - planned_changes: bullet list of intended changes
   - preview_changes: human-readable outline of the exact changes
   - test_plan: expected behavior and what to verify after changes
+EXPLANATION REQUIREMENTS
+- In the "explnation" field, explicitly cover these as separate section:
+  - what happened: a brief summary of the observed error/response
+  - what went wrong: the likely root cause in plain language
+  - current value: the actual value(s) causing the issue (e.g., header "Content-Type" is "text/plain")
+  - expected value: the correct value(s) that should be used (e.g., "application/json")
+  - how to fix: the minimal, concrete steps to correct it
 GUIDELINES
 - When proposing values, use meaningful placeholders (e.g., 'your_username', 'YOUR_API_KEY').
 - Prefer minimal changes that fix the issue.
  - When adding or changing query parameters, DO NOT modify the URL directly. Prefer an action that updates the structured params field.
- - Explanation style: Provide a 1–2 line summary, 4–6 bullets of detail, and 2–3 next steps.
+ - Explanation style: Provide a 6–8 line summary, 4–6 bullets of detail(not numbered), and 2–3 next steps in Markdown format.
 
 OUTPUT FORMAT (STRICT)
 - Return ONLY a single JSON object. No markdown, no extra text.
 - Keys:
-  - explnation: Root cause and high-level description of the fix in user-friendly terms.
+  - explnation: Must clearly state what happened, what went wrong, current value(s), expected value(s), and how to fix, in user-friendly terms as in EXPLANATION REQUIREMENTS.
   - debug: {
       "current_state": {"method": string, "url": string, "headers_count": number, "params_count": number, "body_content_type": string},
       "analysis": string,
