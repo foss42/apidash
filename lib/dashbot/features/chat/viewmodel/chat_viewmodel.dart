@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash/utils/utils.dart';
 import '../../../core/model/chat_attachment.dart';
 import '../../../core/services/curl_import_service.dart';
@@ -96,6 +95,30 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       return;
     }
 
+    // Detect OpenAPI import flow: if the last system message was an OpenAPI import prompt,
+    // then treat pasted URL or raw spec as part of the import flow.
+    final lastSystemOpenApi = existingMessages.lastWhere(
+      (m) =>
+          m.role == MessageRole.system &&
+          m.messageType == ChatMessageType.importOpenApi,
+      orElse: () => ChatMessage(
+        id: '',
+        content: '',
+        role: MessageRole.system,
+        timestamp: DateTime.fromMillisecondsSinceEpoch(0),
+      ),
+    );
+    final openApiFlowActive = lastSystemOpenApi.id.isNotEmpty;
+    if ((_looksLikeOpenApi(text) || _looksLikeUrl(text)) &&
+        (type == ChatMessageType.importOpenApi || openApiFlowActive)) {
+      if (_looksLikeOpenApi(text)) {
+        await handlePotentialOpenApiPaste(text);
+      } else {
+        await handlePotentialOpenApiUrl(text);
+      }
+      return;
+    }
+
     final promptBuilder = _ref.read(promptBuilderProvider);
     // Prepare a substituted copy of current request for prompt context
     final currentReq = _currentRequest;
@@ -155,7 +178,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         ChatMessage(
           id: getNewUuid(),
           content:
-              '{"explnation":"Upload your OpenAPI (JSON or YAML) specification or paste it here.","actions":[${jsonEncode(uploadAction.toJson())}]}',
+              '{"explnation":"Upload your OpenAPI (JSON or YAML) specification, paste the full spec text, or paste a URL to a spec (e.g., https://api.example.com/openapi.json).","actions":[${jsonEncode(uploadAction.toJson())}]}',
           role: MessageRole.system,
           timestamp: DateTime.now(),
           messageType: ChatMessageType.importOpenApi,
@@ -164,6 +187,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
       if (_looksLikeOpenApi(text)) {
         await handlePotentialOpenApiPaste(text);
+      } else if (_looksLikeUrl(text)) {
+        await handlePotentialOpenApiUrl(text);
       }
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
       return;
@@ -597,6 +622,131 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _appendSystem(
           '{"explnation":"Failed to read attachment: $safe","actions":[]}',
           ChatMessageType.importOpenApi);
+    }
+  }
+
+  bool _looksLikeUrl(String input) {
+    final t = input.trim();
+    if (t.isEmpty) return false;
+    return t.startsWith('http://') || t.startsWith('https://');
+  }
+
+  Future<void> handlePotentialOpenApiUrl(String text) async {
+    final trimmed = text.trim();
+    if (!_looksLikeUrl(trimmed)) return;
+    state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
+    try {
+      // Build a simple GET using existing networking stack
+      final httpModel = HttpRequestModel(
+        method: HTTPVerb.get,
+        url: trimmed,
+        headers: const [
+          // Hint servers that we can accept JSON or YAML
+          NameValueModel(
+              name: 'Accept',
+              value: 'application/json, application/yaml, text/yaml, */*'),
+        ],
+        isHeaderEnabledList: const [true],
+      );
+
+      final (resp, _, err) = await sendHttpRequest(
+        getNewUuid(),
+        APIType.rest,
+        httpModel,
+      );
+
+      if (err != null) {
+        final safe = err.replaceAll('"', "'");
+        _appendSystem(
+          '{"explnation":"Failed to fetch URL: $safe","actions":[]}',
+          ChatMessageType.importOpenApi,
+        );
+        return;
+      }
+      if (resp == null) {
+        _appendSystem(
+          '{"explnation":"No response received when fetching the URL.","actions":[]}',
+          ChatMessageType.importOpenApi,
+        );
+        return;
+      }
+
+      final body = resp.body;
+      if (body.trim().isEmpty) {
+        _appendSystem(
+          '{"explnation":"The fetched URL returned an empty body.","actions":[]}',
+          ChatMessageType.importOpenApi,
+        );
+        return;
+      }
+
+      // Try to parse fetched content as OpenAPI
+      final spec = OpenApiImportService.tryParseSpec(body);
+      if (spec == null) {
+        _appendSystem(
+          '{"explnation":"The fetched content does not look like a valid OpenAPI spec (JSON or YAML).","actions":[]}',
+          ChatMessageType.importOpenApi,
+        );
+        return;
+      }
+
+      // Build insights and show picker (reuse local method)
+      String? insights;
+      try {
+        final ai = _selectedAIModel;
+        if (ai != null) {
+          final summary = OpenApiImportService.summaryForSpec(spec);
+          final meta = OpenApiImportService.extractSpecMeta(spec);
+          final sys = dash.DashbotPrompts()
+              .openApiInsightsPrompt(specSummary: summary, specMeta: meta);
+          final res = await _repo.sendChat(
+            request: ai.copyWith(
+              systemPrompt: sys,
+              userPrompt:
+                  'Provide concise, actionable insights about these endpoints.',
+              stream: false,
+            ),
+          );
+          if (res != null && res.isNotEmpty) {
+            try {
+              final map = MessageJson.safeParse(res);
+              if (map['explnation'] is String) insights = map['explnation'];
+            } catch (_) {
+              insights = res;
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('[OpenAPI URL] insights error: $e');
+      }
+
+      final picker = OpenApiImportService.buildOperationPicker(
+        spec,
+        insights: insights,
+      );
+      final rqId = _currentRequest?.id ?? 'global';
+      _addMessage(
+        rqId,
+        ChatMessage(
+          id: getNewUuid(),
+          content: jsonEncode(picker),
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importOpenApi,
+          actions: (picker['actions'] as List)
+              .whereType<Map<String, dynamic>>()
+              .map(ChatAction.fromJson)
+              .toList(),
+        ),
+      );
+    } catch (e) {
+      final safe = e.toString().replaceAll('"', "'");
+      _appendSystem(
+        '{"explnation":"Failed to fetch or parse OpenAPI from URL: $safe","actions":[]}',
+        ChatMessageType.importOpenApi,
+      );
+    } finally {
+      state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
     }
   }
 
