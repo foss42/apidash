@@ -24,11 +24,11 @@ Dashbot is your in-app helper for working with APIs inside API Dash. It explains
 Dashbot’s home screen lists quick actions:
 - Explain response: Explains the last response for the selected request.
 - Debug error: Analyzes a failing response and proposes minimal fixes.
-- Generate documentation: Creates clean Markdown docs for your request/response.
+- Generate documentation: Creates clean Markdown docs for your request/response and lets you download them.
 - Generate tests: Builds simple JavaScript tests; you can add them to the request’s post-request script.
 - Generate code: Produces runnable code in common languages.
 - Import cURL: Paste a full cURL to recreate a request.
-- Import OpenAPI: Upload/paste a spec and import endpoints.
+- Import OpenAPI: Upload, paste, or fetch (URL) a spec and import endpoints.
 
 ![Image](./images/dashbot/dashbot_tasks.png)
 
@@ -73,24 +73,32 @@ Import endpoints from an OpenAPI (Swagger) spec to quickly scaffold requests.
 
 Supported input
 - JSON or YAML OpenAPI files.
-- Upload via the “Upload Attachment” button (file picker) or paste the spec into the chat box (full content).
+- Public URL to a JSON or YAML OpenAPI document (e.g., `https://api.apidash.dev/openapi.json`).
+- Upload via the “Upload Attachment” button (file picker), paste the full spec into the chat box, or enter a URL in the chat field and fetch.
 
 Workflow
 1) Choose “Import OpenAPI”.
-2) Upload a spec (or paste it). If valid, Dashbot shows a summary plus an “Import Now” button.
-3) Click “Import Now” to open the Operation Picker.
-4) In the picker:
-   - Select All or cherry-pick operations (multi-select).
-   - Click Import to add them as new requests.
-5) New requests are named like `GET /users`, `POST /items`, etc.
+2) Provide the spec by uploading, pasting, or entering a URL then clicking Fetch.
+3) If valid, Dashbot shows a summary plus an “Import Now” button.
+4) Click “Import Now” to open the Operation Picker.
+5) In the picker:
+  - Select All or cherry-pick operations (multi-select).
+  - Click Import to add them as new requests.
+6) New requests are named like `GET /users`, `POST /items`, etc.
 
 Base URL as environment
 - If the spec defines servers, Dashbot will infer the base URL and may rewrite imported URLs to use an environment variable like `{{BASE_URL_<HOST>}}`.
+
+URL fetching notes
+- The URL must be publicly reachable and return raw JSON or YAML (not an HTML page).
+- Auth-protected or dynamically generated docs pages may fail; download and upload the spec instead.
+- Large remote specs may take longer; try file upload if a timeout occurs.
 
 Notes and limits
 - Very large specs may take longer and could show only the first N routes for performance.
 - Some request body examples or schema-derived form fields may not auto-populate if missing explicit examples.
 - “Apply to Selected” is supported when importing a single operation via certain actions, but the Operation Picker’s “Import” creates new requests.
+- If URL import fails, verify the URL returns the spec directly and that no authentication is required.
 
 ![Image](./images/dashbot/dashbot_openapi_task.png)
 ![Image](./images/dashbot/dashbot_openapi_file_picker.png)
@@ -154,15 +162,18 @@ Produce clean Markdown docs for your request/response.
 How to use
 1) Choose “Generate documentation”.
 2) Dashbot returns Markdown with:
-   - Title and description
-   - Request details (method, URL, headers, parameters)
-   - Response details and codes
-   - Example responses
-   - Key takeaways
-3) Copy the Markdown to your notes/wiki.
+  - Title and description
+  - Request details (method, URL, headers, parameters)
+  - Response details and codes
+  - Example responses
+  - Key takeaways
+3) Use an action:
+  - Copy: Copies the Markdown to your clipboard.
+  - Download Now: Saves a `.md` file to your system Downloads folder (auto-generated filename like `api-documentation.md`).
 
 Notes
-- The output does not auto-save to a file. Copy/paste where you need it.
+- Downloaded file is plain Markdown; move or rename it as needed.
+- If a file name collision occurs, a numeric suffix may be appended.
 
 ![Image](./images/dashbot/dashbot_documentation.png)
 
@@ -246,9 +257,11 @@ Tips
 ## Troubleshooting
 - AI model is not configured: Set it in the AI Request settings; then retry.
 - cURL parsing failed: Ensure the command starts with `curl` and is complete. Remove shell-specific parts and try again.
-- OpenAPI parsing failed: Make sure the file is valid JSON/YAML and complete. Try a smaller spec if huge.
+- OpenAPI parsing failed (file/paste): Make sure the spec is valid JSON/YAML and complete. Try a smaller spec if huge.
+- OpenAPI URL fetch failed: Check that the URL returns raw JSON/YAML (not HTML), is publicly accessible, and does not require authentication; otherwise download and upload the file.
 - No actions shown: Some tasks return explanations only. That’s expected for Explain/Docs.
 - Changes didn’t apply: Ensure a request is selected and re-run the action. Use “Apply to Selected” vs “Create New Request” appropriately.
+- Documentation file not found: Confirm your Downloads folder is writable; retry or use Copy instead.
 
 ---
 
