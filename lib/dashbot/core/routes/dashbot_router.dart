@@ -3,7 +3,7 @@ import '../../features/chat/view/pages/dashbot_chat_page.dart';
 import '../constants/constants.dart';
 import 'dashbot_routes.dart';
 import '../common/pages/dashbot_default_page.dart';
-import '../../features/home/view/pages/home_page.dart';
+import '../../features/home/view/pages/dashbot_home_page.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic>? generateRoute(RouteSettings settings) {
