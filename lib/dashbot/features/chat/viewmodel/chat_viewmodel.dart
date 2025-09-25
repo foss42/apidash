@@ -181,7 +181,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         ChatMessage(
           id: getNewUuid(),
           content:
-              '{"explnation":"Upload your OpenAPI (JSON or YAML) specification, paste the full spec text, or paste a URL to a spec (e.g., https://api.example.com/openapi.json).","actions":[${jsonEncode(uploadAction.toJson())}]}',
+              '{"explnation":"Upload your OpenAPI (JSON or YAML) specification, paste the full spec text, or paste a URL to a spec (e.g., https://api.apidash.dev/openapi.json).","actions":[${jsonEncode(uploadAction.toJson())}]}',
           role: MessageRole.system,
           timestamp: DateTime.now(),
           messageType: ChatMessageType.importOpenApi,
