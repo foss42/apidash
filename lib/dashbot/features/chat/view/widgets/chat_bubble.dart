@@ -96,7 +96,7 @@ class ChatBubble extends ConsumerWidget {
               ).copyWith(
                 p: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: role == MessageRole.user
-                          ? Theme.of(context).colorScheme.surfaceBright
+                          ? Theme.of(context).colorScheme.inverseSurface
                           : Theme.of(context).colorScheme.onSurface,
                     ),
               ),

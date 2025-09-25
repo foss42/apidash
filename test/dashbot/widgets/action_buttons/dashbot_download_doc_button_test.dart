@@ -51,7 +51,7 @@ void main() {
       final button = tester.widget<ButtonStyleButton>(buttonFinder);
       expect(button.onPressed, isNull);
     });
-
+    // TODO: Fix this test for downloading
     //   testWidgets('saves documentation to downloads directory', (tester) async {
     //     const action = ChatAction(
     //       action: 'download_doc',
