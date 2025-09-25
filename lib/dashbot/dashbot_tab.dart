@@ -65,20 +65,8 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                 child: Align(
                   alignment: AlignmentGeometry.centerRight,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      ADIconButton(
-                        icon: Icons.arrow_back_rounded,
-                        onPressed: () {
-                          final navState = _navKey.currentState;
-                          if (navState?.canPop() ?? false) {
-                            navState!.maybePop();
-                          } else {
-                            Navigator.maybePop(context);
-                          }
-                        },
-                      ),
-                      Spacer(),
                       if (!kIsMobile) ...[
                         ADIconButton(
                           icon: Icons.close_fullscreen,
