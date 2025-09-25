@@ -78,6 +78,7 @@ class EnvironmentsStateNotifier
         id: kGlobalEnvironmentId,
         name: "Global",
         values: [],
+        color: null, // Default global environment has no color
       );
       state = {
         kGlobalEnvironmentId: globalEnvironment,
@@ -95,6 +96,7 @@ class EnvironmentsStateNotifier
             id: environmentModelFromJson.id,
             name: environmentModelFromJson.name,
             values: environmentModelFromJson.values,
+            color: environmentModelFromJson.color, // Load color
           );
           environmentsMap[environmentId] = environmentModel;
         }
@@ -104,11 +106,12 @@ class EnvironmentsStateNotifier
     }
   }
 
-  void addEnvironment() {
+  void addEnvironment({String? color}) {
     final id = getNewUuid();
     final newEnvironmentModel = EnvironmentModel(
       id: id,
       values: [],
+      color: _validateColor(color), // Validate and set color
     );
     state = {
       ...state!,
@@ -126,11 +129,13 @@ class EnvironmentsStateNotifier
     String id, {
     String? name,
     List<EnvironmentVariableModel>? values,
+    String? color,
   }) {
     final environment = state![id]!;
     final updatedEnvironment = environment.copyWith(
       name: name ?? environment.name,
       values: values ?? environment.values,
+      color: _validateColor(color) ?? environment.color,
     );
     state = {
       ...state!,
@@ -146,6 +151,7 @@ class EnvironmentsStateNotifier
     final newEnvironment = environment.copyWith(
       id: newId,
       name: "${environment.name} Copy",
+      color: environment.color, // Copy the same color
     );
 
     var environmentIds = ref.read(environmentSequenceProvider);
@@ -207,5 +213,15 @@ class EnvironmentsStateNotifier
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
+  }
+
+  // Validates color as a hex string
+  String? _validateColor(String? color) {
+    if (color == null) return null;
+    final hexColor = color.startsWith('#') ? color.substring(1) : color;
+    if (RegExp(r'^[0-9A-Fa-f]{6}$').hasMatch(hexColor)) {
+      return '#$hexColor';
+    }
+    return null;
   }
 }

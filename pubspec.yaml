@@ -24,6 +24,7 @@ dependencies:
   file_selector: ^1.0.3
   flex_color_scheme: ^8.2.0
   flutter_code_editor: ^0.3.3
+  flutter_colorpicker: ^1.1.0 
   flutter_highlight: ^0.7.0
   flutter_highlighter: ^0.1.0
   flutter_hooks: ^0.21.2

@@ -16,27 +16,81 @@ class EnvironmentPopupMenu extends StatelessWidget {
   final void Function(EnvironmentModel? value)? onChanged;
   final List<EnvironmentModel>? options;
 
+  Color? _parseColor(String? hexColor) {
+    if (hexColor == null) return null;
+    return Color(int.parse(hexColor.substring(1), radix: 16)).withOpacity(0.2);
+  }
+
+  Color? _getTextColor(Color? bgColor) {
+    if (bgColor == null) return null;
+    return bgColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double width = context.isCompactWindow ? 100 : 130;
+    final double width = context.isCompactWindow ? 100 : 130; // Reintroduced dynamic width
 
-    return ADPopupMenu<EnvironmentModel?>(
-      value: value == null
-          ? "Select Env."
-          : value?.id == kGlobalEnvironmentId
-              ? "Global"
-              : getEnvironmentTitle(value?.name),
-      values: options?.map((e) => (
-                e,
-                (e.id == kGlobalEnvironmentId)
-                    ? "Global"
-                    : getEnvironmentTitle(e.name).clip(30)
-              )) ??
-          [],
-      width: width,
+    // Use the active environment's color directly for the dropdown button
+    final Color? activeBgColor = _parseColor(value?.color);
+    return PopupMenuButton<EnvironmentModel>(
       tooltip: "Select Environment",
-      onChanged: onChanged,
-      isOutlined: true,
+      surfaceTintColor: kColorTransparent,
+      constraints: BoxConstraints(minWidth: width),
+      itemBuilder: (BuildContext context) => options?.map((e) {
+            final label = (e.id == kGlobalEnvironmentId)
+                ? "None"
+                : getEnvironmentTitle(e.name).clip(30);
+            final Color? bgColor = _parseColor(e.color);
+            return PopupMenuItem<EnvironmentModel>(
+              value: e,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: bgColor?.withOpacity(0.2), 
+                  borderRadius: kBorderRadius8,
+                ),
+                child: Text(
+                  label,
+                  style: kTextStylePopupMenuItem.copyWith(
+                    color: _getTextColor(bgColor),
+                  ),
+                ),
+              ),
+            );
+          }).toList() ??
+          [],
+      onSelected: onChanged,
+      child: Container(
+        width: width,
+        padding: kP8,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          ),
+          borderRadius: kBorderRadius8,
+          color: activeBgColor,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                (value == null || value?.id == kGlobalEnvironmentId)
+                    ? "None"
+                    : getEnvironmentTitle(value?.name),
+                style: kTextStylePopupMenuItem.copyWith(
+                  color: _getTextColor(activeBgColor),
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.unfold_more,
+              size: 16,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
