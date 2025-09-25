@@ -36,71 +36,43 @@ class DashbotTaskButtons extends ConsumerWidget {
               HomeScreenTaskButton(
                 label: '🔎 Explain me this response',
                 onPressed: () {
-                  vm.sendMessage(
-                    text: '',
-                    type: ChatMessageType.explainResponse,
-                    countAsUser: false,
-                  );
+                  vm.sendTaskMessage(ChatMessageType.explainResponse);
                 },
               ),
               HomeScreenTaskButton(
                 label: '🐞 Help me debug this error',
                 onPressed: () {
-                  vm.sendMessage(
-                    text: '',
-                    type: ChatMessageType.debugError,
-                    countAsUser: false,
-                  );
+                  vm.sendTaskMessage(ChatMessageType.debugError);
                 },
               ),
               HomeScreenTaskButton(
                 label: '📄 Generate documentation',
                 onPressed: () {
-                  vm.sendMessage(
-                    text: '',
-                    type: ChatMessageType.generateDoc,
-                    countAsUser: false,
-                  );
+                  vm.sendTaskMessage(ChatMessageType.generateDoc);
                 },
               ),
               HomeScreenTaskButton(
                 label: '📝 Generate Tests',
                 onPressed: () {
-                  vm.sendMessage(
-                    text: '',
-                    type: ChatMessageType.generateTest,
-                    countAsUser: false,
-                  );
+                  vm.sendTaskMessage(ChatMessageType.generateTest);
                 },
               ),
               HomeScreenTaskButton(
                 label: '🧩 Generate Code',
                 onPressed: () {
-                  vm.sendMessage(
-                    text: '',
-                    type: ChatMessageType.generateCode,
-                    countAsUser: false,
-                  );
+                  vm.sendTaskMessage(ChatMessageType.generateCode);
                 },
               ),
               HomeScreenTaskButton(
                 label: '📥 Import cURL',
                 onPressed: () {
-                  vm.sendMessage(
-                    text: '',
-                    type: ChatMessageType.importCurl,
-                    countAsUser: false,
-                  );
+                  vm.sendTaskMessage(ChatMessageType.importCurl);
                 },
               ),
               HomeScreenTaskButton(
                 label: '📄 Import OpenAPI',
                 onPressed: () {
-                  vm.sendMessage(
-                    text: '',
-                    type: ChatMessageType.importOpenApi,
-                    countAsUser: false,
-                  );
+                  vm.sendTaskMessage(ChatMessageType.importOpenApi);
                 },
               ),
               HomeScreenTaskButton(

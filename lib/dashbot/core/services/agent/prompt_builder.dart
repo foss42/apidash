@@ -148,4 +148,26 @@ class PromptBuilder {
     if (t.contains('curl')) return 'cURL';
     return null;
   }
+
+  /// Generates appropriate user message text for different task types
+  String getUserMessageForTask(ChatMessageType type) {
+    switch (type) {
+      case ChatMessageType.explainResponse:
+        return "Can you explain this response for me?";
+      case ChatMessageType.debugError:
+        return "Can you help me debug this error?";
+      case ChatMessageType.generateDoc:
+        return "Can you generate documentation for this request?";
+      case ChatMessageType.generateTest:
+        return "Can you generate tests for this request?";
+      case ChatMessageType.generateCode:
+        return "Can you generate code for this request?";
+      case ChatMessageType.importCurl:
+        return "I'd like to import a cURL command";
+      case ChatMessageType.importOpenApi:
+        return "I'd like to import an OpenAPI specification";
+      case ChatMessageType.general:
+        return "Hello";
+    }
+  }
 }

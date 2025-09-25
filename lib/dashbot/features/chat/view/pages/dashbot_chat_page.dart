@@ -29,7 +29,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       final task = widget.initialTask;
       if (task != null) {
         final vm = ref.read(chatViewmodelProvider.notifier);
-        vm.sendMessage(text: '', type: task, countAsUser: false);
+        vm.sendTaskMessage(task);
       }
     });
   }

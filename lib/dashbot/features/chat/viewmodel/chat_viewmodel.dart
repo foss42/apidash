@@ -265,11 +265,27 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final id = _currentRequest?.id ?? 'global';
     final newSessions = {...state.chatSessions};
     newSessions[id] = [];
-    state = state.copyWith(
-      chatSessions: newSessions,
-      isGenerating: false,
-      currentStreamingResponse: '',
+    state = state.copyWith();
+  }
+
+  Future<void> sendTaskMessage(ChatMessageType type) async {
+    final promptBuilder = _ref.read(promptBuilderProvider);
+    final userMessage = promptBuilder.getUserMessageForTask(type);
+
+    final requestId = _currentRequest?.id ?? 'global';
+
+    _addMessage(
+      requestId,
+      ChatMessage(
+        id: getNewUuid(),
+        content: userMessage,
+        role: MessageRole.user,
+        timestamp: DateTime.now(),
+        messageType: ChatMessageType.general,
+      ),
     );
+
+    await sendMessage(text: '', type: type, countAsUser: false);
   }
 
   Future<void> applyAutoFix(ChatAction action) async {
@@ -293,12 +309,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _appendSystem('Failed to apply auto-fix: $e', ChatMessageType.general);
     }
   }
-
-  // Field/URL/Method/Body updates are handled by AutoFixService
-
-  // Header updates are now handled by AutoFixService
-
-  // Body/URL/Method updates handled by AutoFixService
 
   Future<void> _applyOtherAction(ChatAction action) async {
     final requestId = _currentRequest?.id;
