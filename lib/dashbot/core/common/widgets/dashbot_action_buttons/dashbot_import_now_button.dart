@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:openapi_spec/openapi_spec.dart';
 
-import '../../../../features/chat/models/chat_models.dart';
+import '../../../../features/chat/models/chat_action.dart';
 import '../../../../features/chat/view/widgets/openapi_operation_picker_dialog.dart';
 import '../../../../features/chat/viewmodel/chat_viewmodel.dart';
 import '../../../providers/dashbot_window_notifier.dart';

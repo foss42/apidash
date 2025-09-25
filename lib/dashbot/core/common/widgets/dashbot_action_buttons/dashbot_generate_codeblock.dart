@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../features/chat/models/chat_models.dart';
+import '../../../../features/chat/models/chat_action.dart';
 import '../dashbot_action.dart';
 
 class DashbotGeneratedCodeBlock extends StatelessWidget

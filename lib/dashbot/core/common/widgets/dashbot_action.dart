@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../features/chat/models/chat_models.dart';
+import '../../../features/chat/models/chat_action.dart';
+import '../../constants/constants.dart';
 import 'dashbot_action_buttons/dashbot_actions_buttons.dart';
 
 /// Base mixin for action widgets.

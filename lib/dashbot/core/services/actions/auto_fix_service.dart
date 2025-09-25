@@ -1,7 +1,8 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 
-import '../../../features/chat/models/chat_models.dart';
+import '../../../features/chat/models/chat_action.dart';
+import '../../constants/constants.dart';
 import 'request_apply_service.dart';
 
 class AutoFixService {

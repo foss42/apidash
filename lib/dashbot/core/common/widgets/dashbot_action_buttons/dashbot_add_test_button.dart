@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../features/chat/models/chat_models.dart';
+import '../../../../features/chat/models/chat_action.dart';
 import '../../../../features/chat/viewmodel/chat_viewmodel.dart';
 import '../dashbot_action.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

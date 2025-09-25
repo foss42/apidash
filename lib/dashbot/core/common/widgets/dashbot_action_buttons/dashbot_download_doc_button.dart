@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:apidash/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../features/chat/models/chat_models.dart';
+import '../../../../features/chat/models/chat_action.dart';
 import '../dashbot_action.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

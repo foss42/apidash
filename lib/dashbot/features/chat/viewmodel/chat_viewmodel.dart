@@ -1,17 +1,20 @@
 import 'dart:convert';
+import 'package:apidash/dashbot/features/chat/models/chat_message.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
+import '../../../core/constants/constants.dart';
 import '../../../core/model/chat_attachment.dart';
 import '../../../core/services/curl_import_service.dart';
 import '../../../core/services/openapi_import_service.dart';
 
 import '../../../core/utils/safe_parse_json_message.dart';
 import '../../../core/constants/dashbot_prompts.dart' as dash;
-import '../models/chat_models.dart';
+import '../models/chat_action.dart';
+import '../models/chat_state.dart';
 import '../repository/chat_remote_repository.dart';
 import '../providers/service_providers.dart';
 

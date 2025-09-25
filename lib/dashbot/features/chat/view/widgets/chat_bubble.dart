@@ -1,12 +1,13 @@
 import 'package:apidash/dashbot/core/utils/safe_parse_json_message.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import '../../../../core/constants/constants.dart';
 import '../../../../core/utils/dashbot_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/chat_models.dart';
 import '../../../../core/common/widgets/dashbot_action.dart';
+import '../../models/chat_action.dart';
 
 class ChatBubble extends ConsumerWidget {
   final String message;

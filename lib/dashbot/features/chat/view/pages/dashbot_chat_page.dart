@@ -1,7 +1,7 @@
 import 'package:apidash/dashbot/features/chat/view/widgets/dashbot_task_buttons.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 
-import '../../models/chat_models.dart';
+import '../../../../core/constants/constants.dart';
 import '../widgets/chat_bubble.dart';
 import '../../viewmodel/chat_viewmodel.dart';
 import 'package:flutter/material.dart';

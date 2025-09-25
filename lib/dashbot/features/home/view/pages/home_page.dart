@@ -3,6 +3,7 @@ import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designe
 import 'package:apidash/screens/common_widgets/agentic_ui_features/tool_generation/generate_tool_dialog.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/constants/constants.dart';
 import '../../../../core/utils/dashbot_icons.dart';
 import '../../../../core/providers/dashbot_window_notifier.dart';
 
@@ -10,7 +11,6 @@ import '../../../../core/routes/dashbot_routes.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../chat/models/chat_models.dart';
 import '../widgets/home_screen_task_button.dart';
 
 class DashbotHomePage extends ConsumerStatefulWidget {
