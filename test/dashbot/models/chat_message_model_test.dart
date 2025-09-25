@@ -10,7 +10,7 @@ void main() {
       action: 'update_field',
       target: 'httpRequestModel',
       field: 'url',
-      value: 'https://api.example.dev',
+      value: 'https://api.apidash.dev',
       actionType: ChatActionType.updateField,
       targetType: ChatActionTarget.httpRequestModel,
     );
