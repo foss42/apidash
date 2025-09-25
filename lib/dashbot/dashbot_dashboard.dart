@@ -35,16 +35,29 @@ class DashbotWindow extends ConsumerWidget {
       },
     );
 
+    // Listen to changes in response status and navigate accordingly
     ref.listen(
-      selectedRequestModelProvider,
-      (prev, next) {
-        if (prev?.id == next?.id) return;
-        final initial = _dashbotNavigatorKey.currentState?.widget.initialRoute;
-        final atRoot = _dashbotNavigatorKey.currentState?.canPop() == false;
-        // Only push when navigator started on Default and is still at root
-        if (initial == DashbotRoutes.dashbotDefault && atRoot) {
-          _dashbotNavigatorKey.currentState
-              ?.pushNamed(DashbotRoutes.dashbotHome);
+      selectedRequestModelProvider
+          .select((request) => request?.httpResponseModel?.statusCode != null),
+      (prev, hasResponse) {
+        if (prev == hasResponse) return;
+
+        final currentRoute =
+            _dashbotNavigatorKey.currentState?.widget.initialRoute;
+        final canPop = _dashbotNavigatorKey.currentState?.canPop() ?? false;
+
+        if (hasResponse) {
+          // Response available - navigate to home if not already there
+          if (currentRoute == DashbotRoutes.dashbotDefault && !canPop) {
+            _dashbotNavigatorKey.currentState
+                ?.pushNamed(DashbotRoutes.dashbotHome);
+          }
+        } else {
+          // No response - navigate back to default if we're in home
+          if (canPop) {
+            _dashbotNavigatorKey.currentState
+                ?.popUntil((route) => route.isFirst);
+          }
         }
       },
     );
@@ -161,9 +174,11 @@ class DashbotWindow extends ConsumerWidget {
                         Expanded(
                           child: Navigator(
                             key: _dashbotNavigatorKey,
-                            initialRoute: currentRequest?.responseStatus == null
-                                ? DashbotRoutes.dashbotDefault
-                                : DashbotRoutes.dashbotHome,
+                            initialRoute: (currentRequest
+                                        ?.httpResponseModel?.statusCode !=
+                                    null)
+                                ? DashbotRoutes.dashbotHome
+                                : DashbotRoutes.dashbotDefault,
                             onGenerateRoute: generateRoute,
                           ),
                         ),

@@ -27,15 +27,27 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
     super.build(context);
     final currentRequest = ref.watch(selectedRequestModelProvider);
 
-    // If a response arrives while user is on default, navigate to home.
+    // Listen to changes in response status and navigate accordingly
     ref.listen(
-      selectedRequestModelProvider,
-      (prev, next) {
-        if (prev?.id == next?.id) return;
-        final initial = _navKey.currentState?.widget.initialRoute;
-        final atRoot = _navKey.currentState?.canPop() == false;
-        if (initial == DashbotRoutes.dashbotDefault && atRoot) {
-          _navKey.currentState?.pushNamed(DashbotRoutes.dashbotHome);
+      selectedRequestModelProvider.select((request) =>
+          request?.httpResponseModel?.statusCode != null ||
+          request?.responseStatus != null),
+      (prev, hasResponse) {
+        if (prev == hasResponse) return;
+
+        final currentRoute = _navKey.currentState?.widget.initialRoute;
+        final canPop = _navKey.currentState?.canPop() ?? false;
+
+        if (hasResponse) {
+          // Response available - navigate to home if not already there
+          if (currentRoute == DashbotRoutes.dashbotDefault && !canPop) {
+            _navKey.currentState?.pushNamed(DashbotRoutes.dashbotHome);
+          }
+        } else {
+          // No response - navigate back to default if we're in home
+          if (canPop) {
+            _navKey.currentState?.popUntil((route) => route.isFirst);
+          }
         }
       },
     );
@@ -107,9 +119,11 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
               Expanded(
                 child: Navigator(
                   key: _navKey,
-                  initialRoute: currentRequest?.responseStatus == null
-                      ? DashbotRoutes.dashbotDefault
-                      : DashbotRoutes.dashbotHome,
+                  initialRoute:
+                      (currentRequest?.httpResponseModel?.statusCode != null ||
+                              currentRequest?.responseStatus != null)
+                          ? DashbotRoutes.dashbotHome
+                          : DashbotRoutes.dashbotDefault,
                   onGenerateRoute: generateRoute,
                 ),
               ),
