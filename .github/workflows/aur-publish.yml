@@ -1,4 +1,6 @@
 name: Update AUR Package
+permissions:
+  contents: read
 
 on:
   push:
