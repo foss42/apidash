@@ -107,6 +107,8 @@ class RequestApplyService {
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
+        params: const [],
+        isParamEnabledList: const [],
       );
       return const ApplyResult(
         systemMessage: 'Applied cURL to the selected request.',
@@ -221,6 +223,9 @@ class RequestApplyService {
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
+        // Wipe existing parameters and authentication to ensure clean state
+        params: const [],
+        isParamEnabledList: const [],
       );
       return const ApplyResult(
         systemMessage: 'Applied OpenAPI operation to the selected request.',

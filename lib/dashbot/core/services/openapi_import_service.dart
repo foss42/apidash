@@ -246,14 +246,14 @@ class OpenApiImportService {
         {
           'action': 'apply_openapi',
           'target': 'httpRequestModel',
-          'field': 'apply_to_selected',
+          'field': 'apply_to_new',
           'path': null,
           'value': actionPayload,
         },
         {
           'action': 'apply_openapi',
           'target': 'httpRequestModel',
-          'field': 'apply_to_new',
+          'field': 'apply_to_selected',
           'path': null,
           'value': actionPayload,
         }

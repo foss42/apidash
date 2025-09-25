@@ -417,6 +417,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
+        // Wipe existing parameters and authentication to ensure clean state
+        params: const [],
+        isParamEnabledList: const [],
+        authModel: null,
       );
       _appendSystem('Applied OpenAPI operation to the selected request.',
           ChatMessageType.importOpenApi);
@@ -911,6 +915,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
+        // Wipe existing parameters and authentication to ensure clean state
+        params: const [],
+        isParamEnabledList: const [],
+        authModel: null,
       );
       _appendSystem(
           'Applied cURL to the selected request.', ChatMessageType.importCurl);

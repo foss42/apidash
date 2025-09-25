@@ -29,8 +29,6 @@ import 'package:curl_parser/curl_parser.dart';
 ///   concern). Not part of request description.
 /// - `--globoff`: parsing behavior for the curl CLI; irrelevant post-parse.
 
-
-
 /// Service to parse cURL commands and produce
 /// a standard action message map understood by Dashbot.
 class CurlImportService {
@@ -117,14 +115,14 @@ class CurlImportService {
         {
           'action': 'apply_curl',
           'target': 'httpRequestModel',
-          'field': 'apply_to_selected',
+          'field': 'apply_to_new',
           'path': null,
           'value': actionPayload,
         },
         {
           'action': 'apply_curl',
           'target': 'httpRequestModel',
-          'field': 'apply_to_new',
+          'field': 'apply_to_selected',
           'path': null,
           'value': actionPayload,
         }
