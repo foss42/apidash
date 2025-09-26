@@ -40,12 +40,24 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
   // Multi-select: default select all
   final selected = <int>{for (var i = 0; i < ops.length; i++) i};
   bool selectAll = ops.isNotEmpty;
+  String searchQuery = '';
 
   return showDialog<List<OpenApiOperationItem>>(
     context: context,
     useRootNavigator: true,
     builder: (ctx) {
       return StatefulBuilder(builder: (ctx, setState) {
+        // Filter operations based on search query
+        final filteredOps = <int>[];
+        for (int i = 0; i < ops.length; i++) {
+          final o = ops[i];
+          final label = '${o.method} ${o.path}'.toLowerCase();
+          if (searchQuery.isEmpty ||
+              label.contains(searchQuery.toLowerCase())) {
+            filteredOps.add(i);
+          }
+        }
+
         return AlertDialog(
           title: Text('Import from $title'),
           content: SizedBox(
@@ -54,55 +66,65 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ExpansionTile(
-                  initiallyExpanded: true,
-                  title: const Text('Available routes'),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: CheckboxListTile(
-                        value: selectAll,
+                // TODO: Create a Search field widget
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Search routes',
+                      hintText: 'Type to filter routes...',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                // Select all checkbox
+                CheckboxListTile(
+                  value: selectAll,
+                  onChanged: (v) {
+                    setState(() {
+                      selectAll = v ?? false;
+                      selected
+                        ..clear()
+                        ..addAll(selectAll
+                            ? List<int>.generate(ops.length, (i) => i)
+                            : const <int>{});
+                    });
+                  },
+                  title: const Text('Select all'),
+                  controlAffinity: ListTileControlAffinity.leading,
+                ),
+                // Routes list
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: filteredOps.length,
+                    itemBuilder: (c, index) {
+                      final i = filteredOps[index];
+                      final o = ops[i];
+                      final label = '${o.method} ${o.path}';
+                      final checked = selected.contains(i);
+                      return CheckboxListTile(
+                        value: checked,
                         onChanged: (v) {
                           setState(() {
-                            selectAll = v ?? false;
-                            selected
-                              ..clear()
-                              ..addAll(selectAll
-                                  ? List<int>.generate(ops.length, (i) => i)
-                                  : const <int>{});
+                            if (v == true) {
+                              selected.add(i);
+                            } else {
+                              selected.remove(i);
+                            }
+                            selectAll = selected.length == ops.length;
                           });
                         },
-                        title: const Text('Select all'),
+                        title: Text(label),
                         controlAffinity: ListTileControlAffinity.leading,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 300,
-                      child: ListView.builder(
-                        itemCount: ops.length,
-                        itemBuilder: (c, i) {
-                          final o = ops[i];
-                          final label = '${o.method} ${o.path}';
-                          final checked = selected.contains(i);
-                          return CheckboxListTile(
-                            value: checked,
-                            onChanged: (v) {
-                              setState(() {
-                                if (v == true) {
-                                  selected.add(i);
-                                } else {
-                                  selected.remove(i);
-                                }
-                                selectAll = selected.length == ops.length;
-                              });
-                            },
-                            title: Text(label),
-                            controlAffinity: ListTileControlAffinity.leading,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
