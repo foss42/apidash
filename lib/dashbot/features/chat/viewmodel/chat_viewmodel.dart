@@ -494,8 +494,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final curl = CurlImportService.tryParseCurl(trimmed);
       if (curl == null) {
         _appendSystem(
-            '{"explnation":"Sorry, I couldn\'t parse that cURL command. Please verify it starts with `curl ` and is complete.","actions":[]}',
-            ChatMessageType.importCurl);
+          'I couldn\'t parse that cURL command. Please check that it:\n- Starts with `curl `\n- Has balanced quotes (wrap JSON bodies in single quotes)\n- Uses backslashes for multi-line commands (if any)\n\nFix the command and paste it again below.\n\nExample:\n\ncurl -X POST https://api.apidash.dev/users \\\n  -H \'Content-Type: application/json\'',
+          ChatMessageType.importCurl,
+        );
         return;
       }
       final currentCtx = _currentRequestContext();
@@ -584,7 +585,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } catch (e) {
       debugPrint('[cURL] Exception: $e');
       final safe = e.toString().replaceAll('"', "'");
-      _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
+      _appendSystem(
+          'Parsing failed: $safe. Please adjust the command (ensure it starts with `curl ` and quotes/escapes are correct) and paste it again.',
           ChatMessageType.importCurl);
     } finally {
       state = state.copyWith(
