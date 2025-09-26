@@ -66,7 +66,7 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // TODO: Create a Search field widget
+                // TODO: Create a common Search field widget
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: TextField(
@@ -101,29 +101,32 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
                 ),
                 // Routes list
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: filteredOps.length,
-                    itemBuilder: (c, index) {
-                      final i = filteredOps[index];
-                      final o = ops[i];
-                      final label = '${o.method} ${o.path}';
-                      final checked = selected.contains(i);
-                      return CheckboxListTile(
-                        value: checked,
-                        onChanged: (v) {
-                          setState(() {
-                            if (v == true) {
-                              selected.add(i);
-                            } else {
-                              selected.remove(i);
-                            }
-                            selectAll = selected.length == ops.length;
-                          });
-                        },
-                        title: Text(label),
-                        controlAffinity: ListTileControlAffinity.leading,
-                      );
-                    },
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    child: ListView.builder(
+                      itemCount: filteredOps.length,
+                      itemBuilder: (c, index) {
+                        final i = filteredOps[index];
+                        final o = ops[i];
+                        final label = '${o.method} ${o.path}';
+                        final checked = selected.contains(i);
+                        return CheckboxListTile(
+                          value: checked,
+                          onChanged: (v) {
+                            setState(() {
+                              if (v == true) {
+                                selected.add(i);
+                              } else {
+                                selected.remove(i);
+                              }
+                              selectAll = selected.length == ops.length;
+                            });
+                          },
+                          title: Text(label),
+                          controlAffinity: ListTileControlAffinity.leading,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
