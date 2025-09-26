@@ -18,6 +18,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   bool _showTaskSuggestions = false;
 
   @override
@@ -35,10 +36,34 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     ref.listen(chatViewmodelProvider, (prev, next) {
       if (next.isGenerating) {
         _showTaskSuggestions = false;
+      }
+      // Scroll to bottom when new message is added or streaming updates
+      if (prev?.currentStreamingResponse != next.currentStreamingResponse ||
+          (prev != null && prev.isGenerating && !next.isGenerating)) {
+        _scrollToBottom();
       }
     });
 
@@ -54,23 +79,28 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 if (msgs.isEmpty && !state.isGenerating) {
                   return const Center(child: Text('Ask me anything!'));
                 }
-                return ListView.builder(
-                  itemCount: msgs.length + (state.isGenerating ? 1 : 0),
-                  padding: const EdgeInsets.all(16.0),
-                  itemBuilder: (context, index) {
-                    if (state.isGenerating && index == msgs.length) {
+                return Scrollbar(
+                  controller: _scrollController,
+                  thumbVisibility: true,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: msgs.length + (state.isGenerating ? 1 : 0),
+                    padding: const EdgeInsets.all(16.0),
+                    itemBuilder: (context, index) {
+                      if (state.isGenerating && index == msgs.length) {
+                        return ChatBubble(
+                          message: state.currentStreamingResponse,
+                          role: MessageRole.system,
+                        );
+                      }
+                      final message = msgs[index];
                       return ChatBubble(
-                        message: state.currentStreamingResponse,
-                        role: MessageRole.system,
+                        message: message.content,
+                        role: message.role,
+                        actions: message.actions,
                       );
-                    }
-                    final message = msgs[index];
-                    return ChatBubble(
-                      message: message.content,
-                      role: message.role,
-                      actions: message.actions,
-                    );
-                  },
+                    },
+                  ),
                 );
               },
             ),
@@ -80,7 +110,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             height: 5,
             thickness: 6,
           ),
-          if (_showTaskSuggestions) DashbotTaskButtons(),
+          if (_showTaskSuggestions)
+            DashbotTaskButtons(
+              onTaskSelected: _scrollToBottom,
+            ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -128,6 +161,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           text: text,
                           type: ChatMessageType.general,
                         );
+                        _scrollToBottom();
                       }
                     },
                   ),
@@ -145,6 +179,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                             text: text,
                             type: ChatMessageType.general,
                           );
+                          _scrollToBottom();
                         },
                   tooltip: 'Send message',
                 ),

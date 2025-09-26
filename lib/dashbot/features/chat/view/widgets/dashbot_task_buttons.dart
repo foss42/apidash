@@ -11,7 +11,9 @@ import '../../../home/view/widgets/home_screen_task_button.dart';
 import '../../../../core/providers/dashbot_window_notifier.dart';
 
 class DashbotTaskButtons extends ConsumerWidget {
-  const DashbotTaskButtons({super.key});
+  final VoidCallback? onTaskSelected;
+
+  const DashbotTaskButtons({super.key, this.onTaskSelected});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,42 +39,49 @@ class DashbotTaskButtons extends ConsumerWidget {
                 label: '🔎 Explain me this response',
                 onPressed: () {
                   vm.sendTaskMessage(ChatMessageType.explainResponse);
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
                 label: '🐞 Help me debug this error',
                 onPressed: () {
                   vm.sendTaskMessage(ChatMessageType.debugError);
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
                 label: '📄 Generate documentation',
                 onPressed: () {
                   vm.sendTaskMessage(ChatMessageType.generateDoc);
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
                 label: '📝 Generate Tests',
                 onPressed: () {
                   vm.sendTaskMessage(ChatMessageType.generateTest);
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
                 label: '🧩 Generate Code',
                 onPressed: () {
                   vm.sendTaskMessage(ChatMessageType.generateCode);
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
                 label: '📥 Import cURL',
                 onPressed: () {
                   vm.sendTaskMessage(ChatMessageType.importCurl);
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
                 label: '📄 Import OpenAPI',
                 onPressed: () {
                   vm.sendTaskMessage(ChatMessageType.importOpenApi);
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
@@ -83,6 +92,7 @@ class DashbotTaskButtons extends ConsumerWidget {
                   notifier.hide();
                   await GenerateToolDialog.show(context, ref);
                   notifier.show();
+                  onTaskSelected?.call();
                 },
               ),
               HomeScreenTaskButton(
@@ -107,6 +117,7 @@ class DashbotTaskButtons extends ConsumerWidget {
                     );
                   }
                   notifier.show();
+                  onTaskSelected?.call();
                 },
               ),
             ],
