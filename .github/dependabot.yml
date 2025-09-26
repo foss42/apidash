@@ -8,6 +8,6 @@ updates:
   - package-ecosystem: "pub" # See documentation for possible values
     directories:
       - "/" # Location of package manifests
-      - "/packages/*/
+      - "/packages/*/"
     schedule:
       interval: "monthly"
