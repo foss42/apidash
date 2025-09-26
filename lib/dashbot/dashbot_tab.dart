@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/providers/dashbot_window_notifier.dart';
 import 'core/utils/show_dashbot.dart';
 import 'package:apidash/consts.dart';
+import 'features/chat/viewmodel/chat_viewmodel.dart';
 
 class DashbotTab extends ConsumerStatefulWidget {
   const DashbotTab({super.key});
@@ -26,31 +27,46 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
   Widget build(BuildContext context) {
     super.build(context);
     final currentRequest = ref.watch(selectedRequestModelProvider);
+    final chatState = ref.watch(chatViewmodelProvider);
 
-    // Listen to changes in response status and navigate accordingly
-    ref.listen(
-      selectedRequestModelProvider.select((request) =>
-          request?.httpResponseModel?.statusCode != null ||
-          request?.responseStatus != null),
-      (prev, hasResponse) {
-        if (prev == hasResponse) return;
+    void maybeNavigate() {
+      final req = ref.read(selectedRequestModelProvider);
+      final hasResponse = (req?.httpResponseModel?.statusCode != null) ||
+          (req?.responseStatus != null);
+      final requestId = req?.id ?? 'global';
+      final messages = chatState.chatSessions[requestId] ?? const [];
+      final isChatActive = messages.isNotEmpty;
+      final navigator = _navKey.currentState;
+      if (navigator == null) return;
+      final canPop = navigator.canPop();
 
-        final currentRoute = _navKey.currentState?.widget.initialRoute;
-        final canPop = _navKey.currentState?.canPop() ?? false;
+      final desired = isChatActive
+          ? DashbotRoutes.dashbotChat
+          : hasResponse
+              ? DashbotRoutes.dashbotHome
+              : DashbotRoutes.dashbotDefault;
 
-        if (hasResponse) {
-          // Response available - navigate to home if not already there
-          if (currentRoute == DashbotRoutes.dashbotDefault && !canPop) {
-            _navKey.currentState?.pushNamed(DashbotRoutes.dashbotHome);
-          }
-        } else {
-          // No response - navigate back to default if we're in home
-          if (canPop) {
-            _navKey.currentState?.popUntil((route) => route.isFirst);
-          }
-        }
-      },
-    );
+      bool isOn(String r) {
+        Route? top;
+        navigator.popUntil((route) {
+          top = route;
+          return true;
+        });
+        return top?.settings.name == r;
+      }
+
+      if (isOn(desired)) return;
+      if (desired == DashbotRoutes.dashbotDefault && canPop) {
+        navigator.popUntil((route) => route.isFirst);
+        return;
+      }
+      if (desired != DashbotRoutes.dashbotDefault) {
+        navigator.pushNamed(desired);
+      }
+    }
+
+    ref.listen(chatViewmodelProvider, (_, __) => maybeNavigate());
+    ref.listen(selectedRequestModelProvider, (_, __) => maybeNavigate());
 
     return PopScope(
       canPop: true,
@@ -119,8 +135,13 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
               Expanded(
                 child: Navigator(
                   key: _navKey,
-                  initialRoute:
-                      (currentRequest?.httpResponseModel?.statusCode != null ||
+                  initialRoute: (chatState
+                              .chatSessions[(currentRequest?.id ?? 'global')]
+                              ?.isNotEmpty ??
+                          false)
+                      ? DashbotRoutes.dashbotChat
+                      : (currentRequest?.httpResponseModel?.statusCode !=
+                                  null ||
                               currentRequest?.responseStatus != null)
                           ? DashbotRoutes.dashbotHome
                           : DashbotRoutes.dashbotDefault,
