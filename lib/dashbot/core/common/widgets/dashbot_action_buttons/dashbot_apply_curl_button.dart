@@ -26,11 +26,18 @@ class DashbotApplyCurlButton extends ConsumerWidget with DashbotActionMixin {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final label = _labelForField(action.field, action.path);
+    final isDestructive = action.field == 'apply_to_selected';
     return ElevatedButton(
       onPressed: () async {
         await ref.read(chatViewmodelProvider.notifier).applyAutoFix(action);
       },
-      child: Text(label),
+      child: Text(
+        label,
+        // Destructive action: highlight with error color
+        style: isDestructive
+            ? TextStyle(color: Theme.of(context).colorScheme.error)
+            : null,
+      ),
     );
   }
 }
