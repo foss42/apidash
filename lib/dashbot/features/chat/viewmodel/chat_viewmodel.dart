@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:openapi_spec/openapi_spec.dart';
 import 'package:apidash/dashbot/features/chat/models/chat_message.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
@@ -38,9 +39,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
   List<ChatMessage> get currentMessages {
     final id = _currentRequest?.id ?? 'global';
-    debugPrint('[Chat] Getting messages for request ID: $id');
     final messages = state.chatSessions[id] ?? const [];
-    debugPrint('[Chat] Found ${messages.length} messages');
     return messages;
   }
 
@@ -49,8 +48,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     ChatMessageType type = ChatMessageType.general,
     bool countAsUser = true,
   }) async {
-    debugPrint(
-        '[Chat] sendMessage start: type=$type, countAsUser=$countAsUser');
     final ai = _selectedAIModel;
     if (text.trim().isEmpty && countAsUser) return;
     if (ai == null &&
@@ -66,7 +63,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
     final requestId = _currentRequest?.id ?? 'global';
     final existingMessages = state.chatSessions[requestId] ?? const [];
-    debugPrint('[Chat] using requestId=$requestId');
 
     if (countAsUser) {
       _addMessage(
@@ -211,8 +207,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       userPrompt: userPrompt,
       stream: false,
     );
-    debugPrint(
-        '[Chat] prompts prepared: system=${systemPrompt.length} chars, user=${userPrompt.length} chars');
 
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
@@ -297,17 +291,20 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
   Future<void> applyAutoFix(ChatAction action) async {
     try {
+      if (action.actionType == ChatActionType.applyOpenApi) {
+        await _applyOpenApi(action);
+        return;
+      }
+      if (action.actionType == ChatActionType.applyCurl) {
+        await _applyCurl(action);
+        return;
+      }
+
       final msg = await _ref.read(autoFixServiceProvider).apply(action);
       if (msg != null && msg.isNotEmpty) {
-        // Message type depends on action context; choose sensible defaults
-        final t = (action.actionType == ChatActionType.applyCurl)
-            ? ChatMessageType.importCurl
-            : (action.actionType == ChatActionType.applyOpenApi)
-                ? ChatMessageType.importOpenApi
-                : ChatMessageType.general;
+        final t = ChatMessageType.general;
         _appendSystem(msg, t);
       }
-      // Only target-specific 'other' actions remain here
       if (action.actionType == ChatActionType.other) {
         await _applyOtherAction(action);
       }
@@ -344,7 +341,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   Future<void> _applyOpenApi(ChatAction action) async {
-    final requestId = _currentRequest?.id;
     final collection = _ref.read(collectionStateNotifierProvider.notifier);
     final payload = action.value is Map<String, dynamic>
         ? (action.value as Map<String, dynamic>)
@@ -413,28 +409,26 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
     }
 
-    final withEnvUrl = await _maybeSubstituteBaseUrl(url, baseUrl);
-    if (action.field == 'apply_to_selected') {
-      if (requestId == null) return;
-      final replacingBody =
-          (formFlag || formData.isNotEmpty) ? '' : (body ?? '');
-      final replacingFormData =
-          formData.isEmpty ? const <FormDataModel>[] : formData;
-      collection.update(
-        method: method,
-        url: withEnvUrl,
-        headers: headers,
-        isHeaderEnabledList: List<bool>.filled(headers.length, true),
-        body: replacingBody,
-        bodyContentType: bodyContentType,
-        formData: replacingFormData,
-        params: const [],
-        isParamEnabledList: const [],
-        authModel: null,
-      );
-      _appendSystem('Applied OpenAPI operation to the selected request.',
-          ChatMessageType.importOpenApi);
-    } else if (action.field == 'apply_to_new') {
+
+    String sourceTitle = (payload['sourceName'] as String?) ?? '';
+    if (sourceTitle.trim().isEmpty) {
+      final specObj = payload['spec'];
+      if (specObj is OpenApi) {
+        try {
+          final t = specObj.info.title.trim();
+          if (t.isNotEmpty) sourceTitle = t;
+        } catch (_) {}
+      }
+    }
+    debugPrint('[OpenAPI] baseUrl="$baseUrl" title="$sourceTitle" url="$url"');
+    final withEnvUrl = await _maybeSubstituteBaseUrlForOpenApi(
+      url,
+      baseUrl,
+      sourceTitle,
+    );
+    debugPrint('[OpenAPI] withEnvUrl="$withEnvUrl');
+    if (action.field == 'apply_to_new') {
+      debugPrint('[OpenAPI] withEnvUrl="$withEnvUrl');
       final model = HttpRequestModel(
         method: method,
         url: withEnvUrl,
@@ -936,8 +930,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
   // Helpers
   void _addMessage(String requestId, ChatMessage m) {
-    debugPrint(
-        '[Chat] Adding message to request ID: $requestId, actions: ${m.actions?.map((e) => e.toJson()).toList()}');
     final msgs = state.chatSessions[requestId] ?? const [];
     state = state.copyWith(
       chatSessions: {
@@ -945,8 +937,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         requestId: [...msgs, m],
       },
     );
-    debugPrint(
-        '[Chat] Message added, total messages for $requestId: ${(state.chatSessions[requestId]?.length ?? 0)}');
   }
 
   void _appendSystem(String text, ChatMessageType type) {
@@ -1001,6 +991,24 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       url,
       baseUrl,
       ensure: (b) => _ensureBaseUrlEnv(b),
+    );
+  }
+
+  Future<String> _maybeSubstituteBaseUrlForOpenApi(
+      String url, String baseUrl, String title) async {
+    final svc = _ref.read(urlEnvServiceProvider);
+    return svc.maybeSubstituteBaseUrl(
+      url,
+      baseUrl,
+      ensure: (b) => svc.ensureBaseUrlEnvForOpenApi(
+        b,
+        title: title,
+        readEnvs: () => _ref.read(environmentsStateNotifierProvider),
+        readActiveEnvId: () => _ref.read(activeEnvironmentIdStateProvider),
+        updateEnv: (id, {values}) => _ref
+            .read(environmentsStateNotifierProvider.notifier)
+            .updateEnvironment(id, values: values),
+      ),
     );
   }
 

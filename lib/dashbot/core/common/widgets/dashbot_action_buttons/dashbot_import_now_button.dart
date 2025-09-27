@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:openapi_spec/openapi_spec.dart';
 
@@ -55,6 +57,11 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
               method: s.method,
               op: s.op,
             );
+            log("SorceName: $sourceName");
+            payload['sourceName'] =
+                (sourceName != null && sourceName.trim().isNotEmpty)
+                    ? sourceName
+                    : spec.info.title;
             await chatNotifier.applyAutoFix(ChatAction.fromJson({
               'action': 'apply_openapi',
               'actionType': 'apply_openapi',
