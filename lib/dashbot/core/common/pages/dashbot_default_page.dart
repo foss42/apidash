@@ -19,21 +19,16 @@ class DashbotDefaultPage extends StatelessWidget {
         kVSpacer20,
         Text(
           'Hello there!',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+          style: kTextStyleXXLarge.copyWith(
+              fontSize: 22, fontWeight: FontWeight.w600),
         ),
         kVSpacer10,
         Text(
-          'Seems like you haven\'t made any Requests yet',
+          'Seems like you haven\'t made any Requests yet. Why not go ahead and make one?',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
+          style: kTextStyleMedium.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
-        ),
-        Text(
-          "Why not go ahead and make one?",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
         ),
         kVSpacer16,
         Wrap(
