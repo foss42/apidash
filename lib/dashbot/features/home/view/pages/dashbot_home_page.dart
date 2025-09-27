@@ -8,6 +8,7 @@ import '../../../../core/utils/dashbot_icons.dart';
 import '../../../../core/providers/dashbot_window_notifier.dart';
 
 import '../../../../core/routes/dashbot_routes.dart';
+import '../../../../core/providers/dashbot_active_route_provider.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,15 +47,15 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                 HomeScreenTaskButton(
                   label: "🤖 Chat with Dashbot",
                   onPressed: () {
-                    Navigator.of(context).pushNamed(
-                      DashbotRoutes.dashbotChat,
-                    );
+                    ref.read(dashbotActiveRouteProvider.notifier).goToChat();
+                    Navigator.of(context).pushNamed(DashbotRoutes.dashbotChat);
                   },
                 ),
               ],
               HomeScreenTaskButton(
                 label: "🔎 Explain me this response",
                 onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.explainResponse,
@@ -64,6 +65,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "🐞 Help me debug this error",
                 onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.debugError,
@@ -73,6 +75,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "📄 Generate documentation",
                 onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.generateDoc,
@@ -82,6 +85,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "📝 Generate Tests",
                 onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.generateTest,
@@ -91,6 +95,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "🧩 Generate Code",
                 onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.generateCode,
@@ -100,6 +105,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "📥 Import cURL",
                 onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.importCurl,
@@ -109,6 +115,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "📄 Import OpenAPI",
                 onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.importOpenApi,

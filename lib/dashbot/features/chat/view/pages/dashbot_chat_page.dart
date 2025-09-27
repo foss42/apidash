@@ -1,4 +1,5 @@
 import 'package:apidash/dashbot/features/chat/view/widgets/dashbot_task_buttons.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -66,6 +67,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         _scrollToBottom();
       }
     });
+    ref.watch(selectedRequestModelProvider.select((value) => value?.id));
 
     return Scaffold(
       body: Column(

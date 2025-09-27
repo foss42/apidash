@@ -9,8 +9,7 @@ import 'core/routes/dashbot_router.dart';
 import 'core/routes/dashbot_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// Removed navigation persistence provider.
-import 'features/chat/viewmodel/chat_viewmodel.dart';
+import 'core/providers/dashbot_active_route_provider.dart';
 
 class DashbotWindow extends ConsumerWidget {
   final VoidCallback onClose;
@@ -25,8 +24,7 @@ class DashbotWindow extends ConsumerWidget {
     final windowState = ref.watch(dashbotWindowNotifierProvider);
     final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
     final settings = ref.watch(settingsProvider);
-    final currentRequest = ref.watch(selectedRequestModelProvider);
-    final chatState = ref.watch(chatViewmodelProvider);
+    final activeRoute = ref.watch(dashbotActiveRouteProvider);
 
     // Close the overlay when the window is not popped anymore
     ref.listen(
@@ -38,43 +36,26 @@ class DashbotWindow extends ConsumerWidget {
       },
     );
 
-    void _maybeNavigate() {
-      final req = ref.read(selectedRequestModelProvider);
-      final hasResponse = (req?.httpResponseModel?.statusCode != null) ||
-          (req?.responseStatus != null);
-      final requestId = req?.id ?? 'global';
-      final messages = chatState.chatSessions[requestId] ?? const [];
-      final isChatActive = messages.isNotEmpty;
-      final navigator = _dashbotNavigatorKey.currentState;
-      if (navigator == null) return;
-      final canPop = navigator.canPop();
-
-      final desired = isChatActive
-          ? DashbotRoutes.dashbotChat
-          : hasResponse
-              ? DashbotRoutes.dashbotHome
-              : DashbotRoutes.dashbotDefault;
-      bool isOn(String r) {
-        Route? top;
-        navigator.popUntil((route) {
-          top = route;
-          return true;
-        });
-        return top?.settings.name == r;
-      }
-
-      if (isOn(desired)) return;
-      if (desired == DashbotRoutes.dashbotDefault && canPop) {
-        navigator.popUntil((route) => route.isFirst);
-        return;
-      }
-      if (desired != DashbotRoutes.dashbotDefault) {
-        navigator.pushNamed(desired);
+    void navigateTo(String route) {
+      final nav = _dashbotNavigatorKey.currentState;
+      if (nav == null) return;
+      Route? top;
+      nav.popUntil((r) {
+        top = r;
+        return true;
+      });
+      if (top?.settings.name == route) return;
+      if (route == DashbotRoutes.dashbotDefault) {
+        nav.popUntil((r) => r.isFirst);
+      } else {
+        nav.pushNamed(route);
       }
     }
 
-    ref.listen(chatViewmodelProvider, (_, __) => _maybeNavigate());
-    ref.listen(selectedRequestModelProvider, (_, __) => _maybeNavigate());
+    ref.listen<String>(dashbotActiveRouteProvider, (prev, next) {
+      if (prev == next || next.isEmpty) return;
+      navigateTo(next);
+    });
 
     return Stack(
       children: [
@@ -188,17 +169,7 @@ class DashbotWindow extends ConsumerWidget {
                         Expanded(
                           child: Navigator(
                             key: _dashbotNavigatorKey,
-                            initialRoute: (chatState
-                                        .chatSessions[
-                                            (currentRequest?.id ?? 'global')]
-                                        ?.isNotEmpty ??
-                                    false)
-                                ? DashbotRoutes.dashbotChat
-                                : (currentRequest
-                                            ?.httpResponseModel?.statusCode !=
-                                        null)
-                                    ? DashbotRoutes.dashbotHome
-                                    : DashbotRoutes.dashbotDefault,
+                            initialRoute: activeRoute,
                             onGenerateRoute: generateRoute,
                           ),
                         ),

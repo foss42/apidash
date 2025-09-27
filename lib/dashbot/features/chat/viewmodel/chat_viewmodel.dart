@@ -17,6 +17,7 @@ import '../models/chat_action.dart';
 import '../models/chat_state.dart';
 import '../repository/chat_remote_repository.dart';
 import '../providers/service_providers.dart';
+import '../../../core/providers/dashbot_active_route_provider.dart';
 
 class ChatViewmodel extends StateNotifier<ChatState> {
   ChatViewmodel(this._ref) : super(const ChatState());
@@ -270,6 +271,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       isGenerating: false,
       currentStreamingResponse: '',
     );
+    // Reset to base route (unpins chat) after clearing messages.
+    _ref.read(dashbotActiveRouteProvider.notifier).resetToBaseRoute();
   }
 
   Future<void> sendTaskMessage(ChatMessageType type) async {
