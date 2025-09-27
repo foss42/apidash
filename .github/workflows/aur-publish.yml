@@ -44,7 +44,7 @@ jobs:
           echo "license_checksum=$LICENSE_CHECKSUM" >> $GITHUB_OUTPUT
 
       - name: Publish AUR package
-        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
+        uses: KSXGitHub/github-actions-deploy-aur@2ac5a4c1d7035885d46b10e3193393be8460b6f1 # v4.1.1
         with:
           pkgname: apidash-bin
           pkgbuild: |
