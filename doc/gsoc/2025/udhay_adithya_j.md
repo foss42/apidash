@@ -40,8 +40,6 @@ The core model is `AuthModel` in `packages/better_networking/lib/models/auth/api
 
 This is very close to how other API clients behave. I first proposed a different format but after discussion with my mentors we decided to match common patterns so people can migrate their requests easily. I also updated the UI to follow the API Dash design system so it feels consistent with the rest of the app. You can see the user guide [Authentication.md](./../../user_guide/authentication.md). It has simple explanations with images for each method.
 
-[IMAGE: Auth tab overview]
-
 Here is a small example that shows how the handler attaches a Bearer token to the headers. The handler reads the `AuthModel` and adds the correct `Authorization` header to the outgoing `HttpRequestModel`.
 
 ```
@@ -85,7 +83,19 @@ Digest support follows the standard flow. If the server already provided `realm`
 
 Environment variables are available in all auth fields. This means you can write something like `{{API_KEY}}` in the UI and API Dash will resolve it from the active environment before sending. Values are cached using Hive so you don’t need to retype them every time.
 
-All this work is covered by tests and documented for users. I also created the first version of the Authentication user guide and kept it simple and visual so anyone can follow it..
+All this work is covered by tests and documented for users. I also created the first version of the Authentication user guide and kept it simple and visual so anyone can follow it.
+
+<p align="center">
+  <img src="./images/auth-tab-overview.png" alt="Post-res Image" />
+  <br>
+  <em>Authentication Tab</em>
+</p>
+
+<p align="center">
+  <img src="./images/auth-type-dropdown.png" alt="auth-type-dropdown" />
+  <br>
+  <em>Authentication Methods</em>
+</p>
 
 ## Pre‑request and Post‑response Scripting
 
@@ -116,9 +126,17 @@ For post‑response scripts, the script can check status codes and write results
 
 The scripting UI has its own tab in the request editor. It also supports GraphQL requests so the same scripting patterns work there too. While building this I evaluated code editors for Flutter. I tried `flutter_code_editor`, but it had visual issues with folding and scrolling when switching tabs with big scripts. I documented the problem in the discussion linked from the pull request. I may replace or fix this in the future to make long scripts smoother to edit.
 
+<p align="center">
+  <img src="./images/pre-req.png" alt="Pre-req Image" />
+  <br>
+  <em>Pre-request Script Tab</em>
+</p>
 
-[IMAGE: Scripting tab — pre‑request]
-[IMAGE: Scripting tab — post‑response with console output]
+<p align="center">
+  <img src="./images/post-res.png" alt="Post-res Image" />
+  <br>
+  <em>Post-response Script Tab</em>
+</p>
 
 ## OAuth 1.0 and OAuth 2.0
 
@@ -149,64 +167,83 @@ case APIAuthType.oauth2: {
 
 If the provider returns a refresh token, the credentials file stores it so the client can refresh when needed. When a user wants to reset the session, deleting the credentials file clears the token state and the UI resets too. I also made sure the error messages are simple so people know exactly why a flow failed and what to try next.
 
+<p align="center">
+  <img src="./images/oauth1-fields.png" alt="oauth1-fields" />
+  <br>
+  <em>OAuth 1.0a</em>
+</p>
 
-[IMAGE: OAuth2 Authorization Code flow]
-[IMAGE: OAuth2 tokens visible in UI]
+<p align="center">
+  <img src="./images/oauth2-fields.png" alt="oauth2-fields" />
+  <br>
+  <em>OAuth 2.0</em>
+</p>
 
-## Dashbot: In‑app API Helper
+## Dashbot: In‑app API Assistant
 
 `Associated Pull Request`: [#887](https://github.com/foss42/apidash/pull/887), [#903](https://github.com/foss42/apidash/pull/903)
 
-After laying the foundation, I built Dashbot as an in‑app helper that sits right inside API Dash. It is designed to be simple to use and easy to extend. There are quick action buttons for common tasks so you do not need to type long prompts. These include Explain, Debug, Document, and Test. When you click an action, Dashbot builds a prompt using the selected request and its response and asks the configured model to generate a helpful reply. The main chat area shows your messages on the right and Dashbot replies on the left. Messages are persisted throughout the seesion so you do not lose history when you switch between requests.
+Dashbot is the assistant layer I added so users could stay inside the client while doing the things that normally force them to copy/paste between tools: asking “why did this response look like that?”, importing a cURL snippet someone shared, pulling in an OpenAPI spec, generating tests, or quickly turning a request into runnable code. Instead of building another free‑form chat box, I designed it around the idea of “structured help”: every answer comes back as a short human explanation plus a list of clear actions the app can apply (or that you can ignore). This keeps the experience predictable—no mysterious side effects—and lets you move faster because repetitive edits (like adding headers or creating a new request from an import) become one click.
 
-The main widget is `lib/dashbot/widgets/dashbot_widget.dart`. It uses Riverpod providers in `lib/dashbot/providers/dashbot_providers.dart` to store messages and to control whether the panel is minimized. The quick actions are simple buttons that call `_sendMessage` with a short command. The widget then calls the service, waits for the reply, and adds the bot message to the chat.
+You can keep Dashbot docked as a normal tab or pop it out into a small floating panel that you can drag to the part of the screen that’s least distracting. It remembers its size and position while you work. Conversations are scoped to the request you have selected, so switching between requests feels like switching between focused “threads.” If no request is selected, you still have a global space for general API questions. Messages carry optional action buttons: apply imported cURL, create from OpenAPI, add a header the assistant suggested, insert generated tests into your post‑response script, pick a language for code generation, and so on.
 
-```
-// lib/dashbot/widgets/dashbot_widget.dart (quick actions)
-ElevatedButton.icon(
-	onPressed: () => _sendMessage("Explain API"),
-	icon: const Icon(Icons.info_outline, size: 16),
-	label: const Text("Explain"),
-);
-// ... similarly for Debug, Document, Test
-```
+The responses are strict JSON behind the scenes, but what matters for you is that if there’s nothing actionable you just see the explanation; if there is something actionable you see lightweight buttons under the assistant’s reply. Below is a simplified example of the structure the assistant returns (you never have to write this yourself):
 
-The service is in `lib/dashbot/services/dashbot_service.dart`. It connects to a local model via `ollama_dart` using the endpoint in `lib/dashbot/consts.dart`. The method `handleRequest` looks at the input and dispatches to the correct feature. If the input is not one of the quick actions it falls back to a general query mode that can still use the current request and response as context.
-
-```
-// lib/dashbot/services/dashbot_service.dart
-Future<String> handleRequest(String input, RequestModel? req, dynamic res) async {
-	if (input == "Explain API") return _explainFeature.explainLatestApi(requestModel: req, responseModel: res);
-	if (input == "Debug API") return _debugFeature.debugApi(requestModel: req, responseModel: res);
-	if (input == "Document API") return _documentationFeature.generateApiDocumentation(requestModel: req, responseModel: res);
-	if (input == "Test API") return _testGeneratorFeature.generateApiTests(requestModel: req, responseModel: res);
-	return _generalQueryFeature.generateResponse(input, requestModel: req, responseModel: res);
+```json
+{
+	"explanation": "Parsed the cURL command. It adds 2 headers and changes the body to JSON.",
+	"actions": [
+		{"action": "apply_curl", "target": "httpRequestModel", "field": "apply_to_selected", "value": {"method": "POST", "url": "https://api.example.com/users"}},
+		{"action": "apply_curl", "target": "httpRequestModel", "field": "apply_to_new", "value": {"method": "POST", "url": "https://api.example.com/users"}}
+	]
 }
 ```
 
-Each feature builds a focused prompt. The Explain feature in `lib/dashbot/features/explain.dart` reads the request method, URL, headers, parameters, body, status code, and response content. It asks for a short explanation in very clear language so users can understand the response quickly. The Debug feature in `lib/dashbot/features/debug.dart` asks for a text‑only analysis when an API call fails and lists the exact steps to fix the problem. The Documentation feature in `lib/dashbot/features/documentation.dart` generates usable documentation with an overview, authentication note, request details, response structure, errors, and a code sample. The Test Generator feature in `lib/dashbot/features/test_generator.dart` produces a set of cURL tests that cover valid, invalid, and edge cases.
+One of the most immediately useful flows is pasting a raw cURL command. A user can drop in a long multi‑line snippet and Dashbot parses the method, URL, headers, body, form data, and query parameters. It ignores things that are about transport or terminal behavior (redirect flags, silent/verbose, retry counts, output files) because those don’t belong inside a static request description. It then shows a concise diff between what was already selected and what the cURL contains—method changes, new headers, removed headers, body type changes, size differences—plus two actions: overwrite the current request or create a new one. You can inspect the explanation, choose an action, and you’re done. No manual re‑typing.
 
-Dashbot renders content using `lib/dashbot/widgets/content_renderer.dart`. This renderer supports normal text, markdown, and code blocks in many languages. JSON code blocks are pretty‑printed. It tries syntax highlighting first and falls back to a simple code view if needed, so outputs stay readable. The chat bubbles are built by `lib/dashbot/widgets/chat_bubble.dart` and include a quick copy button on bot messages.
+The OpenAPI flow feels similar but works at a higher granularity. A user can paste an entire spec (JSON or YAML) or even just paste a URL to one. Dashbot parses it, summarizes the API (title, version, number of endpoints, methods present), highlights interesting routes like auth or health endpoints, and then offers to “import now.” From there you can pick operations and turn them into real requests in the collection. Behind the scenes it also tries to extract a stable base URL and turn that into an environment variable automatically, so the generated requests are environment‑friendly from the first second (e.g. swapping staging/production later is trivial). The same environment extraction also happens for cURL imports so hostnames don’t get duplicated everywhere.
 
-When Dashbot generates tests, it offers a “Run Test Cases” button. Clicking it opens `lib/dashbot/widgets/test_runner_widget.dart`, which parses cURL commands from the markdown and runs them. The runner shows status, response, and a colored result for each test. You can run all tests or individual ones and copy a command easily. Here is a small part of the parsing and running flow:
+Code generation and test generation use the current request (and response if present) as context. If you just ask “generate code” it first offers a language list instead of guessing; if you mention a language directly (like “generate python code”) it goes straight to the result. Tests come back as snippets you can drop into your scripting layer so they run after a response. Documentation generation produces a structured description of the request and response that you can copy into internal docs or a README.
 
+Reliability mattered while building this. If the assistant ever produces malformed data I simply show you the explanation and skip actions. If parsing a cURL or OpenAPI spec fails, you get a clear message why and what to try next (wrong quoting, invalid JSON/YAML, network failure, etc.). This defensive approach meant I could iterate on prompts and model behavior without risking accidental silent changes to your collection.
+
+Here is a tiny extract of the “explain response” style the assistant is guided to follow—clear summary, focused bullets, no fluff:
+
+```text
+Summary: The request succeeded (200) and returned a list of users.
+- Status indicates a normal success path.
+- Body contains an array; each item has id, email, role.
+- No error fields detected; latency is normal.
+- Consider caching if this endpoint is called frequently.
+Next steps: paginate if the list grows; filter server‑side to reduce payload size.
 ```
-// lib/dashbot/widgets/test_runner_widget.dart (simplified)
-final curlRegex = RegExp(r'```bash\ncurl\s+(.*?)\n```', dotAll: true);
-// ...extract commands and then run
-final response = await http.get(Uri.parse(url));
-// or for POST use body and http.post
+
+And a quick illustration of the language selection flow for code generation:
+
+```json
+{
+	"explanation": "Choose a language to generate client code.",
+	"actions": [
+		{"action": "show_languages", "target": "codegen", "value": ["JavaScript (fetch)", "Python (requests)", "Dart (http)", "Go (net/http)"]}
+	]
+}
 ```
 
-Messages are stored using simple persistence through the hive handler so your chat is restored the next time you open Dashbot. The provider `chatMessagesProvider` loads and saves the conversation behind the scenes. This makes the assistant feel consistent across sessions.
+Once I pick one, the follow‑up reply contains the code plus (when useful) a short note about required dependencies. Because every reply is structured, adding future abilities (like running a suggested retry automatically, or batching several changes) is a matter of teaching the assistant a new action name and wiring a small handler—no redesign needed.
 
-In practice this design makes Dashbot very easy to extend. Adding a new task means writing a small feature class that builds a good prompt from the current request and response and then wiring a quick action to call it. The rest of the UI stays the same. This keeps the code clean and focused. For now Dashbot returns clear text and code blocks. In the future it can also apply changes to the current request or create new requests based on the suggestion, because all the context is already available in the service method.
+Overall Dashbot now feels less like a chat experiment and more like a focused productivity surface: explain, debug, import, generate, adapt—always grounded in the exact request a user is looking at, always explicit about what can change, and always safe to ignore if only context is needed. It already saves users time daily and leaves clear room for future additions such as streaming output, richer operation pickers, or multi‑step guided fixes.
 
-You can review the pull request for Dashbot at .
+<p align="center">
+  <img src="./images/dashbot_window.png" alt="dashbot_window" />
+  <br>
+  <em>Dashbot Window</em>
+</p>
 
-[IMAGE: Dashbot panel open with quick actions]
-[IMAGE: Dashbot explanation reply with markdown]
-[IMAGE: Test Runner dialog with results]
+<p align="center">
+  <img src="./images/dashbot_tab.png" alt="oauth2-fields" />
+  <br>
+  <em>Dashbot Tab</em>
+</p>
 
 
 ## Logs Tab
@@ -255,33 +292,55 @@ void setupJsBridge() {
 
 This design keeps the scripting API simple for users. You can call `ad.console.log(...)`, `ad.console.warn(...)`, or `ad.console.error(...)` in scripts and then open the Logs tab to see what happened, including any fatal errors with their stack traces from the JS engine. Internally, logs are captured centrally so the UI can show them in order, highlight severity, and allow quick filtering or clearing. This has already helped me and early users debug scripts and understand OAuth/token flows faster.
 
-[IMAGE: Logs tab showing JS and system messages]
 
 ## Challenges
 
-#### Designing Familiar Authentication Patterns
-
-Designing authentication so that it feels familiar. I first drafted a custom data format for auth, but after prototyping UI flows we realized it would confuse users migrating from other tools. I rewrote the models to match common patterns instead. This made the handler simpler and the UI clearer. It also helped with writing tests because each case mapped to a known behavior.
-
-#### Safe JavaScript Engine Integration
-
-Integrating a JavaScript engine safely. Scripts run outside widgets, and they need access to request, response, and environment. I used a setup script that parses JSON and exposes a small `ad` object to avoid leaking internals. The bridge captures console logs and fatal errors so we can show them in the Logs tab. This isolation kept the app stable even when scripts throw.
-
 #### Code Editor Stability Issues
 
-Editor stability for long scripts. The first code editor I tried had folding and scroll issues when switching tabs with large scripts. It looked broken and made editing hard. I minimized the folding features and documented the issue for a future fix or replacement. The scripting API remains stable regardless of the editor widget.
+Editor stability for long scripts. The code editor I tried had folding and scroll issues when working with large scripts. It looked broken and made editing hard. I minimized the folding features and documented the issue for a future fix or replacement. The scripting API remains stable regardless of the editor widget.
 
-#### OAuth2 Provider Compatibility
+#### OAuth2 Callback URL
 
-OAuth2 differences across providers. The official client is strict with RFCs, which is good for correctness but exposes differences with legacy servers. I added clear error messages and a limitations note so users know what to expect. On desktop, capturing the callback via a short‑lived localhost server also needed careful port handling and clean shutdowns.
+Reliably getting the authorization response (code / state / error) back into API Dash across desktop and mobile required multiple iterations. Initial attempts relied solely on an in‑app web view + custom scheme via `flutter_web_auth_2`; this worked on mobile but intermittently failed to deliver the redirect parameters on desktop. So, after discussing this issue with the mentors the final solution is a platform‑aware dual strategy:
 
-#### Context-Aware AI Responses
+1. Desktop (macOS / Windows / Linux): Start a lightweight ephemeral `OAuthCallbackServer` bound to the first free port in 8080–8090 and construct a redirect URL like `http://localhost:{port}/callback`. Open the provider authorization URL in the system browser (`open` / `xdg-open` / `rundll32`). When the provider redirects, the local server captures the full query string (authorization code, state, or error), responds with a small HTML page, and then can be stopped. This avoids dependence on custom URL scheme registration on desktop and satisfies providers that insist on HTTP(S) redirect URIs.
+2. Mobile (Android / iOS): Use a custom deep link scheme `apidash://oauth2/callback`. 
+Runtime selection logic chooses localhost server vs custom scheme based on `PlatformUtils.shouldUseLocalhostCallback`. If the localhost range is exhausted, a clear error explains that no free port was found. Distinct timeout (3‑minute) and cancellation messages differentiate user‑initiated cancellations (closing the tab) from connectivity issues. This hybrid approach produced consistent, debuggable behavior and simplified future maintenance.
 
-Making Dashbot reliable with real context. The prompts have to be grounded in the current request and response to be useful. I wrote small feature classes so each task focuses on one job, and I added a content renderer that gracefully falls back when highlighters fail. This kept the chat readable and the outputs actionable.
+#### Dashbot Actions
 
-#### Building Debug Infrastructure
+Designing a scalable, reliable action system for Dashbot was harder than just “have the model suggest buttons.” Early experiments let the model respond in free‑form text with sentences like “You can add a header X” or “Click here to import,” which left the app guessing: Is this actionable? Which part of the request does it touch? Should it overwrite or create? Even when we asked for JSON, the model would drift—renaming keys, nesting arrays differently, mixing prose inside the array, or outputting partial code before the closing brace. That made parsing brittle and limited how many action types we could safely introduce.
 
-Surface for debugging in the app. Without a log view, scripting and OAuth were hard to reason about. I added the Logs tab and a simple severity model so we can filter and spot errors quickly. This improved both development and user experience.
+The turning point was enforcing a strict, minimal JSON envelope in the system prompts:
+
+```
+{
+	"explanation": "<plain concise human summary>",
+	"actions": [ { /* zero or more strictly typed action objects */ } ]
+}
+```
+
+Every action object must follow a controlled schema (conceptually):
+
+```
+{
+	"action": "apply_curl | apply_openapi | show_languages | add_header | update_header | delete_header | update_body | update_method | update_url | import_now_openapi | download_doc | add_test | code | other",
+	"target": "httpRequestModel | codegen | test | attachment | doc | <future>",
+	"field": "optional granular field identifier (e.g. header_name, body, method, select_operation)",
+	"value": <JSON value whose shape depends on action>,
+	"meta": { "optional auxiliary data" }
+}
+```
+
+Key constraints baked into the prompt:
+1. No markdown fences, no commentary outside the single root object.
+2. Do not invent new top‑level keys.
+3. Omit `actions` or make it an empty array if there is nothing actionable (never force a placeholder).
+4. Keep `explanation` short, neutral, and free of ASCII art / emojis.
+5. For lists (e.g. language picker) put the array under `value` of a single `show_languages` action.
+
+On the client side the parser performs: (a) fast JSON parse, (b) basic structural validation (must have `explanation` string, `actions` array if present), (c) per‑action normalization mapping `action` + `target` (or `targetType`) to an internal `ChatActionType` enum. Unknown or malformed actions are silently dropped—only valid ones surface as buttons/widgets. This “accept strictly, degrade gracefully” strategy eliminated UI breakage when the model drifts slightly.
+
 
 ## Pull Requests Summary
 
@@ -300,21 +359,23 @@ Surface for debugging in the app. Without a log view, scripting and OAuth were h
 |core functionalities of dashbot|[#887](https://github.com/foss42/apidash/pull/887)||||
 |in app terminal logger|[#890](https://github.com/foss42/apidash/pull/890)||||
 |add dashbot user guide doc|[#903](https://github.com/foss42/apidash/pull/903)|||||
+|GSoC 25 Report: Udhay Adithya|[#904](https://github.com/foss42/apidash/pull/904)||||
 
 ## Future Work
-- ****
 
 - ****
 
 - ****
+
+- **Add persistent Dashbot chat history with save + export capabilities** Right now Dashbot conversations exist only in memory for the current run. A future milestone is to persist sessions (per request and global) across restarts and allow users to export chats (e.g., JSON for automation, Markdown/plain text for documentation or sharing).
 
 ---
 
 ## Research Links
+
 - [OAuth 2.0 Redirect URI Handling in API Clients](https://gist.github.com/Udhay-Adithya/f7c3174e4e1c7799ee5016974e996e67)
 - [Authentication Data Format in API Clients](https://gist.github.com/Udhay-Adithya/ae09c2e9e306f0ce877d452999bb1789)
 - [Authentication Schema in API Clients](https://gist.github.com/Udhay-Adithya/3215d0ac511a0893d901eb58c6aab059)
-
 - [Pre/Post Request Scripting in API Clients](https://gist.github.com/Udhay-Adithya/da7a0282e9e1ef66c1d4a3f0f22ab840)
 ---
 
