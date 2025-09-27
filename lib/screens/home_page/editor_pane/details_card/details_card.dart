@@ -1,3 +1,5 @@
+import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
+import 'package:apidash/dashbot/dashbot_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -12,10 +14,15 @@ class EditorPaneRequestDetailsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
+    final isDashbotPopped = ref.watch(dashbotWindowNotifierProvider).isPopped;
     return RequestDetailsCard(
       child: EqualSplitView(
         leftWidget: const EditRequestPane(),
-        rightWidget: codePaneVisible ? const CodePane() : const ResponsePane(),
+        rightWidget: !isDashbotPopped
+            ? DashbotTab()
+            : codePaneVisible
+                ? const CodePane()
+                : const ResponsePane(),
       ),
     );
   }

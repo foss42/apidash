@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/dashbot/dashbot.dart';
+import '../dashbot/dashbot.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
@@ -19,6 +19,10 @@ class Dashboard extends ConsumerWidget {
     final railIdx = ref.watch(navRailIndexStateProvider);
     final isDashBotEnabled =
         ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
+    final isDashBotActive = ref
+        .watch(dashbotWindowNotifierProvider.select((value) => value.isActive));
+    final isDashBotPopped = ref
+        .watch(dashbotWindowNotifierProvider.select((value) => value.isPopped));
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -127,17 +131,19 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: isDashBotEnabled
+      floatingActionButton: isDashBotEnabled &&
+              !isDashBotActive &&
+              isDashBotPopped
           ? FloatingActionButton(
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: DashBotWidget(),
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              onPressed: () => showDashbotWindow(context, ref),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6.0,
+                  horizontal: 10,
                 ),
+                child: DashbotIcons.getDashbotIcon1(),
               ),
-              child: const Icon(Icons.help_outline),
             )
           : null,
     );

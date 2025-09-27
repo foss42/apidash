@@ -117,8 +117,45 @@ void main() {
  -F "token=123"''',
         );
       });
+
+      test('form defaults header when absent', () {
+        final curl = Curl(
+          method: 'POST',
+          uri: Uri.parse('https://api.apidash.dev/io/img'),
+          form: true,
+          formData: [
+            FormDataModel(
+              name: 'file',
+              value: '/tmp/a.png',
+              type: FormDataType.file,
+            ),
+          ],
+        );
+        // parse back to ensure header gets defaulted in parser
+        final parsed = Curl.parse(curl.toCurlString());
+        expect(parsed.form, isTrue);
+        expect(
+            parsed.headers?[kHeaderContentType] ??
+                parsed.headers?['content-type'],
+            'multipart/form-data');
+      });
     },
   );
+
+  group('Roundtrip with body', () {
+    test('toCurlString includes body when present', () {
+      final curl = Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/submit'),
+        data: 'a=1&b=2',
+      );
+      final s = curl.toCurlString();
+      final back = Curl.parse(s);
+      expect(back.method, 'POST');
+      expect(back.data, 'a=1&b=2');
+      expect(back.uri, Uri.parse('https://api.apidash.dev/submit'));
+    });
+  });
 
   group(
     'Special Parameters',
