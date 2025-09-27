@@ -34,7 +34,10 @@ class DashbotActionWidgetFactory {
       case ChatActionType.applyCurl:
         return DashbotApplyCurlButton(action: action);
       case ChatActionType.applyOpenApi:
-        return DashbotApplyOpenApiButton(action: action);
+        if (action.action == 'import_now_openapi') {
+          return DashbotImportNowButton(action: action);
+        }
+        return null;
       case ChatActionType.downloadDoc:
         return DashbotDownloadDocButton(action: action);
       case ChatActionType.noAction:
@@ -69,9 +72,6 @@ class DashbotActionWidgetFactory {
     }
     if (action.action == 'apply_curl') {
       return DashbotApplyCurlButton(action: action);
-    }
-    if (action.action == 'apply_openapi') {
-      return DashbotApplyOpenApiButton(action: action);
     }
     if (action.action.contains('update') ||
         action.action.contains('add') ||

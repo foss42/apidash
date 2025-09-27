@@ -445,27 +445,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       collection.addRequestModel(model, name: displayName);
       _appendSystem('Created a new request from the OpenAPI operation.',
           ChatMessageType.importOpenApi);
-    } else if (action.field == 'select_operation') {
-      // Present apply options for the selected operation
-      final applyMsg = OpenApiImportService.buildActionMessageFromPayload(
-        payload,
-        title: 'Selected ${action.path}. Where should I apply it?',
-      );
-      final rqId = _currentRequest?.id ?? 'global';
-      _addMessage(
-        rqId,
-        ChatMessage(
-          id: getNewUuid(),
-          content: jsonEncode(applyMsg),
-          role: MessageRole.system,
-          timestamp: DateTime.now(),
-          messageType: ChatMessageType.importOpenApi,
-          actions: (applyMsg['actions'] as List)
-              .whereType<Map<String, dynamic>>()
-              .map(ChatAction.fromJson)
-              .toList(),
-        ),
-      );
     }
   }
 

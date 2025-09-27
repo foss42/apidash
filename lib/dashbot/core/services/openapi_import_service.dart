@@ -233,34 +233,6 @@ class OpenApiImportService {
         op: op,
       );
 
-  /// Build an action message asking whether to apply to selected/new
-  /// for a single chosen operation.
-  static Map<String, dynamic> buildActionMessageFromPayload(
-      Map<String, dynamic> actionPayload,
-      {String? title}) {
-    final buf = StringBuffer(
-        title ?? 'Parsed the OpenAPI operation. Where should I apply it?');
-    return {
-      'explnation': buf.toString(),
-      'actions': [
-        {
-          'action': 'apply_openapi',
-          'target': 'httpRequestModel',
-          'field': 'apply_to_new',
-          'path': null,
-          'value': actionPayload,
-        },
-        {
-          'action': 'apply_openapi',
-          'target': 'httpRequestModel',
-          'field': 'apply_to_selected',
-          'path': null,
-          'value': actionPayload,
-        }
-      ]
-    };
-  }
-
   static Map<String, dynamic> buildOperationPicker(OpenApi spec,
       {String? insights}) {
     final servers = spec.servers ?? const [];

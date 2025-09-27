@@ -69,20 +69,6 @@ void main() {
       expect(payload['url'], 'https://api.apidash.dev/users');
       expect(payload['headers'], isA<Map>());
     });
-
-    test('buildActionMessageFromPayload returns two actions', () {
-      final op = spec.paths!['/users']!.post!;
-      final payload = OpenApiImportService.payloadForOperation(
-        baseUrl: spec.servers!.first.url!,
-        path: '/users',
-        method: 'post',
-        op: op,
-      );
-      final msg = OpenApiImportService.buildActionMessageFromPayload(payload);
-      final actions = (msg['actions'] as List).cast<Map<String, dynamic>>();
-      expect(actions.length, 2);
-      expect(actions.first['action'], 'apply_openapi');
-    });
   });
 
   group('OpenApiImportService extended coverage', () {
