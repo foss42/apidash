@@ -416,15 +416,18 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final withEnvUrl = await _maybeSubstituteBaseUrl(url, baseUrl);
     if (action.field == 'apply_to_selected') {
       if (requestId == null) return;
+      final replacingBody =
+          (formFlag || formData.isNotEmpty) ? '' : (body ?? '');
+      final replacingFormData =
+          formData.isEmpty ? const <FormDataModel>[] : formData;
       collection.update(
         method: method,
         url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
-        body: body,
+        body: replacingBody,
         bodyContentType: bodyContentType,
-        formData: formData.isEmpty ? null : formData,
-        // Wipe existing parameters and authentication to ensure clean state
+        formData: replacingFormData,
         params: const [],
         isParamEnabledList: const [],
         authModel: null,
@@ -895,14 +898,19 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final withEnvUrl = await _maybeSubstituteBaseUrl(url, baseUrl);
     if (action.field == 'apply_to_selected') {
       if (requestId == null) return;
+      // Replacement semantics: ensure previous body/formData are cleared if absent in cURL
+      final replacingBody =
+          (formFlag || formData.isNotEmpty) ? '' : (body ?? '');
+      final replacingFormData =
+          formData.isEmpty ? const <FormDataModel>[] : formData;
       collection.update(
         method: method,
         url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
-        body: body,
+        body: replacingBody,
         bodyContentType: bodyContentType,
-        formData: formData.isEmpty ? null : formData,
+        formData: replacingFormData,
         // Wipe existing parameters and authentication to ensure clean state
         params: const [],
         isParamEnabledList: const [],
