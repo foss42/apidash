@@ -258,7 +258,7 @@ class OpenApiImportService {
 
     if (endpointsCount == 0) {
       return {
-        'explnation':
+        'explanation':
             'No operations found in the OpenAPI spec. Please check the file.',
         'actions': []
       };
@@ -277,7 +277,7 @@ class OpenApiImportService {
         StringBuffer('OpenAPI parsed. Click Import Now to choose operations.')
             .toString();
     return {
-      'explnation': insights == null || insights.isEmpty
+      'explanation': insights == null || insights.isEmpty
           ? '$explanation\n\n${summary.toString()}'
           : '$explanation\n\n${summary.toString()}\n $insights',
       'actions': [

@@ -110,7 +110,7 @@ class CurlImportService {
           'Where do you want to apply the changes? Choose one of the options below.');
     final explanation = buf.toString();
     final map = {
-      'explnation': explanation,
+      'explanation': explanation,
       'actions': [
         {
           'action': 'apply_curl',

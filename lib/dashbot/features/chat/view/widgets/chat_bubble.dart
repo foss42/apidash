@@ -47,13 +47,13 @@ class ChatBubble extends ConsumerWidget {
         ),
       );
     }
-    // Parse agent JSON when role is system and show only the "explnation" field.
+    // Parse agent JSON when role is system and show only the "explanation" field.
     String renderedMessage = message;
     if (role == MessageRole.system) {
       try {
         final Map<String, dynamic> parsed = MessageJson.safeParse(message);
-        if (parsed.containsKey('explnation')) {
-          final exp = parsed['explnation'];
+        if (parsed.containsKey('explanation')) {
+          final exp = parsed['explanation'];
           if (exp is String && exp.isNotEmpty) {
             renderedMessage = exp;
           }

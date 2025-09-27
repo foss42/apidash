@@ -150,7 +150,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         ChatMessage(
           id: getNewUuid(),
           content:
-              '{"explnation":"Let\'s import a cURL request. Paste your complete cURL command below.","actions":[]}',
+              '{"explanation":"Let\'s import a cURL request. Paste your complete cURL command below.","actions":[]}',
           role: MessageRole.system,
           timestamp: DateTime.now(),
           messageType: ChatMessageType.importCurl,
@@ -182,7 +182,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         ChatMessage(
           id: getNewUuid(),
           content:
-              '{"explnation":"Upload your OpenAPI (JSON or YAML) specification, paste the full spec text, or paste a URL to a spec (e.g., https://api.apidash.dev/openapi.json).","actions":[${jsonEncode(uploadAction.toJson())}]}',
+              '{"explanation":"Upload your OpenAPI (JSON or YAML) specification, paste the full spec text, or paste a URL to a spec (e.g., https://api.apidash.dev/openapi.json).","actions":[${jsonEncode(uploadAction.toJson())}]}',
           role: MessageRole.system,
           timestamp: DateTime.now(),
           messageType: ChatMessageType.importOpenApi,
@@ -526,8 +526,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           if (res != null && res.isNotEmpty) {
             try {
               final parsed = MessageJson.safeParse(res);
-              if (parsed['explnation'] is String) {
-                insights = parsed['explnation'];
+              if (parsed['explanation'] is String) {
+                insights = parsed['explanation'];
               }
             } catch (_) {
               insights = res;
@@ -628,7 +628,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } catch (e) {
       final safe = e.toString().replaceAll('"', "'");
       _appendSystem(
-          '{"explnation":"Failed to read attachment: $safe","actions":[]}',
+          '{"explanation":"Failed to read attachment: $safe","actions":[]}',
           ChatMessageType.importOpenApi);
     }
   }
@@ -666,14 +666,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       if (err != null) {
         final safe = err.replaceAll('"', "'");
         _appendSystem(
-          '{"explnation":"Failed to fetch URL: $safe","actions":[]}',
+          '{"explanation":"Failed to fetch URL: $safe","actions":[]}',
           ChatMessageType.importOpenApi,
         );
         return;
       }
       if (resp == null) {
         _appendSystem(
-          '{"explnation":"No response received when fetching the URL.","actions":[]}',
+          '{"explanation":"No response received when fetching the URL.","actions":[]}',
           ChatMessageType.importOpenApi,
         );
         return;
@@ -682,7 +682,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final body = resp.body;
       if (body.trim().isEmpty) {
         _appendSystem(
-          '{"explnation":"The fetched URL returned an empty body.","actions":[]}',
+          '{"explanation":"The fetched URL returned an empty body.","actions":[]}',
           ChatMessageType.importOpenApi,
         );
         return;
@@ -692,7 +692,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final spec = OpenApiImportService.tryParseSpec(body);
       if (spec == null) {
         _appendSystem(
-          '{"explnation":"The fetched content does not look like a valid OpenAPI spec (JSON or YAML).","actions":[]}',
+          '{"explanation":"The fetched content does not look like a valid OpenAPI spec (JSON or YAML).","actions":[]}',
           ChatMessageType.importOpenApi,
         );
         return;
@@ -718,7 +718,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           if (res != null && res.isNotEmpty) {
             try {
               final map = MessageJson.safeParse(res);
-              if (map['explnation'] is String) insights = map['explnation'];
+              if (map['explanation'] is String) insights = map['explanation'];
             } catch (_) {
               insights = res;
             }
@@ -750,7 +750,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } catch (e) {
       final safe = e.toString().replaceAll('"', "'");
       _appendSystem(
-        '{"explnation":"Failed to fetch or parse OpenAPI from URL: $safe","actions":[]}',
+        '{"explanation":"Failed to fetch or parse OpenAPI from URL: $safe","actions":[]}',
         ChatMessageType.importOpenApi,
       );
     } finally {
@@ -768,7 +768,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final spec = OpenApiImportService.tryParseSpec(trimmed);
       if (spec == null) {
         _appendSystem(
-            '{"explnation":"Sorry, I couldn\'t parse that OpenAPI spec. Ensure it\'s valid JSON or YAML.","actions":[]}',
+            '{"explanation":"Sorry, I couldn\'t parse that OpenAPI spec. Ensure it\'s valid JSON or YAML.","actions":[]}',
             ChatMessageType.importOpenApi);
         return;
       }
@@ -791,10 +791,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             ),
           );
           if (res != null && res.isNotEmpty) {
-            // Ensure we only pass the explnation string to embed into explanation
+            // Ensure we only pass the explanation string to embed into explanation
             try {
               final map = MessageJson.safeParse(res);
-              if (map['explnation'] is String) insights = map['explnation'];
+              if (map['explanation'] is String) insights = map['explanation'];
             } catch (_) {
               insights = res; // fallback raw text
             }
@@ -827,7 +827,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } catch (e) {
       debugPrint('[OpenAPI] Exception: $e');
       final safe = e.toString().replaceAll('"', "'");
-      _appendSystem('{"explnation":"Parsing failed: $safe","actions":[]}',
+      _appendSystem('{"explanation":"Parsing failed: $safe","actions":[]}',
           ChatMessageType.importOpenApi);
     } finally {
       state = state.copyWith(

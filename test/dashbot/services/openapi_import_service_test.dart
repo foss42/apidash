@@ -49,7 +49,7 @@ void main() {
 
     test('buildOperationPicker returns import action', () {
       final picker = OpenApiImportService.buildOperationPicker(spec);
-      expect(picker['explnation'], contains('OpenAPI parsed'));
+      expect(picker['explanation'], contains('OpenAPI parsed'));
       final actions = (picker['actions'] as List);
       expect(actions.length, 1);
       expect(actions.first['action'], 'import_now_openapi');
@@ -201,7 +201,7 @@ void main() {
       final spec = OpenApiImportService.tryParseSpec(_extendedSpecJson)!;
       final picker = OpenApiImportService.buildOperationPicker(spec,
           insights: 'Some insights');
-      expect(picker['explnation'], contains('Some insights'));
+      expect(picker['explanation'], contains('Some insights'));
     });
 
     test('buildOperationPicker zero endpoints branch', () {
@@ -210,7 +210,7 @@ void main() {
       final spec = OpenApiImportService.tryParseSpec(emptySpecJson)!;
       final picker = OpenApiImportService.buildOperationPicker(spec);
       expect(picker['actions'], isEmpty);
-      expect(picker['explnation'], contains('No operations'));
+      expect(picker['explanation'], contains('No operations'));
     });
   });
 }

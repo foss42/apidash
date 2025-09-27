@@ -57,7 +57,7 @@ void main() {
         child: MaterialApp(
           home: Scaffold(
             body: ChatBubble(
-              message: '{"explnation":"Parsed output"}',
+              message: '{"explanation":"Parsed output"}',
               role: MessageRole.system,
             ),
           ),

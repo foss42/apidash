@@ -128,7 +128,7 @@ void main() {
       );
       // note & insights included
       expect(msg['note'], 'note here');
-      final expl = msg['explnation'] as String;
+      final expl = msg['explanation'] as String;
       expect(expl, contains('extra insights'));
       expect(expl, contains('Method: GET'));
       // diff narrative lines

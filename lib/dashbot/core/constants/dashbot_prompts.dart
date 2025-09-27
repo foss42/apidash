@@ -3,7 +3,7 @@ import 'prompts/prompts.dart';
 class DashbotPrompts {
 // ACTION SCHEMA
 // Dashbot must return:
-// { "explnation": string, "actions": [ { ... }, { ... } ] }
+// { "explanation": string, "actions": [ { ... }, { ... } ] }
 // If only one action is needed, return a single-element actions array.
 // Each action object shape:
 // {
@@ -17,14 +17,14 @@ class DashbotPrompts {
 // IMPORTANT: If no actionable changes: set "actions": [] (empty array).
 // EXAMPLE MULTI-ACTION (debugging):
 // {
-//   "explnation": "...details...",
+//   "explanation": "...details...",
 //   "actions": [
 //     {"action":"add_header","target":"httpRequestModel","field":"headers","path":"Authorization","value":"Bearer your_api_token"},
 //     {"action":"update_field","target":"httpRequestModel","field":"url","path":null,"value":"https://api.example.com/v2/users"}
 //   ]
 // }
 // EXAMPLE CODEGEN LANGUAGE PICKER:
-// {"explnation":"Choose a language","actions":[{"action":"show_languages","target":"codegen","path":null,"value":["JavaScript (fetch)","Python (requests)"]}]}
+// {"explanation":"Choose a language","actions":[{"action":"show_languages","target":"codegen","path":null,"value":["JavaScript (fetch)","Python (requests)"]}]}
 
   /// General user interaction prompt enforcing strict JSON-only output and off-topic refusal.
   String generalInteractionPrompt() {
