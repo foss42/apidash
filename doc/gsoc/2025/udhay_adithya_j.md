@@ -19,25 +19,26 @@
 
 When we started planning, the first idea was to build Dashbot, an in‑app assistant that helps with API work such as explaining responses, fixing failing requests, importing cURL or OpenAPI, and generating tests or runnable code without leaving the current request. Very quickly we realized that to make AI features feel reliable and production‑ready, we needed to strengthen the base of the application first. After discussing with my mentors, I switched focus to core building blocks that other features could depend on and that users would benefit from immediately.
 
-I began by implementing the common authentication methods that developers use every day. These include Basic Auth, API Key, Bearer, JWT Bearer, and Digest. I added a clean Authorization tab in the request editor, models to represent the data, a handler that applies the credentials to the request, environment variable support for all auth fields, caching via Hive so the values persist, and tests to keep everything stable. I also wrote a user guide so new users can set up auth without confusion.
+I began by implementing the common authentication methods that developers use every day. These include Basic Auth, API Key, Bearer, JWT Bearer, and Digest. I added a new "Auth" tab in the request editor, environment variable support for all auth fields, caching via Hive so the values persist, and tests to keep everything stable. I also wrote a [user guide](./../../user_guide/authentication.md) so new users can set up auth without confusion.
 
-Next, I worked on pre‑request and post‑response scripting so users can run JavaScript before a request is sent and after a response arrives. This is a common feature in other API clients, and we decided to follow the same standard. I used a JavaScript engine that runs natively with Flutter, converted the request, response, and active environment to JSON, passed that into a setup script that exposes a stable ad object, and then executed the user’s script below it. The script returns updated JSON, which I parse back into the right models and apply to the request or environment. I also extended this to work with GraphQL and planned for a logs console because people need to see what their scripts are doing.
+Next, I worked on pre‑request and post‑response scripting so users can run JavaScript before a request is sent and after a response arrives. This is a common feature in other API clients, and we decided to follow the same standard. I used a JavaScript engine that runs natively with Flutter, converted the request, response, and active environment to JSON, passed that into a setup script that exposes a stable `ad` object, and then executed the user’s script below it. The script returns updated JSON, which I parse back into the right models and apply to the request or environment. I also extended this to work with GraphQL and planned for a logs console because people need to see what their scripts are doing.
 
-After that, I added OAuth. OAuth 1.0 was straightforward because other clients usually do not implement the full three‑legged flow inside the app. Instead, they expect users to bring their own tokens, so I followed the same approach to make it practical. OAuth 2.0 was harder. The official OAuth 2.0 Dart package follows the spec closely, which means some providers and response formats are not supported. I wrote down the limitations to be transparent and added credential caching so users don’t have to repeat the flow every time. For desktop we open the browser and listen on localhost for a short time to capture the callback. For mobile we use the standard in‑app flow. This makes the experience consistent and reliable across platforms.
+After that, I added OAuth. OAuth 1.0 was straightforward because other clients usually do not implement the full three‑legged flow inside the app. Instead, they expect users to bring their own tokens, so I followed the same approach to make it practical. OAuth 2.0 was harder. The official OAuth 2.0 Dart package follows the spec closely, which means some providers and response formats are not supported. I wrote down the [limitations](./../../dev_guide/oauth_authentication_limitations.md) to be transparent and added credential caching so users don’t have to repeat the flow every time. For desktop we open the browser and listen on localhost for a short time to capture the callback. For mobile we use the standard in‑app flow. This makes the experience consistent and reliable across platforms.
 
 Once these foundations were ready, I went back to Dashbot. Because the base was strong now, building Dashbot became much smoother. Dashbot sits inside API Dash as a helper and is built in a way that is easy to extend, so we can add more tasks later without rewriting things. It can explain responses, help with failing requests, import cURL or OpenAPI, generate tests and runnable code, and even apply changes directly to the current request or create a new one if needed. The interface can be moved and resized inside the app so it never gets in the way of your work.
 
-Finally, we noticed that scripts and AI features need a place to show their output and errors. I built a terminal‑style Logs tab inside the app that collects network events, system messages, and JavaScript logs in one place. It supports searching and filtering, and it highlights warnings and errors with colors so you can spot problems quickly. Internally, I changed how our JavaScript utilities are structured so they can safely send logs to the UI even though they run outside of widgets.
+Finally, we noticed that scripts need a place to show their output and errors. I built a terminal‑style Logs tab inside the app that collects network events, system messages, and JavaScript logs in one place. It supports searching and filtering, and it highlights warnings and errors with colors so you can spot problems quickly. Internally, I changed how our JavaScript utilities are structured so they can safely send logs to the UI even though they run outside of widgets.
 
-In the following sections I will explain each feature in detail with examples, file references inside this repository, and simple code where it helps. I will also add image placeholders that I will replace with real screenshots.
 
 ## Authentication: Basic, API Key, Bearer, JWT, Digest
+
+`Associated Pull Request`: [#855](https://github.com/foss42/apidash/pull/855), [#866](https://github.com/foss42/apidash/pull/866)
 
 I started by adding the everyday authentication methods so that anyone using API Dash can set up their credentials without workarounds. Inside the request editor there is now an Authorization tab where you can choose the auth type and fill the required fields. Internally this work lives in the `better_networking` package so it can be reused across the app. I created a single model that holds all supported types and I wrote a handler that reads the selected type and adds the right headers or query params to the request at the time of sending. I also added environment variable support for every input so secrets can be managed in one place, and I used Hive to cache values so they persist across sessions. I wrote tests for these code paths and a user guide that explains everything in plain language.
 
 The core model is `AuthModel` in `packages/better_networking/lib/models/auth/api_auth_model.dart`. It stores the selected `APIAuthType` and the data objects for each specific method. This lets the UI and the request layer work with a single source of truth. The handler `handleAuth` in `packages/better_networking/lib/utils/auth/handle_auth.dart` looks at the chosen type and updates the request right before sending. For Basic it builds the base64 string and sets the Authorization header. For Bearer it sets `Authorization: Bearer <token>`. For API Key it either adds a header or a query parameter based on the user’s choice. For JWT it generates a signed token based on the selected algorithm and places it in the header or the URL. For Digest it supports both the direct mode where the realm and nonce are already known and the two‑step mode where API Dash sends one request, reads the server’s challenge from `WWW-Authenticate`, computes the response, and then adds the final Authorization header.
 
-This is very close to how other API clients behave. I first proposed a different format but after discussion with my mentors we decided to match common patterns so people can migrate their requests easily. I also updated the UI to follow the API Dash design system so it feels consistent with the rest of the app. You can see the user guide at `doc/user_guide/authentication.md`. It has simple explanations and screenshots for each method. I will add fresh images here too.
+This is very close to how other API clients behave. I first proposed a different format but after discussion with my mentors we decided to match common patterns so people can migrate their requests easily. I also updated the UI to follow the API Dash design system so it feels consistent with the rest of the app. You can see the user guide [Authentication.md](./../../user_guide/authentication.md). It has simple explanations with images for each method.
 
 [IMAGE: Auth tab overview]
 
@@ -84,9 +85,12 @@ Digest support follows the standard flow. If the server already provided `realm`
 
 Environment variables are available in all auth fields. This means you can write something like `{{API_KEY}}` in the UI and API Dash will resolve it from the active environment before sending. Values are cached using Hive so you don’t need to retype them every time.
 
-All this work is covered by tests and documented for users. I also created the first version of the Authentication user guide and kept it simple and visual so anyone can follow it. If you want to look at the changes, see the pull requests I opened for this feature at https://github.com/foss42/apidash/pull/855 and https://github.com/foss42/apidash/pull/866.
+All this work is covered by tests and documented for users. I also created the first version of the Authentication user guide and kept it simple and visual so anyone can follow it..
 
 ## Pre‑request and Post‑response Scripting
+
+`Associated Pull Request`: [#846](https://github.com/foss42/apidash/pull/846), [#865](https://github.com/foss42/apidash/pull/865)
+
 
 I wanted API Dash to support scripting like other clients so people can prepare data before a request and verify or transform data after a response. We chose JavaScript because it is the common standard. We use a JS engine that runs natively in Flutter, and we give the script a simple `ad` object to work with so the script can read and change the request, access the response, and work with environment variables. The same approach works for REST and GraphQL.
 
@@ -112,16 +116,17 @@ For post‑response scripts, the script can check status codes and write results
 
 The scripting UI has its own tab in the request editor. It also supports GraphQL requests so the same scripting patterns work there too. While building this I evaluated code editors for Flutter. I tried `flutter_code_editor`, but it had visual issues with folding and scrolling when switching tabs with big scripts. I documented the problem in the discussion linked from the pull request. I may replace or fix this in the future to make long scripts smoother to edit.
 
-You can see the main pull requests for scripting at https://github.com/foss42/apidash/pull/846 and https://github.com/foss42/apidash/pull/865.
 
 [IMAGE: Scripting tab — pre‑request]
 [IMAGE: Scripting tab — post‑response with console output]
 
 ## OAuth 1.0 and OAuth 2.0
 
+`Associated Pull Request`: [#867](https://github.com/foss42/apidash/pull/867)
+
 After the basic auth methods, I completed the remaining authentication types: OAuth 1.0 and OAuth 2.0. This was new territory for me. I learned the flows step by step and aligned our behavior with how other API clients do it so users feel at home. OAuth 1.0 in API Dash focuses on signing requests with the values you provide. Other clients do not run a full three‑legged OAuth 1.0 flow inside the app; they expect you to paste the Access Token and Token Secret you already have. I followed the same approach so the feature is simple and reliable. The signing logic is in `packages/better_networking/lib/utils/auth/oauth1_utils.dart`, and the data model is in `packages/better_networking/lib/models/auth/auth_oauth1_model.dart`.
 
-OAuth 2.0 was more challenging because the official `oauth2` Dart package follows the RFC strictly. Many providers are fine with that, but some legacy servers return token responses in non‑JSON formats or have other differences. Because of that, I wrote a small developer note at `doc/dev_guide/oauth_authentication_limitations.md` to be clear about what works and what does not. API Dash sends `Accept: application/json` to token endpoints and expects JSON. On desktop we also need a free port between 8080 and 8090 for the temporary callback server. If all ports are used, the auth flow fails and the UI explains why.
+OAuth 2.0 was more challenging because the official `oauth2` Dart package follows the RFC strictly. Many providers are fine with that, but some legacy servers return token responses in non‑JSON formats or have other differences. Because of that, I wrote a small developer note at [oauth_authentication_limitations.md](../../dev_guide/oauth_authentication_limitations.md) to be clear about what works and what does not. API Dash sends `Accept: application/json` to token endpoints and expects JSON. On desktop we also need a free port between 8080 and 8090 for the temporary callback server. If all ports are used, the auth flow fails and the UI explains why.
 
 I implemented the three common grant types: Authorization Code, Client Credentials, and Resource Owner Password. We cache credentials to a file so you don’t have to repeat the flow on every request. For desktop, we open your default browser and listen locally for the callback for a short time, then close the temporary server. For mobile, we use the standard in‑app flow. The helper code is in `packages/better_networking/lib/utils/auth/oauth2_utils.dart` and it uses a callback server from `packages/better_networking/lib/services/oauth_callback_server.dart`. The models are in `packages/better_networking/lib/models/auth/auth_oauth2_model.dart`.
 
@@ -144,16 +149,17 @@ case APIAuthType.oauth2: {
 
 If the provider returns a refresh token, the credentials file stores it so the client can refresh when needed. When a user wants to reset the session, deleting the credentials file clears the token state and the UI resets too. I also made sure the error messages are simple so people know exactly why a flow failed and what to try next.
 
-You can review the main pull request for OAuth at https://github.com/foss42/apidash/pull/867 and read the limitations document at `doc/dev_guide/oauth_authentication_limitations.md`.
 
 [IMAGE: OAuth2 Authorization Code flow]
 [IMAGE: OAuth2 tokens visible in UI]
 
 ## Dashbot: In‑app API Helper
 
-After laying the foundation, I built Dashbot as an in‑app helper that sits right inside API Dash. It is designed to be simple to use and easy to extend. It has a header with buttons to minimize, close, and clear the chat. Below that there are quick action buttons for common tasks so you do not need to type long prompts. These include Explain, Debug, Document, and Test. When you click an action, Dashbot builds a prompt using the latest request and response and asks the local model to generate a helpful reply. The main chat area shows your messages on the right and Dashbot replies on the left. Messages are saved and restored so you do not lose history when you close and reopen the panel.
+`Associated Pull Request`: [#887](https://github.com/foss42/apidash/pull/887), [#903](https://github.com/foss42/apidash/pull/903)
 
-The main widget is `lib/dashbot/widgets/dashbot_widget.dart`. It uses Riverpod providers in `lib/dashbot/providers/dashbot_providers.dart` to store messages and to control whether the panel is minimized. The quick actions are simple buttons that call `_sendMessage` with a short command. The widget then calls the service, waits for the reply, and adds the bot message to the chat. When Dashbot generates runnable test cases it shows a button under the reply that opens a Test Runner dialog.
+After laying the foundation, I built Dashbot as an in‑app helper that sits right inside API Dash. It is designed to be simple to use and easy to extend. There are quick action buttons for common tasks so you do not need to type long prompts. These include Explain, Debug, Document, and Test. When you click an action, Dashbot builds a prompt using the selected request and its response and asks the configured model to generate a helpful reply. The main chat area shows your messages on the right and Dashbot replies on the left. Messages are persisted throughout the seesion so you do not lose history when you switch between requests.
+
+The main widget is `lib/dashbot/widgets/dashbot_widget.dart`. It uses Riverpod providers in `lib/dashbot/providers/dashbot_providers.dart` to store messages and to control whether the panel is minimized. The quick actions are simple buttons that call `_sendMessage` with a short command. The widget then calls the service, waits for the reply, and adds the bot message to the chat.
 
 ```
 // lib/dashbot/widgets/dashbot_widget.dart (quick actions)
@@ -196,14 +202,16 @@ Messages are stored using simple persistence through the hive handler so your ch
 
 In practice this design makes Dashbot very easy to extend. Adding a new task means writing a small feature class that builds a good prompt from the current request and response and then wiring a quick action to call it. The rest of the UI stays the same. This keeps the code clean and focused. For now Dashbot returns clear text and code blocks. In the future it can also apply changes to the current request or create new requests based on the suggestion, because all the context is already available in the service method.
 
-You can review the pull request for Dashbot at https://github.com/foss42/apidash/pull/887.
+You can review the pull request for Dashbot at .
 
 [IMAGE: Dashbot panel open with quick actions]
 [IMAGE: Dashbot explanation reply with markdown]
 [IMAGE: Test Runner dialog with results]
 
 
-## Logs Console (Terminal)
+## Logs Tab
+
+`Associated Pull Request`: [#890](https://github.com/foss42/apidash/pull/890)
 
 While building scripting and Dashbot, I realized users need a clear place to see what is happening behind the scenes. I designed a simple terminal‑style Logs tab that collects important messages in one view. It shows JavaScript console output from pre/post scripts, system messages from the JS runtime, and other app events in order. You can scan quickly, search by text, and focus on warnings or errors using filters. Colors make the severity easy to spot.
 
@@ -251,29 +259,73 @@ This design keeps the scripting API simple for users. You can call `ad.console.l
 
 ## Challenges
 
+#### Designing Familiar Authentication Patterns
+
 Designing authentication so that it feels familiar. I first drafted a custom data format for auth, but after prototyping UI flows we realized it would confuse users migrating from other tools. I rewrote the models to match common patterns instead. This made the handler simpler and the UI clearer. It also helped with writing tests because each case mapped to a known behavior.
+
+#### Safe JavaScript Engine Integration
 
 Integrating a JavaScript engine safely. Scripts run outside widgets, and they need access to request, response, and environment. I used a setup script that parses JSON and exposes a small `ad` object to avoid leaking internals. The bridge captures console logs and fatal errors so we can show them in the Logs tab. This isolation kept the app stable even when scripts throw.
 
+#### Code Editor Stability Issues
+
 Editor stability for long scripts. The first code editor I tried had folding and scroll issues when switching tabs with large scripts. It looked broken and made editing hard. I minimized the folding features and documented the issue for a future fix or replacement. The scripting API remains stable regardless of the editor widget.
+
+#### OAuth2 Provider Compatibility
 
 OAuth2 differences across providers. The official client is strict with RFCs, which is good for correctness but exposes differences with legacy servers. I added clear error messages and a limitations note so users know what to expect. On desktop, capturing the callback via a short‑lived localhost server also needed careful port handling and clean shutdowns.
 
+#### Context-Aware AI Responses
+
 Making Dashbot reliable with real context. The prompts have to be grounded in the current request and response to be useful. I wrote small feature classes so each task focuses on one job, and I added a content renderer that gracefully falls back when highlighters fail. This kept the chat readable and the outputs actionable.
+
+#### Building Debug Infrastructure
 
 Surface for debugging in the app. Without a log view, scripting and OAuth were hard to reason about. I added the Logs tab and a simple severity model so we can filter and spot errors quickly. This improved both development and user experience.
 
 ## Pull Requests Summary
 
-| PR | Title / Area | Notes |
-| --- | --- | --- |
-| #855 | Authentication (Basic/Bearer/API Key) | Models, handler, UI wiring, env vars, docs |
-| #866 | JWT and Digest Auth | JWT signing + Digest two‑step flow |
-| #846 | Scripting (pre/post) | JS runtime, `kJSSetupScript`, ad object, Dart glue |
-| #865 | Scripting UI refinements | Editor fixes, GraphQL support, console bridge |
-| #867 | OAuth 1.0 and 2.0 | Flows, callback server, caching, limitations doc |
-| #887 | Dashbot core | Widget, features, content renderer, test runner |
+| Feature | PR | Issue | Status | Comments |
+|---|---|---|---|---|
+|gsoc application for dashbot|[#722](https://github.com/foss42/apidash/pull/722)|[#621](https://github.com/foss42/apidash/issues/621)|Merged||
+|Add pre-request and post-response scripting|[#846](https://github.com/foss42/apidash/pull/846)|[#557](https://github.com/foss42/apidash/issues/557)|Merged||
+|Initial implementation of DashBot|[#854](https://github.com/foss42/apidash/pull/854)|[#621](https://github.com/foss42/apidash/issues/621)|Closed|Started working on authentication features|
+|add basic authentication features|[#855](https://github.com/foss42/apidash/pull/855)|[#610](https://github.com/foss42/apidash/issues/610), [#611](https://github.com/foss42/apidash/issues/611), [#612](https://github.com/foss42/apidash/issues/612), [#613](https://github.com/foss42/apidash/issues/613), [#614](https://github.com/foss42/apidash/issues/614)|Merged||
+|fix ui state not being consistent with the original request model|[#862](https://github.com/foss42/apidash/pull/862)||Merged||
+|add oauth support|[#863](https://github.com/foss42/apidash/pull/863)||Closed|Mentor requested a rebase on top of main branch|
+|add tests for pre-request scripts and post-response scripts|[#865](https://github.com/foss42/apidash/pull/865)||Merged||
+|add env vars support for auth text fields|[#866](https://github.com/foss42/apidash/pull/866)||Merged||
+|add oauth authentication support|[#867](https://github.com/foss42/apidash/pull/867)|[#615](https://github.com/foss42/apidash/issues/615), [#481](https://github.com/foss42/apidash/issues/481)|Merged||
+|Dasbot UI|[#885](https://github.com/foss42/apidash/pull/885)|[#621](https://github.com/foss42/apidash/issues/621)|Closed|We decided to move dashbot inside apidash|
+|core functionalities of dashbot|[#887](https://github.com/foss42/apidash/pull/887)||||
+|in app terminal logger|[#890](https://github.com/foss42/apidash/pull/890)||||
+|add dashbot user guide doc|[#903](https://github.com/foss42/apidash/pull/903)|||||
 
-I will update the table with final titles/labels if any change on merge.
+## Future Work
+- ****
 
+- ****
 
+- ****
+
+---
+
+## Research Links
+- [OAuth 2.0 Redirect URI Handling in API Clients](https://gist.github.com/Udhay-Adithya/f7c3174e4e1c7799ee5016974e996e67)
+- [Authentication Data Format in API Clients](https://gist.github.com/Udhay-Adithya/ae09c2e9e306f0ce877d452999bb1789)
+- [Authentication Schema in API Clients](https://gist.github.com/Udhay-Adithya/3215d0ac511a0893d901eb58c6aab059)
+
+- [Pre/Post Request Scripting in API Clients](https://gist.github.com/Udhay-Adithya/da7a0282e9e1ef66c1d4a3f0f22ab840)
+---
+
+## Conclusion
+
+Google Summer of Code 2025 with API Dash has been an absolutely transformative journey. I'm incredibly proud that I was able to build a strong foundation for API Dash by implementing various core features that will serve as the heart of the application for all upcoming developments. The authentication system, scripting capabilities, OAuth implementation, Dashbot, and logging infrastructure I've built will enable countless future features and improvements.
+
+This experience has been far more than just writing code—it's been a journey of tremendous personal and professional growth. I learned the importance of being consistent every single day, showing up with dedication and focus. More importantly, I developed a deep appreciation for code quality and attention to detail, understanding that every line of code I write is going to be shipped into production and used by real developers around the world. This responsibility taught me to think more carefully, test more thoroughly, and document more clearly.
+
+The technical challenges I faced—from implementing complex OAuth flows to integrating JavaScript engines safely, from designing intuitive authentication UIs to building an extensible AI assistant—pushed me to grow as an engineer in ways I never expected. Each obstacle became an opportunity to learn something new and build something better.
+
+I'm truly grateful for getting this incredible opportunity to contribute to such an amazing project. Most of all, I want to extend my heartfelt thanks to my wonderful, amazing and caring, mentors—Ashita P, Ankit M, and Ragul Raj M. Your guidance, patience, and support made this entire journey possible. You created an environment where I could learn, experiment, fail, and succeed, all while feeling supported every step of the way.
+
+Looking ahead, I'm excited to see how future contributors will build upon this foundation and take API Dash to new heights.
