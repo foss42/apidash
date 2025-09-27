@@ -265,7 +265,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final id = _currentRequest?.id ?? 'global';
     final newSessions = {...state.chatSessions};
     newSessions[id] = [];
-    state = state.copyWith();
+    state = state.copyWith(
+      chatSessions: newSessions,
+      isGenerating: false,
+      currentStreamingResponse: '',
+    );
   }
 
   Future<void> sendTaskMessage(ChatMessageType type) async {
