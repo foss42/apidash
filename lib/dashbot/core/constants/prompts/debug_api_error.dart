@@ -57,7 +57,6 @@ EXPLANATION & REPORT REQUIREMENTS
   ## Preview of Change
   ### Overview
   ### Coverage
-  ## Next Steps
 
 CONTENT RULES
 - Summary: 6–8 line paragraph giving high-level context.
@@ -67,7 +66,6 @@ CONTENT RULES
 - Planned Change: bullet list (max 3) describing ONLY ONE minimal fix.
 - Preview of Change: bullet list showing before → after differences.
 - Test Plan > Overview: short paragraph; Coverage: 3–6 bullet validation checks.
-- Next Steps: 2–3 actionable follow-ups (e.g., add monitoring, retry policy, schema validation).
 
 ACTION POLICY (STRICT)
 - Provide AT MOST ONE action object in the JSON and ONLY if the request failed (HTTP status >= 400 OR evident logic/config error).

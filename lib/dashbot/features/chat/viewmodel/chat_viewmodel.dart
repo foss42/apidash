@@ -467,7 +467,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
     debugPrint('[Chat] Test code added to post-request script');
     _appendSystem(
-        'Test code has been successfully added to the post-request script.',
+        'Test code has been successfully added to the post-response script.',
         ChatMessageType.generateTest);
   }
 
