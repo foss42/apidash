@@ -50,19 +50,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }) async {
     final ai = _selectedAIModel;
     if (text.trim().isEmpty && countAsUser) return;
-    if (ai == null &&
-        type != ChatMessageType.importCurl &&
-        type != ChatMessageType.importOpenApi) {
-      debugPrint('[Chat] No AI model configured');
-      _appendSystem(
-        'AI model is not configured. Please set one.',
-        type,
-      );
-      return;
-    }
 
     final requestId = _currentRequest?.id ?? 'global';
-    final existingMessages = state.chatSessions[requestId] ?? const [];
 
     if (countAsUser) {
       _addMessage(
@@ -76,6 +65,19 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         ),
       );
     }
+
+    if (ai == null &&
+        type != ChatMessageType.importCurl &&
+        type != ChatMessageType.importOpenApi) {
+      debugPrint('[Chat] No AI model configured');
+      _appendSystem(
+        'AI model is not configured. Please set one.',
+        type,
+      );
+      return;
+    }
+
+    final existingMessages = state.chatSessions[requestId] ?? const [];
 
     final lastSystemImport = existingMessages.lastWhere(
       (m) =>
@@ -408,7 +410,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         bodyContentType = ContentType.text;
       }
     }
-
 
     String sourceTitle = (payload['sourceName'] as String?) ?? '';
     if (sourceTitle.trim().isEmpty) {
@@ -931,12 +932,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   // Helpers
   void _addMessage(String requestId, ChatMessage m) {
     final msgs = state.chatSessions[requestId] ?? const [];
-    state = state.copyWith(
-      chatSessions: {
-        ...state.chatSessions,
-        requestId: [...msgs, m],
-      },
-    );
+    final updatedSessions =
+        Map<String, List<ChatMessage>>.from(state.chatSessions);
+    updatedSessions[requestId] = [...msgs, m];
+    state = state.copyWith(chatSessions: updatedSessions);
   }
 
   void _appendSystem(String text, ChatMessageType type) {
