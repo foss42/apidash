@@ -746,9 +746,10 @@ void main() {
 
       // First verify we can find String popup menus
       final stringPopupMenus = find.byType(ADPopupMenu<String>);
-      print('Found ${stringPopupMenus.evaluate().length} String popup menus');
+      debugPrint(
+          'Found ${stringPopupMenus.evaluate().length} String popup menus');
 
-      if (stringPopupMenus.evaluate().length > 0) {
+      if (stringPopupMenus.evaluate().isNotEmpty) {
         // Find the code challenge method dropdown
         final codeChallengeDropdown = stringPopupMenus.first;
         await tester.tap(codeChallengeDropdown);
@@ -756,7 +757,7 @@ void main() {
 
         // Try to find and tap plaintext option
         final plaintextOption = find.text('Plaintext');
-        if (plaintextOption.evaluate().length > 0) {
+        if (plaintextOption.evaluate().isNotEmpty) {
           await tester.tap(plaintextOption.first);
           await tester.pumpAndSettle();
 
@@ -852,19 +853,19 @@ void main() {
 
       // Debug: Print all text widgets to see what's available
       final allText = find.byType(Text);
-      print('Found ${allText.evaluate().length} Text widgets');
+      debugPrint('Found ${allText.evaluate().length} Text widgets');
 
       // Try to find any button-like widget
       final allButtons = find.byType(ADTextButton);
-      print('Found ${allButtons.evaluate().length} ADTextButton widgets');
+      debugPrint('Found ${allButtons.evaluate().length} ADTextButton widgets');
 
       // Look for the specific text content
       final clearText = find.text('Clear OAuth2 Session');
-      print(
+      debugPrint(
           'Found ${clearText.evaluate().length} widgets with Clear OAuth2 Session text');
 
       // If we can find the clear button text, tap it
-      if (clearText.evaluate().length > 0) {
+      if (clearText.evaluate().isNotEmpty) {
         await tester.tap(clearText.first);
         await tester.pumpAndSettle();
       }
@@ -1296,10 +1297,10 @@ void main() {
 
       // Debug: Look for all buttons and text widgets
       final allButtons = find.byType(ADTextButton);
-      print('Found ${allButtons.evaluate().length} ADTextButton widgets');
+      debugPrint('Found ${allButtons.evaluate().length} ADTextButton widgets');
 
       final allText = find.byType(Text);
-      print('Found ${allText.evaluate().length} Text widgets');
+      debugPrint('Found ${allText.evaluate().length} Text widgets');
 
       // Try finding the button widget itself
       if (allButtons.evaluate().isNotEmpty) {

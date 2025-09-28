@@ -8,6 +8,7 @@ import 'requests_page/requests_page.dart';
 import '../envvar/environment_page.dart';
 import '../history/history_page.dart';
 import '../settings_page.dart';
+import '../terminal/terminal_page.dart';
 import 'widgets/page_base.dart';
 import 'navbar.dart';
 
@@ -73,6 +74,11 @@ class PageBranch extends ConsumerWidget {
       case 2:
         return const HistoryPage();
       case 3:
+        return const PageBase(
+          title: 'Logs',
+          scaffoldBody: TerminalPage(),
+        );
+      case 4:
         return const PageBase(
           title: 'Settings',
           scaffoldBody: SettingsPage(),

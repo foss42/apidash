@@ -609,6 +609,21 @@ const ad = {
 
 };
 
+// Provide a global console shim so user scripts using `console.*` are captured.
+// We support log/info/warn/error. `info` aliases to `log`.
+try {
+    // Overwrite or define a minimal console that routes to Dart.
+    // Used globalThis to ensure visibility across async tasks and inner scopes.
+    globalThis.console = {
+        log: (...args) => { try { sendMessage('consoleLog', JSON.stringify(args)); } catch (_) {} },
+        info: (...args) => { try { sendMessage('consoleLog', JSON.stringify(args)); } catch (_) {} },
+        warn: (...args) => { try { sendMessage('consoleWarn', JSON.stringify(args)); } catch (_) {} },
+        error: (...args) => { try { sendMessage('consoleError', JSON.stringify(args)); } catch (_) {} },
+    };
+} catch (e) {
+    // Ignore if cannot define global console
+}
+
 // --- End of APIDash Setup Script ---
 
 // User's script will be appended below this line by Dart.
