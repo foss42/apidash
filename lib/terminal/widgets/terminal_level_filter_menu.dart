@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../consts.dart';
+import '../enums.dart';
 
 class TerminalLevelFilterMenu extends StatelessWidget {
   const TerminalLevelFilterMenu({

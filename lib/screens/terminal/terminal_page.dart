@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/terminal/models.dart';
-import '../../consts.dart';
-import '../../providers/terminal_providers.dart';
-import '../../providers/collection_providers.dart';
-import '../../widgets/button_copy.dart';
-import '../../widgets/field_search.dart';
-import '../../widgets/terminal_tiles.dart';
-import '../../widgets/empty_message.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
-import '../../widgets/terminal_level_filter_menu.dart';
+import 'package:apidash/terminal/terminal.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 
 class TerminalPage extends ConsumerStatefulWidget {
   const TerminalPage({super.key});
@@ -109,10 +104,9 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
           Expanded(
             child: filtered.isEmpty
                 ? const Center(
-                    child: EmptyMessage(
-                      title: 'No logs yet',
-                      subtitle:
-                          'Send a request to see details here in the console',
+                    child: SimpleText(
+                      title: kMsgNoLogs,
+                      subtitle: kMsgSendToView,
                     ),
                   )
                 : ListView.separated(

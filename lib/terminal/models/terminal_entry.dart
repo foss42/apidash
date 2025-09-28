@@ -1,4 +1,4 @@
-import 'package:apidash/consts.dart';
+import '../enums.dart';
 import 'network_log_data.dart';
 import 'js_log_data.dart';
 import 'system_log_data.dart';

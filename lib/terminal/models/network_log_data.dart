@@ -1,5 +1,6 @@
-import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart' show APIType, HTTPVerb;
+import '../enums.dart';
+import 'body_chunk.dart';
 
 class NetworkLogData {
   NetworkLogData({
@@ -71,12 +72,4 @@ class NetworkLogData {
       chunks: chunks ?? this.chunks,
     );
   }
-}
-
-class BodyChunk {
-  BodyChunk({required this.ts, required this.text, required this.sizeBytes});
-
-  final DateTime ts;
-  final String text; // preview text (could be partial)
-  final int sizeBytes;
 }
