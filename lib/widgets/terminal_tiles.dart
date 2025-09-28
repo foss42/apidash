@@ -5,12 +5,18 @@ import '../consts.dart';
 import '../models/terminal/models.dart';
 import '../utils/ui_utils.dart';
 import 'expandable_section.dart';
+import 'highlight_text.dart';
 
 class SystemLogTile extends StatelessWidget {
-  const SystemLogTile(
-      {super.key, required this.entry, this.showTimestamp = false});
+  const SystemLogTile({
+    super.key,
+    required this.entry,
+    this.showTimestamp = false,
+    this.searchQuery,
+  });
   final TerminalEntry entry;
   final bool showTimestamp;
+  final String? searchQuery;
   @override
   Widget build(BuildContext context) {
     assert(entry.system != null, 'System tile requires SystemLogData');
@@ -55,10 +61,18 @@ class SystemLogTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('[${s.category}] ${s.message}', style: titleStyle),
+                HighlightedSelectableText(
+                  text: '[${s.category}] ${s.message}',
+                  style: titleStyle,
+                  query: searchQuery,
+                ),
                 if (s.stack != null && s.stack!.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  SelectableText(s.stack!, style: subStyle),
+                  HighlightedSelectableText(
+                    text: s.stack!,
+                    style: subStyle,
+                    query: searchQuery,
+                  ),
                 ],
               ],
             ),
@@ -70,14 +84,17 @@ class SystemLogTile extends StatelessWidget {
 }
 
 class JsLogTile extends StatelessWidget {
-  const JsLogTile(
-      {super.key,
-      required this.entry,
-      this.showTimestamp = false,
-      this.requestName});
+  const JsLogTile({
+    super.key,
+    required this.entry,
+    this.showTimestamp = false,
+    this.requestName,
+    this.searchQuery,
+  });
   final TerminalEntry entry;
   final bool showTimestamp;
   final String? requestName;
+  final String? searchQuery;
   @override
   Widget build(BuildContext context) {
     assert(entry.js != null, 'JS tile requires JsLogData');
@@ -130,9 +147,10 @@ class JsLogTile extends StatelessWidget {
             ),
           ],
           Expanded(
-            child: SelectableText(
-              bodyText,
+            child: HighlightedSelectableText(
+              text: bodyText,
               style: Theme.of(context).textTheme.bodyMedium,
+              query: searchQuery,
             ),
           ),
         ],
@@ -142,20 +160,55 @@ class JsLogTile extends StatelessWidget {
 }
 
 class NetworkLogTile extends StatefulWidget {
-  const NetworkLogTile(
-      {super.key,
-      required this.entry,
-      this.showTimestamp = false,
-      this.requestName});
+  const NetworkLogTile({
+    super.key,
+    required this.entry,
+    this.showTimestamp = false,
+    this.requestName,
+    this.searchQuery,
+  });
   final TerminalEntry entry;
   final bool showTimestamp;
   final String? requestName;
+  final String? searchQuery;
   @override
   State<NetworkLogTile> createState() => _NetworkLogTileState();
 }
 
 class _NetworkLogTileState extends State<NetworkLogTile> {
   bool _expanded = false;
+  String? _lastQuery;
+
+  @override
+  void didUpdateWidget(covariant NetworkLogTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Auto-expand if a new non-empty search query matches hidden detail content
+    final q = widget.searchQuery?.trim();
+    if (q != null && q.isNotEmpty && q != _lastQuery) {
+      if (!_expanded && _networkDetailsContainQuery(q)) {
+        setState(() => _expanded = true);
+      }
+    }
+    _lastQuery = q;
+  }
+
+  bool _networkDetailsContainQuery(String q) {
+    final n = widget.entry.network!;
+    final lowerQ = q.toLowerCase();
+    bool inMap(Map<String, String>? m) =>
+        m != null &&
+        m.entries.any((e) =>
+            e.key.toLowerCase().contains(lowerQ) ||
+            e.value.toLowerCase().contains(lowerQ));
+    bool inText(String? t) =>
+        t != null && t.toLowerCase().contains(lowerQ) && t.isNotEmpty;
+    return inMap(n.requestHeaders) ||
+        inMap(n.responseHeaders) ||
+        inText(n.requestBodyPreview) ||
+        inText(n.responseBodyPreview) ||
+        inText(n.errorMessage);
+  }
+
   @override
   Widget build(BuildContext context) {
     final n = widget.entry.network!;
@@ -195,12 +248,27 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
                       children: [
                         if (widget.requestName != null &&
                             widget.requestName!.isNotEmpty) ...[
-                          TextSpan(text: '[${widget.requestName}] '),
+                          ...buildHighlightedSpans(
+                            '[${widget.requestName}]',
+                            context,
+                            widget.searchQuery,
+                            baseStyle: bodyStyle,
+                          ),
+                          const TextSpan(text: ' '),
                         ],
-                        TextSpan(
-                            text: n.method.name.toUpperCase(),
-                            style: methodStyle),
-                        TextSpan(text: ' ${n.url}'),
+                        ...buildHighlightedSpans(
+                          n.method.name.toUpperCase(),
+                          context,
+                          widget.searchQuery,
+                          baseStyle: methodStyle,
+                        ),
+                        const TextSpan(text: ' '),
+                        ...buildHighlightedSpans(
+                          n.url,
+                          context,
+                          widget.searchQuery,
+                          baseStyle: bodyStyle,
+                        ),
                       ],
                     ),
                     maxLines: 1,
@@ -219,43 +287,81 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
             ),
           ),
         ),
-        if (_expanded) NetworkDetails(n: n),
+        if (_expanded) NetworkDetails(n: n, searchQuery: widget.searchQuery),
       ],
     );
   }
 }
 
 class NetworkDetails extends StatelessWidget {
-  const NetworkDetails({super.key, required this.n});
+  const NetworkDetails({super.key, required this.n, this.searchQuery});
   final NetworkLogData n;
+  final String? searchQuery;
   @override
   Widget build(BuildContext context) {
+    final q = searchQuery?.trim();
+    bool contains(String? text) =>
+        q != null &&
+        q.isNotEmpty &&
+        text != null &&
+        text.toLowerCase().contains(q.toLowerCase());
+    bool mapContains(Map<String, String>? m) =>
+        q != null &&
+        q.isNotEmpty &&
+        m != null &&
+        m.entries.any((e) =>
+            e.key.toLowerCase().contains(q.toLowerCase()) ||
+            e.value.toLowerCase().contains(q.toLowerCase()));
+
+    final networkBodyMap = {
+      'API Type': n.apiType.name,
+      'Phase': n.phase.name,
+      if (n.isStreaming) 'Streaming': 'true',
+      if (n.sentAt != null) 'Sent': n.sentAt!.toIso8601String(),
+      if (n.completedAt != null) 'Completed': n.completedAt!.toIso8601String(),
+      if (n.duration != null) 'Duration': '${n.duration!.inMilliseconds} ms',
+      'URL': n.url,
+      'Method': n.method.name.toUpperCase(),
+      if (n.responseStatus != null) 'Status': '${n.responseStatus}',
+      if (n.errorMessage != null) 'Error': n.errorMessage!,
+    };
+    final networkSectionHasMatch = q != null &&
+        q.isNotEmpty &&
+        networkBodyMap.entries.any((e) =>
+            e.key.toLowerCase().contains(q.toLowerCase()) ||
+            e.value.toLowerCase().contains(q.toLowerCase()));
+
     final tiles = <Widget>[
       ExpandableSection(
         title: 'Network',
-        child: _kvBody({
-          'API Type': n.apiType.name,
-          'Phase': n.phase.name,
-          if (n.isStreaming) 'Streaming': 'true',
-          if (n.sentAt != null) 'Sent': n.sentAt!.toIso8601String(),
-          if (n.completedAt != null)
-            'Completed': n.completedAt!.toIso8601String(),
-          if (n.duration != null)
-            'Duration': '${n.duration!.inMilliseconds} ms',
-          'URL': n.url,
-          'Method': n.method.name.toUpperCase(),
-          if (n.responseStatus != null) 'Status': '${n.responseStatus}',
-          if (n.errorMessage != null) 'Error': n.errorMessage!,
-        }),
+        forceOpen: networkSectionHasMatch ? true : null,
+        highlightQuery: searchQuery,
+        child: _kvBody(networkBodyMap, query: searchQuery),
       ),
       ExpandableSection(
-          title: 'Request Headers', child: _mapBody(n.requestHeaders)),
+        title: 'Request Headers',
+        forceOpen: mapContains(n.requestHeaders) ? true : null,
+        highlightQuery: searchQuery,
+        child: _mapBody(n.requestHeaders, query: searchQuery),
+      ),
       ExpandableSection(
-          title: 'Request Body', child: _textBody(n.requestBodyPreview)),
+        title: 'Request Body',
+        forceOpen: contains(n.requestBodyPreview) ? true : null,
+        highlightQuery: searchQuery,
+        child: _textBody(n.requestBodyPreview, query: searchQuery),
+      ),
       ExpandableSection(
-          title: 'Response Headers', child: _mapBody(n.responseHeaders)),
+        title: 'Response Headers',
+        forceOpen: mapContains(n.responseHeaders) ? true : null,
+        highlightQuery: searchQuery,
+        child: _mapBody(n.responseHeaders, query: searchQuery),
+      ),
       ExpandableSection(
-          title: 'Response Body', child: _textBody(n.responseBodyPreview)),
+        title: 'Response Body',
+        forceOpen: contains(n.responseBodyPreview) ? true : null,
+        highlightQuery: searchQuery,
+        child: _textBody(n.responseBodyPreview, query: searchQuery),
+      ),
     ];
     return Container(
       width: double.infinity,
@@ -271,21 +377,22 @@ class NetworkDetails extends StatelessWidget {
     );
   }
 
-  Widget _textBody(String? text) {
-    return SelectableText(text == null || text.isEmpty ? '(empty)' : text);
+  Widget _textBody(String? text, {String? query}) {
+    final value = text == null || text.isEmpty ? '(empty)' : text;
+    return HighlightedSelectableText(text: value, query: query);
   }
 
-  Widget _mapBody(Map<String, String>? map) {
+  Widget _mapBody(Map<String, String>? map, {String? query}) {
     if (map == null || map.isEmpty) {
-      return const SelectableText('(none)');
+      return const HighlightedSelectableText(text: '(none)');
     }
     final lines = map.entries.map((e) => '${e.key}: ${e.value}').join('\n');
-    return SelectableText(lines);
+    return HighlightedSelectableText(text: lines, query: query);
   }
 
-  Widget _kvBody(Map<String, String> map) {
+  Widget _kvBody(Map<String, String> map, {String? query}) {
     final lines = map.entries.map((e) => '${e.key}: ${e.value}').join('\n');
-    return SelectableText(lines);
+    return HighlightedSelectableText(text: lines, query: query);
   }
 }
 
@@ -294,5 +401,6 @@ String _formatTs(DateTime ts) {
   final h = ts.hour.toString().padLeft(2, '0');
   final m = ts.minute.toString().padLeft(2, '0');
   final s = ts.second.toString().padLeft(2, '0');
-  return '$h:$m:$s';
+  final ms = ts.millisecond.toString().padLeft(2, '0');
+  return '$h:$m:$s.$ms';
 }

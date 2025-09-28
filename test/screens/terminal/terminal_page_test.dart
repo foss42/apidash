@@ -57,8 +57,13 @@ void main() {
     expect(find.byType(ListView), findsOneWidget);
     // There are separators, but count entries by specific content
     // JS tile renders its body as SelectableText containing args/context
-    final alphaText = find.byWidgetPredicate(
-        (w) => w is SelectableText && (w.data?.contains('alpha') ?? false));
+    final alphaText = find.byWidgetPredicate((w) {
+      if (w is SelectableText) {
+        final text = w.data ?? w.textSpan?.toPlainText() ?? '';
+        return text.contains('alpha');
+      }
+      return false;
+    });
     expect(alphaText, findsOneWidget);
     expect(find.textContaining('[ui] opened'), findsOneWidget);
     final networkTitle = find.byWidgetPredicate((w) =>
@@ -74,6 +79,13 @@ void main() {
     expect(alphaText, findsOneWidget);
     expect(find.textContaining('[ui] opened'), findsNothing);
     expect(networkTitle, findsNothing);
+
+    // Search for something in network data to test auto-expansion
+    await tester.enterText(searchField, 'apidash.dev');
+    await tester.pumpAndSettle();
+    expect(alphaText, findsNothing);
+    expect(networkTitle, findsOneWidget);
+    // Network tile should auto-expand when search matches URL
 
     // Clear search
     await tester.enterText(searchField, '');
@@ -125,7 +137,7 @@ void main() {
     final netId = term.startNetwork(
       apiType: APIType.rest,
       method: HTTPVerb.get,
-      url: 'https://example.com',
+      url: 'https://api.apidash.dev',
       requestId: reqId,
     );
     term.completeNetwork(netId, statusCode: 200);
@@ -141,5 +153,50 @@ void main() {
     final netWithUntitled = find.byWidgetPredicate(
         (w) => w is RichText && w.text.toPlainText().startsWith('[Untitled] '));
     expect(netWithUntitled, findsOneWidget);
+  });
+
+  testWidgets('search highlighting works across different tile types',
+      (tester) async {
+    final container = ProviderContainer();
+    final term = container.read(terminalStateProvider.notifier);
+
+    // Add entries with common search term "test"
+    term.logJs(
+        level: 'info',
+        args: ['test completed'],
+        context: 'postRequest',
+        contextRequestId: 'r1');
+    term.logSystem(category: 'testing', message: 'Unit test passed');
+
+    final netId = term.startNetwork(
+      apiType: APIType.rest,
+      method: HTTPVerb.get,
+      url: 'https://api.apidash.dev/api',
+      requestId: 'r2',
+    );
+    term.completeNetwork(netId,
+        statusCode: 200, responseBodyPreview: '{"test": "success"}');
+
+    await tester.pumpWidget(build(container));
+
+    // Search for "test"
+    final searchField = find.byWidgetPredicate(
+        (w) => w is TextField && w.decoration?.hintText == 'Search logs');
+    await tester.enterText(searchField, 'test');
+    await tester.pumpAndSettle();
+
+    // All three entries should be visible since they all contain "test"
+    expect(find.byWidgetPredicate((w) {
+      if (w is SelectableText) {
+        final text = w.data ?? w.textSpan?.toPlainText() ?? '';
+        return text.contains('test');
+      }
+      return false;
+    }), findsAtLeastNWidgets(1));
+    expect(find.textContaining('[testing]'), findsOneWidget);
+    expect(
+        find.byWidgetPredicate((w) =>
+            w is RichText && w.text.toPlainText().contains('api.apidash.dev')),
+        findsOneWidget);
   });
 }

@@ -120,6 +120,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (ctx, i) {
                       final e = filtered[filtered.length - 1 - i];
+                      final searchQuery = _searchCtrl.text.trim();
                       String requestName = '';
                       if (e.source == TerminalSource.js &&
                           e.requestId != null) {
@@ -140,6 +141,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                           return JsLogTile(
                             entry: e,
                             showTimestamp: _showTimestamps,
+                            searchQuery: searchQuery,
                             requestName:
                                 requestName.isNotEmpty ? requestName : null,
                           );
@@ -147,6 +149,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                           return NetworkLogTile(
                             entry: e,
                             showTimestamp: _showTimestamps,
+                            searchQuery: searchQuery,
                             requestName:
                                 requestName.isNotEmpty ? requestName : null,
                           );
@@ -154,6 +157,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                           return SystemLogTile(
                             entry: e,
                             showTimestamp: _showTimestamps,
+                            searchQuery: searchQuery,
                           );
                       }
                     },
