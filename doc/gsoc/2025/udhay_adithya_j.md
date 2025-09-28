@@ -1,4 +1,4 @@
-# GSoC'25 — API Dash: Authentication, Scripting, OAuth, and Dashbot
+# GSoC'25 — API Dash: Dashbot and API Authentication
 
 > Final report summarizing my contributions to API Dash as part of GSoC'25.
 
@@ -110,7 +110,7 @@ On the Dart side I wrote `executePreRequestScript` and `executePostResponseScrip
 
 Here is a short example that shows how a pre‑request script can set a header and a query parameter from environment values.
 
-```
+```dart
 // user script (runs after kJSSetupScript)
 const token = ad.environment.get('API_TOKEN');
 if (token) {
@@ -150,7 +150,7 @@ I implemented the three common grant types: Authorization Code, Client Credentia
 
 Here is a short excerpt that shows how the Authorization Code grant adds the access token to the request after the flow completes. The handler appends `Authorization: Bearer <token>` to your request headers so you can send the request right away.
 
-```
+```dart
 // packages/better_networking/lib/utils/auth/handle_auth.dart
 case APIAuthType.oauth2: {
 	// ... run the selected grant flow and get the client
@@ -254,7 +254,7 @@ While building scripting and Dashbot, I realized users need a clear place to see
 
 On the JavaScript side, the `ad.console` helper in the setup script forwards logs back to Dart using a small bridge. The calls below are part of `kJSSetupScript` in `lib/utils/js_utils.dart` and they send messages for info, warning, and error.
 
-```
+```dart
 // lib/utils/js_utils.dart (inside kJSSetupScript)
 console: {
 	log: (...args) => {
@@ -271,7 +271,7 @@ console: {
 
 On the Dart side, I wired the JS bridge to receive these messages. The handler currently prints them and includes a note to route them into the in‑app terminal UI. This is in `lib/services/flutter_js_service.dart`.
 
-```
+```dart
 // lib/services/flutter_js_service.dart
 // TODO: These log statements can be printed in a custom api dash terminal.
 void setupJsBridge() {
@@ -291,6 +291,18 @@ void setupJsBridge() {
 ```
 
 This design keeps the scripting API simple for users. You can call `ad.console.log(...)`, `ad.console.warn(...)`, or `ad.console.error(...)` in scripts and then open the Logs tab to see what happened, including any fatal errors with their stack traces from the JS engine. Internally, logs are captured centrally so the UI can show them in order, highlight severity, and allow quick filtering or clearing. This has already helped me and early users debug scripts and understand OAuth/token flows faster.
+
+<p align="center">
+  <img src="./images/terminal.png" alt="log-tab" />
+  <br>
+  <em>Logs Tab</em>
+</p>
+
+<p align="center">
+  <img src="./images/terminal_search.png" alt="log-search" />
+  <br>
+  <em>Logs Search</em>
+</p>
 
 
 ## Challenges
@@ -313,7 +325,7 @@ Designing a scalable, reliable action system for Dashbot was harder than just �
 
 The turning point was enforcing a strict, minimal JSON envelope in the system prompts:
 
-```
+```json
 {
 	"explanation": "<plain concise human summary>",
 	"actions": [ { /* zero or more strictly typed action objects */ } ]
@@ -322,7 +334,7 @@ The turning point was enforcing a strict, minimal JSON envelope in the system pr
 
 Every action object must follow a controlled schema (conceptually):
 
-```
+```json
 {
 	"action": "apply_curl | apply_openapi | show_languages | add_header | update_header | delete_header | update_body | update_method | update_url | import_now_openapi | download_doc | add_test | code | other",
 	"target": "httpRequestModel | codegen | test | attachment | doc | <future>",
@@ -387,6 +399,6 @@ This experience has been far more than just writing code—it's been a journey o
 
 Coming from a background of working solo on personal projects, this opportunity also introduced me to the invaluable experience of teamwork and collaboration. I learned the art of patience when waiting for code reviews, the importance of clear communication when discussing technical decisions, and how to work effectively with mentors and the broader community. These soft skills—teamwork, patience, and communication—have been just as transformative as the technical knowledge I gained. This is truly what made me a better person overall, not just a better developer.
 
-I'm truly grateful for getting this incredible opportunity to contribute to such an amazing project. Most of all, I want to extend my heartfelt thanks to my wonderful, amazing and caring, mentors—Ashita P, Ankit M, and Ragul Raj M. Your guidance, patience, and support made this entire journey possible. You created an environment where I could learn, experiment, fail, and succeed, all while feeling supported every step of the way.
+I'm truly grateful for getting this incredible opportunity to contribute to such an amazing project. Most of all, I want to extend my heartfelt thanks to my wonderful, amazing and caring, mentors— Ashita P, Ankit M, and Ragul Raj M. Your guidance, patience, and support made this entire journey possible. You created an environment where I could learn, experiment, fail, and succeed, all while feeling supported every step of the way.
 
 Looking ahead, I'm excited to see how future contributors will build upon this foundation and take API Dash to new heights.
