@@ -77,7 +77,7 @@ class Dashboard extends ConsumerWidget {
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 3;
                       },
-                      icon: const Icon(Icons.terminal),
+                      icon: const Icon(Icons.terminal_outlined),
                       selectedIcon: const Icon(Icons.terminal),
                     ),
                     Text(
