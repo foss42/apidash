@@ -367,17 +367,13 @@ On the client side the parser performs: (a) fast JSON parse, (b) basic structura
 |add tests for pre-request scripts and post-response scripts|[#865](https://github.com/foss42/apidash/pull/865)||Merged||
 |add env vars support for auth text fields|[#866](https://github.com/foss42/apidash/pull/866)||Merged||
 |add oauth authentication support|[#867](https://github.com/foss42/apidash/pull/867)|[#615](https://github.com/foss42/apidash/issues/615), [#481](https://github.com/foss42/apidash/issues/481)|Merged||
-|Dasbot UI|[#885](https://github.com/foss42/apidash/pull/885)|[#621](https://github.com/foss42/apidash/issues/621)|Closed|We decided to move dashbot inside apidash|
-|core functionalities of dashbot|[#887](https://github.com/foss42/apidash/pull/887)||||
-|in app terminal logger|[#890](https://github.com/foss42/apidash/pull/890)||||
+|Dasbot UI|[#885](https://github.com/foss42/apidash/pull/885)||Closed|We decided to move dashbot inside apidash|
+|core functionalities of dashbot|[#887](https://github.com/foss42/apidash/pull/887)|[#121](https://github.com/foss42/apidash/issues/121), [#620](https://github.com/foss42/apidash/issues/620), [#621](https://github.com/foss42/apidash/issues/621)|||
+|in app terminal logger|[#890](https://github.com/foss42/apidash/pull/890)|[#905](https://github.com/foss42/apidash/pull/905)|Merged||
 |add dashbot user guide doc|[#903](https://github.com/foss42/apidash/pull/903)|||||
 |GSoC 25 Report: Udhay Adithya|[#904](https://github.com/foss42/apidash/pull/904)||||
 
 ## Future Work
-
-- ****
-
-- ****
 
 - **Add persistent Dashbot chat history with save + export capabilities** Right now Dashbot conversations exist only in memory for the current run. A future milestone is to persist sessions (per request and global) across restarts and allow users to export chats (e.g., JSON for automation, Markdown/plain text for documentation or sharing).
 
