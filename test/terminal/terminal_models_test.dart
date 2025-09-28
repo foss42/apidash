@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/terminal/models.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/terminal/models/models.dart';
+import 'package:apidash/terminal/enums.dart';
 
 void main() {
   group('TerminalEntry model', () {

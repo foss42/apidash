@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/highlight_text.dart';
+import 'package:apidash/widgets/text_highlighted_selectable.dart';
 
 void main() {
   testWidgets('HighlightedSelectableText renders plain text when no query',

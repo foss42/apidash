@@ -1,8 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/terminal_providers.dart';
-import 'package:apidash/models/terminal/models.dart';
-import 'package:apidash/consts.dart';
+import 'package:apidash/terminal/terminal.dart';
 import 'package:apidash_core/apidash_core.dart';
 
 void main() {

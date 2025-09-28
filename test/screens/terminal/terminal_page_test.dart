@@ -4,10 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/screens/terminal/terminal_page.dart';
 import 'package:apidash/providers/terminal_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash/consts.dart';
-import 'package:apidash/widgets/terminal_level_filter_menu.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/terminal/terminal.dart';
 import '../../providers/helpers.dart';
 
 void main() {

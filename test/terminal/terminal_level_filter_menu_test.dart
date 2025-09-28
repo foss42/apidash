@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/terminal_level_filter_menu.dart';
-import 'package:apidash/consts.dart';
+import 'package:apidash/terminal/enums.dart';
+import 'package:apidash/terminal/widgets/terminal_level_filter_menu.dart';
 
 void main() {
   testWidgets('TerminalLevelFilterMenu toggles and bulk selects',

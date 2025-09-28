@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/terminal_tiles.dart';
-import 'package:apidash/models/terminal/models.dart';
-import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/terminal/enums.dart';
+import 'package:apidash/terminal/models/models.dart';
+import 'package:apidash/terminal/widgets/widgets.dart';
 
 void main() {
   testWidgets('SystemLogTile renders message and optional stack',
