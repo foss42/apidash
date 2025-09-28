@@ -1,4 +1,3 @@
-// ignore_for_file: avoid_print
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/services.dart';
@@ -307,8 +306,16 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       updateEnv?.call(originalEnvironmentModel, newValues);
     } else {
       if (scriptResult.updatedEnvironment.isNotEmpty) {
-        print(
-            'Warning: Pre-request script updated environment variables, but no active environment was selected to save them to.');
+        final term = ref.read(terminalStateProvider.notifier);
+        final msg =
+            'Pre-request script updated environment variables, but no active environment was selected to save them to.';
+        state = state.copyWith(lastError: msg);
+        term.logJs(
+          level: 'warn',
+          args: [msg],
+          context: 'preRequest',
+          contextRequestId: requestModel.id,
+        );
         return requestModel;
       }
       return newRequestModel;
@@ -359,8 +366,16 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       updateEnv?.call(originalEnvironmentModel, newValues);
     } else {
       if (scriptResult.updatedEnvironment.isNotEmpty) {
-        print(
-            'Warning: Post-response script updated environment variables, but no active environment was selected to save them to.');
+        final term = ref.read(terminalStateProvider.notifier);
+        final msg =
+            'Post-response script updated environment variables, but no active environment was selected to save them to.';
+        state = state.copyWith(lastError: msg);
+        term.logJs(
+          level: 'warn',
+          args: [msg],
+          context: 'postResponse',
+          contextRequestId: requestModel.id,
+        );
       }
       return requestModel;
     }
@@ -375,8 +390,8 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   }
 
   void _handleConsole(String level, dynamic args) {
+    final term = ref.read(terminalStateProvider.notifier);
     try {
-      final term = ref.read(terminalStateProvider.notifier);
       List<String> argList = const <String>[];
       if (args is List) {
         argList = args.map((e) => e.toString()).toList();
@@ -398,13 +413,16 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       term.logJs(
           level: level, args: argList, contextRequestId: _currentRequestId);
     } catch (e) {
-      print('[JS ${level.toUpperCase()} HANDLER ERROR]: $args, Error: $e');
+      term.logSystem(
+          category: 'provider',
+          message:
+              '[JS ${level.toUpperCase()} HANDLER ERROR]: $args, Error: $e');
     }
   }
 
   void _handleFatal(dynamic args) {
+    final term = ref.read(terminalStateProvider.notifier);
     try {
-      final term = ref.read(terminalStateProvider.notifier);
       if (args is Map<String, dynamic>) {
         final message = args['message']?.toString() ?? 'Unknown fatal error';
         final error = args['error']?.toString();
@@ -424,7 +442,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
             contextRequestId: _currentRequestId);
       }
     } catch (e) {
-      print('[JS FATAL ERROR decoding error]: $args, Error: $e');
+      term.logSystem(
+          category: 'provider',
+          message: '[JS FATAL ERROR decoding error]: $args, Error: $e');
     }
   }
 }
