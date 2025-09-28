@@ -390,7 +390,9 @@ const httpRequestModelGet4Json = <String, dynamic>{
     'bearer': null,
     'basic': null,
     'jwt': null,
-    'digest': null
+    'digest': null,
+    'oauth1': null,
+    'oauth2': null
   },
   "isHeaderEnabledList": null,
   "isParamEnabledList": null,
@@ -417,7 +419,9 @@ const httpRequestModelPost10Json = <String, dynamic>{
     'bearer': null,
     'basic': null,
     'jwt': null,
-    'digest': null
+    'digest': null,
+    'oauth1': null,
+    'oauth2': null
   },
   'isHeaderEnabledList': [false, true],
   'isParamEnabledList': null,

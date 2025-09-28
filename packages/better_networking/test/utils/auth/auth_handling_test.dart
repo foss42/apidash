@@ -423,7 +423,7 @@ void main() {
     );
 
     test(
-      'given handleAuth when OAuth1 authentication is provided then it should throw UnimplementedError',
+      'given handleAuth when OAuth1 authentication is provided but oauth1 data is null then it should not add headers',
       () async {
         const httpRequestModel = HttpRequestModel(
           method: HTTPVerb.get,
@@ -432,15 +432,15 @@ void main() {
 
         const authModel = AuthModel(type: APIAuthType.oauth1);
 
-        expect(
-          () async => await handleAuth(httpRequestModel, authModel),
-          throwsA(isA<UnimplementedError>()),
-        );
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isEmpty);
+        expect(result.isHeaderEnabledList, isEmpty);
       },
     );
 
     test(
-      'given handleAuth when OAuth2 authentication is provided then it should throw UnimplementedError',
+      'given handleAuth when OAuth2 authentication is provided but oauth2 data is null then it should throw Exception',
       () async {
         const httpRequestModel = HttpRequestModel(
           method: HTTPVerb.get,
@@ -451,7 +451,13 @@ void main() {
 
         expect(
           () async => await handleAuth(httpRequestModel, authModel),
-          throwsA(isA<UnimplementedError>()),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('Failed to get OAuth2 Data'),
+            ),
+          ),
         );
       },
     );

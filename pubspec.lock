@@ -106,11 +106,10 @@ packages:
   better_networking:
     dependency: transitive
     description:
-      name: better_networking
-      sha256: a23f061e02eee363c4e80fd0b7df529d9353eeb55bacfe2acd3b1d5e09c4016c
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.3"
+      path: "packages/better_networking"
+      relative: true
+    source: path
+    version: "0.0.4-dev"
   bidi:
     dependency: transitive
     description:
@@ -422,6 +421,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.0"
+  desktop_webview_window:
+    dependency: transitive
+    description:
+      name: desktop_webview_window
+      sha256: "57cf20d81689d5cbb1adfd0017e96b669398a669d927906073b0e42fc64111c0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.3"
   dio:
     dependency: transitive
     description:
@@ -709,6 +716,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_auth_2:
+    dependency: transitive
+    description:
+      name: flutter_web_auth_2
+      sha256: "9a9ac1b83b215ebc4926657f7d88b1d766ac66b1dd50d258b9f3ea31e627565e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0-alpha.4"
+  flutter_web_auth_2_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_web_auth_2_platform_interface
+      sha256: e25eb45c50b3eef5a80d0ae73c7ecf82e291c152387da8d2008bfd607ba43087
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.0-alpha.4"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -1206,6 +1229,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  oauth1:
+    dependency: transitive
+    description:
+      name: oauth1
+      sha256: "1d424e3c24017a6c5714acb12e0dd76c2fdff96db6d6ef0aab58c925ffc28ae0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
+  oauth2:
+    dependency: transitive
+    description:
+      name: oauth2
+      sha256: c84470642cbb2bec450ccab2f8520c079cd1ca546a76ffd5c40589e07f4e8bf4
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   octo_image:
     dependency: transitive
     description:
@@ -2131,6 +2170,14 @@ packages:
       url: "https://github.com/google/flutter-desktop-embedding.git"
     source: git
     version: "0.1.0"
+  window_to_front:
+    dependency: transitive
+    description:
+      name: window_to_front
+      sha256: "7aef379752b7190c10479e12b5fd7c0b9d92adc96817d9e96c59937929512aee"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   xdg_directories:
     dependency: transitive
     description:
