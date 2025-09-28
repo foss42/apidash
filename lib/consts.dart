@@ -511,3 +511,6 @@ const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
 const kLabelGenerateUI = "Generate UI";
+// Terminal Page
+const kMsgNoLogs = 'No logs yet';
+const kMsgSendToView = 'Send a request to view its details in the console.';
