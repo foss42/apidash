@@ -34,6 +34,8 @@ The Logs tab pulls together script logs, system messages, and other events so us
 
 `Associated Pull Request`: [#855](https://github.com/foss42/apidash/pull/855), [#866](https://github.com/foss42/apidash/pull/866)
 
+`Documentation`: [authentication.md](../../user_guide/authentication.md)
+
 I started by adding the everyday authentication methods so that anyone using API Dash can set up their credentials without workarounds. Inside the request editor there is now an Authorization tab where you can choose the auth type and fill the required fields. Internally this work lives in the `better_networking` package so it can be reused across the app. I created a single model that holds all supported types and I wrote a handler that reads the selected type and adds the right headers or query params to the request at the time of sending. I also added environment variable support for every input so secrets can be managed in one place, and I used Hive to cache values so they persist across sessions. I wrote tests for these code paths and a user guide that explains everything in plain language.
 
 The core model is `AuthModel` in `packages/better_networking/lib/models/auth/api_auth_model.dart`. It stores the selected `APIAuthType` and the data objects for each specific method. This lets the UI and the request layer work with a single source of truth. The handler `handleAuth` in `packages/better_networking/lib/utils/auth/handle_auth.dart` looks at the chosen type and updates the request right before sending. For Basic it builds the base64 string and sets the Authorization header. For Bearer it sets `Authorization: Bearer <token>`. For API Key it either adds a header or a query parameter based on the user’s choice. For JWT it generates a signed token based on the selected algorithm and places it in the header or the URL. For Digest it supports both the direct mode where the realm and nonce are already known and the two‑step mode where API Dash sends one request, reads the server’s challenge from `WWW-Authenticate`, computes the response, and then adds the final Authorization header.
@@ -101,6 +103,8 @@ All this work is covered by tests and documented for users. I also created the f
 
 `Associated Pull Request`: [#846](https://github.com/foss42/apidash/pull/846), [#865](https://github.com/foss42/apidash/pull/865)
 
+`Documentation`: [scripting_user_guide.md](../../user_guide/scripting_user_guide.md)
+
 
 I wanted API Dash to support scripting like other clients so people can prepare data before a request and verify or transform data after a response. We chose JavaScript because it is the common standard. We use a JS engine that runs natively in Flutter, and we give the script a simple `ad` object to work with so the script can read and change the request, access the response, and work with environment variables. The same approach works for REST and GraphQL.
 
@@ -141,6 +145,8 @@ The scripting UI has its own tab in the request editor. It also supports GraphQL
 ## OAuth 1.0 and OAuth 2.0
 
 `Associated Pull Request`: [#867](https://github.com/foss42/apidash/pull/867)
+
+`Documentation`: [authentication.md](../../user_guide/authentication.md)
 
 After the basic auth methods, I completed the remaining authentication types: OAuth 1.0 and OAuth 2.0. This was new territory for me. I learned the flows step by step and aligned our behavior with how other API clients do it so users feel at home. OAuth 1.0 in API Dash focuses on signing requests with the values you provide. Other clients do not run a full three‑legged OAuth 1.0 flow inside the app; they expect you to paste the Access Token and Token Secret you already have. I followed the same approach so the feature is simple and reliable. The signing logic is in `packages/better_networking/lib/utils/auth/oauth1_utils.dart`, and the data model is in `packages/better_networking/lib/models/auth/auth_oauth1_model.dart`.
 
@@ -183,6 +189,9 @@ If the provider returns a refresh token, the credentials file stores it so the c
 
 `Associated Pull Request`: [#887](https://github.com/foss42/apidash/pull/887), [#903](https://github.com/foss42/apidash/pull/903)
 
+`Documentation`: [dashbot_user_guide.md](../../user_guide/dashbot_user_guide.md
+)
+
 Dashbot is the assistant layer I added so users could stay inside the client while doing the things that normally force them to copy/paste between tools: asking “why did this response look like that?”, importing a cURL snippet someone shared, pulling in an OpenAPI spec, generating tests, or quickly turning a request into runnable code. Instead of building another free‑form chat box, I designed it around the idea of “structured help”: every answer comes back as a short human explanation plus a list of clear actions the app can apply (or that you can ignore). This keeps the experience predictable—no mysterious side effects—and lets you move faster because repetitive edits (like adding headers or creating a new request from an import) become one click.
 
 You can keep Dashbot docked as a normal tab or pop it out into a small floating panel that you can drag to the part of the screen that’s least distracting. It remembers its size and position while you work. Conversations are scoped to the request you have selected, so switching between requests feels like switching between focused “threads.” If no request is selected, you still have a global space for general API questions. Messages carry optional action buttons: apply imported cURL, create from OpenAPI, add a header the assistant suggested, insert generated tests into your post‑response script, pick a language for code generation, and so on.
@@ -201,13 +210,13 @@ The responses are strict JSON behind the scenes, but what matters for you is tha
 
 One of the most immediately useful flows is pasting a raw cURL command. A user can drop in a long multi‑line snippet and Dashbot parses the method, URL, headers, body, form data, and query parameters. It ignores things that are about transport or terminal behavior (redirect flags, silent/verbose, retry counts, output files) because those don’t belong inside a static request description. It then shows a concise diff between what was already selected and what the cURL contains—method changes, new headers, removed headers, body type changes, size differences—plus two actions: overwrite the current request or create a new one. You can inspect the explanation, choose an action, and you’re done. No manual re‑typing.
 
-The OpenAPI flow feels similar but works at a higher granularity. A user can paste an entire spec (JSON or YAML) or even just paste a URL to one. Dashbot parses it, summarizes the API (title, version, number of endpoints, methods present), highlights interesting routes like auth or health endpoints, and then offers to “import now.” From there you can pick operations and turn them into real requests in the collection. Behind the scenes it also tries to extract a stable base URL and turn that into an environment variable automatically, so the generated requests are environment‑friendly from the first second (e.g. swapping staging/production later is trivial). The same environment extraction also happens for cURL imports so hostnames don’t get duplicated everywhere.
+The OpenAPI flow feels similar. A user can paste an entire spec (JSON or YAML) or even just paste a URL to one. Dashbot parses it, summarizes the API (title, version, number of endpoints, methods present), highlights interesting routes like auth or health endpoints, and then offers to “import now.” From there you can pick operations and turn them into real requests in the collection. Behind the scenes it also tries to extract a stable base URL and turn that into an environment variable automatically, so the generated requests are environment‑friendly. The same environment extraction also happens for cURL imports so hostnames don’t get duplicated everywhere.
 
 Code generation and test generation use the current request (and response if present) as context. If you just ask “generate code” it first offers a language list instead of guessing; if you mention a language directly (like “generate python code”) it goes straight to the result. Tests come back as snippets you can drop into your scripting layer so they run after a response. Documentation generation produces a structured description of the request and response that you can copy into internal docs or a README.
 
 Reliability mattered while building this. If the assistant ever produces malformed data I simply show you the explanation and skip actions. If parsing a cURL or OpenAPI spec fails, you get a clear message why and what to try next (wrong quoting, invalid JSON/YAML, network failure, etc.). This defensive approach meant I could iterate on prompts and model behavior without risking accidental silent changes to your collection.
 
-Here is a tiny extract of the “explain response” style the assistant is guided to follow—clear summary, focused bullets, no fluff:
+Here is a tiny extract of the “explain response” style the assistant is guided to follow—clear summary, focused bullets:
 
 ```text
 Summary: The request succeeded (200) and returned a list of users.
