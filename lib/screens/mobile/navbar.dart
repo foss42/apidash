@@ -60,7 +60,7 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 4,
+                    buttonIdx: 3,
                     selectedIcon: Icons.terminal,
                     icon: Icons.terminal,
                     label: 'Logs',
@@ -69,7 +69,7 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 3,
+                    buttonIdx: 4,
                     selectedIcon: Icons.settings,
                     icon: Icons.settings_outlined,
                     label: 'Settings',

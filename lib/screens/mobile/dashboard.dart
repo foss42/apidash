@@ -75,11 +75,14 @@ class PageBranch extends ConsumerWidget {
         return const HistoryPage();
       case 3:
         return const PageBase(
+          title: 'Logs',
+          scaffoldBody: TerminalPage(),
+        );
+      case 4:
+        return const PageBase(
           title: 'Settings',
           scaffoldBody: SettingsPage(),
         );
-      case 4:
-        return const TerminalPage();
       default:
         return const RequestResponsePage();
     }

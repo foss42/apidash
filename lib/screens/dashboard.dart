@@ -73,9 +73,9 @@ class Dashboard extends ConsumerWidget {
                     ),
                     kVSpacer10,
                     IconButton(
-                      isSelected: railIdx == 4,
+                      isSelected: railIdx == 3,
                       onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 4;
+                        ref.read(navRailIndexStateProvider.notifier).state = 3;
                       },
                       icon: const Icon(Icons.terminal),
                       selectedIcon: const Icon(Icons.terminal),
@@ -108,7 +108,7 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 3,
+                          buttonIdx: 4,
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
                           label: 'Settings',
@@ -134,8 +134,8 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
-                  SettingsPage(),
                   TerminalPage(),
+                  SettingsPage(),
                 ],
               ),
             )
