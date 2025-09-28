@@ -1,4 +1,4 @@
-import 'package:better_networking/better_networking.dart';
+import 'package:genai/genai.dart';
 import 'package:har/har.dart' as har;
 
 class HarParserIO {

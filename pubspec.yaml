@@ -14,7 +14,6 @@ dependencies:
     path: packages/apidash_core
   apidash_design_system:
     path: packages/apidash_design_system
-  openapi_spec: ^0.15.0
   carousel_slider: ^5.0.0
   code_builder: ^4.10.0
   csv: ^6.0.0
@@ -45,8 +44,6 @@ dependencies:
     path: packages/json_explorer
   json_field_editor:
     path: packages/json_field_editor
-  curl_parser:
-    path: packages/curl_parser
   just_audio: ^0.9.46
   just_audio_mpv: ^0.1.7
   just_audio_windows: ^0.2.0
@@ -84,8 +81,6 @@ dependency_overrides:
   pdf_widget_wrapper: ^1.0.4
   web: ^1.1.1
   freezed_annotation: ^2.0.3
-  better_networking:
-    path: packages/better_networking
 
 dev_dependencies:
   flutter_test:

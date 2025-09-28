@@ -297,7 +297,7 @@ class Curl extends Equatable {
 
     void appendCont(String seg) {
       cmd += '\\';
-      cmd += '\n ' + seg + ' ';
+      cmd += '\n $seg ';
     }
 
     // Headers

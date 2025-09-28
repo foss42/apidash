@@ -1,5 +1,6 @@
-import 'package:genai/agentic_engine/blueprint.dart';
-import 'package:genai/genai.dart';
+import '../models/models.dart';
+import '../utils/utils.dart';
+import 'blueprint.dart';
 
 class AIAgentService {
   static Future<String?> _call_provider({

@@ -2,10 +2,11 @@
 //
 //     final availableModels = availableModelsFromJson(jsonString);
 
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'dart:convert';
+import 'package:better_networking/better_networking.dart';
 import '../interface/interface.dart';
 import 'ai_request_model.dart';
+
 part 'available_models.freezed.dart';
 part 'available_models.g.dart';
 
