@@ -526,18 +526,18 @@ The generated tests provide enterprise-level quality assurance with minimal setu
 ## Generate Code
 Get runnable code samples for the current request in popular languages.
 
-Workflow
+Workflow:
 1) Choose “Generate Code”.
 2) Select a language from the buttons (JavaScript, Python, Dart, Go, cURL).
 3) Dashbot returns a code block. Copy it and run in your environment.
 
-What you get
+What you get:
 - Minimal script that sends your request
 - Respect for method/URL/headers/params/body
 - Basic error handling and printing of status/body
 - Notes about any required libraries (with install commands) when applicable
 
-Tips
+Tips:
 - Replace placeholders (API keys/tokens) with real values.
 - Verify content types and body structures match your API.
 
