@@ -176,7 +176,7 @@ If the provider returns a refresh token, the credentials file stores it so the c
 <p align="center">
   <img src="./images/oauth1-fields.png" alt="oauth1-fields" />
   <br>
-  <em>OAuth 1.0a</em>
+  <em>OAuth 1.0</em>
 </p>
 
 <p align="center">
