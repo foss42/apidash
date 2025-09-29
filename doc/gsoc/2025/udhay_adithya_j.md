@@ -38,9 +38,14 @@ The Logs tab pulls together script logs, system messages, and other events so us
 
 I started by adding the everyday authentication methods so that anyone using API Dash can set up their credentials without workarounds. Inside the request editor there is now an Authorization tab where you can choose the auth type and fill the required fields. Internally this work lives in the `better_networking` package so it can be reused across the app. I created a single model that holds all supported types and I wrote a handler that reads the selected type and adds the right headers or query params to the request at the time of sending. I also added environment variable support for every input so secrets can be managed in one place, and I used Hive to cache values so they persist across sessions. I wrote tests for these code paths and a user guide that explains everything in plain language.
 
-The core model is `AuthModel` in `packages/better_networking/lib/models/auth/api_auth_model.dart`. It stores the selected `APIAuthType` and the data objects for each specific method. This lets the UI and the request layer work with a single source of truth. The handler `handleAuth` in `packages/better_networking/lib/utils/auth/handle_auth.dart` looks at the chosen type and updates the request right before sending. For Basic it builds the base64 string and sets the Authorization header. For Bearer it sets `Authorization: Bearer <token>`. For API Key it either adds a header or a query parameter based on the user’s choice. For JWT it generates a signed token based on the selected algorithm and places it in the header or the URL. For Digest it supports both the direct mode where the realm and nonce are already known and the two‑step mode where API Dash sends one request, reads the server’s challenge from `WWW-Authenticate`, computes the response, and then adds the final Authorization header.
+The core model is `AuthModel` in `packages/better_networking/lib/models/auth/api_auth_model.dart`. It stores the selected `APIAuthType` and the data objects for each specific method. This lets the UI and the request layer work with a single source of truth. The handler `handleAuth` in `packages/better_networking/lib/utils/auth/handle_auth.dart` looks at the chosen type and updates the request right before sending. For,
+- **Basic Auth**, it builds the base64 string and sets the Authorization header. 
+- **Bearer Auth**, it sets `Authorization: Bearer <token>`. 
+- **API Key Auth**, it either adds a header or a query parameter based on the user’s choice.
+- **JWT Auth**, it generates a signed token based on the selected algorithm and places it in the header or the URL.
+- **Digest Auth**, it supports both the direct mode where the realm and nonce are already known and the two‑step mode where API Dash sends one request, reads the server’s challenge from `WWW-Authenticate`, computes the response, and then adds the final Authorization header.
 
-This is very close to how other API clients behave. I first proposed a different format but after discussion with my mentors we decided to match common patterns so people can migrate their requests easily. I also updated the UI to follow the API Dash design system so it feels consistent with the rest of the app. You can see the user guide [Authentication.md](./../../user_guide/authentication.md). It has simple explanations with images for each method.
+This feature has been designed in such a manner that users can adopt it without much learning curve. I also updated the UI to follow the API Dash design system so it feels consistent with the rest of the app. You can see the user guide [Authentication.md](./../../user_guide/authentication.md). It has simple explanations with images for each method.
 
 Here is a small example that shows how the handler attaches a Bearer token to the headers. The handler reads the `AuthModel` and adds the correct `Authorization` header to the outgoing `HttpRequestModel`.
 
@@ -148,7 +153,7 @@ The scripting UI has its own tab in the request editor. It also supports GraphQL
 
 `Documentation`: [authentication.md](../../user_guide/authentication.md)
 
-After the basic auth methods, I completed the remaining authentication types: OAuth 1.0 and OAuth 2.0. This was new territory for me. I learned the flows step by step and aligned our behavior with how other API clients do it so users feel at home. OAuth 1.0 in API Dash focuses on signing requests with the values you provide. Other clients do not run a full three‑legged OAuth 1.0 flow inside the app; they expect you to paste the Access Token and Token Secret you already have. I followed the same approach so the feature is simple and reliable. The signing logic is in `packages/better_networking/lib/utils/auth/oauth1_utils.dart`, and the data model is in `packages/better_networking/lib/models/auth/auth_oauth1_model.dart`.
+After adding support for the first set of authentication methods, I worked on OAuth 1.0 and OAuth 2.0 authentication. This was new territory for me. I learned the flows step by step. OAuth 1.0 in API Dash focuses on signing requests with the values you provide. I followed the approach where we do not run a full three‑legged OAuth 1.0 flow inside the app, the user pastes the Access Token and Token Secret, so the feature is simple and reliable. The signing logic is in `packages/better_networking/lib/utils/auth/oauth1_utils.dart`, and the data model is in `packages/better_networking/lib/models/auth/auth_oauth1_model.dart`.
 
 OAuth 2.0 was more challenging because the official `oauth2` Dart package follows the RFC strictly. Many providers are fine with that, but some legacy servers return token responses in non‑JSON formats or have other differences. Because of that, I wrote a small developer note at [oauth_authentication_limitations.md](../../dev_guide/oauth_authentication_limitations.md) to be clear about what works and what does not. API Dash sends `Accept: application/json` to token endpoints and expects JSON. On desktop we also need a free port between 8080 and 8090 for the temporary callback server. If all ports are used, the auth flow fails and the UI explains why.
 
@@ -390,10 +395,10 @@ On the client side the parser performs: (a) fast JSON parse, (b) basic structura
 
 ## Research Links
 
-- [OAuth 2.0 Redirect URI Handling in API Clients](https://gist.github.com/Udhay-Adithya/f7c3174e4e1c7799ee5016974e996e67)
-- [Authentication Data Format in API Clients](https://gist.github.com/Udhay-Adithya/ae09c2e9e306f0ce877d452999bb1789)
-- [Authentication Schema in API Clients](https://gist.github.com/Udhay-Adithya/3215d0ac511a0893d901eb58c6aab059)
-- [Pre/Post Request Scripting in API Clients](https://gist.github.com/Udhay-Adithya/da7a0282e9e1ef66c1d4a3f0f22ab840)
+- [OAuth 2.0 Redirect URI Handling](https://gist.github.com/Udhay-Adithya/f7c3174e4e1c7799ee5016974e996e67)
+- [Authentication Data Format](https://gist.github.com/Udhay-Adithya/ae09c2e9e306f0ce877d452999bb1789)
+- [Authentication Schema](https://gist.github.com/Udhay-Adithya/3215d0ac511a0893d901eb58c6aab059)
+- [Pre/Post Request Scripting](https://gist.github.com/Udhay-Adithya/da7a0282e9e1ef66c1d4a3f0f22ab840)
 ---
 
 ## Conclusion
