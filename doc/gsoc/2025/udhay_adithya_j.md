@@ -377,10 +377,10 @@ On the client side the parser performs: (a) fast JSON parse, (b) basic structura
 |add env vars support for auth text fields|[#866](https://github.com/foss42/apidash/pull/866)||Merged||
 |add oauth authentication support|[#867](https://github.com/foss42/apidash/pull/867)|[#615](https://github.com/foss42/apidash/issues/615), [#481](https://github.com/foss42/apidash/issues/481)|Merged||
 |Dasbot UI|[#885](https://github.com/foss42/apidash/pull/885)||Closed|We decided to move dashbot inside apidash|
-|core functionalities of dashbot|[#887](https://github.com/foss42/apidash/pull/887)|[#121](https://github.com/foss42/apidash/issues/121), [#620](https://github.com/foss42/apidash/issues/620), [#621](https://github.com/foss42/apidash/issues/621)|||
+|core functionalities of dashbot|[#887](https://github.com/foss42/apidash/pull/887)|[#121](https://github.com/foss42/apidash/issues/121), [#620](https://github.com/foss42/apidash/issues/620), [#621](https://github.com/foss42/apidash/issues/621)|Merged||
 |in app terminal logger|[#890](https://github.com/foss42/apidash/pull/890)|[#905](https://github.com/foss42/apidash/pull/905)|Merged||
-|add dashbot user guide doc|[#903](https://github.com/foss42/apidash/pull/903)|||||
-|GSoC 25 Report: Udhay Adithya|[#904](https://github.com/foss42/apidash/pull/904)||||
+|add dashbot user guide doc|[#903](https://github.com/foss42/apidash/pull/903)||Merged|||
+|GSoC 25 Report: Udhay Adithya|[#904](https://github.com/foss42/apidash/pull/904)||Merged||
 
 ## Future Work
 
