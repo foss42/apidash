@@ -113,7 +113,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.copy_rounded));
     await tester.pumpAndSettle();
 
-    // TODO: //TODO: The below test works for `flutter run` but not for `flutter test`
+    // TODO: The below test works for `flutter run` but not for `flutter test`
     // final data = await Clipboard.getData('text/plain');
     // expect(data?.text, 'Copy this please');
   });
