@@ -1,8 +1,8 @@
+import 'package:apidash/dashbot/repository/repository.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:apidash/dashbot/features/chat/repository/chat_remote_repository.dart';
 
 // Mock classes
 class MockAIRequestModel extends Mock implements AIRequestModel {}
@@ -26,7 +26,6 @@ void main() {
     group('sendChat', () {
       test('returns result when executeGenAIRequest returns non-empty string',
           () async {
-
         // Create a real AIRequestModel for testing (this will likely return null due to missing config)
         final request = AIRequestModel(
           url: 'https://api.apidash.dev/test',

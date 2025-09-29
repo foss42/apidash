@@ -1,9 +1,8 @@
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_message.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_state.dart';
-import 'package:apidash/dashbot/features/chat/view/pages/dashbot_chat_page.dart';
-import 'package:apidash/dashbot/features/chat/view/widgets/dashbot_task_buttons.dart';
-import 'package:apidash/dashbot/features/chat/viewmodel/chat_viewmodel.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/models/models.dart';
+import 'package:apidash/dashbot/pages/pages.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/widgets/widgets.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';

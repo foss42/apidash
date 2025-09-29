@@ -1,6 +1,5 @@
 import 'dart:typed_data';
-
-import 'package:apidash/dashbot/core/model/chat_attachment.dart';
+import 'package:apidash/dashbot/models/models.dart';
 import 'package:test/test.dart';
 
 void main() {

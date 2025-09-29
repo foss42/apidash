@@ -1,16 +1,12 @@
-import 'dart:typed_data';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/models/models.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/repository/repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_message.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_action.dart';
-import 'package:apidash/dashbot/features/chat/viewmodel/chat_viewmodel.dart';
-import 'package:apidash/dashbot/features/chat/repository/chat_remote_repository.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/core/model/chat_attachment.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
-
 import '../../../../providers/helpers.dart';
 
 // Mock ChatRemoteRepository
@@ -403,38 +399,40 @@ void main() {
 
       // Check _currentRequest value
       final currentRequest = container.read(selectedRequestModelProvider);
-      print('Current request: $currentRequest');
+      debugPrint('Current request: $currentRequest');
 
       // Check the computed ID that currentMessages uses
       final computedId = currentRequest?.id ?? 'global';
-      print('Computed ID for currentMessages: $computedId');
+      debugPrint('Computed ID for currentMessages: $computedId');
 
       // Check initial state
-      print('Initial state - chatSessions: ${viewmodel.state.chatSessions}');
-      print('Initial messages count: ${viewmodel.currentMessages.length}');
+      debugPrint(
+          'Initial state - chatSessions: ${viewmodel.state.chatSessions}');
+      debugPrint('Initial messages count: ${viewmodel.currentMessages.length}');
 
       // Call sendMessage which should trigger _addMessage through _appendSystem
       await viewmodel.sendMessage(text: 'Hello', type: ChatMessageType.general);
 
       // Debug: print current state
-      print(
+      debugPrint(
           'After sendMessage - chatSessions: ${viewmodel.state.chatSessions}');
-      print('After sendMessage - keys: ${viewmodel.state.chatSessions.keys}');
-      print('Current messages count: ${viewmodel.currentMessages.length}');
+      debugPrint(
+          'After sendMessage - keys: ${viewmodel.state.chatSessions.keys}');
+      debugPrint('Current messages count: ${viewmodel.currentMessages.length}');
 
       // Check again after sendMessage
       final currentRequestAfter = container.read(selectedRequestModelProvider);
       final computedIdAfter = currentRequestAfter?.id ?? 'global';
-      print('Current request after: $currentRequestAfter');
-      print('Computed ID after: $computedIdAfter');
+      debugPrint('Current request after: $currentRequestAfter');
+      debugPrint('Computed ID after: $computedIdAfter');
 
       // Let's also check the global session directly
       final globalMessages = viewmodel.state.chatSessions['global'];
-      print('Global messages directly: ${globalMessages?.length ?? 0}');
+      debugPrint('Global messages directly: ${globalMessages?.length ?? 0}');
 
       // Check specific computed ID session
       final computedMessages = viewmodel.state.chatSessions[computedIdAfter];
-      print(
+      debugPrint(
           'Messages for computed ID ($computedIdAfter): ${computedMessages?.length ?? 0}');
 
       // Should now have messages after the bug fix

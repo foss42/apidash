@@ -1,9 +1,8 @@
 import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:apidash/dashbot/core/model/dashbot_window_model.dart';
-import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
+import 'package:apidash/dashbot/models/models.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
 
 import '../../providers/helpers.dart';
 

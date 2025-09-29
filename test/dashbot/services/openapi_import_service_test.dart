@@ -1,5 +1,5 @@
-import 'package:apidash/dashbot/core/services/openapi_import_service.dart';
-import 'package:openapi_spec/openapi_spec.dart';
+import 'package:apidash/dashbot/services/services.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 
 const _specJson = '''
@@ -72,7 +72,7 @@ void main() {
   });
 
   group('OpenApiImportService extended coverage', () {
-    const _extendedSpecJson = '''
+    const extendedSpecJson = '''
 {
   "openapi": "3.0.0",
   "info": {"title": "Extended API", "version": "2.0.0"},
@@ -124,7 +124,7 @@ void main() {
     test(
         'extractSpecMeta captures tags, content types, trimming and noteworthy routes',
         () {
-      final spec = OpenApiImportService.tryParseSpec(_extendedSpecJson)!;
+      final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
       final meta = OpenApiImportService.extractSpecMeta(spec,
           maxRoutes: 1); // trigger trimming branch
       // endpointsCount should reflect all operations (GET, POST on /search, POST on /upload) = 3
@@ -153,7 +153,7 @@ void main() {
     test(
         'payloadForOperation covers json request body & header param & baseUrl slash trimming',
         () {
-      final spec = OpenApiImportService.tryParseSpec(_extendedSpecJson)!;
+      final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
       final getOp = spec.paths!['/search']!.get!;
       final payload = OpenApiImportService.payloadForOperation(
         baseUrl: spec.servers!.first.url!, // ends with slash
@@ -173,7 +173,7 @@ void main() {
     });
 
     test('payloadForOperation covers form request body variants', () {
-      final spec = OpenApiImportService.tryParseSpec(_extendedSpecJson)!;
+      final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
       final postOp = spec.paths!['/search']!.post!; // multipart form
       final payload1 = OpenApiImportService.payloadForOperation(
         baseUrl: spec.servers!.first.url!,
@@ -198,7 +198,7 @@ void main() {
     });
 
     test('buildOperationPicker with insights branch', () {
-      final spec = OpenApiImportService.tryParseSpec(_extendedSpecJson)!;
+      final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
       final picker = OpenApiImportService.buildOperationPicker(spec,
           insights: 'Some insights');
       expect(picker['explanation'], contains('Some insights'));

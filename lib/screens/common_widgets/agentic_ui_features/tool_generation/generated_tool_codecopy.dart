@@ -47,7 +47,7 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
           ),
           Expanded(
             child: SingleChildScrollView(
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
                 child: CodePreviewer(
                   code: toolCode!,

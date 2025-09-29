@@ -1,11 +1,10 @@
-import 'package:apidash/dashbot/core/common/widgets/dashbot_action_buttons/dashbot_add_test_button.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_action.dart';
-import 'package:apidash/dashbot/features/chat/viewmodel/chat_viewmodel.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/models/models.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import '../../../test_consts.dart';
 import 'test_utils.dart';
 

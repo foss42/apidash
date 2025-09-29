@@ -1,9 +1,6 @@
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/core/error/chat_failure.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_action.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_message.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_response.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_state.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/error/chat_failure.dart';
+import 'package:apidash/dashbot/models/models.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -127,7 +124,7 @@ void main() {
   group('Enum mapping helpers', () {
     test('chatActionTypeToString covers all values', () {
       for (final t in ChatActionType.values) {
-        final s = chatActionTypeToString(t);
+        final s = t.text;
         expect(s, isA<String>());
         expect(s.isNotEmpty, true);
       }
@@ -135,7 +132,7 @@ void main() {
 
     test('chatActionTargetToString covers all values', () {
       for (final t in ChatActionTarget.values) {
-        final s = chatActionTargetToString(t);
+        final s = t.name;
         expect(s, isA<String>());
         expect(s.isNotEmpty, true);
       }

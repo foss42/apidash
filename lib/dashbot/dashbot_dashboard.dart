@@ -1,15 +1,12 @@
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/screens/common_widgets/ai/ai.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'core/utils/dashbot_icons.dart';
-
-import 'core/providers/dashbot_window_notifier.dart';
-import 'core/routes/dashbot_router.dart';
-import 'core/routes/dashbot_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/providers/dashbot_active_route_provider.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/ai/ai.dart';
+import 'providers/providers.dart';
+import 'routes/routes.dart';
+import 'utils/utils.dart';
 
 class DashbotWindow extends ConsumerWidget {
   final VoidCallback onClose;

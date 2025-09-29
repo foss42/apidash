@@ -1,7 +1,7 @@
-import 'package:apidash/dashbot/core/common/pages/dashbot_default_page.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/core/routes/dashbot_routes.dart';
-import 'package:apidash/dashbot/features/home/view/widgets/home_screen_task_button.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/pages/pages.dart';
+import 'package:apidash/dashbot/routes/routes.dart';
+import 'package:apidash/dashbot/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

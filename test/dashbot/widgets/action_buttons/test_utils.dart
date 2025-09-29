@@ -1,8 +1,8 @@
-import 'package:apidash/dashbot/core/model/chat_attachment.dart';
-import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_action.dart';
-import 'package:apidash/dashbot/features/chat/viewmodel/chat_viewmodel.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/models/chat_action.dart';
+import 'package:apidash/dashbot/models/chat_attachment.dart';
+import 'package:apidash/dashbot/providers/chat_viewmodel.dart';
+import 'package:apidash/dashbot/providers/dashbot_window_notifier.dart';
 
 class TestChatViewmodel extends ChatViewmodel {
   TestChatViewmodel(super.ref);

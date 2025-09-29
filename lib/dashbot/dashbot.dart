@@ -1,3 +1,4 @@
 export 'dashbot_dashboard.dart';
-export 'core/providers/dashbot_window_notifier.dart';
-export 'core/utils/utils.dart';
+export 'dashbot_tab.dart';
+export 'providers/providers.dart';
+export 'utils/utils.dart';

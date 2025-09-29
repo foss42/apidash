@@ -1,5 +1,5 @@
-import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
-import 'package:apidash/dashbot/core/utils/show_dashbot.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/utils/utils.dart';
 import 'package:apidash/dashbot/dashbot_dashboard.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:flutter/material.dart';

@@ -1,10 +1,8 @@
 import 'dart:typed_data';
-
+import 'package:apidash/dashbot/models/models.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'package:apidash/dashbot/core/providers/attachments_provider.dart';
-import 'package:apidash/dashbot/core/model/chat_attachment.dart';
 
 void main() {
   group('attachmentsProvider', () {

@@ -1,8 +1,8 @@
-import 'package:apidash/dashbot/features/home/view/pages/dashbot_home_page.dart';
-import 'package:apidash/dashbot/features/home/view/widgets/home_screen_task_button.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
-import 'package:apidash/dashbot/core/routes/dashbot_routes.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/pages/pages.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/routes/routes.dart';
+import 'package:apidash/dashbot/widgets/widgets.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash_core/apidash_core.dart';

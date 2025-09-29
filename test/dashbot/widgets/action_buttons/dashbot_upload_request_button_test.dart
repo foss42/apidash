@@ -1,14 +1,12 @@
 import 'dart:typed_data';
-
+import 'package:apidash/dashbot/widgets/dashbot_action_buttons/dashbot_upload_requests_button.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:apidash/dashbot/core/common/widgets/dashbot_action_buttons/dashbot_upload_requests_button.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_action.dart';
-import 'package:apidash/dashbot/features/chat/viewmodel/chat_viewmodel.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/models/chat_action.dart';
+import 'package:apidash/dashbot/providers/chat_viewmodel.dart';
 
 import '../../../test_consts.dart';
 import 'test_utils.dart';

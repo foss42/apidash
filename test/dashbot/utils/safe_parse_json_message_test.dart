@@ -1,4 +1,4 @@
-import 'package:apidash/dashbot/core/utils/safe_parse_json_message.dart';
+import 'package:apidash/dashbot/utils/utils.dart';
 import 'package:test/test.dart';
 
 void main() {

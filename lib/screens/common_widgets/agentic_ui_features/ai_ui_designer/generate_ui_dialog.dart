@@ -114,7 +114,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
           FrameWorkSelectorPage(
             content: widget.content,
             onNext: (apiResponse, targetLanguage) async {
-              print("Generating SDUI Code");
+              debugPrint("Generating SDUI Code");
               final sdui = await generateSDUICode(apiResponse);
               if (sdui == null) return;
               setState(() {
@@ -129,7 +129,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 40.0),
-                child: Container(
+                child: SizedBox(
                   height: 500,
                   child: SendingWidget(
                     startSendingTime: DateTime.now(),

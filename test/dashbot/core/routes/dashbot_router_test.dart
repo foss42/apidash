@@ -1,9 +1,7 @@
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:apidash/dashbot/core/routes/dashbot_router.dart';
-import 'package:apidash/dashbot/core/routes/dashbot_routes.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
 
 void main() {
   group('DashbotRouter', () {

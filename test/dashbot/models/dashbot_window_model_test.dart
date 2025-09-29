@@ -1,4 +1,4 @@
-import 'package:apidash/dashbot/core/model/dashbot_window_model.dart';
+import 'package:apidash/dashbot/models/models.dart';
 import 'package:test/test.dart';
 
 void main() {

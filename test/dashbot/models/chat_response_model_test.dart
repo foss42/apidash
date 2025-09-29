@@ -1,5 +1,5 @@
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_response.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/models/models.dart';
 import 'package:test/test.dart';
 
 void main() {

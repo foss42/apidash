@@ -1,12 +1,10 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'core/routes/dashbot_router.dart';
-import 'core/routes/dashbot_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/providers/dashbot_window_notifier.dart';
-import 'core/utils/show_dashbot.dart';
 import 'package:apidash/consts.dart';
-import 'core/providers/dashbot_active_route_provider.dart';
+import 'providers/providers.dart';
+import 'routes/routes.dart';
+import 'utils/utils.dart';
 
 class DashbotTab extends ConsumerStatefulWidget {
   const DashbotTab({super.key});

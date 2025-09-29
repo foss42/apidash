@@ -1,4 +1,4 @@
-import 'package:apidash/dashbot/core/constants/constants.dart';
+import 'package:apidash/dashbot/constants.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -21,7 +21,7 @@ void main() {
         ChatActionType.uploadAsset: 'upload_asset',
       };
       map.forEach((enumVal, strVal) {
-        expect(chatActionTypeToString(enumVal), strVal);
+        expect(enumVal.text, strVal);
         expect(chatActionTypeFromString(strVal), enumVal);
       });
       // unknown
@@ -38,7 +38,7 @@ void main() {
         ChatActionTarget.documentation: 'documentation',
       };
       map.forEach((enumVal, strVal) {
-        expect(chatActionTargetToString(enumVal), strVal);
+        expect(enumVal.name, strVal);
         expect(chatActionTargetFromString(strVal), enumVal);
       });
       // unknown maps to default httpRequestModel

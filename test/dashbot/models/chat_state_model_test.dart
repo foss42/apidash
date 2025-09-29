@@ -1,7 +1,6 @@
-import 'package:apidash/dashbot/core/error/chat_failure.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_message.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_state.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/error/chat_failure.dart';
+import 'package:apidash/dashbot/models/models.dart';
 import 'package:test/test.dart';
 
 void main() {

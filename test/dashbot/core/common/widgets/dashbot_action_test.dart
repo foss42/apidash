@@ -1,7 +1,6 @@
-import 'package:apidash/dashbot/core/common/widgets/dashbot_action.dart';
-import 'package:apidash/dashbot/core/common/widgets/dashbot_action_buttons/dashbot_actions_buttons.dart';
-import 'package:apidash/dashbot/core/constants/constants.dart';
-import 'package:apidash/dashbot/features/chat/models/chat_action.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/models/models.dart';
+import 'package:apidash/dashbot/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:test/test.dart';
 

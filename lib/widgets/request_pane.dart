@@ -53,29 +53,29 @@ class _RequestPaneState extends State<RequestPane>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      // FilledButton.tonalIcon(
-                      //   style: FilledButton.styleFrom(
-                      //     padding: kPh12,
-                      //     minimumSize: const Size(44, 44),
-                      //   ),
-                      //   onPressed: widget.onPressedCodeButton,
-                      //   icon: Icon(
-                      //     widget.codePaneVisible
-                      //         ? Icons.code_off_rounded
-                      //         : Icons.code_rounded,
-                      //     size: 18,
-                      //   ),
-                      //   label: SizedBox(
-                      //     width: 80,
-                      //     child: Text(
-                      //       widget.codePaneVisible
-                      //           ? kLabelHideCode
-                      //           : kLabelViewCode,
-                      //       overflow: TextOverflow.ellipsis,
-                      //       maxLines: 1,
-                      //     ),
-                      //   ),
-                      // ),
+                      FilledButton.tonalIcon(
+                        style: FilledButton.styleFrom(
+                          padding: kPh12,
+                          minimumSize: const Size(44, 44),
+                        ),
+                        onPressed: widget.onPressedCodeButton,
+                        icon: Icon(
+                          widget.codePaneVisible
+                              ? Icons.code_off_rounded
+                              : Icons.code_rounded,
+                          size: 18,
+                        ),
+                        label: SizedBox(
+                          width: 80,
+                          child: Text(
+                            widget.codePaneVisible
+                                ? kLabelHideCode
+                                : kLabelViewCode,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

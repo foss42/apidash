@@ -48,7 +48,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
         ),
         backgroundColor: Colors.redAccent,
       ));
-      print("exportCode: Failed; ABORTING");
+      debugPrint("exportCode: Failed; ABORTING");
       return;
     }
 
@@ -139,10 +139,10 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                 alignment: Alignment.centerRight,
                 child: (exportingCode)
                     ? Container(
+                        margin: EdgeInsets.only(right: 10),
                         child: CircularProgressIndicator(
                           strokeWidth: 1,
                         ),
-                        margin: EdgeInsets.only(right: 10),
                       )
                     : FilledButton.tonalIcon(
                         style: FilledButton.styleFrom(

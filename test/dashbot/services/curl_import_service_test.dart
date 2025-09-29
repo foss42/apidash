@@ -1,5 +1,5 @@
-import 'package:apidash/dashbot/core/services/curl_import_service.dart';
-import 'package:curl_parser/curl_parser.dart';
+import 'package:apidash/dashbot/services/services.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 
 void main() {

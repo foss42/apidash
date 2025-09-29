@@ -126,7 +126,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       final isExtraLargeWindow = dialogWidth > WindowWidth.large.value;
 
       if (isExtraLargeWindow || isLargeWindow || isExpandedWindow) {
-        return Container(
+        return SizedBox(
           height: 600,
           width: MediaQuery.of(context).size.width * 0.8,
           child: Row(
@@ -153,7 +153,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
           ),
         );
       } else {
-        return Container(
+        return SizedBox(
           height: 600,
           // width: MediaQuery.of(context).size.width * 0.8,
           child: IndexedStack(
