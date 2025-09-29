@@ -1,6 +1,7 @@
 ## 0.0.4-dev
 
 - Add OAuth support.
+- Bump dependency versions.
 
 ## 0.0.3
 

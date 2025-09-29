@@ -6,6 +6,7 @@ import '../../common_widgets/common_widgets.dart';
 import '../../home_page/editor_pane/details_card/response_pane.dart';
 import '../../home_page/editor_pane/editor_request.dart';
 import '../../home_page/editor_pane/url_card.dart';
+import '../../../dashbot/dashbot_tab.dart';
 
 class RequestTabs extends StatelessWidget {
   const RequestTabs({
@@ -30,6 +31,7 @@ class RequestTabs extends StatelessWidget {
             Tab(text: kLabelRequest),
             Tab(text: kLabelResponse),
             Tab(text: kLabelCode),
+            Tab(text: kLabelDashBot)
           ],
         ),
         Expanded(child: RequestTabviews(controller: controller))
@@ -53,6 +55,7 @@ class RequestTabviews extends StatelessWidget {
           child: ResponsePane(),
         ),
         CodePane(),
+        DashbotTab(),
       ],
     );
   }

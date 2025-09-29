@@ -1,8 +1,7 @@
-import 'package:better_networking/consts.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:seed/seed.dart';
+import '../../consts.dart';
 
 part 'auth_oauth2_model.g.dart';
-
 part 'auth_oauth2_model.freezed.dart';
 
 @freezed

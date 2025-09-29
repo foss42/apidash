@@ -1,16 +1,15 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash/widgets/widget_sending.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'framework_selector.dart';
 import 'sdui_preview.dart';
 
-void showCustomDialog(BuildContext context, Widget dialogContent) {
-  showDialog(
+Future<T?> showCustomDialog<T>(BuildContext context, Widget dialogContent,
+    {bool useRootNavigator = true}) {
+  return showDialog<T>(
     context: context,
+    useRootNavigator: useRootNavigator,
     builder: (BuildContext context) {
       return Dialog(
         shape: RoundedRectangleBorder(
@@ -115,7 +114,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
           FrameWorkSelectorPage(
             content: widget.content,
             onNext: (apiResponse, targetLanguage) async {
-              print("Generating SDUI Code");
+              debugPrint("Generating SDUI Code");
               final sdui = await generateSDUICode(apiResponse);
               if (sdui == null) return;
               setState(() {
@@ -130,7 +129,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.only(top: 40.0),
-                child: Container(
+                child: SizedBox(
                   height: 500,
                   child: SendingWidget(
                     startSendingTime: DateTime.now(),
@@ -147,45 +146,6 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
             sduiCode: generatedSDUI,
           )
       ],
-    );
-  }
-}
-
-class AIGenerateUIButton extends ConsumerWidget {
-  const AIGenerateUIButton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FilledButton.tonalIcon(
-      style: FilledButton.styleFrom(
-        padding: kPh12,
-        minimumSize: const Size(44, 44),
-      ),
-      onPressed: () {
-        final model = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel));
-        if (model == null) return;
-
-        String data = "";
-        if (model.sseOutput != null) {
-          data = model.sseOutput!.join('');
-        } else {
-          data = model.formattedBody ?? "<>";
-        }
-
-        showCustomDialog(
-          context,
-          GenerateUIDialog(content: data),
-        );
-      },
-      icon: Icon(
-        Icons.generating_tokens,
-      ),
-      label: const SizedBox(
-        child: Text(
-          kLabelGenerateUI,
-        ),
-      ),
     );
   }
 }
