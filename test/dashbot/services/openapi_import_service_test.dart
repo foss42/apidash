@@ -31,6 +31,86 @@ void main() {
       expect(summary, contains('POST'));
     });
 
+    test('tryParseSpec handles problematic security field with empty arrays',
+        () {
+      const specWithEmptySecurityArray = '''
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cat Fact API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/fact": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "security": [[]]
+}''';
+
+      final result =
+          OpenApiImportService.tryParseSpec(specWithEmptySecurityArray);
+      expect(result, isNotNull);
+      expect(result!.info.title, equals('Cat Fact API'));
+      expect(result.info.version, equals('1.0.0'));
+      expect(result.paths, isNotNull);
+      expect(result.paths!.keys, contains('/fact'));
+    });
+
+    test('tryParseSpec handles valid security field with actual requirements',
+        () {
+      const specWithRealSecurity = '''
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Secured API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/secured": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ]
+}''';
+
+      final result = OpenApiImportService.tryParseSpec(specWithRealSecurity);
+      expect(result, isNotNull);
+      expect(result!.info.title, equals('Secured API'));
+    });
+
+    test('tryParseSpec returns null for invalid JSON', () {
+      const invalidSpec = 'not valid json';
+      final result = OpenApiImportService.tryParseSpec(invalidSpec);
+      expect(result, isNull);
+    });
+
+    test('tryParseSpec returns null for non-OpenAPI JSON', () {
+      const nonOpenApiSpec = '''
+{
+  "notOpenApi": true,
+  "someField": "value"
+}''';
+      final result = OpenApiImportService.tryParseSpec(nonOpenApiSpec);
+      expect(result, isNull);
+    });
+
     test('extractSpecMeta includes endpoints & baseUrl', () {
       final spec = OpenApiImportService.tryParseSpec(_specJson)!;
       final meta = OpenApiImportService.extractSpecMeta(spec);
