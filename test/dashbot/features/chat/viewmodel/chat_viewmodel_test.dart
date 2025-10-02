@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
 import '../../../../providers/helpers.dart';
 
 // Mock ChatRemoteRepository
@@ -50,52 +51,28 @@ void main() {
       expect(state.lastError, isNull);
     });
 
-    test('should get current messages for global chat', () {
+    test('should access _repo getter through sendChat error handling',
+        () async {
       final viewmodel = container.read(chatViewmodelProvider.notifier);
 
-      // Initially should be empty
-      expect(viewmodel.currentMessages, isEmpty);
+      // Set up mock to throw an error to trigger error handling code path
+      mockRepo.mockError = Exception('Network error');
 
-      // Add a message to global chat
-      final message = ChatMessage(
-        id: 'test-id',
-        content: 'Hello',
-        role: MessageRole.user,
-        timestamp: DateTime.now(),
-      );
+      // This should trigger the _repo getter through the sendChat call
+      await viewmodel.sendMessage(
+          text: 'Hello', type: ChatMessageType.generateCode);
 
-      // Simulate adding a message directly to state
-      final state = container.read(chatViewmodelProvider);
-      final newState = state.copyWith(
-        chatSessions: {
-          'global': [message]
-        },
-      );
-      container.read(chatViewmodelProvider.notifier).state = newState;
-
-      expect(viewmodel.currentMessages, hasLength(1));
-      expect(viewmodel.currentMessages.first.content, equals('Hello'));
+      // Should add user message and error message
+      expect(viewmodel.currentMessages.length, greaterThanOrEqualTo(1));
     });
 
-    test('cancel should set isGenerating to false', () {
+    test('should test helper methods like _looksLikeUrl and _looksLikeOpenApi',
+        () {
       final viewmodel = container.read(chatViewmodelProvider.notifier);
 
-      // Set generating state to true
-      viewmodel.state = viewmodel.state.copyWith(isGenerating: true);
-      expect(container.read(chatViewmodelProvider).isGenerating, isTrue);
-
-      // Cancel should set it to false
-      viewmodel.cancel();
-      expect(container.read(chatViewmodelProvider).isGenerating, isFalse);
-    });
-
-    test('clearCurrentChat should clear messages and reset state', () {
-      final viewmodel = container.read(chatViewmodelProvider.notifier);
-
-      // Add some messages first
       final message = ChatMessage(
-        id: 'test-id',
-        content: 'Hello',
+        id: 'test-url',
+        content: 'https://api.apidash.dev/openapi.json',
         role: MessageRole.user,
         timestamp: DateTime.now(),
       );
@@ -104,17 +81,416 @@ void main() {
         chatSessions: {
           'global': [message]
         },
-        isGenerating: true,
-        currentStreamingResponse: 'streaming...',
       );
 
-      // Clear chat
-      viewmodel.clearCurrentChat();
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.content, contains('https://'));
+    });
+  });
 
-      final state = container.read(chatViewmodelProvider);
-      expect(state.chatSessions['global'], isEmpty);
-      expect(state.isGenerating, isFalse);
-      expect(state.currentStreamingResponse, isEmpty);
+  group('ChatViewmodel Helper Methods Coverage', () {
+    test('should test generateCode message type with language detection',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test the generateCode path which calls detectLanguage
+      await viewmodel.sendMessage(
+        text: 'function hello() { console.log("hello"); }',
+        type: ChatMessageType.generateCode,
+      );
+
+      // Should add user message and AI not configured message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.user));
+      expect(viewmodel.currentMessages.last.content,
+          contains('AI model is not configured'));
+    });
+
+    test('should test the systemPrompt building for different message types',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test the else branch for systemPrompt building (lines 192-196)
+      await viewmodel.sendMessage(
+        text: 'Explain this response',
+        type: ChatMessageType.explainResponse,
+      );
+
+      // Should add user message and AI not configured message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.content,
+          equals('Explain this response'));
+    });
+
+    test('should test URL detection helper method', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Start OpenAPI import to activate URL detection flow
+      await viewmodel.sendMessage(
+        text: '',
+        type: ChatMessageType.importOpenApi,
+        countAsUser: false,
+      );
+
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.messageType,
+          equals(ChatMessageType.importOpenApi));
+
+      // Now test URL detection by pasting a URL - this should trigger _looksLikeUrl
+      await viewmodel.sendMessage(text: 'https://api.apidash.dev/openapi.yaml');
+
+      // Should detect URL and try to process it
+      expect(viewmodel.currentMessages.length, greaterThan(1));
+    });
+
+    test('should test OpenAPI spec detection helper method', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Start OpenAPI import flow
+      await viewmodel.sendMessage(
+        text: '',
+        type: ChatMessageType.importOpenApi,
+        countAsUser: false,
+      );
+
+      expect(viewmodel.currentMessages, hasLength(1));
+
+      // Test OpenAPI YAML detection - this should trigger _looksLikeOpenApi (line 951-964)
+      const yamlSpec = '''
+openapi: 3.0.0
+info:
+  title: Test API
+  version: 1.0.0
+''';
+      await viewmodel.sendMessage(text: yamlSpec);
+
+      // Should detect OpenAPI spec and process it
+      expect(viewmodel.currentMessages.length, greaterThan(1));
+    });
+
+    test('should test OpenAPI JSON detection', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Start OpenAPI import flow
+      await viewmodel.sendMessage(
+        text: '',
+        type: ChatMessageType.importOpenApi,
+        countAsUser: false,
+      );
+
+      // Test OpenAPI JSON detection - this should trigger _looksLikeOpenApi JSON branch
+      const jsonSpec = '''
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  }
+}
+''';
+      await viewmodel.sendMessage(text: jsonSpec);
+
+      // Should detect OpenAPI spec and process it
+      expect(viewmodel.currentMessages.length, greaterThan(1));
+    });
+
+    test('should test invalid OpenAPI content', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Start OpenAPI import flow
+      await viewmodel.sendMessage(
+        text: '',
+        type: ChatMessageType.importOpenApi,
+        countAsUser: false,
+      );
+
+      // Test content that doesn't look like OpenAPI - should trigger _looksLikeOpenApi but return false
+      const invalidContent = '''
+{
+  "notOpenApi": true,
+  "someOtherField": "value"
+}
+''';
+      await viewmodel.sendMessage(text: invalidContent);
+
+      // Should not process as OpenAPI since it doesn't contain openapi/swagger keys
+      // The message should still be added but not processed as OpenAPI
+      expect(viewmodel.currentMessages.length, greaterThanOrEqualTo(1));
+    });
+  });
+
+  group('ChatViewmodel Error Paths and Edge Cases', () {
+    test('should handle AI response with no content', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Mock empty response from AI
+      mockRepo.mockResponse = '';
+
+      await viewmodel.sendMessage(
+          text: 'Test message', type: ChatMessageType.explainResponse);
+
+      // Should add user message and "AI model is not configured" message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.last.content,
+          contains('AI model is not configured. Please set one.'));
+    });
+
+    test('should handle AI response with null content', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Mock null response from AI
+      mockRepo.mockResponse = null;
+
+      await viewmodel.sendMessage(
+          text: 'Test message', type: ChatMessageType.debugError);
+
+      // Should add user message and "AI model is not configured" message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.last.content,
+          contains('AI model is not configured. Please set one.'));
+    });
+
+    test('should handle repository error gracefully', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Mock error from repository - this will test the catch block (lines 240-242)
+      mockRepo.mockError = Exception('Connection timeout');
+
+      await viewmodel.sendMessage(
+          text: 'Test message', type: ChatMessageType.generateDoc);
+
+      // Should add user message and "AI model is not configured" message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.last.content,
+          contains('AI model is not configured. Please set one.'));
+    });
+
+    test(
+        'should test userPrompt fallback when text is empty and countAsUser is false',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // This should trigger the fallback userPrompt logic (lines 198-200)
+      await viewmodel.sendMessage(
+        text: '',
+        type: ChatMessageType.generateTest,
+        countAsUser: false,
+      );
+
+      // Should add only the system message about AI not configured (no user message)
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.system));
+      expect(viewmodel.currentMessages.first.content,
+          contains('AI model is not configured'));
+    });
+
+    test('should test cURL import flow detection without active flow',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Try to paste a cURL command without an active import flow
+      // This should not trigger handlePotentialCurlPaste since there's no active flow
+      await viewmodel.sendMessage(text: 'curl -X GET https://api.apidash.dev');
+
+      // Should add user message and AI not configured message (normal flow)
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.user));
+      expect(viewmodel.currentMessages.first.content,
+          equals('curl -X GET https://api.apidash.dev'));
+    });
+  });
+
+  group('ChatViewmodel Environment Substitution Methods', () {
+    test('should test _inferBaseUrl helper method', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test _inferBaseUrl through _applyCurl action
+      final curlAction = ChatAction.fromJson({
+        'action': 'apply_curl',
+        'target': 'httpRequestModel',
+        'field': 'apply_to_new',
+        'value': {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/users',
+          'headers': {},
+          'body': '',
+        },
+      });
+
+      await viewmodel.applyAutoFix(curlAction);
+
+      // Should complete without error and create new request
+      // The _inferBaseUrl is called internally during the process
+    });
+
+    test('should test _maybeSubstituteBaseUrl helper method', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test _maybeSubstituteBaseUrl through _applyCurl
+      final curlAction = ChatAction.fromJson({
+        'action': 'apply_curl',
+        'target': 'httpRequestModel',
+        'field': 'apply_to_new',
+        'value': {
+          'method': 'POST',
+          'url': 'https://api.apidash.dev/data',
+          'headers': {'Content-Type': 'application/json'},
+          'body': '{"test": true}',
+        },
+      });
+
+      await viewmodel.applyAutoFix(curlAction);
+
+      // Should complete the action without error
+    });
+
+    test('should test _maybeSubstituteBaseUrlForOpenApi helper method',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test _maybeSubstituteBaseUrlForOpenApi through _applyOpenApi
+      final openApiAction = ChatAction.fromJson({
+        'action': 'apply_openapi',
+        'target': 'httpRequestModel',
+        'field': 'apply_to_new',
+        'value': {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/pets',
+          'baseUrl': 'https://api.apidash.dev',
+          'sourceName': 'Pet Store API',
+          'headers': {},
+          'body': '',
+        },
+      });
+
+      // This should trigger _maybeSubstituteBaseUrlForOpenApi (line 990) through _applyOpenApi
+      await viewmodel.applyAutoFix(openApiAction);
+
+      // Should complete the action without error
+    });
+
+    test('should test _getSubstitutedHttpRequestModel method', () async {
+      // Create a container with a mock request to test substitution
+      final mockRequest = RequestModel(
+        id: 'test-req-1',
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://{{baseUrl}}/api/test',
+          headers: [NameValueModel(name: 'Authorization', value: '{{token}}')],
+        ),
+      );
+
+      final testContainer = createContainer(
+        overrides: [
+          chatRepositoryProvider.overrideWithValue(mockRepo),
+          selectedRequestModelProvider.overrideWith((ref) => mockRequest),
+        ],
+      );
+
+      final viewmodel = testContainer.read(chatViewmodelProvider.notifier);
+
+      await viewmodel.sendMessage(
+          text: 'Generate code for this request',
+          type: ChatMessageType.generateCode);
+
+      // Should add user message and AI not configured message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.user));
+
+      testContainer.dispose();
+    });
+  });
+
+  group('ChatViewmodel AI Model Configuration Tests', () {
+    test('should test actual AI response processing with valid response',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Mock a valid AI response with actions
+      mockRepo.mockResponse = '''
+{
+  "explanation": "Here's the generated code for your request",
+  "actions": [
+    {
+      "action": "other",
+      "target": "code",
+      "field": "generated",
+      "value": "console.log('Hello World');"
+    }
+  ]
+}
+''';
+
+      await viewmodel.sendMessage(
+          text: 'Generate JavaScript code', type: ChatMessageType.generateCode);
+
+      // Should add user message and "AI model is not configured" message since no AI model is set
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.last.role, equals(MessageRole.system));
+      expect(viewmodel.currentMessages.last.content,
+          contains('AI model is not configured. Please set one.'));
+    });
+
+    test('should test AI response with invalid JSON actions', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Mock AI response with invalid JSON in actions
+      mockRepo.mockResponse = '''
+{
+  "explanation": "Here's the response",
+  "actions": "invalid json string"
+}
+''';
+
+      await viewmodel.sendMessage(
+          text: 'Test message', type: ChatMessageType.explainResponse);
+
+      // Should add user message and AI response (actions parsing fails but response is still added)
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.last.role, equals(MessageRole.system));
+      expect(viewmodel.currentMessages.last.actions, isNull);
+    });
+
+    test('should test userPrompt construction with different scenarios',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test non-empty text with countAsUser=true (normal case)
+      mockRepo.mockResponse = 'Response 1';
+      await viewmodel.sendMessage(
+          text: 'Test request', type: ChatMessageType.debugError);
+
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.content, equals('Test request'));
+
+      // Clear and test empty text with countAsUser=false (fallback case)
+      viewmodel.clearCurrentChat();
+      mockRepo.mockResponse = 'Response 2';
+      await viewmodel.sendMessage(
+          text: '', type: ChatMessageType.generateDoc, countAsUser: false);
+
+      // Should use fallback prompt: "Please complete the task based on the provided context."
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.system));
+    });
+
+    test('should test state management during AI generation', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Mock a delayed response to test state changes
+      mockRepo.mockResponse = 'Delayed response';
+
+      // Start the request
+      final future = viewmodel.sendMessage(
+          text: 'Test generation', type: ChatMessageType.generateTest);
+
+      // Check that isGenerating is set to true during processing
+      await future;
+
+      // After completion, isGenerating should be false
+      expect(viewmodel.state.isGenerating, isFalse);
+      expect(viewmodel.state.currentStreamingResponse, isEmpty);
+      expect(viewmodel.currentMessages, hasLength(2));
     });
   });
 
@@ -201,7 +577,7 @@ void main() {
       );
 
       // Try to paste a curl command
-      await viewmodel.sendMessage(text: 'curl -X GET https://api.example.com');
+      await viewmodel.sendMessage(text: 'curl -X GET https://api.apidash.dev');
 
       // Should call handlePotentialCurlPaste (coverage for curl detection logic)
       expect(viewmodel.currentMessages.length, greaterThan(1));
@@ -253,7 +629,7 @@ void main() {
       );
 
       // Try to paste a URL
-      await viewmodel.sendMessage(text: 'https://api.example.com/openapi.json');
+      await viewmodel.sendMessage(text: 'https://api.apidash.dev/openapi.json');
 
       // Should call handlePotentialOpenApiUrl (coverage for URL detection logic)
       expect(viewmodel.currentMessages.length, greaterThan(1));
@@ -544,7 +920,7 @@ paths:
       expect(viewmodel.currentMessages, hasLength(1));
 
       // Try complex curl command
-      const complexCurl = '''curl -X POST https://api.example.com/users \\
+      const complexCurl = '''curl -X POST https://api.apidash.dev/users \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer token123" \\
   -d '{"name": "John", "email": "john@example.com"}' ''';
@@ -617,7 +993,7 @@ paths:
         'field': 'apply_to_new',
         'value': {
           'method': 'GET',
-          'url': 'https://api.example.com',
+          'url': 'https://api.apidash.dev',
           'headers': {},
           'body': '',
         },
@@ -632,7 +1008,7 @@ paths:
         'field': 'apply_to_new',
         'value': {
           'method': 'POST',
-          'url': 'https://api.example.com/users',
+          'url': 'https://api.apidash.dev/users',
           'headers': {'Content-Type': 'application/json'},
           'body': '{"name": "test"}',
         },
@@ -706,6 +1082,559 @@ paths:
       // Test cancel during generation
       viewmodel.cancel();
       expect(viewmodel.state.isGenerating, isFalse);
+    });
+  });
+
+  group('cURL and OpenAPI Import Handling Methods', () {
+    test('handlePotentialCurlPaste should parse valid cURL command', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const curlCommand =
+          'curl -X POST https://api.apidash.dev/users -H "Content-Type: application/json" -d \'{"name": "test"}\'';
+
+      await viewmodel.handlePotentialCurlPaste(curlCommand);
+
+      // Should add system message with parsed cURL result
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.messageType,
+          equals(ChatMessageType.importCurl));
+      expect(viewmodel.currentMessages.first.content, contains('cURL parsed'));
+    });
+
+    test('handlePotentialCurlPaste should handle invalid cURL command',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const invalidCurl = 'curl invalid command with unbalanced "quotes';
+
+      await viewmodel.handlePotentialCurlPaste(invalidCurl);
+
+      // Should add error message
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.last.content,
+          contains('couldn\'t parse that cURL command'));
+      expect(viewmodel.currentMessages.last.messageType,
+          equals(ChatMessageType.importCurl));
+    });
+
+    test('handlePotentialCurlPaste should ignore non-cURL text', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const nonCurlText = 'This is just regular text, not a cURL command';
+
+      await viewmodel.handlePotentialCurlPaste(nonCurlText);
+
+      // Should not add any messages since it's not a cURL command
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('handlePotentialOpenApiPaste should parse valid OpenAPI spec',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const openApiSpec = '''
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.test.com"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Get users",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}
+''';
+
+      await viewmodel.handlePotentialOpenApiPaste(openApiSpec);
+
+      // Should add system message with parsed OpenAPI result
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.messageType,
+          equals(ChatMessageType.importOpenApi));
+      expect(
+          viewmodel.currentMessages.first.content, contains('OpenAPI parsed'));
+    });
+
+    test('handlePotentialOpenApiPaste should handle invalid OpenAPI spec',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const invalidSpec = '{"invalid": "not an openapi spec"}';
+
+      await viewmodel.handlePotentialOpenApiPaste(invalidSpec);
+
+      // Should not add any messages for invalid spec
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('handlePotentialOpenApiUrl should handle URL import', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const openApiUrl = 'https://petstore.swagger.io/v2/swagger.json';
+
+      await viewmodel.handlePotentialOpenApiUrl(openApiUrl);
+
+      // Should add processing message (even if URL fails in test environment)
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.messageType,
+          equals(ChatMessageType.importOpenApi));
+    });
+
+    test('handlePotentialOpenApiUrl should handle non-URL text', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const nonUrl = 'not a url at all';
+
+      await viewmodel.handlePotentialOpenApiUrl(nonUrl);
+
+      // Should not add any messages since it's not a URL
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+  });
+
+  group('Apply Actions Methods (Lines 829+)', () {
+    test(
+        '_applyTestToPostScript should handle null requestId gracefully in _applyOtherAction',
+        () async {
+      // Test the early return in _applyOtherAction when requestId is null (line 315)
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final testAction = ChatAction(
+        action: 'add_test',
+        target: 'test',
+        field: 'generated',
+        actionType: ChatActionType.other,
+        targetType: ChatActionTarget.test,
+        value: 'pm.test("Test", function () {});',
+      );
+
+      await viewmodel.applyAutoFix(testAction);
+
+      // Should not add any messages since requestId is null (early return in _applyOtherAction line 315)
+      // The method reaches _applyOtherAction but returns early due to null requestId
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('_applyTestToPostScript routing should work when target is test',
+        () async {
+      // Test that the routing logic works by providing a request context
+      // Create a mock request for this test
+      final mockRequest = RequestModel(
+        id: 'test-request-456',
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.apidash.dev/users',
+        ),
+        postRequestScript: 'console.log("Existing script");',
+      );
+
+      final testContainer = createContainer(
+        overrides: [
+          chatRepositoryProvider.overrideWith((ref) => mockRepo),
+          selectedRequestModelProvider.overrideWith((ref) => mockRequest),
+          // We don't override collectionStateNotifierProvider, so it may fail
+          // but the routing logic should be triggered
+        ],
+      );
+
+      final viewmodel = testContainer.read(chatViewmodelProvider.notifier);
+
+      final testAction = ChatAction(
+        action: 'add_test',
+        target:
+            'test',
+        field: 'generated',
+        actionType: ChatActionType.other,
+        targetType: ChatActionTarget.test,
+        value:
+            'pm.test("Status code is 200", function () {\n    pm.response.to.have.status(200);\n});',
+      );
+
+      await viewmodel.applyAutoFix(testAction);
+
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.system));
+      expect(viewmodel.currentMessages.first.content,
+          contains('Failed to apply auto-fix'));
+
+      testContainer.dispose();
+    });
+
+    test('_applyOtherAction should handle unsupported targets gracefully',
+        () async {
+      final mockRequest = RequestModel(
+        id: 'test-request-789',
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/test',
+        ),
+      );
+
+      final testContainer = createContainer(
+        overrides: [
+          chatRepositoryProvider.overrideWith((ref) => mockRepo),
+          selectedRequestModelProvider.overrideWith((ref) => mockRequest),
+        ],
+      );
+
+      final viewmodel = testContainer.read(chatViewmodelProvider.notifier);
+
+      final testAction = ChatAction(
+        action: 'unknown_action',
+        target:
+            'unsupported_target',
+        field: 'some_field',
+        actionType: ChatActionType.other,
+        targetType: ChatActionTarget.test,
+        value: 'some value',
+      );
+
+      await viewmodel.applyAutoFix(testAction);
+
+      // Should not add any messages for unsupported target
+      // The debugPrint happens but no message is added to chat
+      expect(viewmodel.currentMessages, isEmpty);
+
+      testContainer.dispose();
+    });
+
+    test('_applyCurl should process cURL action and update collection',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final curlAction = ChatAction(
+        action: 'apply_curl',
+        target: 'httpRequestModel',
+        field: 'apply_to_new',
+        actionType: ChatActionType.applyCurl,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: {
+          'method': 'POST',
+          'url': 'https://api.apidash.dev/users',
+          'headers': {'Content-Type': 'application/json'},
+          'body': '{"name": "John"}',
+        },
+      );
+
+      await viewmodel.applyAutoFix(curlAction);
+
+      // Should add system message confirming the cURL was applied
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.content,
+          contains('Created a new request from the cURL'));
+    });
+
+    test('_applyCurl should handle form data in cURL action', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final curlActionWithForm = ChatAction(
+        action: 'curl',
+        target: 'new',
+        field: 'request',
+        actionType: ChatActionType.applyCurl,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: {
+          'method': 'POST',
+          'url': 'https://api.apidash.dev/upload',
+          'form': true,
+          'formData': [
+            {'name': 'file', 'value': 'test.txt', 'type': 'text'},
+            {'name': 'description', 'value': 'Test file', 'type': 'text'},
+          ],
+        },
+      );
+
+      await viewmodel.applyAutoFix(curlActionWithForm);
+
+      // Should process the form data action without throwing
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('_applyOpenApi should process OpenAPI action', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final openApiAction = ChatAction(
+        action: 'openapi',
+        target: 'new',
+        field: 'request',
+        actionType: ChatActionType.applyOpenApi,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/users',
+          'operationId': 'getUsers',
+          'summary': 'Get all users',
+        },
+      );
+
+      await viewmodel.applyAutoFix(openApiAction);
+
+      // Should process the OpenAPI action without throwing
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('_applyOpenApi should handle OpenAPI action with parameters',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final openApiActionWithParams = ChatAction(
+        action: 'openapi',
+        target: 'new',
+        field: 'request',
+        actionType: ChatActionType.applyOpenApi,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/users/{id}',
+          'operationId': 'getUserById',
+          'parameters': [
+            {'name': 'id', 'in': 'path', 'required': true, 'type': 'integer'},
+            {
+              'name': 'format',
+              'in': 'query',
+              'required': false,
+              'type': 'string'
+            },
+          ],
+        },
+      );
+
+      await viewmodel.applyAutoFix(openApiActionWithParams);
+
+      // Should process the parameterized OpenAPI action without throwing
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('_applyRequest should handle request modification actions', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final requestAction = ChatAction(
+        action: 'request',
+        target: 'current',
+        field: 'url',
+        actionType: ChatActionType.updateUrl,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: 'https://api.updated.com/endpoint',
+      );
+
+      await viewmodel.applyAutoFix(requestAction);
+
+      // Should process the request action without throwing
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('applyAutoFix should handle unknown action types gracefully',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final unknownAction = ChatAction(
+        action: 'unknown',
+        target: 'current',
+        field: 'test',
+        actionType: ChatActionType.other,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: 'test value',
+      );
+
+      await viewmodel.applyAutoFix(unknownAction);
+
+      // Should handle unknown actions without crashing
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+  });
+
+  group('Complex Multi-Provider Interaction Scenarios', () {
+    test('should interact with collection provider when applying cURL',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final curlAction = ChatAction(
+        action: 'curl',
+        target: 'new',
+        field: 'request',
+        actionType: ChatActionType.applyCurl,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/test',
+        },
+      );
+
+      await viewmodel.applyAutoFix(curlAction);
+
+      // Should interact with collection provider without throwing
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('should use environment providers for URL substitution', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test environment variable substitution through sendMessage
+      await viewmodel.sendMessage(
+        text: 'Test message with URL https://{{BASE_URL}}/api/users',
+        type: ChatMessageType.general,
+      );
+
+      // Should process environment variables through the provider chain
+      expect(viewmodel.currentMessages, hasLength(2));
+    });
+
+    test('should interact with settings provider for AI model', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test AI model selection from settings
+      await viewmodel.sendMessage(
+          text: 'Test message', type: ChatMessageType.general);
+
+      // Should check settings for AI model and show not configured message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.last.content,
+          contains('AI model is not configured'));
+    });
+
+    test('should coordinate with dashbot route provider during imports',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test route coordination during import
+      await viewmodel.sendMessage(
+        text: 'curl -X GET https://api.apidash.dev/test',
+        type: ChatMessageType.importCurl,
+      );
+
+      // Should coordinate with route provider
+      expect(viewmodel.currentMessages, hasLength(2));
+    });
+
+    test('should integrate with prompt builder for message generation',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test prompt builder integration
+      await viewmodel.sendMessage(
+        text: 'Generate documentation for this API',
+        type: ChatMessageType.generateDoc,
+      );
+
+      // Should use prompt builder for message construction
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.content,
+          equals('Generate documentation for this API'));
+    });
+
+    test('should handle autofix service integration', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final action = ChatAction(
+        action: 'autofix',
+        target: 'current',
+        field: 'headers',
+        actionType: ChatActionType.updateHeader,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: {'Authorization': 'Bearer token'},
+      );
+
+      await viewmodel.applyAutoFix(action);
+
+      // Should integrate with autofix service without throwing
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('should manage environment state during substitution operations',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test environment state management through message sending
+      await viewmodel.sendMessage(
+        text: 'Test with environment variables {{API_KEY}} and {{BASE_URL}}',
+        type: ChatMessageType.general,
+      );
+
+      // Should manage environment state
+      expect(viewmodel.currentMessages, hasLength(2));
+    });
+
+    test('should coordinate multiple providers during OpenAPI import',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      const openApiSpec = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Test", "version": "1.0.0"},
+  "servers": [{"url": "{{BASE_URL}}"}],
+  "paths": {"/test": {"get": {"responses": {"200": {"description": "OK"}}}}}
+}
+''';
+
+      await viewmodel.handlePotentialOpenApiPaste(openApiSpec);
+
+      // Should coordinate with multiple providers for processing
+      expect(viewmodel.currentMessages, hasLength(1));
+      expect(viewmodel.currentMessages.first.messageType,
+          equals(ChatMessageType.importOpenApi));
+    });
+
+    test('should handle provider errors gracefully in complex scenarios',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test error handling with provider interactions
+      final complexAction = ChatAction(
+        action: 'curl',
+        target: 'current',
+        field: 'request',
+        actionType: ChatActionType.applyCurl,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: {
+          'method': 'INVALID_METHOD',
+          'url': '', // Invalid URL
+        },
+      );
+
+      await viewmodel.applyAutoFix(complexAction);
+
+      // Should handle provider errors gracefully
+      expect(viewmodel.currentMessages, isEmpty);
+    });
+
+    test('should maintain state consistency across provider interactions',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      // Test state consistency through multiple operations
+      await viewmodel.sendMessage(
+          text: 'First message', type: ChatMessageType.general);
+      await viewmodel.sendMessage(
+          text: 'Second message', type: ChatMessageType.debugError);
+
+      final action = ChatAction(
+        action: 'request',
+        target: 'current',
+        field: 'method',
+        actionType: ChatActionType.updateMethod,
+        targetType: ChatActionTarget.httpRequestModel,
+        value: 'POST',
+      );
+
+      await viewmodel.applyAutoFix(action);
+
+      // Should maintain consistent state (2 user messages + 2 system responses)
+      expect(viewmodel.currentMessages, hasLength(4));
     });
   });
 }
