@@ -84,7 +84,7 @@ API Dash can be downloaded from the links below:
 | HTTP | ✅ |
 | GraphQL | ✅ |
 | SSE/Streaming | ✅ | 
-| AI | https://github.com/foss42/apidash/issues/871 | 
+| AI | ✅ | 
 | WebSocket | https://github.com/foss42/apidash/issues/15 |
 | MQTT | https://github.com/foss42/apidash/issues/115 |
 | gRPC | https://github.com/foss42/apidash/issues/14 |
@@ -94,7 +94,7 @@ API Dash can be downloaded from the links below:
 | Postman | ✅ |
 | cURL | ✅ |
 | Insomnia | ✅ | 
-| OpenAPI | https://github.com/foss42/apidash/issues/121 |
+| OpenAPI | ✅ |
 | hurl | https://github.com/foss42/apidash/issues/123 |
 | HAR | ✅ |
 
