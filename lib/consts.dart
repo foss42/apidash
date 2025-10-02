@@ -450,6 +450,7 @@ const kLabelDownload = "Download";
 const kLabelSaving = "Saving";
 const kLabelSaved = "Saved";
 const kLabelCode = "Code";
+const kLabelDashBot = "DashBot";
 const kLabelDuplicate = "Duplicate";
 const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
@@ -511,3 +512,6 @@ const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
 const kLabelGenerateUI = "Generate UI";
+// Terminal Page
+const kMsgNoLogs = 'No logs yet';
+const kMsgSendToView = 'Send a request to view its details in the console.';

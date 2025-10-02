@@ -22,3 +22,10 @@ const kFormDataButtonLabelTextStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 const kTextStylePopupMenuItem = TextStyle(fontSize: 14);
+
+const kTextStyleSmall = TextStyle(fontSize: 12);
+const kTextStyleMedium = TextStyle(fontSize: 14);
+const kTextStyleLarge = TextStyle(fontSize: 16);
+const kTextStyleXLarge = TextStyle(fontSize: 18);
+const kTextStyleXXLarge = TextStyle(fontSize: 20);
+const kTextStyleXXXLarge = TextStyle(fontSize: 22);

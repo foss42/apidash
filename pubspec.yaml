@@ -22,12 +22,12 @@ dependencies:
   desktop_drop: ^0.5.0
   extended_text_field: ^16.0.0
   file_selector: ^1.0.3
-  flex_color_scheme: ^8.2.0
+  flex_color_scheme: ^8.3.0
   flutter_code_editor: ^0.3.3
   flutter_highlight: ^0.7.0
   flutter_highlighter: ^0.1.0
   flutter_hooks: ^0.21.2
-  flutter_js: ^0.8.2
+  flutter_js: ^0.8.5
   flutter_markdown: ^0.7.6+2
   flutter_portal: ^1.1.4
   flutter_riverpod: ^2.5.1
@@ -64,7 +64,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   share_plus: ^10.1.4
   shared_preferences: ^2.5.2
-  stac: ^0.11.0
+  stac: ^1.0.0-dev.7
   url_launcher: ^6.2.5
   uuid: ^4.5.0
   vector_graphics_compiler: ^1.1.9+1
@@ -86,6 +86,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.4.15
+  file_selector_platform_interface: ^2.6.2
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.5
@@ -94,6 +95,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   melos: ^6.3.2
+  mocktail: ^1.0.4
   spot: ^0.17.0
   test: ^1.25.2
 
@@ -101,3 +103,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/dashbot/

@@ -1,5 +1,3 @@
-import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
-import 'package:apidash/screens/common_widgets/agentic_ui_features/tool_generation/generate_tool_dialog.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -65,15 +63,6 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
           padding: kP10,
           child: Column(
             children: [
-              if (!widget.isPartOfHistory)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(child: GenerateToolButton()),
-                    SizedBox(width: 10),
-                    Expanded(child: AIGenerateUIButton()),
-                  ],
-                ),
               kVSpacer10,
               Row(
                 children: [

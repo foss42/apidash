@@ -270,6 +270,214 @@ void main() {
     },
   );
 
+  test('parses with common non-request flags without error', () {
+    const cmd = r"""curl \
+  --silent --compressed -o out.txt -i --globoff \
+  --url 'https://api.apidash.dev/echo' \
+  -H 'Accept: */*'""";
+    final curl = Curl.tryParse(cmd);
+    expect(curl, isNotNull);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        headers: {'Accept': '*/*'},
+      ),
+    );
+  });
+
+  test('parses with verbose, connect-timeout, retry, and output flags', () {
+    const cmd = r"""curl -v \
+  --connect-timeout 10 \
+  --retry 3 \
+  --output response.json \
+  --url 'https://api.apidash.dev/echo' \
+  -H 'Content-Type: application/json' \
+  --data '{"x":1}'""";
+    final curl = Curl.tryParse(cmd);
+    expect(curl, isNotNull);
+    expect(
+      curl,
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        headers: {'Content-Type': 'application/json'},
+        data: '{"x":1}',
+      ),
+    );
+  });
+
+  test('merges multiple data flags and defaults to POST', () {
+    const cmd = r"""curl \
+  --url 'https://api.apidash.dev/submit' \
+  --data-urlencode 'a=hello world' \
+  --data-raw 'b=2' \
+  --data-binary 'c=3' \
+  -H 'Content-Type: application/x-www-form-urlencoded'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/submit'),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        data: 'a=hello world&b=2&c=3',
+      ),
+    );
+  });
+
+  test('supports PATCH method', () {
+    const cmd = r"""curl -X PATCH \
+  'https://api.apidash.dev/resource/42' \
+  -H 'Content-Type: application/json' \
+  --data '{"status":"ok"}'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'PATCH',
+        uri: Uri.parse('https://api.apidash.dev/resource/42'),
+        headers: {'Content-Type': 'application/json'},
+        data: '{"status":"ok"}',
+      ),
+    );
+  });
+
+  test('merges data flags in defined order', () {
+    const cmd = r"""curl \
+  --url 'https://api.apidash.dev/submit' \
+  --data-urlencode 'a=1' \
+  --data-raw 'b=2' \
+  --data-binary 'c=3' \
+  --data 'd=4'""";
+    final curl = Curl.parse(cmd);
+    expect(curl.data, 'a=1&b=2&c=3&d=4');
+    expect(curl.method, 'POST');
+  });
+
+  test('HEAD with data stays HEAD (no implicit POST)', () {
+    const cmd = r"""curl -I \
+  'https://api.apidash.dev/whatever' \
+  --data 'should_be_ignored_for_method'""";
+    final curl = Curl.parse(cmd);
+    expect(curl.method, 'HEAD');
+  });
+
+  test('user agent via -A populates userAgent field', () {
+    const cmd = r"""curl -A 'MyApp/1.0' \
+  'https://api.apidash.dev/ua'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/ua'),
+        userAgent: 'MyApp/1.0',
+      ),
+    );
+  });
+
+  test('cookie via -b with filename is tolerated', () {
+    const cmd = r"""curl -b cookies.txt \
+  'https://api.apidash.dev/echo'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        cookie: 'cookies.txt',
+      ),
+    );
+  });
+
+  test('maps --oauth2-bearer to Authorization header if absent', () {
+    const cmd = r"""curl --url 'https://api.apidash.dev/secure' \
+  --oauth2-bearer 'tok_123'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/secure'),
+        headers: {'Authorization': 'Bearer tok_123'},
+      ),
+    );
+  });
+
+  test('oauth2-bearer does not override existing Authorization', () {
+    const cmd = r"""curl \
+  --url 'https://api.apidash.dev/secure' \
+  -H 'Authorization: Bearer explicit' \
+  --oauth2-bearer 'ignored'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/secure'),
+        headers: {'Authorization': 'Bearer explicit'},
+      ),
+    );
+  });
+
+  test('chooses first http(s) positional URL if --url missing', () {
+    const cmd = r"""curl foo bar \
+  'https://api.apidash.dev/echo' \
+  baz""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl.uri,
+      Uri.parse('https://api.apidash.dev/echo'),
+    );
+  });
+
+  test('tolerates cookie-jar without affecting request import', () {
+    const cmd = r"""curl --url 'https://api.apidash.dev/echo' \
+  -c cookies.txt -b 'a=1'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        cookie: 'a=1',
+      ),
+    );
+  });
+
+  test('ignores unknown long flags safely', () {
+    const cmd = r"""curl --unknown-flag foo \
+  --url 'https://api.apidash.dev/echo' \
+  --still-unknown=bar \
+  -H 'Accept: */*'""";
+    final curl = Curl.tryParse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        headers: {'Accept': '*/*'},
+      ),
+    );
+  });
+
+  test('ignores unknown short flags safely', () {
+    const cmd = r"""curl -Z -Y \
+  'https://api.apidash.dev/echo' \
+  -H 'X-Test: 1'""";
+    final curl = Curl.tryParse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        headers: {'X-Test': '1'},
+      ),
+    );
+  });
+
   test(
     'HEAD 1',
     () async {

@@ -1,5 +1,4 @@
 import 'package:better_networking/better_networking.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import '../interface/interface.dart';
 import 'model_config.dart';
 part 'ai_request_model.freezed.dart';

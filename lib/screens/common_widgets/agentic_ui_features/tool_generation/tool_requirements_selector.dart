@@ -166,7 +166,7 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     return Opacity(
       opacity: 0.8,
-      child: Container(
+      child: SizedBox(
         width: 200,
         child: Row(
           children: [

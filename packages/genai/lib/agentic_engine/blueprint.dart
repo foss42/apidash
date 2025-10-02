@@ -7,7 +7,7 @@ abstract class AIAgent {
 
 extension SystemPromptTemplating on String {
   String substitutePromptVariable(String variable, String value) {
-    return this.replaceAll(":$variable:", value);
+    return replaceAll(":$variable:", value);
   }
 }
 

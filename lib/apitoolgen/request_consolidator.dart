@@ -50,7 +50,9 @@ class APIDashRequestDescription {
       if (bodyJSON != null) {
         getTyp(input, [i = 0]) {
           String indent = "\t";
-          for (int j = 0; j < i; j++) indent += "\t";
+          for (int j = 0; j < i; j++) {
+            indent += "\t";
+          }
           if (input.runtimeType.toString().toLowerCase().contains('map')) {
             String typd = '{';
             for (final z in input.keys) {

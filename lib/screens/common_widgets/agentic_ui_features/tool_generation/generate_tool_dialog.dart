@@ -9,31 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'generated_tool_codecopy.dart';
 import 'tool_requirements_selector.dart';
 
-class GenerateToolButton extends ConsumerWidget {
-  const GenerateToolButton({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FilledButton.tonalIcon(
-      style: FilledButton.styleFrom(
-        padding: kPh12,
-        minimumSize: const Size(44, 44),
-      ),
-      onPressed: () async {
-        GenerateToolDialog.show(context, ref);
-      },
-      icon: Icon(
-        Icons.token_outlined,
-      ),
-      label: const SizedBox(
-        child: Text(
-          "Generate Tool",
-        ),
-      ),
-    );
-  }
-}
-
 class GenerateToolDialog extends ConsumerStatefulWidget {
   final APIDashRequestDescription requestDesc;
   const GenerateToolDialog({
@@ -41,7 +16,7 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
     required this.requestDesc,
   });
 
-  static show(BuildContext context, WidgetRef ref) {
+  static Future<T?> show<T>(BuildContext context, WidgetRef ref) {
     final aiRequestModel = ref.watch(
         selectedRequestModelProvider.select((value) => value?.aiRequestModel));
     HttpRequestModel? requestModel = ref.watch(selectedRequestModelProvider
@@ -49,9 +24,9 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
     final responseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
 
-    if (aiRequestModel == null && requestModel == null) return;
-    if (requestModel == null) return;
-    if (responseModel == null) return;
+    if (aiRequestModel == null && requestModel == null) return Future.value();
+    if (requestModel == null) return Future.value();
+    if (responseModel == null) return Future.value();
 
     String? bodyTXT;
     Map? bodyJSON;
@@ -72,11 +47,12 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
       bodyJSON: bodyJSON,
     );
 
-    showCustomDialog(
+    return showCustomDialog<T>(
       context,
       GenerateToolDialog(
         requestDesc: reqDesModel,
       ),
+      useRootNavigator: true,
     );
   }
 
@@ -150,7 +126,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       final isExtraLargeWindow = dialogWidth > WindowWidth.large.value;
 
       if (isExtraLargeWindow || isLargeWindow || isExpandedWindow) {
-        return Container(
+        return SizedBox(
           height: 600,
           width: MediaQuery.of(context).size.width * 0.8,
           child: Row(
@@ -177,7 +153,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
           ),
         );
       } else {
-        return Container(
+        return SizedBox(
           height: 600,
           // width: MediaQuery.of(context).size.width * 0.8,
           child: IndexedStack(

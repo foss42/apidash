@@ -1,4 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:seed/seed.dart';
 
 part 'auth_api_key_model.g.dart';
 part 'auth_api_key_model.freezed.dart';

@@ -88,4 +88,17 @@ void main() {
       ],
     );
   }, timeout: defaultTimeout);
+
+  test('split handles CRLF and backslash-newline', () async {
+    final args = splitAsCommandLineArgs(
+        "--request GET \\\r\n  --url 'https://api.apidash.dev/echo' \\\n+  \n  --header 'A: 1' ");
+    expect(args, [
+      '--request',
+      'GET',
+      '--url',
+      'https://api.apidash.dev/echo',
+      '--header',
+      'A: 1'
+    ]);
+  }, timeout: defaultTimeout);
 }

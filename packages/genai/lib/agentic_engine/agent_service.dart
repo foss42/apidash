@@ -1,5 +1,7 @@
-import 'package:genai/agentic_engine/blueprint.dart';
-import 'package:genai/genai.dart';
+import 'package:flutter/foundation.dart';
+import '../models/models.dart';
+import '../utils/utils.dart';
+import 'blueprint.dart';
 
 class AIAgentService {
   static Future<String?> _call_provider({
@@ -67,7 +69,7 @@ class AIAgentService {
         );
       }
       RETRY_COUNT += 1;
-      print(
+      debugPrint(
         "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $RETRY_COUNT",
       );
     } while (RETRY_COUNT < 5);
