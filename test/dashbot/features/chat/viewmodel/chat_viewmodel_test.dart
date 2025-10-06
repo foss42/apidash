@@ -769,50 +769,28 @@ info:
       expect(viewmodel.currentMessages.first.content, equals('Test message'));
     });
 
-    test('should validate sendMessage actually adds messages after bug fix',
-        () async {
+    test('should validate sendMessage adds messages', () async {
       final viewmodel = container.read(chatViewmodelProvider.notifier);
 
-      // Check _currentRequest value
-      final currentRequest = container.read(selectedRequestModelProvider);
-      debugPrint('Current request: $currentRequest');
+      // Initial state should be empty
+      expect(viewmodel.state.chatSessions, isEmpty);
+      expect(viewmodel.currentMessages, isEmpty);
 
-      // Check the computed ID that currentMessages uses
-      final computedId = currentRequest?.id ?? 'global';
-      debugPrint('Computed ID for currentMessages: $computedId');
-
-      // Check initial state
-      debugPrint(
-          'Initial state - chatSessions: ${viewmodel.state.chatSessions}');
-      debugPrint('Initial messages count: ${viewmodel.currentMessages.length}');
-
-      // Call sendMessage which should trigger _addMessage through _appendSystem
+      // Call sendMessage which should trigger _addMessage via _appendSystem
       await viewmodel.sendMessage(text: 'Hello', type: ChatMessageType.general);
 
-      // Debug: print current state
-      debugPrint(
-          'After sendMessage - chatSessions: ${viewmodel.state.chatSessions}');
-      debugPrint(
-          'After sendMessage - keys: ${viewmodel.state.chatSessions.keys}');
-      debugPrint('Current messages count: ${viewmodel.currentMessages.length}');
+      // Expect a user message followed by system "AI model not configured" message
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.user));
+      expect(viewmodel.currentMessages.first.content, equals('Hello'));
+      expect(viewmodel.currentMessages.last.role, equals(MessageRole.system));
+      expect(viewmodel.currentMessages.last.content,
+          contains('AI model is not configured'));
 
-      // Check again after sendMessage
-      final currentRequestAfter = container.read(selectedRequestModelProvider);
-      final computedIdAfter = currentRequestAfter?.id ?? 'global';
-      debugPrint('Current request after: $currentRequestAfter');
-      debugPrint('Computed ID after: $computedIdAfter');
-
-      // Let's also check the global session directly
-      final globalMessages = viewmodel.state.chatSessions['global'];
-      debugPrint('Global messages directly: ${globalMessages?.length ?? 0}');
-
-      // Check specific computed ID session
-      final computedMessages = viewmodel.state.chatSessions[computedIdAfter];
-      debugPrint(
-          'Messages for computed ID ($computedIdAfter): ${computedMessages?.length ?? 0}');
-
-      // Should now have messages after the bug fix
-      expect(viewmodel.currentMessages, isNotEmpty);
+      // Ensure messages are recorded under the expected session (global)
+      expect(viewmodel.state.chatSessions.containsKey('global'), isTrue);
+      expect(viewmodel.state.chatSessions['global'], isNotNull);
+      expect(viewmodel.state.chatSessions['global']!, hasLength(2));
     });
 
     test('should validate state updates and reading', () async {
@@ -1255,8 +1233,7 @@ paths:
 
       final testAction = ChatAction(
         action: 'add_test',
-        target:
-            'test',
+        target: 'test',
         field: 'generated',
         actionType: ChatActionType.other,
         targetType: ChatActionTarget.test,
@@ -1295,8 +1272,7 @@ paths:
 
       final testAction = ChatAction(
         action: 'unknown_action',
-        target:
-            'unsupported_target',
+        target: 'unsupported_target',
         field: 'some_field',
         actionType: ChatActionType.other,
         targetType: ChatActionTarget.test,
