@@ -58,11 +58,6 @@ axios(config)
           : requestModel.hasFileInFormData
               ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1997568083 for details regarding integration\n\n"
               : "";
-      
-      // Add security notice
-      result += "// SECURITY NOTICE: Please validate all inputs and URLs before use in production\n";
-      result += "// This code is generated for testing purposes\n\n";
-      
       var harJson = requestModelToHARJsonRequest(
         requestModel,
         useEnabled: true,
