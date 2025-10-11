@@ -92,8 +92,7 @@ import okhttp3.MultipartBody;""";
     HttpRequestModel requestModel,
   ) {
     try {
-      String result = "// SECURITY NOTICE: Please validate all inputs and URLs before use in production\n";
-      result += "// This code is generated for testing purposes\n\n";
+      String result = "";
       bool hasQuery = false;
       bool hasBody = false;
       bool hasFormData = false;

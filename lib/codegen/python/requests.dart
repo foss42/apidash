@@ -82,8 +82,7 @@ print('Response Body:', response.text)
     String? boundary,
   }) {
     try {
-      String result = "# SECURITY NOTICE: Please validate all inputs and URLs before use in production\n";
-      result += "# This code is generated for testing purposes\n\n";
+      String result = "";
       bool hasQuery = false;
       bool hasHeaders = false;
       bool hasBody = false;
