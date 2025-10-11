@@ -80,7 +80,8 @@ import okhttp3.MediaType.Companion.toMediaType""";
     HttpRequestModel requestModel,
   ) {
     try {
-      String result = "";
+      String result = "// SECURITY NOTICE: Please validate all inputs and URLs before use in production\n";
+      result += "// This code is generated for testing purposes\n\n";
       bool hasQuery = false;
       bool hasBody = false;
       bool hasFormData = false;
