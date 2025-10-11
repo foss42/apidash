@@ -221,8 +221,6 @@ Future<HttpRequestModel> handleAuth(
             }
           }
 
-          debugPrint(res.$1.credentials.accessToken);
-
           // Add the access token to the request headers
           updatedHeaders.add(
             NameValueModel(
@@ -238,7 +236,6 @@ Future<HttpRequestModel> handleAuth(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
           );
-          debugPrint(client.credentials.accessToken);
 
           // Add the access token to the request headers
           updatedHeaders.add(
@@ -250,12 +247,10 @@ Future<HttpRequestModel> handleAuth(
           updatedHeaderEnabledList.add(true);
           break;
         case OAuth2GrantType.resourceOwnerPassword:
-          debugPrint("==Resource Owner Password==");
           final client = await oAuth2ResourceOwnerPasswordGrantHandler(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
           );
-          debugPrint(client.credentials.accessToken);
 
           // Add the access token to the request headers
           updatedHeaders.add(

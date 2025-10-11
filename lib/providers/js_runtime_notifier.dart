@@ -44,6 +44,36 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   late final JavascriptRuntime _runtime;
   String? _currentRequestId;
 
+  // Security: Maximum script length to prevent DoS attacks
+  static const int _maxScriptLength = 50000; // 50KB
+
+  // Security: Dangerous JavaScript patterns that could lead to code injection
+  static const List<String> _dangerousPatterns = [
+    r'eval\s*\(',
+    r'Function\s*\(',
+    r'constructor\s*\[',
+    r'__proto__',
+  ];
+
+  /// Validates user script for basic security checks
+  /// Returns null if valid, error message if invalid
+  String? _validateScript(String script) {
+    // Check script length to prevent DoS
+    if (script.length > _maxScriptLength) {
+      return 'Script exceeds maximum length of $_maxScriptLength characters';
+    }
+
+    // Check for dangerous patterns
+    for (final pattern in _dangerousPatterns) {
+      final regex = RegExp(pattern, caseSensitive: false);
+      if (regex.hasMatch(script)) {
+        return 'Script contains potentially dangerous pattern: ${pattern.replaceAll(r'\s*\(', '(').replaceAll(r'\s*\[', '[')}';
+      }
+    }
+
+    return null; // Script is valid
+  }
+
   void _initialize() {
     if (state.initialized) return;
     _runtime = getJavascriptRuntime();
@@ -100,7 +130,26 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     }
 
     final httpRequest = currentRequestModel.httpRequestModel;
-    final userScript = currentRequestModel.preRequestScript;
+    final userScript = currentRequestModel.preRequestScript!;
+    
+    // Security: Validate user script before execution
+    final validationError = _validateScript(userScript);
+    if (validationError != null) {
+      final term = ref.read(terminalStateProvider.notifier);
+      term.logJs(
+        level: 'error',
+        args: ['Script validation failed', validationError],
+        context: 'preRequest',
+        contextRequestId: requestId,
+      );
+      state = state.copyWith(lastError: validationError);
+      // Return original request without executing the script
+      return (
+        updatedRequest: httpRequest!,
+        updatedEnvironment: activeEnvironment,
+      );
+    }
+    
     final requestJson = jsonEncode(httpRequest?.toJson());
     final environmentJson = jsonEncode(activeEnvironment);
     final dataInjection = '''
@@ -190,7 +239,26 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
 
     final httpRequest = currentRequestModel.httpRequestModel; // for future use
     final httpResponse = currentRequestModel.httpResponseModel;
-    final userScript = currentRequestModel.postRequestScript;
+    final userScript = currentRequestModel.postRequestScript!;
+    
+    // Security: Validate user script before execution
+    final validationError = _validateScript(userScript);
+    if (validationError != null) {
+      final term = ref.read(terminalStateProvider.notifier);
+      term.logJs(
+        level: 'error',
+        args: ['Script validation failed', validationError],
+        context: 'postResponse',
+        contextRequestId: requestId,
+      );
+      state = state.copyWith(lastError: validationError);
+      // Return original response without executing the script
+      return (
+        updatedResponse: httpResponse!,
+        updatedEnvironment: activeEnvironment,
+      );
+    }
+    
     final requestJson = jsonEncode(httpRequest?.toJson());
     final responseJson = jsonEncode(httpResponse?.toJson());
     final environmentJson = jsonEncode(activeEnvironment);

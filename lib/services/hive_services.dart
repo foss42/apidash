@@ -56,7 +56,7 @@ Future<bool> openHiveBoxes() async {
     }
     return true;
   } catch (e) {
-    debugPrint("ERROR OPEN HIVE BOXES: $e");
+    // Error opening Hive boxes - logging suppressed for security
     return false;
   }
 }
@@ -73,7 +73,7 @@ Future<void> clearHiveBoxes() async {
       }
     }
   } catch (e) {
-    debugPrint("ERROR CLEAR HIVE BOXES: $e");
+    // Error clearing Hive boxes - logging suppressed for security
   }
 }
 
@@ -90,7 +90,7 @@ Future<void> deleteHiveBoxes() async {
     }
     await Hive.close();
   } catch (e) {
-    debugPrint("ERROR DELETE HIVE BOXES: $e");
+    // Error deleting Hive boxes - logging suppressed for security
   }
 }
 
@@ -104,7 +104,7 @@ class HiveHandler {
   late final LazyBox dashBotBox;
 
   HiveHandler() {
-    debugPrint("Trying to open Hive boxes");
+    // Initialize Hive boxes
     dataBox = Hive.box(kDataBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
