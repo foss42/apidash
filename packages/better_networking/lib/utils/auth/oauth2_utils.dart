@@ -7,6 +7,7 @@ import '../../models/auth/auth_oauth2_model.dart';
 import '../../services/http_client_manager.dart';
 import '../../services/oauth_callback_server.dart';
 import '../../services/oauth2_secure_storage.dart';
+import '../../services/oauth2_rate_limiter.dart';
 import '../platform_utils.dart';
 
 /// Advanced OAuth2 authorization code grant handler that returns both the client and server
@@ -24,6 +25,17 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   String? state,
   String? scope,
 }) async {
+  // Check rate limiting
+  final rateLimitKey = OAuth2RateLimiter.generateKey(identifier, tokenEndpoint.toString());
+  final canProceedAt = OAuth2RateLimiter.canProceed(rateLimitKey);
+  
+  if (canProceedAt != null) {
+    final cooldownSeconds = OAuth2RateLimiter.getCooldownSeconds(rateLimitKey);
+    throw Exception(
+      'OAuth2 rate limit exceeded. Please try again in ${cooldownSeconds ?? 0} seconds.'
+    );
+  }
+  
   // Check for existing credentials first - try secure storage, then file
   // Try secure storage first (preferred method)
   try {
@@ -35,6 +47,8 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
     if (secureCredJson != null) {
       final credentials = oauth2.Credentials.fromJson(secureCredJson);
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        // Successful retrieval, clear rate limit
+        OAuth2RateLimiter.recordSuccess(rateLimitKey);
         return (
           oauth2.Client(credentials, identifier: identifier, secret: secret),
           null,
@@ -177,8 +191,14 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       }
     }
 
+    // Record successful authentication
+    OAuth2RateLimiter.recordSuccess(rateLimitKey);
+
     return (client, callbackServer);
   } catch (e) {
+    // Record failed authentication attempt
+    OAuth2RateLimiter.recordFailure(rateLimitKey);
+    
     // Clean up the callback server immediately on error
     if (callbackServer != null) {
       try {
@@ -199,6 +219,20 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
   required AuthOAuth2Model oauth2Model,
   required File? credentialsFile,
 }) async {
+  // Check rate limiting
+  final rateLimitKey = OAuth2RateLimiter.generateKey(
+    oauth2Model.clientId,
+    oauth2Model.accessTokenUrl,
+  );
+  final canProceedAt = OAuth2RateLimiter.canProceed(rateLimitKey);
+  
+  if (canProceedAt != null) {
+    final cooldownSeconds = OAuth2RateLimiter.getCooldownSeconds(rateLimitKey);
+    throw Exception(
+      'OAuth2 rate limit exceeded. Please try again in ${cooldownSeconds ?? 0} seconds.'
+    );
+  }
+  
   // Try secure storage first
   try {
     final secureCredJson = await OAuth2SecureStorage.retrieveCredentials(
@@ -209,6 +243,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
     if (secureCredJson != null) {
       final credentials = oauth2.Credentials.fromJson(secureCredJson);
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        OAuth2RateLimiter.recordSuccess(rateLimitKey);
         return oauth2.Client(
           credentials,
           identifier: oauth2Model.clientId,
@@ -284,11 +319,17 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
       }
     }
 
+    // Record successful authentication
+    OAuth2RateLimiter.recordSuccess(rateLimitKey);
+
     // Clean up the HTTP client
     httpClientManager.closeClient(requestId);
 
     return client;
   } catch (e) {
+    // Record failed authentication attempt
+    OAuth2RateLimiter.recordFailure(rateLimitKey);
+    
     // Clean up the HTTP client on error
     httpClientManager.closeClient(requestId);
     rethrow;
