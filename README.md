@@ -1,9 +1,7 @@
 # API Dash ⚡️
 
-[![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/bBeSdtJ6Ue)
-
-<a href="https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash" target="_blank"><img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="400"></a>
-
+<a href="https://discord.com/invite/bBeSdtJ6Ue" target="_blank"><img src="https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white" alt="Discord Server Invite"></a><br>
+<img src="https://trendshift.io/api/badge/repositories/9734" alt="foss42%2Fapidash | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/> &nbsp;&nbsp;&nbsp; <a href="https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash" target="_blank"><img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="400"></a>
 
 ### Please support this initiative by giving this project a Star ⭐️
 
