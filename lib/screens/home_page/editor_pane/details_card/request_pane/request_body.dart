@@ -1,3 +1,4 @@
+import 'package:apidash/screens/common_widgets/env_trigger_text_editing.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -47,17 +48,14 @@ class EditRequestBody extends ConsumerWidget {
                   const Padding(padding: kPh4, child: FormDataWidget()),
                 ContentType.json => Padding(
                     padding: kPt5o10,
-                    child: JsonTextFieldEditor(
-                      key: Key("$selectedId-json-body"),
-                      fieldKey: "$selectedId-json-body-editor-$darkMode",
-                      isDark: darkMode,
+                    child: EnvironmentTriggerTextEditor(
+                      keyId: "$selectedId-environment-trigger",
                       initialValue: requestModel?.httpRequestModel?.body,
                       onChanged: (String value) {
                         ref
                             .read(collectionStateNotifierProvider.notifier)
                             .update(body: value);
                       },
-                      hintText: kHintJson,
                     ),
                   ),
                 _ => Padding(
