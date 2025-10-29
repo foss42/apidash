@@ -4,8 +4,8 @@ import 'package:json_field_editor/json_field_editor.dart';
 import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'env_trigger_options.dart';
 
-class EnvironmentTriggerTextEditor extends StatefulWidget {
-  const EnvironmentTriggerTextEditor({
+class EnvironmentTriggerJsonEditor extends StatefulWidget {
+  const EnvironmentTriggerJsonEditor({
     super.key,
     required this.keyId,
     this.initialValue,
@@ -38,19 +38,24 @@ class EnvironmentTriggerTextEditor extends StatefulWidget {
   final bool obscureText;
 
   @override
-  State<EnvironmentTriggerTextEditor> createState() =>
-      EnvironmentTriggerTextEditorState();
+  State<EnvironmentTriggerJsonEditor> createState() =>
+      EnvironmentTriggerJsonEditorState();
 }
 
-class EnvironmentTriggerTextEditorState
-    extends State<EnvironmentTriggerTextEditor> {
+class EnvironmentTriggerJsonEditorState
+    extends State<EnvironmentTriggerJsonEditor> {
   late JsonTextFieldController controller;
   late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
-    controller = JsonTextFieldController();
+    if (widget.controller != null) {
+      controller = widget.controller as JsonTextFieldController;
+    } else {
+      controller = JsonTextFieldController();
+    }
+
     _focusNode = widget.focusNode ??
         FocusNode(debugLabel: "env Trigger Editor Focus Node");
   }
@@ -58,16 +63,20 @@ class EnvironmentTriggerTextEditorState
   @override
   void dispose() {
     controller.dispose();
-    // _focusNode.dispose(); // the Json TextFieldEditor will dispose this if created here
     super.dispose();
   }
 
   @override
-  void didUpdateWidget(EnvironmentTriggerTextEditor oldWidget) {
+  void didUpdateWidget(EnvironmentTriggerJsonEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if ((oldWidget.keyId != widget.keyId) ||
         (oldWidget.initialValue != widget.initialValue)) {
-      controller = JsonTextFieldController();
+      if (widget.controller != null) {
+        controller = widget.controller as JsonTextFieldController;
+      } else {
+        controller = JsonTextFieldController();
+      }
+      controller.text = widget.initialValue ?? '';
     }
   }
 

@@ -1,4 +1,4 @@
-import 'package:apidash/screens/common_widgets/env_trigger_text_editing.dart';
+import 'package:apidash/screens/common_widgets/env_trigger_json_editing.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:json_field_editor/json_field_editor.dart';
 import 'request_form_data.dart';
 
 class EditRequestBody extends ConsumerWidget {
@@ -48,7 +49,7 @@ class EditRequestBody extends ConsumerWidget {
                   const Padding(padding: kPh4, child: FormDataWidget()),
                 ContentType.json => Padding(
                     padding: kPt5o10,
-                    child: EnvironmentTriggerTextEditor(
+                    child: EnvironmentTriggerJsonEditor(
                       keyId: "$selectedId-environment-trigger",
                       initialValue: requestModel?.httpRequestModel?.body,
                       onChanged: (String value) {
