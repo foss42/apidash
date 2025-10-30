@@ -136,6 +136,13 @@ API Dash can be downloaded from the links below:
 - Customize various options using a dedicated Settings screen.
 - Window Configuration (Size & Position) is persisted and restored on app start. (Only macOS & Windows)
 
+
+## Supported by ❤️
+
+<a href="https://www.lambdatest.com/?utm_source=apidash&utm_medium=sponsor" target="_blank">
+    <img width="250" height="48" alt="lambdatest-logo" src="https://github.com/user-attachments/assets/c1d9263a-e60e-4161-8d65-fc5ff82fe9f7" />
+</a>
+
 ## Code Generators
 
 API Dash currently supports API integration code generation for the following languages/libraries.
