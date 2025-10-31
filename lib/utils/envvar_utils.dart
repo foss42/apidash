@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
+import 'fake_data_provider.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -41,6 +42,7 @@ String? substituteVariables(
   Map<String, String> envVarMap,
 ) {
   if (input == null) return null;
+
   if (envVarMap.keys.isEmpty) {
     return input;
   }
@@ -309,9 +311,32 @@ EnvironmentVariableSuggestion getVariableStatus(
     );
   }
 
+  // If not found in environments check if it's a random data generator
+  if (key.startsWith('\$')) {
+    final generatorType = key.substring(1);
+    final generator = FakeDataProvider.processFakeDataTag(generatorType);
+    if (generator != '{{generatorType}}') {
+      return EnvironmentVariableSuggestion(
+        environmentId: "Random",
+        variable: EnvironmentVariableModel(
+          key: key,
+          type: EnvironmentVariableType.variable,
+          value: generator,
+          enabled: true,
+        ),
+        isUnknown: false,
+      );
+    }
+  }
+
   return EnvironmentVariableSuggestion(
-      isUnknown: true,
-      environmentId: "unknown",
-      variable: EnvironmentVariableModel(
-          key: key, type: EnvironmentVariableType.variable, value: "unknown"));
+    isUnknown: true,
+    environmentId: "unknown",
+    variable: EnvironmentVariableModel(
+      key: key,
+      type: EnvironmentVariableType.variable,
+      value: "unknown",
+      // enabled: false,
+    ),
+  );
 }
