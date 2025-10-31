@@ -14,9 +14,27 @@ void main() {
       expect(environmentModel.name, 'Development');
     });
 
+    test("Testing EnvironmentModel copyWith with defaultAuthModel", () {
+      var environmentModel = environmentModelWithAuth;
+      final newAuthModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: AuthBasicAuthModel(username: 'test', password: 'pass'),
+      );
+      final environmentModelcopyWith =
+          environmentModel.copyWith(defaultAuthModel: newAuthModel);
+      expect(environmentModelcopyWith.defaultAuthModel, newAuthModel);
+      // original model unchanged
+      expect(environmentModel.defaultAuthModel?.type, APIAuthType.bearer);
+    });
+
     test("Testing EnvironmentModel toJson", () {
       var environmentModel = environmentModel1;
       expect(environmentModel.toJson(), environmentModel1Json);
+    });
+
+    test("Testing EnvironmentModel toJson with defaultAuthModel", () {
+      var environmentModel = environmentModelWithAuth;
+      expect(environmentModel.toJson(), environmentModelWithAuthJson);
     });
 
     test("Testing EnvironmentModel fromJson", () {
@@ -37,6 +55,14 @@ void main() {
           enabled: false,
         ),
       ]);
+    });
+
+    test("Testing EnvironmentModel fromJson with defaultAuthModel", () {
+      var environmentModel = environmentModelWithAuth;
+      final modelFromJson = EnvironmentModel.fromJson(environmentModelWithAuthJson);
+      expect(modelFromJson, environmentModel);
+      expect(modelFromJson.defaultAuthModel?.type, APIAuthType.bearer);
+      expect(modelFromJson.defaultAuthModel?.bearer?.token, 'test-token');
     });
 
     test("Testing EnvironmentModel getters", () {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:apidash/providers/providers.dart';
 import '../../../../common_widgets/common_widgets.dart';
 
@@ -24,9 +25,11 @@ class EditAuthType extends ConsumerWidget {
           request?.httpRequestModel?.authModel?.type ?? APIAuthType.none),
     );
     final currentAuthData = selectedRequest.httpRequestModel?.authModel;
+    final currentAuthInheritanceType = selectedRequest.httpRequestModel?.authInheritanceType;
 
     return AuthPage(
       authModel: currentAuthData,
+      authInheritanceType: currentAuthInheritanceType,
       readOnly: readOnly,
       onChangedAuthType: (newType) {
         final selectedRequest = ref.read(selectedRequestModelProvider);
@@ -47,6 +50,13 @@ class EditAuthType extends ConsumerWidget {
         ref.read(collectionStateNotifierProvider.notifier).update(
               authModel: model,
             );
+      },
+      onChangedAuthInheritanceType: (newType) {
+        if (newType != null) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+            authInheritanceType: newType,
+          );
+        }
       },
     );
   }

@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 
 /// Global environment model
 const globalEnvironment = EnvironmentModel(
@@ -57,6 +58,24 @@ const environmentModel2 = EnvironmentModel(
       enabled: false,
     ),
   ],
+);
+
+/// Environment model with default auth
+const environmentModelWithAuth = EnvironmentModel(
+  id: 'environmentIdWithAuth',
+  name: 'Development With Auth',
+  values: [
+    EnvironmentVariableModel(
+      key: 'key1',
+      value: 'value1',
+      type: EnvironmentVariableType.variable,
+      enabled: true,
+    ),
+  ],
+  defaultAuthModel: AuthModel(
+    type: APIAuthType.bearer,
+    bearer: AuthBearerModel(token: 'test-token'),
+  ),
 );
 
 /// Basic Environment Variable
@@ -124,6 +143,25 @@ const environmentModel2Json = {
       'enabled': false,
     },
   ],
+};
+
+const environmentModelWithAuthJson = {
+  'id': 'environmentIdWithAuth',
+  'name': 'Development With Auth',
+  'values': [
+    {
+      'key': 'key1',
+      'value': 'value1',
+      'type': 'variable',
+      'enabled': true,
+    },
+  ],
+  'defaultAuthModel': {
+    'type': 'bearer',
+    'bearer': {
+      'token': 'test-token',
+    },
+  },
 };
 
 const environmentVariableModel1Json = {

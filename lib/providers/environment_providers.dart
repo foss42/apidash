@@ -126,11 +126,13 @@ class EnvironmentsStateNotifier
     String id, {
     String? name,
     List<EnvironmentVariableModel>? values,
+    AuthModel? defaultAuthModel,
   }) {
     final environment = state![id]!;
     final updatedEnvironment = environment.copyWith(
       name: name ?? environment.name,
       values: values ?? environment.values,
+      defaultAuthModel: defaultAuthModel ?? environment.defaultAuthModel,
     );
     state = {
       ...state!,

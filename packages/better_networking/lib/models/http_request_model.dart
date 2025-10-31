@@ -20,6 +20,7 @@ class HttpRequestModel with _$HttpRequestModel {
     List<NameValueModel>? headers,
     List<NameValueModel>? params,
     @Default(AuthModel(type: APIAuthType.none)) AuthModel? authModel,
+    AuthInheritanceType? authInheritanceType, // Add auth inheritance type
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
     @Default(ContentType.json) ContentType bodyContentType,

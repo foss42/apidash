@@ -70,6 +70,15 @@ HttpRequestModel substituteHttpRequestModel(
     combinedEnvVarMap[variable.key] = variable.value;
   }
 
+  // Handle auth inheritance
+  AuthModel? finalAuthModel = httpRequestModel.authModel;
+  if (httpRequestModel.authInheritanceType == AuthInheritanceType.environment && 
+      activeEnvironmentId != null) {
+    // Get the environment model to access its default auth
+    // This would require access to the full environment models, not just variables
+    // For now, we'll handle this in the request processing where we have full environment access
+  }
+
   var newRequestModel = httpRequestModel.copyWith(
     url: substituteVariables(httpRequestModel.url, combinedEnvVarMap)!,
     headers: httpRequestModel.headers?.map((header) {
