@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/terminal/terminal.dart';
+import 'package:better_networking/better_networking.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
