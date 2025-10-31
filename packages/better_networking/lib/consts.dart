@@ -180,3 +180,11 @@ const kCodeCharsPerLineLimit = 200;
 const kHeaderContentType = "Content-Type";
 const kHeaderWwwAuthenticate = 'www-authenticate';
 const kMsgRequestCancelled = 'Request Cancelled';
+
+enum AuthInheritanceType {
+  none("None"),
+  environment("Environment");
+
+  const AuthInheritanceType(this.displayType);
+  final String displayType;
+}

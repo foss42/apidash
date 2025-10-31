@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/terminal/terminal.dart';
+import 'package:better_networking/better_networking.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
@@ -216,6 +217,7 @@ class CollectionStateNotifier
     String? id,
     HTTPVerb? method,
     AuthModel? authModel,
+    AuthInheritanceType? authInheritanceType,
     String? url,
     String? name,
     String? description,
@@ -275,6 +277,7 @@ class CollectionStateNotifier
           headers: headers ?? currentHttpRequestModel.headers,
           params: params ?? currentHttpRequestModel.params,
           authModel: authModel ?? currentHttpRequestModel.authModel,
+          authInheritanceType: authInheritanceType ?? currentHttpRequestModel.authInheritanceType,
           isHeaderEnabledList: isHeaderEnabledList ??
               currentHttpRequestModel.isHeaderEnabledList,
           isParamEnabledList:
@@ -628,9 +631,25 @@ class CollectionStateNotifier
       HttpRequestModel httpRequestModel) {
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+    var environments = ref.read(environmentsStateNotifierProvider);
+
+    // Handle auth inheritance
+    HttpRequestModel processedRequestModel = httpRequestModel;
+    if (httpRequestModel.authInheritanceType == AuthInheritanceType.environment && 
+        activeEnvId != null && 
+        environments != null && 
+        environments[activeEnvId] != null) {
+      
+      final environment = environments[activeEnvId]!;
+      if (environment.defaultAuthModel != null) {
+        processedRequestModel = httpRequestModel.copyWith(
+          authModel: environment.defaultAuthModel,
+        );
+      }
+    }
 
     return substituteHttpRequestModel(
-      httpRequestModel,
+      processedRequestModel,
       envMap,
       activeEnvId,
     );

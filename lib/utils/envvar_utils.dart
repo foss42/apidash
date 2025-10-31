@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
+import 'package:better_networking/better_networking.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -68,6 +69,15 @@ HttpRequestModel substituteHttpRequestModel(
   }
   for (var variable in activeEnv) {
     combinedEnvVarMap[variable.key] = variable.value;
+  }
+
+  // Handle auth inheritance
+  AuthModel? finalAuthModel = httpRequestModel.authModel;
+  if (httpRequestModel.authInheritanceType == AuthInheritanceType.environment && 
+      activeEnvironmentId != null) {
+    // Get the environment model to access its default auth
+    // This would require access to the full environment models, not just variables
+    // For now, we'll handle this in the request processing where we have full environment access
   }
 
   var newRequestModel = httpRequestModel.copyWith(
