@@ -6,6 +6,8 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import '../../models/auth/auth_oauth2_model.dart';
 import '../../services/http_client_manager.dart';
 import '../../services/oauth_callback_server.dart';
+import '../../services/oauth2_secure_storage.dart';
+import '../../services/oauth2_rate_limiter.dart';
 import '../platform_utils.dart';
 
 /// Advanced OAuth2 authorization code grant handler that returns both the client and server
@@ -23,13 +25,60 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   String? state,
   String? scope,
 }) async {
-  // Check for existing credentials first
+  // Check rate limiting
+  final rateLimitKey = OAuth2RateLimiter.generateKey(identifier, tokenEndpoint.toString());
+  final canProceedAt = OAuth2RateLimiter.canProceed(rateLimitKey);
+  
+  if (canProceedAt != null) {
+    final cooldownSeconds = OAuth2RateLimiter.getCooldownSeconds(rateLimitKey);
+    throw Exception(
+      'OAuth2 rate limit exceeded. Please try again in ${cooldownSeconds ?? 0} seconds.'
+    );
+  }
+  
+  // Check for existing credentials first - try secure storage, then file
+  // Try secure storage first (preferred method)
+  try {
+    final secureCredJson = await OAuth2SecureStorage.retrieveCredentials(
+      clientId: identifier,
+      tokenUrl: tokenEndpoint.toString(),
+    );
+    
+    if (secureCredJson != null) {
+      final credentials = oauth2.Credentials.fromJson(secureCredJson);
+      if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        // Successful retrieval, clear rate limit
+        OAuth2RateLimiter.recordSuccess(rateLimitKey);
+        return (
+          oauth2.Client(credentials, identifier: identifier, secret: secret),
+          null,
+        );
+      }
+    }
+  } catch (e) {
+    // Secure storage failed, try file fallback
+  }
+  
+  // Fallback to file-based storage for backward compatibility
   if (credentialsFile != null && await credentialsFile.exists()) {
     try {
       final json = await credentialsFile.readAsString();
       final credentials = oauth2.Credentials.fromJson(json);
 
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        // Migrate to secure storage for future use
+        try {
+          await OAuth2SecureStorage.storeCredentials(
+            clientId: identifier,
+            tokenUrl: tokenEndpoint.toString(),
+            credentialsJson: json,
+          );
+          // Delete old file after successful migration
+          await credentialsFile.delete();
+        } catch (e) {
+          // Migration failed, keep using file
+        }
+        
         return (
           oauth2.Client(credentials, identifier: identifier, secret: secret),
           null,
@@ -124,12 +173,32 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       callbackUriParsed.queryParameters,
     );
 
-    if (credentialsFile != null) {
-      await credentialsFile.writeAsString(client.credentials.toJson());
+    // Store credentials securely (preferred method)
+    try {
+      await OAuth2SecureStorage.storeCredentials(
+        clientId: identifier,
+        tokenUrl: tokenEndpoint.toString(),
+        credentialsJson: client.credentials.toJson(),
+      );
+    } catch (e) {
+      // Secure storage failed, fallback to file if available
+      if (credentialsFile != null) {
+        try {
+          await credentialsFile.writeAsString(client.credentials.toJson());
+        } catch (fileError) {
+          // Both storage methods failed - credentials won't persist
+        }
+      }
     }
+
+    // Record successful authentication
+    OAuth2RateLimiter.recordSuccess(rateLimitKey);
 
     return (client, callbackServer);
   } catch (e) {
+    // Record failed authentication attempt
+    OAuth2RateLimiter.recordFailure(rateLimitKey);
+    
     // Clean up the callback server immediately on error
     if (callbackServer != null) {
       try {
@@ -150,13 +219,61 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
   required AuthOAuth2Model oauth2Model,
   required File? credentialsFile,
 }) async {
-  // Try to use saved credentials
+  // Check rate limiting
+  final rateLimitKey = OAuth2RateLimiter.generateKey(
+    oauth2Model.clientId,
+    oauth2Model.accessTokenUrl,
+  );
+  final canProceedAt = OAuth2RateLimiter.canProceed(rateLimitKey);
+  
+  if (canProceedAt != null) {
+    final cooldownSeconds = OAuth2RateLimiter.getCooldownSeconds(rateLimitKey);
+    throw Exception(
+      'OAuth2 rate limit exceeded. Please try again in ${cooldownSeconds ?? 0} seconds.'
+    );
+  }
+  
+  // Try secure storage first
+  try {
+    final secureCredJson = await OAuth2SecureStorage.retrieveCredentials(
+      clientId: oauth2Model.clientId,
+      tokenUrl: oauth2Model.accessTokenUrl,
+    );
+    
+    if (secureCredJson != null) {
+      final credentials = oauth2.Credentials.fromJson(secureCredJson);
+      if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        OAuth2RateLimiter.recordSuccess(rateLimitKey);
+        return oauth2.Client(
+          credentials,
+          identifier: oauth2Model.clientId,
+          secret: oauth2Model.clientSecret,
+        );
+      }
+    }
+  } catch (e) {
+    // Secure storage failed, try file fallback
+  }
+  
+  // Fallback to file-based storage for backward compatibility
   if (credentialsFile != null && await credentialsFile.exists()) {
     try {
       final json = await credentialsFile.readAsString();
       final credentials = oauth2.Credentials.fromJson(json);
 
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        // Migrate to secure storage
+        try {
+          await OAuth2SecureStorage.storeCredentials(
+            clientId: oauth2Model.clientId,
+            tokenUrl: oauth2Model.accessTokenUrl,
+            credentialsJson: json,
+          );
+          await credentialsFile.delete();
+        } catch (e) {
+          // Migration failed
+        }
+        
         return oauth2.Client(
           credentials,
           identifier: oauth2Model.clientId,
@@ -184,19 +301,35 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
       httpClient: baseClient,
     );
 
+    // Store credentials securely
     try {
-      if (credentialsFile != null) {
-        await credentialsFile.writeAsString(client.credentials.toJson());
-      }
+      await OAuth2SecureStorage.storeCredentials(
+        clientId: oauth2Model.clientId,
+        tokenUrl: oauth2Model.accessTokenUrl,
+        credentialsJson: client.credentials.toJson(),
+      );
     } catch (e) {
-      // Ignore credential saving errors
+      // Secure storage failed, try file fallback
+      if (credentialsFile != null) {
+        try {
+          await credentialsFile.writeAsString(client.credentials.toJson());
+        } catch (fileError) {
+          // Both storage methods failed
+        }
+      }
     }
+
+    // Record successful authentication
+    OAuth2RateLimiter.recordSuccess(rateLimitKey);
 
     // Clean up the HTTP client
     httpClientManager.closeClient(requestId);
 
     return client;
   } catch (e) {
+    // Record failed authentication attempt
+    OAuth2RateLimiter.recordFailure(rateLimitKey);
+    
     // Clean up the HTTP client on error
     httpClientManager.closeClient(requestId);
     rethrow;
@@ -207,13 +340,46 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
   required AuthOAuth2Model oauth2Model,
   required File? credentialsFile,
 }) async {
-  // Try to use saved credentials
+  // Try secure storage first
+  try {
+    final secureCredJson = await OAuth2SecureStorage.retrieveCredentials(
+      clientId: oauth2Model.clientId,
+      tokenUrl: oauth2Model.accessTokenUrl,
+    );
+    
+    if (secureCredJson != null) {
+      final credentials = oauth2.Credentials.fromJson(secureCredJson);
+      if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        return oauth2.Client(
+          credentials,
+          identifier: oauth2Model.clientId,
+          secret: oauth2Model.clientSecret,
+        );
+      }
+    }
+  } catch (e) {
+    // Secure storage failed, try file fallback
+  }
+  
+  // Fallback to file-based storage for backward compatibility
   if (credentialsFile != null && await credentialsFile.exists()) {
     try {
       final json = await credentialsFile.readAsString();
       final credentials = oauth2.Credentials.fromJson(json);
 
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        // Migrate to secure storage
+        try {
+          await OAuth2SecureStorage.storeCredentials(
+            clientId: oauth2Model.clientId,
+            tokenUrl: oauth2Model.accessTokenUrl,
+            credentialsJson: json,
+          );
+          await credentialsFile.delete();
+        } catch (e) {
+          // Migration failed
+        }
+        
         return oauth2.Client(
           credentials,
           identifier: oauth2Model.clientId,
@@ -247,12 +413,22 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
       httpClient: baseClient,
     );
 
+    // Store credentials securely
     try {
-      if (credentialsFile != null) {
-        await credentialsFile.writeAsString(client.credentials.toJson());
-      }
+      await OAuth2SecureStorage.storeCredentials(
+        clientId: oauth2Model.clientId,
+        tokenUrl: oauth2Model.accessTokenUrl,
+        credentialsJson: client.credentials.toJson(),
+      );
     } catch (e) {
-      // Ignore credential saving errors
+      // Secure storage failed, try file fallback
+      if (credentialsFile != null) {
+        try {
+          await credentialsFile.writeAsString(client.credentials.toJson());
+        } catch (fileError) {
+          // Both storage methods failed
+        }
+      }
     }
 
     // Clean up the HTTP client
