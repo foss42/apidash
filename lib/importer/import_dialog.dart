@@ -28,27 +28,41 @@ void importToCollectionPane(
         (content) {
           kImporter
               .getHttpRequestModelList(importFormatType, content)
-              .then((importedRequestModels) {
+              .then((importedRequestModels) async {
             if (importedRequestModels != null) {
               if (importedRequestModels.isEmpty) {
                 sm.showSnackBar(
                     getSnackBar("No requests imported", small: false));
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
               } else {
-                for (var model in importedRequestModels.reversed) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .addRequestModel(
-                        model.$2,
-                        name: model.$1,
-                      );
+                // Show selection dialog for user to choose which requests to import
+                if (!context.mounted) return;
+                
+                final selectedRequests = await showRequestSelectionDialog(
+                  context: context,
+                  requests: importedRequestModels,
+                );
+
+                if (selectedRequests != null && selectedRequests.isNotEmpty) {
+                  // Import selected requests
+                  for (var model in selectedRequests.reversed) {
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .addRequestModel(
+                          model.$2,
+                          name: model.$1,
+                        );
+                  }
+                  sm.showSnackBar(getSnackBar(
+                      "Successfully imported ${selectedRequests.length} request${selectedRequests.length == 1 ? '' : 's'}",
+                      small: false));
                 }
-                sm.showSnackBar(getSnackBar(
-                    "Successfully imported ${importedRequestModels.length} requests",
-                    small: false));
+                
+                // Close the import dialog
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
               }
-              // Solves - Do not use BuildContexts across async gaps
-              if (!context.mounted) return;
-              Navigator.of(context).pop();
             } else {
               var err = "Unable to parse ${file.name}";
               sm.showSnackBar(getSnackBar(err, small: false));
