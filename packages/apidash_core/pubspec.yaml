@@ -18,6 +18,8 @@ dependencies:
     path: ../genai
   har:
     path: ../har
+  hurl:
+    path: ../hurl
   insomnia_collection:
     path: ../insomnia_collection
   openapi_spec: ^0.15.0
