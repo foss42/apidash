@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'importer.dart';
 
 void importToCollectionPane(
@@ -36,28 +38,47 @@ void importToCollectionPane(
                 if (!context.mounted) return;
                 Navigator.of(context).pop();
               } else {
-                // Show selection dialog for user to choose which requests to import
-                if (!context.mounted) return;
+                // Determine if we should show selection dialog
+                // Currently only Hurl format supports selective import
+                final shouldShowSelectionDialog = 
+                    importFormatType == ImportFormat.hurl;
                 
-                final selectedRequests = await showRequestSelectionDialog(
-                  context: context,
-                  requests: importedRequestModels,
-                );
-
-                if (selectedRequests != null && selectedRequests.isNotEmpty) {
-                  // Import selected requests
-                  for (var model in selectedRequests.reversed) {
-                    ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .addRequestModel(
-                          model.$2,
-                          name: model.$1,
-                        );
+                List<(String?, HttpRequestModel)> requestsToImport;
+                
+                if (shouldShowSelectionDialog && context.mounted) {
+                  // Show selection dialog for Hurl files
+                  final selectedRequests = await showRequestSelectionDialog(
+                    context: context,
+                    requests: importedRequestModels,
+                  );
+                  
+                  // User cancelled or didn't select anything
+                  if (selectedRequests == null || selectedRequests.isEmpty) {
+                    if (!context.mounted) return;
+                    Navigator.of(context).pop();
+                    return;
                   }
-                  sm.showSnackBar(getSnackBar(
-                      "Successfully imported ${selectedRequests.length} request${selectedRequests.length == 1 ? '' : 's'}",
-                      small: false));
+                  
+                  requestsToImport = selectedRequests;
+                } else {
+                  // Import all requests directly for other formats
+                  requestsToImport = importedRequestModels;
                 }
+                
+                // Import the requests
+                for (var model in requestsToImport.reversed) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .addRequestModel(
+                        model.$2,
+                        name: model.$1,
+                      );
+                }
+                
+                // Show success message
+                sm.showSnackBar(getSnackBar(
+                    "Successfully imported ${requestsToImport.length} request${requestsToImport.length == 1 ? '' : 's'}",
+                    small: false));
                 
                 // Close the import dialog
                 if (!context.mounted) return;

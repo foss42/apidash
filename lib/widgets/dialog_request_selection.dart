@@ -82,13 +82,13 @@ Future<List<(String?, HttpRequestModel)>?> showRequestSelectionDialog({
                             overflow: TextOverflow.ellipsis,
                           ),
                           subtitle: Text(
-                            '${request.method.name.toUpperCase()}',
+                            request.method.name.toUpperCase(),
                             style: kCodeStyle.copyWith(fontSize: 12),
                           ),
                           secondary: Container(
                             padding: kP8,
                             decoration: BoxDecoration(
-                              color: kColorStatusCodeDefault.withOpacity(0.1),
+                              color: kColorStatusCodeDefault.withValues(alpha: 0.1),
                               borderRadius: kBorderRadius8,
                             ),
                             child: Text(
