@@ -8,7 +8,6 @@ class HurlIO {
   List<(String?, HttpRequestModel)>? getHttpRequestModelList(String content) {
     content = content.trim();
     try {
-      // Parse Hurl file using Rust parser
       final jsonStr = parseHurlToJson(content: content);
       final jsonData = jsonDecode(jsonStr) as Map<String, dynamic>;
       final entries = jsonData['entries'] as List<dynamic>;
@@ -18,15 +17,13 @@ class HurlIO {
         return _hurlEntryToHttpRequestModel(entryMap);
       }).toList();
     } catch (e) {
-      // Return null if parsing fails
       return null;
     }
   }
 
-  /// Converts a single Hurl entry to HttpRequestModel
+  /// converts a single Hurl entry to HttpRequestModel
   (String?, HttpRequestModel) _hurlEntryToHttpRequestModel(
       Map<String, dynamic> entry) {
-    // Extract method
     HTTPVerb method;
     try {
       final methodStr = entry['method'] as String? ?? 'GET';
@@ -56,7 +53,7 @@ class HurlIO {
         }).toList() ??
         [];
 
-    // Add query parameters from [QueryStringParams] section if present
+    // add query parameters from [QueryStringParams] section if present
     final queryParamsList = entry['queryParams'] as List<dynamic>?;
     if (queryParamsList != null && queryParamsList.isNotEmpty) {
       final sectionParams = queryParamsList.map((p) {
@@ -69,7 +66,7 @@ class HurlIO {
       params = [...params, ...sectionParams];
     }
 
-    // Handle Basic Auth - convert to Authorization header
+    // convert to Authorization header
     final basicAuthMap = entry['basicAuth'] as Map<String, dynamic>?;
     if (basicAuthMap != null) {
       final username = basicAuthMap['username'] as String? ?? '';
@@ -81,27 +78,27 @@ class HurlIO {
       ));
     }
 
-    // Extract request body
+    // extract request body
     ContentType bodyContentType = kDefaultContentType;
     String? body;
     List<FormDataModel>? formData;
 
-    // Check for JSON/text body
+    // check for JSON/text body
     final bodyStr = entry['body'] as String?;
     if (bodyStr != null && bodyStr.isNotEmpty) {
-      // Try to detect if it's JSON
+      // try to detect if it's JSON
       try {
         jsonDecode(bodyStr);
         bodyContentType = ContentType.json;
         body = bodyStr;
       } catch (e) {
-        // Not JSON, treat as text
+        // not JSON, treat as text
         bodyContentType = ContentType.text;
         body = bodyStr;
       }
     }
 
-    // Check for form data from [FormParams] section
+    // check for form data from [FormParams] section
     final formParamsList = entry['formParams'] as List<dynamic>?;
     if (formParamsList != null && formParamsList.isNotEmpty) {
       bodyContentType = ContentType.formdata;
@@ -113,10 +110,10 @@ class HurlIO {
           type: FormDataType.text,
         );
       }).toList();
-      body = null; // Clear body when using form data
+      body = null; // clear body when using form data
     }
 
-    // Check for multipart form data from [MultipartFormData] section
+    // check for multipart form data from [MultipartFormData] section
     final multipartParamsList = entry['multipartParams'] as List<dynamic>?;
     if (multipartParamsList != null && multipartParamsList.isNotEmpty) {
       bodyContentType = ContentType.formdata;
@@ -129,11 +126,11 @@ class HurlIO {
           type: paramType == 'file' ? FormDataType.file : FormDataType.text,
         );
       }).toList();
-      body = null; // Clear body when using multipart data
+      body = null; // clear body when using multipart data
     }
 
-    // Handle cookies from [Cookies] section
-    // Add cookies as Cookie header
+    // handle cookies from [Cookies] section
+    // add cookies as Cookie header
     final cookiesList = entry['cookies'] as List<dynamic>?;
     if (cookiesList != null && cookiesList.isNotEmpty) {
       final cookieValues = cookiesList.map((c) {

@@ -3,7 +3,7 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
-import 'api/simple.dart';
+import 'api/hurl_parser.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
@@ -55,7 +55,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 
   @override
   Future<void> executeRustInitializers() async {
-    await api.crateApiSimpleInitApp();
+    await api.crateApiHurlParserInitApp();
   }
 
   @override
@@ -66,7 +66,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -1957925528;
+  int get rustContentHash => -1442735771;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -77,9 +77,9 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<void> crateApiSimpleInitApp();
+  Future<void> crateApiHurlParserInitApp();
 
-  String crateApiSimpleParseHurlToJson({required String content});
+  String crateApiHurlParserParseHurlToJson({required String content});
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -91,7 +91,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<void> crateApiSimpleInitApp() {
+  Future<void> crateApiHurlParserInitApp() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -107,18 +107,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
         ),
-        constMeta: kCrateApiSimpleInitAppConstMeta,
+        constMeta: kCrateApiHurlParserInitAppConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiSimpleInitAppConstMeta =>
+  TaskConstMeta get kCrateApiHurlParserInitAppConstMeta =>
       const TaskConstMeta(debugName: "init_app", argNames: []);
 
   @override
-  String crateApiSimpleParseHurlToJson({required String content}) {
+  String crateApiHurlParserParseHurlToJson({required String content}) {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
@@ -130,14 +130,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_String,
           decodeErrorData: sse_decode_String,
         ),
-        constMeta: kCrateApiSimpleParseHurlToJsonConstMeta,
+        constMeta: kCrateApiHurlParserParseHurlToJsonConstMeta,
         argValues: [content],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiSimpleParseHurlToJsonConstMeta =>
+  TaskConstMeta get kCrateApiHurlParserParseHurlToJsonConstMeta =>
       const TaskConstMeta(
         debugName: "parse_hurl_to_json",
         argNames: ["content"],

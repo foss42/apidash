@@ -11,4 +11,4 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 /// Parses a Hurl file content and returns a simplified JSON representation
 /// containing just the HTTP requests
 String parseHurlToJson({required String content}) =>
-    RustLib.instance.api.crateApiSimpleParseHurlToJson(content: content);
+    RustLib.instance.api.crateApiHurlParserParseHurlToJson(content: content);
