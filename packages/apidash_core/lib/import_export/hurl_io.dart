@@ -116,6 +116,41 @@ class HurlIO {
       body = null; // Clear body when using form data
     }
 
+    // Check for multipart form data from [MultipartFormData] section
+    final multipartParamsList = entry['multipartParams'] as List<dynamic>?;
+    if (multipartParamsList != null && multipartParamsList.isNotEmpty) {
+      bodyContentType = ContentType.formdata;
+      formData = multipartParamsList.map((p) {
+        final paramMap = p as Map<String, dynamic>;
+        final paramType = paramMap['type'] as String? ?? 'text';
+        return FormDataModel(
+          name: paramMap['name'] as String? ?? '',
+          value: paramMap['value'] as String? ?? '',
+          type: paramType == 'file' ? FormDataType.file : FormDataType.text,
+        );
+      }).toList();
+      body = null; // Clear body when using multipart data
+    }
+
+    // Handle cookies from [Cookies] section
+    // Add cookies as Cookie header
+    final cookiesList = entry['cookies'] as List<dynamic>?;
+    if (cookiesList != null && cookiesList.isNotEmpty) {
+      final cookieValues = cookiesList.map((c) {
+        final cookieMap = c as Map<String, dynamic>;
+        final name = cookieMap['name'] as String? ?? '';
+        final value = cookieMap['value'] as String? ?? '';
+        return '$name=$value';
+      }).join('; ');
+      
+      if (cookieValues.isNotEmpty) {
+        headers.add(NameValueModel(
+          name: 'Cookie',
+          value: cookieValues,
+        ));
+      }
+    }
+
     final requestModel = HttpRequestModel(
       method: method,
       url: urlWithoutParams,

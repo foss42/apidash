@@ -80,6 +80,51 @@ pub fn parse_hurl_to_json(content: String) -> Result<String, String> {
                     }
                 }
                 
+                // Extract multipart form data from [MultipartFormData] section
+                let mut multipart_params: Vec<String> = Vec::new();
+                for section in &request.sections {
+                    if let SectionValue::MultipartFormData(params, _) = &section.value {
+                        for param in params {
+                            // Extract key and value from multipart parameter
+                            // MultipartParam has different variants, we'll handle what we can
+                            let param_json = match param {
+                                hurl_core::ast::MultipartParam::Param(kv) => {
+                                    format!(
+                                        r#"{{"name":"{}","value":"{}","type":"text"}}"#,
+                                        escape_json(&template_to_string(&kv.key)),
+                                        escape_json(&template_to_string(&kv.value))
+                                    )
+                                }
+                                _ => {
+                                    // For file parameters or other types, we'll need to inspect the actual structure
+                                    // For now, skip unsupported multipart types
+                                    continue;
+                                }
+                            };
+                            multipart_params.push(param_json);
+                        }
+                    }
+                }
+                
+                // Extract cookies from [Cookies] section
+                let mut cookies: Vec<String> = Vec::new();
+                for section in &request.sections {
+                    if let SectionValue::Cookies(cookie_list) = &section.value {
+                        for cookie in cookie_list {
+                            cookies.push(format!(
+                                r#"{{"name":"{}","value":"{}"}}"#,
+                                escape_json(&template_to_string(&cookie.name)),
+                                escape_json(&template_to_string(&cookie.value))
+                            ));
+                        }
+                    }
+                }
+                
+                // Extract options from [Options] section
+                // Note: Options are metadata for Hurl execution, not typically used in API import
+                // We'll skip detailed option parsing for now as they don't map to HTTP requests
+                let options: Vec<String> = Vec::new();
+                
                 // Extract request body
                 let body = if let Some(body) = &request.body {
                     // Convert body bytes to string
@@ -106,6 +151,18 @@ pub fn parse_hurl_to_json(content: String) -> Result<String, String> {
                 
                 if !form_params.is_empty() {
                     json_parts.push(format!(r#""formParams":[{}]"#, form_params.join(",")));
+                }
+                
+                if !multipart_params.is_empty() {
+                    json_parts.push(format!(r#""multipartParams":[{}]"#, multipart_params.join(",")));
+                }
+                
+                if !cookies.is_empty() {
+                    json_parts.push(format!(r#""cookies":[{}]"#, cookies.join(",")));
+                }
+                
+                if !options.is_empty() {
+                    json_parts.push(format!(r#""options":[{}]"#, options.join(",")));
                 }
                 
                 if let Some(auth) = basic_auth {
