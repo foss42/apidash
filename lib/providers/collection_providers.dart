@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
@@ -350,8 +351,63 @@ class CollectionStateNotifier
           executionRequestModel.httpRequestModel!);
     }
 
-    // Terminal: start network log
+    // Terminal: Add validation logging
     final terminal = ref.read(terminalStateProvider.notifier);
+    
+    // Check for empty or invalid URL
+    if (substitutedHttpRequestModel.url.trim().isEmpty) {
+      terminal.logSystem(
+        category: 'validation',
+        message: 'Request URL is empty. Please provide a valid URL.',
+        level: TerminalLevel.error,
+        tags: ['request-validation', 'empty-url'],
+      );
+    }
+    
+    // Check for GET request with body
+    if (substitutedHttpRequestModel.method == HTTPVerb.get && 
+        substitutedHttpRequestModel.body != null && 
+        substitutedHttpRequestModel.body!.trim().isNotEmpty) {
+      terminal.logSystem(
+        category: 'validation',
+        message: 'GET request contains a body. This may not be supported by all servers.',
+        level: TerminalLevel.warn,
+        tags: ['request-validation', 'get-with-body'],
+      );
+    }
+    
+    // Check for invalid JSON in request body
+    if (substitutedHttpRequestModel.body != null && 
+        substitutedHttpRequestModel.body!.trim().isNotEmpty &&
+        substitutedHttpRequestModel.bodyContentType == ContentType.json) {
+      try {
+        kJsonDecoder.convert(substitutedHttpRequestModel.body!);
+        // Log successful JSON validation for debugging
+        terminal.logSystem(
+          category: 'validation',
+          message: 'Request body contains valid JSON.',
+          level: TerminalLevel.debug,
+          tags: ['request-validation', 'valid-json'],
+        );
+      } catch (e) {
+        terminal.logSystem(
+          category: 'validation',
+          message: 'Invalid JSON in request body: ${e.toString()}',
+          level: TerminalLevel.error,
+          tags: ['request-validation', 'invalid-json'],
+        );
+      }
+    }
+    
+    // Log general request validation info
+    terminal.logSystem(
+      category: 'validation',
+      message: 'Request validation completed for ${substitutedHttpRequestModel.method.name.toUpperCase()} ${substitutedHttpRequestModel.url}',
+      level: TerminalLevel.info,
+      tags: ['request-validation', 'completed'],
+    );
+
+    // Terminal: start network log
     final logId = terminal.startNetwork(
       apiType: executionRequestModel.apiType,
       method: substitutedHttpRequestModel.method,
