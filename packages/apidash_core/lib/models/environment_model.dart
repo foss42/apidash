@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../consts.dart';
 
@@ -15,6 +17,7 @@ class EnvironmentModel with _$EnvironmentModel {
     required String id,
     @Default("") String name,
     @Default([]) List<EnvironmentVariableModel> values,
+    @ColorConverter() @Default(kGlobalColor) Color color
   }) = _EnvironmentModel;
 
   factory EnvironmentModel.fromJson(Map<String, Object?> json) =>
@@ -39,7 +42,7 @@ class EnvironmentVariableModel with _$EnvironmentVariableModel {
 }
 
 const kEnvironmentVariableEmptyModel =
-    EnvironmentVariableModel(key: "", value: "");
+EnvironmentVariableModel(key: "", value: "");
 const kEnvironmentSecretEmptyModel = EnvironmentVariableModel(
     key: "", value: "", type: EnvironmentVariableType.secret);
 
@@ -79,4 +82,14 @@ class EnvironmentVariableSuggestion {
   @override
   int get hashCode =>
       environmentId.hashCode ^ variable.hashCode ^ isUnknown.hashCode;
+}
+
+class ColorConverter implements JsonConverter<Color, int> {
+  const ColorConverter();
+
+  @override
+  Color fromJson(int json) => Color(json);
+
+  @override
+  int toJson(Color object) => object.toARGB32();
 }

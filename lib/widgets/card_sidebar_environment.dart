@@ -11,6 +11,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
     this.isGlobal = false,
     this.isActive = false,
     this.name,
+    this.color,
     this.selectedId,
     this.editRequestId,
     this.setActive,
@@ -27,6 +28,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
   final bool isGlobal;
   final bool isActive;
   final String? name;
+  final Color? color;
   final String? selectedId;
   final String? editRequestId;
   final void Function(bool?)? setActive;
@@ -41,8 +43,8 @@ class SidebarEnvironmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final Color color =
-        isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
+    final colorDot =  color;
+    final Color surfaceColor = colorScheme.surface;
     final Color colorVariant = colorScheme.surfaceContainer;
     final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
@@ -61,8 +63,8 @@ class SidebarEnvironmentCard extends StatelessWidget {
         color: isSelected && !isGlobal
             ? colorScheme.brightness == Brightness.dark
                 ? colorVariant
-                : color
-            : color,
+                : surfaceColor
+            : surfaceColor,
         margin: EdgeInsets.zero,
         child: InkWell(
           borderRadius: kBorderRadius8,
@@ -109,11 +111,22 @@ class SidebarEnvironmentCard extends StatelessWidget {
                               border: InputBorder.none,
                             ),
                           )
-                        : Text(
-                            nm,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                          ),
+                        : Row(
+                          children: [
+                            Container(width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: colorDot),
+                              margin: kPe8,
+                            ),
+                            Text(
+                                nm,
+                                softWrap: false,
+                                overflow: TextOverflow.fade,
+                              ),
+                          ],
+                        ),
                   ),
                   Visibility(
                     visible: isSelected && !inEditMode && !isGlobal,

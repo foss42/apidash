@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
@@ -104,11 +106,12 @@ class EnvironmentsStateNotifier
     }
   }
 
-  void addEnvironment() {
+  void addEnvironment({Color? color}) {
     final id = getNewUuid();
     final newEnvironmentModel = EnvironmentModel(
       id: id,
       values: [],
+      color: color??kGlobalColor
     );
     state = {
       ...state!,
@@ -124,12 +127,13 @@ class EnvironmentsStateNotifier
 
   void updateEnvironment(
     String id, {
-    String? name,
+    String? name, Color? color,
     List<EnvironmentVariableModel>? values,
   }) {
     final environment = state![id]!;
     final updatedEnvironment = environment.copyWith(
       name: name ?? environment.name,
+      color: color ?? environment.color,
       values: values ?? environment.values,
     );
     state = {

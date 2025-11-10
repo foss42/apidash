@@ -17,6 +17,7 @@ class EnvironmentDropdown extends ConsumerWidget {
     return EnvironmentPopupMenu(
       value: environments?[activeEnvironment],
       options: environmentsList,
+      color: environments?[activeEnvironment]?.color,
       onChanged: (value) {
         if (value != null) {
           ref.read(activeEnvironmentIdStateProvider.notifier).state = value.id;

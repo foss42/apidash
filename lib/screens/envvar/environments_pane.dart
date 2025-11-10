@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +25,10 @@ class EnvironmentsPane extends ConsumerWidget {
         children: [
           SidebarHeader(
             onAddNew: () {
+              Color newColor = kEnvColors[Random().nextInt(kEnvColors.length)];
               ref
                   .read(environmentsStateNotifierProvider.notifier)
-                  .addEnvironment();
+                  .addEnvironment(color: newColor);
             },
           ),
           kVSpacer10,
@@ -182,6 +185,7 @@ class EnvironmentItem extends ConsumerWidget {
       isActive: id == activeEnvironmentId,
       isGlobal: id == kGlobalEnvironmentId,
       name: environmentModel.name,
+      color: environmentModel.color,
       selectedId: selectedId,
       editRequestId: editRequestId,
       setActive: (value) {
@@ -225,7 +229,68 @@ class EnvironmentItem extends ConsumerWidget {
               .read(environmentsStateNotifierProvider.notifier)
               .duplicateEnvironment(id);
         }
+        if (item == ItemMenuOption.editColor) {
+          showEnvColorPickerDialog(
+            context,
+            ref.read(environmentsStateNotifierProvider.notifier),
+            id,
+          );
+        }
       },
     );
   }
+}
+
+void showEnvColorPickerDialog(
+  BuildContext context,
+  EnvironmentsStateNotifier notifier,
+  String id,
+) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      Color? hoveredColor;
+
+      return StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Pick a color'),
+          content: SizedBox(
+            width: 250,
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: kEnvColors.map((color) {
+                final isHovered = color == hoveredColor;
+
+                final displayColor = isHovered
+                    ? Color.alphaBlend(
+                        Colors.black.withValues(alpha: 0.25), color)
+                    : color;
+
+                return MouseRegion(
+                  onEnter: (_) => setState(() => hoveredColor = color),
+                  onExit: (_) => setState(() => hoveredColor = null),
+                  child: GestureDetector(
+                    onTap: () {
+                      notifier.updateEnvironment(id, color: color);
+                      Navigator.of(context).pop();
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: displayColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }

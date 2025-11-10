@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import '../tokens/tokens.dart';
 
+
 class ADPopupMenu<T> extends StatelessWidget {
-  const ADPopupMenu({
-    super.key,
-    this.value,
-    required this.values,
-    this.onChanged,
-    this.tooltip,
-    this.width,
-    this.isOutlined = false,
-    this.borderColor,
-  });
+  const ADPopupMenu(
+      {super.key,
+      this.value,
+      required this.values,
+      this.onChanged,
+      this.tooltip,
+      this.width,
+      this.isOutlined = false,
+      this.borderColor,
+      this.colorResolver});
 
   final String? value;
   final Iterable<(T, String?)> values;
@@ -20,6 +21,7 @@ class ADPopupMenu<T> extends StatelessWidget {
   final double? width;
   final bool isOutlined;
   final Color? borderColor;
+  final Color? Function(T)? colorResolver;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +33,21 @@ class ADPopupMenu<T> extends StatelessWidget {
       itemBuilder: (BuildContext context) => values
           .map((item) => PopupMenuItem<T>(
                 value: item.$1,
-                child: Text(
-                  item.$2 ?? "",
-                  style: kTextStylePopupMenuItem,
+                child: Row(
+                  children: [
+                    if (colorResolver != null)
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: colorResolver!(item.$1)),
+                        margin: kPe8,
+                      ),
+                    Text(
+                      item.$2 ?? "",
+                      style: kTextStylePopupMenuItem,
+                    ),
+                  ],
                 ),
               ))
           .toList(),
