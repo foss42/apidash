@@ -38,16 +38,23 @@ class CollectionStateNotifier
   CollectionStateNotifier(
     this.ref,
     this.hiveHandler,
-  ) : super(null) {
+  ) : super({}) {
     var status = loadData();
     Future.microtask(() {
-      if (status) {
+      // Only update sequence/selected id if we have something
+      if (status && state != null && state!.isNotEmpty) {
         ref.read(requestSequenceProvider.notifier).state = [
           state!.keys.first,
         ];
+        final seq = ref.read(requestSequenceProvider);
+        ref.read(selectedIdStateProvider.notifier).state =
+            seq.isNotEmpty ? seq[0] : null;
+      } else {
+        // Ensure selectedId is set safely if sequence already has items
+        final seq = ref.read(requestSequenceProvider);
+        ref.read(selectedIdStateProvider.notifier).state =
+            seq.isNotEmpty ? seq[0] : null;
       }
-      ref.read(selectedIdStateProvider.notifier).state =
-          ref.read(requestSequenceProvider)[0];
     });
   }
 
@@ -71,12 +78,12 @@ class CollectionStateNotifier
       id: id,
       httpRequestModel: const HttpRequestModel(),
     );
-    var map = {...state!};
+    var map = {...(state ?? {})};
     map[id] = newRequestModel;
     state = map;
     ref
         .read(requestSequenceProvider.notifier)
-        .update((state) => [id, ...state]);
+        .update((s) => [id, ...s]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
     unsave();
   }
@@ -91,28 +98,32 @@ class CollectionStateNotifier
       name: name ?? "",
       httpRequestModel: httpRequestModel,
     );
-    var map = {...state!};
+    var map = {...(state ?? {})};
     map[id] = newRequestModel;
     state = map;
     ref
         .read(requestSequenceProvider.notifier)
-        .update((state) => [id, ...state]);
+        .update((s) => [id, ...s]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
     unsave();
   }
 
   void reorder(int oldIdx, int newIdx) {
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
+    if (oldIdx < 0 || oldIdx >= itemIds.length) return;
     final itemId = itemIds.removeAt(oldIdx);
-    itemIds.insert(newIdx, itemId);
+    final safeNewIdx = newIdx.clamp(0, itemIds.length);
+    itemIds.insert(safeNewIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     unsave();
   }
 
   void remove({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
-    var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(rId!);
+    if (rId == null) return;
+    var itemIds = [...ref.read(requestSequenceProvider)];
+    if (!itemIds.contains(rId)) return;
+    int idx = itemIds.indexOf(rId);
     cancelHttpRequest(rId);
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
@@ -120,7 +131,7 @@ class CollectionStateNotifier
     String? newId;
     if (idx == 0 && itemIds.isNotEmpty) {
       newId = itemIds[0];
-    } else if (itemIds.length > 1) {
+    } else if (itemIds.length > 1 && idx > 0) {
       newId = itemIds[idx - 1];
     } else {
       newId = null;
@@ -128,7 +139,7 @@ class CollectionStateNotifier
 
     ref.read(selectedIdStateProvider.notifier).state = newId;
 
-    var map = {...state!};
+    var map = {...(state ?? {})};
     map.remove(rId);
     state = map;
     unsave();
@@ -136,7 +147,7 @@ class CollectionStateNotifier
 
   void clearResponse({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
-    if (rId == null || state?[rId] == null) return;
+    if (rId == null || state == null || state![rId] == null) return;
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       responseStatus: null,
@@ -153,10 +164,11 @@ class CollectionStateNotifier
 
   void duplicate({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null || state == null || state![rId] == null) return;
     final newId = getNewUuid();
 
-    var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(rId!);
+    var itemIds = [...ref.read(requestSequenceProvider)];
+    int idx = itemIds.indexOf(rId);
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       id: newId,
@@ -171,8 +183,9 @@ class CollectionStateNotifier
       sendingTime: null,
     );
 
+    if (idx == -1) idx = 0;
     itemIds.insert(idx + 1, newId);
-    var map = {...state!};
+    var map = {...(state ?? {})};
     map[newId] = newModel;
     state = map;
 
@@ -184,7 +197,7 @@ class CollectionStateNotifier
   void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
     final newId = getNewUuid();
 
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     var currentModel = historyRequestModel;
 
     final newModel = RequestModel(
@@ -202,7 +215,7 @@ class CollectionStateNotifier
     );
 
     itemIds.insert(0, newId);
-    var map = {...state!};
+    var map = {...(state ?? {})};
     map[newId] = newModel;
     state = map;
 
@@ -236,7 +249,7 @@ class CollectionStateNotifier
     AIRequestModel? aiRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
-    if (rId == null) {
+    if (rId == null || state == null || state![rId] == null) {
       debugPrint("Unable to update as Request Id is null");
       return;
     }
@@ -294,7 +307,7 @@ class CollectionStateNotifier
       );
     }
 
-    var map = {...state!};
+    var map = {...(state ?? {})};
     map[rId] = newModel;
     state = map;
     unsave();
@@ -308,9 +321,11 @@ class CollectionStateNotifier
       return;
     }
 
-    RequestModel? requestModel = state![requestId];
-    if (requestModel?.httpRequestModel == null &&
-        requestModel?.aiRequestModel == null) {
+    RequestModel? requestModel = state?[requestId];
+    if (requestModel == null) return;
+
+    if (requestModel.httpRequestModel == null &&
+        requestModel.aiRequestModel == null) {
       return;
     }
 
@@ -318,9 +333,9 @@ class CollectionStateNotifier
     final EnvironmentModel? originalEnvironmentModel =
         ref.read(activeEnvironmentModelProvider);
 
-    RequestModel executionRequestModel = requestModel!.copyWith();
+    RequestModel executionRequestModel = requestModel.copyWith();
 
-    if (!requestModel.preRequestScript.isNullOrEmpty()) {
+    if (!executionRequestModel.preRequestScript.isNullOrEmpty()) {
       executionRequestModel = await ref
           .read(jsRuntimeNotifierProvider.notifier)
           .handlePreRequestScript(
@@ -364,7 +379,7 @@ class CollectionStateNotifier
 
     // Set model to working and streaming
     state = {
-      ...state!,
+      ...(state ?? {}),
       requestId: requestModel.copyWith(
         isWorking: true,
         sendingTime: DateTime.now(),
@@ -410,7 +425,7 @@ class CollectionStateNotifier
           isStreaming: true,
         );
         state = {
-          ...state!,
+          ...(state ?? {}),
           requestId: newRequestModel,
         };
         // Terminal: append chunk preview
@@ -428,10 +443,10 @@ class CollectionStateNotifier
 
         if (historyModel != null && httpResponseModel != null) {
           historyModel =
-              historyModel!.copyWith(httpResponseModel: httpResponseModel!);
+              historyModel.copyWith(httpResponseModel: httpResponseModel);
           ref
               .read(historyMetaStateNotifier.notifier)
-              .editHistoryRequest(historyModel!);
+              .editHistoryRequest(historyModel);
         }
       } else {
         streamingMode = false;
@@ -443,7 +458,7 @@ class CollectionStateNotifier
     }, onDone: () {
       sub?.cancel();
       state = {
-        ...state!,
+        ...(state ?? {}),
         requestId: newRequestModel.copyWith(isStreaming: false),
       };
       unsave();
@@ -472,7 +487,7 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
-      //AI-FORMATTING for Non Streaming Varaint
+      //AI-FORMATTING for Non Streaming Variant
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
@@ -520,7 +535,7 @@ class CollectionStateNotifier
 
       ref
           .read(historyMetaStateNotifier.notifier)
-          .addHistoryRequest(historyModel!);
+          .addHistoryRequest(historyModel);
 
       if (!requestModel.postRequestScript.isNullOrEmpty()) {
         newRequestModel = await ref
@@ -543,7 +558,7 @@ class CollectionStateNotifier
 
     // Final state update
     state = {
-      ...state!,
+      ...(state ?? {}),
       requestId: newRequestModel,
     };
 
@@ -619,9 +634,6 @@ class CollectionStateNotifier
   Future<Map<String, dynamic>> exportDataToHAR() async {
     var result = await collectionToHAR(state?.values.toList());
     return result;
-    // return {
-    //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
-    // };
   }
 
   HttpRequestModel getSubstitutedHttpRequestModel(

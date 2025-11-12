@@ -130,63 +130,61 @@ multipart/form-data; boundary={{boundary}}''';
       var harJson =
           requestModelToHARJsonRequest(requestModel, useEnabled: true);
 
-      if (uri != null) {
-        var templateUrl = jj.Template(kTemplateUrl);
-        result += templateUrl.render({"url": harJson["url"]});
+      var templateUrl = jj.Template(kTemplateUrl);
+      result += templateUrl.render({"url": harJson["url"]});
 
-        String? bodyPublisher = "";
-        if (requestModel.hasTextData) {
-          var templateBody = jj.Template(kTemplateRawBody);
-          bodyPublisher = templateBody.render({"body": requestBody});
-        } else if (requestModel.hasJsonData) {
-          var templateBody = jj.Template(kTemplateJsonBody);
-          bodyPublisher = templateBody.render({"body": requestBody});
-        } else if (requestModel.hasFormData) {
-          var templateFormData = jj.Template(kTemplateFormData);
-          bodyPublisher = templateFormData.render({
-            "fields": requestModel.formDataMapList,
-            "boundary": boundary,
-          });
-        }
-
-        result += bodyPublisher;
-
-        var methodTemplate = jj.Template(kTemplateMethod);
-        result += methodTemplate.render({
-          "method": requestModel.method.name,
-          "hasBody": requestModel.hasBody,
-        });
-
-        var headersList = requestModel.enabledHeaders;
-        if (headersList != null || requestModel.hasBody) {
-          var headers = requestModel.enabledHeadersMap;
-          if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers.putIfAbsent(
-                kHeaderContentType, () => requestModel.bodyContentType.header);
-          }
-          if (requestModel.hasFormData) {
-            var formDataHeader = jj.Template(kTemplateFormHeaderContentType);
-            headers.putIfAbsent(
-                kHeaderContentType,
-                () => formDataHeader.render({
-                      "boundary": boundary,
-                    }));
-          }
-          if (headers.isNotEmpty) {
-            var templateHeader = jj.Template(kTemplateHeader);
-            result += templateHeader.render({
-              "headers": headers,
-            });
-          }
-        }
-
-        var templateEnd = jj.Template(kTemplateEnd);
-        result += templateEnd.render({
-          "hasFormData": requestModel.hasFormData,
+      String? bodyPublisher = "";
+      if (requestModel.hasTextData) {
+        var templateBody = jj.Template(kTemplateRawBody);
+        bodyPublisher = templateBody.render({"body": requestBody});
+      } else if (requestModel.hasJsonData) {
+        var templateBody = jj.Template(kTemplateJsonBody);
+        bodyPublisher = templateBody.render({"body": requestBody});
+      } else if (requestModel.hasFormData) {
+        var templateFormData = jj.Template(kTemplateFormData);
+        bodyPublisher = templateFormData.render({
+          "fields": requestModel.formDataMapList,
           "boundary": boundary,
         });
       }
 
+      result += bodyPublisher;
+
+      var methodTemplate = jj.Template(kTemplateMethod);
+      result += methodTemplate.render({
+        "method": requestModel.method.name,
+        "hasBody": requestModel.hasBody,
+      });
+
+      var headersList = requestModel.enabledHeaders;
+      if (headersList != null || requestModel.hasBody) {
+        var headers = requestModel.enabledHeadersMap;
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
+          headers.putIfAbsent(
+              kHeaderContentType, () => requestModel.bodyContentType.header);
+        }
+        if (requestModel.hasFormData) {
+          var formDataHeader = jj.Template(kTemplateFormHeaderContentType);
+          headers.putIfAbsent(
+              kHeaderContentType,
+              () => formDataHeader.render({
+                    "boundary": boundary,
+                  }));
+        }
+        if (headers.isNotEmpty) {
+          var templateHeader = jj.Template(kTemplateHeader);
+          result += templateHeader.render({
+            "headers": headers,
+          });
+        }
+      }
+
+      var templateEnd = jj.Template(kTemplateEnd);
+      result += templateEnd.render({
+        "hasFormData": requestModel.hasFormData,
+        "boundary": boundary,
+      });
+    
       return result.replaceAll(RegExp('\\n\\n+'), '\n\n');
     } catch (e) {
       return null;

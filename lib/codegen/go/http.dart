@@ -111,56 +111,54 @@ func main() {
 
       Uri? uri = rec.$1;
 
-      if (uri != null) {
-        if (requestModel.hasTextData || requestModel.hasJsonData) {
-          hasBody = true;
-          var templateRawBody = jj.Template(kTemplateBody);
-          result += templateRawBody.render({"body": requestModel.body});
-        } else if (requestModel.hasFormData) {
-          hasBody = true;
-          var templateFormData = jj.Template(kTemplateFormData);
-          result += templateFormData.render({
-            "hasFileInFormData": requestModel.hasFileInFormData,
-            "fields": requestModel.formDataMapList,
-          });
-        }
-
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var templateQueryParam = jj.Template(kTemplateQueryParam);
-            result += templateQueryParam.render({"params": params});
-          }
-        }
-
-        var method = requestModel.method.name.toUpperCase();
-        var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": method,
-          "hasBody": hasBody,
+      if (requestModel.hasTextData || requestModel.hasJsonData) {
+        hasBody = true;
+        var templateRawBody = jj.Template(kTemplateBody);
+        result += templateRawBody.render({"body": requestModel.body});
+      } else if (requestModel.hasFormData) {
+        hasBody = true;
+        var templateFormData = jj.Template(kTemplateFormData);
+        result += templateFormData.render({
+          "hasFileInFormData": requestModel.hasFileInFormData,
+          "fields": requestModel.formDataMapList,
         });
-
-        var headersList = requestModel.enabledHeaders;
-        if (headersList != null || requestModel.hasBody) {
-          var headers = requestModel.enabledHeadersMap;
-          if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers.putIfAbsent(
-                kHeaderContentType, () => requestModel.bodyContentType.header);
-          }
-          if (headers.isNotEmpty) {
-            var templateHeader = jj.Template(kTemplateHeader);
-            result += templateHeader.render({
-              "headers": headers,
-            });
-          }
-        }
-        if (requestModel.hasFormData) {
-          result += kStringFormDataHeader;
-        }
-
-        result += kTemplateEnd;
       }
 
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          var templateQueryParam = jj.Template(kTemplateQueryParam);
+          result += templateQueryParam.render({"params": params});
+        }
+      }
+
+      var method = requestModel.method.name.toUpperCase();
+      var templateRequest = jj.Template(kTemplateRequest);
+      result += templateRequest.render({
+        "method": method,
+        "hasBody": hasBody,
+      });
+
+      var headersList = requestModel.enabledHeaders;
+      if (headersList != null || requestModel.hasBody) {
+        var headers = requestModel.enabledHeadersMap;
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
+          headers.putIfAbsent(
+              kHeaderContentType, () => requestModel.bodyContentType.header);
+        }
+        if (headers.isNotEmpty) {
+          var templateHeader = jj.Template(kTemplateHeader);
+          result += templateHeader.render({
+            "headers": headers,
+          });
+        }
+      }
+      if (requestModel.hasFormData) {
+        result += kStringFormDataHeader;
+      }
+
+      result += kTemplateEnd;
+    
       return result;
     } catch (e) {
       return null;

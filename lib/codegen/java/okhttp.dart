@@ -103,70 +103,68 @@ import okhttp3.MultipartBody;""";
       );
       Uri? uri = rec.$1;
 
-      if (uri != null) {
-        String url = stripUriParams(uri);
+      String url = stripUriParams(uri);
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            hasQuery = true;
-            var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams
-                .render({"url": url, "params": getQueryParams(params)});
-          }
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          hasQuery = true;
+          var templateParams = jj.Template(kTemplateUrlQuery);
+          result += templateParams
+              .render({"url": url, "params": getQueryParams(params)});
         }
-        if (!hasQuery) {
-          var templateUrl = jj.Template(kTemplateUrl);
-          result += templateUrl.render({"url": url});
-        }
-
-        var method = requestModel.method;
-        var requestBody = requestModel.body;
-        if (requestModel.hasFormData) {
-          hasFormData = true;
-          var formDataTemplate = jj.Template(kFormDataBody);
-
-          result += formDataTemplate.render({
-            "formDataList": requestModel.formDataMapList,
-          });
-        } else if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            hasBody = true;
-            String contentType = requestModel.bodyContentType.header;
-            var templateBody = jj.Template(kTemplateRequestBody);
-            result += templateBody.render({
-              "contentType": contentType,
-              "body": kJsonEncoder.convert(requestBody)
-            });
-          }
-        }
-
-        var templateStart = jj.Template(kTemplateStart);
-        var stringStart = templateStart.render({
-          "importForQuery": hasQuery ? kStringImportForQuery : "",
-          "importForBody": hasBody ? kStringImportForBody : "",
-          "importForFormData": hasFormData ? kStringImportForFormData : ""
-        });
-
-        result = stringStart + result;
-        result += kStringRequestStart;
-
-        var headersList = requestModel.enabledHeaders;
-        if (headersList != null) {
-          var headers = requestModel.enabledHeadersMap;
-          if (headers.isNotEmpty) {
-            result += getHeaders(headers);
-          }
-        }
-
-        var templateRequestEnd = jj.Template(kTemplateRequestEnd);
-        result += templateRequestEnd.render({
-          "method": method.name.toLowerCase(),
-          "hasBody": (hasBody || requestModel.hasFormData) ? "body" : "",
-        });
       }
-      return result;
+      if (!hasQuery) {
+        var templateUrl = jj.Template(kTemplateUrl);
+        result += templateUrl.render({"url": url});
+      }
+
+      var method = requestModel.method;
+      var requestBody = requestModel.body;
+      if (requestModel.hasFormData) {
+        hasFormData = true;
+        var formDataTemplate = jj.Template(kFormDataBody);
+
+        result += formDataTemplate.render({
+          "formDataList": requestModel.formDataMapList,
+        });
+      } else if (kMethodsWithBody.contains(method) && requestBody != null) {
+        var contentLength = utf8.encode(requestBody).length;
+        if (contentLength > 0) {
+          hasBody = true;
+          String contentType = requestModel.bodyContentType.header;
+          var templateBody = jj.Template(kTemplateRequestBody);
+          result += templateBody.render({
+            "contentType": contentType,
+            "body": kJsonEncoder.convert(requestBody)
+          });
+        }
+      }
+
+      var templateStart = jj.Template(kTemplateStart);
+      var stringStart = templateStart.render({
+        "importForQuery": hasQuery ? kStringImportForQuery : "",
+        "importForBody": hasBody ? kStringImportForBody : "",
+        "importForFormData": hasFormData ? kStringImportForFormData : ""
+      });
+
+      result = stringStart + result;
+      result += kStringRequestStart;
+
+      var headersList = requestModel.enabledHeaders;
+      if (headersList != null) {
+        var headers = requestModel.enabledHeadersMap;
+        if (headers.isNotEmpty) {
+          result += getHeaders(headers);
+        }
+      }
+
+      var templateRequestEnd = jj.Template(kTemplateRequestEnd);
+      result += templateRequestEnd.render({
+        "method": method.name.toLowerCase(),
+        "hasBody": (hasBody || requestModel.hasFormData) ? "body" : "",
+      });
+          return result;
     } catch (e) {
       return null;
     }

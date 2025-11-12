@@ -103,10 +103,6 @@ int main() {
 
       Uri? uri = rec.$1;
 
-      if (uri == null) {
-        return result;
-      }
-
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
         "hasFormData": requestModel.hasFormData,

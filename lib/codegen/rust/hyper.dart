@@ -109,64 +109,62 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
       var rec = getValidRequestUri(url, requestModel.enabledParams);
       Uri? uri = rec.$1;
 
-      if (uri != null) {
-        var headers = requestModel.enabledHeadersMap;
-        result += jj.Template(kTemplateStart).render({
-          "url": uri,
-          "isHttps": uri.scheme == "https" ? true : false,
-          'hasJsonBody': requestModel.hasJsonData,
-          'hasForm': requestModel.hasFormData,
+      var headers = requestModel.enabledHeadersMap;
+      result += jj.Template(kTemplateStart).render({
+        "url": uri,
+        "isHttps": uri.scheme == "https" ? true : false,
+        'hasJsonBody': requestModel.hasJsonData,
+        'hasForm': requestModel.hasFormData,
+      });
+
+      if (requestModel.hasFormData && headers.isEmpty) {
+        result += jj.Template(kTemplateMethodNoHeadersButForm).render({
+          "method": requestModel.method.name.toUpperCase(),
         });
-
-        if (requestModel.hasFormData && headers.isEmpty) {
-          result += jj.Template(kTemplateMethodNoHeadersButForm).render({
-            "method": requestModel.method.name.toUpperCase(),
-          });
-        } else {
-          result += jj.Template(kTemplateMethod).render({
-            "method": requestModel.method.name.toUpperCase(),
-          });
-        }
-
-        // Add headers if available
-
-        if (headers.isNotEmpty) {
-          if (requestModel.hasFormData) {
-            result += jj.Template(kTemplateHeadersFormData)
-                .render({"headers": headers});
-          } else {
-            result +=
-                jj.Template(kTemplateHeaders).render({"headers": headers});
-          }
-        }
-
-        // Handle body (JSON or raw)
-        var requestBody = requestModel.body;
-        if (requestModel.hasFormData) {
-          result += jj.Template(kTemplateFormData).render({
-            "fields_list": requestModel.formDataMapList,
-          });
-        } else if (requestBody == "" ||
-            requestBody == null ||
-            requestModel.method == HTTPVerb.get ||
-            requestModel.method == HTTPVerb.head) {
-          result += kTemplateEmptyBody;
-        } else if (requestModel.hasJsonData) {
-          result +=
-              jj.Template(kTemplateJsonBody).render({"body": requestBody});
-        } else if (requestModel.hasTextData) {
-          result += jj.Template(kTemplateBody).render({"body": requestBody});
-        }
-        // End request
-
-        if (requestModel.hasFormData && requestModel.method != HTTPVerb.get) {
-          result += kTemplateEndForm;
-        } else {
-          result += kTemplateRequestEnd;
-        }
-        result += kTemplateEnd;
+      } else {
+        result += jj.Template(kTemplateMethod).render({
+          "method": requestModel.method.name.toUpperCase(),
+        });
       }
 
+      // Add headers if available
+
+      if (headers.isNotEmpty) {
+        if (requestModel.hasFormData) {
+          result += jj.Template(kTemplateHeadersFormData)
+              .render({"headers": headers});
+        } else {
+          result +=
+              jj.Template(kTemplateHeaders).render({"headers": headers});
+        }
+      }
+
+      // Handle body (JSON or raw)
+      var requestBody = requestModel.body;
+      if (requestModel.hasFormData) {
+        result += jj.Template(kTemplateFormData).render({
+          "fields_list": requestModel.formDataMapList,
+        });
+      } else if (requestBody == "" ||
+          requestBody == null ||
+          requestModel.method == HTTPVerb.get ||
+          requestModel.method == HTTPVerb.head) {
+        result += kTemplateEmptyBody;
+      } else if (requestModel.hasJsonData) {
+        result +=
+            jj.Template(kTemplateJsonBody).render({"body": requestBody});
+      } else if (requestModel.hasTextData) {
+        result += jj.Template(kTemplateBody).render({"body": requestBody});
+      }
+      // End request
+
+      if (requestModel.hasFormData && requestModel.method != HTTPVerb.get) {
+        result += kTemplateEndForm;
+      } else {
+        result += kTemplateRequestEnd;
+      }
+      result += kTemplateEnd;
+    
       return result;
     } catch (e) {
       return null;

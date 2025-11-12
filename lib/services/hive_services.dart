@@ -1,5 +1,7 @@
+// ...existing code...
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum HiveBoxType { normal, lazy }
 
@@ -30,17 +32,16 @@ Future<bool> initHiveBoxes(
 ) async {
   try {
     if (initializeUsingPath) {
-      if (workspaceFolderPath != null) {
-        Hive.init(workspaceFolderPath);
-      } else {
-        return false;
-      }
+      if (workspaceFolderPath == null) return false;
+      Hive.init(workspaceFolderPath);
     } else {
-      await Hive.initFlutter();
+      // Initialize Hive for Flutter platforms using app documents directory
+      final appDir = await getApplicationDocumentsDirectory();
+      Hive.init(appDir.path);
     }
-    final openHiveBoxesStatus = await openHiveBoxes();
-    return openHiveBoxesStatus;
+    return await openHiveBoxes();
   } catch (e) {
+    debugPrint("ERROR INIT HIVE BOXES: $e");
     return false;
   }
 }
@@ -191,3 +192,4 @@ class HiveHandler {
     }
   }
 }
+// ...existing code...

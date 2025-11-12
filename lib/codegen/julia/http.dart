@@ -80,81 +80,79 @@ println("Response Body: \n$(String(response.body))")
         requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
-      if (uri != null) {
-        final templateStart = jj.Template(kTemplateStart);
-        result += templateStart.render({
-          // "hasJson": requestModel.hasBody && requestModel.hasJsonContentType && requestModel.hasJsonData,
-          "hasJson":
-              false, // we manually send false because we do not require JSON package
-        });
+      final templateStart = jj.Template(kTemplateStart);
+      result += templateStart.render({
+        // "hasJson": requestModel.hasBody && requestModel.hasJsonContentType && requestModel.hasJsonData,
+        "hasJson":
+            false, // we manually send false because we do not require JSON package
+      });
 
-        final templateUrl = jj.Template(kTemplateUrl);
-        result += templateUrl.render({"url": stripUriParams(uri)});
+      final templateUrl = jj.Template(kTemplateUrl);
+      result += templateUrl.render({"url": stripUriParams(uri)});
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            hasQuery = true;
-            final templateParams = jj.Template(kTemplateParams);
-            result += templateParams.render({"params": params});
-          }
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          hasQuery = true;
+          final templateParams = jj.Template(kTemplateParams);
+          result += templateParams.render({"params": params});
         }
-
-        if (requestModel.hasJsonData || requestModel.hasTextData) {
-          addHeaderForBody = true;
-          final templateBody = jj.Template(kTemplateBody);
-          var bodyStr = requestModel.body;
-          result += templateBody.render({"body": bodyStr});
-        }
-
-        if (requestModel.hasFormData) {
-          final formDataBodyData = jj.Template(kTemplateFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "hasFile": requestModel.hasFileInFormData,
-              "formdata": requestModel.formDataMapList,
-            },
-          );
-        }
-
-        var headersList = requestModel.enabledHeaders;
-        if (headersList != null || addHeaderForBody) {
-          var headers = requestModel.enabledHeadersMap;
-
-          if (!requestModel.hasContentTypeHeader) {
-            if (addHeaderForBody) {
-              headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.bodyContentType.header;
-            }
-          }
-
-          if (headers.isNotEmpty) {
-            hasHeaders = true;
-            var templateHeaders = jj.Template(kTemplateHeaders);
-            result += templateHeaders.render({"headers": headers});
-          }
-        }
-
-        var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": requestModel.method.name,
-        });
-
-        if (hasHeaders) {
-          result += kStringRequestHeaders;
-        }
-
-        if (requestModel.hasBody) {
-          result += kStringRequestBody;
-        }
-
-        if (hasQuery) {
-          result += kStringRequestParams;
-        }
-
-        result += kStringRequestEnd;
       }
 
+      if (requestModel.hasJsonData || requestModel.hasTextData) {
+        addHeaderForBody = true;
+        final templateBody = jj.Template(kTemplateBody);
+        var bodyStr = requestModel.body;
+        result += templateBody.render({"body": bodyStr});
+      }
+
+      if (requestModel.hasFormData) {
+        final formDataBodyData = jj.Template(kTemplateFormDataBody);
+        result += formDataBodyData.render(
+          {
+            "hasFile": requestModel.hasFileInFormData,
+            "formdata": requestModel.formDataMapList,
+          },
+        );
+      }
+
+      var headersList = requestModel.enabledHeaders;
+      if (headersList != null || addHeaderForBody) {
+        var headers = requestModel.enabledHeadersMap;
+
+        if (!requestModel.hasContentTypeHeader) {
+          if (addHeaderForBody) {
+            headers[HttpHeaders.contentTypeHeader] =
+                requestModel.bodyContentType.header;
+          }
+        }
+
+        if (headers.isNotEmpty) {
+          hasHeaders = true;
+          var templateHeaders = jj.Template(kTemplateHeaders);
+          result += templateHeaders.render({"headers": headers});
+        }
+      }
+
+      var templateRequest = jj.Template(kTemplateRequest);
+      result += templateRequest.render({
+        "method": requestModel.method.name,
+      });
+
+      if (hasHeaders) {
+        result += kStringRequestHeaders;
+      }
+
+      if (requestModel.hasBody) {
+        result += kStringRequestBody;
+      }
+
+      if (hasQuery) {
+        result += kStringRequestParams;
+      }
+
+      result += kStringRequestEnd;
+    
       return result;
     } catch (e) {
       return null;

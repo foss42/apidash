@@ -123,10 +123,6 @@ public class Main {
       );
       Uri? uri = rec.$1;
 
-      if (uri == null) {
-        return "";
-      }
-
       result += kStringStart;
       if (requestModel.hasFormData) {
         var templateMultipartImport = jj.Template(kTemplateMultipartImport);

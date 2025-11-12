@@ -98,95 +98,93 @@ Map<String, dynamic> requestModelToHARJsonRequest(
 
   Uri? uri = rec.$1;
   var u = "";
-  if (uri != null) {
-    u = uri.toString();
-    if (u[u.length - 1] == "?") {
-      u = u.substring(0, u.length - 1);
+  u = uri.toString();
+  if (u[u.length - 1] == "?") {
+    u = u.substring(0, u.length - 1);
+  }
+
+  json["method"] = requestModel.method.name.toUpperCase();
+  json["url"] = u;
+  json["httpVersion"] = "HTTP/1.1";
+  json["queryString"] = [];
+  json["headers"] = [];
+
+  var params = uri.queryParameters;
+  if (params.isNotEmpty) {
+    for (final k in params.keys) {
+      var m = {"name": k, "value": params[k]};
+      if (exportMode) {
+        m["comment"] = "";
+      }
+      json["queryString"].add(m);
     }
+  }
 
-    json["method"] = requestModel.method.name.toUpperCase();
-    json["url"] = u;
-    json["httpVersion"] = "HTTP/1.1";
-    json["queryString"] = [];
-    json["headers"] = [];
+  if (requestModel.hasJsonData || requestModel.hasTextData) {
+    hasBody = true;
+    json["postData"] = {};
+    json["postData"]["mimeType"] = requestModel.bodyContentType.header;
+    json["postData"]["text"] = requestModel.body;
+    if (exportMode) {
+      json["postData"]["comment"] = "";
+    }
+  }
 
-    var params = uri.queryParameters;
-    if (params.isNotEmpty) {
-      for (final k in params.keys) {
-        var m = {"name": k, "value": params[k]};
+  if (requestModel.hasFormData) {
+    boundary = boundary ?? getNewUuid();
+    hasBody = true;
+    json["postData"] = {};
+    json["postData"]["mimeType"] =
+        "${requestModel.bodyContentType.header}; boundary=$boundary";
+    json["postData"]["params"] = [];
+    for (var item in requestModel.formDataList) {
+      Map<String, String> d = exportMode ? {"comment": ""} : {};
+      if (item.type == FormDataType.text) {
+        d["name"] = item.name;
+        d["value"] = item.value;
+      }
+      if (item.type == FormDataType.file) {
+        d["name"] = item.name;
+        d["fileName"] = getFilenameFromPath(item.value);
+      }
+      json["postData"]["params"].add(d);
+    }
+    if (exportMode) {
+      json["postData"]["comment"] = "";
+    }
+  }
+
+  var headersList =
+      useEnabled ? requestModel.enabledHeaders : requestModel.headers;
+  if (headersList != null || hasBody) {
+    var headers =
+        useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;
+    if (headers.isNotEmpty || hasBody) {
+      if (hasBody && !requestModel.hasContentTypeHeader) {
+        var m = {
+          "name": kHeaderContentType,
+          "value": json["postData"]["mimeType"]
+        };
         if (exportMode) {
           m["comment"] = "";
         }
-        json["queryString"].add(m);
+        json["headers"].add(m);
       }
-    }
-
-    if (requestModel.hasJsonData || requestModel.hasTextData) {
-      hasBody = true;
-      json["postData"] = {};
-      json["postData"]["mimeType"] = requestModel.bodyContentType.header;
-      json["postData"]["text"] = requestModel.body;
-      if (exportMode) {
-        json["postData"]["comment"] = "";
-      }
-    }
-
-    if (requestModel.hasFormData) {
-      boundary = boundary ?? getNewUuid();
-      hasBody = true;
-      json["postData"] = {};
-      json["postData"]["mimeType"] =
-          "${requestModel.bodyContentType.header}; boundary=$boundary";
-      json["postData"]["params"] = [];
-      for (var item in requestModel.formDataList) {
-        Map<String, String> d = exportMode ? {"comment": ""} : {};
-        if (item.type == FormDataType.text) {
-          d["name"] = item.name;
-          d["value"] = item.value;
+      for (final k in headers.keys) {
+        var m = {"name": k, "value": headers[k]};
+        if (exportMode) {
+          m["comment"] = "";
         }
-        if (item.type == FormDataType.file) {
-          d["name"] = item.name;
-          d["fileName"] = getFilenameFromPath(item.value);
-        }
-        json["postData"]["params"].add(d);
-      }
-      if (exportMode) {
-        json["postData"]["comment"] = "";
+        json["headers"].add(m);
       }
     }
-
-    var headersList =
-        useEnabled ? requestModel.enabledHeaders : requestModel.headers;
-    if (headersList != null || hasBody) {
-      var headers =
-          useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;
-      if (headers.isNotEmpty || hasBody) {
-        if (hasBody && !requestModel.hasContentTypeHeader) {
-          var m = {
-            "name": kHeaderContentType,
-            "value": json["postData"]["mimeType"]
-          };
-          if (exportMode) {
-            m["comment"] = "";
-          }
-          json["headers"].add(m);
-        }
-        for (final k in headers.keys) {
-          var m = {"name": k, "value": headers[k]};
-          if (exportMode) {
-            m["comment"] = "";
-          }
-          json["headers"].add(m);
-        }
-      }
-    }
-    if (exportMode) {
-      json["comment"] = "";
-      json["cookies"] = [];
-      json["headersSize"] = -1;
-      json["bodySize"] =
-          hasBody ? utf8.encode(json["postData"]["text"] ?? "").length : 0;
-    }
+  }
+  if (exportMode) {
+    json["comment"] = "";
+    json["cookies"] = [];
+    json["headersSize"] = -1;
+    json["bodySize"] =
+        hasBody ? utf8.encode(json["postData"]["text"] ?? "").length : 0;
   }
   return json;
 }
