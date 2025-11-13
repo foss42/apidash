@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 
 /// Global environment model
 const globalEnvironment = EnvironmentModel(
@@ -17,13 +18,14 @@ const globalEnvironment = EnvironmentModel(
       enabled: false,
     ),
   ],
+  color: kGlobalColor
 );
 
 /// Basic Environment model with 2 variables
-const environmentModel1 = EnvironmentModel(
+final environmentModel1 = EnvironmentModel(
   id: 'environmentId',
   name: 'Development',
-  values: [
+  values: const [
     EnvironmentVariableModel(
       key: 'key1',
       value: 'value1',
@@ -37,13 +39,14 @@ const environmentModel1 = EnvironmentModel(
       enabled: false,
     ),
   ],
+  color: kEnvColors[0],
 );
 
 /// Basic Environment model with 2 secrets
-const environmentModel2 = EnvironmentModel(
+final environmentModel2 = EnvironmentModel(
   id: 'environmentId',
   name: 'Development',
-  values: [
+  values: const [
     EnvironmentVariableModel(
       key: 'key1',
       value: 'value1',
@@ -57,6 +60,7 @@ const environmentModel2 = EnvironmentModel(
       enabled: false,
     ),
   ],
+  color: kEnvColors[1]
 );
 
 /// Basic Environment Variable
@@ -88,7 +92,7 @@ const environmentVariableSuggestion2 = EnvironmentVariableSuggestion(
 );
 
 /// JSONs
-const environmentModel1Json = {
+final environmentModel1Json = {
   'id': 'environmentId',
   'name': 'Development',
   'values': [
@@ -105,9 +109,10 @@ const environmentModel1Json = {
       'enabled': false,
     },
   ],
+  'color': kEnvColors[0].toARGB32(),
 };
 
-const environmentModel2Json = {
+final environmentModel2Json = {
   'id': 'environmentId',
   'name': 'Development',
   'values': [
@@ -124,6 +129,7 @@ const environmentModel2Json = {
       'enabled': false,
     },
   ],
+  'color': kEnvColors[1].toARGB32(),
 };
 
 const environmentVariableModel1Json = {

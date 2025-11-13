@@ -27,6 +27,17 @@ final kColorHttpMethodOptions = Colors.deepPurple.shade800;
 
 final kColorGQL = Colors.pink.shade600;
 
+const kEnvColors = [
+    Color(0xFF4CAF50),
+    Color(0xFF2196F3),
+    Color(0xFFFFC107),
+    Color(0xFFF44336),
+    Color(0xFF9C27B0),
+    Color(0xFF00BCD4),
+    Color(0xFF607D8B),
+    Color(0xFFFF9800),
+];
+
 const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 const kOverlayBackgroundOpacity = 0.5;
