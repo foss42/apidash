@@ -8,4 +8,5 @@ export 'http_utils.dart';
 export 'js_utils.dart';
 export 'save_utils.dart';
 export 'ui_utils.dart';
+export 'validation_utils.dart';
 export 'window_utils.dart';
