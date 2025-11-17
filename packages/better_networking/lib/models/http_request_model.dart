@@ -47,6 +47,10 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasTextContentType => bodyContentType == ContentType.text;
   int get contentLength => utf8.encode(body ?? "").length;
   bool get hasBody => hasJsonData || hasTextData || hasFormData;
+  bool get hasAnyBody =>
+      (hasJsonContentType && contentLength > 0) ||
+      (hasTextContentType && contentLength > 0) ||
+      (hasFormDataContentType && formDataMapList.isNotEmpty);
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
