@@ -6,6 +6,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 import './editor_pane/variables_pane.dart';
+import 'environment_auth_editor.dart';
 
 class EnvironmentEditor extends ConsumerWidget {
   const EnvironmentEditor({super.key});
@@ -15,6 +16,7 @@ class EnvironmentEditor extends ConsumerWidget {
     final id = ref.watch(selectedEnvironmentIdStateProvider);
     final name = ref
         .watch(selectedEnvironmentModelProvider.select((value) => value?.name));
+    
     return Padding(
       padding: context.isMediumWindow
           ? kPb10
@@ -84,24 +86,44 @@ class EnvironmentEditor extends ConsumerWidget {
                         borderRadius: kBorderRadius12,
                       ),
                 elevation: 0,
-                child: const Padding(
-                  padding: kPv6,
+                child: DefaultTabController(
+                  length: 2,
                   child: Column(
                     children: [
-                      kHSpacer40,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(width: 30),
-                          Text("Variable"),
-                          SizedBox(width: 30),
-                          Text("Value"),
-                          SizedBox(width: 40),
+                      TabBar(
+                        tabs: const [
+                          Tab(text: "Variables"),
+                          Tab(text: "Auth"),
                         ],
                       ),
-                      kHSpacer40,
-                      Divider(),
-                      Expanded(child: EditEnvironmentVariables())
+                      const Expanded(
+                        child: TabBarView(
+                          children: [
+                            Padding(
+                              padding: kPv6,
+                              child: Column(
+                                children: [
+                                  kHSpacer40,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(width: 30),
+                                      Text("Variable"),
+                                      SizedBox(width: 30),
+                                      Text("Value"),
+                                      SizedBox(width: 40),
+                                    ],
+                                  ),
+                                  kHSpacer40,
+                                  Divider(),
+                                  Expanded(child: EditEnvironmentVariables())
+                                ],
+                              ),
+                            ),
+                            EnvironmentAuthEditor(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
