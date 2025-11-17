@@ -13,6 +13,7 @@ final historyCodePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
 final hasUnsavedChangesProvider = StateProvider<bool>((ref) => false);
+final showTerminalBadgeProvider = StateProvider<bool>((ref) => false);
 
 // final nameTextFieldControllerProvider =
 //     StateProvider.autoDispose<TextEditingController>((ref) {
