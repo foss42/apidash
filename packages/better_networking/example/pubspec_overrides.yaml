@@ -3,4 +3,4 @@ dependency_overrides:
   better_networking:
     path: ..
   seed:
-    path: ../../seed
+    path: ..\\..\\seed

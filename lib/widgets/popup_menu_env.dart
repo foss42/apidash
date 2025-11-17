@@ -10,11 +10,13 @@ class EnvironmentPopupMenu extends StatelessWidget {
     this.value,
     this.options,
     this.onChanged,
+    this.color
   });
 
   final EnvironmentModel? value;
   final void Function(EnvironmentModel? value)? onChanged;
   final List<EnvironmentModel>? options;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +32,15 @@ class EnvironmentPopupMenu extends StatelessWidget {
                 e,
                 (e.id == kGlobalEnvironmentId)
                     ? "Global"
-                    : getEnvironmentTitle(e.name).clip(30)
+                    : getEnvironmentTitle(e.name).clip(30),
               )) ??
           [],
       width: width,
       tooltip: "Select Environment",
       onChanged: onChanged,
       isOutlined: true,
+      borderColor: color,
+      colorResolver: (env) => env?.color,
     );
   }
 }

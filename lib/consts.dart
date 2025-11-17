@@ -88,7 +88,8 @@ enum HistoryRetentionPeriod {
 enum ItemMenuOption {
   edit("Rename"),
   delete("Delete"),
-  duplicate("Duplicate");
+  duplicate("Duplicate"),
+  editColor("Change Color");
 
   const ItemMenuOption(this.label);
   final String label;

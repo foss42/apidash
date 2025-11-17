@@ -1281,10 +1281,10 @@ packages:
     dependency: transitive
     description:
       name: openapi_spec
-      sha256: "0de980914cafaab7e2086f5541cefba1fb6a64510ab136bd3828bdf02e26c09d"
+      sha256: "68d74ac74d9c90807894b4e430f6906e1b6e478ab4596bc6589fe52ad5ef735a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.15.0"
+    version: "0.7.26"
   package_config:
     dependency: transitive
     description:

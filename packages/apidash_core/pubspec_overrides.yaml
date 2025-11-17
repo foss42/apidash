@@ -1,16 +1,16 @@
-# melos_managed_dependency_overrides: better_networking,curl_parser,har,insomnia_collection,postman,seed,genai
+# melos_managed_dependency_overrides: better_networking,curl_parser,genai,har,insomnia_collection,postman,seed
 dependency_overrides:
   better_networking:
-    path: ../better_networking
+    path: ..\\better_networking
   curl_parser:
-    path: ../curl_parser
+    path: ..\\curl_parser
   genai:
-    path: ../genai
+    path: ..\\genai
   har:
-    path: ../har
+    path: ..\\har
   insomnia_collection:
-    path: ../insomnia_collection
+    path: ..\\insomnia_collection
   postman:
-    path: ../postman
+    path: ..\\postman
   seed:
-    path: ../seed
+    path: ..\\seed
