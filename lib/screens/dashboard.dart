@@ -76,13 +76,21 @@ class Dashboard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
-                    IconButton(
-                      isSelected: railIdx == 3,
-                      onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 3;
-                      },
-                      icon: const Icon(Icons.terminal_outlined),
-                      selectedIcon: const Icon(Icons.terminal),
+                    Badge(
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      isLabelVisible:
+                          ref.watch(showTerminalBadgeProvider) && railIdx != 3,
+                      child: IconButton(
+                        isSelected: railIdx == 3,
+                        onPressed: () {
+                          ref.read(navRailIndexStateProvider.notifier).state =
+                              3;
+                          ref.read(showTerminalBadgeProvider.notifier).state =
+                              false;
+                        },
+                        icon: const Icon(Icons.terminal_outlined),
+                        selectedIcon: const Icon(Icons.terminal),
+                      ),
                     ),
                     Text(
                       'Logs',

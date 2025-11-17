@@ -350,8 +350,20 @@ class CollectionStateNotifier
           executionRequestModel.httpRequestModel!);
     }
 
-    // Terminal: start network log
+    // Terminal
     final terminal = ref.read(terminalStateProvider.notifier);
+
+    var valRes = getValidationResult(substitutedHttpRequestModel);
+    if (valRes != null) {
+      terminal.logSystem(
+        category: 'validation',
+        message: valRes,
+        level: TerminalLevel.error,
+      );
+      ref.read(showTerminalBadgeProvider.notifier).state = true;
+    }
+
+    // Terminal: start network log
     final logId = terminal.startNetwork(
       apiType: executionRequestModel.apiType,
       method: substitutedHttpRequestModel.method,

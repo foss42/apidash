@@ -14,7 +14,6 @@ void main() async {
   await Stac.initialize();
 
   //Load all LLMs
-  // await LLMManager.fetchAvailableLLMs();
   await ModelManager.fetchAvailableModels();
 
   var settingsModel = await getSettingsFromSharedPrefs();
@@ -29,9 +28,6 @@ void main() async {
   if (!initStatus) {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
-
-  // TODO: Load all models at init
-  // await ModelManager.loadAvailableLLMs();
 
   runApp(
     ProviderScope(
