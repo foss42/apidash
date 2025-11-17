@@ -13,6 +13,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Stac.initialize();
 
+  // Initialize Rust library for Hurl parser
+  await RustLib.init();
+
   //Load all LLMs
   await ModelManager.fetchAvailableModels();
 
