@@ -34,9 +34,10 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
         value?.httpRequestModel?.authModel?.type != APIAuthType.none));
 
-    if (tabIndex >= 3) {
+    if (tabIndex >= 4) {
       tabIndex = 0;
     }
+
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
