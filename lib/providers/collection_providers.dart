@@ -250,12 +250,15 @@ class CollectionStateNotifier
       newModel = switch (apiType) {
         APIType.rest || APIType.graphql => currentModel.copyWith(
             apiType: apiType,
+            requestTabIndex: 0,
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
             httpRequestModel: const HttpRequestModel(),
-            aiRequestModel: null),
+            aiRequestModel: null,
+          ),
         APIType.ai => currentModel.copyWith(
             apiType: apiType,
+            requestTabIndex: 0,
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
             httpRequestModel: null,
@@ -350,8 +353,20 @@ class CollectionStateNotifier
           executionRequestModel.httpRequestModel!);
     }
 
-    // Terminal: start network log
+    // Terminal
     final terminal = ref.read(terminalStateProvider.notifier);
+
+    var valRes = getValidationResult(substitutedHttpRequestModel);
+    if (valRes != null) {
+      terminal.logSystem(
+        category: 'validation',
+        message: valRes,
+        level: TerminalLevel.error,
+      );
+      ref.read(showTerminalBadgeProvider.notifier).state = true;
+    }
+
+    // Terminal: start network log
     final logId = terminal.startNetwork(
       apiType: executionRequestModel.apiType,
       method: substitutedHttpRequestModel.method,

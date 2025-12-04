@@ -15,7 +15,7 @@ class EditGraphQLRequestPane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    var tabIndex = ref.watch(
+    final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final headerLength = ref.watch(selectedRequestModelProvider
@@ -34,9 +34,6 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
         value?.httpRequestModel?.authModel?.type != APIAuthType.none));
 
-    if (tabIndex >= 3) {
-      tabIndex = 0;
-    }
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,

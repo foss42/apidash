@@ -132,13 +132,51 @@ class OpenApiImportService {
 
   /// Try to parse a JSON or YAML OpenAPI spec string.
   /// Returns null if parsing fails.
+  ///
+  /// NOTE: There's a known issue with the openapi_spec package where
+  /// security fields containing empty arrays (e.g., "security": [[]])
+  /// cause parsing failures. This method includes a workaround.
   static OpenApi? tryParseSpec(String source) {
     try {
-      // Let the library infer JSON/YAML
       return OpenApi.fromString(source: source, format: null);
-    } catch (_) {
+    } catch (e) {
+      // Try workaround for security field parsing issues
+      try {
+        final processedSource = _removeProblematicSecurityField(source);
+        if (processedSource != source) {
+          return OpenApi.fromString(source: processedSource, format: null);
+        }
+      } catch (_) {
+        // Workaround failed, fall through to return null
+      }
       return null;
     }
+  }
+
+  /// Removes problematic security fields that cause parsing issues.
+  /// TODO: Remove this workaround once openapi_spec package fixes
+  /// the issue with security fields containing empty arrays.
+  static String _removeProblematicSecurityField(String source) {
+    try {
+      final spec = jsonDecode(source) as Map<String, dynamic>;
+
+      if (spec.containsKey('security')) {
+        final security = spec['security'];
+        if (security is List && _hasEmptySecurityArrays(security)) {
+          spec.remove('security');
+          return jsonEncode(spec);
+        }
+      }
+
+      return source;
+    } catch (e) {
+      throw FormatException('Failed to preprocess OpenAPI spec: $e');
+    }
+  }
+
+  /// Checks if security list contains empty arrays that cause parsing issues.
+  static bool _hasEmptySecurityArrays(List<dynamic> security) {
+    return security.any((item) => item is List && item.isEmpty);
   }
 
   /// Build a single request payload from a path + method operation.
