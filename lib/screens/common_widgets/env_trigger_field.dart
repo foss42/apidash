@@ -18,7 +18,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
     this.readOnly = false,
-    this.obscureText = false
+    this.obscureText = false,
   }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
@@ -137,19 +137,18 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
         return ExtendedTextField(
-            controller: textEditingController,
-            focusNode: focusnode,
-            decoration: widget.decoration,
-            style: widget.style,
-            onChanged: widget.onChanged,
-            onSubmitted: widget.onFieldSubmitted,
-            specialTextSpanBuilder: EnvRegExpSpanBuilder(),
-            onTapOutside: (event) {
-              _focusNode.unfocus();
-            },
-            readOnly: widget.readOnly,
-          obscureText: widget.obscureText
-          
+          controller: textEditingController,
+          focusNode: focusnode,
+          decoration: widget.decoration,
+          style: widget.style,
+          onChanged: widget.onChanged,
+          onSubmitted: widget.onFieldSubmitted,
+          specialTextSpanBuilder: EnvRegExpSpanBuilder(),
+          onTapOutside: (event) {
+            _focusNode.unfocus();
+          },
+          readOnly: widget.readOnly,
+          obscureText: widget.obscureText,
         );
       },
     );
