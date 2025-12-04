@@ -250,12 +250,15 @@ class CollectionStateNotifier
       newModel = switch (apiType) {
         APIType.rest || APIType.graphql => currentModel.copyWith(
             apiType: apiType,
+            requestTabIndex: 0,
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
             httpRequestModel: const HttpRequestModel(),
-            aiRequestModel: null),
+            aiRequestModel: null,
+          ),
         APIType.ai => currentModel.copyWith(
             apiType: apiType,
+            requestTabIndex: 0,
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
             httpRequestModel: null,
