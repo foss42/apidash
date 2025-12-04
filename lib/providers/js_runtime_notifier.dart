@@ -44,34 +44,22 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   late final JavascriptRuntime _runtime;
   String? _currentRequestId;
 
-  // Security: Maximum script length to prevent DoS attacks
-  static const int _maxScriptLength = 50000; // 50KB
+  // Modern 2025 security: Simple pattern-based validation
+  static const _maxScriptSize = 50000; // 50KB limit
+  static final _dangerousPatterns = RegExp(
+    r'eval\s*\(|Function\s*\(|constructor\s*\[|__proto__',
+    caseSensitive: false,
+  );
 
-  // Security: Dangerous JavaScript patterns that could lead to code injection
-  static const List<String> _dangerousPatterns = [
-    r'eval\s*\(',
-    r'Function\s*\(',
-    r'constructor\s*\[',
-    r'__proto__',
-  ];
-
-  /// Validates user script for basic security checks
-  /// Returns null if valid, error message if invalid
+  /// Validate script before execution (zero-trust approach)
   String? _validateScript(String script) {
-    // Check script length to prevent DoS
-    if (script.length > _maxScriptLength) {
-      return 'Script exceeds maximum length of $_maxScriptLength characters';
+    if (script.length > _maxScriptSize) {
+      return 'Script too large (max 50KB)';
     }
-
-    // Check for dangerous patterns
-    for (final pattern in _dangerousPatterns) {
-      final regex = RegExp(pattern, caseSensitive: false);
-      if (regex.hasMatch(script)) {
-        return 'Script contains potentially dangerous pattern: ${pattern.replaceAll(r'\s*\(', '(').replaceAll(r'\s*\[', '[')}';
-      }
+    if (_dangerousPatterns.hasMatch(script)) {
+      return 'Script contains unsafe patterns';
     }
-
-    return null; // Script is valid
+    return null; // Valid
   }
 
   void _initialize() {

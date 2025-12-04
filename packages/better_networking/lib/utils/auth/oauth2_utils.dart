@@ -7,7 +7,6 @@ import '../../models/auth/auth_oauth2_model.dart';
 import '../../services/http_client_manager.dart';
 import '../../services/oauth_callback_server.dart';
 import '../../services/oauth2_secure_storage.dart';
-import '../../services/oauth2_rate_limiter.dart';
 import '../platform_utils.dart';
 
 /// Advanced OAuth2 authorization code grant handler that returns both the client and server
@@ -25,21 +24,15 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   String? state,
   String? scope,
 }) async {
-  // Check rate limiting
-  final rateLimitKey = OAuth2RateLimiter.generateKey(identifier, tokenEndpoint.toString());
-  final canProceedAt = OAuth2RateLimiter.canProceed(rateLimitKey);
-  
-  if (canProceedAt != null) {
-    final cooldownSeconds = OAuth2RateLimiter.getCooldownSeconds(rateLimitKey);
-    throw Exception(
-      'OAuth2 rate limit exceeded. Please try again in ${cooldownSeconds ?? 0} seconds.'
-    );
+  // Check rate limiting (integrated with OAuth2SecureStorage)
+  final rateLimitError = OAuth2SecureStorage.checkRateLimit(identifier, tokenEndpoint.toString());
+  if (rateLimitError != null) {
+    throw Exception(rateLimitError);
   }
   
-  // Check for existing credentials first - try secure storage, then file
-  // Try secure storage first (preferred method)
+  // Try secure storage first (modern approach)
   try {
-    final secureCredJson = await OAuth2SecureStorage.retrieveCredentials(
+    final secureCredJson = await OAuth2SecureStorage.retrieve(
       clientId: identifier,
       tokenUrl: tokenEndpoint.toString(),
     );
@@ -47,8 +40,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
     if (secureCredJson != null) {
       final credentials = oauth2.Credentials.fromJson(secureCredJson);
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
-        // Successful retrieval, clear rate limit
-        OAuth2RateLimiter.recordSuccess(rateLimitKey);
+        OAuth2SecureStorage.recordSuccess(identifier, tokenEndpoint.toString());
         return (
           oauth2.Client(credentials, identifier: identifier, secret: secret),
           null,
@@ -56,7 +48,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       }
     }
   } catch (e) {
-    // Secure storage failed, try file fallback
+    // Graceful fallback
   }
   
   // Fallback to file-based storage for backward compatibility
@@ -68,7 +60,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
         // Migrate to secure storage for future use
         try {
-          await OAuth2SecureStorage.storeCredentials(
+          await OAuth2SecureStorage.store(
             clientId: identifier,
             tokenUrl: tokenEndpoint.toString(),
             credentialsJson: json,
@@ -175,7 +167,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
 
     // Store credentials securely (preferred method)
     try {
-      await OAuth2SecureStorage.storeCredentials(
+      await OAuth2SecureStorage.store(
         clientId: identifier,
         tokenUrl: tokenEndpoint.toString(),
         credentialsJson: client.credentials.toJson(),
@@ -192,12 +184,12 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
     }
 
     // Record successful authentication
-    OAuth2RateLimiter.recordSuccess(rateLimitKey);
+    OAuth2SecureStorage.recordSuccess(identifier, tokenEndpoint.toString());
 
     return (client, callbackServer);
   } catch (e) {
     // Record failed authentication attempt
-    OAuth2RateLimiter.recordFailure(rateLimitKey);
+    OAuth2SecureStorage.recordFailure(identifier, tokenEndpoint.toString());
     
     // Clean up the callback server immediately on error
     if (callbackServer != null) {
@@ -220,22 +212,18 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
   required File? credentialsFile,
 }) async {
   // Check rate limiting
-  final rateLimitKey = OAuth2RateLimiter.generateKey(
+  final rateLimitError = OAuth2SecureStorage.checkRateLimit(
     oauth2Model.clientId,
     oauth2Model.accessTokenUrl,
   );
-  final canProceedAt = OAuth2RateLimiter.canProceed(rateLimitKey);
   
-  if (canProceedAt != null) {
-    final cooldownSeconds = OAuth2RateLimiter.getCooldownSeconds(rateLimitKey);
-    throw Exception(
-      'OAuth2 rate limit exceeded. Please try again in ${cooldownSeconds ?? 0} seconds.'
-    );
+  if (rateLimitError != null) {
+    throw Exception(rateLimitError);
   }
   
   // Try secure storage first
   try {
-    final secureCredJson = await OAuth2SecureStorage.retrieveCredentials(
+    final secureCredJson = await OAuth2SecureStorage.retrieve(
       clientId: oauth2Model.clientId,
       tokenUrl: oauth2Model.accessTokenUrl,
     );
@@ -243,7 +231,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
     if (secureCredJson != null) {
       final credentials = oauth2.Credentials.fromJson(secureCredJson);
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
-        OAuth2RateLimiter.recordSuccess(rateLimitKey);
+        OAuth2SecureStorage.recordSuccess(oauth2Model.clientId, oauth2Model.accessTokenUrl);
         return oauth2.Client(
           credentials,
           identifier: oauth2Model.clientId,
@@ -264,7 +252,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
         // Migrate to secure storage
         try {
-          await OAuth2SecureStorage.storeCredentials(
+          await OAuth2SecureStorage.store(
             clientId: oauth2Model.clientId,
             tokenUrl: oauth2Model.accessTokenUrl,
             credentialsJson: json,
@@ -303,7 +291,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
 
     // Store credentials securely
     try {
-      await OAuth2SecureStorage.storeCredentials(
+      await OAuth2SecureStorage.store(
         clientId: oauth2Model.clientId,
         tokenUrl: oauth2Model.accessTokenUrl,
         credentialsJson: client.credentials.toJson(),
@@ -320,7 +308,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
     }
 
     // Record successful authentication
-    OAuth2RateLimiter.recordSuccess(rateLimitKey);
+    OAuth2SecureStorage.recordSuccess(oauth2Model.clientId, oauth2Model.accessTokenUrl);
 
     // Clean up the HTTP client
     httpClientManager.closeClient(requestId);
@@ -328,7 +316,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
     return client;
   } catch (e) {
     // Record failed authentication attempt
-    OAuth2RateLimiter.recordFailure(rateLimitKey);
+    OAuth2SecureStorage.recordFailure(oauth2Model.clientId, oauth2Model.accessTokenUrl);
     
     // Clean up the HTTP client on error
     httpClientManager.closeClient(requestId);
@@ -342,7 +330,7 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
 }) async {
   // Try secure storage first
   try {
-    final secureCredJson = await OAuth2SecureStorage.retrieveCredentials(
+    final secureCredJson = await OAuth2SecureStorage.retrieve(
       clientId: oauth2Model.clientId,
       tokenUrl: oauth2Model.accessTokenUrl,
     );
@@ -370,7 +358,7 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
         // Migrate to secure storage
         try {
-          await OAuth2SecureStorage.storeCredentials(
+          await OAuth2SecureStorage.store(
             clientId: oauth2Model.clientId,
             tokenUrl: oauth2Model.accessTokenUrl,
             credentialsJson: json,
@@ -415,7 +403,7 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
 
     // Store credentials securely
     try {
-      await OAuth2SecureStorage.storeCredentials(
+      await OAuth2SecureStorage.store(
         clientId: oauth2Model.clientId,
         tokenUrl: oauth2Model.accessTokenUrl,
         credentialsJson: client.credentials.toJson(),

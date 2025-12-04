@@ -2,42 +2,40 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Modern OAuth2 secure storage with built-in rate limiting (2025 best practices)
-/// Note: This is a package-local wrapper. The main app uses lib/services/secure_storage.dart
-class OAuth2SecureStorage {
-  // Secure storage with platform-specific encryption
+/// Modern unified secure storage for API Dash (2025 best practices)
+/// Handles OAuth2 credentials, environment secrets, and rate limiting
+class SecureStorage {
+  // Platform-specific secure storage
   static const _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
   );
 
-  // Rate limiting state
+  // OAuth2 Rate limiting state
   static final _rateLimits = <String, _RateLimit>{};
   static const _maxAttempts = 5;
   static const _resetMinutes = 30;
 
-  /// Generate secure storage key using SHA-256
-  static String _key(String clientId, String tokenUrl) {
-    final hash = sha256.convert(utf8.encode('$clientId:$tokenUrl'));
-    return 'oauth2_${hash.toString().substring(0, 16)}';
+  /// Generate secure key using SHA-256
+  static String _hashKey(String input) {
+    return sha256.convert(utf8.encode(input)).toString().substring(0, 16);
   }
 
-  /// Check if authentication can proceed (rate limiting)
+  // ==================== OAuth2 Methods ====================
+  
+  /// Check rate limit for OAuth2
   static String? checkRateLimit(String clientId, String tokenUrl) {
-    final key = _key(clientId, tokenUrl);
+    final key = _hashKey('$clientId:$tokenUrl');
     final limit = _rateLimits[key];
     
     if (limit == null) return null;
     
     final now = DateTime.now();
-    
-    // Auto-reset after 30 minutes
     if (now.difference(limit.firstAttempt).inMinutes >= _resetMinutes) {
       _rateLimits.remove(key);
       return null;
     }
     
-    // Check cooldown
     if (limit.cooldownUntil != null && now.isBefore(limit.cooldownUntil!)) {
       final seconds = limit.cooldownUntil!.difference(now).inSeconds;
       return 'Rate limit exceeded. Try again in $seconds seconds.';
@@ -46,9 +44,9 @@ class OAuth2SecureStorage {
     return null;
   }
 
-  /// Record failed authentication attempt
+  /// Record failed OAuth2 attempt
   static void recordFailure(String clientId, String tokenUrl) {
-    final key = _key(clientId, tokenUrl);
+    final key = _hashKey('$clientId:$tokenUrl');
     final now = DateTime.now();
     final limit = _rateLimits[key];
     
@@ -56,7 +54,6 @@ class OAuth2SecureStorage {
       _rateLimits[key] = _RateLimit(now, now, 1, null);
     } else {
       final attempts = limit.attempts + 1;
-      // Exponential backoff: 2, 4, 8, 16... max 300s (5 minutes)
       final delay = attempts >= _maxAttempts 
         ? (2 << (attempts - _maxAttempts)).clamp(2, 300)
         : 0;
@@ -70,34 +67,73 @@ class OAuth2SecureStorage {
     }
   }
 
-  /// Record successful authentication (clears rate limit)
+  /// Record successful OAuth2 attempt
   static void recordSuccess(String clientId, String tokenUrl) {
-    _rateLimits.remove(_key(clientId, tokenUrl));
+    _rateLimits.remove(_hashKey('$clientId:$tokenUrl'));
   }
 
-  /// Store credentials securely
-  static Future<void> store({
+  /// Store OAuth2 credentials
+  static Future<void> storeOAuth2({
     required String clientId,
     required String tokenUrl,
     required String credentialsJson,
   }) async {
     try {
-      await _storage.write(key: _key(clientId, tokenUrl), value: credentialsJson);
-    } catch (_) {
-      // Graceful degradation
-    }
+      await _storage.write(
+        key: 'oauth2_${_hashKey('$clientId:$tokenUrl')}',
+        value: credentialsJson,
+      );
+    } catch (_) {}
   }
 
-  /// Retrieve credentials
-  static Future<String?> retrieve({
+  /// Retrieve OAuth2 credentials
+  static Future<String?> retrieveOAuth2({
     required String clientId,
     required String tokenUrl,
   }) async {
     try {
-      return await _storage.read(key: _key(clientId, tokenUrl));
+      return await _storage.read(
+        key: 'oauth2_${_hashKey('$clientId:$tokenUrl')}',
+      );
     } catch (_) {
       return null;
     }
+  }
+
+  // ==================== Environment Secret Methods ====================
+  
+  /// Store environment secret
+  static Future<void> storeSecret({
+    required String environmentId,
+    required String key,
+    required String value,
+  }) async {
+    try {
+      await _storage.write(key: 'env_${environmentId}_$key', value: value);
+    } catch (_) {}
+  }
+
+  /// Retrieve environment secret
+  static Future<String?> retrieveSecret({
+    required String environmentId,
+    required String key,
+  }) async {
+    try {
+      return await _storage.read(key: 'env_${environmentId}_$key');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Delete all secrets for an environment
+  static Future<void> deleteEnvironmentSecrets(String environmentId) async {
+    try {
+      final all = await _storage.readAll();
+      final prefix = 'env_${environmentId}_';
+      for (final key in all.keys.where((k) => k.startsWith(prefix))) {
+        await _storage.delete(key: key);
+      }
+    } catch (_) {}
   }
 }
 

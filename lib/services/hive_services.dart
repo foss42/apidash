@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'secure_credential_storage.dart';
+import 'secure_storage.dart';
 
 enum HiveBoxType { normal, lazy }
 
@@ -153,9 +153,9 @@ class HiveHandler {
           
           // Store secret in secure storage
           try {
-            await SecureCredentialStorage.storeEnvironmentSecret(
+            await SecureStorage.storeSecret(
               environmentId: id,
-              variableKey: variable['key'] ?? 'unknown_$i',
+              key: variable['key'] ?? 'unknown_$i',
               value: variable['value'].toString(),
             );
             
@@ -197,9 +197,9 @@ class HiveHandler {
           
           // Retrieve secret from secure storage
           try {
-            final decryptedValue = await SecureCredentialStorage.retrieveEnvironmentSecret(
+            final decryptedValue = await SecureStorage.retrieveSecret(
               environmentId: id,
-              variableKey: variable['key'] ?? 'unknown_$i',
+              key: variable['key'] ?? 'unknown_$i',
             );
             
             if (decryptedValue != null) {
@@ -224,11 +224,9 @@ class HiveHandler {
   Future<void> deleteEnvironment(String id) async {
     // Clean up secure storage for this environment
     try {
-      await SecureCredentialStorage.clearEnvironmentSecrets(
-        environmentId: id,
-      );
+      await SecureStorage.deleteEnvironmentSecrets(id);
     } catch (e) {
-      // Log error but continue with deletion
+      // Graceful failure
     }
     return environmentBox.delete(id);
   }
