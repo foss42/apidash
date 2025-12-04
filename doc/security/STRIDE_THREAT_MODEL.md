@@ -1,47 +1,38 @@
-# STRIDE Threat Model for API Dash
-
-**Document Version:** 1.0  
-**Date:** December 2025  
-**Project:** API Dash - Open Source Cross-Platform API Client  
-**Classification:** Public
-
----
-
-## Executive Summary
+# Threat Model for API Dash
 
 This document presents a comprehensive threat model for API Dash using the STRIDE (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege) framework. API Dash is a cross-platform API testing client built with Flutter that allows users to create, test, and manage API requests locally on their devices.
 
 ### Key Risk Areas Identified:
-1. **High Priority**: Information disclosure of sensitive API credentials and tokens
-2. **High Priority**: Tampering with stored API requests and collections
-3. **Medium Priority**: Local data security and encryption
-4. **Medium Priority**: Code generation security vulnerabilities
 
----
+1. Information disclosure of sensitive API credentials and tokens (**High Priority**)
+2. Tampering with stored API requests and collections (**High Priority**)
+3. Local data security and encryption (**Medium Priority**)
+4. Code generation security vulnerabilities (**Medium Priority**)
 
 ## 1. System Overview
 
 ### 1.1 Architecture Context
 
 API Dash is a Flutter-based desktop and mobile application that:
+
 - Runs locally on user devices (Windows, macOS, Linux, iOS, iPad)
 - Stores data locally using Hive database
 - Does not require backend servers or cloud services
 - Supports multiple API types: HTTP, GraphQL, SSE/Streaming, AI
-- Generates integration code in 35+ languages/libraries
+- Generates integration code in 20+ languages/libraries
 - Imports collections from Postman, cURL, Insomnia, OpenAPI, HAR formats
-- Integrates with AI models via Ollama for API testing assistance
+- Integrates with AI models via Ollama or cloud providers for API testing assistance
 
 ### 1.2 Key Components
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                   User Interface Layer                    │
+│                   User Interface Layer                   │
 │  (Flutter Widgets, Screens, Request/Response Viewers)    │
 └──────────────────────────────────────────────────────────┘
                             │
 ┌──────────────────────────────────────────────────────────┐
-│                  Application Logic Layer                  │
+│                  Application Logic Layer                 │
 │   (Providers, Services, Models, State Management)        │
 └──────────────────────────────────────────────────────────┘
                             │
@@ -52,7 +43,7 @@ API Dash is a Flutter-based desktop and mobile application that:
 └─────────────┴──────────────┴──────────────┴──────────────┘
                             │
 ┌──────────────────────────────────────────────────────────┐
-│                    Operating System                       │
+│                    Operating System                      │
 │        (File System, Network Stack, Keychain)            │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -65,7 +56,7 @@ API Dash is a Flutter-based desktop and mobile application that:
 4. **Response Handling** → Display/store API responses (including multimedia)
 5. **Code Generation** → Transform requests into code snippets
 6. **Export/Import** → HAR, Postman, Insomnia, OpenAPI formats
-7. **AI Integration** → Send prompts to local Ollama instance for assistance
+7. **AI Integration** → Send prompts to local Ollama instance or cloud providers for assistance
 
 ### 1.4 Trust Boundaries
 
@@ -73,38 +64,42 @@ API Dash is a Flutter-based desktop and mobile application that:
 - **Network Boundary**: Outbound connections to user-specified APIs
 - **File System Boundary**: Local storage for collections, history, settings
 - **Process Boundary**: Flutter app process with OS-level isolation
-- **AI Service Boundary**: Optional external connection to local Ollama instance
+- **AI Service Boundary**: Optional external connection to local Ollama instance or user-specified cloud AI model provider(s)
 
----
-
-## 2. STRIDE Threat Analysis
+## 2. Threat Modeling (STRIDE)
 
 ### 2.1 Spoofing Identity (S)
 
 #### Threat S.1: Impersonation of API Endpoints
+
 **Description**: Attacker could intercept or redirect API requests to malicious endpoints through DNS poisoning, man-in-the-middle attacks, or malicious URL manipulation.
 
 **Attack Vectors**:
+
 - DNS hijacking redirecting legitimate API domains to attacker-controlled servers
 - Modified hosts file on compromised systems
 - Malicious proxy configuration
 - SSL/TLS stripping attacks
 
 **Impact**: HIGH
+
 - Credential theft if authentication tokens are sent to malicious endpoints
 - Sensitive data exfiltration
 - Malware delivery through malicious responses
 
 **Affected Components**:
+
 - Network layer (HTTP client in `packages/better_networking`)
 - Request execution services
 - SSL/TLS verification
 
 **Existing Mitigations**:
+
 - Flutter's HTTP client uses system SSL/TLS certificates
 - HTTPS validation by underlying platform (iOS/Android/Desktop)
 
 **Recommended Additional Mitigations**:
+
 1. Implement certificate pinning for known critical APIs (optional feature)
 2. Add visual indicators for HTTPS vs HTTP connections
 3. Warn users when making requests to non-HTTPS endpoints
@@ -112,34 +107,35 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Implement HSTS (HTTP Strict Transport Security) awareness
 6. Add option to verify server certificates explicitly
 
-**Priority**: HIGH  
-**Effort**: MEDIUM
-
----
-
 #### Threat S.2: Spoofing of Imported Collections
+
 **Description**: Malicious actors could distribute modified collection files (HAR, Postman, etc.) that contain malicious URLs or scripts.
 
 **Attack Vectors**:
+
 - Social engineering users to import malicious collections
 - Compromised collection sharing platforms
 - Man-in-the-middle during collection download
 
 **Impact**: MEDIUM
+
 - Unintended API requests to malicious endpoints
 - Potential code injection in collection metadata
 - Credential leakage if malicious URLs are designed to capture tokens
 
 **Affected Components**:
+
 - Import services (`lib/importer`, `packages/postman`, `packages/har`)
 - Collection parser modules
 - File selector dialogs
 
 **Existing Mitigations**:
+
 - User explicitly chooses files to import
 - No automatic execution of imported requests
 
 **Recommended Additional Mitigations**:
+
 1. Validate and sanitize imported collection data
 2. Display security warnings before importing from untrusted sources
 3. Implement collection integrity verification (checksums/signatures)
@@ -147,73 +143,75 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Add "safe mode" import that strips potentially dangerous elements
 6. Provide collection preview before full import
 
-**Priority**: MEDIUM  
-**Effort**: MEDIUM
-
----
-
 #### Threat S.3: AI/LLM Model Impersonation
-**Description**: If using external AI services (Ollama), attacker could impersonate the AI endpoint or model.
+
+**Description**: If using external AI services, attacker could impersonate the AI endpoint or model.
 
 **Attack Vectors**:
+
 - Malicious Ollama server running on localhost
 - Modified Ollama client configuration
 - DNS redirection of AI service endpoints
 
 **Impact**: LOW-MEDIUM
+
 - Malicious code suggestions or API configurations
 - Information disclosure to unauthorized AI services
 - Manipulation of AI-generated test scenarios
 
 **Affected Components**:
+
 - AI integration services (`lib/dashbot`, `packages/genai`)
 - Ollama client integration
 - Model management system
 
 **Existing Mitigations**:
+
 - Ollama typically runs locally
 - User controls AI service endpoints
 
 **Recommended Additional Mitigations**:
+
 1. Verify Ollama service authenticity before sending data
 2. Allow users to review/approve AI-generated requests before execution
 3. Display clear indicators of AI service provider
 4. Implement option to disable AI features entirely
 5. Add warnings about sensitive data in AI prompts
 
-**Priority**: LOW  
-**Effort**: LOW
-
----
-
 ### 2.2 Tampering (T)
 
 #### Threat T.1: Local Data Store Tampering
+
 **Description**: Attacker with file system access could modify Hive database files containing API requests, credentials, and collections.
 
 **Attack Vectors**:
+
 - Direct file system access on compromised devices
 - Malware with file modification capabilities
 - Physical access to unlocked device
 - Backup/restore attacks with modified data files
 
 **Impact**: HIGH
+
 - Injection of malicious API requests
 - Modification of stored credentials
 - Alteration of request history for covering tracks
 - Insertion of malicious code in templates
 
 **Affected Components**:
+
 - Hive database storage (`lib/services/hive_services.dart`)
 - Data persistence layer
 - Settings and preferences storage
 - File system access layers
 
 **Existing Mitigations**:
+
 - OS-level file permissions protect data files
 - Flutter app runs in sandboxed environment on mobile
 
 **Recommended Additional Mitigations**:
+
 1. Implement integrity verification for Hive database files (checksums/HMAC)
 2. Encrypt sensitive data at rest (credentials, tokens, secrets)
 3. Add tamper detection mechanisms with user alerts
@@ -222,35 +220,36 @@ API Dash is a Flutter-based desktop and mobile application that:
 6. Add file-level encryption for workspace directories
 7. Implement audit logging for data modifications
 
-**Priority**: HIGH  
-**Effort**: HIGH
-
----
-
 #### Threat T.2: Request Parameter Injection
+
 **Description**: Malicious input in request fields could lead to injection attacks (SQL injection, command injection) on target APIs.
 
 **Attack Vectors**:
+
 - Crafted input in URL, headers, body, query parameters
 - Injection through environment variables
 - Malicious code in code generation templates
 
 **Impact**: MEDIUM
+
 - Compromise of target API systems
 - Unintended API behavior
 - Security testing tool misuse for malicious purposes
 
 **Affected Components**:
+
 - Request editor UI components
 - Parameter handling logic
 - Code generation templates
 - Environment variable substitution
 
 **Existing Mitigations**:
+
 - Application doesn't execute requests automatically
 - User explicitly triggers API calls
 
 **Recommended Additional Mitigations**:
+
 1. Input validation and sanitization warnings
 2. Display security notices about injection risks
 3. Provide "safe mode" with automatic encoding
@@ -258,34 +257,35 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Implement request review/approval workflow
 6. Include security testing guidelines in documentation
 
-**Priority**: MEDIUM  
-**Effort**: LOW
-
----
-
 #### Threat T.3: Code Generation Template Tampering
+
 **Description**: Modification of code generation templates could inject malicious code into generated snippets.
 
 **Attack Vectors**:
+
 - Direct modification of template files on disk
 - Malicious template imports/extensions
 - Exploiting template engine vulnerabilities (Jinja)
 
 **Impact**: HIGH
+
 - Malicious code in generated snippets used in production
 - Supply chain attacks if developers share generated code
 - Backdoors in generated authentication code
 
 **Affected Components**:
+
 - Code generation system (`lib/codegen`, `lib/templates`)
 - Template engine (Jinja)
 - Template storage and loading mechanisms
 
 **Existing Mitigations**:
+
 - Templates are part of application bundle
 - User doesn't typically modify templates directly
 
 **Recommended Additional Mitigations**:
+
 1. Sign and verify integrity of template files
 2. Implement template sandboxing
 3. Validate generated code against security patterns
@@ -293,69 +293,71 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Provide code generation audit trail
 6. Lock down template directory with strict permissions
 
-**Priority**: MEDIUM  
-**Effort**: MEDIUM
-
----
-
 #### Threat T.4: Exported Collection Tampering
+
 **Description**: Exported HAR/collection files could be modified by attackers and re-imported.
 
 **Attack Vectors**:
+
 - Intercepting exported files during sharing
 - Malicious modification of version-controlled collections
 - Man-in-the-middle during file transfer
 
 **Impact**: MEDIUM
+
 - Re-import of tampered collections
 - Distribution of malicious API configurations
 - Credential theft through modified requests
 
 **Affected Components**:
+
 - Export functionality
 - File system operations
 - Import validation
 
 **Existing Mitigations**:
+
 - User controls export/import workflow
 
 **Recommended Additional Mitigations**:
+
 1. Digital signatures for exported collections
 2. Integrity verification during import
 3. Version tracking with change detection
 4. Encrypted exports for sensitive collections
 5. Warning on import if signatures don't match
 
-**Priority**: MEDIUM  
-**Effort**: MEDIUM
-
----
-
 ### 2.3 Repudiation (R)
 
 #### Threat R.1: No Audit Trail for API Requests
+
 **Description**: Users can deny making specific API requests as there's no cryptographically secure audit trail.
 
 **Attack Vectors**:
+
 - User makes malicious API requests and denies responsibility
 - Deletion or modification of request history
 - Lack of non-repudiation mechanisms
 
 **Impact**: MEDIUM
+
 - Inability to prove which user made specific requests
 - Compliance issues in regulated environments
 - Difficulty in forensic investigations
 
 **Affected Components**:
+
 - History service (`lib/services/history_service.dart`)
 - Request execution logic
 - Logging mechanisms
 
 **Existing Mitigations**:
+
 - Request history is stored locally
 - Timestamps on request history
 
 **Recommended Additional Mitigations**:
+
 1. Implement secure audit logging with integrity protection
 2. Add optional cryptographic signing of requests (timestamp + hash)
 3. Provide export of audit logs for compliance
@@ -363,34 +365,35 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Add user activity tracking for sensitive operations
 6. Optional integration with SIEM systems for enterprises
 
-**Priority**: LOW-MEDIUM  
-**Effort**: MEDIUM
-
----
-
 #### Threat R.2: History Manipulation
+
 **Description**: Users could manipulate or delete request history to hide malicious activities.
 
 **Attack Vectors**:
+
 - Direct deletion of history entries through UI
 - Modification of history database files
 - Clearing history to remove evidence
 
 **Impact**: MEDIUM
+
 - Loss of audit trail
 - Inability to track malicious activities
 - Compliance violations
 
 **Affected Components**:
+
 - History service and providers
 - Hive database for history storage
 - History UI components
 
 **Existing Mitigations**:
+
 - History auto-clear can be configured
 - History is stored persistently
 
 **Recommended Additional Mitigations**:
+
 1. Implement append-only history log option
 2. Add protected history mode requiring authentication to delete
 3. Create tamper-evident logging mechanisms
@@ -398,17 +401,14 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Add retention policies with enforcement
 6. Implement history backup before deletion
 
-**Priority**: LOW  
-**Effort**: MEDIUM
-
----
-
 ### 2.4 Information Disclosure (I)
 
 #### Threat I.1: Exposure of API Credentials in Local Storage
+
 **Description**: API keys, tokens, passwords stored in Hive database are vulnerable to disclosure.
 
 **Attack Vectors**:
+
 - Malware reading application data files
 - Physical access to unlocked device
 - Backup files containing unencrypted credentials
@@ -416,12 +416,14 @@ API Dash is a Flutter-based desktop and mobile application that:
 - Insecure file permissions on workspace folders
 
 **Impact**: CRITICAL
+
 - Unauthorized access to user's APIs and services
 - Data breaches on connected services
 - Financial losses from API abuse
 - Compromise of production systems
 
 **Affected Components**:
+
 - Request models storing auth credentials
 - Environment variable storage (secrets)
 - Settings containing API configurations
@@ -429,11 +431,13 @@ API Dash is a Flutter-based desktop and mobile application that:
 - Memory storage of sensitive data
 
 **Existing Mitigations**:
+
 - OS-level file permissions
 - Application sandboxing on mobile platforms
 
 **Recommended Additional Mitigations**:
-1. **CRITICAL**: Implement encryption at rest for all credentials
+
+1. Implement encryption at rest for all credentials (**CRITICAL**)
 2. Use OS credential storage (Keychain on macOS/iOS, Credential Manager on Windows, Secret Service on Linux)
 3. Encrypt Hive database with user-provided passphrase
 4. Clear sensitive data from memory after use
@@ -443,37 +447,38 @@ API Dash is a Flutter-based desktop and mobile application that:
 8. Implement automatic credential rotation reminders
 9. Add data classification labels (sensitive/non-sensitive)
 
-**Priority**: CRITICAL  
-**Effort**: HIGH
-
----
-
 #### Threat I.2: Response Data Containing Sensitive Information
+
 **Description**: API responses may contain PII, secrets, or sensitive business data stored locally without encryption.
 
 **Attack Vectors**:
+
 - Unauthorized access to history/response cache
 - Malware scanning local databases
 - Accidental sharing of workspace folders
 - Forensic data recovery from deleted files
 
 **Impact**: HIGH
+
 - PII exposure leading to privacy violations
 - Exposure of business-critical information
 - Regulatory compliance violations (GDPR, CCPA)
 - Reputational damage
 
 **Affected Components**:
+
 - Response storage in history
 - Request/response caching
 - Downloaded response files
 - Screenshot/export features
 
 **Existing Mitigations**:
+
 - Data stored locally only
 - User controls data retention
 
 **Recommended Additional Mitigations**:
+
 1. Encrypt stored responses containing sensitive data
 2. Implement data retention policies with auto-deletion
 3. Add response data classification options
@@ -483,35 +488,36 @@ API Dash is a Flutter-based desktop and mobile application that:
 7. Secure deletion (overwrite) when removing history
 8. Add option to exclude response bodies from history
 
-**Priority**: HIGH  
-**Effort**: MEDIUM
-
----
-
 #### Threat I.3: Logging Sensitive Information
+
 **Description**: Debug logs, error messages, or analytics could inadvertently expose sensitive data.
 
 **Attack Vectors**:
+
 - Verbose logging including credentials in URLs
 - Stack traces containing sensitive data
 - Crash reports sent with sensitive context
 - Console logs on shared/public displays
 
 **Impact**: MEDIUM
+
 - Credential disclosure through logs
 - Exposure of API internal details
 - Data leakage through error messages
 
 **Affected Components**:
+
 - Logging infrastructure
 - Error handling and reporting
 - Debug mode operations
 - Crash analytics
 
 **Existing Mitigations**:
+
 - Production builds have minimal logging
 
 **Recommended Additional Mitigations**:
+
 1. Implement credential redaction in all logs
 2. Add sensitive data detection and masking
 3. Create separate log levels with security considerations
@@ -520,34 +526,35 @@ API Dash is a Flutter-based desktop and mobile application that:
 6. Review all log statements for sensitive data exposure
 7. Add opt-in for detailed logging with warnings
 
-**Priority**: MEDIUM  
-**Effort**: LOW
-
----
-
 #### Threat I.4: Screenshot/Screen Recording Exposure
+
 **Description**: Sensitive data visible in UI could be captured through screenshots, screen recordings, or shoulder surfing.
 
 **Attack Vectors**:
+
 - Screen sharing during video calls
 - Screenshot/screen recording malware
 - Shoulder surfing in public spaces
 - Screen capture utilities
 
 **Impact**: MEDIUM
+
 - Credential exposure through visual capture
 - API key disclosure in UI
 - Sensitive response data visible to unauthorized parties
 
 **Affected Components**:
+
 - All UI components displaying sensitive data
 - Request/response viewers
 - Environment variable editors
 
 **Existing Mitigations**:
+
 - None specific
 
 **Recommended Additional Mitigations**:
+
 1. Implement "privacy mode" that masks sensitive fields
 2. Add screenshot blocking for sensitive screens (mobile)
 3. Provide credential masking in UI (show/hide toggle)
@@ -555,34 +562,35 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Implement blur overlay for sensitive content when app is backgrounded
 6. Add user education about screenshot risks
 
-**Priority**: MEDIUM  
-**Effort**: MEDIUM
-
----
-
 #### Threat I.5: Clipboard Data Leakage
+
 **Description**: Sensitive data copied to clipboard could be accessed by malicious applications.
 
 **Attack Vectors**:
+
 - Clipboard monitoring malware
 - Other applications reading clipboard
 - Clipboard history features in OS
 - Cloud clipboard sync exposing credentials
 
 **Impact**: MEDIUM
+
 - Credential theft from clipboard
 - Token/key exposure
 - Sensitive response data leakage
 
 **Affected Components**:
+
 - Copy/paste functionality
 - Code generation copy features
 - Response data copying
 
 **Existing Mitigations**:
+
 - Standard OS clipboard protections
 
 **Recommended Additional Mitigations**:
+
 1. Implement auto-clear clipboard after timeout
 2. Add warnings when copying sensitive data
 3. Provide option to disable clipboard for sensitive fields
@@ -590,34 +598,35 @@ API Dash is a Flutter-based desktop and mobile application that:
 5. Avoid copying credentials to clipboard automatically
 6. Add notification when sensitive data is copied
 
-**Priority**: LOW-MEDIUM  
-**Effort**: LOW
-
----
-
 #### Threat I.6: Exported Collection Data Exposure
+
 **Description**: Exported HAR, Postman, or other collection files may contain sensitive credentials and data.
 
 **Attack Vectors**:
+
 - Unencrypted export files
 - Accidental sharing of exports with credentials
 - Version control commits with sensitive exports
 - Cloud storage of unprotected exports
 
 **Impact**: HIGH
+
 - Credential exposure through shared files
 - API configuration disclosure
 - Secret tokens in version control history
 
 **Affected Components**:
+
 - Export functionality
 - Collection serialization
 - File save operations
 
 **Existing Mitigations**:
+
 - User controls export process
 
 **Recommended Additional Mitigations**:
+
 1. Warn users before exporting with credentials
 2. Provide option to exclude sensitive data from exports
 3. Encrypt exported files with password protection
@@ -626,39 +635,40 @@ API Dash is a Flutter-based desktop and mobile application that:
 6. Implement "safe export" mode for sharing
 7. Add .gitignore recommendations in documentation
 
-**Priority**: HIGH  
-**Effort**: MEDIUM
-
----
-
 ### 2.5 Denial of Service (DoS)
 
 #### Threat D.1: Local Resource Exhaustion
+
 **Description**: Malicious or poorly configured requests could exhaust local system resources.
 
 **Attack Vectors**:
+
 - Very large response bodies consuming disk space
 - Infinite loops in request sequences
 - Memory exhaustion from large collections
 - CPU exhaustion from complex code generation
 
 **Impact**: MEDIUM
+
 - Application crashes or freezes
 - System instability
 - Data loss from unexpected terminations
 - Poor user experience
 
 **Affected Components**:
+
 - Response handling and storage
 - Collection management
 - Code generation engine
 - Memory management
 
 **Existing Mitigations**:
+
 - Flutter framework memory management
 - OS-level resource limits
 
 **Recommended Additional Mitigations**:
+
 1. Implement response size limits with warnings
 2. Add timeout mechanisms for long-running operations
 3. Implement streaming for large responses
@@ -674,29 +684,35 @@ API Dash is a Flutter-based desktop and mobile application that:
 ---
 
 #### Threat D.2: Malicious Response Processing
+
 **Description**: Crafted API responses could trigger resource exhaustion in parsing/rendering.
 
 **Attack Vectors**:
+
 - Extremely large JSON/XML responses
 - Deeply nested data structures causing parser issues
 - Malformed multimedia content causing decoder crashes
 - Billion laughs attack in XML responses
 
 **Impact**: MEDIUM
+
 - Application crash or hang
 - UI freezing
 - Data corruption
 
 **Affected Components**:
+
 - Response parsers
 - JSON/XML/YAML viewers
 - Multimedia rendering components
 - Syntax highlighters
 
 **Existing Mitigations**:
+
 - Flutter framework handles most edge cases
 
 **Recommended Additional Mitigations**:
+
 1. Implement response size validation before processing
 2. Add depth limits for nested data structures
 3. Implement timeout for parsing operations
@@ -712,30 +728,36 @@ API Dash is a Flutter-based desktop and mobile application that:
 ---
 
 #### Threat D.3: File System DoS
-**Description**: Continuous operations could fill up disk space or exceed inode limits.
+
+**Description**: Continuous operations could fill up disk space or tree node limits.
 
 **Attack Vectors**:
+
 - Excessive history retention
 - Large response body downloads
 - Uncontrolled log file growth
 - Multiple workspace folders with duplicated data
 
 **Impact**: LOW-MEDIUM
+
 - System-wide storage exhaustion
 - Application malfunction
 - Data loss from full disk
 
 **Affected Components**:
+
 - History storage
 - Download functionality
 - Workspace management
 - Logging systems
 
 **Existing Mitigations**:
+
 - History auto-clear feature
 - User controls downloads
 
 **Recommended Additional Mitigations**:
+
 1. Implement disk space monitoring
 2. Add storage quota management
 3. Automatic cleanup of old data
@@ -744,37 +766,38 @@ API Dash is a Flutter-based desktop and mobile application that:
 6. Add storage usage dashboard
 7. Automatic log rotation
 
-**Priority**: LOW  
-**Effort**: LOW
-
----
-
 ### 2.6 Elevation of Privilege (E)
 
 #### Threat E.1: Code Injection via Template Engine
+
 **Description**: Template engine vulnerabilities could allow code execution through crafted templates.
 
 **Attack Vectors**:
+
 - Server-Side Template Injection (SSTI) in Jinja templates
 - Malicious template syntax
 - Exploiting template engine vulnerabilities
 - Unsafe template rendering context
 
 **Impact**: HIGH
+
 - Arbitrary code execution on user's device
 - File system access beyond application scope
 - Privilege escalation to user's account level
 
 **Affected Components**:
+
 - Jinja template engine (`jinja: ^0.6.1`)
 - Code generation system
 - Template rendering context
 
 **Existing Mitigations**:
+
 - Templates are bundled with application
 - No user-editable templates by default
 
 **Recommended Additional Mitigations**:
+
 1. Keep Jinja library updated to latest version
 2. Implement template sandboxing with restricted context
 3. Validate and sanitize template inputs
@@ -783,36 +806,37 @@ API Dash is a Flutter-based desktop and mobile application that:
 6. Implement Content Security Policy for templates
 7. Add template execution monitoring
 
-**Priority**: HIGH  
-**Effort**: MEDIUM
-
----
-
 #### Threat E.2: Unsafe Deserialization
+
 **Description**: Deserializing untrusted data from imports or database could lead to code execution.
 
 **Attack Vectors**:
+
 - Malicious HAR file imports
 - Crafted Postman/Insomnia collections
 - Modified Hive database files
 - Exploiting serialization vulnerabilities in Dart
 
 **Impact**: HIGH
+
 - Remote code execution
 - Privilege escalation
 - System compromise
 
 **Affected Components**:
+
 - Import parsers
 - Hive database deserialization
 - JSON deserialization
 - Collection parsers
 
 **Existing Mitigations**:
+
 - Dart's type safety
 - Structured data parsing
 
 **Recommended Additional Mitigations**:
+
 1. Implement strict input validation on all imports
 2. Use safe deserialization libraries
 3. Validate object types after deserialization
@@ -821,35 +845,36 @@ API Dash is a Flutter-based desktop and mobile application that:
 6. Add integrity checks before deserialization
 7. Limit deserializable classes to known types
 
-**Priority**: HIGH  
-**Effort**: MEDIUM
-
----
-
 #### Threat E.3: Dependency Vulnerabilities
+
 **Description**: Vulnerable third-party packages could introduce privilege escalation vectors.
 
 **Attack Vectors**:
+
 - Known CVEs in dependencies
 - Supply chain attacks on packages
 - Malicious package updates
 - Transitive dependency vulnerabilities
 
 **Impact**: VARIES (LOW to CRITICAL)
+
 - Arbitrary code execution
 - Data theft
 - Privilege escalation
 
 **Affected Components**:
+
 - All third-party dependencies (45+ packages)
 - Package management (pubspec.yaml)
 - Build system
 
 **Existing Mitigations**:
+
 - Dependabot alerts (if enabled)
 - Regular dependency updates
 
 **Recommended Additional Mitigations**:
+
 1. **Enable GitHub Dependabot alerts**
 2. Implement automated dependency scanning in CI/CD
 3. Regular security audits of dependencies
@@ -860,36 +885,37 @@ API Dash is a Flutter-based desktop and mobile application that:
 8. Consider dependency license compliance
 9. Regular vulnerability scanning with tools like `dart pub outdated`
 
-**Priority**: HIGH  
-**Effort**: LOW-MEDIUM
-
----
-
 #### Threat E.4: Native Code Vulnerabilities
+
 **Description**: Platform-specific native code or FFI could have vulnerabilities leading to privilege escalation.
 
 **Attack Vectors**:
+
 - Buffer overflows in native plugins
 - Memory corruption in FFI boundaries
 - Platform-specific vulnerabilities
 - Native library vulnerabilities (e.g., libcurl)
 
 **Impact**: HIGH
+
 - System-level access
 - Sandbox escape
 - Device compromise
 
 **Affected Components**:
+
 - Platform channels
 - Native plugins (window_manager, file_selector, etc.)
 - FFI implementations
 - Native media players (fvp, just_audio)
 
 **Existing Mitigations**:
+
 - Flutter's sandboxing
 - Platform security features
 
 **Recommended Additional Mitigations**:
+
 1. Audit all native code integrations
 2. Use memory-safe languages where possible
 3. Implement bounds checking in FFI code
@@ -904,28 +930,34 @@ API Dash is a Flutter-based desktop and mobile application that:
 ---
 
 #### Threat E.5: JavaScript Execution Context
+
 **Description**: `flutter_js` package enables JavaScript execution which could be exploited.
 
 **Attack Vectors**:
+
 - Malicious JavaScript in imported collections
 - XSS-like attacks through JS evaluation
 - Arbitrary code execution via JS engine
 - Exploiting JS engine vulnerabilities
 
 **Impact**: HIGH
+
 - Arbitrary code execution
 - Sandbox escape
 - Access to sensitive application data
 
 **Affected Components**:
+
 - `flutter_js: ^0.8.5` package
 - JavaScript runtime integration
 - Script execution contexts
 
 **Existing Mitigations**:
+
 - Controlled JS execution context
 
 **Recommended Additional Mitigations**:
+
 1. Implement strict JavaScript sandboxing
 2. Validate and sanitize all JS code before execution
 3. Limit JS API access to safe operations only
@@ -935,196 +967,135 @@ API Dash is a Flutter-based desktop and mobile application that:
 7. Consider removing/replacing JS execution if not essential
 8. Add execution timeout and resource limits
 
-**Priority**: HIGH  
-**Effort**: MEDIUM
+## 3. Recommended Security Controls
 
----
-
-## 3. Risk Assessment Matrix
-
-### 3.1 Risk Scoring
-
-Risks are scored based on **Likelihood** × **Impact**:
-
-| Risk Level | Score Range | Color Code |
-|------------|-------------|------------|
-| Critical   | 20-25      | 🔴 Red     |
-| High       | 15-19      | 🟠 Orange  |
-| Medium     | 8-14       | 🟡 Yellow  |
-| Low        | 1-7        | 🟢 Green   |
-
-**Likelihood Scale**: 1 (Very Unlikely) to 5 (Very Likely)  
-**Impact Scale**: 1 (Negligible) to 5 (Critical)
-
-### 3.2 Risk Summary Table
-
-| Threat ID | Category | Threat Name | Likelihood | Impact | Risk Score | Priority |
-|-----------|----------|-------------|------------|--------|------------|----------|
-| I.1 | Information Disclosure | API Credentials Exposure | 4 | 5 | 20 | 🔴 CRITICAL |
-| E.3 | Elevation of Privilege | Dependency Vulnerabilities | 4 | 4 | 16 | 🔴 HIGH |
-| T.1 | Tampering | Local Data Store Tampering | 3 | 5 | 15 | 🔴 HIGH |
-| I.6 | Information Disclosure | Exported Collection Exposure | 4 | 4 | 16 | 🔴 HIGH |
-| E.1 | Elevation of Privilege | Template Engine Code Injection | 2 | 5 | 10 | 🟠 HIGH |
-| E.2 | Elevation of Privilege | Unsafe Deserialization | 2 | 5 | 10 | 🟠 HIGH |
-| E.5 | Elevation of Privilege | JavaScript Execution | 2 | 5 | 10 | 🟠 HIGH |
-| S.1 | Spoofing | API Endpoint Impersonation | 3 | 4 | 12 | 🟠 HIGH |
-| I.2 | Information Disclosure | Sensitive Response Data | 4 | 4 | 16 | 🟠 HIGH |
-| T.3 | Tampering | Code Generation Templates | 2 | 4 | 8 | 🟡 MEDIUM |
-| S.2 | Spoofing | Imported Collection Spoofing | 3 | 3 | 9 | 🟡 MEDIUM |
-| T.2 | Tampering | Request Parameter Injection | 3 | 3 | 9 | 🟡 MEDIUM |
-| T.4 | Tampering | Exported Collection Tampering | 2 | 3 | 6 | 🟡 MEDIUM |
-| I.3 | Information Disclosure | Logging Sensitive Data | 3 | 3 | 9 | 🟡 MEDIUM |
-| I.4 | Information Disclosure | Screenshot Exposure | 3 | 3 | 9 | 🟡 MEDIUM |
-| D.1 | Denial of Service | Resource Exhaustion | 3 | 3 | 9 | 🟡 MEDIUM |
-| D.2 | Denial of Service | Malicious Response Processing | 2 | 3 | 6 | 🟡 MEDIUM |
-| E.4 | Elevation of Privilege | Native Code Vulnerabilities | 2 | 4 | 8 | 🟡 MEDIUM |
-| R.1 | Repudiation | No Audit Trail | 2 | 3 | 6 | 🟡 MEDIUM |
-| R.2 | Repudiation | History Manipulation | 2 | 3 | 6 | 🟡 MEDIUM |
-| I.5 | Information Disclosure | Clipboard Leakage | 2 | 2 | 4 | 🟢 LOW |
-| S.3 | Spoofing | AI Model Impersonation | 2 | 2 | 4 | 🟢 LOW |
-| D.3 | Denial of Service | File System DoS | 2 | 2 | 4 | 🟢 LOW |
-
----
-
-## 4. Recommended Security Controls
-
-### 4.1 Immediate Actions (Critical Priority)
+### 3.1 Immediate Actions (Critical Priority)
 
 1. **Implement Secure Credential Storage**
+
    - Migrate from plain-text Hive storage to OS credential managers
    - Implement encryption at rest for all sensitive data
    - Use Keychain (macOS/iOS), Credential Manager (Windows), Secret Service (Linux)
-   - **Effort**: High | **Impact**: Critical reduction in I.1
+   - **Effort**: High
+   - **Impact**: Critical reduction in I.1
 
 2. **Enable Dependency Scanning**
+
    - Activate GitHub Dependabot
    - Implement automated security scanning in CI/CD
    - Regular dependency updates and security patches
-   - **Effort**: Low | **Impact**: Addresses E.3
+   - **Effort**: Low
+   - **Impact**: Addresses E.3
 
 3. **Implement Data Integrity Verification**
+
    - Add HMAC/checksums for Hive database files
    - Tamper detection for local storage
    - Integrity verification on app startup
-   - **Effort**: Medium | **Impact**: Addresses T.1
+   - **Effort**: Medium
+   - **Impact**: Addresses T.1
 
 4. **Secure Export Functionality**
    - Add warnings before exporting with credentials
    - Implement credential redaction options
    - Add export encryption options
-   - **Effort**: Medium | **Impact**: Addresses I.6
+   - **Effort**: Medium
+   - **Impact**: Addresses I.6
 
-### 4.2 Short-term Actions (High Priority)
+### 3.2 Short-term Actions (High Priority)
 
 5. **Enhanced HTTPS/TLS Validation**
+
    - Add certificate information display
    - Implement warnings for non-HTTPS endpoints
    - Optional certificate pinning
-   - **Effort**: Medium | **Impact**: Addresses S.1
+   - **Effort**: Medium
+   - **Impact**: Addresses S.1
 
 6. **JavaScript Sandboxing**
+
    - Implement strict sandbox for flutter_js
    - Add user confirmation for script execution
    - Limit JS API access
-   - **Effort**: Medium | **Impact**: Addresses E.5
+   - **Effort**: Medium
+   - **Impact**: Addresses E.5
 
 7. **Template Security Hardening**
+
    - Audit and sandbox Jinja templates
    - Implement template integrity verification
    - Regular security review of templates
-   - **Effort**: Medium | **Impact**: Addresses E.1
+   - **Effort**: Medium
+   - **Impact**: Addresses E.1
 
 8. **Import Validation**
    - Schema validation for all imports
    - Sanitization of imported data
    - Security warnings for untrusted imports
-   - **Effort**: Medium | **Impact**: Addresses E.2, S.2
+   - **Effort**: Medium
+   - **Impact**: Addresses E.2, S.2
 
-### 4.3 Medium-term Actions
+### 3.3 Medium-term Actions
 
 9. **Response Data Protection**
+
    - Implement encryption for stored responses
    - Add "incognito mode" for sensitive testing
    - Data retention policies with auto-deletion
-   - **Effort**: Medium | **Impact**: Addresses I.2
+   - **Effort**: Medium
+   - **Impact**: Addresses I.2
 
 10. **Privacy Mode Features**
+
     - Credential masking in UI
     - Screenshot blocking on sensitive screens
     - Blur overlay when app backgrounded
-    - **Effort**: Medium | **Impact**: Addresses I.4
+    - **Effort**: Medium
+    - **Impact**: Addresses I.4
 
 11. **Audit and Logging**
+
     - Implement secure audit trail
     - Credential redaction in logs
     - Optional append-only history mode
-    - **Effort**: Medium | **Impact**: Addresses R.1, R.2, I.3
+    - **Effort**: Medium
+    - **Impact**: Addresses R.1, R.2, I.3
 
 12. **Resource Management**
     - Response size limits
     - Memory usage monitoring
     - Graceful handling of large responses
-    - **Effort**: Medium | **Impact**: Addresses D.1, D.2
+    - **Effort**: Medium
+    - **Impact**: Addresses D.1, D.2
 
-### 4.4 Long-term Actions
+### 3.4 Long-term Actions
 
 13. **Native Code Security Review**
+
     - Audit all platform channel implementations
     - Security testing of FFI boundaries
     - Minimize native code dependencies
-    - **Effort**: High | **Impact**: Addresses E.4
+    - **Effort**: High
+    - **Impact**: Addresses E.4
 
 14. **Comprehensive Security Testing**
+
     - Automated security testing in CI/CD
     - Regular penetration testing
     - Fuzzing for parsers and importers
-    - **Effort**: High | **Impact**: Addresses multiple threats
+    - **Effort**: High
+    - **Impact**: Addresses multiple threats
 
 15. **Security Documentation**
     - Developer security guidelines
     - User security best practices
     - Incident response procedures
-    - **Effort**: Low | **Impact**: General security awareness
+    - **Effort**: Low
+    - **Impact**: General security awareness
 
----
+## 4. Security Architecture Recommendations
 
-## 5. Assumptions and Constraints
-
-### 5.1 Security Assumptions
-
-1. **Local-First Design**: API Dash is primarily a local application without cloud backend
-2. **User Trust**: Users are trusted to configure and use the application appropriately
-3. **OS Security**: Underlying OS provides basic security (sandboxing, file permissions)
-4. **No Authentication**: Application itself has no authentication mechanism
-5. **Open Source**: All code is publicly visible for security review
-6. **No Remote Control**: No remote management or control features
-
-### 5.2 Out of Scope
-
-The following are explicitly out of scope for this threat model:
-
-1. Physical security of user devices
-2. User's network security and infrastructure
-3. Security of target APIs being tested
-4. Social engineering attacks against users
-5. Insider threats from legitimate users
-6. Legal/compliance aspects beyond technical controls
-7. Third-party service security (Ollama, external APIs)
-
-### 5.3 Constraints
-
-1. **Open Source**: Cannot implement security through obscurity
-2. **Cross-Platform**: Solutions must work across all supported platforms
-3. **User Experience**: Security controls must not significantly degrade UX
-4. **Backward Compatibility**: Must maintain data compatibility with existing users
-5. **Resource Limitations**: Open source project with limited dedicated security resources
-6. **Performance**: Security controls must not significantly impact performance
-
----
-
-## 6. Security Architecture Recommendations
-
-### 6.1 Secure-by-Default Configuration
+### 4.1 Secure-by-Default Configuration
 
 ```dart
 // Example: Default secure settings
@@ -1140,7 +1111,7 @@ class SecurityDefaults {
 }
 ```
 
-### 6.2 Defense in Depth Strategy
+### 4.2 Defense in Depth Strategy
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -1156,7 +1127,7 @@ class SecurityDefaults {
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 6.3 Secure Development Lifecycle Integration
+### 4.3 Secure Development Lifecycle Integration
 
 1. **Design Phase**: Security requirements and threat modeling
 2. **Development**: Secure coding guidelines and code reviews
@@ -1164,23 +1135,24 @@ class SecurityDefaults {
 4. **Release**: Security validation, signed releases
 5. **Maintenance**: Security patches, vulnerability management
 
----
+## 5. Security Testing Recommendations
 
-## 7. Security Testing Recommendations
-
-### 7.1 Recommended Security Tests
+### 5.1 Recommended Security Tests
 
 1. **Static Analysis**
+
    - SAST tools for Dart code
    - Dependency vulnerability scanning
    - Code quality and security linters
 
 2. **Dynamic Analysis**
+
    - Fuzzing for parsers (HAR, Postman, JSON, XML)
    - Memory leak detection
    - Runtime security monitoring
 
 3. **Manual Testing**
+
    - Penetration testing
    - Code review of security-critical components
    - Template injection testing
@@ -1191,7 +1163,7 @@ class SecurityDefaults {
    - Privacy compliance (GDPR, CCPA)
    - Accessibility security testing
 
-### 7.2 Security Test Cases
+### 5.2 Security Test Cases
 
 ```
 Test Case: Credential Storage Security
@@ -1213,9 +1185,7 @@ Test Case: Export Security
 - Test integrity of exported files
 ```
 
----
-
-## 8. Incident Response Integration
+## 6. Incident Response Integration
 
 This threat model should be used in conjunction with the **Incident Response Plan (IRP)** for:
 
@@ -1224,11 +1194,7 @@ This threat model should be used in conjunction with the **Incident Response Pla
 3. **Containment Strategies**: Mitigations guide incident containment
 4. **Recovery Planning**: Recommended controls aid in recovery
 
----
-
-## 9. Compliance and Regulatory Considerations
-
-### 9.1 Applicable Regulations
+## 7. Compliance and Regulatory Considerations
 
 While API Dash is a developer tool, it may be subject to:
 
@@ -1237,85 +1203,3 @@ While API Dash is a developer tool, it may be subject to:
 3. **SOC 2**: For enterprise adoption
 4. **ISO 27001**: Information security management
 5. **OWASP**: Mobile and API security guidelines
-
-### 9.2 Security Requirements
-
-| Requirement | STRIDE Coverage | Status |
-|-------------|-----------------|--------|
-| Data Encryption | I.1, I.2, I.6 | Partially Implemented |
-| Access Control | E.1-E.5 | Limited |
-| Audit Logging | R.1, R.2 | Partially Implemented |
-| Input Validation | T.2, S.2 | Partially Implemented |
-| Secure Communications | S.1 | Partially Implemented |
-| Incident Response | All | Documented Separately |
-
----
-
-## 10. Conclusion and Next Steps
-
-### 10.1 Summary
-
-API Dash has a solid foundation with local-first architecture and open-source transparency. However, several critical security improvements are needed, particularly around:
-
-1. **Credential and sensitive data encryption** (CRITICAL)
-2. **Dependency vulnerability management** (HIGH)
-3. **Data integrity verification** (HIGH)
-4. **Secure export functionality** (HIGH)
-
-### 10.2 Recommended Action Plan
-
-**Phase 1 (0-3 months)**: Address critical priority items
-- Implement secure credential storage
-- Enable dependency scanning
-- Add data integrity checks
-- Secure export warnings
-
-**Phase 2 (3-6 months)**: Address high priority items
-- HTTPS/TLS enhancements
-- JavaScript sandboxing
-- Template security
-- Import validation
-
-**Phase 3 (6-12 months)**: Address medium/long-term items
-- Response data protection
-- Privacy features
-- Comprehensive audit logging
-- Security testing program
-
-### 10.3 Continuous Improvement
-
-This threat model should be:
-- **Reviewed quarterly** for updates
-- **Updated** when major features are added
-- **Revised** after security incidents
-- **Validated** through security testing
-- **Shared** with the security community for feedback
-
----
-
-## 11. Document Control
-
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | December 2025 | Security Team | Initial STRIDE threat model |
-
-**Review Schedule**: Quarterly  
-**Next Review Date**: March 2026  
-**Document Owner**: API Dash Security Team  
-**Classification**: Public
-
----
-
-## References
-
-1. [STRIDE Threat Modeling - Microsoft](https://learn.microsoft.com/en-us/previous-versions/commerce-server/ee823878(v=cs.20))
-2. [OWASP Mobile Security Testing Guide](https://owasp.org/www-project-mobile-security-testing-guide/)
-3. [OWASP API Security Top 10](https://owasp.org/www-project-api-security/)
-4. [CWE Top 25 Most Dangerous Software Weaknesses](https://cwe.mitre.org/top25/)
-5. [Flutter Security Best Practices](https://docs.flutter.dev/security)
-6. API Dash Repository: https://github.com/foss42/apidash
-7. API Dash Security Policy: SECURITY.md
-
----
-
-**END OF STRIDE THREAT MODEL**
