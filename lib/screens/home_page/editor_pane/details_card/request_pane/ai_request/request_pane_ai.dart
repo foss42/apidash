@@ -13,12 +13,8 @@ class EditAIRequestPane extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
-    var tabIndex = ref.watch(
+    final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
-      
-    if (tabIndex >= 3) {
-      tabIndex = 0;
-    }
 
     return RequestPane(
       selectedId: selectedId,
