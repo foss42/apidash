@@ -1482,16 +1482,3 @@ Stored XSS:
 AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N
 Score: 5.4 (MEDIUM)
 ```
-
-### Useful Commands
-
-```bash
-# Check for outdated dependency vulnerabilities
-dart pub outdated
-
-# Run static analysis
-flutter analyze
-
-# Check dependencies
-flutter pub deps --style=compact
-```
