@@ -80,7 +80,7 @@ This IRP applies to:
 
 ### 3.1 Core Team Structure
 
-**Primary**: Ankit Mahato
+**Primary**: Ankit Mahato  
 **Backup**: Ashita Prasad
 
 #### 3.1.1 Incident Commander (IC)
