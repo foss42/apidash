@@ -15,6 +15,10 @@ _$EnvironmentModelImpl _$$EnvironmentModelImplFromJson(Map json) =>
                   Map<String, Object?>.from(e as Map)))
               .toList() ??
           const [],
+      defaultAuthModel: json['defaultAuthModel'] == null
+          ? null
+          : AuthModel.fromJson(
+              Map<String, Object?>.from(json['defaultAuthModel'] as Map)),
     );
 
 Map<String, dynamic> _$$EnvironmentModelImplToJson(
@@ -23,6 +27,7 @@ Map<String, dynamic> _$$EnvironmentModelImplToJson(
       'id': instance.id,
       'name': instance.name,
       'values': instance.values.map((e) => e.toJson()).toList(),
+      'defaultAuthModel': instance.defaultAuthModel?.toJson(),
     };
 
 _$EnvironmentVariableModelImpl _$$EnvironmentVariableModelImplFromJson(
