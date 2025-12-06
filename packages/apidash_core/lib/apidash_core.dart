@@ -8,5 +8,6 @@ export 'utils/utils.dart';
 export 'package:freezed_annotation/freezed_annotation.dart';
 export 'package:genai/genai.dart';
 export 'package:curl_parser/curl_parser.dart' show Curl;
+export 'package:hurl/hurl.dart' show RustLib;
 export 'package:openapi_spec/openapi_spec.dart'
     show OpenApi, Operation, ParameterHeader;

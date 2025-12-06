@@ -17,6 +17,7 @@ export 'dialog_history_retention.dart';
 export 'dialog_import.dart';
 export 'dialog_ok_cancel.dart';
 export 'dialog_rename.dart';
+export 'dialog_request_selection.dart';
 export 'dialog_text.dart';
 export 'drag_and_drop_area.dart';
 export 'dropdown_codegen.dart';
