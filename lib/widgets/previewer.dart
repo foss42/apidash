@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
 import 'previewer_csv.dart';
+// import 'previewer_html.dart';
 import 'previewer_json.dart';
 import 'previewer_video.dart';
 import 'uint8_audio_player.dart';
@@ -122,6 +123,18 @@ class _PreviewerState extends State<Previewer> {
         ),
       );
     }
+    // if (widget.type == kTypeText && widget.subtype == kSubTypeHtml) {
+    //   return HtmlPreviewer(
+    //     htmlContent: widget.body,
+    //     errorWidget: ErrorMessage(
+    //       message: errorTemplate.render({
+    //         "showRaw": true,
+    //         "showContentType": false,
+    //         "type": kSubTypeHtml,
+    //       }),
+    //     ),
+    //   );
+    // }
     if (widget.type == kTypeVideo) {
       try {
         var preview = VideoPreviewer(videoBytes: widget.bytes);

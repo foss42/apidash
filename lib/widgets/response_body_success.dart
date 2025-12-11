@@ -39,6 +39,19 @@ class ResponseBodySuccess extends StatefulWidget {
 class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   int segmentIdx = 0;
 
+  bool get isJsonResponse {
+    return widget.mediaType.subtype.contains('json');
+  }
+
+  void _showSchemaDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => SchemaDialog(
+        jsonResponse: widget.formattedBody ?? widget.body,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var currentSeg = widget.options[segmentIdx];
@@ -73,15 +86,16 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           selectedIcon: Icon(currentSeg.icon),
+                          showSelectedIcon: !showLabel,
                           segments: widget.options
                               .map<ButtonSegment<ResponseBodyView>>(
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
-                                  label: Text(e.label),
-                                  icon: constraints.maxWidth >
-                                          kMinWindowSize.width
-                                      ? Icon(e.icon)
-                                      : null,
+                                  label: showLabel
+                                      ? Text(e.label)
+                                      : const SizedBox.shrink(),
+                                  icon: Icon(e.icon),
+                                  tooltip: e.label,
                                 ),
                               )
                               .toList(),
@@ -94,22 +108,39 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           },
                         ),
                   const Spacer(),
+                  // Schema Generator button for JSON responses
+                  if (isJsonResponse &&
+                      (currentSeg == ResponseBodyView.code ||
+                          currentSeg == ResponseBodyView.preview))
+                    IconButton(
+                      onPressed: () {
+                        _showSchemaDialog(context);
+                      },
+                      icon: const Icon(Icons.schema, size: 20),
+                      tooltip: 'Generate Schema',
+                      color: Theme.of(context).colorScheme.primary,
+                      padding: const EdgeInsets.all(8),
+                      constraints: const BoxConstraints(
+                        minWidth: 36,
+                        minHeight: 36,
+                      ),
+                    ),
                   ((widget.options == kPreviewRawBodyViewOptions) ||
                           kCodeRawBodyViewOptions.contains(currentSeg))
                       ? CopyButton(
                           toCopy: widget.formattedBody ?? widget.body,
-                          showLabel: showLabel,
+                          showLabel: false,
                         )
                       : const SizedBox(),
                   kIsMobile
                       ? ShareButton(
                           toShare: widget.formattedBody ?? widget.body,
-                          showLabel: showLabel,
+                          showLabel: false,
                         )
                       : SaveInDownloadsButton(
                           content: widget.bytes,
                           mimeType: widget.mediaType.mimeType,
-                          showLabel: showLabel,
+                          showLabel: false,
                         ),
                 ],
               ),

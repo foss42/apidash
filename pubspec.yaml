@@ -70,6 +70,7 @@ dependencies:
   vector_graphics_compiler: ^1.1.9+1
   video_player: ^2.9.3
   video_player_platform_interface: ^6.3.0
+  webview_flutter: ^4.10.0
   window_manager: ^0.4.2
   window_size:
     git:

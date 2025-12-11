@@ -6,70 +6,87 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
 
-class EditorPaneRequestURLCard extends ConsumerWidget {
+class EditorPaneRequestURLCard extends ConsumerStatefulWidget {
   const EditorPaneRequestURLCard({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EditorPaneRequestURLCard> createState() =>
+      _EditorPaneRequestURLCardState();
+}
+
+class _EditorPaneRequestURLCardState
+    extends ConsumerState<EditorPaneRequestURLCard> {
+  @override
+  Widget build(BuildContext context) {
     ref.watch(selectedIdStateProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
-    return Card(
-      color: kColorTransparent,
-      surfaceTintColor: kColorTransparent,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+    final selectedId = ref.watch(selectedIdStateProvider);
+
+    return Column(
+      children: [
+        Card(
+          color: kColorTransparent,
+          surfaceTintColor: kColorTransparent,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
+            borderRadius: kBorderRadius12,
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: 5,
+              horizontal: !context.isMediumWindow ? 20 : 6,
+            ),
+            child: Column(
+              children: [
+                context.isMediumWindow
+                    ? Row(
+                        children: [
+                          switch (apiType) {
+                            APIType.rest => const DropdownButtonHTTPMethod(),
+                            APIType.graphql => kSizedBoxEmpty,
+                            APIType.ai => const AIModelSelector(),
+                            null => kSizedBoxEmpty,
+                          },
+                          switch (apiType) {
+                            APIType.rest => kHSpacer5,
+                            _ => kHSpacer8,
+                          },
+                          const Expanded(
+                            child: URLTextField(),
+                          ),
+                        ],
+                      )
+                    : Row(
+                        children: [
+                          switch (apiType) {
+                            APIType.rest => const DropdownButtonHTTPMethod(),
+                            APIType.graphql => kSizedBoxEmpty,
+                            APIType.ai => const AIModelSelector(),
+                            null => kSizedBoxEmpty,
+                          },
+                          switch (apiType) {
+                            APIType.rest => kHSpacer20,
+                            _ => kHSpacer8,
+                          },
+                          const Expanded(
+                            child: URLTextField(),
+                          ),
+                          kHSpacer20,
+                          const SizedBox(
+                            height: 36,
+                            child: SendRequestButton(),
+                          )
+                        ],
+                      ),
+              ],
+            ),
+          ),
         ),
-        borderRadius: kBorderRadius12,
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 5,
-          horizontal: !context.isMediumWindow ? 20 : 6,
-        ),
-        child: context.isMediumWindow
-            ? Row(
-                children: [
-                  switch (apiType) {
-                    APIType.rest => const DropdownButtonHTTPMethod(),
-                    APIType.graphql => kSizedBoxEmpty,
-                    APIType.ai => const AIModelSelector(),
-                    null => kSizedBoxEmpty,
-                  },
-                  switch (apiType) {
-                    APIType.rest => kHSpacer5,
-                    _ => kHSpacer8,
-                  },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  switch (apiType) {
-                    APIType.rest => const DropdownButtonHTTPMethod(),
-                    APIType.graphql => kSizedBoxEmpty,
-                    APIType.ai => const AIModelSelector(),
-                    null => kSizedBoxEmpty,
-                  },
-                  switch (apiType) {
-                    APIType.rest => kHSpacer20,
-                    _ => kHSpacer8,
-                  },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
-                  kHSpacer20,
-                  const SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
-                  )
-                ],
-              ),
-      ),
+      ],
     );
   }
 }
