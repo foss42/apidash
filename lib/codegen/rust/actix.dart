@@ -126,88 +126,86 @@ multipart/form-data; boundary={{boundary}}''';
         requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
-      if (uri != null) {
-        var templateStartUrl = jj.Template(kTemplateStart);
-        result += templateStartUrl.render({
-          "url": stripUriParams(uri),
-          'isFormDataRequest': requestModel.hasFormData,
-          "method": requestModel.method.name.toLowerCase()
-        });
+      var templateStartUrl = jj.Template(kTemplateStart);
+      result += templateStartUrl.render({
+        "url": stripUriParams(uri!),
+        'isFormDataRequest': requestModel.hasFormData,
+        "method": requestModel.method.name.toLowerCase()
+      });
 
-        var method = requestModel.method;
-        var requestBody = requestModel.body;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            if (requestModel.bodyContentType == ContentType.json) {
-              hasJsonBody = true;
-              var templateBody = jj.Template(kTemplateJson);
-              result += templateBody.render({"body": requestBody});
-            } else if (!requestModel.hasFormData) {
-              hasBody = true;
-              var templateBody = jj.Template(kTemplateBody);
-              result += templateBody.render({"body": requestBody});
-            }
+      var method = requestModel.method;
+      var requestBody = requestModel.body;
+      if (kMethodsWithBody.contains(method) && requestBody != null) {
+        var contentLength = utf8.encode(requestBody).length;
+        if (contentLength > 0) {
+          if (requestModel.bodyContentType == ContentType.json) {
+            hasJsonBody = true;
+            var templateBody = jj.Template(kTemplateJson);
+            result += templateBody.render({"body": requestBody});
+          } else if (!requestModel.hasFormData) {
+            hasBody = true;
+            var templateBody = jj.Template(kTemplateBody);
+            result += templateBody.render({"body": requestBody});
           }
         }
-
-        if (requestModel.hasFormData) {
-          var formDataBodyData = jj.Template(kStringFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "fields_list": requestModel.formDataMapList,
-              "boundary": boundary ?? uuid,
-            },
-          );
-        }
-        var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": method.name.toLowerCase(),
-        });
-
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var tupleStrings = params.entries
-                .map((entry) => '("${entry.key}", "${entry.value}")')
-                .toList();
-            var paramsString = "[${tupleStrings.join(', ')}]";
-            var templateParms = jj.Template(kTemplateParams);
-            result += templateParms.render({"params": paramsString});
-          }
-        }
-
-        var headersList = requestModel.enabledHeaders;
-        if (headersList != null || hasBody || requestModel.hasFormData) {
-          var headers = requestModel.enabledHeadersMap;
-          if (requestModel.hasFormData) {
-            var formHeaderTemplate =
-                jj.Template(kTemplateFormHeaderContentType);
-            headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": boundary ?? uuid,
-            });
-          } else if (hasBody) {
-            headers[HttpHeaders.contentTypeHeader] =
-                requestModel.bodyContentType.header;
-          }
-
-          if (headers.isNotEmpty) {
-            var templateHeaders = jj.Template(kTemplateHeaders);
-            result += templateHeaders.render({"headers": headers});
-          }
-        }
-
-        if (hasBody || requestModel.hasFormData) {
-          result += kStringRequestBody;
-        } else if (hasJsonBody) {
-          result += kStringRequestJson;
-        } else {
-          result += kStringRequestNormal;
-        }
-
-        result += kStringRequestEnd;
       }
-      return result;
+
+      if (requestModel.hasFormData) {
+        var formDataBodyData = jj.Template(kStringFormDataBody);
+        result += formDataBodyData.render(
+          {
+            "fields_list": requestModel.formDataMapList,
+            "boundary": boundary ?? uuid,
+          },
+        );
+      }
+      var templateRequest = jj.Template(kTemplateRequest);
+      result += templateRequest.render({
+        "method": method.name.toLowerCase(),
+      });
+
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          var tupleStrings = params.entries
+              .map((entry) => '("${entry.key}", "${entry.value}")')
+              .toList();
+          var paramsString = "[${tupleStrings.join(', ')}]";
+          var templateParms = jj.Template(kTemplateParams);
+          result += templateParms.render({"params": paramsString});
+        }
+      }
+
+      var headersList = requestModel.enabledHeaders;
+      if (headersList != null || hasBody || requestModel.hasFormData) {
+        var headers = requestModel.enabledHeadersMap;
+        if (requestModel.hasFormData) {
+          var formHeaderTemplate =
+              jj.Template(kTemplateFormHeaderContentType);
+          headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
+            "boundary": boundary ?? uuid,
+          });
+        } else if (hasBody) {
+          headers[HttpHeaders.contentTypeHeader] =
+              requestModel.bodyContentType.header;
+        }
+
+        if (headers.isNotEmpty) {
+          var templateHeaders = jj.Template(kTemplateHeaders);
+          result += templateHeaders.render({"headers": headers});
+        }
+      }
+
+      if (hasBody || requestModel.hasFormData) {
+        result += kStringRequestBody;
+      } else if (hasJsonBody) {
+        result += kStringRequestJson;
+      } else {
+        result += kStringRequestNormal;
+      }
+
+      result += kStringRequestEnd;
+          return result;
     } catch (e) {
       return null;
     }

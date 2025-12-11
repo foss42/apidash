@@ -123,10 +123,6 @@ public class Main {
       );
       Uri? uri = rec.$1;
 
-      if (uri == null) {
-        return "";
-      }
-
       result += kStringStart;
       if (requestModel.hasFormData) {
         var templateMultipartImport = jj.Template(kTemplateMultipartImport);
@@ -136,7 +132,7 @@ public class Main {
       result += kStringMainClassMainMethodStart;
       result += kStringAsyncHttpClientTryBlockStart;
 
-      var url = stripUriParams(uri);
+      var url = stripUriParams(uri!);
 
       // contains the HTTP method associated with the request
       var method = requestModel.method;

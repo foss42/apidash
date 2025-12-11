@@ -321,13 +321,13 @@ class CollectionStateNotifier
     final EnvironmentModel? originalEnvironmentModel =
         ref.read(activeEnvironmentModelProvider);
 
-    RequestModel executionRequestModel = requestModel!.copyWith();
+    RequestModel? executionRequestModel = requestModel?.copyWith();
 
-    if (!requestModel.preRequestScript.isNullOrEmpty()) {
+    if (!requestModel!.preRequestScript.isNullOrEmpty()) {
       executionRequestModel = await ref
           .read(jsRuntimeNotifierProvider.notifier)
           .handlePreRequestScript(
-        executionRequestModel,
+        executionRequestModel!,
         originalEnvironmentModel,
         (envModel, updatedValues) {
           ref
@@ -341,7 +341,7 @@ class CollectionStateNotifier
       );
     }
 
-    APIType apiType = executionRequestModel.apiType;
+    APIType apiType = executionRequestModel!.apiType;
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
     HttpRequestModel substitutedHttpRequestModel;
 

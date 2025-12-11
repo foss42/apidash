@@ -103,10 +103,6 @@ int main() {
 
       Uri? uri = rec.$1;
 
-      if (uri == null) {
-        return result;
-      }
-
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
         "hasFormData": requestModel.hasFormData,
@@ -162,7 +158,7 @@ int main() {
         });
       }
       if (requestModel.hasTextData) {}
-      if (uri.hasQuery) {
+      if (uri!.hasQuery) {
         var params = uri.queryParameters;
         if (params.isNotEmpty) {
           var templateQueryParam = jj.Template(kTemplateQueryParam);

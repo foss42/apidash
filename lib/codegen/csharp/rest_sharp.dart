@@ -94,96 +94,94 @@ class Program
         requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
-      if (uri != null) {
-        jj.Template kNodejsImportTemplate = jj.Template(kStringImports);
-        String importsData = kNodejsImportTemplate.render();
-        result += importsData;
+      jj.Template kNodejsImportTemplate = jj.Template(kStringImports);
+      String importsData = kNodejsImportTemplate.render();
+      result += importsData;
 
-        result += kStringInit;
+      result += kStringInit;
 
-        jj.Template templateInitClient = jj.Template(kInitClientTemplate);
-        String initClient = templateInitClient
-            .render({"baseUrl": "${uri.scheme}://${uri.authority}"});
-        result += initClient;
+      jj.Template templateInitClient = jj.Template(kInitClientTemplate);
+      String initClient = templateInitClient
+          .render({"baseUrl": "${uri?.scheme}://${uri?.authority}"});
+      result += initClient;
 
-        jj.Template templateMethodType = jj.Template(kMethodTypeTemplate);
-        String methodType = templateMethodType.render({
-          "path": uri.path,
-          "method": requestModel.method.name.capitalize(),
-        });
-        result += methodType;
+      jj.Template templateMethodType = jj.Template(kMethodTypeTemplate);
+      String methodType = templateMethodType.render({
+        "path": uri?.path,
+        "method": requestModel.method.name.capitalize(),
+      });
+      result += methodType;
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            jj.Template templateParams = jj.Template(kTemplateParams);
-            String paramsResult = "";
-            for (var item in params.entries) {
-              paramsResult += templateParams
-                  .render({"param": item.key, "value": item.value});
-            }
-            result += "$paramsResult\n";
+      if (uri!.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          jj.Template templateParams = jj.Template(kTemplateParams);
+          String paramsResult = "";
+          for (var item in params.entries) {
+            paramsResult += templateParams
+                .render({"param": item.key, "value": item.value});
           }
+          result += "$paramsResult\n";
         }
-
-        var headersList = requestModel.enabledHeaders;
-        if (headersList != null ||
-            requestModel.hasJsonData ||
-            requestModel.hasTextData) {
-          var headers = requestModel.enabledHeadersMap;
-          if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers[kHeaderContentType] = requestModel.bodyContentType.header;
-          }
-          if (headers.isNotEmpty) {
-            jj.Template templateHeaders = jj.Template(kTemplateHeaders);
-            String headersResult = "";
-            for (var item in headers.entries) {
-              headersResult += templateHeaders
-                  .render({"header": item.key, "value": item.value});
-            }
-            result += "$headersResult\n";
-          }
-        }
-
-        if (requestModel.hasFormData) {
-          jj.Template templateFormData = jj.Template(kTemplateFormData);
-          String formDataResult = "";
-          for (var data in requestModel.formDataMapList) {
-            formDataResult += templateFormData.render({
-              "name": data["name"],
-              "value": data["value"],
-              "type": data["type"]
-            });
-          }
-          result += kStringFormDataOption;
-          if (requestModel.hasFileInFormData) {
-            result += kStringFormdataFileOption;
-          }
-          result += "$formDataResult\n";
-        }
-
-        if (requestModel.hasJsonData) {
-          var templateJsonData = jj.Template(kTemplateJsonData);
-          Map<String, dynamic> bodyData = json.decode(requestModel.body!);
-          List<String> jsonArr = [];
-
-          bodyData.forEach((key, value) {
-            jsonArr += ["$key = \"$value\""];
-          });
-          String jsonDataResult = "{\n${jsonArr.join(",\n")}\n}";
-
-          result += templateJsonData.render({"jsonData": jsonDataResult});
-        }
-
-        if (requestModel.hasTextData) {
-          jj.Template templateTextData = jj.Template(kTemplateTextData);
-          result += templateTextData
-              .render({"textData": jsonEncode(requestModel.body)});
-        }
-
-        result += kStringEnd;
       }
-      return result;
+
+      var headersList = requestModel.enabledHeaders;
+      if (headersList != null ||
+          requestModel.hasJsonData ||
+          requestModel.hasTextData) {
+        var headers = requestModel.enabledHeadersMap;
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
+          headers[kHeaderContentType] = requestModel.bodyContentType.header;
+        }
+        if (headers.isNotEmpty) {
+          jj.Template templateHeaders = jj.Template(kTemplateHeaders);
+          String headersResult = "";
+          for (var item in headers.entries) {
+            headersResult += templateHeaders
+                .render({"header": item.key, "value": item.value});
+          }
+          result += "$headersResult\n";
+        }
+      }
+
+      if (requestModel.hasFormData) {
+        jj.Template templateFormData = jj.Template(kTemplateFormData);
+        String formDataResult = "";
+        for (var data in requestModel.formDataMapList) {
+          formDataResult += templateFormData.render({
+            "name": data["name"],
+            "value": data["value"],
+            "type": data["type"]
+          });
+        }
+        result += kStringFormDataOption;
+        if (requestModel.hasFileInFormData) {
+          result += kStringFormdataFileOption;
+        }
+        result += "$formDataResult\n";
+      }
+
+      if (requestModel.hasJsonData) {
+        var templateJsonData = jj.Template(kTemplateJsonData);
+        Map<String, dynamic> bodyData = json.decode(requestModel.body!);
+        List<String> jsonArr = [];
+
+        bodyData.forEach((key, value) {
+          jsonArr += ["$key = \"$value\""];
+        });
+        String jsonDataResult = "{\n${jsonArr.join(",\n")}\n}";
+
+        result += templateJsonData.render({"jsonData": jsonDataResult});
+      }
+
+      if (requestModel.hasTextData) {
+        jj.Template templateTextData = jj.Template(kTemplateTextData);
+        result += templateTextData
+            .render({"textData": jsonEncode(requestModel.body)});
+      }
+
+      result += kStringEnd;
+          return result;
     } catch (e) {
       return null;
     }

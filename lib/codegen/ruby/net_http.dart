@@ -46,13 +46,9 @@ puts "Response Code: #{response.code}"
 
       Uri? uri = rec.$1;
 
-      if (uri == null) {
-        return "";
-      }
-
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": uri.query.isEmpty ? stripUriParams(uri) : uri,
+        "url": uri!.query.isEmpty ? stripUriParams(uri) : uri,
         "method": requestModel.method.name.capitalize(),
         "check": uri.scheme,
       });

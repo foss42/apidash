@@ -96,11 +96,7 @@ puts "Response Body: #{response.body}"
 
       Uri? uri = rec.$1;
 
-      if (uri == null) {
-        return "";
-      }
-
-      var url = stripUriParams(uri);
+      var url = stripUriParams(uri!);
 
       result += kStringFaradayRequireStatement;
       if (requestModel.hasFormDataContentType &&

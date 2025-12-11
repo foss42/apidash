@@ -92,89 +92,87 @@ import okhttp3.MediaType.Companion.toMediaType""";
       );
       Uri? uri = rec.$1;
 
-      if (uri != null) {
-        String url = stripUriParams(uri);
+      String url = stripUriParams(uri!);
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            hasQuery = true;
-            var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams
-                .render({"url": url, "params": getQueryParams(params)});
-          }
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          hasQuery = true;
+          var templateParams = jj.Template(kTemplateUrlQuery);
+          result += templateParams
+              .render({"url": url, "params": getQueryParams(params)});
         }
-        if (!hasQuery) {
-          var templateUrl = jj.Template(kTemplateUrl);
-          result += templateUrl.render({"url": url});
-        }
+      }
+      if (!hasQuery) {
+        var templateUrl = jj.Template(kTemplateUrl);
+        result += templateUrl.render({"url": url});
+      }
 
-        var method = requestModel.method;
-        var requestBody = requestModel.body;
-        if (requestModel.hasFormData) {
-          hasFormData = true;
-          var formDataTemplate = jj.Template(kFormDataBody);
+      var method = requestModel.method;
+      var requestBody = requestModel.body;
+      if (requestModel.hasFormData) {
+        hasFormData = true;
+        var formDataTemplate = jj.Template(kFormDataBody);
 
-          List<Map<String, String>> modifiedFormDataList = [];
-          for (var item in requestModel.formDataList) {
-            if (item.type == FormDataType.file) {
-              if (item.value[0] == "/") {
-                modifiedFormDataList.add({
-                  "name": item.name,
-                  "value": item.value.substring(1),
-                  "type": "file"
-                });
-              } else {
-                modifiedFormDataList.add(
-                    {"name": item.name, "value": item.value, "type": "file"});
-              }
-              hasFile = true;
+        List<Map<String, String>> modifiedFormDataList = [];
+        for (var item in requestModel.formDataList) {
+          if (item.type == FormDataType.file) {
+            if (item.value[0] == "/") {
+              modifiedFormDataList.add({
+                "name": item.name,
+                "value": item.value.substring(1),
+                "type": "file"
+              });
             } else {
               modifiedFormDataList.add(
-                  {"name": item.name, "value": item.value, "type": "text"});
+                  {"name": item.name, "value": item.value, "type": "file"});
             }
-          }
-
-          result += formDataTemplate.render({
-            "formDataList": modifiedFormDataList,
-          });
-        } else if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            hasBody = true;
-            String contentType = requestModel.bodyContentType.header;
-            var templateBody = jj.Template(kTemplateRequestBody);
-            result += templateBody
-                .render({"contentType": contentType, "body": requestBody});
+            hasFile = true;
+          } else {
+            modifiedFormDataList.add(
+                {"name": item.name, "value": item.value, "type": "text"});
           }
         }
 
-        var templateStart = jj.Template(kTemplateStart);
-        var stringStart = templateStart.render({
-          "importForQuery": hasQuery ? kStringImportForQuery : "",
-          "importForBody": hasBody ? kStringImportForBody : "",
-          "importForFormData": hasFormData ? kStringImportForFormData : "",
-          "importForFile": hasFile ? kStringImportForFile : "",
+        result += formDataTemplate.render({
+          "formDataList": modifiedFormDataList,
         });
-
-        result = stringStart + result;
-        result += kStringRequestStart;
-
-        var headersList = requestModel.enabledHeaders;
-        if (headersList != null) {
-          var headers = requestModel.enabledHeadersMap;
-          if (headers.isNotEmpty) {
-            result += getHeaders(headers);
-          }
+      } else if (kMethodsWithBody.contains(method) && requestBody != null) {
+        var contentLength = utf8.encode(requestBody).length;
+        if (contentLength > 0) {
+          hasBody = true;
+          String contentType = requestModel.bodyContentType.header;
+          var templateBody = jj.Template(kTemplateRequestBody);
+          result += templateBody
+              .render({"contentType": contentType, "body": requestBody});
         }
-
-        var templateRequestEnd = jj.Template(kTemplateRequestEnd);
-        result += templateRequestEnd.render({
-          "method": method.name.toLowerCase(),
-          "hasBody": (hasBody || requestModel.hasFormData) ? "body" : "",
-        });
       }
-      return result;
+
+      var templateStart = jj.Template(kTemplateStart);
+      var stringStart = templateStart.render({
+        "importForQuery": hasQuery ? kStringImportForQuery : "",
+        "importForBody": hasBody ? kStringImportForBody : "",
+        "importForFormData": hasFormData ? kStringImportForFormData : "",
+        "importForFile": hasFile ? kStringImportForFile : "",
+      });
+
+      result = stringStart + result;
+      result += kStringRequestStart;
+
+      var headersList = requestModel.enabledHeaders;
+      if (headersList != null) {
+        var headers = requestModel.enabledHeadersMap;
+        if (headers.isNotEmpty) {
+          result += getHeaders(headers);
+        }
+      }
+
+      var templateRequestEnd = jj.Template(kTemplateRequestEnd);
+      result += templateRequestEnd.render({
+        "method": method.name.toLowerCase(),
+        "hasBody": (hasBody || requestModel.hasFormData) ? "body" : "",
+      });
+          return result;
     } catch (e) {
       return null;
     }

@@ -1,7 +1,7 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-class SidebarFilter extends StatelessWidget {
+class SidebarFilter extends StatefulWidget {
   const SidebarFilter({
     super.key,
     this.onFilterFieldChanged,
@@ -10,6 +10,25 @@ class SidebarFilter extends StatelessWidget {
 
   final Function(String)? onFilterFieldChanged;
   final String? filterHintText;
+
+  @override
+  State<SidebarFilter> createState() => _SidebarFilterState();
+}
+
+class _SidebarFilterState extends State<SidebarFilter> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +51,10 @@ class SidebarFilter extends StatelessWidget {
           kHSpacer5,
           Expanded(
             child: ADRawTextField(
+              controller: _controller,
               style: Theme.of(context).textTheme.bodyMedium,
-              hintText: filterHintText ?? "Filter by name",
-              onChanged: onFilterFieldChanged,
+              hintText: widget.filterHintText ?? "Filter by name",
+              onChanged: widget.onFilterFieldChanged,
             ),
           ),
         ],

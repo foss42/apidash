@@ -72,10 +72,6 @@ public class Main {
       // uri is already generated based on url and enabled request params
       Uri? uri = rec.$1;
 
-      if (uri == null) {
-        return "";
-      }
-
       // this is the common import and will be imported for every generated code snippet
       result += kStringUnirestImports;
 
@@ -87,7 +83,7 @@ public class Main {
       // adding the main method under Main class
       result += kStringStart;
 
-      var url = stripUriParams(uri);
+      var url = stripUriParams(uri!);
 
       // generating the URL to which the request has to be submitted
       var templateUrl = jj.Template(kTemplateUrl);

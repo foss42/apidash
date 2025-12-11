@@ -67,13 +67,12 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if ((oldWidget.keyId != widget.keyId) ||
-        (oldWidget.initialValue != widget.initialValue)) {
-      controller = widget.controller ??
-          TextEditingController.fromValue(TextEditingValue(
-              text: widget.initialValue!,
-              selection: TextSelection.collapsed(
-                  offset: widget.initialValue!.length)));
+    // Updated this to fix issue : 924 Only update text when switching to a different field (keyId changed)
+    if (oldWidget.keyId != widget.keyId) {
+      if (widget.controller == null) {
+        controller.text = widget.initialValue ?? '';
+        controller.selection = TextSelection.collapsed(offset: controller.text.length);
+      }
     }
   }
 

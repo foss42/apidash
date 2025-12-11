@@ -102,64 +102,62 @@ echo $response . "\n";
       Uri? uri = rec.$1;
 
       //renders starting template
-      if (uri != null) {
-        var templateStart = jj.Template(kTemplateStart);
-        result += templateStart.render();
+      var templateStart = jj.Template(kTemplateStart);
+      result += templateStart.render();
 
-        var templateUri = jj.Template(kTemplateUri);
-        result += templateUri.render({'uri': stripUriParams(uri)});
+      var templateUri = jj.Template(kTemplateUri);
+      result += templateUri.render({'uri': stripUriParams(uri!)});
 
-        //renders the request body contains the HTTP method associated with the request
-        if (requestModel.hasBody) {
-          hasBody = true;
-          // contains the entire request body as a string if body is present
-          var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({
-            'body': requestModel.hasFormData
-                ? requestModel.formDataMapList
-                : requestModel.body,
-          });
-        }
-
-        //checking and adding query params
-        if (uri.hasQuery) {
-          if (requestModel.enabledParamsMap.isNotEmpty) {
-            var templateParams = jj.Template(kTemplateParams);
-            result += templateParams
-                .render({"params": requestModel.enabledParamsMap});
-          }
-        }
-
-        var headers = requestModel.enabledHeadersMap;
-        if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
-          if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers[kHeaderContentType] = requestModel.bodyContentType.header;
-          }
-        }
-
-        if (headers.isNotEmpty) {
-          var templateHeader = jj.Template(kTemplateHeaders);
-          result += templateHeader.render({'headers': headers});
-        }
-
-        // renders the initial request init function call
-        result += kStringRequestInit;
-
-        //renders the request temlate
-        var templateRequestOptsInit = jj.Template(kTemplateRequestOptsInit);
-        result += templateRequestOptsInit
-            .render({'method': requestModel.method.name});
-        if (headers.isNotEmpty) {
-          result += kStringHeaderOpt;
-        }
-        if (hasBody || requestModel.hasFormData) {
-          result += kStringRequestBodyOpt;
-        }
-
-        //and of the request
-        result += kStringRequestEnd;
+      //renders the request body contains the HTTP method associated with the request
+      if (requestModel.hasBody) {
+        hasBody = true;
+        // contains the entire request body as a string if body is present
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({
+          'body': requestModel.hasFormData
+              ? requestModel.formDataMapList
+              : requestModel.body,
+        });
       }
-      return result;
+
+      //checking and adding query params
+      if (uri.hasQuery) {
+        if (requestModel.enabledParamsMap.isNotEmpty) {
+          var templateParams = jj.Template(kTemplateParams);
+          result += templateParams
+              .render({"params": requestModel.enabledParamsMap});
+        }
+      }
+
+      var headers = requestModel.enabledHeadersMap;
+      if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
+          headers[kHeaderContentType] = requestModel.bodyContentType.header;
+        }
+      }
+
+      if (headers.isNotEmpty) {
+        var templateHeader = jj.Template(kTemplateHeaders);
+        result += templateHeader.render({'headers': headers});
+      }
+
+      // renders the initial request init function call
+      result += kStringRequestInit;
+
+      //renders the request temlate
+      var templateRequestOptsInit = jj.Template(kTemplateRequestOptsInit);
+      result += templateRequestOptsInit
+          .render({'method': requestModel.method.name});
+      if (headers.isNotEmpty) {
+        result += kStringHeaderOpt;
+      }
+      if (hasBody || requestModel.hasFormData) {
+        result += kStringRequestBodyOpt;
+      }
+
+      //and of the request
+      result += kStringRequestEnd;
+          return result;
     } catch (e) {
       return null;
     }
