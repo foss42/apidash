@@ -138,7 +138,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             ),
           );
         }
-        return CircularProgressIndicator();
+        return Center(child: CircularProgressIndicator());
       },
     );
   }
