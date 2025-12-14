@@ -34,6 +34,8 @@ class RequestPane extends StatefulHookWidget {
 
 class _RequestPaneState extends State<RequestPane>
     with TickerProviderStateMixin {
+  double _dragStartPosition = 0.0;
+
   @override
   Widget build(BuildContext context) {
     final TabController controller = useTabController(
@@ -98,10 +100,44 @@ class _RequestPaneState extends State<RequestPane>
         ),
         kVSpacer5,
         Expanded(
-          child: TabBarView(
-            controller: controller,
-            physics: const NeverScrollableScrollPhysics(),
-            children: widget.children,
+          child: GestureDetector(
+            onHorizontalDragStart: (details) {
+              _dragStartPosition = details.globalPosition.dx;
+            },
+            onHorizontalDragUpdate: (details) {
+              // Allow the drag to pass through to scrollable content
+            },
+            onHorizontalDragEnd: (details) {
+              final swipeVelocity = details.primaryVelocity ?? 0;
+              final dragDistance = details.globalPosition.dx - _dragStartPosition;
+              final currentIndex = controller.index;
+              final tabCount = widget.children.length;
+
+              // Require minimum swipe distance (50 pixels) or fast velocity (500 px/s)
+              final minSwipeDistance = 50.0;
+              final minSwipeVelocity = 500.0;
+
+              // Swipe right (drag left to right, positive velocity) - go to next tab
+              if ((dragDistance > minSwipeDistance || swipeVelocity > minSwipeVelocity) &&
+                  currentIndex < tabCount - 1) {
+                final newIndex = currentIndex + 1;
+                controller.animateTo(newIndex);
+                widget.onTapTabBar?.call(newIndex);
+              }
+              // Swipe left (drag right to left, negative velocity) - go to previous tab
+              else if ((dragDistance < -minSwipeDistance || swipeVelocity < -minSwipeVelocity) &&
+                  currentIndex > 0) {
+                final newIndex = currentIndex - 1;
+                controller.animateTo(newIndex);
+                widget.onTapTabBar?.call(newIndex);
+              }
+            },
+            behavior: HitTestBehavior.translucent,
+            child: TabBarView(
+              controller: controller,
+              physics: const NeverScrollableScrollPhysics(),
+              children: widget.children,
+            ),
           ),
         ),
       ],
