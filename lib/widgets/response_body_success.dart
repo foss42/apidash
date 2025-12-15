@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -38,6 +39,15 @@ class ResponseBodySuccess extends StatefulWidget {
 
 class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   int segmentIdx = 0;
+
+  String _getBeautifiedBody() {
+    try {
+      final jsonObject = jsonDecode(widget.body);
+      return const JsonEncoder.withIndent('  ').convert(jsonObject);
+    } catch (e) {
+      return widget.body;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +173,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       child: SingleChildScrollView(
                         child: SelectableText(
                           widget.isAIResponse
-                              ? widget.body
+                              ? _getBeautifiedBody()
                               : (widget.formattedBody ?? widget.body),
                           style: kCodeStyle,
                         ),
