@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
 import 'menu_item_card.dart';
+import 'environment_color_indicator.dart';
+import 'environment_color_picker.dart';
 
 class SidebarEnvironmentCard extends StatelessWidget {
   const SidebarEnvironmentCard({
@@ -13,6 +15,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
     this.name,
     this.selectedId,
     this.editRequestId,
+    this.color,
     this.setActive,
     this.onTap,
     this.onDoubleTap,
@@ -21,6 +24,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
     this.focusNode,
     this.onTapOutsideNameEditor,
     this.onMenuSelected,
+    this.onColorChange,
   });
 
   final String id;
@@ -29,6 +33,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
   final String? name;
   final String? selectedId;
   final String? editRequestId;
+  final int? color;
   final void Function(bool?)? setActive;
   final void Function()? onTap;
   final void Function()? onDoubleTap;
@@ -37,11 +42,12 @@ class SidebarEnvironmentCard extends StatelessWidget {
   final FocusNode? focusNode;
   final Function()? onTapOutsideNameEditor;
   final Function(ItemMenuOption)? onMenuSelected;
+  final Function(int?)? onColorChange;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final Color color =
+    final Color cardColor =
         isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
     final Color colorVariant = colorScheme.surfaceContainer;
     final Color surfaceTint = colorScheme.primary;
@@ -61,8 +67,8 @@ class SidebarEnvironmentCard extends StatelessWidget {
         color: isSelected && !isGlobal
             ? colorScheme.brightness == Brightness.dark
                 ? colorVariant
-                : color
-            : color,
+                : cardColor
+            : cardColor,
         margin: EdgeInsets.zero,
         child: InkWell(
           borderRadius: kBorderRadius8,
@@ -87,7 +93,15 @@ class SidebarEnvironmentCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  kHSpacer4,
+                  // Color indicator (only show for non-global environments)
+                  if (!isGlobal) ...[
+                    EnvironmentColorIndicator(
+                      color: color,
+                      size: 20,
+                    ),
+                    kHSpacer8,
+                  ] else
+                    kHSpacer4,
                   Expanded(
                     child: inEditMode
                         ? TextFormField(
@@ -115,6 +129,28 @@ class SidebarEnvironmentCard extends StatelessWidget {
                             overflow: TextOverflow.fade,
                           ),
                   ),
+                  // Color picker button (only show when selected and not in edit mode)
+                  if (isSelected && !inEditMode && !isGlobal)
+                    SizedBox(
+                      width: 28,
+                      child: IconButton(
+                        icon: const Icon(Icons.palette, size: 16),
+                        tooltip: 'Change Color',
+                        padding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => EnvironmentColorPicker(
+                              currentColor: color,
+                              onColorSelected: (newColor) {
+                                onColorChange?.call(newColor);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   Visibility(
                     visible: isSelected && !inEditMode && !isGlobal,
                     child: SizedBox(
