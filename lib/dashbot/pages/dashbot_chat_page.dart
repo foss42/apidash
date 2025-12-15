@@ -1,8 +1,10 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/ai/ai.dart';
 import '../constants.dart';
 import '../providers/providers.dart';
 import '../widgets/widgets.dart';
@@ -118,6 +120,63 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
+                Consumer(
+                  builder: (context, ref, _) {
+                    final settings = ref.watch(settingsProvider);
+                    final aiRequestModel = AIRequestModel.fromJson(
+                        settings.defaultAIModel ?? {});
+                    final modelName = aiRequestModel.model ?? 'Select Model';
+                    
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ADIconButton(
+                          icon: Icons.smart_toy_outlined,
+                          tooltip: 'Select AI Model',
+                          onPressed: ref.watch(chatViewmodelProvider).isGenerating
+                              ? null
+                              : () async {
+                                  final notifier = ref.read(dashbotWindowNotifierProvider.notifier);
+                                  notifier.hide();
+                                  final newAIRequestModel = await showDialog(
+                                    context: context,
+                                    useRootNavigator: true,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        scrollable: true,
+                                        content: AIModelSelectorDialog(
+                                          aiRequestModel: aiRequestModel,
+                                        ),
+                                        contentPadding: kP10,
+                                      );
+                                    },
+                                  );
+                                  notifier.show();
+                                  if (newAIRequestModel == null) return;
+                                  ref.read(settingsProvider.notifier).update(
+                                      defaultAIModel: newAIRequestModel
+                                          .copyWith(
+                                              modelConfigs: [],
+                                              stream: null,
+                                              systemPrompt: '',
+                                              userPrompt: '')
+                                          .toJson());
+                                },
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          modelName,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                fontSize: 9,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(width: 8),
                 ADIconButton(
                   icon: Icons.help_outline_rounded,
                   tooltip: 'Show tasks',

@@ -16,6 +16,17 @@ class DashbotWindow extends ConsumerWidget {
   static final GlobalKey<NavigatorState> _dashbotNavigatorKey =
       GlobalKey<NavigatorState>();
 
+  Widget _buildResizeDot(BuildContext context) {
+    return Container(
+      width: 2,
+      height: 2,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Theme.of(context).colorScheme.surfaceBright,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final windowState = ref.watch(dashbotWindowNotifierProvider);
@@ -111,30 +122,6 @@ class DashbotWindow extends ConsumerWidget {
                                             .surface,
                                       ),
                                     ),
-                                    kHSpacer4,
-                                    AIModelSelectorButton(
-                                      aiRequestModel: AIRequestModel.fromJson(
-                                          settings.defaultAIModel ?? {}),
-                                      useRootNavigator: true,
-                                      onDialogOpen: () => ref
-                                          .read(dashbotWindowNotifierProvider
-                                              .notifier)
-                                          .hide(),
-                                      onDialogClose: () => ref
-                                          .read(dashbotWindowNotifierProvider
-                                              .notifier)
-                                          .show(),
-                                      onModelUpdated: (d) {
-                                        ref
-                                            .read(settingsProvider.notifier)
-                                            .update(
-                                                defaultAIModel: d.copyWith(
-                                                    modelConfigs: [],
-                                                    stream: null,
-                                                    systemPrompt: '',
-                                                    userPrompt: '').toJson());
-                                      },
-                                    ),
                                   ],
                                 ),
                                 Spacer(),
@@ -187,9 +174,9 @@ class DashbotWindow extends ConsumerWidget {
                         child: MouseRegion(
                           cursor: SystemMouseCursors.resizeUpLeft,
                           child: Container(
-                            padding: EdgeInsets.only(top: 6, left: 1),
-                            width: 20,
-                            height: 20,
+                            padding: EdgeInsets.only(top: 2, left: 2),
+                            width: 24,
+                            height: 24,
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(8),
@@ -199,11 +186,52 @@ class DashbotWindow extends ConsumerWidget {
                                   .primaryContainer
                                   .withValues(alpha: 0.7),
                             ),
-                            child: Icon(
-                              Icons.drag_indicator_rounded,
-                              size: 16,
-                              color:
-                                  Theme.of(context).colorScheme.surfaceBright,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: List.generate(
+                                    5,
+                                    (i) => Padding(
+                                      padding: EdgeInsets.only(right: i < 4 ? 2 : 0),
+                                      child: _buildResizeDot(context),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                Row(
+                                  children: List.generate(
+                                    4,
+                                    (i) => Padding(
+                                      padding: EdgeInsets.only(right: i < 3 ? 2 : 0),
+                                      child: _buildResizeDot(context),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                Row(
+                                  children: List.generate(
+                                    3,
+                                    (i) => Padding(
+                                      padding: EdgeInsets.only(right: i < 2 ? 2 : 0),
+                                      child: _buildResizeDot(context),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                Row(
+                                  children: List.generate(
+                                    2,
+                                    (i) => Padding(
+                                      padding: EdgeInsets.only(right: i < 1 ? 2 : 0),
+                                      child: _buildResizeDot(context),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                _buildResizeDot(context),
+                              ],
                             ),
                           ),
                         ),
