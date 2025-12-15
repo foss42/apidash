@@ -110,12 +110,12 @@ class DashbotWindow extends ConsumerWidget {
                                 Row(
                                   children: [
                                     kHSpacer20,
-                                    DashbotIcons.getDashbotIcon1(width: 38),
+                                    DashbotIcons.getDashbotIcon1(width: 32),
                                     kHSpacer12,
                                     Text(
                                       'DashBot',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
                                             .colorScheme

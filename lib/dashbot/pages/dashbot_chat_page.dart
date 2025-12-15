@@ -79,7 +79,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 final vm = ref.read(chatViewmodelProvider.notifier);
                 final msgs = vm.currentMessages;
                 if (msgs.isEmpty && !state.isGenerating) {
-                  return const Center(child: Text('Ask me anything!'));
+                  return Center(
+                  child: Text(
+                    'Ask me anything!',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  );
                 }
                 return Scrollbar(
                   controller: _scrollController,
