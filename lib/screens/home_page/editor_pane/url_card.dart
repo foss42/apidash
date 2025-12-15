@@ -99,6 +99,75 @@ class URLTextField extends ConsumerWidget {
     super.key,
   });
 
+  Future<String?> _handleCurlPaste(
+    BuildContext context,
+    WidgetRef ref,
+    String curlText,
+  ) async {
+    final requestModel = ref.read(selectedRequestModelProvider);
+    if (requestModel?.apiType != APIType.rest) {
+      return null;
+    }
+
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    
+    try {
+      final curlIO = CurlIO();
+      final parsedRequests = curlIO.getHttpRequestModelList(curlText.trim());
+      
+      if (parsedRequests == null || parsedRequests.isEmpty) {
+        scaffoldMessenger.showSnackBar(
+          getSnackBar(
+            'Unable to parse curl command. Please ensure it starts with "curl " and is complete.',
+            small: false,
+          ),
+        );
+        return null;
+      }
+
+      final parsedRequest = parsedRequests.first;
+      final collectionNotifier = ref.read(collectionStateNotifierProvider.notifier);
+      
+      final isHeaderEnabledList = List<bool>.filled(
+        parsedRequest.headers?.length ?? 0,
+        true,
+      );
+      final isParamEnabledList = List<bool>.filled(
+        parsedRequest.params?.length ?? 0,
+        true,
+      );
+
+      collectionNotifier.update(
+        method: parsedRequest.method,
+        url: parsedRequest.url,
+        headers: parsedRequest.headers,
+        params: parsedRequest.params,
+        body: parsedRequest.body,
+        bodyContentType: parsedRequest.bodyContentType,
+        formData: parsedRequest.formData,
+        isHeaderEnabledList: isHeaderEnabledList,
+        isParamEnabledList: isParamEnabledList,
+      );
+
+      scaffoldMessenger.showSnackBar(
+        getSnackBar(
+          'cURL command imported successfully',
+          small: true,
+        ),
+      );
+
+      return parsedRequest.url;
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
+        getSnackBar(
+          'Error parsing curl command: ${e.toString()}',
+          small: false,
+        ),
+      );
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
@@ -126,6 +195,9 @@ class URLTextField extends ConsumerWidget {
       },
       onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+      },
+      onCurlDetected: (curlText) async {
+        return await _handleCurlPaste(context, ref, curlText);
       },
     );
   }

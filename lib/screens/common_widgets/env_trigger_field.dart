@@ -18,7 +18,8 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
     this.readOnly = false,
-    this.obscureText = false
+    this.obscureText = false,
+    this.onCurlDetected,
   }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
@@ -36,6 +37,7 @@ class EnvironmentTriggerField extends StatefulWidget {
   final AutocompleteNoTrigger? autocompleteNoTrigger;
   final bool readOnly;
   final bool obscureText;
+  final Future<String?> Function(String)? onCurlDetected;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -45,22 +47,52 @@ class EnvironmentTriggerField extends StatefulWidget {
 class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   late TextEditingController controller;
   late FocusNode _focusNode;
+  String _previousText = '';
 
   @override
   void initState() {
     super.initState();
+    final initialText = widget.initialValue ?? '';
     controller = widget.controller ??
         TextEditingController.fromValue(TextEditingValue(
-            text: widget.initialValue!,
+            text: initialText,
             selection:
-                TextSelection.collapsed(offset: widget.initialValue!.length)));
+                TextSelection.collapsed(offset: initialText.length)));
+    _previousText = initialText;
     _focusNode = widget.focusNode ?? FocusNode();
+    controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() async {
+    final currentText = controller.text;
+    final trimmedCurrent = currentText.trim();
+    final lengthDiff = currentText.length - _previousText.length;
+    if (trimmedCurrent.toLowerCase().startsWith('curl ') && 
+        trimmedCurrent.length > 20 &&
+        lengthDiff > 15) { 
+      final replacementUrl = await widget.onCurlDetected?.call(currentText);
+      if (replacementUrl != null && mounted) {
+        controller.value = TextEditingValue(
+          text: replacementUrl,
+          selection: TextSelection.collapsed(offset: replacementUrl.length),
+        );
+        widget.onChanged?.call(replacementUrl);
+        _previousText = replacementUrl;
+        return;
+      }
+    }
+    _previousText = currentText;
   }
 
   @override
   void dispose() {
-    controller.dispose();
-    _focusNode.dispose();
+    controller.removeListener(_onTextChanged);
+    if (widget.controller == null) {
+      controller.dispose();
+    }
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -69,11 +101,15 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
     super.didUpdateWidget(oldWidget);
     if ((oldWidget.keyId != widget.keyId) ||
         (oldWidget.initialValue != widget.initialValue)) {
+      controller.removeListener(_onTextChanged);
+      final initialText = widget.initialValue ?? '';
       controller = widget.controller ??
           TextEditingController.fromValue(TextEditingValue(
-              text: widget.initialValue!,
+              text: initialText,
               selection: TextSelection.collapsed(
-                  offset: widget.initialValue!.length)));
+                  offset: initialText.length)));
+      _previousText = initialText;
+      controller.addListener(_onTextChanged);
     }
   }
 
@@ -130,8 +166,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             _focusNode.unfocus();
           },
           readOnly: widget.readOnly,
-          obscureText: widget.obscureText
-          
+          obscureText: widget.obscureText,
         );
       },
     );
