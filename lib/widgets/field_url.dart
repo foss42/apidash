@@ -22,6 +22,8 @@ class URLField extends StatelessWidget {
       key: Key("url-$selectedId"),
       initialValue: initialValue,
       style: kCodeStyle,
+      maxLines: null,
+      minLines: 1,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(

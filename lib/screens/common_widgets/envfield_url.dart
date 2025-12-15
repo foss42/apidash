@@ -26,6 +26,8 @@ class EnvURLField extends StatelessWidget {
       initialValue: initialValue,
       focusNode: focusNode,
       style: kCodeStyle,
+      maxLines: null,
+      minLines: 1,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
