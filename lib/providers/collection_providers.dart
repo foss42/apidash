@@ -234,6 +234,7 @@ class CollectionStateNotifier
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    HttpRequestModel? httpRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -266,6 +267,20 @@ class CollectionStateNotifier
                 ? const AIRequestModel()
                 : AIRequestModel.fromJson(defaultModel)),
       };
+    } else if (httpRequestModel != null) {
+      newModel = currentModel.copyWith(
+        apiType: apiType ?? currentModel.apiType,
+        name: name ?? currentModel.name,
+        description: description ?? currentModel.description,
+        requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+        httpRequestModel: httpRequestModel,
+        responseStatus: responseStatus ?? currentModel.responseStatus,
+        message: message ?? currentModel.message,
+        httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+        preRequestScript: preRequestScript ?? currentModel.preRequestScript,
+        postRequestScript: postRequestScript ?? currentModel.postRequestScript,
+        aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+      );
     } else {
       newModel = currentModel.copyWith(
         apiType: apiType ?? currentModel.apiType,

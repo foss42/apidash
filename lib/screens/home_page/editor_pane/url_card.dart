@@ -116,6 +116,15 @@ class URLTextField extends ConsumerWidget {
         _ => requestModel.httpRequestModel?.url,
       },
       onChanged: (value) {
+        if (value.trim().startsWith('curl ')) {
+          final curlModel = CurlIO().getHttpRequestModelList(value)?.firstOrNull;
+          if (curlModel != null) {
+            ref.read(collectionStateNotifierProvider.notifier).update(
+              httpRequestModel: curlModel,
+            );
+          }
+          return;
+        }
         if (requestModel.apiType == APIType.ai) {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:

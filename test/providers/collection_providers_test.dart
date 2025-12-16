@@ -1230,4 +1230,102 @@ void main() async {
       container.dispose();
     });
   });
+
+  group('CollectionStateNotifier Update with HttpRequestModel Tests', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+    });
+
+    test('should update request with complete HttpRequestModel', () {
+      final id = notifier.state!.entries.first.key;
+      final curlModel = HttpRequestModel(
+        method: HTTPVerb.post,
+        url: 'https://api.example.com/test',
+        headers: const [
+          NameValueModel(name: 'Content-Type', value: 'application/json'),
+          NameValueModel(name: 'Authorization', value: 'Bearer token123'),
+        ],
+        params: const [
+          NameValueModel(name: 'param1', value: 'value1'),
+        ],
+        body: '{"test": "data"}',
+        bodyContentType: ContentType.json,
+        isHeaderEnabledList: const [true, true],
+        isParamEnabledList: const [true],
+      );
+
+      notifier.update(id: id, httpRequestModel: curlModel);
+
+      final updatedRequest = notifier.getRequestModel(id);
+      expect(updatedRequest?.httpRequestModel?.method, HTTPVerb.post);
+      expect(updatedRequest?.httpRequestModel?.url, 'https://api.example.com/test');
+      expect(updatedRequest?.httpRequestModel?.headers?.length, 2);
+      expect(updatedRequest?.httpRequestModel?.headers?.first.name, 'Content-Type');
+      expect(updatedRequest?.httpRequestModel?.params?.length, 1);
+      expect(updatedRequest?.httpRequestModel?.body, '{"test": "data"}');
+      expect(updatedRequest?.httpRequestModel?.bodyContentType, ContentType.json);
+    });
+
+    test('should preserve other RequestModel fields when updating with HttpRequestModel', () {
+      final id = notifier.state!.entries.first.key;
+      
+      // First set up some fields
+      notifier.update(
+        id: id,
+        name: 'Original Request',
+        description: 'Original description',
+        preRequestScript: 'console.log("original");',
+      );
+      
+      // Now update with HttpRequestModel
+      final curlModel = HttpRequestModel(
+        method: HTTPVerb.put,
+        url: 'https://api.example.com/updated',
+        headers: const [
+          NameValueModel(name: 'X-Custom', value: 'value'),
+        ],
+      );
+
+      notifier.update(id: id, httpRequestModel: curlModel);
+
+      final afterUpdate = notifier.getRequestModel(id);
+      
+      // Verify HttpRequestModel was updated
+      expect(afterUpdate?.httpRequestModel?.method, HTTPVerb.put);
+      expect(afterUpdate?.httpRequestModel?.url, 'https://api.example.com/updated');
+      
+      // Verify other fields were preserved
+      expect(afterUpdate?.name, 'Original Request');
+      expect(afterUpdate?.description, 'Original description');
+      expect(afterUpdate?.preRequestScript, 'console.log("original");');
+    });
+
+    test('should handle HttpRequestModel update with form data', () {
+      final id = notifier.state!.entries.first.key;
+      final curlModel = HttpRequestModel(
+        method: HTTPVerb.post,
+        url: 'https://api.example.com/form',
+        bodyContentType: ContentType.formdata,
+        formData: const [
+          FormDataModel(name: 'field1', value: 'value1', type: FormDataType.text),
+          FormDataModel(name: 'field2', value: 'value2', type: FormDataType.text),
+        ],
+      );
+
+      notifier.update(id: id, httpRequestModel: curlModel);
+
+      final updatedRequest = notifier.getRequestModel(id);
+      expect(updatedRequest?.httpRequestModel?.bodyContentType, ContentType.formdata);
+      expect(updatedRequest?.httpRequestModel?.formData?.length, 2);
+      expect(updatedRequest?.httpRequestModel?.formData?.first.name, 'field1');
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+  });
 }
