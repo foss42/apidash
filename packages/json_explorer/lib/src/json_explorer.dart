@@ -316,8 +316,6 @@ class JsonAttribute extends StatelessWidget {
                 if (valueStyle.onTap != null) {
                   valueStyle.onTap!.call();
                 } else {
-                  // On mobile, only focus root nodes (for copy button)
-                  // Expand/collapse is handled by arrow icon tap
                   if (_isMobile && node.isRoot) {
                     final jsonExplorerStore = Provider.of<JsonExplorerStore>(
                       context,
