@@ -23,8 +23,6 @@ class AIModelSelectorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final modelName = aiRequestModel?.model;
-
     return ElevatedButton(
       onPressed: readonly
           ? null
@@ -49,11 +47,7 @@ class AIModelSelectorButton extends StatelessWidget {
               if (newAIRequestModel == null) return;
               onModelUpdated?.call(newAIRequestModel);
             },
-      child: Text(
-        (modelName != null && modelName.isNotEmpty)
-            ? modelName
-            : 'Select Model',
-      ),
+      child: Text(aiRequestModel?.model ?? 'Select Model'),
     );
   }
 }
