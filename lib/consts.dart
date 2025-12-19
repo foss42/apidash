@@ -515,3 +515,13 @@ const kLabelGenerateUI = "Generate UI";
 // Terminal Page
 const kMsgNoLogs = 'No logs yet';
 const kMsgSendToView = 'Send a request to view its details in the console.';
+// AI Code Generation
+const kMsgAIModelNotConfigured =
+    "Please configure a default AI model in Settings to use AI code generation.";
+const kMsgAIRequestModelNotConfigured = "AI request model is not configured.";
+const kMsgGeneratingCodeWithAI = 'Generating code with AI...';
+const kMsgErrorGeneratingCode = 'Error generating code: ';
+const kMsgFailedToGenerateCode =
+    'Failed to generate code. Please check your AI model configuration.';
+const kMsgErrorInAICodeGen = 'Error in AI code generation: ';
+const kMsgErrorParsingAIResponse = 'Error parsing AI response: ';

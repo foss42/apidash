@@ -6,6 +6,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'ai_code_pane.dart';
 
 final Codegen codegen = Codegen();
 
@@ -29,11 +30,9 @@ class CodePane extends ConsumerWidget {
         ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
         : ref.watch(selectedRequestModelProvider);
 
-    // TODO: Add AI Request Codegen
+    // AI Request Codegen - Use AI to generate code
     if (selectedRequestModel?.apiType == APIType.ai) {
-      return const ErrorMessage(
-        message: "Code generation for AI Requests is currently not available.",
-      );
+      return AICodePane(selectedRequestModel: selectedRequestModel!);
     }
 
     final defaultUriScheme =
