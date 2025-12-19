@@ -150,31 +150,45 @@ class AICodePane extends ConsumerWidget {
     try {
       // The response should be in JSON format based on the prompt
       // Try to parse it and extract the code
-      final jsonStart = response.indexOf('{');
-      final jsonEnd = response.lastIndexOf('}');
+      final trimmedResponse = response.trim();
 
-      if (jsonStart == -1 || jsonEnd == -1) {
-        // If not JSON, return the response as-is
-        return response;
+      // Try to parse the entire response first
+      Map<String, dynamic>? parsed;
+      try {
+        parsed = jsonDecode(trimmedResponse) as Map<String, dynamic>;
+      } catch (_) {
+        // If full parse fails, try to extract JSON object
+        final jsonStart = trimmedResponse.indexOf('{');
+        final jsonEnd = trimmedResponse.lastIndexOf('}');
+
+        if (jsonStart == -1 || jsonEnd == -1) {
+          // If not JSON, return the response as-is
+          return trimmedResponse;
+        }
+
+        final jsonStr = trimmedResponse.substring(jsonStart, jsonEnd + 1);
+        parsed = jsonDecode(jsonStr) as Map<String, dynamic>;
       }
 
-      final jsonStr = response.substring(jsonStart, jsonEnd + 1);
-      final parsed = jsonDecode(jsonStr) as Map<String, dynamic>;
-
+      // Extract code from actions array
       if (parsed['actions'] is List) {
         final actions = parsed['actions'] as List;
         if (actions.isNotEmpty) {
           final firstAction = actions[0];
           if (firstAction is Map && firstAction['value'] != null) {
-            return firstAction['value'] as String;
+            final code = firstAction['value'] as String;
+            // The JSON decoder automatically unescapes the string
+            // No additional unescaping should be needed
+            return code;
           }
         }
       }
 
       // Fallback: return the full response
-      return response;
+      return trimmedResponse;
     } catch (e) {
       debugPrint('$kMsgErrorParsingAIResponse$e');
+      debugPrint('Response was: $response');
       // Return the response as-is if parsing fails
       return response;
     }

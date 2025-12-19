@@ -45,6 +45,8 @@ TASK
 OUTPUT FORMAT (STRICT)
 - Return ONLY a single JSON object.
 - SCHEMA: {"explanation": string, "actions": [{"action":"other","target":"code","path":"${language ?? 'N/A'}","value":"<complete code>"}]}
+- CRITICAL: In the "value" field, include the raw code as a JSON string. The code will be automatically escaped by JSON encoding, so write it as you would in a normal code file.
+- DO NOT manually add escape characters like \" or \n to the code - JSON encoding handles this automatically.
 Where "explanation" must include:
 - A short summary of the generated code
 - Any external dependency mention + install commands
