@@ -10,6 +10,7 @@ class AIModelSelectorButton extends StatelessWidget {
   final bool useRootNavigator;
   final VoidCallback? onDialogOpen;
   final VoidCallback? onDialogClose;
+
   const AIModelSelectorButton({
     super.key,
     this.aiRequestModel,
@@ -27,7 +28,7 @@ class AIModelSelectorButton extends StatelessWidget {
           ? null
           : () async {
               onDialogOpen?.call();
-              final newAIRequestModel = await showDialog(
+              final newAIRequestModel = await showDialog<AIRequestModel>(
                 context: context,
                 useRootNavigator: useRootNavigator,
                 builder: (context) {
