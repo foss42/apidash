@@ -42,7 +42,6 @@ class AIModelSelectorButton extends StatelessWidget {
                   );
                 },
               );
-
               onDialogClose?.call();
               if (newAIRequestModel == null) return;
               onModelUpdated?.call(newAIRequestModel);
