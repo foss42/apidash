@@ -66,18 +66,22 @@ class ModelManager {
     String? ollamaUrl,
   }) async {
     // All available models
-    // final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
+    final allLocalModelsUrl = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
+
     // All loaded models
-    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/ps";
+    // TODO: Add a meta data tag in Model class to show running models
+    final runningModelsUrl = "${ollamaUrl ?? kBaseOllamaUrl}/api/ps";
 
     try {
       final (resp, _, msg) = await sendHttpRequest(
         'OLLAMA_FETCH',
         APIType.rest,
-        HttpRequestModel(url: url, method: HTTPVerb.get),
+        HttpRequestModel(url: allLocalModelsUrl, method: HTTPVerb.get),
         noSSL: true,
       );
-      // debugPrint("fetchInstalledOllamaModels -> $url -> ${resp?.body} -> $msg");
+      debugPrint(
+        "fetchInstalledOllamaModels -> $allLocalModelsUrl -> ${resp?.body} -> $msg",
+      );
       if (resp == null) {
         return null;
       }
