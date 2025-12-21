@@ -271,7 +271,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       ),
                       trailingBuilder: (context, node) => node.isFocused
                           ? Padding(
-                              padding: const EdgeInsets.only(right: 12),
+                              padding: const EdgeInsets.only(right: 6),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
                                 constraints:
