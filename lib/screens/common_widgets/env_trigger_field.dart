@@ -18,7 +18,9 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
     this.readOnly = false,
-    this.obscureText = false
+    this.obscureText = false,
+    this.maxLines = 1,
+    this.minLines,
   }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
@@ -36,6 +38,8 @@ class EnvironmentTriggerField extends StatefulWidget {
   final AutocompleteNoTrigger? autocompleteNoTrigger;
   final bool readOnly;
   final bool obscureText;
+  final int? maxLines;
+  final int? minLines;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -130,7 +134,9 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             _focusNode.unfocus();
           },
           readOnly: widget.readOnly,
-          obscureText: widget.obscureText
+          obscureText: widget.obscureText,
+          maxLines: widget.maxLines,
+          minLines: widget.minLines,
           
         );
       },
