@@ -182,6 +182,7 @@ class EnvironmentItem extends ConsumerWidget {
       isActive: id == activeEnvironmentId,
       isGlobal: id == kGlobalEnvironmentId,
       name: environmentModel.name,
+      color: environmentModel.color,
       selectedId: selectedId,
       editRequestId: editRequestId,
       setActive: (value) {
@@ -203,6 +204,11 @@ class EnvironmentItem extends ConsumerWidget {
       },
       onTapOutsideNameEditor: () {
         ref.read(selectedIdEditStateProvider.notifier).state = null;
+      },
+      onColorChange: (newColor) {
+        ref
+            .read(environmentsStateNotifierProvider.notifier)
+            .updateEnvironmentColor(id, newColor);
       },
       onMenuSelected: (ItemMenuOption item) {
         if (item == ItemMenuOption.edit) {
