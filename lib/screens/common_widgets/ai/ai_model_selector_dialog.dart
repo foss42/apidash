@@ -59,11 +59,14 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                   ),
                   kVSpacer10,
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Select Model Provider'),
                       kHSpacer20,
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
+                          isExpanded: true,
+                          iconSize: 20,
                           onChanged: (x) {
                             setState(() {
                               selectedProvider = x;
