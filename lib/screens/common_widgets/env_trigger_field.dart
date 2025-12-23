@@ -5,21 +5,21 @@ import 'env_regexp_span_builder.dart';
 import 'env_trigger_options.dart';
 
 class EnvironmentTriggerField extends StatefulWidget {
-  const EnvironmentTriggerField({
-    super.key,
-    required this.keyId,
-    this.initialValue,
-    this.controller,
-    this.focusNode,
-    this.onChanged,
-    this.onFieldSubmitted,
-    this.style,
-    this.decoration,
-    this.optionsWidthFactor,
-    this.autocompleteNoTrigger,
-    this.readOnly = false,
-    this.obscureText = false
-  }) : assert(
+  const EnvironmentTriggerField(
+      {super.key,
+      required this.keyId,
+      this.initialValue,
+      this.controller,
+      this.focusNode,
+      this.onChanged,
+      this.onFieldSubmitted,
+      this.style,
+      this.decoration,
+      this.optionsWidthFactor,
+      this.autocompleteNoTrigger,
+      this.readOnly = false,
+      this.obscureText = false,
+      }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
         );
@@ -49,11 +49,11 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void initState() {
     super.initState();
+    final initialText = widget.initialValue ?? '';
     controller = widget.controller ??
         TextEditingController.fromValue(TextEditingValue(
-            text: widget.initialValue!,
-            selection:
-                TextSelection.collapsed(offset: widget.initialValue!.length)));
+            text: initialText,
+            selection: TextSelection.collapsed(offset: initialText.length)));
     _focusNode = widget.focusNode ?? FocusNode();
   }
 
@@ -67,13 +67,34 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if ((oldWidget.keyId != widget.keyId) ||
-        (oldWidget.initialValue != widget.initialValue)) {
+
+    if (oldWidget.keyId != widget.keyId) {
+      if (oldWidget.controller == null) {
+        controller.dispose();
+      }
+      final initialText = widget.initialValue ?? '';
       controller = widget.controller ??
           TextEditingController.fromValue(TextEditingValue(
-              text: widget.initialValue!,
-              selection: TextSelection.collapsed(
-                  offset: widget.initialValue!.length)));
+              text: initialText,
+              selection: TextSelection.collapsed(offset: initialText.length)));
+    } else if (oldWidget.initialValue != widget.initialValue) {
+      if (widget.controller == null) {
+        final newText = widget.initialValue ?? '';
+        if (controller.text != newText) {
+          final currentSelection = controller.selection;
+          final newBaseOffset =
+              currentSelection.baseOffset.clamp(0, newText.length);
+          final newExtentOffset =
+              currentSelection.extentOffset.clamp(0, newText.length);
+          controller.value = TextEditingValue(
+            text: newText,
+            selection: TextSelection(
+              baseOffset: newBaseOffset,
+              extentOffset: newExtentOffset,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -130,8 +151,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             _focusNode.unfocus();
           },
           readOnly: widget.readOnly,
-          obscureText: widget.obscureText
-          
+          obscureText: widget.obscureText,
         );
       },
     );
