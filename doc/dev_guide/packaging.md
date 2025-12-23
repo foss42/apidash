@@ -328,4 +328,38 @@ choco push apidash.0.3.0.nupkg --source="https://push.chocolatey.org/" --api-key
 
 ## WinGet
 
-TODo Instructions
+## Windows Installer (Inno Setup)
+
+To create a professional Windows Installer (`.exe`), we use Inno Setup.
+
+1.  **Install Inno Setup**: Download and install [Inno Setup](https://jrsoftware.org/isdl.php).
+2.  **Build API Dash**:
+    ```powershell
+    flutter create . --platforms=windows
+    flutter build windows --release
+    ```
+3.  **Compile Installer**:
+    Open `packaging/windows/apidash.iss` in Inno Setup and click "Compile", or run via command line:
+    ```powershell
+    iscc packaging/windows/apidash.iss
+    ```
+    The output `apidash-setup.exe` will be generated in the `dist/` folder.
+
+## WinGet
+
+We use [GitHub Actions](/.github/workflows/winget-publish.yml) to automatically publish new releases to WinGet.
+
+### How it works
+1.  When a value is published to GitHub Releases, the workflow triggers.
+2.  It builds the Windows Installer (`.exe`).
+3.  It uploads the installer to the GitHub Release assets.
+4.  It uses [winget-releaser](https://github.com/vedantmgoyal2009/winget-releaser) to submit the package to `microsoft/winget-pkgs`.
+
+### Manual Submission
+To manually submit or update the package:
+1.  Install [wingetwrite](https://github.com/microsoft/winget-create).
+2.  Run:
+    ```powershell
+    wingetcreate update foss42.apidash --version <VERSION> --urls <INSTALLER_URL>
+    ```
+
