@@ -1,7 +1,7 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-class ADRawTextField extends StatelessWidget {
+class ADRawTextField extends StatefulWidget {
   const ADRawTextField({
     super.key,
     this.onChanged,
@@ -20,22 +20,49 @@ class ADRawTextField extends StatelessWidget {
   final bool readOnly;
 
   @override
+  State<ADRawTextField> createState() => _ADRawTextFieldState();
+}
+
+class _ADRawTextFieldState extends State<ADRawTextField> {
+  bool isFocused = false;
+  @override
+  void initState() {
+    isFocused = false;
+    super.initState();
+  }
+
+  void alterFocus(bool val) {
+    setState(() {
+      isFocused = val;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return TextField(
-      readOnly: readOnly,
-      controller: controller,
-      onChanged: onChanged,
-      style: style,
-      decoration: InputDecoration(
-        isDense: true,
-        border: InputBorder.none,
-        hintText: hintText,
-        hintStyle: hintTextStyle,
-        contentPadding: kPv8,
+    return AnimatedSize(
+      duration: Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      child: TextField(
+        onTap: () => alterFocus(true),
+        readOnly: widget.readOnly,
+        controller: widget.controller,
+        onSubmitted: (value) => alterFocus(false),
+        maxLines: isFocused ? null : 1,
+        minLines: 1,
+        onChanged: widget.onChanged,
+        style: widget.style,
+        decoration: InputDecoration(
+          isDense: true,
+          border: InputBorder.none,
+          hintText: widget.hintText,
+          hintStyle: widget.hintTextStyle,
+          contentPadding: kPv8,
+        ),
+        onTapOutside: (PointerDownEvent event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          alterFocus(false);
+        },
       ),
-      onTapOutside: (PointerDownEvent event) {
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
     );
   }
 }

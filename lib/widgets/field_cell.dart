@@ -9,6 +9,7 @@ class CellField extends StatelessWidget {
     this.hintText,
     this.onChanged,
     this.colorScheme,
+    this.onOverlayToggle,
   });
 
   final String keyId;
@@ -16,16 +17,31 @@ class CellField extends StatelessWidget {
   final String? hintText;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
+  final void Function(
+    bool,
+    GlobalKey<State<StatefulWidget>>,
+    String,
+    TextStyle,
+    ColorScheme,
+    FocusNode,
+    TextEditingController,
+    InputDecoration,
+  )? onOverlayToggle;
 
   @override
   Widget build(BuildContext context) {
-    return ADOutlinedTextField(
-      keyId: keyId,
-      initialValue: initialValue,
-      hintText: hintText,
-      hintTextFontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-      onChanged: onChanged,
-      colorScheme: colorScheme,
+    return SizedBox(
+      width: double.infinity,
+      child: ADOutlinedTextField(
+        keyId: keyId,
+        initialValue: initialValue,
+        hintText: hintText,
+        hintTextFontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+        onChanged: onChanged,
+        onOverlayToggle: onOverlayToggle,
+        colorScheme: colorScheme,
+        isDense: true,
+      ),
     );
   }
 }
