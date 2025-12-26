@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
@@ -847,6 +848,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
         .toList();
 
+    final paramsMap =
+        (payload['params'] as Map?)?.cast<String, dynamic>() ?? {};
+    final params = paramsMap.entries
+        .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
+        .toList();
+
     final body = payload['body'] as String?;
     final formFlag = payload['form'] == true;
     final formDataListRaw = (payload['formData'] as List?)?.cast<dynamic>();
@@ -900,9 +907,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         body: replacingBody,
         bodyContentType: bodyContentType,
         formData: replacingFormData,
-        // Wipe existing parameters and authentication to ensure clean state
-        params: const [],
-        isParamEnabledList: const [],
+        params: params,
+        isParamEnabledList: List<bool>.filled(params.length, true),
         authModel: null,
       );
       _appendSystem(
@@ -916,6 +922,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
+        params: params,
+        isParamEnabledList:
+            List<bool>.filled(params.length, true),
       );
       collection.addRequestModel(model, name: 'Imported cURL');
       _appendSystem(
