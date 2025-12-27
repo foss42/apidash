@@ -14,12 +14,16 @@ class JsonTextFieldEditor extends StatefulWidget {
     this.hintText,
     this.readOnly = false,
     this.isDark = false,
+    this.jsonTextFieldController,
+    this.focusNode,
   });
 
   final String fieldKey;
+  final FocusNode? focusNode;
   final Function(String)? onChanged;
   final String? initialValue;
   final String? hintText;
+  final JsonTextFieldController ? jsonTextFieldController;
   final bool readOnly;
   final bool isDark;
 
@@ -28,7 +32,7 @@ class JsonTextFieldEditor extends StatefulWidget {
 }
 
 class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
-  final JsonTextFieldController controller = JsonTextFieldController();
+  late JsonTextFieldController controller;
   late final FocusNode editorFocusNode;
 
   void insertTab() {
@@ -51,6 +55,8 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
   @override
   void initState() {
     super.initState();
+    controller =
+        widget.jsonTextFieldController ?? JsonTextFieldController();
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
@@ -60,7 +66,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     //   controller.formatJson(sortJson: false);
     //   setState(() {});
     // });
-    editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
+    editorFocusNode = widget.focusNode ?? FocusNode(debugLabel: "Editor Focus Node");
   }
 
   @override
