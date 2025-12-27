@@ -111,8 +111,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             thickness: 6,
           ),
           if (_showTaskSuggestions)
-            DashbotTaskButtons(
-              onTaskSelected: _scrollToBottom,
+            // Fix: Wrapped in ConstrainedBox and SingleChildScrollView to prevent overflow on small screens
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: SingleChildScrollView(
+                child: DashbotTaskButtons(
+                  onTaskSelected: _scrollToBottom,
+                ),
+              ),
             ),
           Padding(
             padding: const EdgeInsets.all(8.0),
