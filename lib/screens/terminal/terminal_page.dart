@@ -43,61 +43,66 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SearchField(
-                    controller: _searchCtrl,
-                    hintText: 'Search logs',
-                    onChanged: (_) => setState(() {}),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 160,
+                    child: SearchField(
+                      controller: _searchCtrl,
+                      hintText: 'Search logs',
+                      onChanged: (_) => setState(() {}),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                // Filter button
-                TerminalLevelFilterMenu(
-                  selected: _selectedLevels,
-                  onChanged: (set) => setState(() {
-                    _selectedLevels
-                      ..clear()
-                      ..addAll(set);
-                  }),
-                ),
-                const SizedBox(width: 4),
-                Tooltip(
-                  message: 'Show timestamps',
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: _showTimestamps,
-                        onChanged: (v) =>
-                            setState(() => _showTimestamps = v ?? false),
-                      ),
-                      const Text('Timestamp', style: TextStyle(fontSize: 12)),
-                    ],
+                  const SizedBox(width: 8),
+                  // Filter button
+                  TerminalLevelFilterMenu(
+                    selected: _selectedLevels,
+                    onChanged: (set) => setState(() {
+                      _selectedLevels
+                        ..clear()
+                        ..addAll(set);
+                    }),
                   ),
-                ),
+                  const SizedBox(width: 4),
+                  Tooltip(
+                    message: 'Show timestamps',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          value: _showTimestamps,
+                          onChanged: (v) =>
+                              setState(() => _showTimestamps = v ?? false),
+                        ),
+                        const Text('Timestamp', style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ),
 
-                const Spacer(),
-                // Clear button
-                ADIconButton(
-                  tooltip: 'Clear logs',
-                  icon: Icons.delete_outline,
-                  iconSize: 22,
-                  onPressed: () {
-                    ref.read(terminalStateProvider.notifier).clear();
-                  },
-                ),
-                const SizedBox(width: 4),
-                // Copy all button
-                CopyButton(
-                  showLabel: false,
-                  toCopy: ref
-                      .read(terminalStateProvider.notifier)
-                      .serializeAll(entries: allEntries),
-                ),
-              ],
+                  const SizedBox(width: 24),
+                  // Clear button
+                  ADIconButton(
+                    tooltip: 'Clear logs',
+                    icon: Icons.delete_outline,
+                    iconSize: 22,
+                    onPressed: () {
+                      ref.read(terminalStateProvider.notifier).clear();
+                    },
+                  ),
+                  const SizedBox(width: 4),
+                  // Copy all button
+                  CopyButton(
+                    showLabel: false,
+                    toCopy: ref
+                        .read(terminalStateProvider.notifier)
+                        .serializeAll(entries: allEntries),
+                  ),
+                ],
+              ),
             ),
           ),
           const Divider(height: 1),
