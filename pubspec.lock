@@ -142,6 +142,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.2"
+  build_cli_annotations:
+    dependency: transitive
+    description:
+      name: build_cli_annotations
+      sha256: e563c2e01de8974566a1998410d3f6f03521788160a02503b0b1f1a46c7b3d95
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   build_config:
     dependency: transitive
     description:
@@ -711,6 +719,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  flutter_rust_bridge:
+    dependency: transitive
+    description:
+      name: flutter_rust_bridge
+      sha256: "37ef40bc6f863652e865f0b2563ea07f0d3c58d8efad803cc01933a4b2ee067e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.11.1"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -916,6 +932,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  hurl:
+    dependency: transitive
+    description:
+      path: "packages/hurl"
+      relative: true
+    source: path
+    version: "0.0.1"
   image:
     dependency: transitive
     description:
@@ -2266,5 +2289,5 @@ packages:
     source: hosted
     version: "2.2.2"
 sdks:
-  dart: ">=3.9.0 <3.999.0"
+  dart: ">=3.9.2 <3.999.0"
   flutter: ">=3.35.0"
