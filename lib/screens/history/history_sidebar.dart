@@ -43,6 +43,28 @@ class HistoryList extends HookConsumerWidget {
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
     final List<DateTime>? sortedHistoryKeys = historySequence?.keys.toList();
     sortedHistoryKeys?.sort((a, b) => b.compareTo(a));
+    if (sortedHistoryKeys == null || sortedHistoryKeys.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.history,
+              size: 40,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+            kVSpacer10,
+            Text(
+              'No history requests',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.outline,
+                fontSize: 15,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     ScrollController scrollController = useScrollController();
     return Scrollbar(
       controller: scrollController,
@@ -51,14 +73,14 @@ class HistoryList extends HookConsumerWidget {
       child: ListView.separated(
         padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         controller: scrollController,
-        itemCount: sortedHistoryKeys?.length ?? 0,
+        itemCount: sortedHistoryKeys.length,
         separatorBuilder: (context, index) => Divider(
           height: 0,
           thickness: 2,
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
         ),
         itemBuilder: (context, index) {
-          var items = historySequence![sortedHistoryKeys![index]]!;
+          var items = historySequence![sortedHistoryKeys[index]]!;
           final requestGroups = getRequestGroups(items);
           return Padding(
             padding: kPv2,
