@@ -4,9 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final kFontFamily = GoogleFonts.openSans().fontFamily;
-final kFontFamilyFallback = !kIsWeb && (Platform.isIOS || Platform.isMacOS)
-    ? null
-    : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
+final kFontFamilyFallback = kIsWeb || Platform.isAndroid || Platform.isFuchsia
+    ? <String>[GoogleFonts.notoColorEmoji().fontFamily!]
+    : Platform.isIOS || Platform.isMacOS
+        ? null
+        : Platform.isWindows
+            ? <String>['Segoe UI Emoji']
+            : <String>['Color Emoji'];
 
 final kCodeStyle = TextStyle(
   fontFamily: GoogleFonts.sourceCodePro().fontFamily,
