@@ -5,6 +5,7 @@ import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';
 import 'request_editor_top_bar.dart';
 import 'url_card.dart';
+import 'tab_pane.dart'; 
 
 class RequestEditor extends StatelessWidget {
   const RequestEditor({super.key});
@@ -12,25 +13,27 @@ class RequestEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return context.isMediumWindow
-        ? const Padding(
+        ? Padding(
             padding: kPb10,
             child: Column(
               children: [
                 kVSpacer20,
                 Expanded(
-                  child: EditRequestPane(),
+                  child: const EditRequestPane(),
                 ),
               ],
             ),
           )
         : Padding(
             padding: kIsMacOS || kIsWindows ? kPt28o8 : kP8,
-            child: const Column(
+            child: Column(
               children: [
-                RequestEditorTopBar(),
-                EditorPaneRequestURLCard(),
+                const TabPane(), 
                 kVSpacer10,
-                Expanded(
+                const RequestEditorTopBar(),
+                const EditorPaneRequestURLCard(),
+                kVSpacer10,
+                const Expanded(
                   child: EditorPaneRequestDetailsCard(),
                 ),
               ],

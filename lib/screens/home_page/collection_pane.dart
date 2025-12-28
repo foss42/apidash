@@ -200,6 +200,9 @@ class RequestItem extends ConsumerWidget {
       editRequestId: editRequestId,
       onTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
+        if (!ref.read(visibleTabsProvider).contains(id)) {
+          ref.read(visibleTabsProvider.notifier).toggleVisibility(id);
+        }
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
       onSecondaryTap: () {
