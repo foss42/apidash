@@ -134,35 +134,39 @@ class DashApp extends ConsumerWidget {
                   }
                 },
               )
-            : Stack(
-                children: [
-                  !kIsLinux && !kIsMobile
-                      ? const App()
-                      : context.isMediumWindow
-                          ? (kIsMobile && !userOnboarded)
-                              ? OnboardingScreen(
-                                  onComplete: () async {
-                                    await setOnboardingStatusToSharedPrefs(
-                                      isOnboardingComplete: true,
-                                    );
-                                    ref
-                                        .read(userOnboardedProvider.notifier)
-                                        .state = true;
-                                  },
-                                )
-                              : const MobileDashboard()
-                          : const Dashboard(),
-                  if (kIsWindows)
-                    SizedBox(
-                      height: 29,
-                      child: WindowCaption(
-                        backgroundColor: Colors.transparent,
-                        brightness:
-                            isDarkMode ? Brightness.dark : Brightness.light,
-                      ),
+
+            : InteractiveViewer(
+            panEnabled: true,
+            scaleEnabled: true,
+            minScale: 0.5,
+            maxScale: 3.0,
+            child: Stack(
+              children: [
+                !kIsLinux && !kIsMobile
+                    ? const App()
+                    : context.isMediumWindow
+                        ? (kIsMobile && !userOnboarded)
+                            ? OnboardingScreen(
+                                onComplete: () async {
+                                  await setOnboardingStatusToSharedPrefs(
+                                    isOnboardingComplete: true,
+                                  );
+                                  ref.read(userOnboardedProvider.notifier).state = true;
+                                },
+                              )
+                            : const MobileDashboard()
+                        : const Dashboard(),
+                if (kIsWindows)
+                  SizedBox(
+                    height: 29,
+                    child: WindowCaption(
+                      backgroundColor: Colors.transparent,
+                      brightness: isDarkMode ? Brightness.dark : Brightness.light,
                     ),
-                ],
-              ),
+                  ),
+              ],
+            ),
+          ),
       ),
     );
   }
