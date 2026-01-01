@@ -3,13 +3,10 @@ export 'app_js_runtime_stub.dart'
     if (dart.library.js_interop) 'app_js_runtime_web.dart';
 
 abstract class AppJsRuntime {
-  /// Evaluates the given JavaScript code and returns the result.
   AppJsEvalResult evaluate(String code);
 
-  /// Registers a callback for messages sent from JavaScript.
   void onMessage(String channel, void Function(dynamic args) callback);
 
-  /// Disposes the runtime and releases resources.
   void dispose();
 }
 
