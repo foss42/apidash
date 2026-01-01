@@ -5,7 +5,7 @@
 
 ### Please support this initiative by giving this project a Star ⭐️
 
-API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
+API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](#code-generators)) on the go.
 
 ![API Dash](screenshots/apidash.png)
 
@@ -114,12 +114,12 @@ API Dash can be downloaded from the links below:
 
 - Inspect the API Response (HTTP status code, error message, headers, body, time taken).
 - View formatted code previews for responses of various content types like `JSON`, `XML`, `YAML`, `HTML`, `SQL`, etc.
-- API Dash helps explore, test & preview Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported MIME types/formats here](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer).
+- API Dash helps explore, test & preview Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported MIME types/formats here](#mime-types-supported-by-api-dash-response-previewer).
 - Save 💾 response body of any mimetype (`image`, `text`, etc.) directly in the `Downloads` folder of your system by clicking on the `Download` button.
 
 **👩🏻‍💻 Code Generation**
 
-- We started out as the **only** open source API client which supported advanced Dart code generation to easily integrate APIs in Dart/Flutter projects or to directly run it on DartPad. With time we have added more code-gens and currently API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators).
+- We started out as the **only** open source API client which supported advanced Dart code generation to easily integrate APIs in Dart/Flutter projects or to directly run it on DartPad. With time we have added more code-gens and currently API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](#code-generators).
 
 **🌙 Full Dark Mode Support**
 
