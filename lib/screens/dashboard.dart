@@ -142,12 +142,12 @@ class Dashboard extends ConsumerWidget {
               child: IndexedStack(
                 alignment: AlignmentDirectional.topCenter,
                 index: railIdx,
-                children: const [
-                  HomePage(),
-                  EnvironmentPage(),
-                  HistoryPage(),
-                  TerminalPage(),
-                  SettingsPage(),
+                children:  [
+                  HomePage(key: ValueKey('home-$railIdx')),
+                  EnvironmentPage(key: ValueKey('env-$railIdx')),
+                  HistoryPage(key: ValueKey('history-$railIdx')),
+                  TerminalPage(key: ValueKey('terminal-$railIdx')),
+                  SettingsPage(key: ValueKey('settings-$railIdx')),
                 ],
               ),
             )

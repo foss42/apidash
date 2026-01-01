@@ -19,6 +19,7 @@ class VideoPreviewer extends StatefulWidget {
 }
 
 class _VideoPreviewerState extends State<VideoPreviewer> {
+  static VideoPlayerController? _globalVideoController;
   late VideoPlayerController _videoController;
   late Future<void> _initializeVideoPlayerFuture;
   bool _isPlaying = false;
@@ -50,7 +51,6 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
       await _videoController.initialize();
       if (mounted) {
         setState(() {
-          _videoController.play();
           _videoController.setLooping(true);
         });
       }
@@ -59,6 +59,19 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
       return;
     }
   }
+
+    void _activateAsGlobalPlayer() {
+    if (_globalVideoController != null &&
+        _globalVideoController != _videoController) {
+      _globalVideoController!
+        ..pause()
+        ..seekTo(Duration.zero);
+    }
+
+    _globalVideoController = _videoController;
+    _videoController.play();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +119,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
                             if (_videoController.value.isPlaying) {
                               _videoController.pause();
                             } else {
-                              _videoController.play();
+                             _activateAsGlobalPlayer();
                             }
                             setState(() {
                               _isPlaying = !_isPlaying;
@@ -135,12 +148,15 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
 
   @override
   void dispose() {
+    if (_globalVideoController == _videoController) {
+      _globalVideoController = null;
+    }
     _videoController.pause();
     _videoController.dispose();
     if (!kIsRunningTests) {
       Future.delayed(const Duration(seconds: 1), () async {
         try {
-          await _tempVideoFile.delete();
+          if(await _tempVideoFile.exists()) await _tempVideoFile.delete();
         } catch (e) {
           debugPrint("VideoPreviewer dispose(): $e");
           return;
