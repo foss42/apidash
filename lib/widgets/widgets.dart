@@ -76,4 +76,5 @@ export 'uint8_audio_player.dart';
 export 'widget_not_sent.dart';
 export 'widget_sending.dart';
 export 'window_caption.dart';
+export 'window_listener/window_listener_wrapper.dart';
 export 'workspace_selector.dart';
