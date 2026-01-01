@@ -29,7 +29,6 @@ class _WindowListenerWrapperState extends ConsumerState<WindowListenerWrapper>
   }
 
   void _init() async {
-    // Add this line to override the default close handler
     await windowManager.setPreventClose(true);
     if (mounted) setState(() {});
   }
