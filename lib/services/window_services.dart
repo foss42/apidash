@@ -73,3 +73,9 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
     });
   }
 }
+
+Future<void> destroyWindow() async {
+  if (kIsDesktop) {
+    await windowManager.destroy();
+  }
+}
