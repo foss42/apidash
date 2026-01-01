@@ -482,7 +482,7 @@ class CollectionStateNotifier
           (errorMessage?.contains("XMLHttpRequest") == true ||
               errorMessage?.contains("ClientException") == true)) {
         msg =
-            "$errorMessage\n\nError can be due to CORS restrictions. Check if the API supports CORS or use a Proxy (Settings > Proxy URL).";
+            "$errorMessage\n\nError can be due to CORS restrictions. Check if the API supports CORS or use a Proxy (Settings > Proxy URL)";
       }
 
       newRequestModel = newRequestModel.copyWith(
