@@ -26,6 +26,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  String? proxyUrl,
 }) async {
   final authData = requestModel.authModel;
   if (httpClientManager.wasRequestCancelled(requestId)) {
@@ -51,6 +52,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
 
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
+    if (proxyUrl != null && proxyUrl.isNotEmpty) {
+      requestUrl = Uri.parse("$proxyUrl$requestUrl");
+    }
+
     Map<String, String> headers = authenticatedRequestModel.enabledHeadersMap;
     bool overrideContentType = false;
     HttpResponse? response;
@@ -161,6 +166,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  String? proxyUrl,
 }) async {
   final stream = await streamHttpRequest(
     requestId,
@@ -168,6 +174,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     requestModel,
     defaultUriScheme: defaultUriScheme,
     noSSL: noSSL,
+    proxyUrl: proxyUrl,
   );
   final output = await stream.first;
   return (output?.$2, output?.$3, output?.$4);
@@ -186,16 +193,16 @@ http.Request prepareHttpRequest({
 }) {
   var request = http.Request(method, url);
   if (headers.getValueContentType() != null) {
-    request.headers[HttpHeaders.contentTypeHeader] = headers
-        .getValueContentType()!;
+    request.headers[HttpHeaders.contentTypeHeader] =
+        headers.getValueContentType()!;
     if (!overrideContentType) {
       headers.removeKeyContentType();
     }
   }
   if (body != null) {
     request.body = body;
-    headers[HttpHeaders.contentLengthHeader] = request.bodyBytes.length
-        .toString();
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
   }
   request.headers.addAll(headers);
   return request;
@@ -207,6 +214,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
   HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  String? proxyUrl,
 }) async {
   final authData = httpRequestModel.authModel;
   final controller = StreamController<HttpStreamOutput>();
@@ -276,10 +284,15 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     return controller.stream;
   }
 
+  Uri effectiveUri = uri;
+  if (proxyUrl != null && proxyUrl.isNotEmpty) {
+    effectiveUri = Uri.parse("$proxyUrl$effectiveUri");
+  }
+
   try {
     final streamedResponse = await makeStreamedRequest(
       client: client,
-      uri: uri,
+      uri: effectiveUri,
       requestModel: authenticatedHttpRequestModel,
       apiType: apiType,
     );

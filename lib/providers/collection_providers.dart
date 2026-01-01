@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -387,12 +388,16 @@ class CollectionStateNotifier
     };
     bool streamingMode = true; //Default: Streaming First
 
+    final String? proxyUrl =
+        kIsWeb ? ref.read(settingsProvider).proxyUrl : null;
+
     final stream = await streamHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      proxyUrl: proxyUrl,
     );
 
     HttpResponseModel? httpResponseModel;
@@ -472,13 +477,21 @@ class CollectionStateNotifier
     final (response, duration, errorMessage) = await completer.future;
 
     if (response == null) {
+      String? msg = errorMessage;
+      if (kIsWeb &&
+          (errorMessage?.contains("XMLHttpRequest") == true ||
+              errorMessage?.contains("ClientException") == true)) {
+        msg =
+            "$errorMessage\n\nError can be due to CORS restrictions. Check if the API supports CORS or use a Proxy (Settings > Proxy URL).";
+      }
+
       newRequestModel = newRequestModel.copyWith(
         responseStatus: -1,
-        message: errorMessage,
+        message: msg,
         isWorking: false,
         isStreaming: false,
       );
-      terminal.failNetwork(logId, errorMessage ?? 'Unknown error');
+      terminal.failNetwork(logId, msg ?? 'Unknown error');
     } else {
       final statusCode = response.statusCode;
       httpResponseModel = baseHttpResponseModel.fromResponse(
