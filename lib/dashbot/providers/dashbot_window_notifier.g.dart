@@ -13,14 +13,14 @@ String _$dashbotWindowNotifierHash() =>
 @ProviderFor(DashbotWindowNotifier)
 final dashbotWindowNotifierProvider =
     NotifierProvider<DashbotWindowNotifier, DashbotWindowModel>.internal(
-      DashbotWindowNotifier.new,
-      name: r'dashbotWindowNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$dashbotWindowNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  DashbotWindowNotifier.new,
+  name: r'dashbotWindowNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$dashbotWindowNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$DashbotWindowNotifier = Notifier<DashbotWindowModel>;
 // ignore_for_file: type=lint
