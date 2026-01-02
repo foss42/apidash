@@ -40,6 +40,8 @@ mixin _$RequestModel {
   String? get preRequestScript => throw _privateConstructorUsedError;
   String? get postRequestScript => throw _privateConstructorUsedError;
   AIRequestModel? get aiRequestModel => throw _privateConstructorUsedError;
+  WebSocketRequestModel? get webSocketRequestModel =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -72,11 +74,13 @@ abstract class $RequestModelCopyWith<$Res> {
       @JsonKey(includeToJson: false) bool isStreaming,
       String? preRequestScript,
       String? postRequestScript,
-      AIRequestModel? aiRequestModel});
+      AIRequestModel? aiRequestModel,
+      WebSocketRequestModel? webSocketRequestModel});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
   $AIRequestModelCopyWith<$Res>? get aiRequestModel;
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel;
 }
 
 /// @nodoc
@@ -109,6 +113,7 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
     Object? aiRequestModel = freezed,
+    Object? webSocketRequestModel = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -171,6 +176,10 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.aiRequestModel
           : aiRequestModel // ignore: cast_nullable_to_non_nullable
               as AIRequestModel?,
+      webSocketRequestModel: freezed == webSocketRequestModel
+          ? _value.webSocketRequestModel
+          : webSocketRequestModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketRequestModel?,
     ) as $Val);
   }
 
@@ -215,6 +224,21 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
       return _then(_value.copyWith(aiRequestModel: value) as $Val);
     });
   }
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel {
+    if (_value.webSocketRequestModel == null) {
+      return null;
+    }
+
+    return $WebSocketRequestModelCopyWith<$Res>(_value.webSocketRequestModel!,
+        (value) {
+      return _then(_value.copyWith(webSocketRequestModel: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -240,7 +264,8 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       @JsonKey(includeToJson: false) bool isStreaming,
       String? preRequestScript,
       String? postRequestScript,
-      AIRequestModel? aiRequestModel});
+      AIRequestModel? aiRequestModel,
+      WebSocketRequestModel? webSocketRequestModel});
 
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
@@ -248,6 +273,8 @@ abstract class _$$RequestModelImplCopyWith<$Res>
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
   @override
   $AIRequestModelCopyWith<$Res>? get aiRequestModel;
+  @override
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel;
 }
 
 /// @nodoc
@@ -278,6 +305,7 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
     Object? aiRequestModel = freezed,
+    Object? webSocketRequestModel = freezed,
   }) {
     return _then(_$RequestModelImpl(
       id: null == id
@@ -339,6 +367,10 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.aiRequestModel
           : aiRequestModel // ignore: cast_nullable_to_non_nullable
               as AIRequestModel?,
+      webSocketRequestModel: freezed == webSocketRequestModel
+          ? _value.webSocketRequestModel
+          : webSocketRequestModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketRequestModel?,
     ));
   }
 }
@@ -362,7 +394,8 @@ class _$RequestModelImpl implements _RequestModel {
       @JsonKey(includeToJson: false) this.isStreaming = false,
       this.preRequestScript,
       this.postRequestScript,
-      this.aiRequestModel});
+      this.aiRequestModel,
+      this.webSocketRequestModel});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -404,10 +437,12 @@ class _$RequestModelImpl implements _RequestModel {
   final String? postRequestScript;
   @override
   final AIRequestModel? aiRequestModel;
+  @override
+  final WebSocketRequestModel? webSocketRequestModel;
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel, webSocketRequestModel: $webSocketRequestModel)';
   }
 
   @override
@@ -440,7 +475,9 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.postRequestScript, postRequestScript) ||
                 other.postRequestScript == postRequestScript) &&
             (identical(other.aiRequestModel, aiRequestModel) ||
-                other.aiRequestModel == aiRequestModel));
+                other.aiRequestModel == aiRequestModel) &&
+            (identical(other.webSocketRequestModel, webSocketRequestModel) ||
+                other.webSocketRequestModel == webSocketRequestModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -461,7 +498,8 @@ class _$RequestModelImpl implements _RequestModel {
       isStreaming,
       preRequestScript,
       postRequestScript,
-      aiRequestModel);
+      aiRequestModel,
+      webSocketRequestModel);
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -495,7 +533,8 @@ abstract class _RequestModel implements RequestModel {
       @JsonKey(includeToJson: false) final bool isStreaming,
       final String? preRequestScript,
       final String? postRequestScript,
-      final AIRequestModel? aiRequestModel}) = _$RequestModelImpl;
+      final AIRequestModel? aiRequestModel,
+      final WebSocketRequestModel? webSocketRequestModel}) = _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
       _$RequestModelImpl.fromJson;
@@ -534,6 +573,8 @@ abstract class _RequestModel implements RequestModel {
   String? get postRequestScript;
   @override
   AIRequestModel? get aiRequestModel;
+  @override
+  WebSocketRequestModel? get webSocketRequestModel;
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.

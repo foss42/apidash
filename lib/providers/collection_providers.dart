@@ -234,6 +234,7 @@ class CollectionStateNotifier
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? webSocketRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -265,6 +266,15 @@ class CollectionStateNotifier
             aiRequestModel: defaultModel == null
                 ? const AIRequestModel()
                 : AIRequestModel.fromJson(defaultModel)),
+        APIType.websocket => currentModel.copyWith(
+            apiType: apiType,
+            requestTabIndex: 0,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: null,
+            aiRequestModel: null,
+            webSocketRequestModel: const WebSocketRequestModel(),
+          ),
       };
     } else {
       newModel = currentModel.copyWith(
@@ -579,6 +589,128 @@ class CollectionStateNotifier
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
     unsave();
+  }
+
+  Future<void> sendWebSocketMessage(String id, String message) async {
+    try {
+      webSocketService.send(id, message);
+      final requestModel = state?[id];
+      if (requestModel != null) {
+        final newMessages = [
+          ...?requestModel.webSocketRequestModel?.messages,
+          WebSocketMessageModel(
+            message: message,
+            time: DateTime.now(),
+            isSent: true,
+          ),
+        ];
+
+        final newModel = requestModel.copyWith(
+          webSocketRequestModel: requestModel.webSocketRequestModel
+              ?.copyWith(messages: newMessages),
+        );
+        var map = {...state!};
+        map[id] = newModel;
+        state = map;
+        // Don't unsave here necessarily unless we want to persist chat history which usually we don't for WS?
+        // Plan said "State Persistence: Switch between requests and verify message history is preserved (in memory)."
+        // So yes, update state.
+      }
+    } catch (e) {
+      // Handle error
+      debugPrint("Error sending WS message: $e");
+    }
+  }
+
+  Future<void> connectWebSocket(String id) async {
+    final requestModel = state?[id];
+    if (requestModel == null ||
+        requestModel.webSocketRequestModel == null ||
+        requestModel.webSocketRequestModel!.url.isEmpty) {
+      return;
+    }
+
+    try {
+      // Update state to working/connecting
+      state = {
+        ...state!,
+        id: requestModel.copyWith(isWorking: true),
+      };
+
+      final stream = await webSocketService.connect(
+        id,
+        requestModel.webSocketRequestModel!.url,
+      );
+
+      // Successfully connected
+      state = {
+        ...state!,
+        id: state![id]!.copyWith(
+            isWorking: false,
+            responseStatus: 101), // 101 Switching Protocols as connected
+      };
+
+      stream.listen(
+        (message) {
+          final currentModel = state?[id];
+          if (currentModel == null) return;
+
+          final newMessages = [
+            ...?currentModel.webSocketRequestModel?.messages,
+            WebSocketMessageModel(
+              message: message.toString(),
+              time: DateTime.now(),
+              isSent: false,
+            ),
+          ];
+
+          final newModel = currentModel.copyWith(
+              webSocketRequestModel: currentModel.webSocketRequestModel
+                  ?.copyWith(messages: newMessages));
+
+          state = {
+            ...state!,
+            id: newModel,
+          };
+        },
+        onDone: () {
+          final currentModel = state?[id];
+          if (currentModel == null) return;
+          state = {
+            ...state!,
+            id: currentModel.copyWith(responseStatus: null, isWorking: false),
+          };
+        },
+        onError: (error) {
+          final currentModel = state?[id];
+          if (currentModel == null) return;
+          state = {
+            ...state!,
+            id: currentModel.copyWith(
+                responseStatus: -1,
+                message: error.toString(),
+                isWorking: false),
+          };
+        },
+      );
+    } catch (e) {
+      state = {
+        ...state!,
+        id: requestModel.copyWith(
+            responseStatus: -1, message: e.toString(), isWorking: false),
+      };
+    }
+  }
+
+  Future<void> disconnectWebSocket(String id) async {
+    await webSocketService.disconnect(id);
+    final requestModel = state?[id];
+    if (requestModel != null) {
+      state = {
+        ...state!,
+        id: requestModel.copyWith(responseStatus: null, isWorking: false),
+      };
+    }
   }
 
   bool loadData() {
