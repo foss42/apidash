@@ -739,6 +739,12 @@ class CollectionStateNotifier
               httpRequestModel: const HttpRequestModel(),
             );
           }
+          if (requestModel.apiType == APIType.websocket) {
+            requestModel = requestModel.copyWith(
+              responseStatus: null,
+              isWorking: false,
+            );
+          }
           data[id] = requestModel;
         }
       }
