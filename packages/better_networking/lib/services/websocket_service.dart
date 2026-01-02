@@ -10,18 +10,11 @@ class WebSocketService {
     String url, {
     Map<String, String>? headers,
   }) async {
-    // Close existing connection if any
     await disconnect(requestId);
 
     try {
       final uri = Uri.parse(url);
       final channel = WebSocketChannel.connect(uri, protocols: headers?.keys);
-      // Note: web_socket_channel doesn't support headers nicely in connect for all platforms
-      // similarly to http. usually it's just protocols or you insert them in URL.
-      // But for now let's stick to basic connect.
-      // Actually certain platforms support headers.
-      // For now we will assume standard connect.
-
       _activeConnections[requestId] = channel;
       return channel.stream;
     } catch (e) {
