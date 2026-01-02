@@ -123,13 +123,13 @@ class URLTextField extends ConsumerWidget {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
+        } else if (requestModel.apiType == APIType.websocket) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+              webSocketRequestModel: (requestModel.webSocketRequestModel ??
+                      const WebSocketRequestModel())
+                  .copyWith(url: value));
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
-        }
-        if (requestModel.apiType == APIType.websocket) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
-              webSocketRequestModel:
-                  requestModel.webSocketRequestModel?.copyWith(url: value));
         }
       },
       onFieldSubmitted: (value) {
@@ -167,19 +167,19 @@ class SendRequestButton extends ConsumerWidget {
         onTap: () {
           final id = ref.read(selectedIdStateProvider);
           if (id != null) {
-            if (isConnected) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .disconnectWebSocket(id);
-            } else {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .connectWebSocket(id);
-            }
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .connectWebSocket(id);
           }
         },
-        onCancel:
-            () {}, // Not used for WS disconnect via button usually, or mapped to disconnect
+        onCancel: () {
+          final id = ref.read(selectedIdStateProvider);
+          if (id != null) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .disconnectWebSocket(id);
+          }
+        },
         text: isConnected ? "Disconnect" : "Connect",
         icon: isConnected ? Icons.stop : Icons.play_arrow,
       );

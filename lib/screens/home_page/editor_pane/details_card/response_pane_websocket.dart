@@ -146,7 +146,7 @@ class WebSocketMessageInput extends HookConsumerWidget {
     final isConnected = responseStatus == 101;
 
     return Padding(
-      padding: kP10,
+      padding: kP10.copyWith(right: 70),
       child: Row(
         children: [
           Expanded(

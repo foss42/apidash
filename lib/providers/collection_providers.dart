@@ -304,6 +304,8 @@ class CollectionStateNotifier
         preRequestScript: preRequestScript ?? currentModel.preRequestScript,
         postRequestScript: postRequestScript ?? currentModel.postRequestScript,
         aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+        webSocketRequestModel:
+            webSocketRequestModel ?? currentModel.webSocketRequestModel,
       );
     }
 
@@ -612,9 +614,7 @@ class CollectionStateNotifier
         var map = {...state!};
         map[id] = newModel;
         state = map;
-        // Don't unsave here necessarily unless we want to persist chat history which usually we don't for WS?
-        // Plan said "State Persistence: Switch between requests and verify message history is preserved (in memory)."
-        // So yes, update state.
+        unsave();
       }
     } catch (e) {
       // Handle error
@@ -672,6 +672,7 @@ class CollectionStateNotifier
             ...state!,
             id: newModel,
           };
+          unsave();
         },
         onDone: () {
           final currentModel = state?[id];
@@ -682,6 +683,7 @@ class CollectionStateNotifier
           };
         },
         onError: (error) {
+          debugPrint("WS Stream Error: $error");
           final currentModel = state?[id];
           if (currentModel == null) return;
           state = {
@@ -694,6 +696,7 @@ class CollectionStateNotifier
         },
       );
     } catch (e) {
+      debugPrint("WS Connect Exception: $e");
       state = {
         ...state!,
         id: requestModel.copyWith(
