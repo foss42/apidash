@@ -121,7 +121,7 @@ class WebSocketMessageItem extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              message.time.toString(),
+              message.time.toString().split('.').first,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontSize: 10,
                     color: Theme.of(context).colorScheme.outline,
