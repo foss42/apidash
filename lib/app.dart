@@ -33,8 +33,6 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 
   void _init() async {
-    // Add this line to override the default close handler
-    await windowManager.setPreventClose(true);
     setState(() {});
   }
 
@@ -55,46 +53,46 @@ class _AppState extends ConsumerState<App> with WindowListener {
     });
   }
 
-  @override
-  void onWindowClose() async {
-    bool isPreventClose = await windowManager.isPreventClose();
-    if (isPreventClose) {
-      if (ref.watch(
-              settingsProvider.select((value) => value.promptBeforeClosing)) &&
-          ref.watch(hasUnsavedChangesProvider)) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Save Changes'),
-            content:
-                const Text('Want to save changes before you close API Dash?'),
-            actions: [
-              OutlinedButton(
-                child: const Text('No'),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  await windowManager.destroy();
-                },
-              ),
-              FilledButton(
-                child: const Text('Save'),
-                onPressed: () async {
-                  await ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .saveData();
-                  Navigator.of(context).pop();
-                  await windowManager.destroy();
-                },
-              ),
-            ],
-          ),
-        );
-      } else {
-        await windowManager.destroy();
-      }
-    }
-  }
+ @override
+void onWindowClose() async {
+  final shouldPrompt =
+      ref.read(settingsProvider.select((v) => v.promptBeforeClosing));
+  final hasUnsaved = ref.read(hasUnsavedChangesProvider);
 
+  if (shouldPrompt && hasUnsaved) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: const Text('Save Changes'),
+        content: const Text(
+          'Do you want to save your workspace before closing API Dash?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              await windowManager.destroy();
+            },
+            child: const Text('No'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              await ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .saveData();
+              Navigator.of(context).pop();
+              await windowManager.destroy();
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  } else {
+    await windowManager.destroy();
+  }
+}
   @override
   Widget build(BuildContext context) {
     return context.isMediumWindow ? const MobileDashboard() : const Dashboard();
