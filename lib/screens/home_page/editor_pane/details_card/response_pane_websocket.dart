@@ -15,6 +15,8 @@ class WebSocketResponsePane extends ConsumerWidget {
     final isWorking = ref.watch(
             selectedRequestModelProvider.select((value) => value?.isWorking)) ??
         false;
+    final message = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseStatus = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseStatus));
 
@@ -29,19 +31,49 @@ class WebSocketResponsePane extends ConsumerWidget {
             height: kHeaderHeight,
             child: Row(
               children: [
-                Text(
-                  isConnected
-                      ? "Connected"
-                      : (isWorking ? "Connecting..." : "Disconnected"),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: isConnected
-                            ? kColorStatusCode200
-                            : (isWorking ? Colors.amber : Colors.red),
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+                if (message != null && responseStatus == -1)
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          "Failed",
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: kColorStatusCode400,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        kHSpacer10,
+                        Tooltip(
+                          message: message,
+                          child: Icon(
+                            Icons.info_outline_rounded,
+                            size: 18,
+                            color: kColorStatusCode400,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: Text(
+                      isConnected
+                          ? "Connected ($responseStatus)"
+                          : (isWorking ? "Connecting..." : "Disconnected"),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: isConnected
+                                ? kColorStatusCode200
+                                : (isWorking
+                                    ? Colors.amber
+                                    : kColorStatusCode400),
+                            fontWeight: FontWeight.bold,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
                 const Spacer(),
-                // Optional: Clear messages button
               ],
             ),
           ),

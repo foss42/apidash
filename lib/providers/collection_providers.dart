@@ -676,7 +676,7 @@ class CollectionStateNotifier
         },
         onDone: () {
           final currentModel = state?[id];
-          if (currentModel == null) return;
+          if (currentModel == null || currentModel.responseStatus == -1) return;
           state = {
             ...state!,
             id: currentModel.copyWith(responseStatus: null, isWorking: false),
