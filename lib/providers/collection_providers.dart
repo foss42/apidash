@@ -194,9 +194,10 @@ class CollectionStateNotifier
       aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
-      responseStatus: currentModel.metaData.responseStatus,
-      message: kResponseCodeReasons[currentModel.metaData.responseStatus],
+      responseStatus: null,
+      message: null,
       httpResponseModel: currentModel.httpResponseModel,
+      webSocketRequestModel: currentModel.webSocketRequestModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -631,6 +632,15 @@ class CollectionStateNotifier
     }
 
     try {
+      final terminal = ref.read(terminalStateProvider.notifier);
+      final logId = terminal.startNetwork(
+        apiType: APIType.websocket,
+        method: HTTPVerb.get,
+        url: requestModel.webSocketRequestModel!.url,
+        requestId: id,
+        isStreaming: true,
+      );
+
       // Update state to working/connecting
       state = {
         ...state!,
@@ -646,8 +656,9 @@ class CollectionStateNotifier
       state = {
         ...state!,
         id: state![id]!.copyWith(
-            isWorking: false,
-            responseStatus: 101), // 101 Switching Protocols as connected
+          isWorking: false,
+          responseStatus: 101,
+        ),
       };
 
       stream.listen(
@@ -676,11 +687,40 @@ class CollectionStateNotifier
         },
         onDone: () {
           final currentModel = state?[id];
-          if (currentModel == null || currentModel.responseStatus == -1) return;
+          if (currentModel == null || currentModel.responseStatus == -1) {
+            return;
+          }
+          String newHistoryId = getNewUuid();
+          final historyModel = HistoryRequestModel(
+            historyId: newHistoryId,
+            metaData: HistoryMetaModel(
+              historyId: newHistoryId,
+              requestId: id,
+              apiType: APIType.websocket,
+              name: currentModel.name,
+              url: currentModel.webSocketRequestModel?.url ?? "",
+              method: HTTPVerb.get,
+              responseStatus: 101,
+              timeStamp: DateTime.now(),
+            ),
+            httpRequestModel: const HttpRequestModel(method: HTTPVerb.get),
+            httpResponseModel: const HttpResponseModel(
+                statusCode: 101, body: "WebSocket Session Ended"),
+            webSocketRequestModel: currentModel.webSocketRequestModel,
+          );
+          ref
+              .read(historyMetaStateNotifier.notifier)
+              .addHistoryRequest(historyModel);
           state = {
             ...state!,
             id: currentModel.copyWith(responseStatus: null, isWorking: false),
           };
+          terminal.completeNetwork(
+            logId,
+            statusCode: 101,
+            duration: Duration.zero,
+            responseBodyPreview: "WebSocket Session",
+          );
         },
         onError: (error) {
           debugPrint("WS Stream Error: $error");
@@ -693,6 +733,7 @@ class CollectionStateNotifier
                 message: error.toString(),
                 isWorking: false),
           };
+          terminal.failNetwork(logId, error.toString());
         },
       );
     } catch (e) {

@@ -19,6 +19,10 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
           ? null
           : AIRequestModel.fromJson(
               Map<String, Object?>.from(json['aiRequestModel'] as Map)),
+      webSocketRequestModel: json['webSocketRequestModel'] == null
+          ? null
+          : WebSocketRequestModel.fromJson(
+              Map<String, dynamic>.from(json['webSocketRequestModel'] as Map)),
       httpResponseModel: HttpResponseModel.fromJson(
           Map<String, Object?>.from(json['httpResponseModel'] as Map)),
       preRequestScript: json['preRequestScript'] as String?,
@@ -36,6 +40,7 @@ Map<String, dynamic> _$$HistoryRequestModelImplToJson(
       'metaData': instance.metaData.toJson(),
       'httpRequestModel': instance.httpRequestModel?.toJson(),
       'aiRequestModel': instance.aiRequestModel?.toJson(),
+      'webSocketRequestModel': instance.webSocketRequestModel?.toJson(),
       'httpResponseModel': instance.httpResponseModel.toJson(),
       'preRequestScript': instance.preRequestScript,
       'postRequestScript': instance.postRequestScript,

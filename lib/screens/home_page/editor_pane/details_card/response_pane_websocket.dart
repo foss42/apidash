@@ -90,12 +90,15 @@ class WebSocketResponsePane extends ConsumerWidget {
 }
 
 class WebSocketMessageList extends ConsumerWidget {
-  const WebSocketMessageList({super.key});
+  const WebSocketMessageList({super.key, this.messages});
+
+  final List<WebSocketMessageModel>? messages;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final messages = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.webSocketRequestModel?.messages));
+    final messages = this.messages ??
+        ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketRequestModel?.messages));
 
     if (messages == null || messages.isEmpty) {
       return Center(
