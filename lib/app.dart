@@ -33,6 +33,11 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 
   void _init() async {
+    try {
+    await windowManager.setPreventClose(true);
+  } catch (e) {
+    debugPrint('setPreventClose failed: $e');
+  }
     setState(() {});
   }
 
@@ -58,7 +63,6 @@ void onWindowClose() async {
   final shouldPrompt =
       ref.read(settingsProvider.select((v) => v.promptBeforeClosing));
   final hasUnsaved = ref.read(hasUnsavedChangesProvider);
-
   if (shouldPrompt && hasUnsaved) {
     showDialog(
       context: context,
@@ -72,16 +76,35 @@ void onWindowClose() async {
           TextButton(
             onPressed: () async {
               Navigator.of(context).pop();
+              try {
+                await windowManager.setPreventClose(false);
+              } catch (e) {
+                debugPrint('setPreventClose(false) failed: $e');
+              }
               await windowManager.destroy();
             },
             child: const Text('No'),
           ),
           FilledButton(
             onPressed: () async {
-              await ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .saveData();
+              try {
+                await ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .saveData();
+              } catch (e) {
+                final sm = ScaffoldMessenger.of(context);
+                sm.hideCurrentSnackBar();
+                sm.showSnackBar(SnackBar(content: Text('Save failed: $e')));
+                debugPrint('saveData failed: $e');
+                return; 
+              }
+
               Navigator.of(context).pop();
+              try {
+                await windowManager.setPreventClose(false);
+              } catch (e) {
+                debugPrint('setPreventClose(false) failed: $e');
+              }
               await windowManager.destroy();
             },
             child: const Text('Save'),
@@ -90,9 +113,15 @@ void onWindowClose() async {
       ),
     );
   } else {
+    try {
+      await windowManager.setPreventClose(false);
+    } catch (e) {
+      debugPrint('setPreventClose(false) failed: $e');
+    }
     await windowManager.destroy();
   }
 }
+
   @override
   Widget build(BuildContext context) {
     return context.isMediumWindow ? const MobileDashboard() : const Dashboard();

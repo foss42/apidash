@@ -39,5 +39,3 @@ final importFormatStateProvider =
     StateProvider<ImportFormat>((ref) => ImportFormat.curl);
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
 
-final autoSaveOnCloseProvider = StateProvider<bool>((ref) => false);
-
