@@ -38,3 +38,4 @@ final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
 final importFormatStateProvider =
     StateProvider<ImportFormat>((ref) => ImportFormat.curl);
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
+
