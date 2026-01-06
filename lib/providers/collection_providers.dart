@@ -194,8 +194,12 @@ class CollectionStateNotifier
       aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
-      responseStatus: currentModel.metaData.responseStatus,
-      message: kResponseCodeReasons[currentModel.metaData.responseStatus],
+      responseStatus: currentModel.metaData.apiType == APIType.websocket
+          ? null
+          : currentModel.metaData.responseStatus,
+      message: currentModel.metaData.apiType == APIType.websocket
+          ? null
+          : kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
       webSocketRequestModel: currentModel.webSocketRequestModel,
       isWorking: false,
