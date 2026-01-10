@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../../consts.dart';
@@ -28,10 +29,10 @@ class RequestTabs extends StatelessWidget {
         SegmentedTabbar(
           controller: controller,
           tabs: const [
-            Tab(text: kLabelRequest),
-            Tab(text: kLabelResponse),
-            Tab(text: kLabelCode),
-            Tab(text: kLabelDashBot)
+            Tab(child: AutoSizeText(kLabelRequest,maxLines: 1,minFontSize: 10,overflow: TextOverflow.ellipsis,),),
+            Tab(child: AutoSizeText(kLabelResponse,maxLines: 1,minFontSize: 10,overflow: TextOverflow.ellipsis,),),
+            Tab(child: AutoSizeText(kLabelCode,maxLines: 1,minFontSize: 10,overflow: TextOverflow.ellipsis,),),
+            Tab(child: AutoSizeText(kLabelDashBot,maxLines: 1,minFontSize: 10,overflow: TextOverflow.ellipsis,),)
           ],
         ),
         Expanded(child: RequestTabviews(controller: controller))
