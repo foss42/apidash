@@ -163,7 +163,8 @@ class JsonExplorer extends StatelessWidget {
         super(key: key);
 
   @override
-  Widget build(BuildContext context) => ScrollablePositionedList.builder(
+  Widget build(BuildContext context) => SelectionArea(
+          child: ScrollablePositionedList.builder(
         itemCount: nodes.length,
         itemScrollController: itemScrollController,
         itemPositionsListener: itemPositionsListener,
@@ -192,7 +193,7 @@ class JsonExplorer extends StatelessWidget {
           ),
         ),
         physics: physics,
-      );
+      ));
 }
 
 class JsonAttribute extends StatelessWidget {
@@ -354,7 +355,7 @@ class JsonAttribute extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: spacing),
                       child: SizedBox(
                         width: 8,
-                        child: SelectableText(
+                        child: Text(
                           ':',
                           style: theme.rootKeyTextStyle,
                         ),
@@ -480,7 +481,7 @@ class _RootNodeWidget extends StatelessWidget {
     final text = _keyName();
 
     if (!showHighlightedText) {
-      return SelectableText(text, style: attributeKeyStyle);
+      return Text(text, style: attributeKeyStyle);
     }
 
     final focusedSearchMatchIndex =
@@ -543,7 +544,7 @@ class _PropertyNodeWidget extends StatelessWidget {
     final text = valueFormatter?.call(node.value) ?? node.value.toString();
 
     if (!showHighlightedText) {
-      return SelectableText(text, style: style);
+      return Text(text, style: style);
     }
 
     final focusedSearchMatchIndex =
@@ -664,7 +665,7 @@ class _HighlightedText extends StatelessWidget {
     final lowerCaseQuery = highlightedText.toLowerCase();
 
     if (highlightedText.isEmpty || !lowerCaseText.contains(lowerCaseQuery)) {
-      return SelectableText(text, style: style);
+      return Text(text, style: style);
     }
 
     final spans = <TextSpan>[];
@@ -698,7 +699,7 @@ class _HighlightedText extends StatelessWidget {
       start = index + highlightedText.length;
     }
 
-    return SelectableText.rich(
+    return Text.rich(
       TextSpan(
         children: spans,
       ),
