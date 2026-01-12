@@ -13,4 +13,7 @@ class AuthApiKeyModel with _$AuthApiKeyModel {
 
   factory AuthApiKeyModel.fromJson(Map<String, dynamic> json) =>
       _$AuthApiKeyModelFromJson(json);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

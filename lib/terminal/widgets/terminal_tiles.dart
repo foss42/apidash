@@ -218,7 +218,7 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
     final methodStyle = kCodeStyle.copyWith(
       fontWeight: FontWeight.bold,
       color: getAPIColor(
-        APIType.rest,
+        n.apiType,
         method: n.method,
         brightness: Theme.of(context).brightness,
       ),
@@ -256,7 +256,9 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
                           const TextSpan(text: ' '),
                         ],
                         ...buildHighlightedSpans(
-                          n.method.name.toUpperCase(),
+                          n.apiType == APIType.ws
+                              ? n.apiType.abbr
+                              : n.method.name.toUpperCase(),
                           context,
                           widget.searchQuery,
                           baseStyle: methodStyle,
@@ -343,24 +345,27 @@ class NetworkDetails extends StatelessWidget {
         highlightQuery: searchQuery,
         child: _mapBody(n.requestHeaders, query: searchQuery),
       ),
-      ExpandableSection(
-        title: 'Request Body',
-        forceOpen: contains(n.requestBodyPreview) ? true : null,
-        highlightQuery: searchQuery,
-        child: _textBody(n.requestBodyPreview, query: searchQuery),
-      ),
-      ExpandableSection(
-        title: 'Response Headers',
-        forceOpen: mapContains(n.responseHeaders) ? true : null,
-        highlightQuery: searchQuery,
-        child: _mapBody(n.responseHeaders, query: searchQuery),
-      ),
-      ExpandableSection(
-        title: 'Response Body',
-        forceOpen: contains(n.responseBodyPreview) ? true : null,
-        highlightQuery: searchQuery,
-        child: _textBody(n.responseBodyPreview, query: searchQuery),
-      ),
+      if (n.apiType != APIType.ws)
+        ExpandableSection(
+          title: 'Request Body',
+          forceOpen: contains(n.requestBodyPreview) ? true : null,
+          highlightQuery: searchQuery,
+          child: _textBody(n.requestBodyPreview, query: searchQuery),
+        ),
+      if (n.apiType != APIType.ws)
+        ExpandableSection(
+          title: 'Response Headers',
+          forceOpen: mapContains(n.responseHeaders) ? true : null,
+          highlightQuery: searchQuery,
+          child: _mapBody(n.responseHeaders, query: searchQuery),
+        ),
+      if (n.apiType != APIType.ws)
+        ExpandableSection(
+          title: 'Response Body',
+          forceOpen: contains(n.responseBodyPreview) ? true : null,
+          highlightQuery: searchQuery,
+          child: _textBody(n.responseBodyPreview, query: searchQuery),
+        ),
     ];
     return Container(
       width: double.infinity,

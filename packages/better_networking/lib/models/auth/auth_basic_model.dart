@@ -12,4 +12,7 @@ class AuthBasicAuthModel with _$AuthBasicAuthModel {
 
   factory AuthBasicAuthModel.fromJson(Map<String, dynamic> json) =>
       _$AuthBasicAuthModelFromJson(json);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

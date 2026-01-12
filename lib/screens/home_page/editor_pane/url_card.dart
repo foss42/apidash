@@ -36,6 +36,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.ws => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -53,6 +54,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.ws => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -63,9 +65,12 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     child: URLTextField(),
                   ),
                   kHSpacer20,
-                  const SizedBox(
+                  SizedBox(
                     height: 36,
-                    child: SendRequestButton(),
+                    child: switch (apiType) {
+                      APIType.ws => ConnectWebsocketButton(),
+                      _ => SendRequestButton(),
+                    },
                   )
                 ],
               ),
@@ -106,6 +111,8 @@ class URLTextField extends ConsumerWidget {
         .select((value) => value?.aiRequestModel?.url));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.websocketRequestModel?.url));
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
@@ -113,6 +120,7 @@ class URLTextField extends ConsumerWidget {
       selectedId: selectedId,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
+        APIType.ws => requestModel.websocketRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,
       },
       onChanged: (value) {
@@ -120,6 +128,10 @@ class URLTextField extends ConsumerWidget {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
+        } else if (requestModel.apiType == APIType.ws) {
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .update(websocketUrl: value);
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }
@@ -156,6 +168,41 @@ class SendRequestButton extends ConsumerWidget {
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
       },
+    );
+  }
+}
+
+class ConnectWebsocketButton extends ConsumerWidget {
+  final Function()? onTap;
+  const ConnectWebsocketButton({
+    super.key,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(selectedIdStateProvider);
+    final isConnecting = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.websocketConnectionModel?.isConnecting));
+    final isConnected = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.websocketConnectionModel?.isConnected));
+
+    return ConnectButton(
+      onTap: () {
+        ref.read(collectionStateNotifierProvider.notifier).connectToWebsocket();
+      },
+      onCancel: () {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .cancelWebsocketConnection();
+      },
+      onDisconnect: () {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .cancelWebsocketConnection();
+      },
+      isConnecting: isConnecting,
+      isConnected: isConnected,
     );
   }
 }

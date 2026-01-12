@@ -20,6 +20,8 @@ class RequestModel with _$RequestModel {
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    WebSocketRequestModel? websocketRequestModel,
+    WebSocketConnectionModel? websocketConnectionModel,
     @JsonKey(includeToJson: false) @Default(false) bool isWorking,
     @JsonKey(includeToJson: false) DateTime? sendingTime,
     @JsonKey(includeToJson: false) @Default(false) bool isStreaming,

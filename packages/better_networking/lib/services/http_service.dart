@@ -186,16 +186,16 @@ http.Request prepareHttpRequest({
 }) {
   var request = http.Request(method, url);
   if (headers.getValueContentType() != null) {
-    request.headers[HttpHeaders.contentTypeHeader] = headers
-        .getValueContentType()!;
+    request.headers[HttpHeaders.contentTypeHeader] =
+        headers.getValueContentType()!;
     if (!overrideContentType) {
       headers.removeKeyContentType();
     }
   }
   if (body != null) {
     request.body = body;
-    headers[HttpHeaders.contentLengthHeader] = request.bodyBytes.length
-        .toString();
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
   }
   request.headers.addAll(headers);
   return request;

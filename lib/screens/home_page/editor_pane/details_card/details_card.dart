@@ -1,3 +1,5 @@
+import 'package:apidash/screens/home_page/editor_pane/details_card/websocket_message_pane.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -14,14 +16,18 @@ class EditorPaneRequestDetailsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final isDashbotPopped = ref.watch(dashbotWindowNotifierProvider).isPopped;
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     return RequestDetailsCard(
       child: EqualSplitView(
         leftWidget: const EditRequestPane(),
-        rightWidget: !isDashbotPopped
-            ? DashbotTab()
-            : codePaneVisible
-                ? const CodePane()
-                : const ResponsePane(),
+        rightWidget: apiType == APIType.ws
+            ? WebSocketMessagesPane()
+            : !isDashbotPopped
+                ? DashbotTab()
+                : codePaneVisible
+                    ? const CodePane()
+                    : const ResponsePane(),
       ),
     );
   }

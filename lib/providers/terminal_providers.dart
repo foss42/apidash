@@ -8,6 +8,8 @@ final terminalStateProvider =
   return TerminalController();
 });
 
+final requestLogIdProvider = StateProvider<Map<String, String>>((ref) => {});
+
 class TerminalState {
   TerminalState({required this.entries})
       : index = {

@@ -19,4 +19,7 @@ class AuthJwtModel with _$AuthJwtModel {
 
   factory AuthJwtModel.fromJson(Map<String, dynamic> json) =>
       _$AuthJwtModelFromJson(json);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

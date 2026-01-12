@@ -17,4 +17,7 @@ class AuthDigestModel with _$AuthDigestModel {
 
   factory AuthDigestModel.fromJson(Map<String, dynamic> json) =>
       _$AuthDigestModelFromJson(json);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

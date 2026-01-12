@@ -37,6 +37,7 @@ Color getAPIColor(
       ),
     APIType.graphql => kColorGQL,
     APIType.ai => Colors.amber,
+    APIType.ws => Colors.blue,
   };
   if (brightness == Brightness.dark) {
     col = col.toDark;

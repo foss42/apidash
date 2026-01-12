@@ -36,6 +36,7 @@ const _$APITypeEnumMap = {
   APIType.rest: 'rest',
   APIType.ai: 'ai',
   APIType.graphql: 'graphql',
+  APIType.ws: 'ws',
 };
 
 const _$HTTPVerbEnumMap = {

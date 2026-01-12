@@ -1,3 +1,4 @@
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane_ws.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -100,6 +101,7 @@ class EditRequestPane extends ConsumerWidget {
       APIType.rest => const EditRestRequestPane(),
       APIType.graphql => const EditGraphQLRequestPane(),
       APIType.ai => const EditAIRequestPane(),
+      APIType.ws => const EditWSRequestPane(),
       _ => kSizedBoxEmpty,
     };
   }

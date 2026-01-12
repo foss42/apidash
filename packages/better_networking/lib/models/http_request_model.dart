@@ -70,4 +70,7 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasFileInFormData => formDataList
       .map((e) => e.type == FormDataType.file)
       .any((element) => element);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
