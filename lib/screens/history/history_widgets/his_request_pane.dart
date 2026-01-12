@@ -27,7 +27,10 @@ class HistoryRequestPane extends ConsumerWidget {
     final headersMap = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.httpRequestModel!.headersMap;
+            if (apiType == APIType.ws) {
+              return value?.websocketRequestModel?.headersMap;
+            }
+            return value?.httpRequestModel?.headersMap;
           },
         )) ??
         {};
@@ -36,7 +39,10 @@ class HistoryRequestPane extends ConsumerWidget {
     final paramsMap = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.httpRequestModel!.paramsMap;
+            if (apiType == APIType.ws) {
+              return value?.websocketRequestModel?.paramsMap;
+            }
+            return value?.httpRequestModel?.paramsMap;
           },
         )) ??
         {};
@@ -45,7 +51,8 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasBody = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return false;
-            return value?.httpRequestModel!.hasBody;
+            if (apiType == APIType.ws) return false;
+            return value?.httpRequestModel?.hasBody;
           },
         )) ??
         false;
@@ -53,7 +60,8 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery =
         ref.watch(selectedHistoryRequestModelProvider.select((value) {
               if (apiType == APIType.ai) return false;
-              return value?.httpRequestModel!.hasQuery;
+              if (apiType == APIType.ws) return false;
+              return value?.httpRequestModel?.hasQuery;
             })) ??
             false;
 
@@ -163,6 +171,34 @@ class HistoryRequestPane extends ConsumerWidget {
             const HisAIRequestPromptSection(),
             const HisAIRequestAuthorizationSection(),
             const HisAIRequestConfigSection(),
+          ],
+        ),
+      APIType.ws => RequestPane(
+          key: const Key("history-request-pane-ws"),
+          selectedId: selectedId,
+          codePaneVisible: codePaneVisible,
+          onPressedCodeButton: () {
+            ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+                !codePaneVisible;
+          },
+          showViewCodeButton: false,
+          showIndicators: [
+            paramLength > 0,
+            headerLength > 0,
+          ],
+          tabLabels: const [
+            kLabelURLParams,
+            kLabelHeaders,
+          ],
+          children: [
+            RequestDataTable(
+              rows: paramsMap,
+              keyName: kNameURLParam,
+            ),
+            RequestDataTable(
+              rows: headersMap,
+              keyName: kNameHeader,
+            ),
           ],
         ),
       _ => kSizedBoxEmpty,

@@ -4,7 +4,6 @@ import 'models.dart';
 part 'history_request_model.freezed.dart';
 
 part 'history_request_model.g.dart';
-
 @freezed
 class HistoryRequestModel with _$HistoryRequestModel {
   @JsonSerializable(
@@ -17,6 +16,8 @@ class HistoryRequestModel with _$HistoryRequestModel {
     HttpRequestModel? httpRequestModel,
     AIRequestModel? aiRequestModel,
     required HttpResponseModel httpResponseModel,
+    WebSocketRequestModel? websocketRequestModel,
+    WebSocketConnectionModel? websocketConnectionModel,
     String? preRequestScript,
     String? postRequestScript,
     AuthModel? authModel,

@@ -23,6 +23,14 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           ? null
           : HttpResponseModel.fromJson(
               Map<String, Object?>.from(json['httpResponseModel'] as Map)),
+      websocketRequestModel: json['websocketRequestModel'] == null
+          ? null
+          : WebSocketRequestModel.fromJson(
+              Map<String, Object?>.from(json['websocketRequestModel'] as Map)),
+      websocketConnectionModel: json['websocketConnectionModel'] == null
+          ? null
+          : WebSocketConnectionModel.fromJson(Map<String, Object?>.from(
+              json['websocketConnectionModel'] as Map)),
       isWorking: json['isWorking'] as bool? ?? false,
       sendingTime: json['sendingTime'] == null
           ? null
@@ -46,6 +54,8 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'responseStatus': instance.responseStatus,
       'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
+      'websocketRequestModel': instance.websocketRequestModel?.toJson(),
+      'websocketConnectionModel': instance.websocketConnectionModel?.toJson(),
       'preRequestScript': instance.preRequestScript,
       'postRequestScript': instance.postRequestScript,
       'aiRequestModel': instance.aiRequestModel?.toJson(),
@@ -55,4 +65,5 @@ const _$APITypeEnumMap = {
   APIType.rest: 'rest',
   APIType.ai: 'ai',
   APIType.graphql: 'graphql',
+  APIType.ws: 'ws',
 };

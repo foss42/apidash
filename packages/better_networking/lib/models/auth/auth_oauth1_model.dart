@@ -26,4 +26,7 @@ class AuthOAuth1Model with _$AuthOAuth1Model {
 
   factory AuthOAuth1Model.fromJson(Map<String, dynamic> json) =>
       _$AuthOAuth1ModelFromJson(json);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

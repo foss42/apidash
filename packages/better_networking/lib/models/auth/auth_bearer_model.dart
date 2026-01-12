@@ -11,4 +11,7 @@ class AuthBearerModel with _$AuthBearerModel {
 
   factory AuthBearerModel.fromJson(Map<String, dynamic> json) =>
       _$AuthBearerModelFromJson(json);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

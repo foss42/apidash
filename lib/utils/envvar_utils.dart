@@ -97,6 +97,40 @@ HttpRequestModel substituteHttpRequestModel(
   return newRequestModel;
 }
 
+WebSocketRequestModel substituteWSRequestModel(
+  WebSocketRequestModel websocketRequestModel,
+  Map<String?, List<EnvironmentVariableModel>> envMap,
+  String? activeEnvironmentId,
+) {
+  final Map<String, String> combinedEnvVarMap = {};
+  final activeEnv = envMap[activeEnvironmentId] ?? [];
+  final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
+
+  for (var variable in globalEnv) {
+    combinedEnvVarMap[variable.key] = variable.value;
+  }
+  for (var variable in activeEnv) {
+    combinedEnvVarMap[variable.key] = variable.value;
+  }
+
+  var newRequestModel = websocketRequestModel.copyWith(
+    url: substituteVariables(websocketRequestModel.url, combinedEnvVarMap)!,
+    headers: websocketRequestModel.headers?.map((header) {
+      return header.copyWith(
+        name: substituteVariables(header.name, combinedEnvVarMap) ?? "",
+        value: substituteVariables(header.value, combinedEnvVarMap),
+      );
+    }).toList(),
+    params: websocketRequestModel.params?.map((param) {
+      return param.copyWith(
+        name: substituteVariables(param.name, combinedEnvVarMap) ?? "",
+        value: substituteVariables(param.value, combinedEnvVarMap),
+      );
+    }).toList(),
+  );
+  return newRequestModel;
+}
+
 AuthModel? substituteAuthModel(
     AuthModel? authModel, Map<String, String> envVarMap) {
   if (authModel == null) return null;

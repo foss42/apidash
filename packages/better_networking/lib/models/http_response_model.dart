@@ -87,4 +87,7 @@ class HttpResponseModel with _$HttpResponseModel {
       sseOutput: isStreamingResponse ? [body] : null,
     );
   }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

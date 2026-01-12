@@ -17,7 +17,7 @@ class APITypePopupMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return ADPopupMenu<APIType>(
       tooltip: "Select API Type",
-      width: kIsMobile ? 80 : 100,
+      width: kIsMobile ? 90 : 110,
       value: apiType?.label,
       values: APIType.values.map((e) => (e, e.label)),
       onChanged: onChanged,

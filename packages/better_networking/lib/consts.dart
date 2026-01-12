@@ -3,7 +3,8 @@ import 'dart:convert';
 enum APIType {
   rest("HTTP", "HTTP"),
   ai("AI", "AI"),
-  graphql("GraphQL", "GQL");
+  graphql("GraphQL", "GQL"),
+  ws("Websocket","WS");
 
   const APIType(this.label, this.abbr);
   final String label;

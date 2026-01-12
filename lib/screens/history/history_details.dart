@@ -1,3 +1,5 @@
+import 'package:apidash/screens/history/history_widgets/his_websocket_message_response_pane.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -23,6 +25,8 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
     final selectedHistoryRequest =
         ref.watch(selectedHistoryRequestModelProvider);
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
+    final apiType = ref.watch(selectedHistoryRequestModelProvider
+        .select((value) => value?.metaData.apiType));
     final TabController controller =
         useTabController(initialLength: 3, vsync: this);
 
@@ -56,7 +60,9 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
                           HistoryRequestPane(
                             isCompact: isCompact,
                           ),
-                          const HistoryResponsePane(),
+                          apiType == APIType.ws
+                              ? const HistoryWebsocketMessageResponsePane()
+                              : const HistoryResponsePane(),
                           const CodePane(
                             isHistoryRequest: true,
                           ),
@@ -74,7 +80,9 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
                                 HistoryRequestPane(isCompact: isCompact),
                             rightWidget: codePaneVisible
                                 ? const CodePane(isHistoryRequest: true)
-                                : const HistoryResponsePane(),
+                                : apiType == APIType.ws
+                                    ? const HistoryWebsocketMessageResponsePane()
+                                    : const HistoryResponsePane(),
                           ),
                         ),
                       ),

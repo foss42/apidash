@@ -31,6 +31,10 @@ mixin _$RequestModel {
   String? get message => throw _privateConstructorUsedError;
   HttpResponseModel? get httpResponseModel =>
       throw _privateConstructorUsedError;
+  WebSocketRequestModel? get websocketRequestModel =>
+      throw _privateConstructorUsedError;
+  WebSocketConnectionModel? get websocketConnectionModel =>
+      throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   bool get isWorking => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
@@ -67,6 +71,8 @@ abstract class $RequestModelCopyWith<$Res> {
       int? responseStatus,
       String? message,
       HttpResponseModel? httpResponseModel,
+      WebSocketRequestModel? websocketRequestModel,
+      WebSocketConnectionModel? websocketConnectionModel,
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime,
       @JsonKey(includeToJson: false) bool isStreaming,
@@ -76,6 +82,8 @@ abstract class $RequestModelCopyWith<$Res> {
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
+  $WebSocketRequestModelCopyWith<$Res>? get websocketRequestModel;
+  $WebSocketConnectionModelCopyWith<$Res>? get websocketConnectionModel;
   $AIRequestModelCopyWith<$Res>? get aiRequestModel;
 }
 
@@ -103,6 +111,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? responseStatus = freezed,
     Object? message = freezed,
     Object? httpResponseModel = freezed,
+    Object? websocketRequestModel = freezed,
+    Object? websocketConnectionModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
     Object? isStreaming = null,
@@ -147,6 +157,14 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel?,
+      websocketRequestModel: freezed == websocketRequestModel
+          ? _value.websocketRequestModel
+          : websocketRequestModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketRequestModel?,
+      websocketConnectionModel: freezed == websocketConnectionModel
+          ? _value.websocketConnectionModel
+          : websocketConnectionModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketConnectionModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
@@ -206,6 +224,36 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $WebSocketRequestModelCopyWith<$Res>? get websocketRequestModel {
+    if (_value.websocketRequestModel == null) {
+      return null;
+    }
+
+    return $WebSocketRequestModelCopyWith<$Res>(_value.websocketRequestModel!,
+        (value) {
+      return _then(_value.copyWith(websocketRequestModel: value) as $Val);
+    });
+  }
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WebSocketConnectionModelCopyWith<$Res>? get websocketConnectionModel {
+    if (_value.websocketConnectionModel == null) {
+      return null;
+    }
+
+    return $WebSocketConnectionModelCopyWith<$Res>(
+        _value.websocketConnectionModel!, (value) {
+      return _then(_value.copyWith(websocketConnectionModel: value) as $Val);
+    });
+  }
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $AIRequestModelCopyWith<$Res>? get aiRequestModel {
     if (_value.aiRequestModel == null) {
       return null;
@@ -235,6 +283,8 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       int? responseStatus,
       String? message,
       HttpResponseModel? httpResponseModel,
+      WebSocketRequestModel? websocketRequestModel,
+      WebSocketConnectionModel? websocketConnectionModel,
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime,
       @JsonKey(includeToJson: false) bool isStreaming,
@@ -246,6 +296,10 @@ abstract class _$$RequestModelImplCopyWith<$Res>
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   @override
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
+  @override
+  $WebSocketRequestModelCopyWith<$Res>? get websocketRequestModel;
+  @override
+  $WebSocketConnectionModelCopyWith<$Res>? get websocketConnectionModel;
   @override
   $AIRequestModelCopyWith<$Res>? get aiRequestModel;
 }
@@ -272,6 +326,8 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? responseStatus = freezed,
     Object? message = freezed,
     Object? httpResponseModel = freezed,
+    Object? websocketRequestModel = freezed,
+    Object? websocketConnectionModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
     Object? isStreaming = null,
@@ -315,6 +371,14 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel?,
+      websocketRequestModel: freezed == websocketRequestModel
+          ? _value.websocketRequestModel
+          : websocketRequestModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketRequestModel?,
+      websocketConnectionModel: freezed == websocketConnectionModel
+          ? _value.websocketConnectionModel
+          : websocketConnectionModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketConnectionModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
@@ -357,6 +421,8 @@ class _$RequestModelImpl implements _RequestModel {
       this.responseStatus,
       this.message,
       this.httpResponseModel,
+      this.websocketRequestModel,
+      this.websocketConnectionModel,
       @JsonKey(includeToJson: false) this.isWorking = false,
       @JsonKey(includeToJson: false) this.sendingTime,
       @JsonKey(includeToJson: false) this.isStreaming = false,
@@ -390,6 +456,10 @@ class _$RequestModelImpl implements _RequestModel {
   @override
   final HttpResponseModel? httpResponseModel;
   @override
+  final WebSocketRequestModel? websocketRequestModel;
+  @override
+  final WebSocketConnectionModel? websocketConnectionModel;
+  @override
   @JsonKey(includeToJson: false)
   final bool isWorking;
   @override
@@ -407,7 +477,7 @@ class _$RequestModelImpl implements _RequestModel {
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, websocketRequestModel: $websocketRequestModel, websocketConnectionModel: $websocketConnectionModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel)';
   }
 
   @override
@@ -429,6 +499,11 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.message, message) || other.message == message) &&
             (identical(other.httpResponseModel, httpResponseModel) ||
                 other.httpResponseModel == httpResponseModel) &&
+            (identical(other.websocketRequestModel, websocketRequestModel) ||
+                other.websocketRequestModel == websocketRequestModel) &&
+            (identical(
+                    other.websocketConnectionModel, websocketConnectionModel) ||
+                other.websocketConnectionModel == websocketConnectionModel) &&
             (identical(other.isWorking, isWorking) ||
                 other.isWorking == isWorking) &&
             (identical(other.sendingTime, sendingTime) ||
@@ -456,6 +531,8 @@ class _$RequestModelImpl implements _RequestModel {
       responseStatus,
       message,
       httpResponseModel,
+      websocketRequestModel,
+      websocketConnectionModel,
       isWorking,
       sendingTime,
       isStreaming,
@@ -490,6 +567,8 @@ abstract class _RequestModel implements RequestModel {
       final int? responseStatus,
       final String? message,
       final HttpResponseModel? httpResponseModel,
+      final WebSocketRequestModel? websocketRequestModel,
+      final WebSocketConnectionModel? websocketConnectionModel,
       @JsonKey(includeToJson: false) final bool isWorking,
       @JsonKey(includeToJson: false) final DateTime? sendingTime,
       @JsonKey(includeToJson: false) final bool isStreaming,
@@ -519,6 +598,10 @@ abstract class _RequestModel implements RequestModel {
   String? get message;
   @override
   HttpResponseModel? get httpResponseModel;
+  @override
+  WebSocketRequestModel? get websocketRequestModel;
+  @override
+  WebSocketConnectionModel? get websocketConnectionModel;
   @override
   @JsonKey(includeToJson: false)
   bool get isWorking;

@@ -438,9 +438,12 @@ const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
+
 const kLabelPlusNew = "+ New";
 const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
+const kLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
@@ -464,11 +467,13 @@ const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
 const kLabelURLParams = "Params";
+const kLabelMessages = "Messages";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelScripts = "Scripts";
 const kLabelAuth = "Auth";
 const kLabelQuery = "Query";
+const kLabelWSResponseMessage = "Response Messages";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
 const kNameHeader = "Header Name";
@@ -487,6 +492,9 @@ const kHintContent = "Enter content";
 const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
+const kHintEnterWSMessage = "Enter WebSocket message";
+const kHintConnectWSToSendMessage =
+    "Connect to a WebSocket server to send messages";
 // TODO: CodeField widget does not allow this hint. To be solved.
 const kHintScript = "// Use Javacript to modify this request dynamically";
 // Response Pane
@@ -502,6 +510,7 @@ const kNullResponseModelError = "Error: Response data does not exist.";
 const kMsgNullBody = "Response body is missing (null).";
 const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
+const kMsgNoWSActiviy = "No WebSocket activity";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
 // History Page
@@ -512,6 +521,8 @@ const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
 const kLabelGenerateUI = "Generate UI";
+const kLabelDisconnected = "Disconnected";
+
 // Terminal Page
 const kMsgNoLogs = 'No logs yet';
 const kMsgSendToView = 'Send a request to view its details in the console.';

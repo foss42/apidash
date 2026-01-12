@@ -44,3 +44,54 @@ class SendButton extends StatelessWidget {
     );
   }
 }
+
+class ConnectButton extends StatelessWidget {
+  const ConnectButton({
+    super.key,
+    required this.isConnecting,
+    required this.isConnected,
+    required this.onTap,
+    this.onCancel,
+    this.onDisconnect,
+  });
+
+  final bool? isConnecting;
+  final bool? isConnected;
+  final void Function() onTap;
+  final void Function()? onCancel;
+  final void Function()? onDisconnect;
+
+  @override
+  Widget build(BuildContext context) {
+    return ADFilledButton(
+      onPressed: ((isConnected != null && isConnected == true) ||
+              (isConnecting != null && isConnected == true))
+          ? onDisconnect
+          : onTap,
+      items: (isConnected != false || isConnecting != false)
+          ? [
+              kHSpacer8,
+              Text(
+                isConnecting != null && isConnecting == true
+                    ? kLabelCancel
+                    : isConnected != null && isConnected == true
+                        ? kLabelDisconnect
+                        : kLabelConnect,
+                style: kTextStyleButton,
+              ),
+              kHSpacer6,
+            ]
+          : const [
+              Text(
+                kLabelConnect,
+                style: kTextStyleButton,
+              ),
+              kHSpacer10,
+              Icon(
+                size: 16,
+                Icons.send,
+              ),
+            ],
+    );
+  }
+}
