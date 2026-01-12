@@ -19,32 +19,41 @@ showImportDialog({
         builder: (context, StateSetter setState) {
           return AlertDialog(
             contentPadding: kP12,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(kLabelImport),
-                    kHSpacer8,
-                    DropdownButtonImportFormat(
-                      importFormat: fmt,
-                      onChanged: (format) {
-                        if (format != null) {
-                          onImportFormatChange?.call(format);
-                          setState(() {
-                            fmt = format;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                kVSpacer6,
-                DragAndDropArea(
-                  onFileDropped: onFileDropped,
-                ),
-              ],
+            content: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 500,
+                minWidth: 280,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Use Wrap instead of Row to handle overflow gracefully
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      const Text(kLabelImport),
+                      DropdownButtonImportFormat(
+                        importFormat: fmt,
+                        onChanged: (format) {
+                          if (format != null) {
+                            onImportFormatChange?.call(format);
+                            setState(() {
+                              fmt = format;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  kVSpacer6,
+                  DragAndDropArea(
+                    onFileDropped: onFileDropped,
+                  ),
+                ],
+              ),
             ),
           );
         },
