@@ -59,8 +59,12 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
 
   @override
   void dispose() {
-    controller.dispose();
-    _focusNode.dispose();
+    if (widget.controller == null) {
+      controller.dispose();
+    }
+    if (widget.focusNode == null) {
+        _focusNode.dispose();
+    }
     super.dispose();
   }
 
