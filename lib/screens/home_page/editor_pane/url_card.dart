@@ -94,14 +94,50 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
   }
 }
 
-class URLTextField extends ConsumerWidget {
+class URLTextField extends ConsumerStatefulWidget {
   const URLTextField({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedIdStateProvider);
+  ConsumerState<ConsumerStatefulWidget> createState() => _URLTextFieldState();
+
+}
+
+class _URLTextFieldState extends ConsumerState<URLTextField> {
+  final FocusNode _focusNode = FocusNode();
+
+ @override
+  void initState() {
+    super.initState();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _focusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+   final selectedId = ref.watch(selectedIdStateProvider);
+
+     ref.listen<String?>(selectedIdStateProvider, (previous, next) {
+      if (previous != next && next != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _focusNode.requestFocus();
+          }
+        });
+      }
+    });
+
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.url));
     ref.watch(selectedRequestModelProvider
@@ -111,6 +147,7 @@ class URLTextField extends ConsumerWidget {
         .getRequestModel(selectedId!)!;
     return EnvURLField(
       selectedId: selectedId,
+      focusNode: _focusNode,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,
@@ -130,6 +167,7 @@ class URLTextField extends ConsumerWidget {
     );
   }
 }
+
 
 class SendRequestButton extends ConsumerWidget {
   final Function()? onTap;
