@@ -43,61 +43,139 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SearchField(
-                    controller: _searchCtrl,
-                    hintText: 'Search logs',
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Filter button
-                TerminalLevelFilterMenu(
-                  selected: _selectedLevels,
-                  onChanged: (set) => setState(() {
-                    _selectedLevels
-                      ..clear()
-                      ..addAll(set);
-                  }),
-                ),
-                const SizedBox(width: 4),
-                Tooltip(
-                  message: 'Show timestamps',
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: _showTimestamps,
-                        onChanged: (v) =>
-                            setState(() => _showTimestamps = v ?? false),
-                      ),
-                      const Text('Timestamp', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Determine if we should use compact layout
+                final isCompact = constraints.maxWidth < 600;
 
-                const Spacer(),
-                // Clear button
-                ADIconButton(
-                  tooltip: 'Clear logs',
-                  icon: Icons.delete_outline,
-                  iconSize: 22,
-                  onPressed: () {
-                    ref.read(terminalStateProvider.notifier).clear();
-                  },
-                ),
-                const SizedBox(width: 4),
-                // Copy all button
-                CopyButton(
-                  showLabel: false,
-                  toCopy: ref
-                      .read(terminalStateProvider.notifier)
-                      .serializeAll(entries: allEntries),
-                ),
-              ],
+                if (isCompact) {
+                  // Compact layout for narrow screens
+                  return Column(
+                    children: [
+                      // First row: Search field
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SearchField(
+                              controller: _searchCtrl,
+                              hintText: 'Search logs',
+                              onChanged: (_) => setState(() {}),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // Second row: Controls
+                      Row(
+                        children: [
+                          TerminalLevelFilterMenu(
+                            selected: _selectedLevels,
+                            onChanged: (set) => setState(() {
+                              _selectedLevels
+                                ..clear()
+                                ..addAll(set);
+                            }),
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Tooltip(
+                              message: 'Show timestamps',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Checkbox(
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    value: _showTimestamps,
+                                    onChanged: (v) => setState(
+                                        () => _showTimestamps = v ?? false),
+                                  ),
+                                  const Flexible(
+                                    child: Text('Timestamp',
+                                        style: TextStyle(fontSize: 12)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          ADIconButton(
+                            tooltip: 'Clear logs',
+                            icon: Icons.delete_outline,
+                            iconSize: 22,
+                            onPressed: () {
+                              ref.read(terminalStateProvider.notifier).clear();
+                            },
+                          ),
+                          const SizedBox(width: 4),
+                          CopyButton(
+                            showLabel: false,
+                            toCopy: ref
+                                .read(terminalStateProvider.notifier)
+                                .serializeAll(entries: allEntries),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                } else {
+                  // Standard layout for wider screens
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: SearchField(
+                          controller: _searchCtrl,
+                          hintText: 'Search logs',
+                          onChanged: (_) => setState(() {}),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      TerminalLevelFilterMenu(
+                        selected: _selectedLevels,
+                        onChanged: (set) => setState(() {
+                          _selectedLevels
+                            ..clear()
+                            ..addAll(set);
+                        }),
+                      ),
+                      const SizedBox(width: 4),
+                      Tooltip(
+                        message: 'Show timestamps',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Checkbox(
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              value: _showTimestamps,
+                              onChanged: (v) =>
+                                  setState(() => _showTimestamps = v ?? false),
+                            ),
+                            const Text('Timestamp',
+                                style: TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      ADIconButton(
+                        tooltip: 'Clear logs',
+                        icon: Icons.delete_outline,
+                        iconSize: 22,
+                        onPressed: () {
+                          ref.read(terminalStateProvider.notifier).clear();
+                        },
+                      ),
+                      const SizedBox(width: 4),
+                      CopyButton(
+                        showLabel: false,
+                        toCopy: ref
+                            .read(terminalStateProvider.notifier)
+                            .serializeAll(entries: allEntries),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
           ),
           const Divider(height: 1),
