@@ -11,6 +11,7 @@ import 'package:apidash/screens/screens.dart';
 import 'package:apidash/screens/settings_page.dart';
 import 'package:apidash/screens/history/history_page.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -473,10 +474,10 @@ void main() {
 
       expect(find.byType(RequestEditorDefault), findsOneWidget);
 
-      // Tap on the "Plus New" button
+      // Tap on the "New Request" button
       Finder plusNewButton = find.descendant(
         of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
+        matching: find.text(kLabelNewRequest),
       );
       await tester.tap(plusNewButton);
       await tester.pump();
@@ -521,10 +522,10 @@ void main() {
 
       expect(find.byType(RequestEditorDefault), findsOneWidget);
 
-      // Tap on the "Plus New" button
+      // Tap on the "New Request" button
       Finder plusNewButton = find.descendant(
         of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
+        matching: find.text(kLabelNewRequest),
       );
       await tester.tap(plusNewButton);
       await tester.pump();
@@ -573,10 +574,10 @@ void main() {
 
       expect(find.byType(RequestEditorDefault), findsOneWidget);
 
-      // Tap on the "Plus New" button
+      // Tap on the "New Request" button
       Finder plusNewButton = find.descendant(
         of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
+        matching: find.text(kLabelNewRequest),
       );
       await tester.tap(plusNewButton);
       await tester.pump();
@@ -634,10 +635,10 @@ void main() {
 
       expect(find.byType(RequestEditorDefault), findsOneWidget);
 
-      // Tap on the "Plus New" button
+      // Tap on the "New Request" button
       Finder plusNewButton = find.descendant(
         of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
+        matching: find.text(kLabelNewRequest),
       );
       await tester.tap(plusNewButton);
       await tester.pump();

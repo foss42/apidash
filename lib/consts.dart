@@ -459,6 +459,13 @@ const kLabelStop = "Stop";
 const kLabelOk = "Ok";
 const kLabelImport = "Import";
 const kUntitled = "untitled";
+// Empty State
+const kMsgEmptyRequestEditorTitle = "No Request Selected";
+const kMsgEmptyRequestEditorSubtitle =
+    "Create a new API request or select one from the sidebar to get started";
+const kLabelNewRequest = "New Request";
+const kMsgKeyboardShortcut = "Press ⌘N to create new";
+
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
