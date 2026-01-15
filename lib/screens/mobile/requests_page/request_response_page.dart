@@ -7,9 +7,9 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../home_page/collection_pane.dart';
-import '../../home_page/editor_pane/url_card.dart';
 import '../../home_page/editor_pane/editor_default.dart';
 import '../../common_widgets/common_widgets.dart';
+import 'request_response_page_bottombar.dart';
 import 'request_tabs.dart';
 
 class RequestResponsePage extends StatefulHookConsumerWidget {
@@ -30,7 +30,7 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     final name = getRequestTitleFromUrl(
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
     final TabController requestTabController =
-        useTabController(initialLength: 4, vsync: this);
+        useTabController(initialLength: 3, vsync: this);
     return DrawerSplitView(
       scaffoldKey: kHomeScaffoldKey,
       title: Row(
@@ -66,60 +66,13 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
           ? const RequestEditorDefault()
           : RequestTabs(
               controller: requestTabController,
+              showDashbot: ref.watch(dashbotShowMobileProvider),
             ),
       bottomNavigationBar: RequestResponsePageBottombar(
         requestTabController: requestTabController,
       ),
       onDrawerChanged: (value) =>
           ref.read(leftDrawerStateProvider.notifier).state = value,
-    );
-  }
-}
-
-class RequestResponsePageBottombar extends StatelessWidget {
-  const RequestResponsePageBottombar({
-    super.key,
-    required this.requestTabController,
-  });
-  final TabController requestTabController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: Container(
-        height: 60 + MediaQuery.paddingOf(context).bottom,
-        width: MediaQuery.sizeOf(context).width,
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.paddingOf(context).bottom,
-          left: 16,
-          right: 16,
-        ),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(
-            top: BorderSide(
-              color: Theme.of(context).colorScheme.onInverseSurface,
-              width: 1,
-            ),
-          ),
-        ),
-        child: Row(
-          children: [
-            const Spacer(),
-            SizedBox(
-              height: 36,
-              child: SendRequestButton(
-                onTap: () {
-                  if (requestTabController.index != 1) {
-                    requestTabController.animateTo(1);
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
