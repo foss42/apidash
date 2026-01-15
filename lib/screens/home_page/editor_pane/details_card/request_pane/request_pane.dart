@@ -24,7 +24,7 @@ class EditRequestPane extends ConsumerWidget {
         ref.watch(dashbotWindowNotifierProvider.select((s) => s.isPopped));
 
     // When Dashbot window is not popped, show compact segmented layout like History page
-    if (isPopped == false && apiType == APIType.rest) {
+    if (!isPopped) {
       return DefaultTabController(
         length: 3,
         child: Builder(
@@ -45,44 +45,19 @@ class EditRequestPane extends ConsumerWidget {
                 Expanded(
                   child: TabBarView(
                     controller: controller,
-                    children: const [
-                      EditRestRequestPane(),
-                      ResponsePane(),
-                      CodePane(),
-                    ],
-                  ),
-                ),
-                kVSpacer8,
-              ],
-            );
-          },
-        ),
-      );
-    }
-
-    if (isPopped == false && apiType == APIType.graphql) {
-      return DefaultTabController(
-        length: 3,
-        child: Builder(
-          builder: (context) {
-            final controller = DefaultTabController.of(context);
-            return Column(
-              children: [
-                kVSpacer10,
-                SegmentedTabbar(
-                  controller: controller,
-                  tabs: const [
-                    Tab(text: kLabelRequest),
-                    Tab(text: kLabelResponse),
-                    Tab(text: kLabelCode),
-                  ],
-                ),
-                kVSpacer10,
-                Expanded(
-                  child: TabBarView(
-                    controller: controller,
-                    children: const [
-                      EditGraphQLRequestPane(),
+                    children: [
+                      switch (apiType) {
+                        APIType.rest => EditRestRequestPane(
+                            showViewCodeButton: false,
+                          ),
+                        APIType.graphql => EditGraphQLRequestPane(
+                            showViewCodeButton: false,
+                          ),
+                        APIType.ai => EditAIRequestPane(
+                            showViewCodeButton: false,
+                          ),
+                        _ => kSizedBoxEmpty,
+                      },
                       ResponsePane(),
                       CodePane(),
                     ],
