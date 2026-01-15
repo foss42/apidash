@@ -8,9 +8,9 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../home_page/collection_pane.dart';
 import '../../home_page/editor_pane/url_card.dart';
-import '../../home_page/editor_pane/editor_default.dart';
 import '../../common_widgets/common_widgets.dart';
 import 'request_tabs.dart';
+import '../widgets/request_onboarding_panel.dart';
 
 class RequestResponsePage extends StatefulHookConsumerWidget {
   const RequestResponsePage({
@@ -26,11 +26,12 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    final id = ref.watch(selectedIdStateProvider);
-    final name = getRequestTitleFromUrl(
-        ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
+    final request = ref.watch(selectedRequestModelProvider);
+    final name = getRequestTitleFromUrl(request?.name);
+
     final TabController requestTabController =
         useTabController(initialLength: 4, vsync: this);
+
     return DrawerSplitView(
       scaffoldKey: kHomeScaffoldKey,
       title: Row(
@@ -62,11 +63,9 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
       ),
       leftDrawerContent: const CollectionPane(),
       actions: const [kHSpacer12],
-      mainContent: id == null
-          ? const RequestEditorDefault()
-          : RequestTabs(
-              controller: requestTabController,
-            ),
+      mainContent: RequestTabs(
+        controller: requestTabController,
+      ),
       bottomNavigationBar: RequestResponsePageBottombar(
         requestTabController: requestTabController,
       ),
