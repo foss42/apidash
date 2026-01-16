@@ -12,8 +12,10 @@ class RequestTabs extends StatelessWidget {
   const RequestTabs({
     super.key,
     required this.controller,
+    this.showDashbot = false,
   });
   final TabController controller;
+  final bool showDashbot;
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +27,21 @@ class RequestTabs extends StatelessWidget {
           child: EditorPaneRequestURLCard(),
         ),
         kVSpacer10,
-        SegmentedTabbar(
-          controller: controller,
-          tabs: const [
-            Tab(text: kLabelRequest),
-            Tab(text: kLabelResponse),
-            Tab(text: kLabelCode),
-            Tab(text: kLabelDashBot)
-          ],
-        ),
-        Expanded(child: RequestTabviews(controller: controller))
+        if (!showDashbot)
+          SegmentedTabbar(
+            controller: controller,
+            tabs: const [
+              Tab(text: kLabelRequest),
+              Tab(text: kLabelResponse),
+              Tab(text: kLabelCode),
+            ],
+          ),
+        Expanded(
+            child: showDashbot
+                ? DashbotTab(
+                    showTopBar: false,
+                  )
+                : RequestTabviews(controller: controller)),
       ],
     );
   }
@@ -55,7 +62,6 @@ class RequestTabviews extends StatelessWidget {
           child: ResponsePane(),
         ),
         CodePane(),
-        DashbotTab(),
       ],
     );
   }
