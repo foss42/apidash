@@ -13,7 +13,12 @@ import 'request_pane_graphql.dart';
 import 'request_pane_rest.dart';
 
 class EditRequestPane extends ConsumerWidget {
-  const EditRequestPane({super.key});
+  const EditRequestPane({
+    super.key,
+    this.showViewCodeButton = true,
+  });
+
+  final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +29,7 @@ class EditRequestPane extends ConsumerWidget {
         ref.watch(dashbotWindowNotifierProvider.select((s) => s.isPopped));
 
     // When Dashbot window is not popped, show compact segmented layout like History page
-    if (!isPopped) {
+    if (!isPopped && !context.isMediumWindow) {
       return DefaultTabController(
         length: 3,
         child: Builder(
@@ -72,9 +77,15 @@ class EditRequestPane extends ConsumerWidget {
     }
 
     return switch (apiType) {
-      APIType.rest => const EditRestRequestPane(),
-      APIType.graphql => const EditGraphQLRequestPane(),
-      APIType.ai => const EditAIRequestPane(),
+      APIType.rest => EditRestRequestPane(
+          showViewCodeButton: showViewCodeButton,
+        ),
+      APIType.graphql => EditGraphQLRequestPane(
+          showViewCodeButton: showViewCodeButton,
+        ),
+      APIType.ai => EditAIRequestPane(
+          showViewCodeButton: showViewCodeButton,
+        ),
       _ => kSizedBoxEmpty,
     };
   }
