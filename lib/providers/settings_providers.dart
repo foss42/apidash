@@ -35,6 +35,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    String? proxyUrl,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -51,6 +52,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      proxyUrl: proxyUrl,
     );
     await setSettingsToSharedPrefs(state);
   }

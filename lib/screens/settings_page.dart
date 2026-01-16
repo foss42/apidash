@@ -104,6 +104,35 @@ class SettingsPage extends ConsumerWidget {
                       },
                     )
                   : kSizedBoxEmpty,
+              kIsWeb
+                  ? ListTile(
+                      hoverColor: kColorTransparent,
+                      title: const Text('Proxy URL'),
+                      subtitle: const Text(
+                          'Enter the URL of the CORS proxy server to bypass CORS restrictions on the web.'),
+                      trailing: SizedBox(
+                        width: 300,
+                        child: TextField(
+                          onChanged: (value) {
+                            ref
+                                .read(settingsProvider.notifier)
+                                .update(proxyUrl: value);
+                          },
+                          controller:
+                              TextEditingController(text: settings.proxyUrl),
+                          decoration: const InputDecoration(
+                            hintText: 'https://proxy.com/',
+                            isDense: false,
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : kSizedBoxEmpty,
               ListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
