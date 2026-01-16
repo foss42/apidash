@@ -23,7 +23,7 @@ class RequestEditorDefault extends ConsumerWidget {
             Icon(
               Icons.rocket_launch_outlined,
               size: 80,
-              color: colorScheme.primary.withOpacity(0.6),
+              color: colorScheme.primary.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 24),
 
@@ -42,27 +42,26 @@ class RequestEditorDefault extends ConsumerWidget {
             Text(
               'Create your first API request to begin testing',
               style: textTheme.bodyLarge?.copyWith(
-                color: colorScheme.onSurface.withOpacity(0.7),
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
 
             // Primary action button
-            ElevatedButton.icon(
+            ElevatedButton(
               onPressed: () {
                 ref.read(collectionStateNotifierProvider.notifier).add();
               },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelPlusNew,
-                style: kTextStyleButton,
-              ),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 16,
                 ),
+              ),
+              child: Text(
+                kLabelPlusNew,
+                style: kTextStyleButton,
               ),
             ),
             const SizedBox(height: 40),
@@ -72,10 +71,11 @@ class RequestEditorDefault extends ConsumerWidget {
               constraints: const BoxConstraints(maxWidth: 500),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                color:
+                    colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colorScheme.outlineVariant.withOpacity(0.5),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                 ),
               ),
               child: Column(
@@ -114,13 +114,8 @@ class RequestEditorDefault extends ConsumerWidget {
                   _buildTipItem(
                     context,
                     icon: Icons.upload_file_outlined,
-                    text: 'Import existing collections from Postman or Insomnia',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildTipItem(
-                    context,
-                    icon: Icons.keyboard_outlined,
-                    text: 'Use keyboard shortcuts for faster workflow',
+                    text:
+                        'Import existing collections from Postman or Insomnia',
                   ),
                 ],
               ),
@@ -131,7 +126,8 @@ class RequestEditorDefault extends ConsumerWidget {
     );
   }
 
-  Widget _buildTipItem(BuildContext context, {
+  Widget _buildTipItem(
+    BuildContext context, {
     required IconData icon,
     required String text,
   }) {
@@ -144,14 +140,14 @@ class RequestEditorDefault extends ConsumerWidget {
         Icon(
           icon,
           size: 18,
-          color: colorScheme.primary.withOpacity(0.8),
+          color: colorScheme.primary.withValues(alpha: 0.8),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             text,
             style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.8),
+              color: colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
         ),
