@@ -59,9 +59,49 @@ class _AppState extends ConsumerState<App> with WindowListener {
   void onWindowClose() async {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
-      if (ref.watch(
-              settingsProvider.select((value) => value.promptBeforeClosing)) &&
-          ref.watch(hasUnsavedChangesProvider)) {
+      final hasUnsaved = ref.watch(hasUnsavedChangesProvider);
+      final autoSave =
+          ref.watch(settingsProvider.select((value) => value.autoSaveOnExit));
+      final promptBefore = ref
+          .watch(settingsProvider.select((value) => value.promptBeforeClosing));
+
+      // Priority 1: Auto-save if enabled and there are unsaved changes
+      if (autoSave && hasUnsaved) {
+        try {
+          await ref.read(collectionStateNotifierProvider.notifier).saveData();
+          await windowManager.destroy();
+        } catch (e) {
+          // If autosave fails, show error and prevent close to avoid data loss
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Error Saving'),
+                content: Text(
+                    'Failed to save your changes: $e\n\nPlease try saving manually or close without saving.'),
+                actions: [
+                  OutlinedButton(
+                    child: const Text('Close Without Saving'),
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await windowManager.destroy();
+                    },
+                  ),
+                  FilledButton(
+                    child: const Text('Try Again'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      onWindowClose(); // Retry
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      }
+      // Priority 2: Show prompt if enabled and there are unsaved changes
+      else if (promptBefore && hasUnsaved) {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -89,7 +129,9 @@ class _AppState extends ConsumerState<App> with WindowListener {
             ],
           ),
         );
-      } else {
+      }
+      // Priority 3: Just close if no unsaved changes or both settings disabled
+      else {
         await windowManager.destroy();
       }
     }
