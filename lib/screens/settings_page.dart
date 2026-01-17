@@ -154,6 +154,17 @@ class SettingsPage extends ConsumerWidget {
                       .update(promptBeforeClosing: value);
                 },
               ),
+              CheckboxListTile(
+                title: const Text("Auto-save on Exit"),
+                subtitle: const Text(
+                    "Automatically save all changes when closing the app"),
+                value: settings.autoSaveOnExit,
+                onChanged: (value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(autoSaveOnExit: value);
+                },
+              ),
               ListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('History Retention Period'),

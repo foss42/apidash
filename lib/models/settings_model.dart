@@ -14,6 +14,7 @@ class SettingsModel {
     this.defaultCodeGenLang = CodegenLanguage.curl,
     this.saveResponses = true,
     this.promptBeforeClosing = true,
+    this.autoSaveOnExit = true,
     this.activeEnvironmentId,
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
@@ -30,6 +31,7 @@ class SettingsModel {
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
   final bool promptBeforeClosing;
+  final bool autoSaveOnExit;
   final String? activeEnvironmentId;
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
@@ -46,6 +48,7 @@ class SettingsModel {
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
+    bool? autoSaveOnExit,
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
@@ -63,6 +66,7 @@ class SettingsModel {
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
+      autoSaveOnExit: autoSaveOnExit ?? this.autoSaveOnExit,
       activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
       historyRetentionPeriod:
           historyRetentionPeriod ?? this.historyRetentionPeriod,
@@ -85,6 +89,7 @@ class SettingsModel {
       offset: offset,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
+      autoSaveOnExit: autoSaveOnExit,
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
@@ -132,6 +137,7 @@ class SettingsModel {
     }
     final saveResponses = data["saveResponses"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
+    final autoSaveOnExit = data["autoSaveOnExit"] as bool?;
     final activeEnvironmentId = data["activeEnvironmentId"] as String?;
     final historyRetentionPeriodStr = data["historyRetentionPeriod"] as String?;
     HistoryRetentionPeriod? historyRetentionPeriod;
@@ -160,6 +166,7 @@ class SettingsModel {
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
+      autoSaveOnExit: autoSaveOnExit,
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod:
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
@@ -182,6 +189,7 @@ class SettingsModel {
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
+      "autoSaveOnExit": autoSaveOnExit,
       "activeEnvironmentId": activeEnvironmentId,
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
@@ -209,6 +217,7 @@ class SettingsModel {
         other.defaultCodeGenLang == defaultCodeGenLang &&
         other.saveResponses == saveResponses &&
         other.promptBeforeClosing == promptBeforeClosing &&
+        other.autoSaveOnExit == autoSaveOnExit &&
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
@@ -229,6 +238,7 @@ class SettingsModel {
       defaultCodeGenLang,
       saveResponses,
       promptBeforeClosing,
+      autoSaveOnExit,
       activeEnvironmentId,
       historyRetentionPeriod,
       workspaceFolderPath,
