@@ -7,6 +7,7 @@ import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
+import '../services/auth_resolution_service.dart';
 import '../utils/utils.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
@@ -351,6 +352,19 @@ class CollectionStateNotifier
     } else {
       substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
           executionRequestModel.httpRequestModel!);
+    }
+
+    // Resolve authentication following priority: Request > Environment > Global
+    final resolvedAuth = resolveAuth(
+      executionRequestModel,
+      ref.read(activeEnvironmentIdStateProvider),
+      ref.read(environmentsStateNotifierProvider),
+    );
+
+    // Apply resolved authentication to the request model
+    if (resolvedAuth != null) {
+      substitutedHttpRequestModel =
+          substitutedHttpRequestModel.copyWith(authModel: resolvedAuth);
     }
 
     // Terminal
