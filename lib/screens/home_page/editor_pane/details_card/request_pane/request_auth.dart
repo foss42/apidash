@@ -36,15 +36,18 @@ class EditAuthType extends ConsumerWidget {
 
     // Determine inheritance source
     String? inheritanceSource;
-    if (!hasRequestAuth && resolvedAuth != null) {
+    if (!hasRequestAuth && resolvedAuth != null && environments != null) {
       if (activeEnvironmentId != null &&
-          environments?[activeEnvironmentId]?.authModel != null &&
-          environments![activeEnvironmentId]!.authModel!.type !=
+          activeEnvironmentId.isNotEmpty &&
+          environments.containsKey(activeEnvironmentId) &&
+          environments[activeEnvironmentId]?.authModel != null &&
+          environments[activeEnvironmentId]!.authModel!.type !=
               APIAuthType.none) {
         final envName = environments[activeEnvironmentId]?.name ?? 'Environment';
         inheritanceSource = '$envName Environment';
-      } else if (environments?[kGlobalEnvironmentId]?.authModel != null &&
-          environments![kGlobalEnvironmentId]!.authModel!.type !=
+      } else if (environments.containsKey(kGlobalEnvironmentId) &&
+          environments[kGlobalEnvironmentId]?.authModel != null &&
+          environments[kGlobalEnvironmentId]!.authModel!.type !=
               APIAuthType.none) {
         inheritanceSource = 'Global';
       }

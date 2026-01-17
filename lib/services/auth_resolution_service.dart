@@ -19,7 +19,9 @@ AuthModel? resolveAuth(
   }
 
   // Priority 2: Environment-level authentication
-  if (activeEnvironmentId != null && environments != null) {
+  if (activeEnvironmentId != null &&
+      activeEnvironmentId.isNotEmpty &&
+      environments != null) {
     final environment = environments[activeEnvironmentId];
     final environmentAuth = environment?.authModel;
     if (environmentAuth != null && environmentAuth.type != APIAuthType.none) {
@@ -28,7 +30,7 @@ AuthModel? resolveAuth(
   }
 
   // Priority 3: Global-level authentication (lowest priority)
-  if (environments != null) {
+  if (environments != null && environments.containsKey(kGlobalEnvironmentId)) {
     final globalEnvironment = environments[kGlobalEnvironmentId];
     final globalAuth = globalEnvironment?.authModel;
     if (globalAuth != null && globalAuth.type != APIAuthType.none) {

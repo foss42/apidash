@@ -13,13 +13,17 @@ class EditEnvironmentAuth extends ConsumerWidget {
     final selectedEnvironment = ref.watch(selectedEnvironmentModelProvider);
     final currentAuthData = selectedEnvironment?.authModel;
 
+    if (selectedId == null) {
+      return const SizedBox.shrink();
+    }
+
     return AuthPage(
       authModel: currentAuthData,
       readOnly: false,
       onChangedAuthType: (newType) {
         if (newType != null) {
           ref.read(environmentsStateNotifierProvider.notifier).updateEnvironment(
-                selectedId!,
+                selectedId,
                 authModel: currentAuthData?.copyWith(type: newType) ??
                     AuthModel(type: newType),
               );
@@ -28,12 +32,12 @@ class EditEnvironmentAuth extends ConsumerWidget {
       updateAuthData: (model) {
         if (model == null) {
           ref.read(environmentsStateNotifierProvider.notifier).updateEnvironment(
-                selectedId!,
+                selectedId,
                 authModel: AuthModel(type: APIAuthType.none),
               );
         } else {
           ref.read(environmentsStateNotifierProvider.notifier).updateEnvironment(
-                selectedId!,
+                selectedId,
                 authModel: model,
               );
         }
