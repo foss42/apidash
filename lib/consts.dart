@@ -53,6 +53,7 @@ const kSuggestionsMenuMaxHeight = 200.0;
 
 const kSegmentedTabWidth = 140.0;
 const kSegmentedTabHeight = 32.0;
+const kSegmentedTabMinWidth = 80.0;
 
 const kDataTableScrollbarTheme = ScrollbarThemeData(
   crossAxisMargin: -4,

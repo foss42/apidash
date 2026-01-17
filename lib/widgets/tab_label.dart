@@ -18,12 +18,18 @@ class TabLabel extends StatelessWidget {
       child: Stack(
         children: [
           Center(
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.fade,
-              softWrap: false,
-              style: kTextStyleTab,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: kTextStyleTab,
+                ),
+              ),
             ),
           ),
           if (showIndicator)

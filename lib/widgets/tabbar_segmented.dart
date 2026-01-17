@@ -18,39 +18,61 @@ class SegmentedTabbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        margin: kPh4,
-        width: tabWidth * tabs.length,
-        height: tabHeight,
-        decoration: BoxDecoration(
-          borderRadius: kBorderRadius20,
-          border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: kBorderRadius20,
-          child: TabBar(
-            dividerColor: Colors.transparent,
-            indicatorWeight: 0.0,
-            indicatorSize: TabBarIndicatorSize.tab,
-            unselectedLabelColor: Theme.of(context).colorScheme.outline,
-            labelStyle: kTextStyleTab.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onPrimary,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate the ideal width for all tabs
+        final idealWidth = tabWidth * tabs.length;
+
+        // Account for padding and margins (8px on each side = 16px total)
+        final availableWidth = constraints.maxWidth - 16;
+
+        // Determine if we need scrolling
+        final needsScrolling = idealWidth > availableWidth;
+
+        // Use ideal width if scrolling, otherwise fit to available width
+        final containerWidth = needsScrolling ? idealWidth : availableWidth;
+
+        return Center(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: needsScrolling
+                ? const BouncingScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
+            child: Container(
+              margin: kPh4,
+              width: containerWidth,
+              height: tabHeight,
+              decoration: BoxDecoration(
+                borderRadius: kBorderRadius20,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: kBorderRadius20,
+                child: TabBar(
+                  dividerColor: Colors.transparent,
+                  indicatorWeight: 0.0,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  unselectedLabelColor: Theme.of(context).colorScheme.outline,
+                  labelStyle: kTextStyleTab.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  unselectedLabelStyle: kTextStyleTab,
+                  splashBorderRadius: kBorderRadius20,
+                  indicator: BoxDecoration(
+                    borderRadius: kBorderRadius20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  controller: controller,
+                  tabs: tabs,
+                ),
+              ),
             ),
-            unselectedLabelStyle: kTextStyleTab,
-            splashBorderRadius: kBorderRadius20,
-            indicator: BoxDecoration(
-              borderRadius: kBorderRadius20,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            controller: controller,
-            tabs: tabs,
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
