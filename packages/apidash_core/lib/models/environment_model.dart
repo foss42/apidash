@@ -1,4 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:better_networking/better_networking.dart';
 import '../consts.dart';
 
 part 'environment_model.freezed.dart';
@@ -15,6 +15,7 @@ class EnvironmentModel with _$EnvironmentModel {
     required String id,
     @Default("") String name,
     @Default([]) List<EnvironmentVariableModel> values,
+    AuthModel? authModel,
   }) = _EnvironmentModel;
 
   factory EnvironmentModel.fromJson(Map<String, Object?> json) =>
