@@ -18,7 +18,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
     this.readOnly = false,
-    this.obscureText = false
+    this.obscureText = false,
   }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
@@ -67,13 +67,31 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if ((oldWidget.keyId != widget.keyId) ||
-        (oldWidget.initialValue != widget.initialValue)) {
+    if (oldWidget.keyId != widget.keyId) {
+      // Key changed - create new controller with cursor at end
       controller = widget.controller ??
           TextEditingController.fromValue(TextEditingValue(
               text: widget.initialValue!,
               selection: TextSelection.collapsed(
                   offset: widget.initialValue!.length)));
+    } else if (oldWidget.initialValue != widget.initialValue) {
+      // Initial value changed but key is same
+      // Preserve cursor position if text is being updated
+      if (widget.controller == null) {
+        final currentSelection = controller.selection;
+        final newText = widget.initialValue ?? '';
+
+        // Only update if the text actually differs from controller's current text
+        if (controller.text != newText) {
+          // Preserve cursor position, ensuring it's within bounds
+          final newOffset =
+              currentSelection.baseOffset.clamp(0, newText.length);
+          controller.value = TextEditingValue(
+            text: newText,
+            selection: TextSelection.collapsed(offset: newOffset),
+          );
+        }
+      }
     }
   }
 
@@ -130,8 +148,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             _focusNode.unfocus();
           },
           readOnly: widget.readOnly,
-          obscureText: widget.obscureText
-          
+          obscureText: widget.obscureText,
         );
       },
     );
