@@ -5,7 +5,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
-import './editor_pane/variables_pane.dart';
+import './editor_pane/variables_tabs.dart';
 
 class EnvironmentEditor extends ConsumerWidget {
   const EnvironmentEditor({super.key});
@@ -86,24 +86,7 @@ class EnvironmentEditor extends ConsumerWidget {
                 elevation: 0,
                 child: const Padding(
                   padding: kPv6,
-                  child: Column(
-                    children: [
-                      kHSpacer40,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(width: 30),
-                          Text("Variable"),
-                          SizedBox(width: 30),
-                          Text("Value"),
-                          SizedBox(width: 40),
-                        ],
-                      ),
-                      kHSpacer40,
-                      Divider(),
-                      Expanded(child: EditEnvironmentVariables())
-                    ],
-                  ),
+                  child: VariablesTabs(),
                 ),
               ),
             ),
