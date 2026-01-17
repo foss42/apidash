@@ -80,7 +80,7 @@ class EditEnvironmentVariablesState
       (index) {
         bool isLast = index + 1 == variableRows.length;
         return DataRow(
-          key: ValueKey("$selectedId-$index-variables-row-$seed"),
+          key: ValueKey("$selectedId-$index-variables-row-$seed-${variableRows[index].value}"),
           cells: <DataCell>[
             DataCell(
               ADCheckBox(
