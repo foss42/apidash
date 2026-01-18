@@ -6,8 +6,7 @@ part of 'environment_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$EnvironmentModelImpl _$$EnvironmentModelImplFromJson(Map json) =>
-    _$EnvironmentModelImpl(
+_EnvironmentModel _$EnvironmentModelFromJson(Map json) => _EnvironmentModel(
       id: json['id'] as String,
       name: json['name'] as String? ?? "",
       values: (json['values'] as List<dynamic>?)
@@ -15,19 +14,22 @@ _$EnvironmentModelImpl _$$EnvironmentModelImplFromJson(Map json) =>
                   Map<String, Object?>.from(e as Map)))
               .toList() ??
           const [],
+      authModel: json['authModel'] == null
+          ? null
+          : AuthModel.fromJson(
+              Map<String, dynamic>.from(json['authModel'] as Map)),
     );
 
-Map<String, dynamic> _$$EnvironmentModelImplToJson(
-        _$EnvironmentModelImpl instance) =>
+Map<String, dynamic> _$EnvironmentModelToJson(_EnvironmentModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'values': instance.values.map((e) => e.toJson()).toList(),
+      'authModel': instance.authModel?.toJson(),
     };
 
-_$EnvironmentVariableModelImpl _$$EnvironmentVariableModelImplFromJson(
-        Map json) =>
-    _$EnvironmentVariableModelImpl(
+_EnvironmentVariableModel _$EnvironmentVariableModelFromJson(Map json) =>
+    _EnvironmentVariableModel(
       key: json['key'] as String,
       value: json['value'] as String,
       type:
@@ -36,8 +38,8 @@ _$EnvironmentVariableModelImpl _$$EnvironmentVariableModelImplFromJson(
       enabled: json['enabled'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$$EnvironmentVariableModelImplToJson(
-        _$EnvironmentVariableModelImpl instance) =>
+Map<String, dynamic> _$EnvironmentVariableModelToJson(
+        _EnvironmentVariableModel instance) =>
     <String, dynamic>{
       'key': instance.key,
       'value': instance.value,

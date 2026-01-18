@@ -95,6 +95,7 @@ class EnvironmentsStateNotifier
             id: environmentModelFromJson.id,
             name: environmentModelFromJson.name,
             values: environmentModelFromJson.values,
+            authModel: environmentModelFromJson.authModel,
           );
           environmentsMap[environmentId] = environmentModel;
         }
@@ -126,11 +127,13 @@ class EnvironmentsStateNotifier
     String id, {
     String? name,
     List<EnvironmentVariableModel>? values,
+    AuthModel? authModel,
   }) {
     final environment = state![id]!;
     final updatedEnvironment = environment.copyWith(
       name: name ?? environment.name,
       values: values ?? environment.values,
+      authModel: authModel ?? environment.authModel,
     );
     state = {
       ...state!,

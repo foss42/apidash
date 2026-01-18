@@ -1,4 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:better_networking/better_networking.dart';
 import '../consts.dart';
 
 part 'environment_model.freezed.dart';
@@ -6,15 +6,13 @@ part 'environment_model.freezed.dart';
 part 'environment_model.g.dart';
 
 @freezed
-class EnvironmentModel with _$EnvironmentModel {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-  )
+abstract class EnvironmentModel with _$EnvironmentModel {
+  @JsonSerializable(explicitToJson: true, anyMap: true)
   const factory EnvironmentModel({
     required String id,
     @Default("") String name,
     @Default([]) List<EnvironmentVariableModel> values,
+    AuthModel? authModel,
   }) = _EnvironmentModel;
 
   factory EnvironmentModel.fromJson(Map<String, Object?> json) =>
@@ -22,11 +20,8 @@ class EnvironmentModel with _$EnvironmentModel {
 }
 
 @freezed
-class EnvironmentVariableModel with _$EnvironmentVariableModel {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-  )
+abstract class EnvironmentVariableModel with _$EnvironmentVariableModel {
+  @JsonSerializable(explicitToJson: true, anyMap: true)
   const factory EnvironmentVariableModel({
     required String key,
     required String value,
