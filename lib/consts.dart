@@ -516,3 +516,10 @@ const kLabelGenerateUI = "Generate UI";
 // Terminal Page
 const kMsgNoLogs = 'No logs yet';
 const kMsgSendToView = 'Send a request to view its details in the console.';
+// AI
+const kLabelUpdateModels = 'Update Models';
+const kMsgSelectModelProvider = 'Select Model Provider';
+const kMsgSelectAIProvider = "Please select an AI API Provider";
+const kLabelAPIKey = 'API Key / Credential';
+const kLabelEndpoint = 'Endpoint';
+const kLabelModels = 'Models';
