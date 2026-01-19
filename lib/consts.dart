@@ -516,3 +516,23 @@ const kLabelGenerateUI = "Generate UI";
 // Terminal Page
 const kMsgNoLogs = 'No logs yet';
 const kMsgSendToView = 'Send a request to view its details in the console.';
+
+// Environment Colors
+const List<Color> kEnvironmentColors = [
+  // Primary Colors
+  Color(0xFF2196F3), // Blue - Development
+  Color(0xFF4CAF50), // Green - Staging  
+  Color(0xFFF44336), // Red - Production
+  Color(0xFFFF9800), // Orange - Testing
+  // Secondary Colors
+  Color(0xFF9C27B0), // Purple - QA
+  Color(0xFF00BCD4), // Cyan - Demo
+  Color(0xFFFFEB3B), // Yellow - Local
+  Color(0xFF795548), // Brown - Archive
+  // Additional Colors
+  Color(0xFFE91E63), // Pink
+  Color(0xFF3F51B5), // Indigo
+  Color(0xFF009688), // Teal
+  Color(0xFFCDDC39), // Lime
+];
+
