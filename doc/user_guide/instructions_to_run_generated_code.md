@@ -1230,6 +1230,29 @@ Open Command Prompt (or PowerShell) and type the following command to install th
 ```bash
 pip install requests
 ```
+  💡 **Recommended: Use a Virtual Environment (Optional but Helpful)**
+
+ It is recommended to run API Dash generated Python code inside a virtual environment
+ to avoid dependency conflicts with other Python projects.
+
+ #### Create and activate a virtual environment:
+
+ **macOS / Linux**
+ ```bash
+ python3 -m venv venv
+ source venv/bin/activate
+ ```
+
+ **Windows**
+ ```bash
+ python -m venv venv
+venv\Scripts\activate
+ ```
+
+ After activation, install dependencies:
+ ```bash
+ pip install requests
+`
 
 ### 3. Execute the generated code:
 Once you have Python and `requests` installed, follow these steps to execute the generated code:
