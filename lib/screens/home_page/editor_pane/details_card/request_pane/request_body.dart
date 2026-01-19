@@ -1,3 +1,4 @@
+import 'package:apidash/screens/common_widgets/env_editor.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class EditRequestBody extends ConsumerWidget {
                   ),
                 _ => Padding(
                     padding: kPt5o10,
-                    child: TextFieldEditor(
+                    child: EnvironmentTextFieldEditor(
                       key: Key("$selectedId-body"),
                       fieldKey: "$selectedId-body-editor",
                       initialValue: requestModel?.httpRequestModel?.body,

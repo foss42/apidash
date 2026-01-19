@@ -18,7 +18,12 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
     this.readOnly = false,
-    this.obscureText = false
+    this.obscureText = false,
+    this.expands = false,
+    this.keyboardType,
+    this.maxLines,
+    this.textAlignVertical,
+    this.optionsAlignment = OptionsAlignment.bottom
   }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
@@ -36,6 +41,11 @@ class EnvironmentTriggerField extends StatefulWidget {
   final AutocompleteNoTrigger? autocompleteNoTrigger;
   final bool readOnly;
   final bool obscureText;
+  final TextInputType ? keyboardType;
+  final bool expands;
+  final int ? maxLines;
+  final TextAlignVertical ? textAlignVertical;
+  final OptionsAlignment optionsAlignment;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -84,6 +94,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       textEditingController: controller,
       focusNode: _focusNode,
       optionsWidthFactor: widget.optionsWidthFactor ?? 1,
+      optionsAlignment: widget.optionsAlignment,
       autocompleteTriggers: [
         if (widget.autocompleteNoTrigger != null) widget.autocompleteNoTrigger!,
         AutocompleteTrigger(
@@ -130,8 +141,11 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             _focusNode.unfocus();
           },
           readOnly: widget.readOnly,
-          obscureText: widget.obscureText
-          
+          obscureText: widget.obscureText,
+          keyboardType: widget.keyboardType,
+          expands: widget.expands,
+          maxLines: widget.maxLines,
+          textAlignVertical: widget.textAlignVertical
         );
       },
     );
