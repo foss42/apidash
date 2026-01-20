@@ -140,7 +140,7 @@ API Dash can be downloaded from the links below:
 ## ❤️ Supported by
 
 <a href="https://www.testmu.ai" target="_blank">
-    <img width="250" height="74" alt="lambdatest-logo" src="https://github.com/user-attachments/assets/a40dde8e-6068-4993-98e4-ffb90c082f30" />
+    <img width="200" height="60" alt="lambdatest-logo" src="https://github.com/user-attachments/assets/a40dde8e-6068-4993-98e4-ffb90c082f30" />
 </a>
 
 ## Code Generators
