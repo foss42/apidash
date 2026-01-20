@@ -137,10 +137,10 @@ API Dash can be downloaded from the links below:
 - Window Configuration (Size & Position) is persisted and restored on app start. (Only macOS & Windows)
 
 
-## Supported by ❤️
+## ❤️ Supported by
 
-<a href="https://www.lambdatest.com/?utm_source=apidash&utm_medium=sponsor" target="_blank">
-    <img width="250" height="48" alt="lambdatest-logo" src="https://github.com/user-attachments/assets/c1d9263a-e60e-4161-8d65-fc5ff82fe9f7" />
+<a href="https://www.testmu.ai" target="_blank">
+    <img width="200" height="60" alt="testmu-ai-logo" src="https://github.com/user-attachments/assets/a40dde8e-6068-4993-98e4-ffb90c082f30" />
 </a>
 
 ## Code Generators
