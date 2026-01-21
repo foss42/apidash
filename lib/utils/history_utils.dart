@@ -1,9 +1,17 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+
 import 'convert_utils.dart';
 
 DateTime stripTime(DateTime dateTime) {
-  return DateTime(dateTime.year, dateTime.month, dateTime.day);
+  return DateTime(
+    dateTime.year,
+    dateTime.month,
+    dateTime.day,
+    dateTime.hour,
+    dateTime.minute,
+    dateTime.second,
+  );
 }
 
 RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
@@ -116,11 +124,30 @@ List<HistoryMetaModel> getRequestGroup(
   return requestGroup;
 }
 
+int calculateOptimalBatchSize(int totalRecords) {
+  if (totalRecords < 100) return 50;
+  if (totalRecords < 500) return 80;
+  if (totalRecords < 5000) return 100;
+  return 500;
+}
+
+List<List<String>> createBatches(List<String> items, int batchSize) {
+  return List.generate(
+    (items.length / batchSize).ceil(),
+    (index) => items.sublist(
+      index * batchSize,
+      (index * batchSize + batchSize).clamp(0, items.length),
+    ),
+  );
+}
+
 DateTime? getRetentionDate(HistoryRetentionPeriod? retentionPeriod) {
   DateTime now = DateTime.now();
   DateTime today = stripTime(now);
 
   switch (retentionPeriod) {
+    case HistoryRetentionPeriod.fiveSeconds:
+      return today.subtract(const Duration(seconds: 5));
     case HistoryRetentionPeriod.oneWeek:
       return today.subtract(const Duration(days: 7));
     case HistoryRetentionPeriod.oneMonth:
