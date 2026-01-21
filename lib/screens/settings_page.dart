@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,7 @@ import '../utils/utils.dart';
 import '../widgets/widgets.dart';
 import '../consts.dart';
 import 'common_widgets/common_widgets.dart';
+import 'common_widgets/auth/auth_page.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -153,6 +155,34 @@ class SettingsPage extends ConsumerWidget {
                       .read(settingsProvider.notifier)
                       .update(promptBeforeClosing: value);
                 },
+              ),
+              // Global Authentication
+              ExpansionTile(
+                title: const Text('Global Authentication'),
+                subtitle: const Text(
+                    'Set default authentication for all requests. Can be overridden at environment or request level.'),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    child: AuthPage(
+                      authModel: settings.globalAuthModel ??
+                          const AuthModel(type: APIAuthType.none),
+                      onChangedAuthType: (newType) {
+                        ref.read(settingsProvider.notifier).update(
+                              globalAuthModel: AuthModel(type: newType!),
+                            );
+                      },
+                      updateAuthData: (newAuthModel) {
+                        if (newAuthModel != null) {
+                          ref.read(settingsProvider.notifier).update(
+                                globalAuthModel: newAuthModel,
+                              );
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
               ListTile(
                 hoverColor: kColorTransparent,

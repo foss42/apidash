@@ -2,6 +2,7 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 
@@ -95,6 +96,7 @@ class EnvironmentsStateNotifier
             id: environmentModelFromJson.id,
             name: environmentModelFromJson.name,
             values: environmentModelFromJson.values,
+            authModel: environmentModelFromJson.authModel,
           );
           environmentsMap[environmentId] = environmentModel;
         }
@@ -126,11 +128,13 @@ class EnvironmentsStateNotifier
     String id, {
     String? name,
     List<EnvironmentVariableModel>? values,
+    AuthModel? authModel,
   }) {
     final environment = state![id]!;
     final updatedEnvironment = environment.copyWith(
       name: name ?? environment.name,
       values: values ?? environment.values,
+      authModel: authModel ?? environment.authModel,
     );
     state = {
       ...state!,

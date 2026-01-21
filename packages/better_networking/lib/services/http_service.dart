@@ -26,6 +26,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  AuthModel? environmentAuth,
+  AuthModel? globalAuth,
 }) async {
   final authData = requestModel.authModel;
   if (httpClientManager.wasRequestCancelled(requestId)) {
@@ -37,7 +39,12 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
 
   try {
     if (authData != null && authData.type != APIAuthType.none) {
-      authenticatedRequestModel = await handleAuth(requestModel, authData);
+      authenticatedRequestModel = await handleAuth(
+        requestModel,
+        authData,
+        environmentAuth: environmentAuth,
+        globalAuth: globalAuth,
+      );
     }
   } catch (e) {
     return (null, null, e.toString());
@@ -161,6 +168,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  AuthModel? environmentAuth,
+  AuthModel? globalAuth,
 }) async {
   final stream = await streamHttpRequest(
     requestId,
@@ -168,6 +177,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     requestModel,
     defaultUriScheme: defaultUriScheme,
     noSSL: noSSL,
+    environmentAuth: environmentAuth,
+    globalAuth: globalAuth,
   );
   final output = await stream.first;
   return (output?.$2, output?.$3, output?.$4);
@@ -186,16 +197,16 @@ http.Request prepareHttpRequest({
 }) {
   var request = http.Request(method, url);
   if (headers.getValueContentType() != null) {
-    request.headers[HttpHeaders.contentTypeHeader] = headers
-        .getValueContentType()!;
+    request.headers[HttpHeaders.contentTypeHeader] =
+        headers.getValueContentType()!;
     if (!overrideContentType) {
       headers.removeKeyContentType();
     }
   }
   if (body != null) {
     request.body = body;
-    headers[HttpHeaders.contentLengthHeader] = request.bodyBytes.length
-        .toString();
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
   }
   request.headers.addAll(headers);
   return request;
@@ -207,6 +218,8 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
   HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  AuthModel? environmentAuth,
+  AuthModel? globalAuth,
 }) async {
   final authData = httpRequestModel.authModel;
   final controller = StreamController<HttpStreamOutput>();
@@ -258,6 +271,8 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
       authenticatedHttpRequestModel = await handleAuth(
         httpRequestModel,
         authData,
+        environmentAuth: environmentAuth,
+        globalAuth: globalAuth,
       );
     }
   } catch (e) {

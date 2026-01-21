@@ -1,7 +1,6 @@
 name: apidash_core
 description: "API Dash Core"
 version: 0.0.1
-homepage:
 publish_to: none
 
 environment:
@@ -11,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  better_networking:
+    path: ../better_networking
   curl_parser:
     path: ../curl_parser
   freezed_annotation: ^3.0.0

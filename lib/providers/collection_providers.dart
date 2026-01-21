@@ -387,12 +387,18 @@ class CollectionStateNotifier
     };
     bool streamingMode = true; //Default: Streaming First
 
+    // Retrieve environment and global auth for cascading auth resolution
+    final environmentAuth = originalEnvironmentModel?.authModel;
+    final globalAuth = ref.read(settingsProvider).globalAuthModel;
+
     final stream = await streamHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      environmentAuth: environmentAuth,
+      globalAuth: globalAuth,
     );
 
     HttpResponseModel? httpResponseModel;

@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
@@ -35,6 +36,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    AuthModel? globalAuthModel,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -51,6 +53,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      globalAuthModel: globalAuthModel,
     );
     await setSettingsToSharedPrefs(state);
   }

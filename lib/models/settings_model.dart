@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -20,6 +21,7 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.globalAuthModel,
   });
 
   final bool isDark;
@@ -36,6 +38,7 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
+  final AuthModel? globalAuthModel;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -52,6 +55,7 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    AuthModel? globalAuthModel,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -70,6 +74,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+      globalAuthModel: globalAuthModel ?? this.globalAuthModel,
     );
   }
 
@@ -91,6 +96,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      globalAuthModel: globalAuthModel,
     );
   }
 
@@ -149,6 +155,10 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+    final globalAuthModel = data["globalAuthModel"] == null
+        ? null
+        : AuthModel.fromJson(
+            Map<String, dynamic>.from(data["globalAuthModel"]));
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -167,6 +177,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      globalAuthModel: globalAuthModel,
     );
   }
 
@@ -188,6 +199,7 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "globalAuthModel": globalAuthModel?.toJson(),
     };
   }
 
@@ -214,7 +226,8 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
-        mapEquals(other.defaultAIModel, defaultAIModel);
+        mapEquals(other.defaultAIModel, defaultAIModel) &&
+        other.globalAuthModel == globalAuthModel;
   }
 
   @override
@@ -235,6 +248,7 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      globalAuthModel,
     );
   }
 }

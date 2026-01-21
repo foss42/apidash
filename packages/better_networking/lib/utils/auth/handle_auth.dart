@@ -5,15 +5,25 @@ import 'package:better_networking/utils/auth/jwt_auth_utils.dart';
 import 'package:better_networking/utils/auth/digest_auth_utils.dart';
 import 'package:better_networking/better_networking.dart';
 import 'package:better_networking/utils/auth/oauth2_utils.dart';
+import 'package:better_networking/utils/auth/auth_resolver.dart';
 import 'package:flutter/foundation.dart';
 
 import 'oauth1_utils.dart';
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
-  AuthModel? authData,
-) async {
-  if (authData == null || authData.type == APIAuthType.none) {
+  AuthModel? authData, {
+  AuthModel? environmentAuth,
+  AuthModel? globalAuth,
+}) async {
+  // Resolve auth using cascading priority
+  final resolvedAuth = resolveAuth(
+    requestAuth: authData,
+    environmentAuth: environmentAuth,
+    globalAuth: globalAuth,
+  );
+
+  if (resolvedAuth == null || resolvedAuth.type == APIAuthType.none) {
     return httpRequestModel;
   }
 
@@ -28,10 +38,10 @@ Future<HttpRequestModel> handleAuth(
     httpRequestModel.isParamEnabledList ?? [],
   );
 
-  switch (authData.type) {
+  switch (resolvedAuth.type) {
     case APIAuthType.basic:
-      if (authData.basic != null) {
-        final basicAuth = authData.basic!;
+      if (resolvedAuth.basic != null) {
+        final basicAuth = resolvedAuth.basic!;
         final encoded = base64Encode(
           utf8.encode('${basicAuth.username}:${basicAuth.password}'),
         );
@@ -43,8 +53,8 @@ Future<HttpRequestModel> handleAuth(
       break;
 
     case APIAuthType.bearer:
-      if (authData.bearer != null) {
-        final bearerAuth = authData.bearer!;
+      if (resolvedAuth.bearer != null) {
+        final bearerAuth = resolvedAuth.bearer!;
         updatedHeaders.add(
           NameValueModel(
             name: 'Authorization',
@@ -56,8 +66,8 @@ Future<HttpRequestModel> handleAuth(
       break;
 
     case APIAuthType.jwt:
-      if (authData.jwt != null) {
-        final jwtAuth = authData.jwt!;
+      if (resolvedAuth.jwt != null) {
+        final jwtAuth = resolvedAuth.jwt!;
         final jwtToken = generateJWT(jwtAuth);
 
         if (jwtAuth.addTokenTo == 'header') {
@@ -79,8 +89,8 @@ Future<HttpRequestModel> handleAuth(
       break;
 
     case APIAuthType.apiKey:
-      if (authData.apikey != null) {
-        final apiKeyAuth = authData.apikey!;
+      if (resolvedAuth.apikey != null) {
+        final apiKeyAuth = resolvedAuth.apikey!;
         if (apiKeyAuth.location == 'header') {
           updatedHeaders.add(
             NameValueModel(name: apiKeyAuth.name, value: apiKeyAuth.key),
@@ -98,8 +108,8 @@ Future<HttpRequestModel> handleAuth(
     case APIAuthType.none:
       break;
     case APIAuthType.digest:
-      if (authData.digest != null) {
-        final digestAuthModel = authData.digest!;
+      if (resolvedAuth.digest != null) {
+        final digestAuthModel = resolvedAuth.digest!;
 
         if (digestAuthModel.realm.isNotEmpty &&
             digestAuthModel.nonce.isNotEmpty) {
@@ -158,8 +168,8 @@ Future<HttpRequestModel> handleAuth(
       }
       break;
     case APIAuthType.oauth1:
-      if (authData.oauth1 != null) {
-        final oauth1Model = authData.oauth1!;
+      if (resolvedAuth.oauth1 != null) {
+        final oauth1Model = resolvedAuth.oauth1!;
 
         try {
           final client = generateOAuth1AuthHeader(
@@ -177,7 +187,7 @@ Future<HttpRequestModel> handleAuth(
       }
       break;
     case APIAuthType.oauth2:
-      final oauth2 = authData.oauth2;
+      final oauth2 = resolvedAuth.oauth2;
 
       if (oauth2 == null) {
         throw Exception("Failed to get OAuth2 Data");

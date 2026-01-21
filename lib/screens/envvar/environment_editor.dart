@@ -6,12 +6,33 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 import './editor_pane/variables_pane.dart';
+import './editor_pane/environment_auth_pane.dart';
 
-class EnvironmentEditor extends ConsumerWidget {
+class EnvironmentEditor extends ConsumerStatefulWidget {
   const EnvironmentEditor({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EnvironmentEditor> createState() => _EnvironmentEditorState();
+}
+
+class _EnvironmentEditorState extends ConsumerState<EnvironmentEditor>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final id = ref.watch(selectedEnvironmentIdStateProvider);
     final name = ref
         .watch(selectedEnvironmentModelProvider.select((value) => value?.name));
@@ -66,46 +87,88 @@ class EnvironmentEditor extends ConsumerWidget {
                 )
               : const SizedBox.shrink(),
           kVSpacer5,
+          // Tab Bar
+          Container(
+            margin: context.isMediumWindow
+                ? null
+                : const EdgeInsets.symmetric(horizontal: 4),
+            child: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(text: 'Variables'),
+                Tab(text: 'Authentication'),
+              ],
+            ),
+          ),
+          kVSpacer10,
+          // Tab Bar View
           Expanded(
-            child: Container(
-              margin: context.isMediumWindow ? null : kP4,
-              child: Card(
-                margin: EdgeInsets.zero,
-                color: kColorTransparent,
-                surfaceTintColor: kColorTransparent,
-                shape: context.isMediumWindow
-                    ? null
-                    : RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                        ),
-                        borderRadius: kBorderRadius12,
-                      ),
-                elevation: 0,
-                child: const Padding(
-                  padding: kPv6,
-                  child: Column(
-                    children: [
-                      kHSpacer40,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Variables Tab
+                Container(
+                  margin: context.isMediumWindow ? null : kP4,
+                  child: Card(
+                    margin: EdgeInsets.zero,
+                    color: kColorTransparent,
+                    surfaceTintColor: kColorTransparent,
+                    shape: context.isMediumWindow
+                        ? null
+                        : RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                            borderRadius: kBorderRadius12,
+                          ),
+                    elevation: 0,
+                    child: const Padding(
+                      padding: kPv6,
+                      child: Column(
                         children: [
-                          SizedBox(width: 30),
-                          Text("Variable"),
-                          SizedBox(width: 30),
-                          Text("Value"),
-                          SizedBox(width: 40),
+                          kHSpacer40,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(width: 30),
+                              Text("Variable"),
+                              SizedBox(width: 30),
+                              Text("Value"),
+                              SizedBox(width: 40),
+                            ],
+                          ),
+                          kHSpacer40,
+                          Divider(),
+                          Expanded(child: EditEnvironmentVariables())
                         ],
                       ),
-                      kHSpacer40,
-                      Divider(),
-                      Expanded(child: EditEnvironmentVariables())
-                    ],
+                    ),
                   ),
                 ),
-              ),
+                // Authentication Tab
+                Container(
+                  margin: context.isMediumWindow ? null : kP4,
+                  child: Card(
+                    margin: EdgeInsets.zero,
+                    color: kColorTransparent,
+                    surfaceTintColor: kColorTransparent,
+                    shape: context.isMediumWindow
+                        ? null
+                        : RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                            ),
+                            borderRadius: kBorderRadius12,
+                          ),
+                    elevation: 0,
+                    child: const EnvironmentAuthPane(),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
