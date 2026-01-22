@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:better_networking/models/proxy_settings_model.dart' as bn;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -404,14 +404,7 @@ class CollectionStateNotifier
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
-      proxySettings: (settings.networkProxy != null)
-          ? bn.ProxySettings(
-              host: settings.networkProxy!.host,
-              port: settings.networkProxy!.port,
-              username: settings.networkProxy!.username,
-              password: settings.networkProxy!.password,
-            )
-          : null,
+      proxySettings: settings.networkProxy,
     );
 
     HttpResponseModel? httpResponseModel;
