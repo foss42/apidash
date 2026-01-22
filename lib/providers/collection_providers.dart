@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/models/proxy_settings_model.dart' as bn;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
@@ -387,12 +389,31 @@ class CollectionStateNotifier
     };
     bool streamingMode = true; //Default: Streaming First
 
+    final settings = ref.read(settingsProvider);
+    final proxyUriPrefix = settings.proxyUriPrefix;
+
+    // Gateway Mode: Always prepend if prefix is present
+    if (proxyUriPrefix != null && proxyUriPrefix.isNotEmpty) {
+      substitutedHttpRequestModel = substitutedHttpRequestModel.copyWith(
+        url: "$proxyUriPrefix${substitutedHttpRequestModel.url}",
+      );
+    }
+
     final stream = await streamHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      // Pass networkProxy only (proxyUriPrefix is handled via URL modification)
+      proxySettings: (settings.networkProxy != null)
+          ? bn.ProxySettings(
+              host: settings.networkProxy!.host,
+              port: settings.networkProxy!.port,
+              username: settings.networkProxy!.username,
+              password: settings.networkProxy!.password,
+            )
+          : null,
     );
 
     HttpResponseModel? httpResponseModel;
