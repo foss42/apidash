@@ -41,9 +41,7 @@ class HttpClientManager {
   HttpClientManager._internal();
 
   http.Client createClient(String requestId,
-      {bool noSSL = false,
-      String? proxyUrl,
-      ProxySettings? proxySettings}) {
+      {bool noSSL = false, ProxySettings? proxySettings}) {
     if (kIsWeb) {
       final client = http.Client();
       _clients[requestId] = client;
