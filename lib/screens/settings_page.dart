@@ -117,7 +117,7 @@ class SettingsPage extends ConsumerWidget {
                     )
                   : ListTile(
                       title: const Text("Network Proxy"),
-                      subtitle: Text(settings.networkProxy != null
+                      subtitle: Text(settings.networkProxy != null && settings.networkProxy!.host.isNotEmpty && settings.networkProxy!.port.isNotEmpty
                           ? "Enabled (${settings.networkProxy!.host}:${settings.networkProxy!.port})"
                           : "Configure Network Proxy"),
                       trailing: FilledButton.tonal(
