@@ -392,7 +392,6 @@ class CollectionStateNotifier
     final settings = ref.read(settingsProvider);
     final proxyUriPrefix = settings.proxyUriPrefix;
 
-    // Gateway Mode: Always prepend if prefix is present
     if (proxyUriPrefix != null && proxyUriPrefix.isNotEmpty) {
       substitutedHttpRequestModel = substitutedHttpRequestModel.copyWith(
         url: "$proxyUriPrefix${substitutedHttpRequestModel.url}",
@@ -405,7 +404,6 @@ class CollectionStateNotifier
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
-      // Pass networkProxy only (proxyUriPrefix is handled via URL modification)
       proxySettings: (settings.networkProxy != null)
           ? bn.ProxySettings(
               host: settings.networkProxy!.host,

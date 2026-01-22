@@ -56,9 +56,9 @@ class _ProxySettingsDialogState extends ConsumerState<ProxySettingsDialog> {
   }
 
   void _clearSettings() {
-    _updateProxySettings(null);
+    _updateProxySettings(const ProxySettings(host: '', port: ''));
     Navigator.of(context).pop();
-  }
+  } 
 
   void _updateProxySettings(ProxySettings? newProxy) {
     ref.read(settingsProvider.notifier).update(networkProxy: newProxy);

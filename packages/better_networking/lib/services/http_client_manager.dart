@@ -54,7 +54,7 @@ class HttpClientManager {
         ioClient.badCertificateCallback =
             (X509Certificate cert, String host, int port) => true;
       }
-      if (proxySettings != null) {
+      if (proxySettings != null && proxySettings.host.isNotEmpty) {
         ioClient.findProxy = (uri) {
           return "PROXY ${proxySettings.host}:${proxySettings.port}";
         };
@@ -74,11 +74,6 @@ class HttpClientManager {
             return Future.value(true);
           };
         }
-      } else if (proxyUrl != null && proxyUrl.isNotEmpty) {
-        // Fallback or Legacy (though logic is separated now)
-        ioClient.findProxy = (uri) {
-          return "PROXY $proxyUrl";
-        };
       }
       final client = IOClient(ioClient);
       _clients[requestId] = client;
