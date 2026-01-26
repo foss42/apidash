@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_js/flutter_js.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../services/js_runtime/app_js_runtime.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
 import '../providers/terminal_providers.dart';
@@ -41,12 +41,12 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   JsRuntimeNotifier(this.ref) : super(const JsRuntimeState());
 
   final Ref ref;
-  late final JavascriptRuntime _runtime;
+  late final AppJsRuntime _runtime;
   String? _currentRequestId;
 
   void _initialize() {
     if (state.initialized) return;
-    _runtime = getJavascriptRuntime();
+    _runtime = getAppJavascriptRuntime();
     _setupJsBridge();
     state = state.copyWith(initialized: true);
   }
@@ -64,7 +64,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     super.dispose();
   }
 
-  JsEvalResult evaluate(String code) {
+  AppJsEvalResult evaluate(String code) {
     // If disposed, prevent usage
     if (!mounted) {
       throw StateError('JsRuntimeNotifier used after dispose');
