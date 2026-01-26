@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/dashbot/utils/utils.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/constants.dart';
 import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
@@ -116,6 +119,25 @@ class URLTextField extends ConsumerWidget {
         _ => requestModel.httpRequestModel?.url,
       },
       onChanged: (value) {
+        if (value.trim().startsWith('curl ')) {
+          final windowNotifier =
+              ref.read(dashbotWindowNotifierProvider.notifier);
+          final windowState = ref.read(dashbotWindowNotifierProvider);
+          if (windowState.isPopped) {
+            windowNotifier.togglePopped();
+          }
+          if (!windowState.isActive) {
+            showDashbotWindow(context, ref);
+          }
+          ref.read(dashbotActiveRouteProvider.notifier).goToChat();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(chatViewmodelProvider.notifier).sendMessage(
+                  text: value.trim(),
+                  type: ChatMessageType.importCurl,
+                );
+          });
+          return;
+        }
         if (requestModel.apiType == APIType.ai) {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
