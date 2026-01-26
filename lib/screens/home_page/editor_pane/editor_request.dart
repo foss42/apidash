@@ -26,7 +26,7 @@ class RequestEditor extends StatelessWidget {
             ),
           )
         : Padding(
-            padding: kIsMacOS || kIsWindows ? kPt28o8 : kP8,
+            padding: kIsMacOS ? kPt28o8 : kP8,
             child: const Column(
               children: [
                 RequestEditorTopBar(),
