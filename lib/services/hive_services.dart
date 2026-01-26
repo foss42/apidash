@@ -112,7 +112,8 @@ class HiveHandler {
     dashBotBox = Hive.lazyBox(kDashBotBox);
   }
 
-  dynamic getIds() => dataBox.get(kKeyDataBoxIds);
+  List<String>? getIds() =>
+      (dataBox.get(kKeyDataBoxIds) as List?)?.cast<String>();
   Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
 
   dynamic getRequestModel(String id) => dataBox.get(id);
@@ -122,7 +123,8 @@ class HiveHandler {
 
   void delete(String key) => dataBox.delete(key);
 
-  dynamic getEnvironmentIds() => environmentBox.get(kKeyEnvironmentBoxIds);
+  List<String>? getEnvironmentIds() =>
+      (environmentBox.get(kKeyEnvironmentBoxIds) as List?)?.cast<String>();
   Future<void> setEnvironmentIds(List<String>? ids) =>
       environmentBox.put(kKeyEnvironmentBoxIds, ids);
 
@@ -133,7 +135,8 @@ class HiveHandler {
 
   Future<void> deleteEnvironment(String id) => environmentBox.delete(id);
 
-  dynamic getHistoryIds() => historyMetaBox.get(kHistoryBoxIds);
+  List<String>? getHistoryIds() =>
+      (historyMetaBox.get(kHistoryBoxIds) as List?)?.cast<String>();
   Future<void> setHistoryIds(List<String>? ids) =>
       historyMetaBox.put(kHistoryBoxIds, ids);
 
@@ -173,7 +176,6 @@ class HiveHandler {
   Future<void> removeUnused() async {
     var ids = getIds();
     if (ids != null) {
-      ids = ids as List;
       for (var key in dataBox.keys.toList()) {
         if (key != kKeyDataBoxIds && !ids.contains(key)) {
           await dataBox.delete(key);
@@ -182,7 +184,6 @@ class HiveHandler {
     }
     var environmentIds = getEnvironmentIds();
     if (environmentIds != null) {
-      environmentIds = environmentIds as List;
       for (var key in environmentBox.keys.toList()) {
         if (key != kKeyEnvironmentBoxIds && !environmentIds.contains(key)) {
           await environmentBox.delete(key);
