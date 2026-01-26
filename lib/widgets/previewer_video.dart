@@ -1,24 +1,28 @@
 import 'dart:io';
 import 'package:apidash/consts.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:fvp/fvp.dart' as fvp;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 
-class VideoPreviewer extends StatefulWidget {
+class VideoPreviewer extends ConsumerStatefulWidget {
   const VideoPreviewer({
     super.key,
     required this.videoBytes,
+    this.isPartOfHistory = false,
   });
 
   final Uint8List videoBytes;
+  final bool isPartOfHistory;
 
   @override
-  State<VideoPreviewer> createState() => _VideoPreviewerState();
+  ConsumerState<VideoPreviewer> createState() => _VideoPreviewerState();
 }
 
-class _VideoPreviewerState extends State<VideoPreviewer> {
+class _VideoPreviewerState extends ConsumerState<VideoPreviewer> {
   late VideoPlayerController _videoController;
   late Future<void> _initializeVideoPlayerFuture;
   bool _isPlaying = false;
@@ -51,6 +55,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
       if (mounted) {
         setState(() {
           _videoController.play();
+          _isPlaying = true; // Sync state
           _videoController.setLooping(true);
         });
       }
@@ -62,6 +67,26 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
 
   @override
   Widget build(BuildContext context) {
+    // Monitor tab index to pause video when not visible
+    final navRailIndex = ref.watch(navRailIndexStateProvider);
+    final isVisible = widget.isPartOfHistory
+        ? navRailIndex == 2 // History tab
+        : navRailIndex == 0; // Requests tab
+
+    if (!isVisible &&
+        _videoController.value.isInitialized &&
+        _videoController.value.isPlaying) {
+      _videoController.pause();
+      // We don't update _isPlaying here so that if the user returns,
+      // we could potentially resume if we wanted to, or at least
+      // the UI reflects that it was playing.
+      // However, for this bug fix, strictly ensuring silence is key.
+      // Let's update UI state to match reality.
+      setState(() {
+        _isPlaying = false;
+      });
+    }
+
     final iconColor = Theme.of(context).iconTheme.color;
     final progressBarColors = VideoProgressColors(
       playedColor: iconColor!,
@@ -140,7 +165,9 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
     if (!kIsRunningTests) {
       Future.delayed(const Duration(seconds: 1), () async {
         try {
-          await _tempVideoFile.delete();
+          if (await _tempVideoFile.exists()) {
+            await _tempVideoFile.delete();
+          }
         } catch (e) {
           debugPrint("VideoPreviewer dispose(): $e");
           return;
