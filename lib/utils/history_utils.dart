@@ -16,6 +16,7 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     aiRequestModel: model.aiRequestModel,
     httpRequestModel: model.httpRequestModel,
     httpResponseModel: model.httpResponseModel,
+    webSocketRequestModel: model.webSocketRequestModel,
   );
 }
 

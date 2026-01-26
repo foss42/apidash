@@ -36,6 +36,13 @@ class CodePane extends ConsumerWidget {
       );
     }
 
+    if (selectedRequestModel?.apiType == APIType.websocket) {
+      return const ErrorMessage(
+        message:
+            "Code generation for WebSocket Requests is currently not available.",
+      );
+    }
+
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 

@@ -34,6 +34,10 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           ? null
           : AIRequestModel.fromJson(
               Map<String, Object?>.from(json['aiRequestModel'] as Map)),
+      webSocketRequestModel: json['webSocketRequestModel'] == null
+          ? null
+          : WebSocketRequestModel.fromJson(
+              Map<String, dynamic>.from(json['webSocketRequestModel'] as Map)),
     );
 
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
@@ -49,10 +53,12 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'preRequestScript': instance.preRequestScript,
       'postRequestScript': instance.postRequestScript,
       'aiRequestModel': instance.aiRequestModel?.toJson(),
+      'webSocketRequestModel': instance.webSocketRequestModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {
   APIType.rest: 'rest',
   APIType.ai: 'ai',
   APIType.graphql: 'graphql',
+  APIType.websocket: 'websocket',
 };
