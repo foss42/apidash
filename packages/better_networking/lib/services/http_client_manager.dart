@@ -3,11 +3,26 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
-http.Client createHttpClientWithNoSSL() {
-  var ioClient = HttpClient()
-    ..badCertificateCallback = (X509Certificate cert, String host, int port) =>
-        true;
+http.Client createHttpClientWithNoSSL({Duration? timeout}) {
+  final ioClient = HttpClient()
+    ..badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+
+  if (timeout != null) {
+    ioClient.connectionTimeout = timeout;
+  }
+
   return IOClient(ioClient);
+}
+
+HttpClient _createBaseHttpClient({Duration? timeout}) {
+  final client = HttpClient();
+
+  if (timeout != null) {
+    client.connectionTimeout = timeout;
+  }
+
+  return client;
 }
 
 class _JsonAcceptClient extends http.BaseClient {
@@ -39,10 +54,24 @@ class HttpClientManager {
 
   HttpClientManager._internal();
 
-  http.Client createClient(String requestId, {bool noSSL = false}) {
-    final client = (noSSL && !kIsWeb)
-        ? createHttpClientWithNoSSL()
-        : http.Client();
+  http.Client createClient(
+    String requestId, {
+    bool noSSL = false,
+    Duration? timeout,
+  }) {
+    final http.Client client;
+
+    if (!kIsWeb) {
+      if (noSSL) {
+        client = createHttpClientWithNoSSL(timeout: timeout);
+      } else {
+        client = IOClient(_createBaseHttpClient(timeout: timeout));
+      }
+    } else {
+      // Web does not support HttpClient.connectionTimeout
+      client = http.Client();
+    }
+
     _clients[requestId] = client;
     return client;
   }
@@ -81,10 +110,19 @@ class HttpClientManager {
   http.Client createClientWithJsonAccept(
     String requestId, {
     bool noSSL = false,
+    Duration? timeout,
   }) {
-    final baseClient = (noSSL && !kIsWeb)
-        ? createHttpClientWithNoSSL()
-        : http.Client();
+    final http.Client baseClient;
+
+    if (!kIsWeb) {
+      if (noSSL) {
+        baseClient = createHttpClientWithNoSSL(timeout: timeout);
+      } else {
+        baseClient = IOClient(_createBaseHttpClient(timeout: timeout));
+      }
+    } else {
+      baseClient = http.Client();
+    }
 
     final client = _JsonAcceptClient(baseClient);
     _clients[requestId] = client;
