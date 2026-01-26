@@ -90,7 +90,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.5
-  freezed: ^2.5.7
+  freezed: ^3.2.3
   json_serializable: ^6.9.4
   integration_test:
     sdk: flutter
