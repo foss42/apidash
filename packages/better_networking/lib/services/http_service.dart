@@ -31,7 +31,12 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
   if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
   }
-  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+
+  final client = httpClientManager.createClient(
+    requestId,
+    noSSL: noSSL,
+    timeout: kDefaultRequestTimeout,
+  );
 
   HttpRequestModel authenticatedRequestModel = requestModel.copyWith();
 
@@ -92,9 +97,9 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
                 );
               }
             }
-            http.StreamedResponse multiPartResponse = await client.send(
-              multiPartRequest,
-            );
+            http.StreamedResponse multiPartResponse = await client
+                .send(multiPartRequest)
+                .timeout(kDefaultRequestTimeout);
 
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
@@ -104,10 +109,14 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
         }
         switch (authenticatedRequestModel.method) {
           case HTTPVerb.get:
-            response = await client.get(requestUrl, headers: headers);
+            response = await client
+                .get(requestUrl, headers: headers)
+                .timeout(kDefaultRequestTimeout);
             break;
           case HTTPVerb.head:
-            response = await client.head(requestUrl, headers: headers);
+            response = await client
+                .head(requestUrl, headers: headers)
+                .timeout(kDefaultRequestTimeout);
             break;
           case HTTPVerb.post:
           case HTTPVerb.put:
@@ -121,7 +130,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
               body: body,
               overrideContentType: overrideContentType,
             );
-            final streamed = await client.send(request);
+            final streamed =
+                await client.send(request).timeout(kDefaultRequestTimeout);
             response = await http.Response.fromStream(streamed);
             break;
         }
@@ -138,7 +148,9 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
             }
           }
         }
-        response = await client.post(requestUrl, headers: headers, body: body);
+        response = await client
+            .post(requestUrl, headers: headers, body: body)
+            .timeout(kDefaultRequestTimeout);
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
@@ -186,16 +198,16 @@ http.Request prepareHttpRequest({
 }) {
   var request = http.Request(method, url);
   if (headers.getValueContentType() != null) {
-    request.headers[HttpHeaders.contentTypeHeader] = headers
-        .getValueContentType()!;
+    request.headers[HttpHeaders.contentTypeHeader] =
+        headers.getValueContentType()!;
     if (!overrideContentType) {
       headers.removeKeyContentType();
     }
   }
   if (body != null) {
     request.body = body;
-    headers[HttpHeaders.contentLengthHeader] = request.bodyBytes.length
-        .toString();
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
   }
   request.headers.addAll(headers);
   return request;
@@ -249,7 +261,11 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     return controller.stream;
   }
 
-  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+  final client = httpClientManager.createClient(
+    requestId,
+    noSSL: noSSL,
+    timeout: kDefaultRequestTimeout,
+  );
 
   HttpRequestModel authenticatedHttpRequestModel = httpRequestModel.copyWith();
 
@@ -361,7 +377,8 @@ Future<http.StreamedResponse> makeStreamedRequest({
         );
       }
     }
-    streamedResponse = await client.send(multipart);
+    streamedResponse =
+        await client.send(multipart).timeout(kDefaultRequestTimeout);
   } else if (apiType == APIType.graphql) {
     // Handling GraphQL Requests
     var requestBody = getGraphQLBody(requestModel);
@@ -379,7 +396,8 @@ Future<http.StreamedResponse> makeStreamedRequest({
     final request = http.Request('POST', uri)
       ..headers.addAll(headers)
       ..body = body ?? '';
-    streamedResponse = await client.send(request);
+    streamedResponse =
+        await client.send(request).timeout(kDefaultRequestTimeout);
   } else {
     //Handling regular REST Requests
     String? body;
@@ -400,7 +418,8 @@ Future<http.StreamedResponse> makeStreamedRequest({
       body: body,
       overrideContentType: overrideContentType,
     );
-    streamedResponse = await client.send(request);
+    streamedResponse =
+        await client.send(request).timeout(kDefaultRequestTimeout);
   }
   return streamedResponse;
 }
