@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
+import 'expanded_url_editor.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -94,13 +95,20 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
   }
 }
 
-class URLTextField extends ConsumerWidget {
+class URLTextField extends ConsumerStatefulWidget {
   const URLTextField({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<URLTextField> createState() => _URLTextFieldState();
+}
+
+class _URLTextFieldState extends ConsumerState<URLTextField> {
+  bool _isNavigating = false;
+
+  @override
+  Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.url));
@@ -109,24 +117,54 @@ class URLTextField extends ConsumerWidget {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
-    return EnvURLField(
-      selectedId: selectedId,
-      initialValue: switch (requestModel.apiType) {
-        APIType.ai => requestModel.aiRequestModel?.url,
-        _ => requestModel.httpRequestModel?.url,
-      },
-      onChanged: (value) {
-        if (requestModel.apiType == APIType.ai) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
-              aiRequestModel:
-                  requestModel.aiRequestModel?.copyWith(url: value));
-        } else {
-          ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+    
+    final initialValue = switch (requestModel.apiType) {
+      APIType.ai => requestModel.aiRequestModel?.url,
+      _ => requestModel.httpRequestModel?.url,
+    };
+
+    void updateUrl(String value) {
+      if (requestModel.apiType == APIType.ai) {
+        ref.read(collectionStateNotifierProvider.notifier).update(
+            aiRequestModel:
+                requestModel.aiRequestModel?.copyWith(url: value));
+      } else {
+        ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+      }
+    }
+
+    return GestureDetector(
+      onScaleUpdate: (details) async {
+        if (details.scale > 1.5 && !_isNavigating) {
+          _isNavigating = true;
+          // HapticFeedback.mediumImpact(); // Optional: Add haptic feedback
+          await showDialog(
+            context: context,
+            builder: (context) => ExpandedURLEditor(
+              selectedId: selectedId,
+              initialValue: initialValue,
+              onChanged: updateUrl,
+              onFieldSubmitted: (value) {
+                 updateUrl(value);
+                 ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+              },
+            ),
+          );
+          if (mounted) {
+            setState(() {
+              _isNavigating = false;
+            });
+          }
         }
       },
-      onFieldSubmitted: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
-      },
+      child: EnvURLField(
+        selectedId: selectedId,
+        initialValue: initialValue,
+        onChanged: updateUrl,
+        onFieldSubmitted: (value) {
+          ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        },
+      ),
     );
   }
 }
