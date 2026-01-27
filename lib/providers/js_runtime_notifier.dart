@@ -44,6 +44,24 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   late final JavascriptRuntime _runtime;
   String? _currentRequestId;
 
+  // Modern 2025 security: Simple pattern-based validation
+  static const _maxScriptSize = 50000; // 50KB limit
+  static final _dangerousPatterns = RegExp(
+    r'eval\s*\(|Function\s*\(|constructor\s*\[|__proto__',
+    caseSensitive: false,
+  );
+
+  /// Validate script before execution (zero-trust approach)
+  String? _validateScript(String script) {
+    if (script.length > _maxScriptSize) {
+      return 'Script too large (max 50KB)';
+    }
+    if (_dangerousPatterns.hasMatch(script)) {
+      return 'Script contains unsafe patterns';
+    }
+    return null; // Valid
+  }
+
   void _initialize() {
     if (state.initialized) return;
     _runtime = getJavascriptRuntime();
@@ -100,7 +118,26 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     }
 
     final httpRequest = currentRequestModel.httpRequestModel;
-    final userScript = currentRequestModel.preRequestScript;
+    final userScript = currentRequestModel.preRequestScript!;
+    
+    // Security: Validate user script before execution
+    final validationError = _validateScript(userScript);
+    if (validationError != null) {
+      final term = ref.read(terminalStateProvider.notifier);
+      term.logJs(
+        level: 'error',
+        args: ['Script validation failed', validationError],
+        context: 'preRequest',
+        contextRequestId: requestId,
+      );
+      state = state.copyWith(lastError: validationError);
+      // Return original request without executing the script
+      return (
+        updatedRequest: httpRequest!,
+        updatedEnvironment: activeEnvironment,
+      );
+    }
+    
     final requestJson = jsonEncode(httpRequest?.toJson());
     final environmentJson = jsonEncode(activeEnvironment);
     final dataInjection = '''
@@ -190,7 +227,26 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
 
     final httpRequest = currentRequestModel.httpRequestModel; // for future use
     final httpResponse = currentRequestModel.httpResponseModel;
-    final userScript = currentRequestModel.postRequestScript;
+    final userScript = currentRequestModel.postRequestScript!;
+    
+    // Security: Validate user script before execution
+    final validationError = _validateScript(userScript);
+    if (validationError != null) {
+      final term = ref.read(terminalStateProvider.notifier);
+      term.logJs(
+        level: 'error',
+        args: ['Script validation failed', validationError],
+        context: 'postResponse',
+        contextRequestId: requestId,
+      );
+      state = state.copyWith(lastError: validationError);
+      // Return original response without executing the script
+      return (
+        updatedResponse: httpResponse!,
+        updatedEnvironment: activeEnvironment,
+      );
+    }
+    
     final requestJson = jsonEncode(httpRequest?.toJson());
     final responseJson = jsonEncode(httpResponse?.toJson());
     final environmentJson = jsonEncode(activeEnvironment);
