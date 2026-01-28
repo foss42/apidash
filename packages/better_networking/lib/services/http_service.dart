@@ -161,6 +161,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  ProxySettings? proxySettings,
 }) async {
   final stream = await streamHttpRequest(
     requestId,
@@ -168,6 +169,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     requestModel,
     defaultUriScheme: defaultUriScheme,
     noSSL: noSSL,
+    proxySettings: proxySettings,
   );
   final output = await stream.first;
   return (output?.$2, output?.$3, output?.$4);
@@ -207,6 +209,8 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
   HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+
+  ProxySettings? proxySettings,
 }) async {
   final authData = httpRequestModel.authModel;
   final controller = StreamController<HttpStreamOutput>();
@@ -249,7 +253,8 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     return controller.stream;
   }
 
-  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+  final client = httpClientManager.createClient(requestId,
+      noSSL: noSSL, proxySettings: proxySettings);
 
   HttpRequestModel authenticatedHttpRequestModel = httpRequestModel.copyWith();
 

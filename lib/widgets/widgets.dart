@@ -53,6 +53,7 @@ export 'previewer_codegen.dart';
 export 'previewer_csv.dart';
 export 'previewer_json.dart';
 export 'previewer_video.dart';
+export 'proxy_settings_dialog.dart';
 export 'request_pane.dart';
 export 'response_body_success.dart';
 export 'response_body.dart';
