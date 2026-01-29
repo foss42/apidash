@@ -49,11 +49,11 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void initState() {
     super.initState();
+    final initialText = widget.initialValue ?? '';
     controller = widget.controller ??
         TextEditingController.fromValue(TextEditingValue(
-            text: widget.initialValue!,
-            selection:
-                TextSelection.collapsed(offset: widget.initialValue!.length)));
+            text: initialText,
+            selection: TextSelection.collapsed(offset: initialText.length)));
     _focusNode = widget.focusNode ?? FocusNode();
   }
 
