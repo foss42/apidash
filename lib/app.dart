@@ -4,8 +4,8 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:window_manager/window_manager.dart' hide WindowCaption;
-import 'widgets/widgets.dart' show WindowCaption, WorkspaceSelector;
+import 'package:window_manager/window_manager.dart';
+import 'widgets/widgets.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
@@ -134,8 +134,8 @@ class DashApp extends ConsumerWidget {
                   }
                 },
               )
-            : Stack(
-                children: [
+            : //Stack(
+              //  children: [
                   !kIsLinux && !kIsMobile
                       ? const App()
                       : context.isMediumWindow
@@ -152,17 +152,17 @@ class DashApp extends ConsumerWidget {
                                 )
                               : const MobileDashboard()
                           : const Dashboard(),
-                  if (kIsWindows)
-                    SizedBox(
-                      height: 29,
-                      child: WindowCaption(
-                        backgroundColor: Colors.transparent,
-                        brightness:
-                            isDarkMode ? Brightness.dark : Brightness.light,
-                      ),
-                    ),
-                ],
-              ),
+              //     if (kIsWindows)
+              //       SizedBox(
+              //         height: 29,
+              //         child: WindowCaption(
+              //           backgroundColor: Colors.transparent,
+              //           brightness:
+              //               isDarkMode ? Brightness.dark : Brightness.light,
+              //         ),
+              //       ),
+              //   ],
+              // ),
       ),
     );
   }

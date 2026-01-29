@@ -5,21 +5,21 @@ import 'env_regexp_span_builder.dart';
 import 'env_trigger_options.dart';
 
 class EnvironmentTriggerField extends StatefulWidget {
-  const EnvironmentTriggerField(
-      {super.key,
-      required this.keyId,
-      this.initialValue,
-      this.controller,
-      this.focusNode,
-      this.onChanged,
-      this.onFieldSubmitted,
-      this.style,
-      this.decoration,
-      this.optionsWidthFactor,
-      this.autocompleteNoTrigger,
-      this.readOnly = false,
-      this.obscureText = false,
-      }) : assert(
+  const EnvironmentTriggerField({
+    super.key,
+    required this.keyId,
+    this.initialValue,
+    this.controller,
+    this.focusNode,
+    this.onChanged,
+    this.onFieldSubmitted,
+    this.style,
+    this.decoration,
+    this.optionsWidthFactor,
+    this.autocompleteNoTrigger,
+    this.readOnly = false,
+    this.obscureText = false,
+  }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
         );
@@ -67,33 +67,23 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (oldWidget.keyId != widget.keyId) {
-      if (oldWidget.controller == null) {
-        controller.dispose();
-      }
-      final initialText = widget.initialValue ?? '';
       controller = widget.controller ??
           TextEditingController.fromValue(TextEditingValue(
-              text: initialText,
-              selection: TextSelection.collapsed(offset: initialText.length)));
-    } else if (oldWidget.initialValue != widget.initialValue) {
-      if (widget.controller == null) {
-        final newText = widget.initialValue ?? '';
-        if (controller.text != newText) {
-          final currentSelection = controller.selection;
-          final newBaseOffset =
-              currentSelection.baseOffset.clamp(0, newText.length);
-          final newExtentOffset =
-              currentSelection.extentOffset.clamp(0, newText.length);
-          controller.value = TextEditingValue(
-            text: newText,
-            selection: TextSelection(
-              baseOffset: newBaseOffset,
-              extentOffset: newExtentOffset,
-            ),
-          );
-        }
+              text: widget.initialValue!,
+              selection: TextSelection.collapsed(
+                  offset: widget.initialValue!.length)));
+    } else if (widget.controller == null &&
+        oldWidget.initialValue != widget.initialValue &&
+        widget.initialValue != null &&
+        controller.text != widget.initialValue) {
+      // Update controller text only if it differs from current text
+      // This preserves cursor position when typing
+      final currentSelection = controller.selection;
+      controller.text = widget.initialValue!;
+      // Restore the selection if it's still valid
+      if (currentSelection.baseOffset <= controller.text.length) {
+        controller.selection = currentSelection;
       }
     }
   }
