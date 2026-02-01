@@ -38,14 +38,24 @@ class _EnvURLFieldState extends State<EnvURLField> {
   @override
   void didUpdateWidget(covariant EnvURLField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialValue != widget.initialValue) {
-      _controller.text = widget.initialValue ?? '';
+    if (oldWidget.initialValue != widget.initialValue &&
+        widget.initialValue != null &&
+        _controller.text != widget.initialValue) {
+      final currentSelection = _controller.selection;
+      _controller.text = widget.initialValue!;
+      if (currentSelection.baseOffset <= _controller.text.length) {
+        _controller.selection = currentSelection;
+      }
     }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    try {
+      _controller.dispose();
+    } catch (e) {
+      // do nothing
+    }
     super.dispose();
   }
 
