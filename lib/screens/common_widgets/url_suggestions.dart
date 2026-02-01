@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/services/services.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/providers/url_history_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class URLSuggestions extends ConsumerWidget {
   final String query;
-  final void Function(String) onSuggestionTap;
+  final void Function(String, String) onSuggestionTap;
 
   const URLSuggestions({
     super.key,
@@ -81,7 +82,7 @@ class URLSuggestions extends ConsumerWidget {
     }
 
     if (hasUnresolvedVars) {
-      return 'Variable - Missing (using resolved URL)';
+      return 'Variable - Missing';
     }
 
     return 'Variable - $raw';
@@ -92,7 +93,7 @@ class URLSuggestions extends ConsumerWidget {
     //  use env variable provider
     final envMap = ref.watch(availableEnvironmentVariablesStateProvider);
 
-    List<Map<String, dynamic>> urlHistory = hiveHandler.getUrlHistory();
+    List<Map<String, dynamic>> urlHistory = ref.watch(urlHistoryProvider);
     final suggestions = _getFilteredUrls(urlHistory, envMap);
 
     if (suggestions.isEmpty) {
@@ -129,6 +130,7 @@ class URLSuggestions extends ConsumerWidget {
 
           final raw = urlObj[kUrlHistoryKeyRaw] as String?;
           final resolved = urlObj[kUrlHistoryKeyResolved] as String? ?? '';
+          final method = urlObj['method'] as String? ?? 'GET';
 
           final hasVariables =
               raw != null && raw.contains('{{') && raw.contains('}}');
@@ -144,7 +146,7 @@ class URLSuggestions extends ConsumerWidget {
 
           return InkWell(
             onTap: () {
-              onSuggestionTap(displayUrl);
+              onSuggestionTap(displayUrl, method);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -160,9 +162,18 @@ class URLSuggestions extends ConsumerWidget {
                       color: Theme.of(context).colorScheme.secondaryContainer,
                       borderRadius: kBorderRadius4,
                     ),
-                    child: Icon(
-                      Icons.link,
-                      size: 16,
+                    child: Padding(
+                      padding: kP4,
+                      child: Text(
+                        method.toUpperCase(),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer,
+                              fontFamily: kFontFamily,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 15),
@@ -179,8 +190,8 @@ class URLSuggestions extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Opacity(
                           opacity: hasUnresolvedVariables
-                              ? 0.6
-                              : (hasVariables ? 1.0 : 0.6),
+                              ? 0.8
+                              : (hasVariables ? 1.0 : 0.8),
                           child: Text(
                             subtitleText,
                             style:
@@ -193,6 +204,9 @@ class URLSuggestions extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                        ),
+                        SizedBox(
+                          width: 10,
                         ),
                       ],
                     ),

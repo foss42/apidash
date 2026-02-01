@@ -541,7 +541,11 @@ class CollectionStateNotifier
       if (statusCode >= 200 && statusCode < 300) {
         final rawUrl = requestModel.httpRequestModel?.url ?? '';
         await hiveHandler.saveUrlToHistory(
-            rawUrl, substitutedHttpRequestModel.url);
+            rawUrl,
+            substitutedHttpRequestModel.url,
+            substitutedHttpRequestModel.method.name);
+        // Refresh the URL history provider
+        ref.read(urlHistoryProvider.notifier).refresh();
       }
 
       if (!requestModel.postRequestScript.isNullOrEmpty()) {

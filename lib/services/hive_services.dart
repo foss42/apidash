@@ -200,7 +200,8 @@ class HiveHandler {
     }
   }
 
-  Future<void> saveUrlToHistory(String rawUrl, String resolvedUrl) async {
+  Future<void> saveUrlToHistory(
+      String rawUrl, String resolvedUrl, String method) async {
     if (rawUrl.isEmpty || resolvedUrl.isEmpty) return;
 
     final List<dynamic> urlHistory =
@@ -219,6 +220,7 @@ class HiveHandler {
         'raw': rawUrl,
         'resolved': resolvedUrl,
         'count': (existingEntry['count'] as int? ?? 1) + 1,
+        'method': method,
       };
       urlHistory.removeAt(existingIndex);
       urlHistory.insert(0, updatedEntry);
@@ -228,6 +230,7 @@ class HiveHandler {
         'raw': rawUrl,
         'resolved': resolvedUrl,
         'count': 1,
+        'method': method,
       });
     }
 

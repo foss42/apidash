@@ -1,4 +1,3 @@
-import 'package:apidash/services/services.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
@@ -14,12 +13,14 @@ class EnvURLField extends StatefulWidget {
     this.onChanged,
     this.onFieldSubmitted,
     this.focusNode,
+    this.onMethodChanged,
   });
 
   final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
+  final void Function(String)? onMethodChanged;
   final FocusNode? focusNode;
 
   @override
@@ -81,12 +82,14 @@ class _EnvURLFieldState extends State<EnvURLField> {
         optionsViewBuilder: (context, autocompleteQuery, controller) {
           return URLSuggestions(
             query: autocompleteQuery.query,
-            onSuggestionTap: (url) {
+            onSuggestionTap: (url, method) {
               final autocomplete = MultiTriggerAutocomplete.of(context);
               autocomplete.replaceFieldWithAutocompleteOption(
                 url,
                 onOptionSelected: widget.onChanged,
               );
+              // Notify parent about method change
+              widget.onMethodChanged?.call(method);
             },
           );
         },
