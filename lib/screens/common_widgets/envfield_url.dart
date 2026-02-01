@@ -1,9 +1,12 @@
+import 'package:apidash/services/services.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'package:apidash/consts.dart';
 import 'env_trigger_field.dart';
+import 'url_suggestions.dart';
 
-class EnvURLField extends StatelessWidget {
+class EnvURLField extends StatefulWidget {
   const EnvURLField({
     super.key,
     required this.selectedId,
@@ -20,11 +23,38 @@ class EnvURLField extends StatelessWidget {
   final FocusNode? focusNode;
 
   @override
+  State<EnvURLField> createState() => _EnvURLFieldState();
+}
+
+class _EnvURLFieldState extends State<EnvURLField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant EnvURLField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialValue != widget.initialValue) {
+      _controller.text = widget.initialValue ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return EnvironmentTriggerField(
-      keyId: "url-$selectedId",
-      initialValue: initialValue,
-      focusNode: focusNode,
+      keyId: "url-${widget.selectedId}",
+      controller: _controller,
+      focusNode: widget.focusNode,
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
@@ -33,9 +63,24 @@ class EnvURLField extends StatelessWidget {
         ),
         border: InputBorder.none,
       ),
-      onChanged: onChanged,
-      onFieldSubmitted: onFieldSubmitted,
+      onChanged: widget.onChanged,
+      onFieldSubmitted: widget.onFieldSubmitted,
       optionsWidthFactor: 1,
+      autocompleteNoTrigger: AutocompleteNoTrigger(
+        minimumRequiredCharacters: 0,
+        optionsViewBuilder: (context, autocompleteQuery, controller) {
+          return URLSuggestions(
+            query: autocompleteQuery.query,
+            onSuggestionTap: (url) {
+              final autocomplete = MultiTriggerAutocomplete.of(context);
+              autocomplete.replaceFieldWithAutocompleteOption(
+                url,
+                onOptionSelected: widget.onChanged,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
