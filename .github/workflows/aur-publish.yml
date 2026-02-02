@@ -57,7 +57,7 @@ jobs:
             arch=('x86_64' 'aarch64')
             url="https://apidash.dev"
             license=('Apache-2.0')
-            depends=()
+            depends=('mpv')
             options=('!emptydirs' '!strip')
             source=("LICENSE::https://raw.githubusercontent.com/foss42/apidash/main/LICENSE")
             source_x86_64=("apidash-linux-amd64.deb::https://github.com/foss42/apidash/releases/download/v${{ steps.get_version.outputs.version }}/apidash-linux-amd64.deb")
