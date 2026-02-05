@@ -33,7 +33,6 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 
   void _init() async {
-    // Add this line to override the default close handler
     await windowManager.setPreventClose(true);
     setState(() {});
   }
@@ -59,15 +58,15 @@ class _AppState extends ConsumerState<App> with WindowListener {
   void onWindowClose() async {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
-      if (ref.watch(
-              settingsProvider.select((value) => value.promptBeforeClosing)) &&
-          ref.watch(hasUnsavedChangesProvider)) {
+      final shouldPrompt = ref.watch(settingsProvider.select((v) => v.promptBeforeClosing));
+      final hasChanges = ref.watch(hasUnsavedChangesProvider);
+
+      if (shouldPrompt && hasChanges) {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('Save Changes'),
-            content:
-                const Text('Want to save changes before you close API Dash?'),
+            content: const Text('Want to save changes before you close API Dash?'),
             actions: [
               OutlinedButton(
                 child: const Text('No'),
@@ -79,9 +78,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
               FilledButton(
                 child: const Text('Save'),
                 onPressed: () async {
-                  await ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .saveData();
+                  await ref.read(collectionStateNotifierProvider.notifier).saveData();
                   Navigator.of(context).pop();
                   await windowManager.destroy();
                 },
@@ -106,25 +103,25 @@ class DashApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode =
-        ref.watch(settingsProvider.select((value) => value.isDark));
-    final workspaceFolderPath = ref
-        .watch(settingsProvider.select((value) => value.workspaceFolderPath));
+    // Watches the Dark Mode setting from the provider
+    final isDarkMode = ref.watch(settingsProvider.select((value) => value.isDark));
+    final workspaceFolderPath = ref.watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
     final userOnboarded = ref.watch(userOnboardedProvider);
+
     return Portal(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        // Applies themes from the design system
         theme: kLightMaterialAppTheme,
         darkTheme: kDarkMaterialAppTheme,
+        // Toggles the theme mode based on user settings
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         home: showWorkspaceSelector
             ? WorkspaceSelector(
                 onContinue: (val) async {
                   await initHiveBoxes(kIsDesktop, val);
-                  ref
-                      .read(settingsProvider.notifier)
-                      .update(workspaceFolderPath: val);
+                  ref.read(settingsProvider.notifier).update(workspaceFolderPath: val);
                 },
                 onCancel: () async {
                   try {
@@ -134,35 +131,33 @@ class DashApp extends ConsumerWidget {
                   }
                 },
               )
-            : //Stack(
-              //  children: [
+            : Stack(
+                children: [
+                  // Main Application UI
                   !kIsLinux && !kIsMobile
                       ? const App()
                       : context.isMediumWindow
                           ? (kIsMobile && !userOnboarded)
                               ? OnboardingScreen(
                                   onComplete: () async {
-                                    await setOnboardingStatusToSharedPrefs(
-                                      isOnboardingComplete: true,
-                                    );
-                                    ref
-                                        .read(userOnboardedProvider.notifier)
-                                        .state = true;
+                                    await setOnboardingStatusToSharedPrefs(isOnboardingComplete: true);
+                                    ref.read(userOnboardedProvider.notifier).state = true;
                                   },
                                 )
                               : const MobileDashboard()
                           : const Dashboard(),
-              //     if (kIsWindows)
-              //       SizedBox(
-              //         height: 29,
-              //         child: WindowCaption(
-              //           backgroundColor: Colors.transparent,
-              //           brightness:
-              //               isDarkMode ? Brightness.dark : Brightness.light,
-              //         ),
-              //       ),
-              //   ],
-              // ),
+
+                  // Windows Title Bar Theme Support
+                  if (kIsWindows)
+                    SizedBox(
+                      height: 32, // Standard height for window caption
+                      child: WindowCaption(
+                        backgroundColor: Colors.transparent,
+                        brightness: isDarkMode ? Brightness.dark : Brightness.light,
+                      ),
+                    ),
+                ],
+              ),
       ),
     );
   }

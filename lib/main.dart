@@ -13,18 +13,21 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Stac.initialize();
 
-  //Load all LLMs
+  // Load all LLMs
   await ModelManager.fetchAvailableModels();
 
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
+
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,
   );
+
   if (kIsDesktop) {
     await initWindow(settingsModel: settingsModel);
   }
+
   if (!initStatus) {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
@@ -32,6 +35,7 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
+        // This injects the saved Dark Mode/Light Mode settings into the app
         settingsProvider.overrideWith(
           (ref) => ThemeStateNotifier(settingsModel: settingsModel),
         ),
@@ -42,19 +46,18 @@ void main() async {
   );
 }
 
+// --- KEEP THESE FUNCTIONS AS IS ---
+
 Future<bool> initApp(
   bool initializeUsingPath, {
   SettingsModel? settingsModel,
 }) async {
   GoogleFonts.config.allowRuntimeFetching = false;
   try {
-    debugPrint("initializeUsingPath: $initializeUsingPath");
-    debugPrint("workspaceFolderPath: ${settingsModel?.workspaceFolderPath}");
     final openBoxesStatus = await initHiveBoxes(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );
-    debugPrint("openBoxesStatus: $openBoxesStatus");
     if (openBoxesStatus) {
       await autoClearHistory(settingsModel: settingsModel);
     }
@@ -70,21 +73,12 @@ Future<void> initWindow({
   SettingsModel? settingsModel,
 }) async {
   if (kIsLinux) {
-    await setupInitialWindow(
-      sz: sz ?? settingsModel?.size,
-    );
+    await setupInitialWindow(sz: sz ?? settingsModel?.size);
   }
   if (kIsMacOS || kIsWindows) {
-    if (sz != null) {
-      await setupWindow(
-        sz: sz,
-        off: const Offset(100, 100),
-      );
-    } else {
-      await setupWindow(
-        sz: settingsModel?.size,
-        off: settingsModel?.offset,
-      );
-    }
+    await setupWindow(
+      sz: sz ?? settingsModel?.size,
+      off: settingsModel?.offset,
+    );
   }
 }

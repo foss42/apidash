@@ -18,12 +18,16 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+    // Watch dark mode state for the toggle button
+    final isDarkMode = ref.watch(settingsProvider.select((value) => value.isDark));
+
     final isDashBotEnabled =
         ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
     final isDashBotActive = ref
         .watch(dashbotWindowNotifierProvider.select((value) => value.isActive));
     final isDashBotPopped = ref
         .watch(dashbotWindowNotifierProvider.select((value) => value.isPopped));
+
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -102,6 +106,21 @@ class Dashboard extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      // --- DARK MODE TOGGLE BUTTON ---
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: IconButton(
+                          onPressed: () {
+                            ref.read(settingsProvider.notifier).update(isDark: !isDarkMode);
+                          },
+                          icon: Icon(
+                            isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_outlined,
+                            color: isDarkMode ? Colors.amber : null,
+                          ),
+                          tooltip: isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                        ),
+                      ),
+                      // -------------------------------
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
