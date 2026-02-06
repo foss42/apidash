@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -18,11 +19,12 @@ class SegmentedTabbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Center(
       child: Container(
         margin: kPh4,
-        width: tabWidth * tabs.length,
-        height: tabHeight,
+        width: tabWidth * tabs.length*ds.scaleFactor,
+        height: tabHeight*ds.scaleFactor*ds.scaleFactor,
         decoration: BoxDecoration(
           borderRadius: kBorderRadius20,
           border: Border.all(
@@ -36,11 +38,11 @@ class SegmentedTabbar extends StatelessWidget {
             indicatorWeight: 0.0,
             indicatorSize: TabBarIndicatorSize.tab,
             unselectedLabelColor: Theme.of(context).colorScheme.outline,
-            labelStyle: kTextStyleTab.copyWith(
+            labelStyle: kTextStyleTab(ds.scaleFactor).copyWith(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onPrimary,
             ),
-            unselectedLabelStyle: kTextStyleTab,
+            unselectedLabelStyle: kTextStyleTab(ds.scaleFactor),
             splashBorderRadius: kBorderRadius20,
             indicator: BoxDecoration(
               borderRadius: kBorderRadius20,

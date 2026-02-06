@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -17,8 +18,9 @@ class ResponseHeadersHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return SizedBox(
-      height: kHeaderHeight,
+      height: kHeaderHeight*ds.scaleFactor,
       child: Row(
         children: [
           Expanded(
@@ -51,6 +53,7 @@ class ResponseHeaders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Padding(
       padding: kPh20v5,
       child: ListView(
@@ -59,19 +62,19 @@ class ResponseHeaders extends StatelessWidget {
             map: responseHeaders,
             name: kLabelResponseHeaders,
           ),
-          if (responseHeaders.isNotEmpty) kVSpacer5,
+          if (responseHeaders.isNotEmpty) kVSpacer5(ds.scaleFactor),
           if (responseHeaders.isNotEmpty)
             MapTable(
               map: responseHeaders,
               colNames: kHeaderRow,
               firstColumnHeaderCase: true,
             ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
           ResponseHeadersHeader(
             map: requestHeaders,
             name: kLabelRequestHeaders,
           ),
-          if (requestHeaders.isNotEmpty) kVSpacer5,
+          if (requestHeaders.isNotEmpty) kVSpacer5(ds.scaleFactor),
           if (requestHeaders.isNotEmpty)
             MapTable(
               map: requestHeaders,

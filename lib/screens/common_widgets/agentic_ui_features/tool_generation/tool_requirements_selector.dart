@@ -1,5 +1,6 @@
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/screens/common_widgets/ai/ai_model_selector_button.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _ToolRequirementSelectorPageState
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final lightMode = Theme.of(context).brightness == Brightness.light;
 
     return Container(
@@ -49,20 +51,20 @@ class _ToolRequirementSelectorPageState
           Text(
             "Generate API Tool",
             style: TextStyle(
-              fontSize: 24,
+              fontSize: 24*ds.scaleFactor,
             ),
           ),
-          kVSpacer5,
+          kVSpacer5(ds.scaleFactor),
           Padding(
             padding: EdgeInsets.only(left: 3),
             child: Text(
               "Select an agent framework & language",
               style: TextStyle(
                   color: lightMode ? Colors.black54 : Colors.white60,
-                  fontSize: 15),
+                  fontSize: 15*ds.scaleFactor),
             ),
           ),
-          kVSpacer20,
+          kVSpacer20(ds.scaleFactor),
           Padding(
             padding: EdgeInsets.only(left: 3),
             child: Text(
@@ -72,14 +74,14 @@ class _ToolRequirementSelectorPageState
               ),
             ),
           ),
-          kVSpacer8,
+          kVSpacer8(ds.scaleFactor),
           ADPopupMenu<String>(
             value: frameworkMapping[agentFramework],
             values: [
               ...frameworkMapping.keys
                   .map((e) => (e.toString(), frameworkMapping[e].toString())),
             ],
-            width: MediaQuery.of(context).size.width * 0.35,
+            width: MediaQuery.of(context).size.width * 0.35*ds.scaleFactor,
             tooltip: '',
             onChanged: (x) {
               setState(() {
@@ -93,7 +95,7 @@ class _ToolRequirementSelectorPageState
             },
             isOutlined: true,
           ),
-          kVSpacer20,
+          kVSpacer20(ds.scaleFactor),
           Padding(
             padding: EdgeInsets.only(left: 3),
             child: Text(
@@ -103,14 +105,14 @@ class _ToolRequirementSelectorPageState
               ),
             ),
           ),
-          kVSpacer8,
+          kVSpacer8(ds.scaleFactor),
           ADPopupMenu<String>(
             value: languageMapping[targetLanguage],
             values: [
               ...languageMapping.keys
                   .map((e) => (e.toString(), languageMapping[e].toString())),
             ],
-            width: MediaQuery.of(context).size.width * 0.35,
+            width: MediaQuery.of(context).size.width * 0.35*ds.scaleFactor,
             tooltip: '',
             onChanged: (x) {
               setState(() {
@@ -124,7 +126,7 @@ class _ToolRequirementSelectorPageState
             },
             isOutlined: true,
           ),
-          kVSpacer20,
+          kVSpacer20(ds.scaleFactor),
           Wrap(
             runSpacing: 10,
             alignment: WrapAlignment.center,
@@ -148,7 +150,7 @@ class _ToolRequirementSelectorPageState
                   ),
                 ),
               ),
-              kHSpacer5,
+              kHSpacer5(ds.scaleFactor),
               DefaultLLModelSelectorWidget(),
             ],
           ),
@@ -163,11 +165,12 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final settings = ref.watch(settingsProvider);
     return Opacity(
       opacity: 0.8,
       child: SizedBox(
-        width: 200,
+        width: 200*ds.scaleFactor,
         child: Row(
           children: [
             Padding(
@@ -178,10 +181,10 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
                     color: Theme.of(context).brightness == Brightness.light
                         ? Colors.black54
                         : Colors.white60,
-                    fontSize: 15),
+                    fontSize: 15*ds.scaleFactor),
               ),
             ),
-            SizedBox(width: 5),
+            SizedBox(width: 5*ds.scaleFactor),
             AIModelSelectorButton(
               aiRequestModel:
                   AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
@@ -194,7 +197,7 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
                         userPrompt: '').toJson());
               },
             ),
-            kVSpacer5,
+            kVSpacer5(ds.scaleFactor),
           ],
         ),
       ),

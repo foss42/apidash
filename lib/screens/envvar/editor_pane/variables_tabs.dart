@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -19,6 +20,7 @@ class _VariablesTabsState extends ConsumerState<VariablesTabs>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final tabController = useTabController(initialLength: 2, vsync: this);
     final selectedEnvironment = ref.watch(selectedEnvironmentModelProvider);
     final variablesLength =
@@ -29,7 +31,7 @@ class _VariablesTabsState extends ConsumerState<VariablesTabs>
             .length;
     return Column(
       children: [
-        !context.isMediumWindow ? kVSpacer10 : const SizedBox.shrink(),
+        !context.isMediumWindow ? kVSpacer10() : const SizedBox.shrink(),
         TabBar(
           controller: tabController,
           overlayColor: kColorTransparentState,
@@ -45,7 +47,7 @@ class _VariablesTabsState extends ConsumerState<VariablesTabs>
             ),
           ],
         ),
-        kVSpacer5,
+        kVSpacer5(ds.scaleFactor),
         Expanded(
           child: TabBarView(
             controller: tabController,

@@ -2,6 +2,7 @@ import 'package:apidash/widgets/button_copy.dart';
 import 'package:apidash/widgets/previewer_code.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_design_system/tokens/tokens.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 class GeneratedToolCodeCopyPage extends StatelessWidget {
@@ -12,6 +13,7 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final lightMode = Theme.of(context).brightness == Brightness.light;
     var codeTheme = lightMode ? kLightCodeTheme : kDarkCodeTheme;
 
@@ -48,7 +50,7 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               child: SizedBox(
-                width: double.infinity,
+                width: double.infinity*ds.scaleFactor,
                 child: CodePreviewer(
                   code: toolCode!,
                   theme: codeTheme,

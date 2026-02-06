@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'api_key_auth_fields.dart';
@@ -26,6 +27,7 @@ class AuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -39,7 +41,7 @@ class AuthPage extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 8,
+              height: 8*ds.scaleFactor,
             ),
             ADPopupMenu<APIAuthType>(
               value: authModel?.type.displayType,
@@ -50,7 +52,7 @@ class AuthPage extends StatelessWidget {
               isOutlined: true,
               onChanged: readOnly ? null : onChangedAuthType,
             ),
-            const SizedBox(height: 48),
+            SizedBox(height: 48*ds.scaleFactor),
             switch (authModel?.type) {
               APIAuthType.basic => BasicAuthFields(
                   readOnly: readOnly,

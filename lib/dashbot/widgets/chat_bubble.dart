@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,7 @@ class ChatBubble extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final preview =
         message.length > 100 ? '${message.substring(0, 100)}...' : message;
     debugPrint(
@@ -38,9 +40,9 @@ class ChatBubble extends ConsumerWidget {
         alignment: Alignment.centerLeft,
         child: Column(
           children: [
-            kVSpacer8,
-            DashbotIcons.getDashbotIcon1(width: 42),
-            kVSpacer8,
+            kVSpacer8(ds.scaleFactor),
+            DashbotIcons.getDashbotIcon1(width: 42*ds.scaleFactor),
+            kVSpacer8(ds.scaleFactor),
             CircularProgressIndicator.adaptive(),
           ],
         ),
@@ -73,15 +75,15 @@ class ChatBubble extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (role == MessageRole.system) ...[
-            kVSpacer6,
-            DashbotIcons.getDashbotIcon1(width: 42),
-            kVSpacer8,
+            kVSpacer6(ds.scaleFactor),
+            DashbotIcons.getDashbotIcon1(width: 42*ds.scaleFactor),
+            kVSpacer8(ds.scaleFactor),
           ],
           Container(
             margin: const EdgeInsets.symmetric(vertical: 5.0),
             padding: const EdgeInsets.all(12.0),
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.75,
+              maxWidth: MediaQuery.of(context).size.width * 0.75*ds.scaleFactor,
             ),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -103,7 +105,7 @@ class ChatBubble extends ConsumerWidget {
           ),
           if (role == MessageRole.system) ...[
             if (effectiveActions.isNotEmpty) ...[
-              const SizedBox(height: 4),
+              SizedBox(height: 4*ds.scaleFactor),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -119,7 +121,7 @@ class ChatBubble extends ConsumerWidget {
                 ],
               ),
             ],
-            const SizedBox(height: 4),
+            SizedBox(height: 4*ds.scaleFactor),
             ADIconButton(
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: renderedMessage));

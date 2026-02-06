@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/utils/utils.dart';
@@ -20,15 +21,16 @@ class ResponsePaneHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final bool showClearButton = onClearResponse != null;
     return Padding(
       padding: kPv8,
       child: SizedBox(
-        height: kHeaderHeight,
+        height: kHeaderHeight*ds.scaleFactor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            kHSpacer10,
+            kHSpacer10(ds.scaleFactor),
             Expanded(
               child: Text(
                 "$responseStatus: ${message ?? '-'}",
@@ -43,7 +45,7 @@ class ResponsePaneHeader extends StatelessWidget {
                     ),
               ),
             ),
-            kHSpacer10,
+            kHSpacer10(ds.scaleFactor),
             Text(
               humanizeDuration(time),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -51,7 +53,7 @@ class ResponsePaneHeader extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
             ),
-            kHSpacer10,
+            kHSpacer10(ds.scaleFactor),
             showClearButton
                 ? ClearResponseButton(
                     onPressed: onClearResponse,

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
@@ -52,26 +54,26 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             ];
     isAddingRow = false;
 
-    List<DataColumn> columns = const [
-      DataColumn2(
+    List<DataColumn> columns = [
+      const DataColumn2(
         label: Text(kNameField),
         size: ColumnSize.M,
       ),
       DataColumn2(
-        label: Text('='),
-        fixedWidth: 20,
+        label: const Text('='),
+        fixedWidth: 20*ds.scaleFactor,
       ),
       DataColumn2(
-        label: Text(''),
-        fixedWidth: 70,
+        label: const Text(''),
+        fixedWidth: 70*ds.scaleFactor,
       ),
-      DataColumn2(
+      const DataColumn2(
         label: Text(kNameValue),
         size: ColumnSize.L,
       ),
       DataColumn2(
-        label: Text(''),
-        fixedWidth: 32,
+        label: const Text(''),
+        fixedWidth: 32*ds.scaleFactor,
       ),
     ];
 
@@ -197,15 +199,15 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     dividerThickness: 0,
                     horizontalMargin: 0,
                     headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
-                    bottomMargin: kDataTableBottomPadding,
+                    dataRowHeight: kDataTableRowHeight*ds.scaleFactor,
+                    bottomMargin: kDataTableBottomPadding*ds.scaleFactor,
                     isVerticalScrollBarVisible: true,
                     columns: columns,
                     rows: dataRows,
                   ),
                 ),
               ),
-              if (!kIsMobile) kVSpacer40,
+              if (!kIsMobile) kVSpacer40(ds.scaleFactor),
             ],
           ),
         ),
@@ -220,9 +222,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   _onFieldChange();
                 },
                 icon: const Icon(Icons.add),
-                label: const Text(
+                label: Text(
                   kLabelAddFormField,
-                  style: kTextStyleButton,
+                  style: kTextStyleButton(ds.scaleFactor),
                 ),
               ),
             ),

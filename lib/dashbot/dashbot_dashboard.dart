@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class DashbotWindow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final windowState = ref.watch(dashbotWindowNotifierProvider);
     final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
     final settings = ref.watch(settingsProvider);
@@ -64,8 +66,8 @@ class DashbotWindow extends ConsumerWidget {
               elevation: 8,
               borderRadius: BorderRadius.circular(8),
               child: Container(
-                width: windowState.width,
-                height: windowState.height,
+                width: windowState.width*ds.scaleFactor,
+                height: windowState.height*ds.scaleFactor,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
                   borderRadius: BorderRadius.circular(8),
@@ -84,7 +86,7 @@ class DashbotWindow extends ConsumerWidget {
                             );
                           },
                           child: Container(
-                            height: 50,
+                            height: 50*ds.scaleFactor,
                             decoration: BoxDecoration(
                               color: Theme.of(context)
                                   .colorScheme
@@ -98,20 +100,20 @@ class DashbotWindow extends ConsumerWidget {
                               children: [
                                 Row(
                                   children: [
-                                    kHSpacer20,
+                                    kHSpacer20(ds.scaleFactor),
                                     DashbotIcons.getDashbotIcon1(width: 38),
-                                    kHSpacer12,
+                                    kHSpacer12(ds.scaleFactor),
                                     Text(
                                       'DashBot',
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 16*ds.scaleFactor,
                                         fontWeight: FontWeight.bold,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .surface,
                                       ),
                                     ),
-                                    kHSpacer4,
+                                    kHSpacer4(ds.scaleFactor),
                                     AIModelSelectorButton(
                                       aiRequestModel: AIRequestModel.fromJson(
                                           settings.defaultAIModel ?? {}),
@@ -188,8 +190,8 @@ class DashbotWindow extends ConsumerWidget {
                           cursor: SystemMouseCursors.resizeUpLeft,
                           child: Container(
                             padding: EdgeInsets.only(top: 6, left: 1),
-                            width: 20,
-                            height: 20,
+                            width: 20*ds.scaleFactor,
+                            height: 20*ds.scaleFactor,
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(8),

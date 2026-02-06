@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -35,13 +36,14 @@ class _DashbotGeneratedCodeBlockState extends State<DashbotGeneratedCodeBlock> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final code =
         (widget.action.value is String) ? widget.action.value as String : '';
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final codeTheme = isDark ? kDarkCodeTheme : kLightCodeTheme;
 
     return Container(
-      width: double.infinity,
+      width: double.infinity*ds.scaleFactor,
       decoration: BoxDecoration(
         color: codeTheme['root']?.backgroundColor ??
             Theme.of(context).colorScheme.surface,
@@ -55,12 +57,12 @@ class _DashbotGeneratedCodeBlockState extends State<DashbotGeneratedCodeBlock> {
           GestureDetector(
             onTap: code.isNotEmpty ? () => _copyCode(code) : null,
             child: Container(
-              width: double.infinity,
+              width: double.infinity*ds.scaleFactor,
               padding: const EdgeInsets.all(12),
               child: Text(
                 code.isEmpty ? '// No code returned' : code,
                 style: kCodeStyle.copyWith(
-                  fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+                  fontSize: (Theme.of(context).textTheme.bodySmall?.fontSize ?? 12) * ds.scaleFactor,
                   color: codeTheme['root']?.color ??
                       Theme.of(context).colorScheme.onSurface,
                 ),

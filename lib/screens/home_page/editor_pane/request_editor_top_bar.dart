@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class RequestEditorTopBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     ref.watch(selectedIdStateProvider);
     final name =
         ref.watch(selectedRequestModelProvider.select((value) => value?.name));
@@ -20,7 +22,7 @@ class RequestEditorTopBar extends ConsumerWidget {
       child: Row(
         children: [
           const APITypeDropdown(),
-          kHSpacer10,
+          kHSpacer10(ds.scaleFactor),
           Expanded(
             child: Text(
               name.isNullOrEmpty() ? kUntitled : name!,
@@ -29,7 +31,7 @@ class RequestEditorTopBar extends ConsumerWidget {
               maxLines: 1,
             ),
           ),
-          kHSpacer10,
+          kHSpacer10(ds.scaleFactor),
           EditorTitleActions(
             onRenamePressed: () {
               showRenameDialog(context, "Rename Request", name, (val) {
@@ -43,7 +45,7 @@ class RequestEditorTopBar extends ConsumerWidget {
             onDeletePressed: () =>
                 ref.read(collectionStateNotifierProvider.notifier).remove(),
           ),
-          kHSpacer10,
+          kHSpacer10(ds.scaleFactor),
           const EnvironmentDropdown(),
         ],
       ),

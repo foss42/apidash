@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class HistoryRequests extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedRequestId = ref.watch(selectedHistoryIdStateProvider);
     final selectedRequest = ref.watch(selectedHistoryRequestModelProvider);
     final historyMetas = ref.watch(historyMetaStateNotifier);
@@ -28,7 +30,7 @@ class HistoryRequests extends ConsumerWidget {
       controller: scrollController,
       padding: kPh4,
       children: [
-        kVSpacer10,
+        kVSpacer10(ds.scaleFactor),
         ...requestGroup.map((request) => Padding(
               padding: kPv2 + kPh4,
               child: HistoryRequestCard(
@@ -45,7 +47,7 @@ class HistoryRequests extends ConsumerWidget {
                 },
               ),
             )),
-        kVSpacer10,
+        kVSpacer10(ds.scaleFactor),
       ],
     );
   }
@@ -129,10 +131,11 @@ class Grabber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     final handle = Container(
-      width: double.infinity,
+      width: double.infinity*ds.scaleFactor,
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         borderRadius: const BorderRadius.only(
@@ -142,8 +145,8 @@ class Grabber extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: Container(
           margin: kPv10,
-          width: 80.0,
-          height: 6.0,
+          width: 80.0*ds.scaleFactor,
+          height: 6.0*ds.scaleFactor,
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(8.0),

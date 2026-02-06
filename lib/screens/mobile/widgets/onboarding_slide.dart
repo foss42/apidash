@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -20,6 +21,7 @@ class OnboardingSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,7 +32,7 @@ class OnboardingSlide extends StatelessWidget {
             child: Lottie.asset(
               assetPath,
               renderCache: RenderCache.drawingCommands,
-              width: assetSize,
+              width: assetSize*ds.scaleFactor,
               fit: BoxFit.cover,
             ),
           ),
@@ -42,12 +44,12 @@ class OnboardingSlide extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 28*ds.scaleFactor,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10*ds.scaleFactor),
             Padding(
               padding: const EdgeInsets.symmetric(
                 vertical: 8.0,
@@ -56,11 +58,11 @@ class OnboardingSlide extends StatelessWidget {
               child: Text(
                 description,
                 textAlign: TextAlign.center,
-                style: kTextStyleButton.copyWith(fontSize: 16),
+                style: kTextStyleButton(ds.scaleFactor).copyWith(fontSize: 16*ds.scaleFactor),
               ),
             ),
-            const SizedBox(
-              height: 70,
+            SizedBox(
+              height: 70*ds.scaleFactor,
             )
           ],
         ),

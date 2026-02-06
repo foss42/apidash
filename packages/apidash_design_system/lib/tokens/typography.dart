@@ -14,19 +14,44 @@ final kCodeStyle = TextStyle(
   fontFamilyFallback: kFontFamilyFallback,
 );
 
-const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
-const kTextStyleTab = TextStyle(fontSize: 14);
-const kTextStyleButtonSmall = TextStyle(fontSize: 12);
-const kFormDataButtonLabelTextStyle = TextStyle(
-  fontSize: 12,
-  fontWeight: FontWeight.w600,
-  overflow: TextOverflow.ellipsis,
-);
-const kTextStylePopupMenuItem = TextStyle(fontSize: 14);
+// const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
+TextStyle kTextStyleButton([double? scaleFactor = 1.0]) {
+  return TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 14 * (scaleFactor ?? 1.0), // base fontSize 14
+  );
+}
 
-const kTextStyleSmall = TextStyle(fontSize: 12);
-const kTextStyleMedium = TextStyle(fontSize: 14);
-const kTextStyleLarge = TextStyle(fontSize: 16);
-const kTextStyleXLarge = TextStyle(fontSize: 18);
-const kTextStyleXXLarge = TextStyle(fontSize: 20);
-const kTextStyleXXXLarge = TextStyle(fontSize: 22);
+kTextStyleTab(double? scaleFactor){
+  return TextStyle(fontSize: 14 * (scaleFactor ?? 1));
+}
+kTextStyleButtonSmall(double? scaleFactor){
+  return TextStyle(fontSize: 12 * (scaleFactor ?? 1));
+}
+kFormDataButtonLabelTextStyle(double? scaleFactor){
+  return TextStyle(
+  fontSize: 12 * (scaleFactor ?? 1),
+  fontWeight: FontWeight.w600,
+  overflow: TextOverflow.ellipsis,);
+}
+kTextStylePopupMenuItem(double? scaleFactor){
+  return TextStyle(fontSize: 14 * (scaleFactor ?? 1));
+}
+kTextStyleSmall(double? scaleFactor){
+  return TextStyle(fontSize: 12 * (scaleFactor ?? 1));
+}
+kTextStyleMedium(double? scaleFactor){
+  return TextStyle(fontSize: 14 * (scaleFactor ?? 1));
+}
+kTextStyleLarge(double? scaleFactor){
+  return TextStyle(fontSize: 16 * (scaleFactor ?? 1));
+}
+kTextStyleXLarge(double? scaleFactor){
+  return TextStyle(fontSize: 18 * (scaleFactor ?? 1));
+}
+kTextStyleXXLarge(double? scaleFactor){
+  return TextStyle(fontSize: 20 * (scaleFactor ?? 1));
+}
+kTextStyleXXXLarge(double? scaleFactor){
+  return TextStyle(fontSize: 22 * (scaleFactor ?? 1));
+}

@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -175,6 +176,7 @@ class HisRequestBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedHistoryModel = ref.watch(selectedHistoryRequestModelProvider);
     final apiType = selectedHistoryModel?.metaData.apiType;
     final requestModel = selectedHistoryModel?.httpRequestModel;
@@ -183,7 +185,7 @@ class HisRequestBody extends ConsumerWidget {
     return switch (apiType) {
       APIType.rest => Column(
           children: [
-            kVSpacer5,
+            kVSpacer5(ds.scaleFactor),
             RichText(
               text: TextSpan(
                 style: Theme.of(context).textTheme.labelLarge,
@@ -200,7 +202,7 @@ class HisRequestBody extends ConsumerWidget {
                 ],
               ),
             ),
-            kVSpacer5,
+            kVSpacer5(ds.scaleFactor),
             Expanded(
               child: switch (contentType) {
                 ContentType.formdata => Padding(

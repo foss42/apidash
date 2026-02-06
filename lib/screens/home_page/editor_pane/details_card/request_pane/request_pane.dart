@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class EditRequestPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     ref.watch(selectedIdStateProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
@@ -37,7 +39,7 @@ class EditRequestPane extends ConsumerWidget {
             final controller = DefaultTabController.of(context);
             return Column(
               children: [
-                kVSpacer10,
+                kVSpacer10(ds.scaleFactor),
                 SegmentedTabbar(
                   controller: controller,
                   tabs: const [
@@ -46,7 +48,7 @@ class EditRequestPane extends ConsumerWidget {
                     Tab(text: kLabelCode),
                   ],
                 ),
-                kVSpacer10,
+                kVSpacer10(ds.scaleFactor),
                 Expanded(
                   child: TabBarView(
                     controller: controller,
@@ -68,7 +70,7 @@ class EditRequestPane extends ConsumerWidget {
                     ],
                   ),
                 ),
-                kVSpacer8,
+                kVSpacer8(ds.scaleFactor),
               ],
             );
           },

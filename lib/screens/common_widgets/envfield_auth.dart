@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:apidash/consts.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'env_trigger_field.dart';
@@ -50,6 +51,7 @@ class _AuthFieldState extends State<EnvAuthField> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return AutofillGroup(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -69,7 +71,7 @@ class _AuthFieldState extends State<EnvAuthField> {
                     child: Icon(
                       Icons.help_outline_rounded,
                       color: Theme.of(context).colorScheme.primaryFixedDim,
-                      size: 14,
+                      size: 14*ds.scaleFactor,
                     ),
                   ),
                 ),
@@ -95,7 +97,7 @@ class _AuthFieldState extends State<EnvAuthField> {
             obscureText: _obscureText,
             style: kCodeStyle.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
-              fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+              fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * ds.scaleFactor,
             ),
             decoration: getTextFieldInputDecoration(
               Theme.of(context).colorScheme,
@@ -108,7 +110,7 @@ class _AuthFieldState extends State<EnvAuthField> {
                   ? IconButton(
                       icon: Icon(
                         _obscureText ? Icons.visibility_off : Icons.visibility,
-                        size: 20,
+                        size: 20*ds.scaleFactor,
                       ),
                       onPressed: _toggleVisibility,
                     )

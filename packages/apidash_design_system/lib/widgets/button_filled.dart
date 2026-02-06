@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import '../tokens/tokens.dart';
 
@@ -27,9 +28,10 @@ class ADFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     Widget child = Text(
       label ?? "",
-      style: labelTextStyle ?? kTextStyleButton,
+      style: labelTextStyle ?? kTextStyleButton(ds.scaleFactor),
     );
     if (items != null) {
       child = Row(

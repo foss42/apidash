@@ -1,8 +1,8 @@
-import 'package:apidash/ui/design_system_provider.dart';
-import 'package:apidash/ui/ui_design_system.dart';
-import 'package:apidash/ui/zoom_controller.dart';
-import 'package:apidash/ui/zoom_in.dart';
-import 'package:apidash/ui/zoom_out.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
+import 'package:apidash_design_system/ui/ui_design_system.dart';
+import 'package:apidash_design_system/ui/zoom_controller.dart';
+import 'package:apidash_design_system/ui/zoom_in.dart';
+import 'package:apidash_design_system/ui/zoom_out.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';

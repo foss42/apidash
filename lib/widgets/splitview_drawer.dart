@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
@@ -30,6 +31,7 @@ class DrawerSplitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Container(
       padding: kIsMacOS ? kPt28 : EdgeInsets.zero,
       color: Theme.of(context).colorScheme.surface,
@@ -39,7 +41,7 @@ class DrawerSplitView extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.surface,
           onDrawerChanged: onDrawerChanged,
           onEndDrawerChanged: onEndDrawerChanged,
-          drawerEdgeDragWidth: 80,
+          drawerEdgeDragWidth: 80*ds.scaleFactor,
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.surface,
             scrolledUnderElevation: 0,

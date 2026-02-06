@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -16,6 +17,7 @@ class EnvironmentPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final id = ref.watch(selectedEnvironmentIdStateProvider);
     final name = getEnvironmentTitle(ref.watch(
         selectedEnvironmentModelProvider.select((value) => value?.name)));
@@ -47,7 +49,7 @@ class EnvironmentPage extends ConsumerWidget {
           },
         ),
         leftDrawerContent: const EnvironmentsPane(),
-        actions: const [SizedBox(width: 16)],
+        actions: [SizedBox(width: 16*ds.scaleFactor)],
         onDrawerChanged: (value) =>
             ref.read(leftDrawerStateProvider.notifier).state = value,
       );

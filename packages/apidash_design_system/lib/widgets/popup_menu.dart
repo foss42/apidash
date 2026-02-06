@@ -1,3 +1,5 @@
+// import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import '../tokens/tokens.dart';
 
@@ -23,6 +25,7 @@ class ADPopupMenu<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final double containerWidth = width ?? 220;
     var popup = PopupMenuButton<T>(
       tooltip: tooltip,
@@ -33,13 +36,13 @@ class ADPopupMenu<T> extends StatelessWidget {
                 value: item.$1,
                 child: Text(
                   item.$2 ?? "",
-                  style: kTextStylePopupMenuItem,
+                  style: kTextStylePopupMenuItem(ds.scaleFactor),
                 ),
               ))
           .toList(),
       onSelected: onChanged,
       child: Container(
-        width: containerWidth,
+        width: containerWidth*ds.scaleFactor,
         padding: kP8,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,7 +50,7 @@ class ADPopupMenu<T> extends StatelessWidget {
             Expanded(
               child: Text(
                 value ?? "",
-                style: kTextStylePopupMenuItem,
+                style: kTextStylePopupMenuItem(ds.scaleFactor),
                 softWrap: false,
                 overflow: TextOverflow.clip,
               ),

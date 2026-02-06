@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class SidebarRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final Color color = Theme.of(context).colorScheme.surface;
     final Color colorVariant = Theme.of(context).colorScheme.surfaceContainer;
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
@@ -86,14 +88,14 @@ class SidebarRequestCard extends StatelessWidget {
               bottom: 5,
             ),
             child: SizedBox(
-              height: 20,
+              height: 20*ds.scaleFactor,
               child: Row(
                 children: [
                   SidebarRequestCardTextBox(
                     apiType: apiType,
                     method: method,
                   ),
-                  kHSpacer4,
+                  kHSpacer4(ds.scaleFactor),
                   Expanded(
                     child: inEditMode
                         ? TextFormField(
@@ -126,7 +128,7 @@ class SidebarRequestCard extends StatelessWidget {
                   Visibility(
                     visible: isSelected && !inEditMode,
                     child: SizedBox(
-                      width: 28,
+                      width: 28*ds.scaleFactor,
                       child: ItemCardMenu(
                         onSelected: onMenuSelected,
                       ),

@@ -1,4 +1,5 @@
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ class AIRequestPromptSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final systemPrompt = ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.systemPrompt));
@@ -33,7 +35,7 @@ class AIRequestPromptSection extends ConsumerWidget {
               'System Prompt',
             ),
           ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -50,14 +52,14 @@ class AIRequestPromptSection extends ConsumerWidget {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 10*ds.scaleFactor),
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
             child: Text(
               'User Prompt / Input',
             ),
           ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),

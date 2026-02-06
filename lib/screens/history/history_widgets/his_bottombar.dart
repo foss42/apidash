@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ class HistoryPageBottombar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedRequestModel = ref.watch(selectedHistoryRequestModelProvider);
     final historyMetas = ref.watch(historyMetaStateNotifier);
     final requestGroup = getRequestGroup(
@@ -20,19 +22,19 @@ class HistoryPageBottombar extends ConsumerWidget {
     final requestCount = requestGroup.length;
 
     return Container(
-      height: 60 + MediaQuery.paddingOf(context).bottom,
-      width: MediaQuery.sizeOf(context).width,
+      height: (60 + MediaQuery.paddingOf(context).bottom)*ds.scaleFactor,
+      width: MediaQuery.sizeOf(context).width*ds.scaleFactor,
       padding: EdgeInsets.only(
         bottom: MediaQuery.paddingOf(context).bottom,
-        left: 16,
-        right: 16,
+        left: 16*ds.scaleFactor,
+        right: 16*ds.scaleFactor,
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(
           top: BorderSide(
             color: Theme.of(context).colorScheme.onInverseSurface,
-            width: 1,
+            width: 1*ds.scaleFactor,
           ),
         ),
       ),
@@ -61,6 +63,7 @@ class HistorySheetButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final isCompact = context.isCompactWindow;
     const icon = Icon(Icons.keyboard_arrow_up_rounded);
     return Badge(
@@ -81,7 +84,7 @@ class HistorySheetButton extends StatelessWidget {
                   isScrollControlled: true,
                   builder: (context) {
                     return ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 400),
+                        constraints: BoxConstraints(maxWidth: 400*ds.scaleFactor),
                         child: const HistorRequestsScrollableSheet());
                   },
                 );
@@ -89,13 +92,13 @@ class HistorySheetButton extends StatelessWidget {
             : null,
         child: isCompact
             ? icon
-            : const Row(
+            : Row(
                 children: [
                   Text(
                     "Show All",
-                    style: kTextStyleButton,
+                    style: kTextStyleButton(ds.scaleFactor),
                   ),
-                  kHSpacer5,
+                  kHSpacer5(ds.scaleFactor),
                   icon,
                 ],
               ),

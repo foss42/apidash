@@ -1,4 +1,4 @@
-import 'package:apidash/ui/ui_design_system.dart';
+import 'ui_design_system.dart';
 import 'package:flutter/material.dart';
 
 class DesignSystemProvider extends InheritedWidget {

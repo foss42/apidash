@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -12,6 +13,7 @@ showHistoryRetentionDialog(
   showDialog(
     context: context,
     builder: (context) {
+      final ds = DesignSystemProvider.of(context);
       return AlertDialog(
         icon: const Icon(Icons.manage_history_rounded),
         iconColor: Theme.of(context).colorScheme.primary,
@@ -19,7 +21,7 @@ showHistoryRetentionDialog(
         titleTextStyle: Theme.of(context).textTheme.titleLarge,
         contentPadding: kPv20,
         content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 320),
+          constraints: BoxConstraints(maxWidth: 320*ds.scaleFactor),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -33,7 +35,7 @@ showHistoryRetentionDialog(
                       ),
                 ),
               ),
-              kVSpacer10,
+              kVSpacer10(ds.scaleFactor),
               ...HistoryRetentionPeriod.values
                   .map((e) => RadioListTile<HistoryRetentionPeriod>(
                         title: Text(

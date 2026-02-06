@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -26,6 +27,7 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final id = ref.watch(selectedIdStateProvider);
     final name = getRequestTitleFromUrl(
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
@@ -61,7 +63,7 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
         ],
       ),
       leftDrawerContent: const CollectionPane(),
-      actions: const [kHSpacer12],
+      actions: [kHSpacer12(ds.scaleFactor)],
       mainContent: id == null
           ? const RequestEditorDefault()
           : RequestTabs(

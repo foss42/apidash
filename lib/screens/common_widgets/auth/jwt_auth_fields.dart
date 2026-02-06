@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -42,6 +43,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return ListView(
       shrinkWrap: true,
       children: [
@@ -49,10 +51,10 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           kMsgAddToken,
           style: TextStyle(
             fontWeight: FontWeight.normal,
-            fontSize: 14,
+            fontSize: 14*ds.scaleFactor,
           ),
         ),
-        SizedBox(height: 4),
+        SizedBox(height: 4*ds.scaleFactor),
         ADPopupMenu<String>(
           value: kAddToLocationsMap[_addTokenTo],
           values: kAddToLocations,
@@ -69,15 +71,15 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
                   }
                 },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         Text(
           kTextAlgo,
           style: TextStyle(
             fontWeight: FontWeight.normal,
-            fontSize: 14,
+            fontSize: 14*ds.scaleFactor,
           ),
         ),
-        SizedBox(height: 4),
+        SizedBox(height: 4*ds.scaleFactor),
         ADPopupMenu<String>(
           value: _algorithm,
           values: kJwtAlgos.map((i) => (i, i)),
@@ -94,7 +96,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
                   }
                 },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         if (_algorithm.startsWith(kStartAlgo)) ...[
           EnvAuthField(
             readOnly: widget.readOnly,
@@ -107,13 +109,13 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
               _updateJwtAuth();
             },
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16*ds.scaleFactor),
           CheckboxListTile(
             title: Text(
               kMsgSecret,
               style: TextStyle(
                 fontWeight: FontWeight.normal,
-                fontSize: 14,
+                fontSize: 14*ds.scaleFactor,
               ),
             ),
             value: _isSecretBase64Encoded,
@@ -132,10 +134,10 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
             kMsgPrivateKey,
             style: TextStyle(
               fontWeight: FontWeight.normal,
-              fontSize: 14,
+              fontSize: 14*ds.scaleFactor,
             ),
           ),
-          SizedBox(height: 4),
+          SizedBox(height: 4*ds.scaleFactor),
           TextField(
             readOnly: widget.readOnly,
             controller: _privateKeyController,
@@ -166,15 +168,15 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
             onChanged: (value) => _updateJwtAuth(),
           ),
         ],
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         Text(
           kMsgPayload,
           style: TextStyle(
             fontWeight: FontWeight.normal,
-            fontSize: 14,
+            fontSize: 14*ds.scaleFactor,
           ),
         ),
-        SizedBox(height: 4),
+        SizedBox(height: 4*ds.scaleFactor),
         TextField(
           readOnly: widget.readOnly,
           controller: _payloadController,

@@ -1,6 +1,7 @@
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,6 +10,7 @@ class AIRequestConfigSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final modelConfigs = ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.modelConfigs));
@@ -49,7 +51,7 @@ class AIRequestConfigSection extends ConsumerWidget {
                   Text(
                     el.description,
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 5*ds.scaleFactor),
                   switch (el.type) {
                     ConfigType.boolean => AIConfigBool(
                         configuration: el,
@@ -77,7 +79,7 @@ class AIRequestConfigSection extends ConsumerWidget {
                         },
                       ),
                   },
-                  SizedBox(height: 10),
+                  SizedBox(height: 10*ds.scaleFactor),
                 ],
               ),
             ),

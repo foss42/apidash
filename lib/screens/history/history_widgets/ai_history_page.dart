@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class HisAIRequestPromptSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
     final aiReqM = selectedHistoryModel.aiRequestModel;
@@ -28,7 +30,7 @@ class HisAIRequestPromptSection extends ConsumerWidget {
               'System Prompt',
             ),
           ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -42,14 +44,14 @@ class HisAIRequestPromptSection extends ConsumerWidget {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 10*ds.scaleFactor),
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
             child: Text(
               'User Prompt / Input',
             ),
           ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -109,6 +111,7 @@ class HisAIRequestConfigSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
     final aiReqM = selectedHistoryModel.aiRequestModel;
@@ -129,7 +132,7 @@ class HisAIRequestConfigSection extends ConsumerWidget {
                   Text(
                     el.description,
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 5*ds.scaleFactor),
                   switch (el.type) {
                     ConfigType.boolean => AIConfigBool(
                         readonly: true,
@@ -153,7 +156,7 @@ class HisAIRequestConfigSection extends ConsumerWidget {
                         onSliderUpdated: (x) {},
                       ),
                   },
-                  SizedBox(height: 10),
+                  SizedBox(height: 10*ds.scaleFactor),
                 ],
               ),
             ),

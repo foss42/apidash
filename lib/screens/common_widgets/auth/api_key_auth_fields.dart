@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -37,6 +38,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return ListView(
       shrinkWrap: true,
       children: [
@@ -44,11 +46,11 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
           kLabelAddTo,
           style: TextStyle(
             fontWeight: FontWeight.normal,
-            fontSize: 14,
+            fontSize: 14*ds.scaleFactor,
           ),
         ),
         SizedBox(
-          height: 4,
+          height: 4*ds.scaleFactor,
         ),
         ADPopupMenu<String>(
           value: kAddToLocationsMap[_addKeyTo],
@@ -66,7 +68,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
                   }
                 },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           hintText: kHintTextFieldName,
@@ -76,7 +78,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
             _updateApiKeyAuth();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           title: kLabelApiKey,

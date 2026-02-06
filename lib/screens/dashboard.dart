@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +18,7 @@ class Dashboard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final railIdx = ref.watch(navRailIndexStateProvider);
     final isDashBotEnabled =
         ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
@@ -32,7 +34,7 @@ class Dashboard extends ConsumerWidget {
               children: [
                 SizedBox(
                   height: kIsMacOS ? 32.0 : 16.0,
-                  width: 64,
+                  width: 64*ds.scaleFactor,
                 ),
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -49,7 +51,7 @@ class Dashboard extends ConsumerWidget {
                       'Requests',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
-                    kVSpacer10,
+                    kVSpacer10(ds.scaleFactor),
                     IconButton(
                       isSelected: railIdx == 1,
                       onPressed: () {
@@ -62,7 +64,7 @@ class Dashboard extends ConsumerWidget {
                       'Variables',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
-                    kVSpacer10,
+                    kVSpacer10(ds.scaleFactor),
                     IconButton(
                       isSelected: railIdx == 2,
                       onPressed: () {
@@ -75,7 +77,7 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
-                    kVSpacer10,
+                    kVSpacer10(ds.scaleFactor),
                     Badge(
                       backgroundColor: Theme.of(context).colorScheme.error,
                       isLabelVisible:
@@ -135,7 +137,7 @@ class Dashboard extends ConsumerWidget {
             ),
             VerticalDivider(
               thickness: 1,
-              width: 1,
+              width: 1*ds.scaleFactor,
               color: Theme.of(context).colorScheme.surfaceContainerHigh,
             ),
             Expanded(

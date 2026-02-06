@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     ref.watch(selectedIdStateProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
@@ -39,8 +41,8 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
-                    APIType.rest => kHSpacer5,
-                    _ => kHSpacer8,
+                    APIType.rest => kHSpacer5(ds.scaleFactor),
+                    _ => kHSpacer8(ds.scaleFactor),
                   },
                   const Expanded(
                     child: URLTextField(),
@@ -56,16 +58,16 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
-                    APIType.rest => kHSpacer20,
-                    _ => kHSpacer8,
+                    APIType.rest => kHSpacer20(ds.scaleFactor),
+                    _ => kHSpacer8(ds.scaleFactor),
                   },
                   const Expanded(
                     child: URLTextField(),
                   ),
-                  kHSpacer20,
-                  const SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
+                  kHSpacer20(ds.scaleFactor),
+                  SizedBox(
+                    height: 36*ds.scaleFactor,
+                    child: const SendRequestButton(),
                   )
                 ],
               ),

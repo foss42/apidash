@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
@@ -11,6 +12,7 @@ showImportDialog({
   Function(ImportFormat?)? onImportFormatChange,
   Function(XFile)? onFileDropped,
 }) {
+  final ds = DesignSystemProvider.of(context);
   showDialog(
     context: context,
     builder: (context) {
@@ -26,7 +28,7 @@ showImportDialog({
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(kLabelImport),
-                    kHSpacer8,
+                    kHSpacer8(ds.scaleFactor),
                     DropdownButtonImportFormat(
                       importFormat: fmt,
                       onChanged: (format) {
@@ -40,7 +42,7 @@ showImportDialog({
                     ),
                   ],
                 ),
-                kVSpacer6,
+                kVSpacer6(ds.scaleFactor),
                 DragAndDropArea(
                   onFileDropped: onFileDropped,
                 ),
