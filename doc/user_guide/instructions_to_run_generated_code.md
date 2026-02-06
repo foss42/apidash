@@ -1272,6 +1272,7 @@ This makes the steps a little more visual and fun!
 1. Open the **Terminal**.
 2. **Navigate to the directory** where you saved the `.py` file. For example:
 
+
 ```bash
 cd /path/to/your/file
 ```
@@ -1295,7 +1296,12 @@ cd C:\path\to\your\file
 ```bash
 python api_test.py
 ```
+#### Troubleshooting (Python – requests)
 
+- If you see `ModuleNotFoundError: No module named 'requests'`, run:
+  ```bash
+  pip install requests
+  
 ## Python (http.client)
 
 Here are the detailed instructions for running the generated API Dash code in Python using `http.client`:
