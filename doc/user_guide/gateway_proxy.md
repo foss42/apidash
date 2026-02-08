@@ -54,6 +54,9 @@ You can easily deploy a proxy using [cors-anywhere](https://github.com/Rob--W/co
 
 ### Deploying to Vercel/Cloudflare
 
-There are many open-source templates for deploying CORS proxies to serverless platforms like Vercel or Cloudflare Workers. 
+There are many open-source templates for deploying CORS proxies to serverless platforms like Vercel or Cloudflare Workers.
+
+- **Vercel**: [cors-anywhere-vercel](https://github.com/davidfurlong/cors-anywhere-vercel)
+- **Cloudflare Workers**: [cloudflare-cors-anywhere](https://github.com/Zibri/cloudflare-cors-anywhere)
 
 > **Security Note:** If you deploy a public proxy, anyone can use it to mask their IP. It is recommended to restrict the `originWhitelist` to your API Dash deployment domain (or `localhost` for testing).
