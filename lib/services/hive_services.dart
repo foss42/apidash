@@ -52,19 +52,10 @@ Future<bool> initHiveBoxes(
 Future<bool> openHiveBoxes() async {
   try {
     for (var box in kHiveBoxes) {
-      try {
-        if (box.$2 == HiveBoxType.normal) {
-          await Hive.openBox(box.$1);
-        } else if (box.$2 == HiveBoxType.lazy) {
-          await Hive.openLazyBox(box.$1);
-        }
-      } catch (e) {
-        await Hive.deleteBoxFromDisk(box.$1);
-        if (box.$2 == HiveBoxType.normal) {
-          await Hive.openBox(box.$1);
-        } else if (box.$2 == HiveBoxType.lazy) {
-          await Hive.openLazyBox(box.$1);
-        }
+      if (box.$2 == HiveBoxType.normal) {
+        await Hive.openBox(box.$1);
+      } else if (box.$2 == HiveBoxType.lazy) {
+        await Hive.openLazyBox(box.$1);
       }
     }
     return true;
