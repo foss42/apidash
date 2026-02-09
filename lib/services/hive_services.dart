@@ -128,8 +128,9 @@ class HiveHandler {
     List<RequestMetaModel> metaList = [];
     for (var id in ids) {
       var metaJson = requestMetaBox.get(id);
+      if (metaJson != null) {
         metaList.add(RequestMetaModel.fromJson(Map<String, dynamic>.from(metaJson)));
-      
+      }
     }
     return metaList;
   }
@@ -227,7 +228,7 @@ class HiveHandler {
     if (ids != null) {
       ids = ids as List;
       for (var key in requestMetaBox.keys.toList()) {
-        if (!ids.contains(key)) {
+        if (key != kKeyDataBoxIds && !ids.contains(key)) {
           await requestMetaBox.delete(key);
         }
       }

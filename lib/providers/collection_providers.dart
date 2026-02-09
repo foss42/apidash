@@ -632,6 +632,7 @@ class CollectionStateNotifier
           httpRequestModel: HttpRequestModel(
             method: meta.method,
             url: meta.url,
+            authModel: null,
           ),
         );
       }
