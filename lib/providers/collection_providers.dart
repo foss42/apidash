@@ -39,19 +39,7 @@ class CollectionStateNotifier
     this.ref,
     this.hiveHandler,
   ) : super(null) {
-    _initialize();
-  }
-
-  final Ref ref;
-  final HiveHandler hiveHandler;
-  final baseHttpResponseModel = const HttpResponseModel();
-  
-  // Add a completer to track initialization
-  final _initCompleter = Completer<void>();
-  Future<void> get initialized => _initCompleter.future;
-
-  Future<void> _initialize() async {
-    final status = await loadData();
+    loadData().then((status) {
     if (status) {
       ref.read(requestSequenceProvider.notifier).state = [
         state!.keys.first,
@@ -61,8 +49,12 @@ class CollectionStateNotifier
     if (sequence.isNotEmpty) {
       ref.read(selectedIdStateProvider.notifier).state = sequence[0];
     }
-    _initCompleter.complete();
+    });
   }
+
+  final Ref ref;
+  final HiveHandler hiveHandler;
+  final baseHttpResponseModel = const HttpResponseModel();
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
