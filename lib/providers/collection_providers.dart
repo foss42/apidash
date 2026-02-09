@@ -417,7 +417,7 @@ class CollectionStateNotifier
         sendingTime: DateTime.now(),
       ),
     };
-    bool streamingMode = true;
+    bool streamingMode = true; //Default: Streaming First
 
     final stream = await streamHttpRequest(
       requestId,
@@ -460,7 +460,7 @@ class CollectionStateNotifier
           ...state!,
           requestId: newRequestModel,
         };
-        
+        // Terminal: append chunk preview
         if (response != null && response.body.isNotEmpty) {
           terminal.addNetworkChunk(
             logId,
@@ -517,6 +517,7 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
+      //AI-FORMATTING for Non Streaming Varaint
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
@@ -585,6 +586,7 @@ class CollectionStateNotifier
       }
     }
 
+    // Final state update
     state = {
       ...state!,
       requestId: newRequestModel,
@@ -699,6 +701,9 @@ class CollectionStateNotifier
   Future<Map<String, dynamic>> exportDataToHAR() async {
     var result = await collectionToHAR(state?.values.toList());
     return result;
+    // return {
+    //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
+    // };
   }
 
   HttpRequestModel getSubstitutedHttpRequestModel(
