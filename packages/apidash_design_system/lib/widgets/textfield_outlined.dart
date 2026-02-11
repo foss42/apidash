@@ -60,7 +60,7 @@ class ADOutlinedTextField extends StatelessWidget {
       enabled: enabled,
       maxLines: maxLines,
       expands: expands,
-      initialValue: initialValue,
+        initialValue: controller == null ? initialValue : null,
       style: textStyle ??
           kCodeStyle.copyWith(
             fontSize: textFontSize,

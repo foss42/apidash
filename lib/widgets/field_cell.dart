@@ -1,7 +1,7 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-class CellField extends StatelessWidget {
+class CellField extends StatefulWidget {
   const CellField({
     super.key,
     required this.keyId,
@@ -18,14 +18,42 @@ class CellField extends StatelessWidget {
   final ColorScheme? colorScheme;
 
   @override
+  State<CellField> createState() => _CellFieldState();
+}
+
+class _CellFieldState extends State<CellField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue ?? "");
+  }
+
+  @override
+  void didUpdateWidget(covariant CellField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final newValue = widget.initialValue ?? "";
+    if (_controller.text != newValue) {
+      _controller.text = newValue;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ADOutlinedTextField(
-      keyId: keyId,
-      initialValue: initialValue,
-      hintText: hintText,
+      keyId: widget.keyId,
+      controller: _controller,
+      hintText: widget.hintText,
       hintTextFontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-      onChanged: onChanged,
-      colorScheme: colorScheme,
+      onChanged: widget.onChanged,
+      colorScheme: widget.colorScheme,
     );
   }
 }
