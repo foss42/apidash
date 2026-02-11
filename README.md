@@ -139,7 +139,7 @@ API Dash can be downloaded from the links below:
 
 ## ❤️ Supported by
 
-<a href="https://www.testmu.ai" target="_blank">
+<a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=apidash" target="_blank">
     <img width="200" height="60" alt="testmu-ai-logo" src="https://github.com/user-attachments/assets/a40dde8e-6068-4993-98e4-ffb90c082f30" />
 </a>
 
