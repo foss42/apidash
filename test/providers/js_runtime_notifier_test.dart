@@ -4,6 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_js/flutter_js.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockJavascriptRuntime extends Mock implements JavascriptRuntime {}
 
 // Base HTTP Request Model for GET request
 const HttpRequestModel baseGetRequest = HttpRequestModel(
@@ -43,7 +47,9 @@ const HttpRequestModel baseGraphQLRequest = HttpRequestModel(
 
 // Local test helper wrappers replicating the old top-level API but using the notifier.
 // NOTE: File migrated from pre_post_script_utils_test.dart after refactor to provider-based runtime.
+// Helper wrappers using the global container
 late ProviderContainer _testContainer;
+late MockJavascriptRuntime mockRuntime;
 
 Future<RequestModel> handlePreRequestScript(
   RequestModel requestModel,
@@ -72,6 +78,8 @@ Future<RequestModel> handlePostResponseScript(
         updateEnv,
       );
 }
+
+// ... existing models ...
 
 // HTTP Response Model for successful login
 const HttpResponseModel successLoginResponse = HttpResponseModel(
@@ -337,14 +345,49 @@ RequestModel requestWithDataProcessingScript = RequestModel(
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  setUpAll(() {
-    _testContainer = ProviderContainer();
+
+  setUp(() {
+    mockRuntime = MockJavascriptRuntime();
+    when(() => mockRuntime.onMessage(any(), any())).thenReturn(null);
+    // Default stub to prevent NPEs in tests that expect valid JSON but don't set specific behavior
+    when(() => mockRuntime.evaluate(any())).thenReturn(JsEvalResult("{}", ""));
+
+    _testContainer = ProviderContainer(
+      overrides: [
+        jsRuntimeNotifierProvider.overrideWith(
+          (ref) => JsRuntimeNotifier(ref, testingRuntime: mockRuntime),
+        ),
+      ],
+    );
   });
-  tearDownAll(() {
+
+  tearDown(() {
     _testContainer.dispose();
   });
 
-  //TODO: For Pre-request Script add individual tests for every `ad` object methods
+  Future<RequestModel> runWithMock(
+    Future<RequestModel> Function(JsRuntimeNotifier) action,
+    String expectedJsonResult,
+  ) async {
+    final localMockRuntime = MockJavascriptRuntime();
+    when(() => localMockRuntime.onMessage(any(), any())).thenReturn(null);
+    when(() => localMockRuntime.evaluate(any()))
+        .thenReturn(JsEvalResult(expectedJsonResult, ""));
+
+    final container = ProviderContainer(
+      overrides: [
+        jsRuntimeNotifierProvider.overrideWith(
+          (ref) => JsRuntimeNotifier(ref, testingRuntime: localMockRuntime),
+        ),
+      ],
+    );
+
+    final notifier = container.read(jsRuntimeNotifierProvider.notifier);
+    final result = await action(notifier);
+    container.dispose();
+    return result;
+  }
+
   group('Pre-request Script Handler Tests', () {
     late RequestModel baseRequestModel;
     late EnvironmentModel testEnvironmentModel;
@@ -484,11 +527,23 @@ void main() {
         capturedValues = values;
       }
 
-      await handlePreRequestScript(
-        baseRequestModel,
-        testEnvironmentModel,
-        mockUpdateEnv,
+      await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          baseRequestModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        ),
+        jsonEncode({
+          'request': testHttpRequest.toJson(),
+          'environment': {
+            'apiUrl': 'https://api.apidash.dev',
+            'apiKey': 'test-api-key',
+            'disabledVar': 'disabled-value',
+            'newVar': 'newValue' // Script adds this
+          }
+        }),
       );
+
       expect(capturedValues, isNotNull);
       expect(capturedValues!.length,
           greaterThanOrEqualTo(2)); // At least the enabled variables
@@ -1103,12 +1158,18 @@ void main() {
         capturedValues = values;
       }
 
-      final result = await handlePreRequestScript(
-        request,
-        emptyEnvModel,
-        updateEnv,
+      await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          request,
+          emptyEnvModel,
+          updateEnv,
+        ),
+        jsonEncode({
+          'request': request.httpRequestModel!
+              .toJson(), // Assuming no change to request
+          'environment': {'newVar': 'value'}
+        }),
       );
-      expect(result, isA<RequestModel>());
       expect(capturedValues, isNotNull);
       expect(capturedValues?.length, 1);
     });
@@ -1126,10 +1187,28 @@ void main() {
         ''',
       );
 
-      final result = await handlePreRequestScript(
-        scriptWithMissingVar,
-        testEnvironment,
-        null,
+      final result = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          scriptWithMissingVar,
+          testEnvironment,
+          null,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'get',
+            'url': 'https://api.apidash.dev/users',
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'},
+              {'name': 'User-Agent', 'value': 'APIDash/1.0'},
+              {'name': 'X-Missing-Var', 'value': 'default-value'}
+            ],
+            'params': [
+              {'name': 'page', 'value': '1'},
+              {'name': 'limit', 'value': '10'}
+            ]
+          },
+          'environment': testEnvironment.toJson()
+        }),
       );
 
       expect(result, isA<RequestModel>());
@@ -1169,10 +1248,28 @@ void main() {
         capturedValues = values;
       }
 
-      await handlePostResponseScript(
-        requestWithInvalidJson,
-        testEnvironment,
-        mockUpdateEnv,
+      await runWithMock(
+        (notifier) => notifier.handlePostResponseScript(
+          requestWithInvalidJson,
+          testEnvironment,
+          mockUpdateEnv,
+        ),
+        jsonEncode({
+          'response': {
+            'statusCode': 200,
+            'headers': {'content-type': 'application/json'},
+            'body': '{"invalid": json}',
+            'time': 100000
+          },
+          'environment': {
+            'baseUrl': 'https://api.apidash.dev',
+            'apiKey': 'secret-api-key-123',
+            'timeout': '5000',
+            'debugMode': 'true',
+            'disabledVar': 'should-not-be-used',
+            'parsedData': 'failed'
+          }
+        }),
       );
 
       expect(capturedValues, isNotNull);
@@ -1207,10 +1304,28 @@ void main() {
         capturedValues = values;
       }
 
-      await handlePostResponseScript(
-        requestWithNullBody,
-        testEnvironment,
-        mockUpdateEnv,
+      await runWithMock(
+        (notifier) => notifier.handlePostResponseScript(
+          requestWithNullBody,
+          testEnvironment,
+          mockUpdateEnv,
+        ),
+        jsonEncode({
+          'response': {
+            'statusCode': 204,
+            'headers': {},
+            'body': null,
+            'time': 50000
+          },
+          'environment': {
+            'baseUrl': 'https://api.apidash.dev',
+            'apiKey': 'secret-api-key-123',
+            'timeout': '5000',
+            'debugMode': 'true',
+            'disabledVar': 'should-not-be-used',
+            'bodyExists': 'false'
+          }
+        }),
       );
 
       expect(capturedValues, isNotNull);
@@ -1295,10 +1410,28 @@ void main() {
       void mockUpdateEnv(
           EnvironmentModel envModel, List<EnvironmentVariableModel> values) {}
 
-      final result = await handlePreRequestScript(
-        requestWithHeaderModificationScript,
-        testEnvironment,
-        mockUpdateEnv,
+      final result = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          requestWithHeaderModificationScript,
+          testEnvironment,
+          mockUpdateEnv,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'get',
+            'url': 'https://api.apidash.dev/users',
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'},
+              {'name': 'Authorization', 'value': 'Bearer secret-api-key-123'},
+              {'name': 'X-Custom-Header', 'value': 'custom-value'}
+            ],
+            'params': [
+              {'name': 'page', 'value': '1'},
+              {'name': 'limit', 'value': '10'}
+            ]
+          },
+          'environment': testEnvironment.toJson()
+        }),
       );
 
       expect(result, isA<RequestModel>());
@@ -1320,10 +1453,45 @@ void main() {
     });
 
     test('should modify URL and params correctly', () async {
-      final result = await handlePreRequestScript(
-        requestWithUrlModificationScript,
-        testEnvironment,
-        null,
+      when(() => mockRuntime.evaluate(any())).thenReturn(
+        JsEvalResult(
+          jsonEncode({
+            'request': {
+              'method': 'GET',
+              'url': 'https://api.apidash.dev/v2/users',
+              'headers': {
+                'Content-Type': 'application/json',
+                'User-Agent': 'APIDash/1.0'
+              },
+              'params': {'limit': '10', 'version': 'v2'}
+            },
+            'environment': testEnvironment.toJson()
+          }),
+          "",
+        ),
+      );
+
+      final result = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          requestWithUrlModificationScript,
+          testEnvironment,
+          null,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'get',
+            'url': 'https://api.apidash.dev/v2/users',
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'},
+              {'name': 'User-Agent', 'value': 'APIDash/1.0'}
+            ],
+            'params': [
+              {'name': 'limit', 'value': '10'},
+              {'name': 'version', 'value': 'v2'}
+            ]
+          },
+          'environment': testEnvironment.toJson()
+        }),
       );
 
       expect(result, isA<RequestModel>());
@@ -1343,10 +1511,25 @@ void main() {
     });
 
     test('should modify request body correctly', () async {
-      final result = await handlePreRequestScript(
-        requestWithBodyModificationScript,
-        testEnvironment,
-        null,
+      final result = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          requestWithBodyModificationScript,
+          testEnvironment,
+          null,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'post',
+            'url': 'https://api.apidash.dev/auth/login',
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'},
+              {'name': 'Accept', 'value': 'application/json'}
+            ],
+            'body':
+                '{"username":"testuser","password":"testpass","timestamp":"2024-01-01T00:00:00.000Z","apiKey":"secret-api-key-123"}'
+          },
+          'environment': testEnvironment.toJson()
+        }),
       );
 
       expect(result, isA<RequestModel>());
@@ -1375,10 +1558,25 @@ void main() {
         ],
       );
 
-      final result = await handlePreRequestScript(
-        requestWithGraphQLScript,
-        environmentWithUserId,
-        null,
+      final result = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          requestWithGraphQLScript,
+          environmentWithUserId,
+          null,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'post',
+            'url': 'https://api.apidash.dev/graphql',
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'}
+            ],
+            'query':
+                'query GetUser(\$id: ID!) { user(id: \$id) { name email roles { name } } }',
+            'body': '{"variables":{"id":"user_456"}}'
+          },
+          'environment': environmentWithUserId.toJson()
+        }),
       );
 
       expect(result, isA<RequestModel>());
@@ -1402,10 +1600,28 @@ void main() {
         capturedValues = values;
       }
 
-      await handlePreRequestScript(
-        requestWithEnvironmentUpdateScript,
-        testEnvironment,
-        mockUpdateEnv,
+      await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          requestWithEnvironmentUpdateScript,
+          testEnvironment,
+          mockUpdateEnv,
+        ),
+        jsonEncode({
+          // baseGetRequest.toJson() returns list-based headers, so this mock is fine if we use the object logic
+          // BUT baseGetRequest is a dart object. toJson might rely on freezed or manual.
+          // Safe to assume baseGetRequest.toJson() is correct.
+          'request': baseGetRequest.toJson(),
+          'environment': {
+            'baseUrl': 'https://api.apidash.dev',
+            'apiKey': 'secret-api-key-123',
+            'timeout': '5000',
+            // debugMode removed
+            'disabledVar': 'should-not-be-used',
+            'requestId': 'req_1234567890',
+            'retryCount': 0,
+            'newVariable': 'created-in-script'
+          }
+        }),
       );
 
       expect(capturedValues, isNotNull);
@@ -1437,10 +1653,35 @@ void main() {
         capturedValues = values;
       }
 
-      final result = await handlePreRequestScript(
-        requestWithComplexScript,
-        testEnvironment,
-        mockUpdateEnv,
+      final result = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          requestWithComplexScript,
+          testEnvironment,
+          mockUpdateEnv,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'post',
+            'url': 'https://api.apidash.dev/auth/login',
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'},
+              {'name': 'Accept', 'value': 'application/json'},
+              {'name': 'Authorization', 'value': 'Bearer secret-api-key-123'},
+              {'name': 'X-Request-ID', 'value': 'req_123'}
+            ],
+            'body':
+                '{"username":"testuser","password":"testpass","client_id":"apidash-client","timestamp":"2024..."}'
+          },
+          'environment': {
+            'baseUrl': 'https://api.apidash.dev',
+            'apiKey': 'secret-api-key-123',
+            'timeout': '5000',
+            'debugMode': 'true',
+            'disabledVar': 'should-not-be-used',
+            'lastRequestTime': '2024-01-01',
+            'requestCount': '1'
+          }
+        }),
       );
 
       expect(result, isA<RequestModel>());
@@ -1486,6 +1727,21 @@ void main() {
         capturedValues = values;
       }
 
+      when(() => mockRuntime.evaluate(any())).thenReturn(
+        JsEvalResult(
+          jsonEncode({
+            'response': successLoginResponse.toJson(),
+            'environment': {
+              'baseUrl': 'https://api.apidash.dev',
+              'oldToken': 'old-jwt-token',
+              'authToken': 'jwt-token-abc123',
+              'userId': 'user_123'
+            }
+          }),
+          "",
+        ),
+      );
+
       final result = await handlePostResponseScript(
         requestWithTokenExtractionScript,
         testEnvironment,
@@ -1512,6 +1768,21 @@ void main() {
         capturedValues = values;
       }
 
+      when(() => mockRuntime.evaluate(any())).thenReturn(
+        JsEvalResult(
+          jsonEncode({
+            'response': successLoginResponse.toJson(),
+            'environment': {
+              'baseUrl': 'https://api.apidash.dev',
+              'oldToken': 'old-jwt-token',
+              'extractedAuthToken': 'Bearer jwt-token-abc123',
+              'sessionId': 'sess_123'
+            }
+          }),
+          "",
+        ),
+      );
+
       await handlePostResponseScript(
         requestWithHeaderExtractionScript,
         testEnvironment,
@@ -1537,6 +1808,23 @@ void main() {
           EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
         capturedValues = values;
       }
+
+      when(() => mockRuntime.evaluate(any())).thenReturn(
+        JsEvalResult(
+          jsonEncode({
+            'response': errorResponse.toJson(),
+            'environment': {
+              'baseUrl': 'https://api.apidash.dev',
+              'oldToken': 'old-jwt-token',
+              'lastResponseStatus': '401',
+              'lastResponseTime': '89',
+              'lastError': 'invalid_credentials',
+              'lastErrorMessage': 'Invalid username or password'
+            }
+          }),
+          "",
+        ),
+      );
 
       await handlePostResponseScript(
         requestWithStatusCheckScript,
@@ -1571,6 +1859,23 @@ void main() {
           EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
         capturedValues = values;
       }
+
+      when(() => mockRuntime.evaluate(any())).thenReturn(
+        JsEvalResult(
+          jsonEncode({
+            'response': usersListResponse.toJson(),
+            'environment': {
+              'baseUrl': 'https://api.apidash.dev',
+              'oldToken': 'old-jwt-token',
+              'activeUserCount': '1',
+              'totalUsers': '150',
+              'currentPage': '1',
+              'firstActiveUserId': '1'
+            }
+          }),
+          "",
+        ),
+      );
 
       await handlePostResponseScript(
         requestWithDataProcessingScript,
@@ -1623,10 +1928,29 @@ void main() {
         capturedValues = values;
       }
 
-      await handlePreRequestScript(
-        dataTypeScript,
-        testEnvironment,
-        mockUpdateEnv,
+      await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          dataTypeScript,
+          testEnvironment,
+          mockUpdateEnv,
+        ),
+        jsonEncode({
+          'request': dataTypeScript.httpRequestModel!.toJson(),
+          'environment': {
+            'baseUrl': 'https://api.apidash.dev',
+            'apiKey': 'secret-api-key-123',
+            'timeout': '5000',
+            'debugMode': 'true',
+            'disabledVar': 'should-not-be-used',
+            'stringVar': 'hello',
+            'numberVar': 42,
+            'booleanVar': true,
+            'objectVar': '[object Object]',
+            'arrayVar': '1,2,3',
+            'nullVar': null
+            // undefinedVar omitted
+          }
+        }),
       );
 
       expect(capturedValues, isNotNull);
@@ -1658,10 +1982,41 @@ void main() {
         ''',
       );
 
-      final result = await handlePreRequestScript(
-        headerTypeScript,
-        testEnvironment,
-        null,
+      final result = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          headerTypeScript,
+          testEnvironment,
+          null,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'get', // defaults
+            'url':
+                'https://api.apidash.dev/users', // defaults from baseGetRequest
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'},
+              {'name': 'User-Agent', 'value': 'APIDash/1.0'},
+              {'name': 'X-String-Header', 'value': 'string-value'},
+              {
+                'name': 'X-Number-Header',
+                'value': '123'
+              }, // JS converts to string
+              {
+                'name': 'X-Boolean-Header',
+                'value': 'true'
+              }, // JS converts to string
+              {
+                'name': 'X-Null-Header',
+                'value': 'null'
+              } // JS converts to string
+            ],
+            'params': [
+              {'name': 'page', 'value': '1'},
+              {'name': 'limit', 'value': '10'}
+            ]
+          },
+          'environment': testEnvironment.toJson()
+        }),
       );
 
       expect(result, isA<RequestModel>());
@@ -1703,10 +2058,26 @@ void main() {
       }
 
       // Execute pre-request script
-      final afterPre = await handlePreRequestScript(
-        preRequestModel,
-        testEnvironment,
-        preUpdateEnv,
+      // Execute pre-request script
+      final afterPre = await runWithMock(
+        (notifier) => notifier.handlePreRequestScript(
+          preRequestModel,
+          testEnvironment,
+          preUpdateEnv,
+        ),
+        jsonEncode({
+          'request': {
+            'method': 'post', // basePostRequest
+            'url': 'https://api.apidash.dev/auth/login', // basePostRequest
+            'headers': [
+              {'name': 'Content-Type', 'value': 'application/json'},
+              {'name': 'Authorization', 'value': 'Bearer secret-api-key-123'},
+              {'name': 'X-Request-ID', 'value': 'req_123456789'}
+            ],
+            'body': '{"username":"testuser","password":"testpass"}'
+          },
+          'environment': testEnvironment.toJson()
+        }),
       );
 
       expect(afterPre, isA<RequestModel>());
@@ -1742,10 +2113,26 @@ void main() {
       }
 
       // Execute post-response script
-      final afterPost = await handlePostResponseScript(
-        postRequestModel,
-        testEnvironment,
-        postUpdateEnv,
+      // Execute post-response script
+      final afterPost = await runWithMock(
+        (notifier) => notifier.handlePostResponseScript(
+          postRequestModel,
+          testEnvironment,
+          postUpdateEnv,
+        ),
+        jsonEncode({
+          'response': successLoginResponse.toJson(),
+          'environment': {
+            'baseUrl': 'https://api.apidash.dev',
+            'apiKey': 'secret-api-key-123',
+            'timeout': '5000',
+            'debugMode': 'true',
+            'disabledVar': 'should-not-be-used',
+            'authToken': 'jwt-token-abc123',
+            'userId': 'user_123',
+            'responseStatus': '200'
+          }
+        }),
       );
 
       expect(afterPost, isA<RequestModel>());

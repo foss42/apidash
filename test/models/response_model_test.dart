@@ -14,15 +14,21 @@ void main() {
   });
 
   test('Testing fromResponse', () async {
-    var responseRec = await sendHttpRequest(
-      requestModelGet1.id,
-      requestModelGet1.apiType,
-      requestModelGet1.httpRequestModel!,
-      defaultUriScheme: kDefaultUriScheme,
-      noSSL: false,
+    // var responseRec = await sendHttpRequest(
+    //   requestModelGet1.id,
+    //   requestModelGet1.apiType,
+    //   requestModelGet1.httpRequestModel!,
+    //   defaultUriScheme: kDefaultUriScheme,
+    //   noSSL: false,
+    // );
+
+    final response = Response(
+      '{"data":"Check out https://api.apidash.dev/docs to get started."}',
+      200,
+      headers: {'Content-Type': 'application/json'},
     );
 
-    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
     expect(responseData.body,
         '{"data":"Check out https://api.apidash.dev/docs to get started."}');
@@ -49,13 +55,24 @@ void main() {
 
   test('Testing contentType override by the user having no charset (#630)',
       () async {
-    var responseRec = await sendHttpRequest(
-      requestModelPost11.id,
-      requestModelPost11.apiType,
-      requestModelPost11.httpRequestModel!,
+    // var responseRec = await sendHttpRequest(
+    //   requestModelPost11.id,
+    //   requestModelPost11.apiType,
+    //   requestModelPost11.httpRequestModel!,
+    // );
+
+    final request =
+        Request('POST', Uri.parse('https://api.apidash.dev/case/lower'));
+    request.headers['content-type'] = 'application/json';
+
+    final response = Response(
+      '{"data":"i love flutter"}',
+      200,
+      headers: {'Content-Type': 'application/json'},
+      request: request,
     );
 
-    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
     expect(responseData.body, '{"data":"i love flutter"}');
     expect(responseData.contentType, 'application/json');
@@ -63,26 +80,48 @@ void main() {
   });
 
   test('Testing default contentType charset added by dart', () async {
-    var responseRec = await sendHttpRequest(
-      requestModelPost12.id,
-      requestModelPost12.apiType,
-      requestModelPost12.httpRequestModel!,
+    // var responseRec = await sendHttpRequest(
+    //   requestModelPost12.id,
+    //   requestModelPost12.apiType,
+    //   requestModelPost12.httpRequestModel!,
+    // );
+
+    final request =
+        Request('POST', Uri.parse('https://api.apidash.dev/case/lower'));
+    request.headers['content-type'] = 'application/json; charset=utf-8';
+
+    final response = Response(
+      '{"data":"i love flutter"}',
+      200,
+      headers: {'Content-Type': 'application/json; charset=utf-8'},
+      request: request,
     );
 
-    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
     expect(responseData.requestHeaders?['content-type'],
         'application/json; charset=utf-8');
   });
 
   test('Testing latin1 charset added by user', () async {
-    var responseRec = await sendHttpRequest(
-      requestModelPost13.id,
-      requestModelPost13.apiType,
-      requestModelPost13.httpRequestModel!,
+    // var responseRec = await sendHttpRequest(
+    //   requestModelPost13.id,
+    //   requestModelPost13.apiType,
+    //   requestModelPost13.httpRequestModel!,
+    // );
+
+    final request =
+        Request('POST', Uri.parse('https://api.apidash.dev/case/lower'));
+    request.headers['content-type'] = 'application/json; charset=latin1';
+
+    final response = Response(
+      '{"data":"i love flutter"}',
+      200,
+      headers: {'Content-Type': 'application/json; charset=latin1'},
+      request: request,
     );
 
-    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
     expect(responseData.requestHeaders?['content-type'],
         'application/json; charset=latin1');

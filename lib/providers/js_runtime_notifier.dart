@@ -38,7 +38,14 @@ final jsRuntimeNotifierProvider =
 });
 
 class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
-  JsRuntimeNotifier(this.ref) : super(const JsRuntimeState());
+  JsRuntimeNotifier(this.ref, {JavascriptRuntime? testingRuntime})
+      : super(const JsRuntimeState()) {
+    if (testingRuntime != null) {
+      _runtime = testingRuntime;
+      _setupJsBridge();
+      state = state.copyWith(initialized: true);
+    }
+  }
 
   final Ref ref;
   late final JavascriptRuntime _runtime;
@@ -268,9 +275,17 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     EnvironmentModel? originalEnvironmentModel,
     void Function(EnvironmentModel, List<EnvironmentVariableModel>)? updateEnv,
   ) async {
+    final Map<String, dynamic> envMap = {};
+    if (originalEnvironmentModel != null) {
+      envMap.addEntries(
+        originalEnvironmentModel.values
+            .where((e) => e.enabled)
+            .map((e) => MapEntry(e.key, e.value)),
+      );
+    }
     final scriptResult = await executePreRequestScript(
       currentRequestModel: requestModel,
-      activeEnvironment: originalEnvironmentModel?.toJson() ?? {},
+      activeEnvironment: envMap,
       requestId: requestModel.id,
     );
     final newRequestModel =
@@ -328,9 +343,17 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     EnvironmentModel? originalEnvironmentModel,
     void Function(EnvironmentModel, List<EnvironmentVariableModel>)? updateEnv,
   ) async {
+    final Map<String, dynamic> envMap = {};
+    if (originalEnvironmentModel != null) {
+      envMap.addEntries(
+        originalEnvironmentModel.values
+            .where((e) => e.enabled)
+            .map((e) => MapEntry(e.key, e.value)),
+      );
+    }
     final scriptResult = await executePostResponseScript(
       currentRequestModel: requestModel,
-      activeEnvironment: originalEnvironmentModel?.toJson() ?? {'values': []},
+      activeEnvironment: envMap, // Use the simple map
       requestId: requestModel.id,
     );
     final newRequestModel =
