@@ -24,11 +24,8 @@ void main() {
     expect(find.text('Raise Issue'), findsOneWidget);
     expect(
         find.text('An error occurred. $kUnexpectedRaiseIssue'), findsNothing);
-    final dynamic filledButtonWithIconWidget = tester.widget(
-        find.byWidgetPredicate((Widget widget) =>
-            '${widget.runtimeType}' == '_FilledButtonWithIcon'));
-    expect(find.byType(filledButtonWithIconWidget.runtimeType), findsOneWidget);
-    await tester.tap(find.byType(filledButtonWithIconWidget.runtimeType));
+    expect(find.byType(FilledButton), findsOneWidget);
+    await tester.tap(find.byType(FilledButton));
   });
 
   testWidgets('Testing when no error message is sent', (tester) async {
@@ -49,10 +46,7 @@ void main() {
     expect(find.text(errorMessage), findsNothing);
     expect(
         find.text('An error occurred. $kUnexpectedRaiseIssue'), findsOneWidget);
-    final dynamic filledButtonWithIconWidget = tester.widget(
-        find.byWidgetPredicate((Widget widget) =>
-            '${widget.runtimeType}' == '_FilledButtonWithIcon'));
-    expect(find.byType(filledButtonWithIconWidget.runtimeType), findsOneWidget);
-    await tester.tap(find.byType(filledButtonWithIconWidget.runtimeType));
+    expect(find.byType(FilledButton), findsOneWidget);
+    await tester.tap(find.byType(FilledButton));
   });
 }

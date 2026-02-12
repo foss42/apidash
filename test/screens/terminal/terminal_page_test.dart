@@ -100,7 +100,7 @@ void main() {
     expect(networkTitle, findsNothing);
 
     // Toggle timestamp checkbox
-    await tester.tap(find.byType(Checkbox));
+    await tester.tap(find.widgetWithIcon(IconButton, Icons.access_time));
     await tester.pumpAndSettle();
 
     // We won't parse time, but ensure list still renders with entries

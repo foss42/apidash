@@ -100,7 +100,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                     stacRepresentation: widget.sduiCode,
                     onError: () {
                       Future.delayed(Duration(milliseconds: 200), () {
-                        if (!mounted) return;
+                        if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
                             "Failed to Display Preview",

@@ -11,6 +11,7 @@ typedef AudioErrorWidgetBuilder = Widget Function(
 );
 
 // Uint8List AudioSource for just_audio
+// ignore: experimental_member_use
 class Uint8AudioSource extends StreamAudioSource {
   Uint8AudioSource(this.bytes, {required this.contentType});
 
@@ -18,9 +19,11 @@ class Uint8AudioSource extends StreamAudioSource {
   final String contentType;
 
   @override
+  // ignore: experimental_member_use
   Future<StreamAudioResponse> request([int? start, int? end]) async {
     start ??= 0;
     end ??= bytes.length;
+    // ignore: experimental_member_use
     return StreamAudioResponse(
       sourceLength: bytes.length,
       contentLength: end - start,

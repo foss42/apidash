@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http/http.dart';
+// ignore: unnecessary_import
 import 'package:http_parser/http_parser.dart';
 import 'package:seed/seed.dart';
 import '../extensions/extensions.dart';
