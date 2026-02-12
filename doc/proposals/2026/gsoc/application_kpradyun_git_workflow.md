@@ -26,7 +26,7 @@ Yes, I have contributed to API Dash itself.
 
 **2. What is your one project/achievement that you are most proud of? Why?**
 I developed **F1_agent**, an autonomous AI agent capable of analyzing Formula 1 telemetry and race data using natural language queries.
-* **Tech Stack:** Python, LangChain (or CrewAI/LlamaIndex), OpenAI API (or Ollama/Local LLMs), FastF1/Ergast API, and Pandas/Matplotlib for data visualization.
+* **Tech Stack:** Python, LangChain, Ollama, FastF1 API, OpenF1 API and Pandas/Matplotlib for data visualization.
 * **Why I'm proud:** This project moved beyond simple RAG (Retrieval-Augmented Generation) to true agentic workflows. The agent can decompose complex questions like "Compare Verstappen's lap times vs. Hamilton's in Q3 of the 2023 Monaco GP" into executable code, fetch real-time telemetry data, and generate insightful visualizations on the fly. Building the reasoning loop to handle API failures and data inconsistencies taught me how to build robust, production-ready AI systems.
 
 **3. What kind of problems or challenges motivate you the most to solve them?**
