@@ -80,6 +80,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
         targetLanguage: selectedLanguage,
         selectedAgent: selectedAgent,
       );
+      if (!mounted) return;
       if (res == null) {
         setState(() {
           generatedToolCode = '';
@@ -99,6 +100,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
         index = 1;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         index = 0;
       });

@@ -17,8 +17,9 @@ class JsonField extends ExtendedTextField {
     super.autofocus,
     super.buildCounter,
     super.canRequestFocus,
+
     super.clipBehavior,
-    this.controller,
+    JsonTextFieldController? super.controller,
     super.cursorColor,
     super.cursorHeight,
     super.cursorRadius,
@@ -53,7 +54,6 @@ class JsonField extends ExtendedTextField {
     super.textCapitalization,
     super.textDirection,
     super.textInputAction,
-    super.toolbarOptions,
     super.contentInsertionConfiguration,
     super.selectionControls,
     super.mouseCursor,
@@ -128,8 +128,6 @@ class JsonField extends ExtendedTextField {
 
   /// Callback for the error message.
   final Function(String?)? onError;
-  @override
-  final JsonTextFieldController? controller;
 
   @override
   JsonFieldState createState() {
@@ -139,7 +137,8 @@ class JsonField extends ExtendedTextField {
 
 class JsonFieldState extends State<JsonField> {
   late final JsonTextFieldController controller =
-      widget.controller ?? JsonTextFieldController();
+      (widget.controller as JsonTextFieldController?) ??
+      JsonTextFieldController();
   late String? jsonError =
       controller.text.isEmpty
           ? null

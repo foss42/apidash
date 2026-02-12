@@ -47,6 +47,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         ref: ref,
         apiResponse: apiResponse,
       );
+      if (!mounted) return null;
       if (res == null) {
         setState(() {
           index = 0;
@@ -62,6 +63,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       }
       return res;
     } catch (e) {
+      if (!mounted) return null;
       String errMsg = 'Unexpected Error Occured';
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = "Please Select Default AI Model in Settings";
@@ -87,6 +89,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       ref: ref,
       modificationRequest: modificationRequest,
     );
+    if (!mounted) return;
     if (res == null) {
       setState(() {
         index = 2;

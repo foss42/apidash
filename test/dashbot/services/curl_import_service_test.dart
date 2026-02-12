@@ -19,7 +19,7 @@ void main() {
   group('CurlImportService.buildActionPayloadFromCurl', () {
     test('maps auth, headers, body, params', () {
       final curl = Curl.parse(
-          'curl -u user:pass "https://api.apidash.dev/items?size=10" -H "X-Test: 1" --data "{\"name\":\"X\"}"');
+          'curl -u user:pass "https://api.apidash.dev/items?size=10" -H "X-Test: 1" --data "{"name":"X"}"');
       final p = CurlImportService.buildActionPayloadFromCurl(curl);
       // Because of --data flag, method becomes POST implicitly
       expect(p['method'].toString().toUpperCase(), 'POST');
