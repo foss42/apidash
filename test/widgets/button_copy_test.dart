@@ -26,9 +26,8 @@ void main() {
     await tester.tap(button);
     await tester.pumpAndSettle();
 
-    //TODO: The below test works for `flutter run` but not for `flutter test`
-    // var data = await Clipboard.getData('text/plain');
-    // expect(data?.text, copyText);
+    // Verify the snackbar shows "Copied" message instead of testing clipboard
+    expect(find.text('Copied'), findsOneWidget);
   });
 
   testWidgets('Testing for copy button without label', (tester) async {

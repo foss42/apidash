@@ -113,8 +113,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.copy_rounded));
     await tester.pumpAndSettle();
 
-    // TODO: The below test works for `flutter run` but not for `flutter test`
-    // final data = await Clipboard.getData('text/plain');
-    // expect(data?.text, 'Copy this please');
+    // Verify the snackbar shows "Copied" message instead of testing clipboard
+    expect(find.text('Copied'), findsOneWidget);
   });
 }
