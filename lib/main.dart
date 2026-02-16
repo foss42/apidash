@@ -56,7 +56,7 @@ Future<bool> initApp(
     );
     debugPrint("openBoxesStatus: $openBoxesStatus");
     if (openBoxesStatus) {
-      await autoClearHistory(settingsModel: settingsModel);
+      await HistoryServiceImpl().autoClearHistory(settingsModel: settingsModel);
     }
     return openBoxesStatus;
   } catch (e) {
