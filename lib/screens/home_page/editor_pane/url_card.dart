@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -14,61 +15,158 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
-    return Card(
-      color: kColorTransparent,
-      surfaceTintColor: kColorTransparent,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        ),
-        borderRadius: kBorderRadius12,
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 5,
-          horizontal: !context.isMediumWindow ? 20 : 6,
-        ),
-        child: context.isMediumWindow
-            ? Row(
-                children: [
-                  switch (apiType) {
-                    APIType.rest => const DropdownButtonHTTPMethod(),
-                    APIType.graphql => kSizedBoxEmpty,
-                    APIType.ai => const AIModelSelector(),
-                    null => kSizedBoxEmpty,
-                  },
-                  switch (apiType) {
-                    APIType.rest => kHSpacer5,
-                    _ => kHSpacer8,
-                  },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
-                ],
-              )
-            : Row(
-                children: [
-                  switch (apiType) {
-                    APIType.rest => const DropdownButtonHTTPMethod(),
-                    APIType.graphql => kSizedBoxEmpty,
-                    APIType.ai => const AIModelSelector(),
-                    null => kSizedBoxEmpty,
-                  },
-                  switch (apiType) {
-                    APIType.rest => kHSpacer20,
-                    _ => kHSpacer8,
-                  },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
-                  kHSpacer20,
-                  const SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
+    
+    // Watch the global setting
+    final showUrlPreview = ref.watch(settingsProvider.select((value) => value.showUrlPreview));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Card(
+          color: kColorTransparent,
+          surfaceTintColor: kColorTransparent,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
+            borderRadius: kBorderRadius12,
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: 5,
+              horizontal: !context.isMediumWindow ? 20 : 6,
+            ),
+            child: context.isMediumWindow
+                ? Row(
+                    children: [
+                      switch (apiType) {
+                        APIType.rest => const DropdownButtonHTTPMethod(),
+                        APIType.graphql => kSizedBoxEmpty,
+                        APIType.ai => const AIModelSelector(),
+                        null => kSizedBoxEmpty,
+                      },
+                      switch (apiType) {
+                        APIType.rest => kHSpacer5,
+                        _ => kHSpacer8,
+                      },
+                      const Expanded(
+                        child: URLTextField(),
+                      ),
+                    ],
                   )
-                ],
-              ),
+                : Row(
+                    children: [
+                      switch (apiType) {
+                        APIType.rest => const DropdownButtonHTTPMethod(),
+                        APIType.graphql => kSizedBoxEmpty,
+                        APIType.ai => const AIModelSelector(),
+                        null => kSizedBoxEmpty,
+                      },
+                      switch (apiType) {
+                        APIType.rest => kHSpacer20,
+                        _ => kHSpacer8,
+                      },
+                      const Expanded(
+                        child: URLTextField(),
+                      ),
+                      kHSpacer20,
+                      const SizedBox(
+                        height: 36,
+                        child: SendRequestButton(),
+                      )
+                    ],
+                  ),
+          ),
+        ),
+        // RENDER ONLY IF SETTING IS ENABLED
+        if (showUrlPreview) const URLPreviewer(),
+      ],
+    );
+  }
+}
+
+class URLPreviewer extends ConsumerWidget {
+  const URLPreviewer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+    if (selectedId == null) return const SizedBox.shrink();
+
+    final requestModel = ref.watch(selectedRequestModelProvider);
+    if (requestModel == null || requestModel.apiType == APIType.ai) {
+      return const SizedBox.shrink();
+    }
+
+    final httpRequest = requestModel.httpRequestModel;
+    if (httpRequest == null) return const SizedBox.shrink();
+
+    String baseUrl = httpRequest.url ?? "";
+    final params = httpRequest.params;
+    final isEnabledList = httpRequest.isParamEnabledList;
+
+    // Only show if there are actual params to display
+    if (params == null || params.isEmpty) return const SizedBox.shrink();
+
+    String fullUrl = baseUrl;
+    List<String> queryParts = [];
+    for (int i = 0; i < params.length; i++) {
+      if (isEnabledList != null && i < isEnabledList.length && isEnabledList[i]) {
+        final p = params[i];
+        if (p.name.isNotEmpty) {
+          queryParts.add("${Uri.encodeComponent(p.name)}=${Uri.encodeComponent(p.value)}");
+        }
+      }
+    }
+
+    if (queryParts.isNotEmpty) {
+      fullUrl += baseUrl.contains('?') ? "&" : "?";
+      fullUrl += queryParts.join('&');
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: Row(
+        children: [
+          Icon(
+            Icons.link,
+            size: 12,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              fullUrl,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontFamily: 'monospace',
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8),
+          InkWell(
+            onTap: () {
+              Clipboard.setData(ClipboardData(text: fullUrl));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("URL copied to clipboard"),
+                  duration: Duration(seconds: 1),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+            child: Icon(
+              Icons.copy,
+              size: 14,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ],
       ),
     );
   }

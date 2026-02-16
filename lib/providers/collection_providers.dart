@@ -267,6 +267,53 @@ class CollectionStateNotifier
                 : AIRequestModel.fromJson(defaultModel)),
       };
     } else {
+      // --- LOGIC START: URL Param Extraction (Issue #166 & #268) ---
+      
+      String? effectiveUrl = url;
+      List<NameValueModel>? effectiveParams = params;
+      List<bool>? effectiveIsParamEnabledList = isParamEnabledList;
+
+      // 1. Check if the updated URL contains query parameters (e.g. ?key=value)
+      if (effectiveUrl != null && effectiveUrl.contains('?')) {
+        int idx = effectiveUrl.indexOf('?');
+        String baseUrl = effectiveUrl.substring(0, idx);
+        String queryString = effectiveUrl.substring(idx + 1);
+
+        if (queryString.trim().isNotEmpty) {
+          try {
+            // Use Uri.parse to handle standard query string decoding
+            final dummyUri = Uri.parse("http://dummy.com?$queryString");
+            
+            List<NameValueModel> extractedParams = [];
+            List<bool> extractedEnabled = [];
+
+            // FIX FOR #268: queryParametersAll supports multiple values for the same key
+            // e.g. ?id=1&id=2 -> key 'id' has values ['1', '2']
+            dummyUri.queryParametersAll.forEach((key, values) {
+              for (var value in values) {
+                // Add a separate row for each value
+                extractedParams.add(NameValueModel(name: key, value: value));
+                extractedEnabled.add(true);
+              }
+            });
+
+            // Append extracted params to existing ones
+            var currentParams = effectiveParams ?? currentHttpRequestModel?.params ?? [];
+            var currentEnabled = effectiveIsParamEnabledList ?? currentHttpRequestModel?.isParamEnabledList ?? [];
+
+            effectiveParams = [...currentParams, ...extractedParams];
+            effectiveIsParamEnabledList = [...currentEnabled, ...extractedEnabled];
+            
+            // Clean the URL (remove params)
+            effectiveUrl = baseUrl;
+          } catch (e) {
+            debugPrint("Error extracting params from URL: $e");
+          }
+        }
+      }
+      
+      // --- LOGIC END ---
+
       newModel = currentModel.copyWith(
         apiType: apiType ?? currentModel.apiType,
         name: name ?? currentModel.name,
@@ -274,14 +321,15 @@ class CollectionStateNotifier
         requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
         httpRequestModel: currentHttpRequestModel?.copyWith(
           method: method ?? currentHttpRequestModel.method,
-          url: url ?? currentHttpRequestModel.url,
+          url: effectiveUrl ?? currentHttpRequestModel.url, // Clean URL
           headers: headers ?? currentHttpRequestModel.headers,
-          params: params ?? currentHttpRequestModel.params,
+          params: effectiveParams ?? currentHttpRequestModel.params, // Updated Params
           authModel: authModel ?? currentHttpRequestModel.authModel,
           isHeaderEnabledList: isHeaderEnabledList ??
+              effectiveIsParamEnabledList ??
               currentHttpRequestModel.isHeaderEnabledList,
           isParamEnabledList:
-              isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+              effectiveIsParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
           bodyContentType:
               bodyContentType ?? currentHttpRequestModel.bodyContentType,
           body: body ?? currentHttpRequestModel.body,
