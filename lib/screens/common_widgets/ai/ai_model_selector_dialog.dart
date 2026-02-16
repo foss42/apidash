@@ -51,10 +51,6 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                   ElevatedButton(
                     onPressed: null,
                     // TODO: Add update model logic
-                    //() async {
-                    // await LLMManager.fetchAvailableLLMs();
-                    // setState(() {});
-                    //},
                     child: Text('Update Models'),
                   ),
                   kVSpacer10,
@@ -100,10 +96,6 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                         ElevatedButton(
                           onPressed: null,
                           // TODO: Add update model logic
-                          //() async {
-                          // await LLMManager.fetchAvailableLLMs();
-                          // setState(() {});
-                          //},
                           child: Text('Update Models'),
                         ),
                         SizedBox(height: 20),
@@ -147,8 +139,34 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     if (aiModelProvider == null) {
       return Center(child: Text("Please select an AI API Provider"));
     }
-    // final currentCredential =
-    //     ref.watch(aiApiCredentialProvider)[aiModelProvider.providerId!] ?? "";
+
+    // --- VALIDATION LOGIC START ---
+    
+    // 1. Identify Provider Types
+    final isOllama = aiModelProvider.providerId == ModelAPIProvider.ollama;
+    // Using string check for safety, as 'azure' constant might vary
+    final isAzure = aiModelProvider.providerName == 'Azure OpenAI';
+
+    // 2. Validate API Key (Mandatory for everyone EXCEPT Ollama)
+    final apiKey = newAIRequestModel?.apiKey ?? "";
+    final isApiKeyRequired = !isOllama; 
+    final isApiKeyEmpty = apiKey.trim().isEmpty;
+
+    // 3. Validate URL (Mandatory ONLY for Azure)
+    final url = newAIRequestModel?.url ?? "";
+    final isUrlRequired = isAzure;
+    final isUrlEmpty = url.trim().isEmpty;
+
+    // 4. Validate Model Selection (Must always pick a model)
+    final isModelEmpty = newAIRequestModel?.model?.isEmpty ?? true;
+
+    // 5. Final Invalid State
+    final bool isInvalidConfig = isModelEmpty ||
+        (isApiKeyRequired && isApiKeyEmpty) ||
+        (isUrlRequired && isUrlEmpty);
+
+    // --- VALIDATION LOGIC END ---
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
@@ -158,25 +176,43 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           style: TextStyle(fontSize: 28),
         ),
         SizedBox(height: 20),
-        if (aiModelProvider.providerId != ModelAPIProvider.ollama) ...[
-          Text('API Key / Credential'),
+
+        // API Key Field (Shown for everyone except Ollama)
+        if (!isOllama) ...[
+          Row(
+            children: [
+              Text('API Key / Credential'),
+              Text(' *', style: TextStyle(color: kColorRed)), // Mark as required
+            ],
+          ),
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
-            // value: currentCredential,
           ),
+          // Validation Error for API Key
+          if (isApiKeyEmpty) ...[
+            kVSpacer5,
+            Text(
+              "API Key is required",
+              style: TextStyle(color: kColorRed, fontSize: 12),
+            ),
+          ],
           kVSpacer10,
         ],
-        Text('Endpoint'),
+
+        // Endpoint URL Field
+        Row(
+          children: [
+            Text('Endpoint'),
+            if (isAzure)
+              Text(' *', style: TextStyle(color: kColorRed)), // Mark as required for Azure
+          ],
+        ),
         kVSpacer8,
         BoundedTextField(
           key: ValueKey(aiModelProvider.providerName ?? ""),
@@ -187,13 +223,22 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           },
           value: newAIRequestModel?.url ?? "",
         ),
+        // Validation Error for URL
+        if (isAzure && isUrlEmpty) ...[
+          kVSpacer5,
+          Text(
+            "Endpoint URL is required for Azure OpenAI",
+            style: TextStyle(color: kColorRed, fontSize: 12),
+          ),
+        ],
+
         kVSpacer20,
+
+        // Model List
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Models'),
-            // IconButton(
-            //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
           ],
         ),
         kVSpacer8,
@@ -236,12 +281,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           ),
         ),
         kVSpacer10,
+        
+        // Save Button (Disabled if Invalid)
         Align(
           alignment: Alignment.centerRight,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(newAIRequestModel);
-            },
+            onPressed: isInvalidConfig
+                ? null
+                : () {
+                    Navigator.of(context).pop(newAIRequestModel);
+                  },
             child: Text('Save'),
           ),
         ),
