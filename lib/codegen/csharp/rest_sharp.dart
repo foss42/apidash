@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 
@@ -130,7 +131,15 @@ class Program
         if (headersList != null ||
             requestModel.hasJsonData ||
             requestModel.hasTextData) {
-          var headers = requestModel.enabledHeadersMap;
+          var headers = requestModel.enabledHeadersMap.map(
+            (key, value) {
+              String separator = ", ";
+              if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+                separator = "; ";
+              }
+              return MapEntry(key, value.join(separator));
+            },
+          );
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers[kHeaderContentType] = requestModel.bodyContentType.header;
           }

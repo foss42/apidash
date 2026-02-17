@@ -51,7 +51,19 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
 
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = authenticatedRequestModel.enabledHeadersMap;
+
+    // FIX: Flatten headers from Map<String, List<String>> to Map<String, String>
+    // The http package expects headers as Strings. We join lists with ',' (or ';' for Cookies).
+    Map<String, String> headers = authenticatedRequestModel.enabledHeadersMap.map(
+      (key, value) {
+        String separator = ", ";
+        if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+          separator = "; ";
+        }
+        return MapEntry(key, value.join(separator));
+      },
+    );
+
     bool overrideContentType = false;
     HttpResponse? response;
     String? body;
@@ -339,7 +351,17 @@ Future<http.StreamedResponse> makeStreamedRequest({
   required HttpRequestModel requestModel,
   required APIType apiType,
 }) async {
-  final headers = requestModel.enabledHeadersMap;
+  // FIX: Flatten headers from Map<String, List<String>> to Map<String, String>
+  final headers = requestModel.enabledHeadersMap.map(
+    (key, value) {
+      String separator = ", ";
+      if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+        separator = "; ";
+      }
+      return MapEntry(key, value.join(separator));
+    },
+  );
+
   final hasBody = kMethodsWithBody.contains(requestModel.method);
   final isMultipart = requestModel.bodyContentType == ContentType.formdata;
 

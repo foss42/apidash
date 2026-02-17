@@ -268,7 +268,7 @@ class CollectionStateNotifier
       };
     } else {
       // --- LOGIC START: URL Param Extraction (Issue #166 & #268) ---
-      
+
       String? effectiveUrl = url;
       List<NameValueModel>? effectiveParams = params;
       List<bool>? effectiveIsParamEnabledList = isParamEnabledList;
@@ -279,11 +279,17 @@ class CollectionStateNotifier
         String baseUrl = effectiveUrl.substring(0, idx);
         String queryString = effectiveUrl.substring(idx + 1);
 
+        // FIX: Remove fragment if present (e.g. ?foo=bar#section -> foo=bar)
+        int fragmentIdx = queryString.indexOf('#');
+        if (fragmentIdx >= 0) {
+          queryString = queryString.substring(0, fragmentIdx);
+        }
+
         if (queryString.trim().isNotEmpty) {
           try {
             // Use Uri.parse to handle standard query string decoding
             final dummyUri = Uri.parse("http://dummy.com?$queryString");
-            
+
             List<NameValueModel> extractedParams = [];
             List<bool> extractedEnabled = [];
 
@@ -297,13 +303,11 @@ class CollectionStateNotifier
               }
             });
 
-            // Append extracted params to existing ones
-            var currentParams = effectiveParams ?? currentHttpRequestModel?.params ?? [];
-            var currentEnabled = effectiveIsParamEnabledList ?? currentHttpRequestModel?.isParamEnabledList ?? [];
+            // FIX: Replace parameters instead of appending to avoid duplicates
+            // (e.g., preventing ?foo=1 and ?foo=2 from existing simultaneously)
+            effectiveParams = extractedParams;
+            effectiveIsParamEnabledList = extractedEnabled;
 
-            effectiveParams = [...currentParams, ...extractedParams];
-            effectiveIsParamEnabledList = [...currentEnabled, ...extractedEnabled];
-            
             // Clean the URL (remove params)
             effectiveUrl = baseUrl;
           } catch (e) {
@@ -311,7 +315,7 @@ class CollectionStateNotifier
           }
         }
       }
-      
+
       // --- LOGIC END ---
 
       newModel = currentModel.copyWith(
@@ -323,13 +327,14 @@ class CollectionStateNotifier
           method: method ?? currentHttpRequestModel.method,
           url: effectiveUrl ?? currentHttpRequestModel.url, // Clean URL
           headers: headers ?? currentHttpRequestModel.headers,
-          params: effectiveParams ?? currentHttpRequestModel.params, // Updated Params
+          params: effectiveParams ??
+              currentHttpRequestModel.params, // Updated Params
           authModel: authModel ?? currentHttpRequestModel.authModel,
+          // FIX: Ensure Header state is independent of Param state
           isHeaderEnabledList: isHeaderEnabledList ??
-              effectiveIsParamEnabledList ??
               currentHttpRequestModel.isHeaderEnabledList,
-          isParamEnabledList:
-              effectiveIsParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+          isParamEnabledList: effectiveIsParamEnabledList ??
+              currentHttpRequestModel.isParamEnabledList,
           bodyContentType:
               bodyContentType ?? currentHttpRequestModel.bodyContentType,
           body: body ?? currentHttpRequestModel.body,
@@ -420,7 +425,9 @@ class CollectionStateNotifier
       method: substitutedHttpRequestModel.method,
       url: substitutedHttpRequestModel.url,
       requestId: requestId,
-      requestHeaders: substitutedHttpRequestModel.enabledHeadersMap,
+      requestHeaders: substitutedHttpRequestModel.enabledHeadersMap.map(
+        (key, value) => MapEntry(key, value.join(", ")),
+      ),
       requestBodyPreview: substitutedHttpRequestModel.body,
       isStreaming: true,
     );

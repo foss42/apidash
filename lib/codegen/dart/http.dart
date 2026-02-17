@@ -14,8 +14,18 @@ class DartHttpCodeGen {
       final next = generatedDartCode(
         url: requestModel.url,
         method: requestModel.method,
-        queryParams: requestModel.enabledParamsMap,
-        headers: {...requestModel.enabledHeadersMap},
+        queryParams: requestModel.enabledParamsMap.map(
+          (key, value) => MapEntry(key, value.join(", ")),
+        ),
+        headers: requestModel.enabledHeadersMap.map(
+          (key, value) {
+            String separator = ", ";
+            if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+              separator = "; ";
+            }
+            return MapEntry(key, value.join(separator));
+          },
+        ),
         contentType: requestModel.bodyContentType,
         hasContentTypeHeader: requestModel.hasContentTypeHeader,
         body: requestModel.body,

@@ -109,22 +109,41 @@ class URLPreviewer extends ConsumerWidget {
     // Only show if there are actual params to display
     if (params == null || params.isEmpty) return const SizedBox.shrink();
 
-    String fullUrl = baseUrl;
-    List<String> queryParts = [];
+    // Map<String, List<String>> supports duplicate keys (e.g. ?id=1&id=2)
+    // We use List<String> here to satisfy Issue #268 while complying with Copilot's request
+    // to use the standard Uri class.
+    final Map<String, List<String>> queryParams = {};
+
     for (int i = 0; i < params.length; i++) {
-      if (isEnabledList != null && i < isEnabledList.length && isEnabledList[i]) {
+      // Safety Check: If lists are out of sync, default to true
+      final isEnabled = (isEnabledList != null && i < isEnabledList.length)
+          ? isEnabledList[i]
+          : true;
+
+      if (isEnabled) {
         final p = params[i];
         if (p.name.isNotEmpty) {
-          queryParts.add("${Uri.encodeComponent(p.name)}=${Uri.encodeComponent(p.value)}");
+          if (!queryParams.containsKey(p.name)) {
+            queryParams[p.name] = [];
+          }
+          queryParams[p.name]!.add(p.value);
         }
       }
     }
 
-    if (queryParts.isNotEmpty) {
-      fullUrl += baseUrl.contains('?') ? "&" : "?";
-      fullUrl += queryParts.join('&');
-    } else {
+    if (queryParams.isEmpty) {
       return const SizedBox.shrink();
+    }
+
+    String fullUrl;
+    try {
+      final Uri baseUri = Uri.parse(baseUrl.trim());
+      // The 'queryParameters' argument in Uri.replace accepts Map<String, dynamic>.
+      // If the value is an Iterable (List), it automatically generates duplicate keys.
+      fullUrl = baseUri.replace(queryParameters: queryParams).toString();
+    } catch (e) {
+      // Visual Fallback if parsing fails (e.g. user is still typing)
+      fullUrl = "$baseUrl${baseUrl.contains('?') ? '&' : '?' }...";
     }
 
     return Padding(
@@ -149,21 +168,29 @@ class URLPreviewer extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 8),
-          InkWell(
-            onTap: () {
-              Clipboard.setData(ClipboardData(text: fullUrl));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("URL copied to clipboard"),
-                  duration: Duration(seconds: 1),
-                  behavior: SnackBarBehavior.floating,
+          // FIX: Added Accessibility (Tooltip + Semantics)
+          Tooltip(
+            message: 'Copy URL to clipboard',
+            child: Semantics(
+              button: true,
+              label: 'Copy URL to clipboard',
+              child: InkWell(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: fullUrl));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("URL copied to clipboard"),
+                      duration: Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+                child: Icon(
+                  Icons.copy,
+                  size: 14,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
-              );
-            },
-            child: Icon(
-              Icons.copy,
-              size: 14,
-              color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
           ),
         ],

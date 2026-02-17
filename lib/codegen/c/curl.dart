@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 
 class CCurlCodeGen {
@@ -128,7 +129,15 @@ int main() {
           requestModel.hasBody ||
           requestModel.hasTextData ||
           requestModel.hasJsonData) {
-        var headers = requestModel.enabledHeadersMap;
+        var headers = requestModel.enabledHeadersMap.map(
+          (key, value) {
+            String separator = ", ";
+            if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+              separator = "; ";
+            }
+            return MapEntry(key, value.join(separator));
+          },
+        );
         // if (requestModel.hasFormData) {
         //   headers.putIfAbsent("Content-Type", () => "multipart/form-data");
         // }

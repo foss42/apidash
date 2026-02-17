@@ -1,21 +1,31 @@
 import 'package:better_networking/better_networking.dart';
 import 'package:json5/json5.dart' as json5;
 
-Map<String, String>? rowsToMap(
+// FIX: Change return type to Map<String, List<String>> to support duplicate keys
+Map<String, List<String>>? rowsToMap(
   List<NameValueModel>? kvRows, {
   bool isHeader = false,
 }) {
   if (kvRows == null) {
     return null;
   }
-  Map<String, String> finalMap = {};
+
+  Map<String, List<String>> finalMap = {};
+
   for (var row in kvRows) {
-    if (row.name.trim() != "") {
+    if (row.name.trim().isNotEmpty) {
       String key = row.name;
       if (isHeader) {
         key = key.toLowerCase();
       }
-      finalMap[key] = row.value.toString();
+
+      // Initialize the list if the key doesn't exist
+      if (!finalMap.containsKey(key)) {
+        finalMap[key] = [];
+      }
+
+      // Add the value to the list instead of overwriting the key
+      finalMap[key]!.add(row.value.toString());
     }
   }
   return finalMap;
@@ -36,34 +46,29 @@ List<Map<String, String>>? rowsToFormDataMapList(List<FormDataModel>? kvRows) {
   if (kvRows == null) {
     return null;
   }
-  List<Map<String, String>> finalMap = kvRows
-      .map(
-        (FormDataModel formData) =>
-            (formData.name.trim().isEmpty && formData.value.trim().isEmpty)
-            ? null
-            : {
-                "name": formData.name,
-                "value": formData.value,
-                "type": formData.type.name,
-              },
-      )
-      .nonNulls
+  // Added cast to List<Map<String, String>> to ensure type safety
+  return kvRows
+      .where((formData) =>
+          formData.name.trim().isNotEmpty || formData.value.trim().isNotEmpty)
+      .map((formData) => {
+            "name": formData.name,
+            "value": formData.value,
+            "type": formData.type.name,
+          })
       .toList();
-  return finalMap;
 }
 
-List<FormDataModel>? mapListToFormDataModelRows(List<Map>? kvMap) {
+List<FormDataModel>? mapListToFormDataModelRows(List<dynamic>? kvMap) {
   if (kvMap == null) {
     return null;
   }
-  List<FormDataModel> finalRows = kvMap.map((formData) {
+  return kvMap.map((formData) {
     return FormDataModel(
       name: formData["name"],
       value: formData["value"],
       type: getFormDataType(formData["type"]),
     );
   }).toList();
-  return finalRows;
 }
 
 FormDataType getFormDataType(String? type) {
@@ -73,6 +78,7 @@ FormDataType getFormDataType(String? type) {
   );
 }
 
+// FIX: Helper function for checking enabled rows
 List<NameValueModel>? getEnabledRows(
   List<NameValueModel>? rows,
   List<bool>? isRowEnabledList,
@@ -80,10 +86,15 @@ List<NameValueModel>? getEnabledRows(
   if (rows == null || isRowEnabledList == null) {
     return rows;
   }
-  List<NameValueModel> finalRows = rows
-      .where((element) => isRowEnabledList[rows.indexOf(element)])
-      .toList();
-  return finalRows == [] ? null : finalRows;
+
+  List<NameValueModel> finalRows = [];
+  for (int i = 0; i < rows.length; i++) {
+    if (i < isRowEnabledList.length && isRowEnabledList[i]) {
+      finalRows.add(rows[i]);
+    }
+  }
+
+  return finalRows;
 }
 
 String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {

@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 
 class RubyNetHttpCodeGen {
@@ -57,7 +58,15 @@ puts "Response Code: #{response.code}"
         "check": uri.scheme,
       });
 
-      var headers = requestModel.enabledHeadersMap;
+      var headers = requestModel.enabledHeadersMap.map(
+        (key, value) {
+          String separator = ", ";
+          if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+            separator = "; ";
+          }
+          return MapEntry(key, value.join(separator));
+        },
+      );
       if (!requestModel.hasContentTypeHeader &&
           (requestModel.hasJsonData || requestModel.hasTextData)) {
         headers[kHeaderContentType] = requestModel.bodyContentType.header;

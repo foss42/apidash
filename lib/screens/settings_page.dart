@@ -28,6 +28,13 @@ class SettingsPage extends ConsumerWidget {
               )
             : kSizedBoxEmpty,
         kIsDesktop
+            ? Padding(
+                padding: kPh20,
+                child: Text("Settings",
+                    style: Theme.of(context).textTheme.headlineLarge),
+              )
+            : kSizedBoxEmpty,
+        kIsDesktop
             ? const Padding(
                 padding: kPh20,
                 child: Divider(
@@ -77,7 +84,7 @@ class SettingsPage extends ConsumerWidget {
               // --- NEW SETTING END ---
               ADListTile(
                 type: ListTileType.switchOnOff,
-                title: 'Collection Pane Scrollbar Visiblity',
+                title: 'Collection Pane Scrollbar Visibility',
                 subtitle:
                     'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
                 value: settings.alwaysShowCollectionPaneScrollbar,
