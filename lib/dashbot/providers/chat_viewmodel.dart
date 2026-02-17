@@ -501,14 +501,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             diff: diff,
             newReq: payload,
           );
-          debugPrint("Prompt $sys");
           final res = await _repo.sendChat(
             request: ai.copyWith(
               systemPrompt: sys,
               stream: false,
             ),
           );
-          debugPrint("Response $res");
           String? insights;
           if (res != null && res.isNotEmpty) {
             try {
@@ -833,8 +831,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         _appendSystem(
             'Created a new request from the cURL.', ChatMessageType.importCurl);
       }
-    } catch (_) {
-      _appendSystem('Error encountered while importing cURL.',
+    } catch (e) {
+      _appendSystem('Error encountered while importing cURL - $e',
           ChatMessageType.importCurl);
     }
   }
