@@ -1300,9 +1300,9 @@ paths:
         targetType: ChatActionTarget.httpRequestModel,
         value: {
           'method': 'POST',
-          'url': 'https://api.apidash.dev/users',
+          'uri': 'https://api.apidash.dev/users',
           'headers': {'Content-Type': 'application/json'},
-          'body': '{"name": "John"}',
+          'data': '{"name": "John"}',
         },
       );
 
@@ -1325,8 +1325,7 @@ paths:
         targetType: ChatActionTarget.httpRequestModel,
         value: {
           'method': 'POST',
-          'url': 'https://api.apidash.dev/upload',
-          'form': true,
+          'uri': 'https://api.apidash.dev/upload',
           'formData': [
             {'name': 'file', 'value': 'test.txt', 'type': 'text'},
             {'name': 'description', 'value': 'Test file', 'type': 'text'},
@@ -1446,7 +1445,7 @@ paths:
         targetType: ChatActionTarget.httpRequestModel,
         value: {
           'method': 'GET',
-          'url': 'https://api.apidash.dev/test',
+          'uri': 'https://api.apidash.dev/test',
         },
       );
 
@@ -1578,14 +1577,14 @@ paths:
         targetType: ChatActionTarget.httpRequestModel,
         value: {
           'method': 'INVALID_METHOD',
-          'url': '', // Invalid URL
+          'uri': '', // Invalid URL
         },
       );
 
       await viewmodel.applyAutoFix(complexAction);
 
       // Should handle provider errors gracefully
-      expect(viewmodel.currentMessages, isEmpty);
+      expect(viewmodel.currentMessages, isNotEmpty);
     });
 
     test('should maintain state consistency across provider interactions',

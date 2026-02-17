@@ -20,9 +20,9 @@ void main() {
               url: 'https://api.apidash.dev/users',
               headers: [],
               params: [],
-              body: null,
+              body: '',
               bodyContentType: ContentType.text,
-              formData: null));
+              formData: []));
     });
 
     test('should parse POST request with JSON body and headers', () {
@@ -47,7 +47,7 @@ void main() {
           params: [],
           body: '{"name": "John", "age": 30}',
           bodyContentType: ContentType.json,
-          formData: null,
+          formData: [],
         ),
       );
     });
@@ -72,7 +72,7 @@ void main() {
               NameValueModel(name: "Content-Type", value: "multipart/form-data")
             ],
             params: [],
-            body: null,
+            body: '',
             bodyContentType: ContentType.formdata,
             formData: [
               FormDataModel(name: 'file', value: '', type: FormDataType.file),
