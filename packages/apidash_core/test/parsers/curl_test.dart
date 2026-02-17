@@ -90,5 +90,55 @@ void main() {
 
       expect(result, isNull);
     });
+
+    test('should parse multiple curl commands', () {
+      const curl = '''
+        curl https://api.apidash.dev/users
+
+        curl -X POST https://api.apidash.dev/create 
+        -H "Content-Type: application/json" 
+        -d '{"title": "Test"}'
+        
+        curl https://api.apidash.dev/status
+      ''';
+
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result?.length, 3);
+      expect(result?[0].method, HTTPVerb.get);
+      expect(result?[0].url, 'https://api.apidash.dev/users');
+      expect(result?[1].method, HTTPVerb.post);
+      expect(result?[1].url, 'https://api.apidash.dev/create');
+      expect(result?[2].method, HTTPVerb.get);
+      expect(result?[2].url, 'https://api.apidash.dev/status');
+    });
+
+    test('should skip invalid curl commands and parse valid ones', () {
+      const curl = '''
+        curl https://api.apidash.dev/valid1
+        
+        not a curl command
+        
+        curl -X POST https://api.apidash.dev/valid2 -d "data"
+      ''';
+
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result?.length, 2);
+      expect(result?[0].url, 'https://api.apidash.dev/valid1');
+      expect(result?[1].url, 'https://api.apidash.dev/valid2');
+    });
+
+    test('should return null if all curl commands are invalid', () {
+      const curl = '''
+        invalid command 1
+        also invalid
+        still not valid
+      ''';
+
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result, isNull);
+    });
   });
 }

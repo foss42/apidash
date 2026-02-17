@@ -39,3 +39,48 @@ HttpRequestModel convertCurlToHttpRequestModel(Curl curl) {
     formData: formData,
   );
 }
+
+/// Splits content into individual curl commands.
+///
+/// Handles both single and multiple curl commands by splitting on 'curl '
+/// while preserving the delimiter for proper parsing.
+///
+/// Returns a list of curl command strings.
+List<String> splitCurlCommands(String content) {
+  final commands = <String>[];
+  
+  // Split on lines or use regex to find curl command patterns
+  final lines = content.split('\n');
+  final buffer = StringBuffer();
+  
+  for (final line in lines) {
+    final trimmedLine = line.trim();
+    
+    // Start of a new curl command
+    if (trimmedLine.startsWith('curl ')) {
+      // Save previous command if exists
+      if (buffer.isNotEmpty) {
+        commands.add(buffer.toString().trim());
+        buffer.clear();
+      }
+      buffer.writeln(line);
+    } else if (buffer.isNotEmpty) {
+      // Continuation of current curl command
+      buffer.writeln(line);
+    }
+    // else: skip lines that are not part of a curl command
+  }
+  
+  // Add last command if exists
+  if (buffer.isNotEmpty) {
+    commands.add(buffer.toString().trim());
+  }
+  
+  // If no commands were found, try treating the whole content as one command
+  // only if it starts with 'curl '
+  if (commands.isEmpty && content.trim().startsWith('curl ')) {
+    return [content];
+  }
+  
+  return commands;
+}
