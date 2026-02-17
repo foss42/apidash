@@ -155,7 +155,7 @@ class CurlImportService {
     if (value is String) return '"$value"';
     if (value is Map || value is List) {
       final encoded = jsonEncode(value);
-      return encoded.length > 50 ? '${encoded.substring(0, 47)}...' : encoded;
+      return encoded;
     }
     return value.toString();
   }

@@ -327,6 +327,15 @@ void main() {
     );
   });
 
+  test('buildResponseFromParsed with cookie referer user-agent', () {
+    final curl = Curl.parse(
+        "curl -b 'a=1' -e 'https://ref.example' -A 'MyAgent' https://api.apidash.dev/hdr");
+    // Verify curl fields are captured
+    expect(curl.cookie, contains('a=1'));
+    expect(curl.userAgent, contains('MyAgent'));
+    expect(curl.referer, contains('ref.example'));
+  });
+
   test('supports PATCH method', () {
     const cmd = r"""curl -X PATCH \
   'https://api.apidash.dev/resource/42' \
