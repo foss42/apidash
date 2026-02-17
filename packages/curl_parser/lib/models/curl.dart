@@ -1,70 +1,78 @@
 import 'package:args/args.dart';
-import 'package:equatable/equatable.dart';
 import 'package:seed/seed.dart';
 import '../utils/string.dart';
 
+part 'curl.freezed.dart';
+part 'curl.g.dart';
+
 /// The standard HTTP Content-Type header name.
 const kHeaderContentType = 'Content-Type';
+
+/// A [JsonConverter] that serializes [Uri] as a [String].
+class UriJsonConverter implements JsonConverter<Uri, String> {
+  const UriJsonConverter();
+
+  @override
+  Uri fromJson(String json) => Uri.parse(json);
+
+  @override
+  String toJson(Uri object) => object.toString();
+}
 
 /// A representation of a cURL command in Dart.
 ///
 /// The Curl class provides methods for parsing a cURL command string
 /// and formatting a Curl object back into a cURL command.
-class Curl extends Equatable {
-  /// Specifies the HTTP request method (e.g., GET, POST, PUT, DELETE).
-  final String method;
-
-  /// Specifies the HTTP request URL.
-  final Uri uri;
-
-  /// Adds custom HTTP headers to the request.
-  final Map<String, String>? headers;
-
-  /// Sends data as the request body (typically used with POST requests).
-  final String? data;
-
-  /// Sends cookies with the request.
-  final String? cookie;
-
-  /// Specifies the username and password for HTTP basic authentication.
-  final String? user;
-
-  /// Sets the Referer header for the request.
-  final String? referer;
-
-  /// Sets the User-Agent header for the request.
-  final String? userAgent;
-
-  /// Sends data as a multipart/form-data request.
-  final bool form;
-
-  /// Form data list.
-  final List<FormDataModel>? formData;
-
-  /// Allows insecure SSL connections.
-  final bool insecure;
-
-  /// Follows HTTP redirects.
-  final bool location;
+@freezed
+@JsonSerializable(explicitToJson: true)
+abstract class Curl with _$Curl {
+  /// Private constructor to allow custom methods in a freezed class.
+  const Curl._();
 
   /// Constructs a new Curl object with the specified parameters.
   ///
   /// The [method] and [uri] parameters are required, while the remaining
   /// parameters are optional.
-  const Curl({
-    required this.method,
-    required this.uri,
-    this.headers,
-    this.data,
-    this.cookie,
-    this.user,
-    this.referer,
-    this.userAgent,
-    this.form = false,
-    this.formData,
-    this.insecure = false,
-    this.location = false,
-  });
+  const factory Curl({
+    /// Specifies the HTTP request method (e.g., GET, POST, PUT, DELETE).
+    required String method,
+
+    /// Specifies the HTTP request URL.
+    @UriJsonConverter() required Uri uri,
+
+    /// Adds custom HTTP headers to the request.
+    Map<String, String>? headers,
+
+    /// Sends data as the request body (typically used with POST requests).
+    String? data,
+
+    /// Sends cookies with the request.
+    String? cookie,
+
+    /// Specifies the username and password for HTTP basic authentication.
+    String? user,
+
+    /// Sets the Referer header for the request.
+    String? referer,
+
+    /// Sets the User-Agent header for the request.
+    String? userAgent,
+
+    /// Sends data as a multipart/form-data request.
+    @Default(false) bool form,
+
+    /// Form data list.
+    List<FormDataModel>? formData,
+
+    /// Allows insecure SSL connections.
+    @Default(false) bool insecure,
+
+    /// Follows HTTP redirects.
+    @Default(false) bool location,
+  }) = _Curl;
+
+  /// Creates a [Curl] instance from a JSON map.
+  factory Curl.fromJson(Map<String, dynamic> json) => _$CurlFromJson(json);
 
   /// Attempts to parse [curlString] as a [Curl] instance.
   ///
@@ -323,22 +331,6 @@ class Curl extends Equatable {
 
     return buffer.toString().trim();
   }
-
-  @override
-  List<Object?> get props => [
-        method,
-        uri,
-        headers,
-        data,
-        cookie,
-        user,
-        referer,
-        userAgent,
-        form,
-        formData,
-        insecure,
-        location,
-      ];
 
   /// Builds the [ArgParser] for cURL command-line options.
   static ArgParser _buildArgParser() {
