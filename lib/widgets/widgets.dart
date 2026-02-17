@@ -77,3 +77,6 @@ export 'widget_not_sent.dart';
 export 'widget_sending.dart';
 // export 'window_caption.dart';
 export 'workspace_selector.dart';
+export 'environment_color_indicator.dart';
+export 'environment_color_picker.dart';
+
