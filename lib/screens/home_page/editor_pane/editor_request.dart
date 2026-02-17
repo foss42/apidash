@@ -18,13 +18,15 @@ class RequestEditor extends StatelessWidget {
               children: [
                 kVSpacer20,
                 Expanded(
-                  child: EditRequestPane(),
+                  child: EditRequestPane(
+                    showViewCodeButton: false,
+                  ),
                 ),
               ],
             ),
           )
         : Padding(
-            padding: kIsMacOS || kIsWindows ? kPt28o8 : kP8,
+            padding: kIsMacOS ? kPt28o8 : kP8,
             child: const Column(
               children: [
                 RequestEditorTopBar(),

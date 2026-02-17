@@ -91,21 +91,36 @@ https://user-images.githubusercontent.com/1382619/227956871-87376f18-d80f-4a53-9
 
 ### Debian-based Linux Distributions (Debian, Ubuntu, Linux Mint, etc.)
 
-Download the `.deb` file from the [latest release](https://github.com/foss42/apidash/releases/latest) corresponding to you CPU architecture (x64/amd64 or arm64).
+API Dash requires `mpv` as a runtime dependency for audio/video functionality.
 
-`cd` to the Downloads folder and execute the following command to install API Dash.
+**Installation Steps:**
 
+1. Download the `.deb` file from the [latest release](https://github.com/foss42/apidash/releases/latest) corresponding to your CPU architecture (x64/amd64 or arm64).
+
+2. `cd` to the Downloads folder and execute one of the following commands to install API Dash:
+
+   **Recommended Method** (automatically resolves dependencies):
+   ```
+   sudo apt install ./apidash-<fullname>.deb
+   ```
+
+   Or, manually install the dependency first:
+   ```
+   sudo apt update
+   sudo apt install mpv
+   sudo dpkg -i apidash-<fullname>.deb
+   ```
+
+3. Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
+
+**Troubleshooting:**
+
+If you encounter a dependency error mentioning `mpv is not installed`, run:
 ```
-sudo apt install ./apidash-<fullname>.deb
+sudo apt install --fix-broken
 ```
 
-or
-
-```
-sudo dpkg -i apidash-<fullname>.deb
-```
-
-Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
+This will automatically install any missing dependencies.
 
 ### Red Hat-based Linux Distributions (Fedora, Rocky, AlmaLinux, CentOS, RHEL, etc.)
 

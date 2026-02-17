@@ -102,6 +102,9 @@ Failed to compile application.
 
 This happens because `.toJS` is no longer required for converting Dart strings to JavaScript strings in recent Dart versions.  
 
+> [!WARNING]  
+> The following fix involves modifying a file in your local pub cache (`.pub-cache`). This is a temporary workaround. Your changes will be lost if you clear your cache or set up the project on a new machine. Use with caution.
+
 **Fix:**  
 Update the `printing_web.dart` file in the cached `printing` package by removing `.toJS` as done in the PR [here](https://github.com/DavBfr/dart_pdf/pull/1739/files)
 

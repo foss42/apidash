@@ -10,7 +10,12 @@ import 'request_body.dart';
 import 'request_scripts.dart';
 
 class EditGraphQLRequestPane extends ConsumerWidget {
-  const EditGraphQLRequestPane({super.key});
+  const EditGraphQLRequestPane({
+    super.key,
+    this.showViewCodeButton = true,
+  });
+
+  final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,6 +41,7 @@ class EditGraphQLRequestPane extends ConsumerWidget {
 
     return RequestPane(
       selectedId: selectedId,
+      showViewCodeButton: showViewCodeButton,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
