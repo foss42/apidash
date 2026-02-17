@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:curl_parser/curl_parser.dart';
 import 'package:genai/genai.dart';
 
@@ -10,7 +12,30 @@ import 'package:genai/genai.dart';
 HttpRequestModel convertCurlToHttpRequestModel(Curl curl) {
   final url = stripUriParams(curl.uri);
   final method = HTTPVerb.values.byName(curl.method.toLowerCase());
-  final headers = mapToRows(curl.headers);
+  
+  // Create mutable headers map
+  final headersMap = Map<String, String>.from(curl.headers ?? {});
+  
+  // Helper functions
+  bool hasHeader(String key) =>
+      headersMap.keys.any((k) => k.toLowerCase() == key.toLowerCase());
+  void setIfMissing(String key, String? value) {
+    if (value == null || value.isEmpty) return;
+    if (!hasHeader(key)) headersMap[key] = value;
+  }
+
+  // Map cookie to Cookie header if not present
+  setIfMissing('Cookie', curl.cookie);
+  // Map user agent and referer to headers if not present
+  setIfMissing('User-Agent', curl.userAgent);
+  setIfMissing('Referer', curl.referer);
+  // Map -u user:password to Authorization: Basic ... if not already present
+  if (!hasHeader('Authorization') && (curl.user?.isNotEmpty ?? false)) {
+    final basic = base64.encode(utf8.encode(curl.user!));
+    headersMap['Authorization'] = 'Basic $basic';
+  }
+  
+  final headers = mapToRows(headersMap);
   final params = mapToRows(curl.uri.queryParameters);
   final body = curl.data;
   // Clear file paths in form data to avoid permission issues
@@ -48,14 +73,14 @@ HttpRequestModel convertCurlToHttpRequestModel(Curl curl) {
 /// Returns a list of curl command strings.
 List<String> splitCurlCommands(String content) {
   final commands = <String>[];
-  
+
   // Split on lines or use regex to find curl command patterns
   final lines = content.split('\n');
   final buffer = StringBuffer();
-  
+
   for (final line in lines) {
     final trimmedLine = line.trim();
-    
+
     // Start of a new curl command
     if (trimmedLine.startsWith('curl ')) {
       // Save previous command if exists
@@ -70,17 +95,17 @@ List<String> splitCurlCommands(String content) {
     }
     // else: skip lines that are not part of a curl command
   }
-  
+
   // Add last command if exists
   if (buffer.isNotEmpty) {
     commands.add(buffer.toString().trim());
   }
-  
+
   // If no commands were found, try treating the whole content as one command
   // only if it starts with 'curl '
   if (commands.isEmpty && content.trim().startsWith('curl ')) {
     return [content];
   }
-  
+
   return commands;
 }

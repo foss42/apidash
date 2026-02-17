@@ -18,7 +18,7 @@ void main() {
           const HttpRequestModel(
               method: HTTPVerb.get,
               url: 'https://api.apidash.dev/users',
-              headers: null,
+              headers: [],
               params: [],
               body: null,
               bodyContentType: ContentType.text,
