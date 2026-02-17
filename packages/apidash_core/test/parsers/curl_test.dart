@@ -52,7 +52,9 @@ void main() {
       );
     });
 
-    test('should parse form data request', () {
+    test(
+        'should parse form data request and file set to '
+        ' so that user can select it.', () {
       const curl = '''
         curl -X POST https://api.apidash.dev/upload 
         -F "file=@photo.jpg" 
@@ -73,8 +75,7 @@ void main() {
             body: null,
             bodyContentType: ContentType.formdata,
             formData: [
-              FormDataModel(
-                  name: 'file', value: 'photo.jpg', type: FormDataType.file),
+              FormDataModel(name: 'file', value: '', type: FormDataType.file),
               FormDataModel(
                   name: 'description',
                   value: 'My Photo',

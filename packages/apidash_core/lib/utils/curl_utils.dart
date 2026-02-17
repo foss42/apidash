@@ -13,9 +13,17 @@ HttpRequestModel convertCurlToHttpRequestModel(Curl curl) {
   final headers = mapToRows(curl.headers);
   final params = mapToRows(curl.uri.queryParameters);
   final body = curl.data;
-  // TODO: formdata with file paths must be set to empty as
-  // there will be permission issue while trying to access the path
-  final formData = curl.formData;
+  // Clear file paths in form data to avoid permission issues
+  // when accessing files from different systems
+  final formData = curl.formData?.map((field) {
+    return field.type == FormDataType.file
+        ? FormDataModel(
+            name: field.name,
+            value: '',
+            type: FormDataType.file,
+          )
+        : field;
+  }).toList();
   // Determine content type based on form data and headers
   final ContentType contentType = curl.form
       ? ContentType.formdata
