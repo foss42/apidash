@@ -58,6 +58,54 @@ void main() {
     expect(find.text('entering 123 for cell field'), findsOneWidget);
   });
 
+  testWidgets('Cell Field refreshes when initialValue changes',
+      (tester) async {
+    // Build widget with initial value "first value"
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'CellField',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: Column(
+            children: [
+              CellField(
+                keyId: "test-field",
+                initialValue: "first value",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Verify initial value is displayed
+    expect(find.text("first value"), findsOneWidget);
+
+    // Rebuild widget with new initialValue "second value"
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'CellField',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: Column(
+            children: [
+              CellField(
+                keyId: "test-field",
+                initialValue: "second value",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify the widget refreshed and displays the new value
+    expect(find.text("second value"), findsOneWidget);
+    expect(find.text("first value"), findsNothing);
+  });
+
   testWidgets('URL Field sends request on enter keystroke', (tester) async {
     bool wasSubmitCalled = false;
 
