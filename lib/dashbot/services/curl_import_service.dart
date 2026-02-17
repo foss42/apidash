@@ -40,49 +40,7 @@ class CurlImportService {
 
   /// Convert a parsed Curl into a payload used by Dashbot auto-fix action.
   static Map<String, dynamic> buildActionPayloadFromCurl(Curl curl) {
-    final headers =
-        Map<String, String>.from(curl.headers ?? <String, String>{});
-    bool hasHeader(String key) =>
-        headers.keys.any((k) => k.toLowerCase() == key.toLowerCase());
-    void setIfMissing(String key, String? value) {
-      if (value == null || value.isEmpty) return;
-      if (!hasHeader(key)) headers[key] = value;
-    }
-
-    // Map cookie to Cookie header if not present
-    setIfMissing('Cookie', curl.cookie);
-    // Map user agent and referer to headers if not present
-    setIfMissing('User-Agent', curl.userAgent);
-    setIfMissing('Referer', curl.referer);
-    // Map -u user:password to Authorization: Basic ... if not already present
-    if (!hasHeader('Authorization') && (curl.user?.isNotEmpty ?? false)) {
-      final basic = base64.encode(utf8.encode(curl.user!));
-      headers['Authorization'] = 'Basic $basic';
-    }
-
-    final payload = <String, dynamic>{
-      'method': curl.method,
-      'url': curl.uri.toString(),
-      'headers': headers,
-      'body': curl.data,
-      'form': curl.form,
-      'formData': curl.formData
-          ?.map((f) => {
-                'name': f.name,
-                'value': f.value,
-                'type': f.type.name,
-              })
-          .toList(),
-    };
-
-    // Include query params for insights only
-    try {
-      final qp = curl.uri.queryParameters;
-      if (qp.isNotEmpty) {
-        payload['params'] = qp;
-      }
-    } catch (_) {}
-
+    final payload = convertCurlToHttpRequestModel(curl).toJson();
     return payload;
   }
 
