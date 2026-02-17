@@ -38,12 +38,6 @@ class CurlImportService {
     return Curl.tryParse(input);
   }
 
-  /// Convert a parsed Curl into a payload used by Dashbot auto-fix action.
-  static Map<String, dynamic> buildActionPayloadFromCurl(Curl curl) {
-    final payload = convertCurlToHttpRequestModel(curl).toJson();
-    return payload;
-  }
-
   /// Build the message object with two actions: apply to selected or new.
   static Map<String, dynamic> buildActionMessageFromPayload(
     Map<String, dynamic> actionPayload, {
@@ -99,7 +93,7 @@ class CurlImportService {
   /// Convenience: from parsed [Curl] to (json, actions list).
   static ({String jsonMessage, List<Map<String, dynamic>> actions})
       buildResponseFromParsed(Curl curl, {Map<String, dynamic>? current}) {
-    final payload = buildActionPayloadFromCurl(curl);
+    final payload = curl.toJson();
     // Build a small note for flags that are not represented in the request model
     final notes = <String>[];
     // if (curl.insecure) notes.add('insecure (-k) is not applied automatically');
