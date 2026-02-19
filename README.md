@@ -3,7 +3,12 @@
 <a href="https://discord.com/invite/bBeSdtJ6Ue" target="_blank"><img src="https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white" alt="Discord Server Invite"></a><br>
 <img src="https://trendshift.io/api/badge/repositories/9734" alt="foss42%2Fapidash | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/> &nbsp;&nbsp;&nbsp; <a href="https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash" target="_blank"><img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="400"></a>
 
-## Weekly Connect Session for GSoC candidates - [Link](https://luma.com/embed/calendar/cal-ZTW02O2EsWRs6V4/events)
+| GSoC 2026         | Link                                                       |
+| ----------------- | ---------------------------------------------------------- |
+| List of Ideas     | [Link](https://github.com/foss42/apidash/discussions/1054)                |
+| Application Guide | [Link](https://github.com/foss42/apidash/discussions/1048) |
+| Weekly Connect Meeting for GSoC Participants | [Link](https://luma.com/embed/calendar/cal-ZTW02O2EsWRs6V4/events) |
+| Discord Channel   | [Link](https://discord.com/invite/bBeSdtJ6Ue)              |
 
 ### Please support this initiative by giving this project a Star ⭐️
 
