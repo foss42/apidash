@@ -23,6 +23,44 @@ Future<void> saveCollection(
   sm.showSnackBar(getSnackBar(message, small: false));
 }
 
+Future<void> saveCollectionAsPostman(
+  Map<String, dynamic> data,
+  ScaffoldMessengerState sm,
+) async {
+  var message = "";
+  try {
+    var pth = await getFileDownloadpath(null, "json");
+    if (pth != null) {
+      await saveFile(pth, jsonMapToBytes(data));
+      var sp = getShortPath(pth);
+      message = 'Saved to $sp';
+    }
+  } catch (e) {
+    message = "An error occurred while exporting.";
+  }
+  sm.hideCurrentSnackBar();
+  sm.showSnackBar(getSnackBar(message, small: false));
+}
+
+Future<void> saveCollectionAsInsomnia(
+  Map<String, dynamic> data,
+  ScaffoldMessengerState sm,
+) async {
+  var message = "";
+  try {
+    var pth = await getFileDownloadpath(null, "json");
+    if (pth != null) {
+      await saveFile(pth, jsonMapToBytes(data));
+      var sp = getShortPath(pth);
+      message = 'Saved to $sp';
+    }
+  } catch (e) {
+    message = "An error occurred while exporting.";
+  }
+  sm.hideCurrentSnackBar();
+  sm.showSnackBar(getSnackBar(message, small: false));
+}
+
 Future<void> saveToDownloads(
   ScaffoldMessengerState sm, {
   Uint8List? content,

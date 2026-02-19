@@ -170,7 +170,7 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('Export Data'),
+                title: const Text('Export Data (HAR)'),
                 subtitle: const Text(
                     'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
                 trailing: FilledButton.icon(
@@ -179,6 +179,44 @@ class SettingsPage extends ConsumerWidget {
                         .read(collectionStateNotifierProvider.notifier)
                         .exportDataToHAR();
                     await saveCollection(data, sm);
+                  },
+                  label: const Text("Export"),
+                  icon: const Icon(
+                    Icons.arrow_outward_rounded,
+                    size: 20,
+                  ),
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Export Data (Postman)'),
+                subtitle: const Text(
+                    'Export your collection to Postman Collection v2.1 format.\nImport directly into Postman or other compatible API clients.'),
+                trailing: FilledButton.icon(
+                  onPressed: () async {
+                    var data = ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .exportDataToPostman();
+                    await saveCollectionAsPostman(data, sm);
+                  },
+                  label: const Text("Export"),
+                  icon: const Icon(
+                    Icons.arrow_outward_rounded,
+                    size: 20,
+                  ),
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Export Data (Insomnia)'),
+                subtitle: const Text(
+                    'Export your collection to Insomnia v4 format.\nImport directly into Insomnia or other compatible API clients.'),
+                trailing: FilledButton.icon(
+                  onPressed: () async {
+                    var data = ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .exportDataToInsomnia();
+                    await saveCollectionAsInsomnia(data, sm);
                   },
                   label: const Text("Export"),
                   icon: const Icon(

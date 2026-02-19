@@ -655,6 +655,14 @@ class CollectionStateNotifier
     // };
   }
 
+  Map<String, dynamic> exportDataToPostman() {
+    return collectionToPostman(state?.values.toList());
+  }
+
+  Map<String, dynamic> exportDataToInsomnia() {
+    return collectionToInsomnia(state?.values.toList());
+  }
+
   HttpRequestModel getSubstitutedHttpRequestModel(
       HttpRequestModel httpRequestModel) {
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
