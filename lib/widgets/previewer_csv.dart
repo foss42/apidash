@@ -14,8 +14,11 @@ class CsvPreviewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      final List<List<dynamic>> csvData =
-          const CsvToListConverter().convert(body, eol: '\n');
+      final csvConverter = CsvToListConverter(); 
+      final List<List<dynamic>> csvData = csvConverter.convert(body, eol: '\n');
+      
+      if (csvData.isEmpty) return errorWidget;
+      
       return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SingleChildScrollView(
@@ -50,6 +53,7 @@ class CsvPreviewer extends StatelessWidget {
         ),
       );
     } catch (e) {
+      debugPrint("CSV Error: $e"); 
       return errorWidget;
     }
   }
