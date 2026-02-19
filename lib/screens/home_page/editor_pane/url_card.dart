@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/dashbot/utils/utils.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/constants.dart';
 import '../../common_widgets/common_widgets.dart';
@@ -97,13 +96,21 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
   }
 }
 
-class URLTextField extends ConsumerWidget {
+class URLTextField extends ConsumerStatefulWidget {
   const URLTextField({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<URLTextField> createState() => _URLTextFieldState();
+}
+
+class _URLTextFieldState extends ConsumerState<URLTextField> {
+  String _previousValue = '';
+  int _rebuildSuffix = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.url));
@@ -112,32 +119,33 @@ class URLTextField extends ConsumerWidget {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
+
+    final currentUrl = switch (requestModel.apiType) {
+      APIType.ai => requestModel.aiRequestModel?.url,
+      _ => requestModel.httpRequestModel?.url,
+    };
+
+    if (_previousValue.isEmpty && currentUrl != null && currentUrl.isNotEmpty) {
+      _previousValue = currentUrl;
+    }
+
     return EnvURLField(
+      key: ValueKey('$selectedId-$_rebuildSuffix'),
       selectedId: selectedId,
-      initialValue: switch (requestModel.apiType) {
-        APIType.ai => requestModel.aiRequestModel?.url,
-        _ => requestModel.httpRequestModel?.url,
-      },
+      initialValue: currentUrl,
       onChanged: (value) {
-        if (value.trim().startsWith('curl ')) {
-          final windowNotifier =
-              ref.read(dashbotWindowNotifierProvider.notifier);
-          final windowState = ref.read(dashbotWindowNotifierProvider);
-          if (windowState.isPopped) {
-            windowNotifier.togglePopped();
-          }
-          if (!windowState.isActive) {
-            showDashbotWindow(context, ref);
-          }
-          ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(chatViewmodelProvider.notifier).sendMessage(
-                  text: value.trim(),
-                  type: ChatMessageType.importCurl,
-                );
-          });
+        final isDashBotEnabled = ref.read(settingsProvider).isDashBotEnabled;
+        final isPaste = (value.length - _previousValue.length) > 1;
+
+        if (isDashBotEnabled &&
+            isPaste &&
+            value.trim().startsWith('curl ') &&
+            requestModel.apiType == APIType.rest) {
+          _handleCurlPaste(value.trim());
           return;
         }
+
+        _previousValue = value;
         if (requestModel.apiType == APIType.ai) {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
@@ -150,6 +158,20 @@ class URLTextField extends ConsumerWidget {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
     );
+  }
+
+  void _handleCurlPaste(String curlText) {
+    ref.read(dashbotWindowNotifierProvider.notifier).setIsPopped(false);
+    ref.read(dashbotActiveRouteProvider.notifier).goToChat();
+    ref.read(chatViewmodelProvider.notifier).sendMessage(
+          text: curlText,
+          type: ChatMessageType.importCurl,
+        );
+    ref.read(collectionStateNotifierProvider.notifier).update(url: '');
+    setState(() {
+      _previousValue = '';
+      _rebuildSuffix++;
+    });
   }
 }
 
