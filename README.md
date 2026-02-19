@@ -3,6 +3,8 @@
 <a href="https://discord.com/invite/bBeSdtJ6Ue" target="_blank"><img src="https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white" alt="Discord Server Invite"></a><br>
 <img src="https://trendshift.io/api/badge/repositories/9734" alt="foss42%2Fapidash | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/> &nbsp;&nbsp;&nbsp; <a href="https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash" target="_blank"><img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="400"></a>
 
+## Weekly Connect Session for GSoC candidates - [Link](https://luma.com/embed/calendar/cal-ZTW02O2EsWRs6V4/events)
+
 ### Please support this initiative by giving this project a Star ⭐️
 
 API Dash is a beautiful **AI powered open-source cross-platform** API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
@@ -136,6 +138,18 @@ API Dash can be downloaded from the links below:
 - Customize various options using a dedicated Settings screen.
 - Window Configuration (Size & Position) is persisted and restored on app start. (Only macOS & Windows)
 
+## AI Requests
+
+API Dash lets you test AI APIs of various providers (or your own).
+
+<img width="1053" height="712" alt="aireq1" src="https://github.com/user-attachments/assets/a696123a-24bb-4f1f-83d4-37d32da136fc" />
+
+## DashBot
+
+Dashbot is the AI assistant available in API Dash (powered by local or cloud LLM) so that you can interact with your requests to debug it, generate code, generate doc, and many more. 
+
+<img width="1470" height="956" alt="dashbot_tab" src="https://github.com/user-attachments/assets/b67b42dc-6281-4c71-bd85-b70199f3cfbd" />
+
 
 ## ❤️ Supported by
 
@@ -180,8 +194,6 @@ API Dash currently supports API integration code generation for the following la
 | Rust                   | `Actix Client` |        |
 | Swift                  | `Alamofire`   |         |
 | Swift                  | `URLSession`  |         |
-
-We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
 ## MIME Types supported by API Dash Response Previewer
 
