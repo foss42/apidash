@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 class SearchField extends StatelessWidget {
@@ -17,6 +18,7 @@ class SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final theme = Theme.of(context);
     return Container(
       height: height,
@@ -29,8 +31,8 @@ class SearchField extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, size: 18),
-          const SizedBox(width: 6),
+          Icon(Icons.search, size: 18*ds.scaleFactor),
+          SizedBox(width: 6*ds.scaleFactor),
           Expanded(
             child: ADRawTextField(
               controller: controller,

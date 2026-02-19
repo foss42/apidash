@@ -1,7 +1,9 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
 Future<void> addNewModel(BuildContext context) async {
+  final ds = DesignSystemProvider.of(context);
   TextEditingController iC = TextEditingController();
   TextEditingController nC = TextEditingController();
   final z = await showDialog(
@@ -16,14 +18,14 @@ Future<void> addNewModel(BuildContext context) async {
                 controller: iC,
                 hintText: 'Model ID',
               ),
-              kVSpacer10,
+              kVSpacer10(ds.scaleFactor),
               ADOutlinedTextField(
                 controller: nC,
                 hintText: 'Model Display Name',
               ),
-              kVSpacer10,
+              kVSpacer10(ds.scaleFactor),
               SizedBox(
-                width: double.infinity,
+                width: double.infinity*ds.scaleFactor,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop([

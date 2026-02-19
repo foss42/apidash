@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
@@ -14,11 +15,12 @@ class HistoryRetentionPopupMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     const double width = 120;
     return ADPopupMenu<HistoryRetentionPeriod>(
       value: value?.label,
       values: HistoryRetentionPeriod.values.map((e) => (e, e.label)),
-      width: width,
+      width: width*ds.scaleFactor,
       tooltip: "Select retention period",
       onChanged: onChanged,
       isOutlined: true,

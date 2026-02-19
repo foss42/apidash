@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -33,6 +34,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final state = ref.watch(terminalStateProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
     final allEntries = state.entries;
@@ -52,7 +54,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                     onChanged: (_) => setState(() {}),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8*ds.scaleFactor),
                 // Filter button
                 TerminalLevelFilterMenu(
                   selected: _selectedLevels,
@@ -62,7 +64,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                       ..addAll(set);
                   }),
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4*ds.scaleFactor),
                 // Timestamp toggle
                 IconButton(
                   tooltip: 'Show timestamps',
@@ -73,17 +75,17 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                     setState(() => _showTimestamps = !_showTimestamps);
                   },
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4*ds.scaleFactor),
                 // Clear button
                 ADIconButton(
                   tooltip: 'Clear logs',
                   icon: Icons.delete_outline,
-                  iconSize: 22,
+                  iconSize: 22*ds.scaleFactor,
                   onPressed: () {
                     ref.read(terminalStateProvider.notifier).clear();
                   },
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: 4*ds.scaleFactor),
                 // Copy all button
                 CopyButton(
                   showLabel: false,
@@ -94,7 +96,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
               ],
             ),
           ),
-          const Divider(height: 1),
+          Divider(height: 1*ds.scaleFactor),
           Expanded(
             child: filtered.isEmpty
                 ? const Center(

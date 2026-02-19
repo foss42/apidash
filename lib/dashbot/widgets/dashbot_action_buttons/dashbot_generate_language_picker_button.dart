@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants.dart';
@@ -26,6 +27,7 @@ class DashbotGenerateLanguagePicker extends ConsumerWidget
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final langs = _extractLanguages(action.value);
     return Wrap(
       spacing: 6,
@@ -39,7 +41,7 @@ class DashbotGenerateLanguagePicker extends ConsumerWidget
                     type: ChatMessageType.generateCode,
                   );
             },
-            child: Text(l, style: const TextStyle(fontSize: 12)),
+            child: Text(l, style: TextStyle(fontSize: 12*ds.scaleFactor)),
           ),
       ],
     );

@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -11,13 +12,14 @@ class RequestEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return context.isMediumWindow
-        ? const Padding(
+        ? Padding(
             padding: kPb10,
             child: Column(
               children: [
-                kVSpacer20,
-                Expanded(
+                kVSpacer20(ds.scaleFactor),
+                const Expanded(
                   child: EditRequestPane(
                     showViewCodeButton: false,
                   ),
@@ -27,12 +29,12 @@ class RequestEditor extends StatelessWidget {
           )
         : Padding(
             padding: kIsMacOS ? kPt28o8 : kP8,
-            child: const Column(
+            child: Column(
               children: [
-                RequestEditorTopBar(),
-                EditorPaneRequestURLCard(),
-                kVSpacer10,
-                Expanded(
+                const RequestEditorTopBar(),
+                const EditorPaneRequestURLCard(),
+                kVSpacer10(ds.scaleFactor),
+                const Expanded(
                   child: EditorPaneRequestDetailsCard(),
                 ),
               ],

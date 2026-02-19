@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -12,6 +13,7 @@ class EnvironmentEditor extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final id = ref.watch(selectedEnvironmentIdStateProvider);
     final name = ref
         .watch(selectedEnvironmentModelProvider.select((value) => value?.name));
@@ -23,12 +25,12 @@ class EnvironmentEditor extends ConsumerWidget {
               : kP8,
       child: Column(
         children: [
-          kVSpacer5,
+          kVSpacer5(ds.scaleFactor),
           !context.isMediumWindow
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    kHSpacer10,
+                    kHSpacer10(ds.scaleFactor),
                     Expanded(
                       child: Text(
                         name ?? "",
@@ -37,8 +39,8 @@ class EnvironmentEditor extends ConsumerWidget {
                         maxLines: 1,
                       ),
                     ),
-                    const SizedBox(
-                      width: 6,
+                    SizedBox(
+                      width: 6*ds.scaleFactor,
                     ),
                     EditorTitleActions(
                       onRenamePressed: () {
@@ -61,11 +63,11 @@ class EnvironmentEditor extends ConsumerWidget {
                                   .removeEnvironment(id!);
                             },
                     ),
-                    kHSpacer4,
+                    kHSpacer4(ds.scaleFactor),
                   ],
                 )
               : const SizedBox.shrink(),
-          kVSpacer5,
+          kVSpacer5(ds.scaleFactor),
           Expanded(
             child: Container(
               margin: context.isMediumWindow ? null : kP4,
@@ -84,24 +86,24 @@ class EnvironmentEditor extends ConsumerWidget {
                         borderRadius: kBorderRadius12,
                       ),
                 elevation: 0,
-                child: const Padding(
+                child: Padding(
                   padding: kPv6,
                   child: Column(
                     children: [
-                      kHSpacer40,
+                      kHSpacer40(ds.scaleFactor),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(width: 30),
-                          Text("Variable"),
-                          SizedBox(width: 30),
-                          Text("Value"),
-                          SizedBox(width: 40),
+                          SizedBox(width: 30*ds.scaleFactor),
+                          const Text("Variable"),
+                          SizedBox(width: 30*ds.scaleFactor),
+                          const Text("Value"),
+                          SizedBox(width: 40*ds.scaleFactor),
                         ],
                       ),
-                      kHSpacer40,
-                      Divider(),
-                      Expanded(child: EditEnvironmentVariables())
+                      kHSpacer40(ds.scaleFactor),
+                      const Divider(),
+                      const Expanded(child: EditEnvironmentVariables())
                     ],
                   ),
                 ),

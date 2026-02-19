@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class SidebarHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final Color color = Theme.of(context).colorScheme.surface;
     final Color colorVariant = Theme.of(context).colorScheme.surfaceContainer;
     final model = models.first;
@@ -60,14 +62,14 @@ class SidebarHistoryCard extends StatelessWidget {
               bottom: 5,
             ),
             child: SizedBox(
-              height: 20,
+              height: 20*ds.scaleFactor,
               child: Row(
                 children: [
                   SidebarRequestCardTextBox(
                     apiType: apiType,
                     method: method,
                   ),
-                  kHSpacer4,
+                  kHSpacer4(ds.scaleFactor),
                   Expanded(
                     child: Text(
                       name,
@@ -75,12 +77,12 @@ class SidebarHistoryCard extends StatelessWidget {
                       overflow: TextOverflow.fade,
                     ),
                   ),
-                  requestGroupSize > 1 ? kHSpacer4 : const SizedBox.shrink(),
+                  requestGroupSize > 1 ? kHSpacer4(ds.scaleFactor) : const SizedBox.shrink(),
                   Visibility(
                     visible: requestGroupSize > 1,
                     child: Container(
                       padding: kPh4,
-                      constraints: const BoxConstraints(minWidth: 24),
+                      constraints: BoxConstraints(minWidth: 24*ds.scaleFactor),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primaryContainer,
                         borderRadius: kBorderRadius6,

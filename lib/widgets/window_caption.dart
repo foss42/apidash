@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:window_manager/window_manager.dart';
@@ -33,6 +34,7 @@ class _WindowCaptionState extends State<WindowCaption> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Row(
       children: [
         Expanded(
@@ -41,8 +43,8 @@ class _WindowCaptionState extends State<WindowCaption> with WindowListener {
             onPanStart: (details) {
               windowManager.startDragging();
             },
-            child: const SizedBox(
-              height: double.infinity,
+            child: SizedBox(
+              height: double.infinity*ds.scaleFactor,
             ),
           ),
         ),

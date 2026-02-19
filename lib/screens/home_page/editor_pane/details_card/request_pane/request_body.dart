@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -12,6 +13,7 @@ class EditRequestBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
@@ -27,9 +29,9 @@ class EditRequestBody extends ConsumerWidget {
     return Column(
       children: [
         (apiType == APIType.rest)
-            ? const SizedBox(
-                height: kHeaderHeight,
-                child: Row(
+            ? SizedBox(
+                height: kHeaderHeight*ds.scaleFactor,
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(

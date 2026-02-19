@@ -1,6 +1,12 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
+import 'package:apidash_design_system/ui/ui_design_system.dart';
+import 'package:apidash_design_system/ui/zoom_controller.dart';
+import 'package:apidash_design_system/ui/zoom_in.dart';
+import 'package:apidash_design_system/ui/zoom_out.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stac/stac.dart';
 import 'models/models.dart';
@@ -17,7 +23,6 @@ void main() async {
   await ModelManager.fetchAvailableModels();
 
   var settingsModel = await getSettingsFromSharedPrefs();
-  var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,
@@ -29,17 +34,57 @@ void main() async {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        settingsProvider.overrideWith(
-          (ref) => ThemeStateNotifier(settingsModel: settingsModel),
+  final zoomController = ZoomController();
+
+runApp(
+  AnimatedBuilder(
+    animation: zoomController,
+    builder: (context, _) {
+      return ProviderScope(
+        child: Builder(
+          builder: (context) {
+            final width = MediaQuery.of(context).size.width;
+
+            final designSystem = UIDesignSystem.fromScreenWidth(
+              width,
+              zoom: zoomController.zoom,
+            );
+
+            return Shortcuts(
+              shortcuts: <LogicalKeySet, Intent>{
+                LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.equal): const ZoomInIntent(),
+                LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.numpadAdd): const ZoomInIntent(),
+                LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.minus): const ZoomOutIntent(),
+                LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.numpadSubtract): const ZoomOutIntent(),
+              },
+              child: Actions(
+                actions: <Type, Action<Intent>>{
+                  ZoomInIntent: CallbackAction<ZoomInIntent>(
+                    onInvoke: (intent) {
+                      zoomController.zoomIn();
+                      return null;
+                    },
+                  ),
+                  ZoomOutIntent: CallbackAction<ZoomOutIntent>(
+                    onInvoke: (intent) {
+                      zoomController.zoomOut();
+                      return null;
+                    },
+                  ),
+                },
+                child: DesignSystemProvider(
+                  designSystem: designSystem,
+                  child: const DashApp(),
+                ),
+              ),
+            );
+          },
         ),
-        userOnboardedProvider.overrideWith((ref) => onboardingStatus),
-      ],
-      child: const DashApp(),
-    ),
-  );
+      );
+    },
+  ),
+);
+
 }
 
 Future<bool> initApp(

@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 
@@ -14,8 +15,9 @@ class SidebarRequestCardTextBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return SizedBox(
-      width: 24,
+      width: 24*ds.scaleFactor,
       child: Text(
         switch (apiType) {
           APIType.rest => method!.abbr,
@@ -24,7 +26,7 @@ class SidebarRequestCardTextBox extends StatelessWidget {
         },
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 8,
+          fontSize: 8*ds.scaleFactor,
           fontWeight: FontWeight.bold,
           color: getAPIColor(
             apiType,

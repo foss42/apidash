@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -41,6 +42,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     var currentSeg = widget.options[segmentIdx];
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
@@ -63,7 +65,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
           padding: kP10,
           child: Column(
             children: [
-              kVSpacer10,
+              kVSpacer10(ds.scaleFactor),
               Row(
                 children: [
                   (widget.options == kRawBodyViewOptions)
@@ -113,11 +115,11 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         ),
                 ],
               ),
-              kVSpacer10,
+              kVSpacer10(ds.scaleFactor),
               switch (currentSeg) {
                 ResponseBodyView.preview || ResponseBodyView.none => Expanded(
                     child: Container(
-                      width: double.maxFinite,
+                      width: double.maxFinite*ds.scaleFactor,
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: Previewer(
@@ -131,7 +133,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                   ),
                 ResponseBodyView.code => Expanded(
                     child: Container(
-                      width: double.maxFinite,
+                      width: double.maxFinite*ds.scaleFactor,
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: CodePreviewer(
@@ -144,7 +146,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                   ),
                 ResponseBodyView.answer => Expanded(
                     child: Container(
-                      width: double.maxFinite,
+                      width: double.maxFinite*ds.scaleFactor,
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: SingleChildScrollView(
@@ -157,7 +159,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                   ),
                 ResponseBodyView.raw => Expanded(
                     child: Container(
-                      width: double.maxFinite,
+                      width: double.maxFinite*ds.scaleFactor,
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: SingleChildScrollView(
@@ -172,7 +174,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                   ),
                 ResponseBodyView.sse => Expanded(
                     child: Container(
-                      width: double.maxFinite,
+                      width: double.maxFinite*ds.scaleFactor,
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: SSEDisplay(

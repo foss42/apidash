@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 class ADCheckBox extends StatelessWidget {
@@ -15,6 +16,7 @@ class ADCheckBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     var colorScheme = this.colorScheme ?? Theme.of(context).colorScheme;
     return Checkbox(
         key: Key(keyId),
@@ -23,7 +25,7 @@ class ADCheckBox extends StatelessWidget {
         ),
         side: BorderSide(
           color: colorScheme.surfaceContainerHighest,
-          width: 1.5,
+          width: 1.5*ds.scaleFactor,
         ),
         splashRadius: 0,
         value: value,

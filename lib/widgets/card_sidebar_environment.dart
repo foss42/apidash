@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -40,6 +41,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final Color color =
         isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
@@ -84,10 +86,10 @@ class SidebarEnvironmentCard extends StatelessWidget {
               bottom: 5,
             ),
             child: SizedBox(
-              height: 20,
+              height: 20*ds.scaleFactor,
               child: Row(
                 children: [
-                  kHSpacer4,
+                  kHSpacer4(ds.scaleFactor),
                   Expanded(
                     child: inEditMode
                         ? TextFormField(
@@ -118,7 +120,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
                   Visibility(
                     visible: isSelected && !inEditMode && !isGlobal,
                     child: SizedBox(
-                      width: 28,
+                      width: 28*ds.scaleFactor,
                       child: ItemCardMenu(
                         onSelected: onMenuSelected,
                       ),

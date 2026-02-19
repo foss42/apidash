@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -210,6 +211,7 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final n = widget.entry.network!;
     final status = n.responseStatus != null ? '${n.responseStatus}' : null;
     final duration =
@@ -274,11 +276,11 @@ class _NetworkLogTileState extends State<NetworkLogTile> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12*ds.scaleFactor),
                 if (status != null) Text(status),
                 if (status != null && duration != null) const Text('  |  '),
                 if (duration != null) Text(duration),
-                const SizedBox(width: 6),
+                SizedBox(width: 6*ds.scaleFactor),
                 Icon(_expanded
                     ? Icons.keyboard_arrow_up
                     : Icons.keyboard_arrow_down),

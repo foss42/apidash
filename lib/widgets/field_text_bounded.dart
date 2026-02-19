@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 class BoundedTextField extends StatefulWidget {
@@ -34,9 +35,10 @@ class _BoundedTextFieldState extends State<BoundedTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     // final double width = context.isCompactWindow ? 150 : 220;
     return Container(
-      height: 40,
+      height: 40*ds.scaleFactor,
       decoration: BoxDecoration(
         border: Border.all(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,

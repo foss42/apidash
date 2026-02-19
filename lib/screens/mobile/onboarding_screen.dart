@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -32,6 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -67,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   OnboardingSlide(
                     context: context,
                     assetPath: kAssetApiServerLottie,
-                    assetSize: context.width * 0.75,
+                    assetSize: context.width * 0.75*ds.scaleFactor,
                     title: "Test APIs with Ease",
                     description:
                         "Send requests, preview responses, and test APIs with ease. REST and GraphQL support included!",
@@ -75,7 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   OnboardingSlide(
                     context: context,
                     assetPath: kAssetFolderLottie,
-                    assetSize: context.width * 0.55,
+                    assetSize: context.width * 0.55*ds.scaleFactor,
                     title: "Organize & Save Requests",
                     description:
                         "Save and organize API requests into collections for quick access and better workflow.",
@@ -83,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   OnboardingSlide(
                     context: context,
                     assetPath: kAssetGenerateCodeLottie,
-                    assetSize: context.width * 0.65,
+                    assetSize: context.width * 0.65*ds.scaleFactor,
                     title: "Generate Code Instantly",
                     description:
                         "Integrate APIs using well tested code generators for JavaScript, Python, Dart, Kotlin & others.",

@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 class SimpleText extends StatelessWidget {
@@ -14,14 +15,15 @@ class SimpleText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 36, color: theme.colorScheme.outline),
-            const SizedBox(height: 8),
+            Icon(icon, size: 36*ds.scaleFactor, color: theme.colorScheme.outline),
+            SizedBox(height: 8*ds.scaleFactor),
           ],
           if (title != null) ...[
             Text(
@@ -30,7 +32,7 @@ class SimpleText extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6*ds.scaleFactor),
           ],
           if (subtitle != null)
             Text(

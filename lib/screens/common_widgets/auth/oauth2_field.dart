@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -110,6 +111,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     // Watch for changes in the selected request model's HTTP response
     ref.listen<RequestModel?>(selectedRequestModelProvider, (previous, next) {
       // Check if the HTTP response has changed (new response received)
@@ -135,7 +137,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
           kLabelOAuth2GrantType,
           style: Theme.of(context).textTheme.labelLarge,
         ),
-        kVSpacer5,
+        kVSpacer5(ds.scaleFactor),
         ADPopupMenu<OAuth2GrantType>(
           value: _grantType.displayType,
           values: OAuth2GrantType.values.map((e) => (e, e.displayType)),
@@ -153,7 +155,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
                   }
                 },
         ),
-        kVSpacer16,
+        kVSpacer16(),
         if (_shouldShowField(OAuth2Field.authorizationUrl))
           ..._buildFieldWithSpacing(
             EnvAuthField(
@@ -244,7 +246,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
             kLabelOAuth2CodeChallengeMethod,
             style: Theme.of(context).textTheme.labelLarge,
           ),
-          kVSpacer5,
+          kVSpacer5(ds.scaleFactor),
           ADPopupMenu<String>(
             value: _codeChallengeMethod.toUpperCase(),
             values: const [
@@ -266,7 +268,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
                     }
                   },
           ),
-          kVSpacer16,
+          kVSpacer16(ds.scaleFactor),
         ],
         if (_shouldShowField(OAuth2Field.redirectUrl))
           ..._buildFieldWithSpacing(
@@ -320,7 +322,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
           ),
         ),
         Divider(),
-        kVSpacer16,
+        kVSpacer16(ds.scaleFactor),
         ..._buildFieldWithSpacing(
           EnvAuthField(
             readOnly: widget.readOnly,
@@ -363,7 +365,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
                 },
               ),
               if (_tokenExpiration != null) ...[
-                const SizedBox(height: 4),
+                SizedBox(height: 4*ds.scaleFactor),
                 Text(
                   getExpirationText(_tokenExpiration),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -376,15 +378,16 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
             ],
           ),
         ),
-        kVSpacer16,
+        kVSpacer16(ds.scaleFactor),
       ],
     );
   }
 
   List<Widget> _buildFieldWithSpacing(Widget field) {
+    final ds = DesignSystemProvider.of(context);
     return [
       field,
-      kVSpacer16,
+      kVSpacer16(ds.scaleFactor),
     ];
   }
 

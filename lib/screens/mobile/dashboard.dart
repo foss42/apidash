@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   Widget build(
     BuildContext context,
   ) {
+    final ds = DesignSystemProvider.of(context);
     final railIdx = ref.watch(navRailIndexStateProvider);
     final isLeftDrawerOpen = ref.watch(leftDrawerStateProvider);
 
@@ -48,7 +50,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
                       : -(72 + MediaQuery.paddingOf(context).bottom),
               left: 0,
               right: 0,
-              height: 70 + MediaQuery.paddingOf(context).bottom,
+              height: (70 + MediaQuery.paddingOf(context).bottom)*ds.scaleFactor,
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOut,
               child: const BottomNavBar(),

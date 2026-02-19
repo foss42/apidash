@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -10,27 +11,28 @@ class DashbotDefaultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        kVSpacer16,
-        DashbotIcons.getDashbotIcon1(width: 60),
-        kVSpacer20,
+        kVSpacer16(ds.scaleFactor),
+        DashbotIcons.getDashbotIcon1(width: 60*ds.scaleFactor),
+        kVSpacer20(ds.scaleFactor),
         Text(
           'Hello there!',
-          style: kTextStyleXXLarge.copyWith(
-              fontSize: 22, fontWeight: FontWeight.w600),
+          style: kTextStyleXXLarge(ds.scaleFactor).copyWith(
+              fontSize: 22*ds.scaleFactor, fontWeight: FontWeight.w600),
         ),
-        kVSpacer10,
+        kVSpacer10(ds.scaleFactor),
         Text(
           'Seems like you haven\'t made any Requests yet. Why not go ahead and make one?',
           textAlign: TextAlign.center,
-          style: kTextStyleMedium.copyWith(
+          style: kTextStyleMedium(ds.scaleFactor).copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        kVSpacer16,
+        kVSpacer16(ds.scaleFactor),
         Wrap(
           alignment: WrapAlignment.center,
           spacing: 8,
@@ -64,7 +66,7 @@ class DashbotDefaultPage extends StatelessWidget {
             ),
           ],
         ),
-        kVSpacer16,
+        kVSpacer16(ds.scaleFactor),
       ],
     );
   }

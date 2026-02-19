@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -16,6 +17,7 @@ class HistoryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final historyModel = ref.watch(selectedHistoryRequestModelProvider);
     final title = historyModel != null
         ? getHistoryRequestName(historyModel.metaData)
@@ -29,7 +31,7 @@ class HistoryPage extends ConsumerWidget {
             hasHistoryKeys ? const HistoryViewer() : const HistoryEmpty(),
         title: Text(title),
         leftDrawerContent: const HistoryPane(),
-        actions: const [SizedBox(width: 16)],
+        actions: [SizedBox(width: 16*ds.scaleFactor)],
         onDrawerChanged: (value) =>
             ref.read(leftDrawerStateProvider.notifier).state = value,
       );

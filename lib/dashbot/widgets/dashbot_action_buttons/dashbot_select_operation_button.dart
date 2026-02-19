@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/models.dart';
@@ -12,12 +13,13 @@ class DashbotSelectOperationButton extends ConsumerWidget
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final operationName = action.path ?? 'Unknown';
     return OutlinedButton(
       onPressed: () async {
         await ref.read(chatViewmodelProvider.notifier).applyAutoFix(action);
       },
-      child: Text(operationName, style: const TextStyle(fontSize: 12)),
+      child: Text(operationName, style: TextStyle(fontSize: 12*ds.scaleFactor)),
     );
   }
 }

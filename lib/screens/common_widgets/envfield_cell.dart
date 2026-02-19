@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'env_trigger_field.dart';
@@ -26,6 +27,7 @@ class EnvCellField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
     return EnvironmentTriggerField(
       keyId: keyId,
@@ -33,7 +35,7 @@ class EnvCellField extends StatelessWidget {
       focusNode: focusNode,
       style: kCodeStyle.copyWith(
         color: clrScheme.onSurface,
-        fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+        fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * ds.scaleFactor,
       ),
       decoration: getTextFieldInputDecoration(
         clrScheme,

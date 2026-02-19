@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -9,6 +10,7 @@ class RequestEditorDefault extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -25,7 +27,7 @@ class RequestEditorDefault extends ConsumerWidget {
               size: 80,
               color: colorScheme.primary.withValues(alpha: 0.6),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24*ds.scaleFactor),
 
             // Main heading
             Text(
@@ -36,7 +38,7 @@ class RequestEditorDefault extends ConsumerWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12*ds.scaleFactor),
 
             // Subtitle
             Text(
@@ -46,7 +48,7 @@ class RequestEditorDefault extends ConsumerWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32*ds.scaleFactor),
 
             // Primary action button
             ElevatedButton(
@@ -61,14 +63,14 @@ class RequestEditorDefault extends ConsumerWidget {
               ),
               child: Text(
                 kLabelPlusNew,
-                style: kTextStyleButton,
+                style: kTextStyleButton(ds.scaleFactor),
               ),
             ),
-            const SizedBox(height: 40),
+            SizedBox(height: 40*ds.scaleFactor),
 
             // Quick tips section
             Container(
-              constraints: const BoxConstraints(maxWidth: 500),
+              constraints: BoxConstraints(maxWidth: 500*ds.scaleFactor),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color:
@@ -88,7 +90,7 @@ class RequestEditorDefault extends ConsumerWidget {
                         size: 20,
                         color: colorScheme.primary,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8*ds.scaleFactor),
                       Text(
                         'Quick Tips',
                         style: textTheme.titleMedium?.copyWith(
@@ -98,19 +100,19 @@ class RequestEditorDefault extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16*ds.scaleFactor),
                   _buildTipItem(
                     context,
                     icon: Icons.add_circle_outline,
                     text: 'Click "+ New" to create a new API request',
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12*ds.scaleFactor),
                   _buildTipItem(
                     context,
                     icon: Icons.folder_outlined,
                     text: 'Organize requests into collections',
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12*ds.scaleFactor),
                   _buildTipItem(
                     context,
                     icon: Icons.upload_file_outlined,
@@ -131,6 +133,7 @@ class RequestEditorDefault extends ConsumerWidget {
     required IconData icon,
     required String text,
   }) {
+    final ds = DesignSystemProvider.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -142,7 +145,7 @@ class RequestEditorDefault extends ConsumerWidget {
           size: 18,
           color: colorScheme.primary.withValues(alpha: 0.8),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: 12*ds.scaleFactor),
         Expanded(
           child: Text(
             text,

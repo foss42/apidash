@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/consts.dart';
@@ -10,6 +11,7 @@ class SaveButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final savingData = ref.watch(saveDataStateProvider);
     final hasUnsavedChanges = ref.watch(hasUnsavedChangesProvider);
     return TextButton.icon(
@@ -29,9 +31,9 @@ class SaveButton extends ConsumerWidget {
         Icons.save,
         size: 20,
       ),
-      label: const Text(
+      label: Text(
         kLabelSave,
-        style: kTextStyleButton,
+        style: kTextStyleButton(ds.scaleFactor),
       ),
     );
   }

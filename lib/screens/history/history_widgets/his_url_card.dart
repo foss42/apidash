@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -18,10 +19,11 @@ class HistoryURLCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final apiType = historyRequestModel?.metaData.apiType;
     final method = historyRequestModel?.metaData.method;
     final url = historyRequestModel?.metaData.url;
-    final fontSize = Theme.of(context).textTheme.titleMedium?.fontSize;
+    final fontSize = (Theme.of(context).textTheme.titleMedium?.fontSize ?? 16) * ds.scaleFactor;
 
     return LayoutBuilder(builder: (context, constraints) {
       final isCompact = constraints.maxWidth <= kMinWindowSize.width;
@@ -43,12 +45,12 @@ class HistoryURLCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              isCompact ? const SizedBox.shrink() : kHSpacer10,
+              isCompact ? const SizedBox.shrink() : kHSpacer10(ds.scaleFactor),
               if (apiType == APIType.rest) ...[
                 Text(
                   method!.name.toUpperCase(),
                   style: kCodeStyle.copyWith(
-                    fontSize: fontSize,
+                    fontSize: fontSize*ds.scaleFactor,
                     fontWeight: FontWeight.bold,
                     color: getAPIColor(
                       apiType!,
@@ -57,19 +59,19 @@ class HistoryURLCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                isCompact ? kHSpacer10 : kHSpacer20,
+                isCompact ? kHSpacer10(ds.scaleFactor) : kHSpacer20(ds.scaleFactor),
               ],
               if (apiType == APIType.ai) ...[
                 AIModelSelector(
                   readOnlyModel: historyRequestModel?.aiRequestModel,
                 ),
-                SizedBox(width: 20),
+                SizedBox(width: 20*ds.scaleFactor),
               ],
               Expanded(
                 child: ReadOnlyTextField(
                   initialValue: url,
                   style: kCodeStyle.copyWith(
-                    fontSize: fontSize,
+                    fontSize: fontSize*ds.scaleFactor,
                   ),
                 ),
               ),

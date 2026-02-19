@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 class SSEDisplay extends StatelessWidget {
@@ -14,14 +15,15 @@ class SSEDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final theme = Theme.of(context);
-    final fontSizeMedium = theme.textTheme.bodyMedium?.fontSize;
+    final fontSizeMedium = theme.textTheme.bodyMedium?.fontSize?? 14 * ds.scaleFactor;
     final isDark = theme.brightness == Brightness.dark;
     if (sseOutput == null || sseOutput!.isEmpty) {
       return Text(
         'No content',
         style: kCodeStyle.copyWith(
-          fontSize: fontSizeMedium,
+          fontSize: fontSizeMedium*ds.scaleFactor,
           color: isDark ? kColorDarkDanger : kColorLightDanger,
         ),
       );
@@ -83,12 +85,12 @@ class SSEDisplay extends StatelessWidget {
                             Text(
                               '${entry.key}: ',
                               style: kCodeStyle.copyWith(
-                                fontSize: fontSizeMedium,
+                                fontSize: fontSizeMedium*ds.scaleFactor,
                                 color: isDark ? kColorGQL.toDark : kColorGQL,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: 4*ds.scaleFactor),
                             Expanded(
                               child: Text(
                                 entry.value.toString(),
@@ -103,7 +105,7 @@ class SSEDisplay extends StatelessWidget {
                 : Text(
                     chunk.toString().trim(),
                     style: kCodeStyle.copyWith(
-                      fontSize: fontSizeMedium,
+                      fontSize: fontSizeMedium*ds.scaleFactor,
                     ),
                   ),
           ),

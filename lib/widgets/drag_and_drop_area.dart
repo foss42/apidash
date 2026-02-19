@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:desktop_drop/desktop_drop.dart';
@@ -23,6 +24,7 @@ class _DragAndDropAreaState extends State<DragAndDropArea> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return DropTarget(
       onDragDone: (detail) {
         setState(() {
@@ -50,24 +52,24 @@ class _DragAndDropAreaState extends State<DragAndDropArea> {
             color: Theme.of(context).colorScheme.primaryContainer,
           ),
         ),
-        width: 600,
-        height: 400,
+        width: 600*ds.scaleFactor,
+        height: 400*ds.scaleFactor,
         child: _list.isEmpty
             ? Center(
                 child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
-                    width: 150,
+                    width: 150*ds.scaleFactor,
                     child: ElevatedButton.icon(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.snippet_folder_rounded,
-                        size: 20,
+                        size: 20*ds.scaleFactor,
                       ),
                       style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(kDataTableRowHeight),
+                        minimumSize: Size.fromHeight(kDataTableRowHeight*ds.scaleFactor),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(6*ds.scaleFactor),
                         ),
                       ),
                       onPressed: () async {
@@ -77,14 +79,14 @@ class _DragAndDropAreaState extends State<DragAndDropArea> {
                           widget.onFileDropped?.call(pickedResult);
                         }
                       },
-                      label: const Text(
+                      label: Text(
                         kLabelSelectFile,
                         overflow: TextOverflow.ellipsis,
-                        style: kFormDataButtonLabelTextStyle,
+                        style: kFormDataButtonLabelTextStyle(ds.scaleFactor),
                       ),
                     ),
                   ),
-                  kVSpacer10,
+                  kVSpacer10(ds.scaleFactor),
                   const Text("Select or drop the file here"),
                 ],
               ))

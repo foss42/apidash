@@ -1,5 +1,6 @@
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,6 +58,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return ListView(
       physics: ClampingScrollPhysics(),
       shrinkWrap: true,
@@ -100,7 +102,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _consumerSecret,
@@ -112,15 +114,15 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         Text(
           kLabelOAuth1SignatureMethod,
           style: TextStyle(
             fontWeight: FontWeight.normal,
-            fontSize: 14,
+            fontSize: 14*ds.scaleFactor,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4*ds.scaleFactor),
         ADPopupMenu<OAuth1SignatureMethod>(
           value: _signatureMethodController.displayType,
           values: OAuth1SignatureMethod.values.map((e) => (e, e.displayType)),
@@ -137,7 +139,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
                   }
                 },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _accessToken,
@@ -148,7 +150,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _tokenSecret,
@@ -160,7 +162,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _callbackUrl,
@@ -171,7 +173,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _verifier,
@@ -182,7 +184,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _timestamp,
@@ -193,7 +195,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _nonce,
@@ -204,7 +206,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           initialValue: _realm,
@@ -215,7 +217,7 @@ class _OAuth1FieldsState extends ConsumerState<OAuth1Fields> {
             _updateOAuth1();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,20 +22,21 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          kVSpacer16,
-          DashbotIcons.getDashbotIcon1(width: 60),
-          kVSpacer16,
+          kVSpacer16(ds.scaleFactor),
+          DashbotIcons.getDashbotIcon1(width: 60*ds.scaleFactor),
+          kVSpacer16(ds.scaleFactor),
           Text(
             'Hello there,',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+            style: TextStyle(fontSize: 18*ds.scaleFactor, fontWeight: FontWeight.w800),
           ),
           Text('How can I help you today?'),
-          kVSpacer16,
+          kVSpacer16(ds.scaleFactor),
           Wrap(
             alignment: WrapAlignment.center,
             spacing: 8,
@@ -156,7 +158,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               ),
             ],
           ),
-          kVSpacer20,
+          kVSpacer20(ds.scaleFactor),
         ],
       ),
     );

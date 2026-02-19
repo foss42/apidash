@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -164,6 +165,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     var sm = ScaffoldMessenger.of(context);
     return ChangeNotifierProvider.value(
       value: store,
@@ -172,7 +174,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
           return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               var maxRootNodeWidth =
-                  getJsonPreviewerMaxRootNodeWidth(constraints.maxWidth);
+                  getJsonPreviewerMaxRootNodeWidth(constraints.maxWidth*ds.scaleFactor);
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -204,8 +206,8 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                                   onChanged: (term) => state.search(term),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 8,
+                              SizedBox(
+                                width: 8*ds.scaleFactor,
                               ),
                               if (state.searchResults.isNotEmpty)
                                 Text(_searchFocusText(),
@@ -239,7 +241,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                             (constraints.minWidth > kMinWindowSize.width) &&
                                 !kIsMobile,
                         label: 'Expand All',
-                        labelTextStyle: kTextStyleButtonSmall,
+                        labelTextStyle: kTextStyleButtonSmall(ds.scaleFactor),
                         onPressed:
                             state.areAllExpanded() ? null : state.expandAll,
                       ),
@@ -249,13 +251,13 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                             (constraints.minWidth > kMinWindowSize.width) &&
                                 !kIsMobile,
                         label: 'Collapse All',
-                        labelTextStyle: kTextStyleButtonSmall,
+                        labelTextStyle: kTextStyleButtonSmall(ds.scaleFactor),
                         onPressed:
                             state.areAllCollapsed() ? null : state.collapseAll,
                       ),
                     ],
                   ),
-                  kVSpacer6,
+                  kVSpacer6(ds.scaleFactor),
                   Expanded(
                     child: JsonExplorer(
                       nodes: state.displayNodes,
@@ -275,10 +277,10 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                               child: IconButton(
                                 padding: EdgeInsets.zero,
                                 constraints:
-                                    const BoxConstraints(maxHeight: 18),
-                                icon: const Icon(
+                                    BoxConstraints(maxHeight: 18*ds.scaleFactor),
+                                icon: Icon(
                                   Icons.copy,
-                                  size: 18,
+                                  size: 18*ds.scaleFactor,
                                 ),
                                 onPressed: () async {
                                   final val = toJson(node);

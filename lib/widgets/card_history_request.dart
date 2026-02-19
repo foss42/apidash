@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/models/models.dart';
@@ -20,6 +21,7 @@ class HistoryRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final Color color = Theme.of(context).colorScheme.surface;
     final Color colorVariant = Theme.of(context).colorScheme.surfaceContainer;
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
@@ -40,7 +42,7 @@ class HistoryRequestCard extends StatelessWidget {
         child: Padding(
           padding: kPv6 + kPh8,
           child: SizedBox(
-            height: 20,
+            height: 20*ds.scaleFactor,
             child: Row(
               children: [
                 Expanded(
@@ -51,7 +53,7 @@ class HistoryRequestCard extends StatelessWidget {
                     style: kCodeStyle,
                   ),
                 ),
-                kHSpacer4,
+                kHSpacer4(ds.scaleFactor),
                 StatusCode(statusCode: model.responseStatus),
               ],
             ),

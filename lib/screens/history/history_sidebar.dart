@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,15 +17,16 @@ class HistoryPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     return Padding(
       padding: (!context.isMediumWindow && kIsMacOS ? kPt24 : kPt8) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          HistorySidebarHeader(),
-          Expanded(child: HistoryList()),
-          kVSpacer5,
+          const HistorySidebarHeader(),
+          const Expanded(child: HistoryList()),
+          kVSpacer5(ds.scaleFactor),
         ],
       ),
     );
@@ -95,6 +97,7 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
     with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
@@ -114,7 +117,7 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
                 size: 20,
                 color: colorScheme.outline,
               )),
-          kHSpacer5,
+          kHSpacer5(ds.scaleFactor),
           Text(
             humanizeDate(widget.date),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(

@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
@@ -22,6 +23,7 @@ class FilledButtonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return LayoutBuilder(builder: (context, constraints) {
       final showLabel = constraints.maxWidth > buttons.length * 110;
       List<Widget> buttonWidgets = buttons
@@ -33,7 +35,7 @@ class FilledButtonGroup extends StatelessWidget {
       for (int i = 0; i < buttonWidgets.length; i++) {
         buttonsWithSpacers.add(buttonWidgets[i]);
         if (i < buttonWidgets.length - 1) {
-          buttonsWithSpacers.add(kHSpacer2);
+          buttonsWithSpacers.add(kHSpacer2(ds.scaleFactor));
         }
       }
       return ClipRRect(
@@ -56,10 +58,11 @@ class FilledButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final icon = Icon(buttonData.icon, size: 20);
     final label = Text(
       buttonData.label,
-      style: kTextStyleButton,
+      style: kTextStyleButton(ds.scaleFactor),
     );
     return Tooltip(
       message: buttonData.tooltip,
@@ -73,7 +76,7 @@ class FilledButtonWidget extends StatelessWidget {
             ? Row(
                 children: [
                   icon,
-                  kHSpacer4,
+                  kHSpacer4(ds.scaleFactor),
                   label,
                 ],
               )

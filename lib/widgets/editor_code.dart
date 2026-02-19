@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/monokai.dart';
@@ -18,6 +19,7 @@ class CodeEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return CodeTheme(
       data: CodeThemeData(
         styles: isDark ? monokaiTheme : xcodeTheme,
@@ -45,7 +47,7 @@ class CodeEditor extends StatelessWidget {
         cursorColor: Theme.of(context).colorScheme.primary,
         controller: controller,
         textStyle: kCodeStyle.copyWith(
-          fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+          fontSize: (Theme.of(context).textTheme.titleMedium?.fontSize ?? 16) * ds.scaleFactor,
         ),
       ),
     );
