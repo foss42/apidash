@@ -134,11 +134,9 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
       selectedId: selectedId,
       initialValue: currentUrl,
       onChanged: (value) {
-        final isDashBotEnabled = ref.read(settingsProvider).isDashBotEnabled;
         final isPaste = (value.length - _previousValue.length) > 1;
 
-        if (isDashBotEnabled &&
-            isPaste &&
+        if (isPaste &&
             value.trim().startsWith('curl ') &&
             requestModel.apiType == APIType.rest) {
           _handleCurlPaste(value.trim());
@@ -167,7 +165,6 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
           text: curlText,
           type: ChatMessageType.importCurl,
         );
-    ref.read(collectionStateNotifierProvider.notifier).update(url: '');
     setState(() {
       _previousValue = '';
       _rebuildSuffix++;
