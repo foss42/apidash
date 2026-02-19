@@ -2,7 +2,6 @@ import 'package:apidash/dashbot/constants.dart';
 import 'package:apidash/dashbot/dashbot.dart';
 import 'package:apidash/dashbot/models/models.dart';
 import 'package:apidash/dashbot/providers/chat_viewmodel.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/env_trigger_field.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
@@ -53,7 +52,6 @@ void main() {
   });
 
   Widget buildTestHarness({
-    bool isDashBotEnabled = true,
     DashbotWindowNotifier? windowNotifier,
   }) {
     return ProviderScope(
@@ -137,7 +135,7 @@ void main() {
           ChatMessageType.importCurl);
     });
 
-    testWidgets('Pasting curl does NOT trigger when DashBot is disabled',
+    testWidgets('Pasting curl triggers DashBot even when DashBot is disabled',
         (tester) async {
       final windowNotifier = DashbotWindowNotifier();
 
@@ -155,9 +153,16 @@ void main() {
       state.widget.onChanged?.call(pasteText);
       await tester.pumpAndSettle();
 
-      expect(windowNotifier.state.isPopped, isTrue);
-      expect(state.controller.text, pasteText);
-      expect(spyChatViewmodel?.sendMessageCalls ?? [], isEmpty);
+      expect(windowNotifier.state.isPopped, isFalse);
+
+      final newField = find.byType(EnvironmentTriggerField);
+      final newState = tester.state<EnvironmentTriggerFieldState>(newField);
+      expect(newState.controller.text, isEmpty);
+
+      expect(spyChatViewmodel!.sendMessageCalls, hasLength(1));
+      expect(spyChatViewmodel!.sendMessageCalls.first.text, pasteText);
+      expect(spyChatViewmodel!.sendMessageCalls.first.type,
+          ChatMessageType.importCurl);
     });
 
     testWidgets('Normal URL paste is not affected by curl detection',
