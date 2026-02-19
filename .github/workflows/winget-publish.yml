@@ -1,0 +1,46 @@
+name: Publish to WinGet
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  winget:
+    name: Publish to WinGet
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Create Windows Runner
+        run: flutter create . --platforms=windows
+
+      - name: Build Windows Application
+        run: flutter build windows --release
+
+      - name: Compile Inno Setup Installer
+        run: |
+          "C:\Program Files (x86)\Inno Setup 6\iscc.exe" packaging/windows/apidash.iss
+
+      - name: Upload Installer to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/apidash-setup.exe
+          asset_name: apidash-windows-setup.exe
+          tag: ${{ github.ref }}
+
+      - name: Submit to WinGet
+        uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: foss42.apidash
+          installers-regex: 'apidash-windows-setup.exe$'
+          token: ${{ secrets.WINGET_TOKEN }}
