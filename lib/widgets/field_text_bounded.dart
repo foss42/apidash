@@ -44,7 +44,7 @@ class _BoundedTextFieldState extends State<BoundedTextField> {
   Widget build(BuildContext context) {
     // final double width = context.isCompactWindow ? 150 : 220;
     return Container(
-      height: widget.errorText != null ? null : 40,
+      height: widget.errorText != null ? 60 : 40,
       decoration: BoxDecoration(
         border: Border.all(
           color: widget.errorText != null
