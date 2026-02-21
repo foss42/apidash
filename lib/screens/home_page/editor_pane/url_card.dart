@@ -134,10 +134,15 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
       selectedId: selectedId,
       initialValue: currentUrl,
       onChanged: (value) {
-        final isPaste = (value.length - _previousValue.length) > 1;
+        final lengthDiff = value.length - _previousValue.length;
+        final isPaste = lengthDiff > 1 ||
+            lengthDiff < 0 ||
+            (lengthDiff == 0 && value != _previousValue) ||
+            (lengthDiff == 1 && !value.startsWith(_previousValue));
 
         if (isPaste &&
             value.trim().startsWith('curl ') &&
+            !_previousValue.trim().startsWith('curl ') &&
             requestModel.apiType == APIType.rest) {
           _handleCurlPaste(value.trim());
           return;
