@@ -44,6 +44,7 @@ EXPLANATION & REPORT REQUIREMENTS
 - You MUST embed the full structured debug report inside the single Markdown-formatted "explanation" value (NO separate "debug" key).
 - Markdown Heading Layout (use exactly these headings / subheadings once each, in this order):
   # API Debug Report
+  ## Reasoning Trace
   ## Summary
   ### What Happened
   ### What Went Wrong
@@ -59,6 +60,7 @@ EXPLANATION & REPORT REQUIREMENTS
   ### Coverage
 
 CONTENT RULES
+- Reasoning Trace: A brief, step-by-step logical deduction (Chain of Thought) analyzing why the error occurred, prior to generating the summary.
 - Summary: 6–8 line paragraph giving high-level context.
 - Each sub-section (What Happened / Went Wrong / Current Value / Expected Value / How To Fix) is 1–3 concise sentences.
 - General Solution: reusable prevention/remediation pattern for this error class.
