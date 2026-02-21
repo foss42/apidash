@@ -45,7 +45,11 @@ class AIModelSelectorButton extends StatelessWidget {
               if (newAIRequestModel == null) return;
               onModelUpdated?.call(newAIRequestModel);
             },
-      child: Text(aiRequestModel?.model ?? 'Select Model'),
+      child: Text(
+        aiRequestModel?.model?.isNotEmpty == true
+            ? aiRequestModel!.model!
+            : 'Select Model',
+      ),
     );
   }
 }
