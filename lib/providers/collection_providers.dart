@@ -136,7 +136,7 @@ class CollectionStateNotifier
     String? newId;
     if (idx == 0 && itemIds.isNotEmpty) {
       newId = itemIds[0];
-    } else if (itemIds.length > 1) {
+    } else if (itemIds.isNotEmpty) {
       newId = itemIds[idx - 1];
     } else {
       newId = null;
