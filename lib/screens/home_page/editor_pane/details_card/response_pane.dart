@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 
 class ResponsePane extends ConsumerWidget {
@@ -61,6 +62,8 @@ class ResponseDetails extends ConsumerWidget {
           responseStatus: responseStatus,
           message: message,
           time: responseModel?.time,
+          headerBytes: getHeaderSize(responseModel?.headers),
+          bodyBytes: responseModel?.bodyBytes?.length,
           onClearResponse: () {
             ref.read(collectionStateNotifierProvider.notifier).clearResponse();
           },
