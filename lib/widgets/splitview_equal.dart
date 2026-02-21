@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 
-class EqualSplitView extends StatelessWidget {
+// Changed from StatelessWidget to StatefulWidget
+class EqualSplitView extends StatefulWidget {
   const EqualSplitView({
     super.key,
     required this.leftWidget,
@@ -11,7 +12,15 @@ class EqualSplitView extends StatelessWidget {
   final Widget leftWidget;
   final Widget rightWidget;
 
-  getMinFractionWidth(double width) {
+  @override
+  State<EqualSplitView> createState() => _EqualSplitViewState();
+}
+
+class _EqualSplitViewState extends State<EqualSplitView> {
+  // Declare the controller in the State
+  late MultiSplitViewController _controller;
+
+  double getMinFractionWidth(double width) {
     if (width < 900) {
       return 0.9;
     } else if (width < 1000) {
@@ -21,6 +30,25 @@ class EqualSplitView extends StatelessWidget {
     } else {
       return 0.4;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the controller ONCE here so dragged sizes survive rebuilds
+    _controller = MultiSplitViewController(
+      areas: [
+        Area(id: "left", flex: 1),
+        Area(id: "right", flex: 1),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers to prevent memory leaks
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,17 +66,20 @@ class EqualSplitView extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final minWidth = getMinFractionWidth(constraints.maxWidth);
+          
+          // Safely update min constraints on the existing areas 
+          // without destroying the flex weights the user dragged
+          for (var area in _controller.areas) {
+             area.min = minWidth; 
+          }
+
           return MultiSplitView(
-            controller: MultiSplitViewController(
-              areas: [
-                Area(id: "left", flex: 1, min: minWidth),
-                Area(id: "right", flex: 1, min: minWidth),
-              ],
-            ),
+            controller: _controller, // Use the preserved controller
             builder: (context, area) {
               return switch (area.id) {
-                "left" => leftWidget,
-                "right" => rightWidget,
+                // Access left/right widgets using 'widget.' prefix
+                "left" => widget.leftWidget, 
+                "right" => widget.rightWidget, 
                 _ => Container(),
               };
             },
