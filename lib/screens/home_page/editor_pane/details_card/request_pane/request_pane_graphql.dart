@@ -5,6 +5,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'request_auth.dart';
+import 'request_description.dart';
 import 'request_headers.dart';
 import 'request_body.dart';
 import 'request_scripts.dart';
@@ -39,6 +40,9 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
         value?.httpRequestModel?.authModel?.type != APIAuthType.none));
 
+    final hasDescription = ref.watch(selectedRequestModelProvider
+            .select((value) => (value?.description ?? '').isNotEmpty));
+
     return RequestPane(
       selectedId: selectedId,
       showViewCodeButton: showViewCodeButton,
@@ -58,18 +62,21 @@ class EditGraphQLRequestPane extends ConsumerWidget {
         hasAuth,
         hasQuery,
         scriptsLength > 0,
+        hasDescription,
       ],
       tabLabels: const [
         kLabelHeaders,
         kLabelAuth,
         kLabelQuery,
         kLabelScripts,
+        kLabelDescription,
       ],
       children: const [
         EditRequestHeaders(),
         EditAuthType(),
         EditRequestBody(),
         EditRequestScripts(),
+        EditRequestDescription(),
       ],
     );
   }
