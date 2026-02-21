@@ -36,6 +36,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -53,6 +54,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -63,9 +65,11 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     child: URLTextField(),
                   ),
                   kHSpacer20,
-                  const SizedBox(
+                  SizedBox(
                     height: 36,
-                    child: SendRequestButton(),
+                    child: apiType == APIType.websocket
+                        ? const WsConnectButton()
+                        : const SendRequestButton(),
                   )
                 ],
               ),
@@ -156,6 +160,55 @@ class SendRequestButton extends ConsumerWidget {
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
       },
+    );
+  }
+}
+class WsConnectButton extends ConsumerWidget {
+  const WsConnectButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+    if (selectedId == null) return const SizedBox.shrink();
+
+    final wsState = ref.watch(wsStateProvider(selectedId));
+    final isConnected = wsState.status == WsConnectionStatus.connected;
+    final isConnecting = wsState.status == WsConnectionStatus.connecting;
+
+    return FilledButton(
+      style: FilledButton.styleFrom(
+        backgroundColor: isConnected
+            ? Theme.of(context).colorScheme.error
+            : Colors.teal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: kBorderRadius8,
+        ),
+      ),
+      onPressed: isConnecting
+          ? null
+          : () {
+              if (isConnected) {
+                ref.read(wsStateProvider(selectedId).notifier).disconnect();
+              } else {
+                final url = ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .getRequestModel(selectedId)
+                    ?.httpRequestModel
+                    ?.url;
+                ref
+                    .read(wsStateProvider(selectedId).notifier)
+                    .connect(url ?? '');
+              }
+            },
+      child: Text(
+        isConnecting
+            ? 'Connecting…'
+            : isConnected
+                ? 'Disconnect'
+                : 'Connect',
+        style: const TextStyle(fontSize: 13),
+      ),
     );
   }
 }
