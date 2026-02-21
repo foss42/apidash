@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class VideoPreviewer extends StatefulWidget {
   const VideoPreviewer({
@@ -50,7 +51,6 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
       await _videoController.initialize();
       if (mounted) {
         setState(() {
-          _videoController.play();
           _videoController.setLooping(true);
         });
       }
@@ -74,55 +74,66 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (_videoController.value.isInitialized) {
-              return MouseRegion(
-                onEnter: (_) => setState(() => _showControls = true),
-                onExit: (_) => setState(() => _showControls = false),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: AspectRatio(
-                        aspectRatio: _videoController.value.aspectRatio,
-                        child: VideoPlayer(_videoController),
-                      ),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: SizedBox(
-                        height: 50.0,
-                        child: VideoProgressIndicator(
-                          _videoController,
-                          allowScrubbing: true,
-                          padding: const EdgeInsets.all(20),
-                          colors: progressBarColors,
+              return VisibilityDetector(
+                key: const Key("VideoPreviewerVisibilityKey"),
+                onVisibilityChanged: (visibilityInfo) {
+                  var visiblePercentage = visibilityInfo.visibleFraction * 100;
+                  if (visiblePercentage == 0  && _videoController.value.isPlaying) {
+                    _videoController.pause();
+                  }  else if (visiblePercentage >= 50 && !_isPlaying) {
+                    _videoController.play();
+                  }
+                },
+                child: MouseRegion(
+                  onEnter: (_) => setState(() => _showControls = true),
+                  onExit: (_) => setState(() => _showControls = false),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: AspectRatio(
+                          aspectRatio: _videoController.value.aspectRatio,
+                          child: VideoPlayer(_videoController),
                         ),
                       ),
-                    ),
-                    if (_showControls)
-                      Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            if (_videoController.value.isPlaying) {
-                              _videoController.pause();
-                            } else {
-                              _videoController.play();
-                            }
-                            setState(() {
-                              _isPlaying = !_isPlaying;
-                            });
-                          },
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Icon(
-                              _isPlaying ? Icons.play_arrow : Icons.pause,
-                              size: 64,
-                              color: iconColor,
-                            ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: SizedBox(
+                          height: 50.0,
+                          child: VideoProgressIndicator(
+                            _videoController,
+                            allowScrubbing: true,
+                            padding: const EdgeInsets.all(20),
+                            colors: progressBarColors,
                           ),
                         ),
                       ),
-                  ],
+                      if (_showControls)
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              if (_videoController.value.isPlaying) {
+                                _videoController.pause();
+                              } else {
+                                _videoController.play();
+                              }
+                              setState(() {
+                                _isPlaying = !_isPlaying;
+                              });
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              child: Icon(
+                                _isPlaying ? Icons.play_arrow : Icons.pause,
+                                size: 64,
+                                color: iconColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               );
             }
