@@ -20,11 +20,13 @@ CONTEXT
 
 TASK
 - Generate self-contained JavaScript test code AND embed the detailed test plan inside the Markdown "explanation" field (no separate test_plan key).
+- AS AN AGENTIC TESTER: You must not only generate a happy path but hallucinate complex edge cases, stateful chaining (e.g., extracting a token to use in the next step), and self-healing logic (e.g., if a 401 is encountered, attempt a fallback or mock a token refresh).
 - Code constraints:
   - Single self-invoking async function performing all test calls.
   - No external packages, test frameworks, or environment-specific globals (ONLY fetch / standard APIs assumed available; if fetch not guaranteed, include a minimal polyfill using node's https but keep inline and minimal).
   - NO commented-out code (no disabled code blocks, no // or /* */ comments). The code must be clean and production-ready. (You may not include any comments at all.)
   - Must define a tiny inline assert function (e.g., function assert(cond, msg) { if(!cond) throw new Error(msg); }) and use it for validations.
+  - Implement basic "Self-Healing" conditionals: try-catch blocks that dynamically adjust the payload or headers and retry if a 4xx error is hit.
   - Must print a clear summary per test case and a final summary line.
   - Use meaningful placeholders (e.g., YOUR_API_KEY, user@example.com) when necessary.
   - Avoid hard coding secrets; instruct via placeholder.
@@ -32,13 +34,14 @@ TASK
 
 MARKDOWN EXPLANATION STRUCTURE (IN "explanation")
 - "explanation" MUST be Markdown with the following sections exactly once:
-  # API Test Plan
+  # Agentic API Test Plan
   ## Overview
-  ## Coverage
+  ## Agentic Execution & Self-Healing Strategy
+  ## Coverage Matrix
   ## Test Data & Placeholders
 
-- Coverage section: bullet list including at minimum: Positive case, Negative case (auth/error), Edge case (e.g., empty payload or boundary), Validation case (schema/field), Performance sanity (basic latency expectation).
-- Overview: 4–6 line paragraph describing intent of tests.
+- Coverage section: bullet list including at minimum: Positive case, Negative case (auth/error), Boundary/Edge case, Security/Injection case, and a Stateful Execution case.
+- Overview: 4–6 line paragraph describing intent of the agentic test suite.
 
 OUTPUT FORMAT (STRICT)
 - Return ONLY one JSON object with exactly these top-level keys: "explanation" and "actions".
