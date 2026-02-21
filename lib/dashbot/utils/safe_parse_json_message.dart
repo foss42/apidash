@@ -8,16 +8,49 @@ class MessageJson {
     // Try strict JSON first
     try {
       return _parseJson(input);
-    } catch (_) {
-      // If input looks like markdown fenced block containing JSON, try to extract
-      final start = input.indexOf('{');
-      final end = input.lastIndexOf('}');
-      if (start != -1 && end != -1 && end > start) {
-        final slice = input.substring(start, end + 1);
-        return _parseJson(slice);
+    } catch (_) {}
+
+    // Walk the string using a depth counter to find the outermost { ... }
+    // block. Using lastIndexOf('}') is NOT safe because the generated code
+    // inside the "value" field often contains braces of its own.
+    final start = input.indexOf('{');
+    if (start == -1) return {};
+
+    int depth = 0;
+    bool inString = false;
+    bool escaped = false;
+
+    for (int i = start; i < input.length; i++) {
+      final ch = input[i];
+      if (escaped) {
+        escaped = false;
+        continue;
       }
-      rethrow;
+      if (ch == r'\' && inString) {
+        escaped = true;
+        continue;
+      }
+      if (ch == '"') {
+        inString = !inString;
+        continue;
+      }
+      if (inString) continue;
+
+      if (ch == '{') {
+        depth++;
+      } else if (ch == '}') {
+        depth--;
+        if (depth == 0) {
+          final slice = input.substring(start, i + 1);
+          try {
+            return _parseJson(slice);
+          } catch (_) {
+            return {};
+          }
+        }
+      }
     }
+    return {};
   }
 
   static Map<String, dynamic> _parseJson(String s) {

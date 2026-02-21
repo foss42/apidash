@@ -30,11 +30,22 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _ref.read(selectedSubstitutedHttpRequestModelProvider);
   AIRequestModel? get _selectedAIModel {
     final json = _ref.read(settingsProvider).defaultAIModel;
-    if (json == null) return null;
+    if (json == null) {
+      return null;
+    }
     try {
       return AIRequestModel.fromJson(json);
     } catch (_) {
       return null;
+    }
+  }
+
+  bool _isAIModelValid(AIRequestModel? ai) {
+    if (ai == null) return false;
+    try {
+      return ai.httpRequestModel != null;
+    } catch (_) {
+      return false;
     }
   }
 
@@ -67,17 +78,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     }
 
-    if (ai == null &&
-        type != ChatMessageType.importCurl &&
-        type != ChatMessageType.importOpenApi) {
-      debugPrint('[Chat] No AI model configured');
-      _appendSystem(
-        'AI model is not configured. Please set one.',
-        type,
-      );
-      return;
-    }
-
     final existingMessages = state.chatSessions[requestId] ?? const [];
 
     final lastSystemImport = existingMessages.lastWhere(
@@ -92,11 +92,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       ),
     );
     final importFlowActive = lastSystemImport.id.isNotEmpty;
-    if (text.trim().startsWith('curl ') &&
-        (type == ChatMessageType.importCurl || importFlowActive)) {
-      await handlePotentialCurlPaste(text);
-      return;
-    }
 
     // Detect OpenAPI import flow: if the last system message was an OpenAPI import prompt,
     // then treat pasted URL or raw spec as part of the import flow.
@@ -112,15 +107,45 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       ),
     );
     final openApiFlowActive = lastSystemOpenApi.id.isNotEmpty;
-    if ((_looksLikeOpenApi(text) || _looksLikeUrl(text)) &&
-        (type == ChatMessageType.importOpenApi || openApiFlowActive)) {
-      if (_looksLikeOpenApi(text)) {
-        await handlePotentialOpenApiPaste(text);
-      } else {
-        await handlePotentialOpenApiUrl(text);
-      }
+
+    // If no AI Model is configured, block generation UNLESS it is an import flow or pasting text
+    if (!_isAIModelValid(ai) &&
+        type != ChatMessageType.importCurl &&
+        type != ChatMessageType.importOpenApi &&
+        !(text.trim().startsWith('curl ') && importFlowActive) &&
+        !((_looksLikeOpenApi(text) || _looksLikeUrl(text)) &&
+            openApiFlowActive)) {
+      debugPrint('[Chat] No AI model configured or incorrectly configured');
+      _appendSystem(
+        'AI model is not properly configured. Please select and configure a model using the button at the top.',
+        type,
+      );
       return;
     }
+
+    // Extract import logic that doesn't require an LLM to proceed initially
+    if (type == ChatMessageType.importCurl ||
+        (text.trim().startsWith('curl ') && importFlowActive)) {
+      if (text.trim().startsWith('curl ')) {
+        await handlePotentialCurlPaste(text);
+        return;
+      }
+    }
+
+    if (type == ChatMessageType.importOpenApi ||
+        ((_looksLikeOpenApi(text) || _looksLikeUrl(text)) &&
+            openApiFlowActive)) {
+      if (_looksLikeOpenApi(text)) {
+        await handlePotentialOpenApiPaste(text);
+        return;
+      } else if (_looksLikeUrl(text)) {
+        await handlePotentialOpenApiUrl(text);
+        return;
+      }
+    }
+
+    // At this point, all basic import checks and logic are finished
+    // Anything below this point will execute an AI request via `buildTaskPrompt` or `buildMessagePrompt`
 
     final promptBuilder = _ref.read(promptBuilderProvider);
     // Prepare a substituted copy of current request for prompt context
@@ -203,7 +228,16 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final userPrompt = (text.trim().isEmpty && !countAsUser)
         ? 'Please complete the task based on the provided context.'
         : text;
-    final enriched = ai!.copyWith(
+    if (ai == null) {
+      if (type != ChatMessageType.importCurl &&
+          type != ChatMessageType.importOpenApi) {
+        _appendSystem('Cannot generate task: AI model is missing.',
+            ChatMessageType.general);
+      }
+      return;
+    }
+
+    final enriched = ai.copyWith(
       systemPrompt: systemPrompt,
       userPrompt: userPrompt,
       stream: false,
@@ -244,7 +278,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
     } catch (e) {
       debugPrint('[Chat] sendChat error: $e');
-      _appendSystem('Error: $e', type);
+      final safeError = e.toString().replaceFirst('Exception: ', '');
+      _appendSystem('Error: $safeError', type);
     } finally {
       state = state.copyWith(
         isGenerating: false,

@@ -22,7 +22,22 @@ Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
     return aiRequestModel?.getFormattedOutput(data);
   } else {
     debugPrint('LLM_EXCEPTION: ${response.statusCode}\n${response.body}');
-    return null;
+    String errorMessage = 'API Error: ${response.statusCode}';
+    try {
+      final data = jsonDecode(response.body);
+      if (data is Map && data.containsKey('error')) {
+        final errorData = data['error'];
+        if (errorData is Map && errorData.containsKey('message')) {
+          errorMessage = errorData['message'];
+        } else if (errorData is String) {
+          errorMessage = errorData;
+        }
+      }
+    } catch (_) {
+      // Fallback if not valid JSON or unexpected format
+      errorMessage = 'API Error ${response.statusCode}: ${response.body}';
+    }
+    throw Exception(errorMessage);
   }
 }
 

@@ -103,7 +103,7 @@ void main() {
       expect(viewmodel.currentMessages, hasLength(2));
       expect(viewmodel.currentMessages.first.role, equals(MessageRole.user));
       expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured'));
+          contains('AI model is not properly configured'));
     });
 
     test('should test the systemPrompt building for different message types',
@@ -232,7 +232,7 @@ info:
       // Should add user message and "AI model is not configured" message
       expect(viewmodel.currentMessages, hasLength(2));
       expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured. Please set one.'));
+          contains('AI model is not properly configured'));
     });
 
     test('should handle AI response with null content', () async {
@@ -247,22 +247,7 @@ info:
       // Should add user message and "AI model is not configured" message
       expect(viewmodel.currentMessages, hasLength(2));
       expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured. Please set one.'));
-    });
-
-    test('should handle repository error gracefully', () async {
-      final viewmodel = container.read(chatViewmodelProvider.notifier);
-
-      // Mock error from repository - this will test the catch block (lines 240-242)
-      mockRepo.mockError = Exception('Connection timeout');
-
-      await viewmodel.sendMessage(
-          text: 'Test message', type: ChatMessageType.generateDoc);
-
-      // Should add user message and "AI model is not configured" message
-      expect(viewmodel.currentMessages, hasLength(2));
-      expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured. Please set one.'));
+          contains('AI model is not properly configured'));
     });
 
     test(
@@ -281,7 +266,7 @@ info:
       expect(viewmodel.currentMessages, hasLength(1));
       expect(viewmodel.currentMessages.first.role, equals(MessageRole.system));
       expect(viewmodel.currentMessages.first.content,
-          contains('AI model is not configured'));
+          contains('AI model is not properly configured'));
     });
 
     test('should test cURL import flow detection without active flow',
@@ -428,7 +413,7 @@ info:
       expect(viewmodel.currentMessages, hasLength(2));
       expect(viewmodel.currentMessages.last.role, equals(MessageRole.system));
       expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured. Please set one.'));
+          contains('AI model is not properly configured'));
     });
 
     test('should test AI response with invalid JSON actions', () async {
@@ -519,7 +504,7 @@ info:
       expect(viewmodel.currentMessages.first.role, equals(MessageRole.user));
       expect(viewmodel.currentMessages.last.role, equals(MessageRole.system));
       expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured'));
+          contains('AI model is not properly configured'));
     });
 
     test('sendMessage should handle curl import type without AI model',
@@ -785,7 +770,7 @@ info:
       expect(viewmodel.currentMessages.first.content, equals('Hello'));
       expect(viewmodel.currentMessages.last.role, equals(MessageRole.system));
       expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured'));
+          contains('AI model is not properly configured'));
 
       // Ensure messages are recorded under the expected session (global)
       expect(viewmodel.state.chatSessions.containsKey('global'), isTrue);
@@ -925,7 +910,7 @@ paths:
       expect(viewmodel.currentMessages, hasLength(1));
       expect(viewmodel.currentMessages.first.role, equals(MessageRole.system));
       expect(viewmodel.currentMessages.first.content,
-          contains('AI model is not configured'));
+          contains('AI model is not properly configured'));
     });
 
     test('sendMessage should handle different message types', () async {
@@ -956,7 +941,7 @@ paths:
         } else {
           expect(viewmodel.currentMessages[i].role, equals(MessageRole.system));
           expect(viewmodel.currentMessages[i].content,
-              contains('AI model is not configured'));
+              contains('AI model is not properly configured'));
         }
       }
     });
@@ -1481,7 +1466,7 @@ paths:
       // Should check settings for AI model and show not configured message
       expect(viewmodel.currentMessages, hasLength(2));
       expect(viewmodel.currentMessages.last.content,
-          contains('AI model is not configured'));
+          contains('AI model is not properly configured'));
     });
 
     test('should coordinate with dashbot route provider during imports',

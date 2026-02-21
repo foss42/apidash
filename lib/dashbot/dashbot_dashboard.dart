@@ -54,6 +54,29 @@ class DashbotWindow extends ConsumerWidget {
       navigateTo(next);
     });
 
+    // Sync DashBot's AI model with the currently selected request's AI model.
+    // When the user switches to an AI request in the outer pane, DashBot's
+    // model pill in the header updates automatically to match.
+    ref.listen(
+      selectedRequestModelProvider
+          .select((r) => r?.apiType == APIType.ai ? r?.aiRequestModel : null),
+      (prev, next) {
+        if (next == null) return;
+        if (prev?.model == next.model &&
+            prev?.modelApiProvider == next.modelApiProvider) {
+          return;
+        }
+        ref.read(settingsProvider.notifier).update(
+              defaultAIModel: next.copyWith(
+                modelConfigs: [],
+                stream: null,
+                systemPrompt: '',
+                userPrompt: '',
+              ).toJson(),
+            );
+      },
+    );
+
     return Stack(
       children: [
         if (!windowState.isHidden)

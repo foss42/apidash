@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'codegen_intro.dart';
 import 'curl_insights.dart';
 import 'debug_api_error.dart';
@@ -122,6 +123,7 @@ class DashbotPrompts {
     String? bodyContentType,
     Map<String, String>? paramsMap,
     String? authType,
+    AIRequestModel? aiRequestModel,
   }) {
     return buildCodeGenerationIntroPrompt(
       url: url,
@@ -131,6 +133,7 @@ class DashbotPrompts {
       bodyContentType: bodyContentType,
       paramsMap: paramsMap,
       authType: authType,
+      aiRequestModel: aiRequestModel,
     );
   }
 
@@ -144,6 +147,7 @@ class DashbotPrompts {
     Map<String, String>? paramsMap,
     String? authType,
     String? language,
+    AIRequestModel? aiRequestModel,
   }) {
     return buildGenerateCodePrompt(
       url: url,
@@ -154,6 +158,7 @@ class DashbotPrompts {
       paramsMap: paramsMap,
       authType: authType,
       language: language,
+      aiRequestModel: aiRequestModel,
     );
   }
 

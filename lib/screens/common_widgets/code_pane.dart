@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -6,6 +7,9 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/utils/show_dashbot.dart';
 
 final Codegen codegen = Codegen();
 
@@ -31,8 +35,33 @@ class CodePane extends ConsumerWidget {
 
     // TODO: Add AI Request Codegen
     if (selectedRequestModel?.apiType == APIType.ai) {
-      return const ErrorMessage(
-        message: "Code generation for AI Requests is currently not available.",
+      return Padding(
+        padding: kPh20v10,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Code generation for AI API calls is available via DashBot.",
+                style: Theme.of(context).textTheme.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+              kVSpacer20,
+              FilledButton.icon(
+                onPressed: () async {
+                  showDashbotWindow(context, ref);
+                  await Future.delayed(const Duration(milliseconds: 100));
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
+                  ref
+                      .read(chatViewmodelProvider.notifier)
+                      .sendTaskMessage(ChatMessageType.generateCode);
+                },
+                icon: const Icon(Icons.auto_awesome),
+                label: const Text('Generate Code with DashBot'),
+              ),
+            ],
+          ),
+        ),
       );
     }
 

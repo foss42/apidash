@@ -114,6 +114,7 @@ class PromptBuilder {
             bodyContentType: http?.bodyContentType.name,
             paramsMap: http?.paramsMap,
             authType: http?.authModel?.type.name,
+            aiRequestModel: req.aiRequestModel,
           );
         } else {
           return prompts.generateCodePrompt(
@@ -125,6 +126,7 @@ class PromptBuilder {
             paramsMap: http?.paramsMap,
             authType: http?.authModel?.type.name,
             language: overrideLanguage,
+            aiRequestModel: req.aiRequestModel,
           );
         }
       case ChatMessageType.importCurl:
