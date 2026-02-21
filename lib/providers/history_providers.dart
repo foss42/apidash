@@ -78,13 +78,12 @@ class HistoryMetaStateNotifier
 
   void addHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
+    final existingKeys = state?.keys.toList() ?? [];
     state = {
       ...state ?? {},
       id: model.metaData,
     };
-    final List<String> updatedHistoryKeys =
-        state == null ? [id] : [...state!.keys, id];
-    hiveHandler.setHistoryIds(updatedHistoryKeys);
+    hiveHandler.setHistoryIds([...existingKeys, id]);
     hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
