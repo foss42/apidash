@@ -50,8 +50,7 @@ API Dash can be downloaded from the links below:
         </tr>
         <tr>
             <td rowspan=5>Linux</td>
-            <td rowspan=2><code>.deb</code></td>          
-</td>
+            <td rowspan=2><code>.deb</code></td>
             <td>amd64</td>
             <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
