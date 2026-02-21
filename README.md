@@ -25,7 +25,6 @@ API Dash can be downloaded from the links below:
         <tr>
             <th>OS</th>
             <th>Distribution</th>
-            <th>Installation Guide</th>
             <th>CPU/Architecture</th>
             <th>Download Link</th>
         </tr>
@@ -35,27 +34,24 @@ API Dash can be downloaded from the links below:
             <td>iOS/iPad</td>
           <td>App Store</td>
             <td></td>
-            <td></td>
             <td><a href="https://apps.apple.com/us/app/api-dash-api-client-testing/id6711353348">Link</a></td>
         </tr>
         <tr>
             <td>macOS</td>
           <td><code>.dmg</code></td>
-            <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#macos">Link</a></td>
             <td>Apple Silicon & Intel</td>
             <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
         <tr>
             <td>Windows</td>
             <td><code>.exe</code></td>
-            <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#windows">Link</a></td>
             <td>64-bit</td>
             <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
         <tr>
             <td rowspan=5>Linux</td>
             <td rowspan=2><code>.deb</code></td>          
-            <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc">Link</a></td>
+</td>
             <td>amd64</td>
             <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
@@ -65,7 +61,6 @@ API Dash can be downloaded from the links below:
         </tr>
         <tr>
             <td rowspan=2><code>.rpm</code></td>
-            <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc">Link</a></td>
             <td>x86_64</td>
             <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
@@ -75,7 +70,6 @@ API Dash can be downloaded from the links below:
         </tr>
         <tr>
             <td><code>PKGBUILD</code> (Arch Linux)</td>
-            <td><a href="https://aur.archlinux.org/packages/apidash-bin">Link</a></td>
             <td>x86_64</td>
             <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
