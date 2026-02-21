@@ -31,6 +31,7 @@ dependencies:
   oauth1: ^2.1.0
   oauth2: ^2.0.3
   flutter_web_auth_2: ^5.0.0-alpha.3
+  web_socket_channel: ^3.0.1
 
 dev_dependencies:
   flutter_test:

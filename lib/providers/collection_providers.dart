@@ -262,6 +262,12 @@ class CollectionStateNotifier
             aiRequestModel: defaultModel == null
                 ? const AIRequestModel()
                 : AIRequestModel.fromJson(defaultModel)),
+        APIType.websocket => currentModel.copyWith(
+            apiType: apiType,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: const HttpRequestModel(),
+            aiRequestModel: null),
       };
     } else {
       newModel = currentModel.copyWith(
