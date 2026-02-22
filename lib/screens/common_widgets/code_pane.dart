@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,8 +30,13 @@ class CodePane extends ConsumerWidget {
         ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
         : ref.watch(selectedRequestModelProvider);
 
+    if (selectedRequestModel == null) {
+      return kSizedBoxEmpty;
+    }
+
     // TODO: Add AI Request Codegen
-    if (selectedRequestModel?.apiType == APIType.ai) {
+    if (selectedRequestModel.apiType == APIType.ai ||
+        selectedRequestModel.httpRequestModel == null) {
       return const ErrorMessage(
         message: "Code generation for AI Requests is currently not available.",
       );
@@ -42,12 +48,12 @@ class CodePane extends ConsumerWidget {
     var envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
 
-    final substitutedRequestModel = selectedRequestModel?.copyWith(
+    final substitutedRequestModel = selectedRequestModel.copyWith(
         httpRequestModel: substituteHttpRequestModel(
             selectedRequestModel.httpRequestModel!, envMap, activeEnvId));
 
     final code = codegen.getCode(
-        codegenLanguage, substitutedRequestModel!, defaultUriScheme);
+        codegenLanguage, substitutedRequestModel, defaultUriScheme);
 
     // TODO: Add GraphQL Codegen
     if (substitutedRequestModel.apiType == APIType.graphql) {

@@ -93,6 +93,20 @@ class _RequestListState extends ConsumerState<RequestList> {
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
     final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
 
+    final filteredIds = requestSequence.where((id) {
+      var item = requestItems[id]!;
+      return (item.httpRequestModel?.url ?? "")
+              .toLowerCase()
+              .contains(filterQuery) ||
+          item.name.toLowerCase().contains(filterQuery);
+    }).toList();
+
+    if (filteredIds.isEmpty) {
+      return const Center(
+        child: Text("No results found"),
+      );
+    }
+
     return Scrollbar(
       controller: controller,
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
@@ -146,7 +160,7 @@ class _RequestListState extends ConsumerState<RequestList> {
                 );
               },
             )
-          : ListView(
+          : ListView.builder(
               padding: context.isMediumWindow
                   ? EdgeInsets.only(
                       bottom: MediaQuery.paddingOf(context).bottom,
@@ -154,22 +168,17 @@ class _RequestListState extends ConsumerState<RequestList> {
                     )
                   : kPe8,
               controller: controller,
-              children: requestSequence.map((id) {
-                var item = requestItems[id]!;
-                if (item.httpRequestModel!.url
-                        .toLowerCase()
-                        .contains(filterQuery) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
-                  return Padding(
-                    padding: kP1,
-                    child: RequestItem(
-                      id: id,
-                      requestModel: item,
-                    ),
-                  );
-                }
-                return kSizedBoxEmpty;
-              }).toList(),
+              itemCount: filteredIds.length,
+              itemBuilder: (context, index) {
+                final id = filteredIds[index];
+                return Padding(
+                  padding: kP1,
+                  child: RequestItem(
+                    id: id,
+                    requestModel: requestItems[id]!,
+                  ),
+                );
+              },
             ),
     );
   }
