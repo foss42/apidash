@@ -1230,4 +1230,35 @@ void main() async {
       container.dispose();
     });
   });
+    group('CollectionStateNotifier Filter Tests', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+    });
+
+    test('filter does not crash when collection contains AI type requests', () {
+      notifier.update(
+        apiType: APIType.ai,
+        name: 'AI Request',
+      );
+
+      final requests = container.read(collectionStateNotifierProvider)!;
+
+      expect(() {
+        requests.values.where((item) {
+          return (item.httpRequestModel?.url ?? '')
+                  .toLowerCase()
+                  .contains('test') ||
+              item.name.toLowerCase().contains('test');
+        }).toList();
+      }, returnsNormally);
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+  });
 }
