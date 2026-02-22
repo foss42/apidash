@@ -1230,4 +1230,48 @@ void main() async {
       container.dispose();
     });
   });
+
+  group('CollectionStateNotifier Removal Selection Tests', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+    });
+
+    test(
+        'should select the remaining item when removing the last item in a multi-item collection',
+        () async {
+      // Wait for microtasks in constructor to finish
+      await Future.microtask(() {});
+
+      var initialItemIds = container.read(requestSequenceProvider);
+      int initialCount = initialItemIds.length;
+
+      // Add two more items
+      notifier.add();
+      notifier.add();
+
+      var itemIds = container.read(requestSequenceProvider);
+      expect(itemIds.length, initialCount + 2);
+
+      final lastAddedId = itemIds[0];
+      final previousId = itemIds[1];
+
+      container.read(selectedIdStateProvider.notifier).state = lastAddedId;
+      expect(container.read(selectedIdStateProvider), lastAddedId);
+
+      // Remove the last added one
+      notifier.remove(id: lastAddedId);
+
+      expect(container.read(requestSequenceProvider).length, initialCount + 1);
+      expect(container.read(selectedIdStateProvider), previousId);
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+  });
 }
+
