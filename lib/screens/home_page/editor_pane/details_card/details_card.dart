@@ -8,6 +8,7 @@ import 'package:apidash/dashbot/dashbot.dart';
 import 'request_pane/request_pane.dart';
 import 'mqtt_response_pane.dart';
 import 'response_pane.dart';
+import 'ws_response_pane.dart';
 
 class EditorPaneRequestDetailsCard extends ConsumerWidget {
   const EditorPaneRequestDetailsCard({super.key});
@@ -29,6 +30,17 @@ class EditorPaneRequestDetailsCard extends ConsumerWidget {
     } else {
       rightWidget = const ResponsePane();
     }
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((m) => m?.apiType));
+
+    // For WebSocket, right pane is always the WS response/messages view.
+    final rightWidget = apiType == APIType.websocket
+        ? const WsResponsePane()
+        : !isDashbotPopped
+            ? DashbotTab()
+            : codePaneVisible
+                ? const CodePane()
+                : const ResponsePane();
 
     return RequestDetailsCard(
       child: EqualSplitView(

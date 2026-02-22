@@ -38,6 +38,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.mqtt => const MqttVersionDropdown(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -63,6 +64,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.mqtt => const MqttVersionDropdown(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -84,6 +86,8 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     height: 36,
                     child: apiType == APIType.mqtt
                         ? const MqttConnectButton()
+                    child: apiType == APIType.websocket
+                        ? const WsConnectButton()
                         : const SendRequestButton(),
                   )
                 ],
@@ -222,6 +226,8 @@ class MqttVersionDropdown extends ConsumerWidget {
 
 class MqttClientIdField extends ConsumerWidget {
   const MqttClientIdField({super.key});
+class WsConnectButton extends ConsumerWidget {
+  const WsConnectButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -268,6 +274,22 @@ class MqttConnectButton extends ConsumerWidget {
         connectionInfo.state == MqttConnectionState.connecting;
 
     return ADFilledButton(
+    if (selectedId == null) return const SizedBox.shrink();
+
+    final wsState = ref.watch(wsStateProvider(selectedId));
+    final isConnected = wsState.status == WsConnectionStatus.connected;
+    final isConnecting = wsState.status == WsConnectionStatus.connecting;
+
+    return FilledButton(
+      style: FilledButton.styleFrom(
+        backgroundColor: isConnected
+            ? Theme.of(context).colorScheme.error
+            : Colors.teal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: kBorderRadius8,
+        ),
+      ),
       onPressed: isConnecting
           ? null
           : () {
@@ -297,6 +319,29 @@ class MqttConnectButton extends ConsumerWidget {
           isConnected ? Icons.link_off : Icons.link,
         ),
       ],
+    );
+  }
+}
+                ref.read(wsStateProvider(selectedId).notifier).disconnect();
+              } else {
+                final url = ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .getRequestModel(selectedId)
+                    ?.httpRequestModel
+                    ?.url;
+                ref
+                    .read(wsStateProvider(selectedId).notifier)
+                    .connect(url ?? '');
+              }
+            },
+      child: Text(
+        isConnecting
+            ? 'Connecting…'
+            : isConnected
+                ? 'Disconnect'
+                : 'Connect',
+        style: const TextStyle(fontSize: 13),
+      ),
     );
   }
 }

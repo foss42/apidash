@@ -12,6 +12,7 @@ import 'ai_request/request_pane_ai.dart';
 import 'request_pane_graphql.dart';
 import 'request_pane_mqtt.dart';
 import 'request_pane_rest.dart';
+import 'request_pane_ws.dart';
 
 class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({super.key});
@@ -106,6 +107,7 @@ class EditRequestPane extends ConsumerWidget {
       APIType.graphql => const EditGraphQLRequestPane(),
       APIType.ai => const EditAIRequestPane(),
       APIType.mqtt => const EditMqttRequestPane(),
+      APIType.websocket => const EditWSRequestPane(),
       _ => kSizedBoxEmpty,
     };
   }
