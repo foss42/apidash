@@ -459,6 +459,7 @@ const kLabelStop = "Stop";
 const kLabelOk = "Ok";
 const kLabelImport = "Import";
 const kUntitled = "untitled";
+const kLabelClose = "Close";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";

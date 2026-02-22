@@ -13,6 +13,7 @@ final historyCodePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
 final hasUnsavedChangesProvider = StateProvider<bool>((ref) => false);
+final showTerminalBadgeProvider = StateProvider<bool>((ref) => false);
 
 // final nameTextFieldControllerProvider =
 //     StateProvider.autoDispose<TextEditingController>((ref) {
@@ -37,3 +38,5 @@ final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
 final importFormatStateProvider =
     StateProvider<ImportFormat>((ref) => ImportFormat.curl);
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
+
+final dashbotShowMobileProvider = StateProvider<bool>((ref) => false);

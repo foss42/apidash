@@ -5,7 +5,7 @@ version: 0.5.0+5
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.29.0"
+  flutter: ">=3.38.7"
 
 dependencies:
   flutter:
@@ -35,7 +35,7 @@ dependencies:
   fvp: ^0.32.1
   highlight: ^0.7.0
   highlighter: ^0.1.1
-  hive_flutter: ^1.1.0
+  hive_ce_flutter: ^2.3.3
   hooks_riverpod: ^2.5.2
   intl: ^0.19.0
   jinja: ^0.6.1

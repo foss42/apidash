@@ -1,0 +1,91 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "API Dash",
+  "logo": {
+    "light": "/screenshots/apidash.png",
+    "dark": "/screenshots/apidash.png"
+  },
+  "favicon": "/screenshots/apidash.png",
+  "colors": {
+    "primary": "#1C64F2",
+    "light": "#3B82F6",
+    "dark": "#1C64F2"
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/foss42/apidash"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Download",
+    "url": "https://github.com/foss42/apidash/blob/main/INSTALLATION.md"
+  },
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/foss42/apidash"
+    },
+    {
+      "name": "Discord",
+      "icon": "discord",
+      "url": "https://discord.com/invite/bBeSdtJ6Ue"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "doc/README"
+      ]
+    },
+    {
+      "group": "User Guide",
+      "pages": [
+        "doc/user_guide/README",
+        "doc/user_guide/req_user_guide",
+        "doc/user_guide/collections_guide",
+        "doc/user_guide/importing_guide",
+        "doc/user_guide/code_generation_guide",
+        "doc/user_guide/authentication",
+        "doc/user_guide/env_user_guide",
+        "doc/user_guide/scripting_user_guide",
+        "doc/user_guide/his_user_guide",
+        "doc/user_guide/disable_ssl",
+        "doc/user_guide/dashbot_user_guide",
+        "doc/user_guide/instructions_to_run_generated_code"
+      ]
+    },
+    {
+      "group": "Developer Guide",
+      "pages": [
+        "doc/dev_guide/README",
+        "doc/dev_guide/architecture",
+        "doc/dev_guide/setup_run",
+        "doc/dev_guide/platform_specific_instructions",
+        "doc/dev_guide/testing",
+        "doc/dev_guide/integration_testing",
+        "doc/dev_guide/api_endpoints_for_testing",
+        "doc/dev_guide/adding_codegen",
+        "doc/dev_guide/packaging",
+        "doc/dev_guide/oauth_authentication_limitations",
+        "doc/dev_guide/openapi",
+        "doc/dev_guide/flutter_rust_bridge_experiment"
+      ]
+    },
+    {
+      "group": "Security",
+      "pages": [
+        "doc/security/README",
+        "doc/security/THREAT_MODEL",
+        "doc/security/INCIDENT_RESPONSE_PLAN",
+        "doc/security/COMMANDS"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/foss42/apidash",
+    "discord": "https://discord.com/invite/bBeSdtJ6Ue"
+  }
+}

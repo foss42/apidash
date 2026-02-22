@@ -18,7 +18,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
     this.readOnly = false,
-    this.obscureText = false
+    this.obscureText = false,
   }) : assert(
           !(controller != null && initialValue != null),
           'controller and initialValue cannot be simultaneously defined.',
@@ -49,11 +49,11 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void initState() {
     super.initState();
+    final initialText = widget.initialValue ?? '';
     controller = widget.controller ??
         TextEditingController.fromValue(TextEditingValue(
-            text: widget.initialValue!,
-            selection:
-                TextSelection.collapsed(offset: widget.initialValue!.length)));
+            text: initialText,
+            selection: TextSelection.collapsed(offset: initialText.length)));
     _focusNode = widget.focusNode ?? FocusNode();
   }
 
@@ -67,13 +67,24 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if ((oldWidget.keyId != widget.keyId) ||
-        (oldWidget.initialValue != widget.initialValue)) {
+    if (oldWidget.keyId != widget.keyId) {
       controller = widget.controller ??
           TextEditingController.fromValue(TextEditingValue(
               text: widget.initialValue!,
               selection: TextSelection.collapsed(
                   offset: widget.initialValue!.length)));
+    } else if (widget.controller == null &&
+        oldWidget.initialValue != widget.initialValue &&
+        widget.initialValue != null &&
+        controller.text != widget.initialValue) {
+      // Update controller text only if it differs from current text
+      // This preserves cursor position when typing
+      final currentSelection = controller.selection;
+      controller.text = widget.initialValue!;
+      // Restore the selection if it's still valid
+      if (currentSelection.baseOffset <= controller.text.length) {
+        controller.selection = currentSelection;
+      }
     }
   }
 
@@ -130,8 +141,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             _focusNode.unfocus();
           },
           readOnly: widget.readOnly,
-          obscureText: widget.obscureText
-          
+          obscureText: widget.obscureText,
         );
       },
     );

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/window_caption.dart';
+// import 'package:apidash/widgets/window_caption.dart';
 
 class PageBase extends ConsumerWidget {
   const PageBase({
@@ -18,8 +18,8 @@ class PageBase extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode =
-        ref.watch(settingsProvider.select((value) => value.isDark));
+    // final isDarkMode =
+    //     ref.watch(settingsProvider.select((value) => value.isDark));
     final scaffold = Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       appBar: AppBar(
@@ -36,25 +36,25 @@ class PageBase extends ConsumerWidget {
         child: scaffoldBody,
       ),
     );
-    return Stack(
-      children: [
+    return //Stack(
+      // children: [
         Container(
           padding: (addBottomPadding && context.isMediumWindow
                   ? kPb70
                   : EdgeInsets.zero) +
-              (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
+              (kIsMacOS ? kPt28 : EdgeInsets.zero),
           color: Theme.of(context).colorScheme.surfaceContainerLowest,
           child: scaffold,
-        ),
-        if (kIsWindows)
-          SizedBox(
-            height: 29,
-            child: WindowCaption(
-              backgroundColor: Colors.transparent,
-              brightness: isDarkMode ? Brightness.dark : Brightness.light,
-            ),
-          ),
-      ],
+        // ),
+        // if (kIsWindows)
+        //   SizedBox(
+        //     height: 29,
+        //     child: WindowCaption(
+        //       backgroundColor: Colors.transparent,
+        //       brightness: isDarkMode ? Brightness.dark : Brightness.light,
+        //     ),
+        //   ),
+      // ],
     );
   }
 }
