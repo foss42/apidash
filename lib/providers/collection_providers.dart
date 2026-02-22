@@ -16,9 +16,13 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final collection = ref.watch(collectionStateNotifierProvider);
   if (selectedId == null || collection == null) {
     return null;
-  } else {
-    return collection[selectedId];
   }
+  Future.microtask(() async {
+    final notifier = ref.read(collectionStateNotifierProvider.notifier);
+    await notifier.ensureRequestLoaded(selectedId);
+  });
+  
+  return collection[selectedId];
 });
 
 final selectedSubstitutedHttpRequestModelProvider =
@@ -55,15 +59,16 @@ class CollectionStateNotifier
     this.ref,
     this.hiveHandler,
   ) : super(null) {
-    var status = loadData();
-    Future.microtask(() {
+    loadData().then((status) {
       if (status) {
         ref.read(requestSequenceProvider.notifier).state = [
           state!.keys.first,
         ];
       }
-      ref.read(selectedIdStateProvider.notifier).state =
-          ref.read(requestSequenceProvider)[0];
+      var sequence = ref.read(requestSequenceProvider);
+      if (sequence.isNotEmpty) {
+        ref.read(selectedIdStateProvider.notifier).state = sequence[0];
+      }
     });
   }
 
@@ -81,6 +86,20 @@ class CollectionStateNotifier
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
+  Future<void> _autosaveRequest(String id, RequestModel model) async {
+    final saveResponse = ref.read(settingsProvider).saveResponses;
+    await hiveHandler.setRequestModel(
+      id,
+      saveResponse
+          ? model.toJson()
+          : model.copyWith(httpResponseModel: null).toJson(),
+    );
+  }
+
+  Future<void> _autosaveSequence() async {
+    await hiveHandler.setIds(ref.read(requestSequenceProvider));
+  }
+
   void add() {
     final id = getNewUuid();
     final newRequestModel = RequestModel(
@@ -94,7 +113,9 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
-    unsave();
+    
+    _autosaveRequest(id, newRequestModel);
+    _autosaveSequence();
   }
 
   void addRequestModel(
@@ -114,24 +135,27 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
-    unsave();
+    
+    _autosaveRequest(id, newRequestModel);
+    _autosaveSequence();
   }
 
   void reorder(int oldIdx, int newIdx) {
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
-    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
-    unsave();
+    ref.read(requestSequenceProvider.notifier).state = itemIds;
+    
+    _autosaveSequence();
   }
 
   void remove({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     int idx = itemIds.indexOf(rId!);
     cancelHttpRequest(rId);
     itemIds.remove(rId);
-    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    ref.read(requestSequenceProvider.notifier).state = itemIds;
 
     String? newId;
     if (idx == 0 && itemIds.isNotEmpty) {
@@ -147,7 +171,9 @@ class CollectionStateNotifier
     var map = {...state!};
     map.remove(rId);
     state = map;
-    unsave();
+    
+    hiveHandler.deleteRequest(rId);
+    _autosaveSequence();
   }
 
   void clearResponse({String? id}) {
@@ -164,14 +190,15 @@ class CollectionStateNotifier
     var map = {...state!};
     map[rId] = newModel;
     state = map;
-    unsave();
+    
+    _autosaveRequest(rId, newModel);
   }
 
   void duplicate({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     final newId = getNewUuid();
 
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     int idx = itemIds.indexOf(rId!);
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
@@ -192,15 +219,17 @@ class CollectionStateNotifier
     map[newId] = newModel;
     state = map;
 
-    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    ref.read(requestSequenceProvider.notifier).state = itemIds;
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    unsave();
+    
+    _autosaveRequest(newId, newModel);
+    _autosaveSequence();
   }
 
   void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
     final newId = getNewUuid();
 
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     var currentModel = historyRequestModel;
 
     final newModel = RequestModel(
@@ -222,9 +251,11 @@ class CollectionStateNotifier
     map[newId] = newModel;
     state = map;
 
-    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    ref.read(requestSequenceProvider.notifier).state = itemIds;
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    unsave();
+    
+    _autosaveRequest(newId, newModel);
+    _autosaveSequence();
   }
 
   void update({
@@ -316,7 +347,8 @@ class CollectionStateNotifier
     var map = {...state!};
     map[rId] = newModel;
     state = map;
-    unsave();
+    
+    _autosaveRequest(rId, newModel);
   }
 
   Future<void> sendRequest() async {
@@ -455,7 +487,6 @@ class CollectionStateNotifier
             ),
           );
         }
-        unsave();
 
         if (historyModel != null && httpResponseModel != null) {
           historyModel =
@@ -477,7 +508,6 @@ class CollectionStateNotifier
         ...state!,
         requestId: newRequestModel.copyWith(isStreaming: false),
       };
-      unsave();
     }, onError: (e) {
       if (!completer.isCompleted) {
         completer.complete((null, null, 'StreamError: $e'));
@@ -577,14 +607,13 @@ class CollectionStateNotifier
       ...state!,
       requestId: newRequestModel,
     };
-
-    unsave();
+    
+    _autosaveRequest(requestId, newRequestModel);
   }
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
     cancelHttpRequest(id);
-    unsave();
   }
 
   Future<void> clearData() async {
@@ -594,10 +623,9 @@ class CollectionStateNotifier
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
-    unsave();
   }
 
-  bool loadData() {
+  Future<bool> loadData() async {
     var ids = hiveHandler.getIds();
     if (ids == null || ids.length == 0) {
       String newId = getNewUuid();
@@ -610,22 +638,58 @@ class CollectionStateNotifier
       return true;
     } else {
       Map<String, RequestModel> data = {};
-      for (var id in ids) {
-        var jsonModel = hiveHandler.getRequestModel(id);
-        if (jsonModel != null) {
-          var jsonMap = Map<String, Object?>.from(jsonModel);
-          var requestModel = RequestModel.fromJson(jsonMap);
-          if (requestModel.httpRequestModel == null) {
-            requestModel = requestModel.copyWith(
-              httpRequestModel: const HttpRequestModel(),
-            );
-          }
-          data[id] = requestModel;
-        }
+      List<RequestMetaModel> metaList = hiveHandler.loadRequestMeta();
+      
+      for (var meta in metaList) {
+        data[meta.id] = RequestModel(
+          id: meta.id,
+          name: meta.name,
+          description: meta.description,
+          apiType: meta.apiType,
+          responseStatus: meta.responseStatus,
+          httpRequestModel: HttpRequestModel(
+            method: meta.method,
+            url: meta.url,
+            authModel: null,
+          ),
+        );
       }
       state = data;
       return false;
     }
+  }
+
+  Future<RequestModel?> ensureRequestLoaded(String id) async {
+    var current = state?[id];
+    if (current == null) return null;
+    
+    if (current.httpRequestModel?.headers != null && 
+        current.httpRequestModel!.headers!.isNotEmpty) {
+      return current;
+    }
+    
+    if (current.httpRequestModel?.authModel != null ||
+        current.httpRequestModel?.body != null ||
+        current.preRequestScript != null ||
+        current.postRequestScript != null) {
+      return current;
+    }
+    
+    var fullModel = await hiveHandler.loadRequest(id);
+    if (fullModel != null) {
+      if (fullModel.httpRequestModel == null) {
+        fullModel = fullModel.copyWith(
+          httpRequestModel: const HttpRequestModel(),
+        );
+      }
+      
+      var map = {...state!};
+      map[id] = fullModel;
+      state = map;
+      return fullModel;
+    }
+    
+    return current;
   }
 
   Future<void> saveData() async {
@@ -634,12 +698,15 @@ class CollectionStateNotifier
     final ids = ref.read(requestSequenceProvider);
     await hiveHandler.setIds(ids);
     for (var id in ids) {
-      await hiveHandler.setRequestModel(
-        id,
-        saveResponse
-            ? (state?[id])?.toJson()
-            : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
-      );
+      final model = state?[id];
+      if (model != null) {
+        await hiveHandler.setRequestModel(
+          id,
+          saveResponse
+              ? model.toJson()
+              : model.copyWith(httpResponseModel: null).toJson(),
+        );
+      }
     }
 
     await hiveHandler.removeUnused();

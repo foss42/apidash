@@ -1,3 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/models/models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
@@ -5,6 +7,7 @@ enum HiveBoxType { normal, lazy }
 
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
+const String kRequestMetaBox = "apidash-request-meta";
 
 const String kEnvironmentBox = "apidash-environments";
 const String kKeyEnvironmentBoxIds = "environmentIds";
@@ -17,7 +20,8 @@ const String kDashBotBox = "apidash-dashbot-data";
 const String kKeyDashBotBoxIds = 'messages';
 
 const kHiveBoxes = [
-  (kDataBox, HiveBoxType.normal),
+  (kDataBox, HiveBoxType.lazy),
+  (kRequestMetaBox, HiveBoxType.normal),
   (kEnvironmentBox, HiveBoxType.normal),
   (kHistoryMetaBox, HiveBoxType.normal),
   (kHistoryLazyBox, HiveBoxType.lazy),
@@ -97,7 +101,8 @@ Future<void> deleteHiveBoxes() async {
 final hiveHandler = HiveHandler();
 
 class HiveHandler {
-  late final Box dataBox;
+  late final LazyBox dataBox;
+  late final Box requestMetaBox;
   late final Box environmentBox;
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
@@ -105,20 +110,67 @@ class HiveHandler {
 
   HiveHandler() {
     debugPrint("Trying to open Hive boxes");
-    dataBox = Hive.box(kDataBox);
+    dataBox = Hive.lazyBox(kDataBox);
+    requestMetaBox = Hive.box(kRequestMetaBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
     dashBotBox = Hive.lazyBox(kDashBotBox);
   }
 
-  dynamic getIds() => dataBox.get(kKeyDataBoxIds);
-  Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
+  dynamic getIds() => requestMetaBox.get(kKeyDataBoxIds);
+  Future<void> setIds(List<String>? ids) => requestMetaBox.put(kKeyDataBoxIds, ids);
 
-  dynamic getRequestModel(String id) => dataBox.get(id);
+  List<RequestMetaModel> loadRequestMeta() {
+    var ids = getIds();
+    if (ids == null || ids is! List) return [];
+
+    List<RequestMetaModel> metaList = [];
+    for (var id in ids) {
+      var metaJson = requestMetaBox.get(id);
+      if (metaJson != null) {
+        metaList.add(RequestMetaModel.fromJson(Map<String, dynamic>.from(metaJson)));
+      }
+    }
+    return metaList;
+  }
+
+  Future<RequestModel?> loadRequest(String id) async {
+    var requestJson = await dataBox.get(id);
+    if (requestJson != null) {
+      return RequestModel.fromJson(Map<String, dynamic>.from(requestJson));
+    }
+    return null;
+  }
+
+  Future<void> saveRequest(String id, Map<String, dynamic> requestJson) async {
+    var requestModel = RequestModel.fromJson(requestJson);
+    await dataBox.put(id, requestJson);
+    var metaModel = RequestMetaModel(
+      id: requestModel.id,
+      name: requestModel.name,
+      url: requestModel.httpRequestModel?.url ?? "",
+      method: requestModel.httpRequestModel?.method ?? HTTPVerb.get,
+      apiType: requestModel.apiType,
+      responseStatus: requestModel.responseStatus,
+      description: requestModel.description,
+    );
+    await requestMetaBox.put(id, metaModel.toJson());
+  }
+
+  Future<void> deleteRequest(String id) async {
+    await dataBox.delete(id);
+    await requestMetaBox.delete(id);
+    await dataBox.delete(id);
+  }
+
   Future<void> setRequestModel(
-          String id, Map<String, dynamic>? requestModelJson) =>
-      dataBox.put(id, requestModelJson);
+          String id, Map<String, dynamic>? requestModelJson) async =>
+      requestModelJson == null
+          ? await deleteRequest(id)
+          : await saveRequest(id, requestModelJson);
+          
+  Future<dynamic> getRequestModel(String id) async => await dataBox.get(id);
 
   void delete(String key) => dataBox.delete(key);
 
@@ -164,6 +216,7 @@ class HiveHandler {
 
   Future clear() async {
     await dataBox.clear();
+    await requestMetaBox.clear();
     await environmentBox.clear();
     await historyMetaBox.clear();
     await historyLazyBox.clear();
@@ -174,6 +227,12 @@ class HiveHandler {
     var ids = getIds();
     if (ids != null) {
       ids = ids as List;
+      for (var key in requestMetaBox.keys.toList()) {
+        if (key != kKeyDataBoxIds && !ids.contains(key)) {
+          await requestMetaBox.delete(key);
+        }
+      }
+
       for (var key in dataBox.keys.toList()) {
         if (key != kKeyDataBoxIds && !ids.contains(key)) {
           await dataBox.delete(key);
