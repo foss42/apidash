@@ -104,8 +104,10 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
                         child: GestureDetector(
                           onTap: () {
                             if (_videoController.value.isPlaying) {
+                              _videoController.setVolume(0);
                               _videoController.pause();
                             } else {
+                              _videoController.setVolume(1.0);
                               _videoController.play();
                             }
                             setState(() {
