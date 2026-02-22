@@ -71,10 +71,11 @@ class DartDioCodeGen {
     ''');
     Expression? dataExp;
     if ((kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false) ||
-        contentType == ContentType.formdata)) {
+        contentType == ContentType.formdata ||
+        contentType == ContentType.urlencoded)) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       switch (contentType) {
-        // dio dosen't need pass `content-type` header when body is json or plain text
+        // dio doesn't need to pass `content-type` header when body is json or plain text
         case ContentType.json:
           final convertImport = Directive.import('dart:convert', as: 'convert');
           sbf.writeln(convertImport.accept(emitter));
@@ -85,6 +86,14 @@ class DartDioCodeGen {
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
+        case ContentType.urlencoded:
+          // Build URL-encoded string from formData list
+          final encoded = formData
+              .where((f) => f['type'] == 'text')
+              .map((f) =>
+                  '${Uri.encodeQueryComponent(f['name']!)}=${Uri.encodeQueryComponent(f['value']!)}')
+              .join('&');
+          dataExp = declareFinal('data').assign(literalString(encoded));
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
@@ -110,8 +119,9 @@ class DartDioCodeGen {
           if (queryParamExp != null) queryParamExp,
           if (headerExp != null) headerExp,
           if (dataExp != null) dataExp,
-          if ((contentType == ContentType.formdata && formData.isNotEmpty))
-            multiPartList,
+          if ((contentType == ContentType.formdata && formData.isNotEmpty) ||
+              (contentType == ContentType.urlencoded && formData.isNotEmpty))
+            if (contentType == ContentType.formdata) multiPartList,
           responseExp,
           refer('print').call([refer('response').property('statusCode')]),
           refer('print').call([refer('response').property('data')]),
@@ -143,7 +153,10 @@ class DartDioCodeGen {
 
     return DartFormatter(
       languageVersion: Version(3, 2, 4),
-      pageWidth: contentType == ContentType.formdata ? 70 : 160,
+      pageWidth: (contentType == ContentType.formdata ||
+              contentType == ContentType.urlencoded)
+          ? 70
+          : 160,
     ).format(sbf.toString());
   }
 }

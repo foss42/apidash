@@ -225,6 +225,18 @@ const httpRequestModelPost4 = HttpRequestModel(
   ],
 );
 
+/// POST request model with url-encoded body (text-only fields)
+const httpRequestModelPost4Urlencoded = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/io/form',
+  bodyContentType: ContentType.urlencoded,
+  formData: [
+    FormDataModel(name: "text", value: "API", type: FormDataType.text),
+    FormDataModel(name: "sep", value: "|", type: FormDataType.text),
+    FormDataModel(name: "times", value: "3", type: FormDataType.text),
+  ],
+);
+
 /// POST request model with multipart body and headers
 const httpRequestModelPost5 = HttpRequestModel(
   method: HTTPVerb.post,

@@ -60,11 +60,14 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
       if (apiType == APIType.rest) {
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;
+        var isUrlencodedRequest =
+            requestModel.bodyContentType == ContentType.urlencoded;
 
         if (kMethodsWithBody.contains(authenticatedRequestModel.method)) {
           var requestBody = authenticatedRequestModel.body;
           if (requestBody != null &&
               !isMultiPartRequest &&
+              !isUrlencodedRequest &&
               requestBody.isNotEmpty) {
             body = requestBody;
             if (authenticatedRequestModel.hasContentTypeHeader) {
@@ -72,6 +75,20 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
             } else {
               headers[HttpHeaders.contentTypeHeader] =
                   authenticatedRequestModel.bodyContentType.header;
+            }
+          }
+          if (isUrlencodedRequest &&
+              authenticatedRequestModel.formDataList.isNotEmpty) {
+            body = authenticatedRequestModel.formDataList
+                .where((f) => f.type == FormDataType.text)
+                .map((f) =>
+                    '${Uri.encodeQueryComponent(f.name)}=${Uri.encodeQueryComponent(f.value)}')
+                .join('&');
+            if (!authenticatedRequestModel.hasContentTypeHeader) {
+              headers[HttpHeaders.contentTypeHeader] =
+                  ContentType.urlencoded.header;
+            } else {
+              overrideContentType = true;
             }
           }
           if (isMultiPartRequest) {
@@ -186,16 +203,16 @@ http.Request prepareHttpRequest({
 }) {
   var request = http.Request(method, url);
   if (headers.getValueContentType() != null) {
-    request.headers[HttpHeaders.contentTypeHeader] = headers
-        .getValueContentType()!;
+    request.headers[HttpHeaders.contentTypeHeader] =
+        headers.getValueContentType()!;
     if (!overrideContentType) {
       headers.removeKeyContentType();
     }
   }
   if (body != null) {
     request.body = body;
-    headers[HttpHeaders.contentLengthHeader] = request.bodyBytes.length
-        .toString();
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
   }
   request.headers.addAll(headers);
   return request;
@@ -342,6 +359,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
   final headers = requestModel.enabledHeadersMap;
   final hasBody = kMethodsWithBody.contains(requestModel.method);
   final isMultipart = requestModel.bodyContentType == ContentType.formdata;
+  final isUrlencoded = requestModel.bodyContentType == ContentType.urlencoded;
 
   http.StreamedResponse streamedResponse;
 
@@ -362,6 +380,27 @@ Future<http.StreamedResponse> makeStreamedRequest({
       }
     }
     streamedResponse = await client.send(multipart);
+  } else if (apiType == APIType.rest &&
+      isUrlencoded &&
+      hasBody &&
+      requestModel.formDataList.isNotEmpty) {
+    //Handling HTTP URL-Encoded Form Requests
+    final encodedBody = requestModel.formDataList
+        .where((f) => f.type == FormDataType.text)
+        .map((f) =>
+            '${Uri.encodeQueryComponent(f.name)}=${Uri.encodeQueryComponent(f.value)}')
+        .join('&');
+    if (!requestModel.hasContentTypeHeader) {
+      headers[HttpHeaders.contentTypeHeader] = ContentType.urlencoded.header;
+    }
+    final request = prepareHttpRequest(
+      url: uri,
+      method: requestModel.method.name.toUpperCase(),
+      headers: headers,
+      body: encodedBody,
+      overrideContentType: requestModel.hasContentTypeHeader,
+    );
+    streamedResponse = await client.send(request);
   } else if (apiType == APIType.graphql) {
     // Handling GraphQL Requests
     var requestBody = getGraphQLBody(requestModel);

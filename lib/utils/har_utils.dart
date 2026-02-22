@@ -131,7 +131,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    if (requestModel.hasFormData) {
+    if (requestModel.hasFormDataContentType && requestModel.hasFormData) {
       boundary = boundary ?? getNewUuid();
       hasBody = true;
       json["postData"] = {};
@@ -149,6 +149,23 @@ Map<String, dynamic> requestModelToHARJsonRequest(
           d["fileName"] = getFilenameFromPath(item.value);
         }
         json["postData"]["params"].add(d);
+      }
+      if (exportMode) {
+        json["postData"]["comment"] = "";
+      }
+    } else if (requestModel.hasUrlencodedContentType &&
+        requestModel.hasFormData) {
+      hasBody = true;
+      json["postData"] = {};
+      json["postData"]["mimeType"] = ContentType.urlencoded.header;
+      json["postData"]["params"] = [];
+      for (var item in requestModel.formDataList) {
+        if (item.type == FormDataType.text) {
+          Map<String, String> d = exportMode ? {"comment": ""} : {};
+          d["name"] = item.name;
+          d["value"] = item.value;
+          json["postData"]["params"].add(d);
+        }
       }
       if (exportMode) {
         json["postData"]["comment"] = "";
