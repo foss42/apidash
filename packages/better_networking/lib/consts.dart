@@ -83,9 +83,8 @@ enum HTTPVerb {
 
 enum SupportedUriSchemes { https, http }
 
-final kSupportedUriSchemes = SupportedUriSchemes.values
-    .map((i) => i.name)
-    .toList();
+final kSupportedUriSchemes =
+    SupportedUriSchemes.values.map((i) => i.name).toList();
 const kDefaultUriScheme = SupportedUriSchemes.https;
 final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
 final kIPHostRegex = RegExp(
@@ -180,3 +179,14 @@ const kCodeCharsPerLineLimit = 200;
 const kHeaderContentType = "Content-Type";
 const kHeaderWwwAuthenticate = 'www-authenticate';
 const kMsgRequestCancelled = 'Request Cancelled';
+
+const kDefaultUserAgent = 'APIDash';
+const kDefaultAccept = '*/*';
+
+/// Default headers to include in every request when the user hasn't
+/// explicitly set them. This prevents Cloudflare and similar services
+/// from blocking requests due to missing User-Agent/Accept headers.
+const kDefaultHeaders = {
+  'User-Agent': kDefaultUserAgent,
+  'Accept': kDefaultAccept,
+};
