@@ -9,6 +9,14 @@ import '../models/models.dart';
 import '../utils/utils.dart';
 import 'http_client_manager.dart';
 
+//  Default headers to include in all requests to help avoid 403 errors from Cloudflare and similar services.
+const Map<String, String> kDefaultRequestHeaders = {
+  'User-Agent': 'APIDash (https://apidash.dev)',
+  'Accept': '*/*',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'Connection': 'keep-alive',
+};
+
 typedef HttpResponse = http.Response;
 
 typedef HttpStreamOutput = (
@@ -51,7 +59,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
 
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = authenticatedRequestModel.enabledHeadersMap;
+    Map<String, String> headers = {
+      ...kDefaultRequestHeaders,
+      ...authenticatedRequestModel.enabledHeadersMap,
+    };
     bool overrideContentType = false;
     HttpResponse? response;
     String? body;
@@ -339,7 +350,10 @@ Future<http.StreamedResponse> makeStreamedRequest({
   required HttpRequestModel requestModel,
   required APIType apiType,
 }) async {
-  final headers = requestModel.enabledHeadersMap;
+  final headers = {
+    ...kDefaultRequestHeaders,
+    ...requestModel.enabledHeadersMap,
+  };
   final hasBody = kMethodsWithBody.contains(requestModel.method);
   final isMultipart = requestModel.bodyContentType == ContentType.formdata;
 
