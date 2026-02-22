@@ -26,6 +26,7 @@ class RequestModel with _$RequestModel {
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? webSocketRequestModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>

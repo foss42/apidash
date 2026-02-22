@@ -11,6 +11,7 @@ import '../response_pane.dart';
 import 'ai_request/request_pane_ai.dart';
 import 'request_pane_graphql.dart';
 import 'request_pane_rest.dart';
+import 'request_pane_websocket.dart';
 
 class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({
@@ -86,6 +87,7 @@ class EditRequestPane extends ConsumerWidget {
       APIType.ai => EditAIRequestPane(
           showViewCodeButton: showViewCodeButton,
         ),
+      APIType.websocket => const EditWebSocketRequestPane(),
       _ => kSizedBoxEmpty,
     };
   }

@@ -210,9 +210,14 @@ class CollectionStateNotifier
       aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
-      responseStatus: currentModel.metaData.responseStatus,
-      message: kResponseCodeReasons[currentModel.metaData.responseStatus],
+      responseStatus: currentModel.metaData.apiType == APIType.websocket
+          ? null
+          : currentModel.metaData.responseStatus,
+      message: currentModel.metaData.apiType == APIType.websocket
+          ? null
+          : kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
+      webSocketRequestModel: currentModel.webSocketRequestModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -250,6 +255,7 @@ class CollectionStateNotifier
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? webSocketRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -281,6 +287,15 @@ class CollectionStateNotifier
             aiRequestModel: defaultModel == null
                 ? const AIRequestModel()
                 : AIRequestModel.fromJson(defaultModel)),
+        APIType.websocket => currentModel.copyWith(
+            apiType: apiType,
+            requestTabIndex: 0,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: null,
+            aiRequestModel: null,
+            webSocketRequestModel: const WebSocketRequestModel(),
+          ),
       };
     } else {
       newModel = currentModel.copyWith(
@@ -310,6 +325,8 @@ class CollectionStateNotifier
         preRequestScript: preRequestScript ?? currentModel.preRequestScript,
         postRequestScript: postRequestScript ?? currentModel.postRequestScript,
         aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+        webSocketRequestModel:
+            webSocketRequestModel ?? currentModel.webSocketRequestModel,
       );
     }
 
@@ -597,6 +614,169 @@ class CollectionStateNotifier
     unsave();
   }
 
+  Future<void> sendWebSocketMessage(String id, String message) async {
+    try {
+      webSocketService.send(id, message);
+      final requestModel = state?[id];
+      if (requestModel != null) {
+        final newMessages = [
+          ...?requestModel.webSocketRequestModel?.messages,
+          WebSocketMessageModel(
+            message: message,
+            time: DateTime.now(),
+            isSent: true,
+          ),
+        ];
+
+        final newModel = requestModel.copyWith(
+          webSocketRequestModel: requestModel.webSocketRequestModel
+              ?.copyWith(messages: newMessages),
+        );
+        var map = {...state!};
+        map[id] = newModel;
+        state = map;
+        unsave();
+      }
+    } catch (e) {
+      // Handle error
+      debugPrint("Error sending WS message: $e");
+    }
+  }
+
+  Future<void> connectWebSocket(String id) async {
+    final requestModel = state?[id];
+    if (requestModel == null ||
+        requestModel.webSocketRequestModel == null ||
+        requestModel.webSocketRequestModel!.url.isEmpty) {
+      return;
+    }
+
+    try {
+      final terminal = ref.read(terminalStateProvider.notifier);
+      final logId = terminal.startNetwork(
+        apiType: APIType.websocket,
+        method: HTTPVerb.get,
+        url: requestModel.webSocketRequestModel!.url,
+        requestId: id,
+        isStreaming: true,
+      );
+
+      // Update state to working/connecting
+      state = {
+        ...state!,
+        id: requestModel.copyWith(isWorking: true),
+      };
+
+      final stream = await webSocketService.connect(
+        id,
+        requestModel.webSocketRequestModel!.url,
+      );
+
+      // Successfully connected
+      state = {
+        ...state!,
+        id: state![id]!.copyWith(
+          isWorking: false,
+          responseStatus: 101,
+        ),
+      };
+
+      stream.listen(
+        (message) {
+          final currentModel = state?[id];
+          if (currentModel == null) return;
+
+          final newMessages = [
+            ...?currentModel.webSocketRequestModel?.messages,
+            WebSocketMessageModel(
+              message: message.toString(),
+              time: DateTime.now(),
+              isSent: false,
+            ),
+          ];
+
+          final newModel = currentModel.copyWith(
+              webSocketRequestModel: currentModel.webSocketRequestModel
+                  ?.copyWith(messages: newMessages));
+
+          state = {
+            ...state!,
+            id: newModel,
+          };
+          unsave();
+        },
+        onDone: () {
+          final currentModel = state?[id];
+          if (currentModel == null || currentModel.responseStatus == -1) {
+            return;
+          }
+          String newHistoryId = getNewUuid();
+          final historyModel = HistoryRequestModel(
+            historyId: newHistoryId,
+            metaData: HistoryMetaModel(
+              historyId: newHistoryId,
+              requestId: id,
+              apiType: APIType.websocket,
+              name: currentModel.name,
+              url: currentModel.webSocketRequestModel?.url ?? "",
+              method: HTTPVerb.get,
+              responseStatus: 101,
+              timeStamp: DateTime.now(),
+            ),
+            httpRequestModel: const HttpRequestModel(method: HTTPVerb.get),
+            httpResponseModel: const HttpResponseModel(
+                statusCode: 101, body: "WebSocket Session Ended"),
+            webSocketRequestModel: currentModel.webSocketRequestModel,
+          );
+          ref
+              .read(historyMetaStateNotifier.notifier)
+              .addHistoryRequest(historyModel);
+          state = {
+            ...state!,
+            id: currentModel.copyWith(responseStatus: null, isWorking: false),
+          };
+          terminal.completeNetwork(
+            logId,
+            statusCode: 101,
+            duration: Duration.zero,
+            responseBodyPreview: "WebSocket Session",
+          );
+        },
+        onError: (error) {
+          debugPrint("WS Stream Error: $error");
+          final currentModel = state?[id];
+          if (currentModel == null) return;
+          state = {
+            ...state!,
+            id: currentModel.copyWith(
+                responseStatus: -1,
+                message: error.toString(),
+                isWorking: false),
+          };
+          terminal.failNetwork(logId, error.toString());
+        },
+      );
+    } catch (e) {
+      debugPrint("WS Connect Exception: $e");
+      state = {
+        ...state!,
+        id: requestModel.copyWith(
+            responseStatus: -1, message: e.toString(), isWorking: false),
+      };
+    }
+  }
+
+  Future<void> disconnectWebSocket(String id) async {
+    await webSocketService.disconnect(id);
+    final requestModel = state?[id];
+    if (requestModel != null) {
+      state = {
+        ...state!,
+        id: requestModel.copyWith(responseStatus: null, isWorking: false),
+      };
+    }
+  }
+
   bool loadData() {
     var ids = hiveHandler.getIds();
     if (ids == null || ids.length == 0) {
@@ -618,6 +798,12 @@ class CollectionStateNotifier
           if (requestModel.httpRequestModel == null) {
             requestModel = requestModel.copyWith(
               httpRequestModel: const HttpRequestModel(),
+            );
+          }
+          if (requestModel.apiType == APIType.websocket) {
+            requestModel = requestModel.copyWith(
+              responseStatus: null,
+              isWorking: false,
             );
           }
           data[id] = requestModel;
