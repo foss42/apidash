@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:apidash_core/apidash_core.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
@@ -403,12 +405,22 @@ class CollectionStateNotifier
     };
     bool streamingMode = true; //Default: Streaming First
 
+    final settings = ref.read(settingsProvider);
+    final proxyUriPrefix = settings.proxyUriPrefix;
+
+    if (proxyUriPrefix != null && proxyUriPrefix.isNotEmpty) {
+      substitutedHttpRequestModel = substitutedHttpRequestModel.copyWith(
+        url: "$proxyUriPrefix${substitutedHttpRequestModel.url}",
+      );
+    }
+
     final stream = await streamHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      proxySettings: settings.networkProxy,
     );
 
     HttpResponseModel? httpResponseModel;
