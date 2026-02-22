@@ -54,6 +54,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  final Map<String, StreamSubscription<MqttMessageModel>> _mqttStreamSubs = {};
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -593,8 +594,9 @@ class CollectionStateNotifier
         ref.read(mqttConnectionProvider(requestId).notifier).state =
             const MqttConnectionInfo(state: MqttConnectionState.connected);
 
-        // Listen for incoming messages
-        manager.messageStream.listen((msg) {
+        // Cancel any existing subscription for this request before adding a new one
+        await _mqttStreamSubs[requestId]?.cancel();
+        _mqttStreamSubs[requestId] = manager.messageStream.listen((msg) {
           ref.read(mqttMessagesProvider(requestId).notifier).addMessage(msg);
         });
 
@@ -626,6 +628,7 @@ class CollectionStateNotifier
     final requestId = ref.read(selectedIdStateProvider);
     if (requestId == null) return;
 
+    _mqttStreamSubs.remove(requestId)?.cancel();
     MqttClientManager.getOrCreate(requestId).disconnect();
     ref.read(mqttConnectionProvider(requestId).notifier).state =
         const MqttConnectionInfo(state: MqttConnectionState.disconnected);
