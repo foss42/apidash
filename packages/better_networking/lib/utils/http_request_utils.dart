@@ -94,6 +94,7 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
           : null,
     APIType.graphql => getGraphQLBody(httpRequestModel),
     APIType.ai => null, //TODO: TAKE A LOOK
+    APIType.mqtt => null,
     APIType.websocket => null,
   };
 }

@@ -26,6 +26,7 @@ final kColorHttpMethodDelete = Colors.red.shade800;
 final kColorHttpMethodOptions = Colors.deepPurple.shade800;
 
 final kColorGQL = Colors.pink.shade600;
+final kColorMQTT = Colors.teal.shade700;
 
 const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
 import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
@@ -36,6 +37,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.mqtt => const MqttVersionDropdown(),
                     APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
@@ -46,6 +48,13 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   const Expanded(
                     child: URLTextField(),
                   ),
+                  if (apiType == APIType.mqtt) ...[
+                    kHSpacer10,
+                    const SizedBox(
+                      width: 120,
+                      child: MqttClientIdField(),
+                    ),
+                  ],
                 ],
               )
             : Row(
@@ -54,6 +63,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.mqtt => const MqttVersionDropdown(),
                     APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
@@ -64,9 +74,18 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   const Expanded(
                     child: URLTextField(),
                   ),
+                  if (apiType == APIType.mqtt) ...[
+                    kHSpacer10,
+                    const SizedBox(
+                      width: 150,
+                      child: MqttClientIdField(),
+                    ),
+                  ],
                   kHSpacer20,
                   SizedBox(
                     height: 36,
+                    child: apiType == APIType.mqtt
+                        ? const MqttConnectButton()
                     child: apiType == APIType.websocket
                         ? const WsConnectButton()
                         : const SendRequestButton(),
@@ -110,6 +129,8 @@ class URLTextField extends ConsumerWidget {
         .select((value) => value?.aiRequestModel?.url));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.mqttRequestModel?.url));
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
@@ -117,6 +138,7 @@ class URLTextField extends ConsumerWidget {
       selectedId: selectedId,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
+        APIType.mqtt => requestModel.mqttRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,
       },
       onChanged: (value) {
@@ -124,12 +146,20 @@ class URLTextField extends ConsumerWidget {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
+        } else if (requestModel.apiType == APIType.mqtt) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+              mqttRequestModel:
+                  requestModel.mqttRequestModel?.copyWith(url: value));
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }
       },
       onFieldSubmitted: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        if (requestModel.apiType == APIType.mqtt) {
+          ref.read(collectionStateNotifierProvider.notifier).connectMqtt();
+        } else {
+          ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        }
       },
     );
   }
@@ -163,12 +193,87 @@ class SendRequestButton extends ConsumerWidget {
     );
   }
 }
+
+class MqttVersionDropdown extends ConsumerWidget {
+  const MqttVersionDropdown({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mqttVersion = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.mqttRequestModel?.mqttVersion));
+    return ADPopupMenu<MqttVersion>(
+      tooltip: kLabelMqttVersion,
+      width: 80,
+      value: mqttVersion?.label ?? MqttVersion.v311.label,
+      values: MqttVersion.values.map((e) => (e, e.label)),
+      onChanged: (MqttVersion? value) {
+        if (value == MqttVersion.v5) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text(kMsgMqttV5NotSupported)),
+          );
+          return;
+        }
+        final requestModel = ref.read(selectedRequestModelProvider);
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              mqttRequestModel:
+                  requestModel?.mqttRequestModel?.copyWith(mqttVersion: value!),
+            );
+      },
+      isOutlined: true,
+    );
+  }
+}
+
+class MqttClientIdField extends ConsumerWidget {
+  const MqttClientIdField({super.key});
 class WsConnectButton extends ConsumerWidget {
   const WsConnectButton({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.mqttRequestModel?.clientId));
+    final requestModel = ref
+        .read(collectionStateNotifierProvider.notifier)
+        .getRequestModel(selectedId!);
+    return EnvironmentTriggerField(
+      keyId: "mqtt-clientid-$selectedId",
+      initialValue: requestModel?.mqttRequestModel?.clientId ?? "",
+      style: kCodeStyle,
+      decoration: InputDecoration(
+        hintText: kHintMqttClientId,
+        hintStyle: kCodeStyle.copyWith(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+        border: InputBorder.none,
+      ),
+      onChanged: (value) {
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              mqttRequestModel:
+                  requestModel?.mqttRequestModel?.copyWith(clientId: value),
+            );
+      },
+      optionsWidthFactor: 1,
+    );
+  }
+}
+
+class MqttConnectButton extends ConsumerWidget {
+  const MqttConnectButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+    if (selectedId == null) return kSizedBoxEmpty;
+
+    final connectionInfo = ref.watch(mqttConnectionProvider(selectedId));
+    final isConnected =
+        connectionInfo.state == MqttConnectionState.connected;
+    final isConnecting =
+        connectionInfo.state == MqttConnectionState.connecting;
+
+    return ADFilledButton(
     if (selectedId == null) return const SizedBox.shrink();
 
     final wsState = ref.watch(wsStateProvider(selectedId));
@@ -189,6 +294,34 @@ class WsConnectButton extends ConsumerWidget {
           ? null
           : () {
               if (isConnected) {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .disconnectMqtt();
+              } else {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .connectMqtt();
+              }
+            },
+      isTonal: isConnected,
+      items: [
+        Text(
+          isConnecting
+              ? kLabelMqttConnecting
+              : isConnected
+                  ? kLabelDisconnect
+                  : kLabelConnect,
+          style: kTextStyleButton,
+        ),
+        kHSpacer6,
+        Icon(
+          size: 16,
+          isConnected ? Icons.link_off : Icons.link,
+        ),
+      ],
+    );
+  }
+}
                 ref.read(wsStateProvider(selectedId).notifier).disconnect();
               } else {
                 final url = ref
