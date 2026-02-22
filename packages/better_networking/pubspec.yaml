@@ -27,6 +27,7 @@ dependencies:
   json_annotation: ^4.9.0
   seed:
     path: ../seed
+  mqtt_client: ^10.11.9
   xml: ^6.3.0
   oauth1: ^2.1.0
   oauth2: ^2.0.3

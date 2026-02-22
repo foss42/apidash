@@ -515,3 +515,49 @@ const kLabelGenerateUI = "Generate UI";
 // Terminal Page
 const kMsgNoLogs = 'No logs yet';
 const kMsgSendToView = 'Send a request to view its details in the console.';
+
+// MQTT
+const kLabelMessage = "Message";
+const kLabelTopics = "Topics";
+const kLabelLastWill = "Last Will";
+const kLabelMqttSettings = "Settings";
+const kLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";
+const kLabelRetain = "Retain";
+const kLabelCleanStart = "Clean Start";
+const kLabelPublish = "Publish";
+const kHintMqttHost = "Enter broker host e.g. test.mosquitto.org";
+const kHintMqttPort = "Port";
+const kHintMqttClientId = "Client ID";
+const kHintMqttTopic = "Enter topic";
+const kHintMqttPayload = "Enter message payload";
+const kLabelMqttConnected = "Connected";
+const kLabelMqttDisconnected = "Disconnected";
+const kLabelMqttConnecting = "Connecting...";
+const kLabelMqttNotConnected = "Not Connected";
+const kLabelMqttVersion = "MQTT Version";
+const kLabelKeepAlive = "Keep Alive (s)";
+const kLabelUsername = "Username";
+const kLabelPassword = "Password";
+const kLabelTopic = "Topic";
+const kLabelQos = "QoS";
+const kLabelSubscribe = "Subscribe";
+const kLabelDescription = "Description";
+const kLabelRetainMsg = "Retain";
+const kLabelLastWillTopic = "Last Will Topic";
+const kLabelLastWillMessage = "Last Will Message";
+const kLabelLastWillQos = "Last Will QoS";
+const kLabelLastWillRetain = "Retain Last Will";
+const kLabelPublishedMessage = "Published Message";
+const kLabelSubscribedMessage = "Subscribed Message";
+const kLabelAddTopic = "Add Topic";
+const kHintAddTopic = "Add Topic";
+const kMsgMqttV5NotSupported = "MQTT v5.0 is not yet supported";
+
+const kMqttConnackReasons = {
+  1: 'Connection Refused: Unacceptable Protocol Version',
+  2: 'Connection Refused: Identifier Rejected',
+  3: 'Connection Refused: Server Unavailable',
+  4: 'Connection Refused: Bad Username or Password',
+  5: 'Connection Refused: Not Authorized',
+};

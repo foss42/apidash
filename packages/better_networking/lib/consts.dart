@@ -3,7 +3,8 @@ import 'dart:convert';
 enum APIType {
   rest("HTTP", "HTTP"),
   ai("AI", "AI"),
-  graphql("GraphQL", "GQL");
+  graphql("GraphQL", "GQL"),
+  mqtt("MQTT", "MQ");
 
   const APIType(this.label, this.abbr);
   final String label;
@@ -180,3 +181,21 @@ const kCodeCharsPerLineLimit = 200;
 const kHeaderContentType = "Content-Type";
 const kHeaderWwwAuthenticate = 'www-authenticate';
 const kMsgRequestCancelled = 'Request Cancelled';
+
+enum MqttQos {
+  atMostOnce(0, "QoS 0"),
+  atLeastOnce(1, "QoS 1"),
+  exactlyOnce(2, "QoS 2");
+
+  const MqttQos(this.value, this.label);
+  final int value;
+  final String label;
+}
+
+enum MqttVersion {
+  v311("v3.1.1"),
+  v5("v5.0");
+
+  const MqttVersion(this.label);
+  final String label;
+}
