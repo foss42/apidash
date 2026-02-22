@@ -7,7 +7,11 @@ import 'routes/routes.dart';
 import 'utils/utils.dart';
 
 class DashbotTab extends ConsumerStatefulWidget {
-  const DashbotTab({super.key});
+  const DashbotTab({
+    super.key,
+    this.showTopBar = true,
+  });
+  final bool showTopBar;
 
   @override
   ConsumerState<DashbotTab> createState() => _DashbotTabState();
@@ -69,50 +73,52 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
           ),
           child: Column(
             children: [
-              Padding(
-                padding: kP8,
-                child: Align(
-                  alignment: AlignmentGeometry.centerRight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (!kIsMobile) ...[
-                        ADIconButton(
-                          icon: Icons.close_fullscreen,
-                          onPressed: () {
-                            ref
-                                .read(dashbotWindowNotifierProvider.notifier)
-                                .togglePopped();
-
-                            final newState =
-                                ref.read(dashbotWindowNotifierProvider);
-                            if (newState.isPopped) {
-                              showDashbotWindow(context, ref);
-                            }
-                          },
-                        ),
-                        ADIconButton(
-                          onPressed: () {
-                            final isActive = ref
-                                .read(dashbotWindowNotifierProvider)
-                                .isActive;
-
-                            ref
-                                .read(dashbotWindowNotifierProvider.notifier)
-                                .togglePopped();
-                            if (isActive) {
+              if (widget.showTopBar)
+                Padding(
+                  padding: kP8,
+                  child: Align(
+                    alignment: AlignmentGeometry.centerRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (!kIsMobile) ...[
+                          ADIconButton(
+                            icon: Icons.close_fullscreen,
+                            onPressed: () {
                               ref
                                   .read(dashbotWindowNotifierProvider.notifier)
-                                  .toggleActive();
-                            }
-                          },
-                          icon: Icons.close,
-                        ),
+                                  .togglePopped();
+
+                              final newState =
+                                  ref.read(dashbotWindowNotifierProvider);
+                              if (newState.isPopped) {
+                                showDashbotWindow(context, ref);
+                              }
+                            },
+                          ),
+                          ADIconButton(
+                            onPressed: () {
+                              final isActive = ref
+                                  .read(dashbotWindowNotifierProvider)
+                                  .isActive;
+
+                              ref
+                                  .read(dashbotWindowNotifierProvider.notifier)
+                                  .togglePopped();
+                              if (isActive) {
+                                ref
+                                    .read(
+                                        dashbotWindowNotifierProvider.notifier)
+                                    .toggleActive();
+                              }
+                            },
+                            icon: Icons.close,
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
-              ),
               Expanded(
                 child: Navigator(
                   key: _navKey,

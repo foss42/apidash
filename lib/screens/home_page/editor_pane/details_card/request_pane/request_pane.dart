@@ -14,7 +14,12 @@ import 'request_pane_mqtt.dart';
 import 'request_pane_rest.dart';
 
 class EditRequestPane extends ConsumerWidget {
-  const EditRequestPane({super.key});
+  const EditRequestPane({
+    super.key,
+    this.showViewCodeButton = true,
+  });
+
+  final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +30,7 @@ class EditRequestPane extends ConsumerWidget {
         ref.watch(dashbotWindowNotifierProvider.select((s) => s.isPopped));
 
     // When Dashbot window is not popped, show compact segmented layout like History page
-    if (isPopped == false && apiType == APIType.rest) {
+    if (!isPopped && !context.isMediumWindow) {
       return DefaultTabController(
         length: 3,
         child: Builder(
@@ -46,44 +51,19 @@ class EditRequestPane extends ConsumerWidget {
                 Expanded(
                   child: TabBarView(
                     controller: controller,
-                    children: const [
-                      EditRestRequestPane(),
-                      ResponsePane(),
-                      CodePane(),
-                    ],
-                  ),
-                ),
-                kVSpacer8,
-              ],
-            );
-          },
-        ),
-      );
-    }
-
-    if (isPopped == false && apiType == APIType.graphql) {
-      return DefaultTabController(
-        length: 3,
-        child: Builder(
-          builder: (context) {
-            final controller = DefaultTabController.of(context);
-            return Column(
-              children: [
-                kVSpacer10,
-                SegmentedTabbar(
-                  controller: controller,
-                  tabs: const [
-                    Tab(text: kLabelRequest),
-                    Tab(text: kLabelResponse),
-                    Tab(text: kLabelCode),
-                  ],
-                ),
-                kVSpacer10,
-                Expanded(
-                  child: TabBarView(
-                    controller: controller,
-                    children: const [
-                      EditGraphQLRequestPane(),
+                    children: [
+                      switch (apiType) {
+                        APIType.rest => EditRestRequestPane(
+                            showViewCodeButton: false,
+                          ),
+                        APIType.graphql => EditGraphQLRequestPane(
+                            showViewCodeButton: false,
+                          ),
+                        APIType.ai => EditAIRequestPane(
+                            showViewCodeButton: false,
+                          ),
+                        _ => kSizedBoxEmpty,
+                      },
                       ResponsePane(),
                       CodePane(),
                     ],
@@ -106,6 +86,15 @@ class EditRequestPane extends ConsumerWidget {
       APIType.graphql => const EditGraphQLRequestPane(),
       APIType.ai => const EditAIRequestPane(),
       APIType.mqtt => const EditMqttRequestPane(),
+      APIType.rest => EditRestRequestPane(
+          showViewCodeButton: showViewCodeButton,
+        ),
+      APIType.graphql => EditGraphQLRequestPane(
+          showViewCodeButton: showViewCodeButton,
+        ),
+      APIType.ai => EditAIRequestPane(
+          showViewCodeButton: showViewCodeButton,
+        ),
       _ => kSizedBoxEmpty,
     };
   }

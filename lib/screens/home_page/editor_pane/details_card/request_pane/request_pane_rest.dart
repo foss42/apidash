@@ -11,7 +11,12 @@ import 'request_auth.dart';
 import 'request_scripts.dart';
 
 class EditRestRequestPane extends ConsumerWidget {
-  const EditRestRequestPane({super.key});
+  const EditRestRequestPane({
+    super.key,
+    this.showViewCodeButton = true,
+  });
+
+  final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,6 +46,7 @@ class EditRestRequestPane extends ConsumerWidget {
 
     return RequestPane(
       selectedId: selectedId,
+      showViewCodeButton: showViewCodeButton,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {

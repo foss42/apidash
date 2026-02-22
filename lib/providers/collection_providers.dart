@@ -21,6 +21,22 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   }
 });
 
+final selectedSubstitutedHttpRequestModelProvider =
+    StateProvider<HttpRequestModel?>((ref) {
+  final selectedRequestModel = ref.watch(selectedRequestModelProvider);
+  final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+  final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+  if (selectedRequestModel?.httpRequestModel == null) {
+    return null;
+  } else {
+    return substituteHttpRequestModel(
+      selectedRequestModel!.httpRequestModel!,
+      envMap,
+      activeEnvId,
+    );
+  }
+});
+
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
   return ids ?? [];
@@ -252,6 +268,7 @@ class CollectionStateNotifier
       newModel = switch (apiType) {
         APIType.rest || APIType.graphql => currentModel.copyWith(
             apiType: apiType,
+            requestTabIndex: 0,
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
             httpRequestModel: const HttpRequestModel(),
@@ -259,6 +276,7 @@ class CollectionStateNotifier
             mqttRequestModel: null),
         APIType.ai => currentModel.copyWith(
             apiType: apiType,
+            requestTabIndex: 0,
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
             httpRequestModel: null,
@@ -369,8 +387,20 @@ class CollectionStateNotifier
           executionRequestModel.httpRequestModel!);
     }
 
-    // Terminal: start network log
+    // Terminal
     final terminal = ref.read(terminalStateProvider.notifier);
+
+    var valRes = getValidationResult(substitutedHttpRequestModel);
+    if (valRes != null) {
+      terminal.logSystem(
+        category: 'validation',
+        message: valRes,
+        level: TerminalLevel.error,
+      );
+      ref.read(showTerminalBadgeProvider.notifier).state = true;
+    }
+
+    // Terminal: start network log
     final logId = terminal.startNetwork(
       apiType: executionRequestModel.apiType,
       method: substitutedHttpRequestModel.method,

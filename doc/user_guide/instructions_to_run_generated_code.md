@@ -36,11 +36,148 @@ Choose your programming language/library from the list provided below to learn m
 
 ## cURL
 
-TODO
+cURL is a command-line tool for making HTTP requests. It comes pre-installed on most operating systems.
+
+### 1. Verify cURL Installation
+
+#### macOS and Linux:
+cURL is pre-installed on most macOS and Linux systems. Verify by running:
+```bash
+curl --version
+```
+
+#### Windows:
+cURL is included in Windows 10 (version 1803) and later. Verify by running in Command Prompt or PowerShell:
+```bash
+curl --version
+```
+
+If cURL is not installed on Windows, you can:
+- Download it from [curl.se/windows](https://curl.se/windows/)
+- Or install via package managers like [Chocolatey](https://chocolatey.org/):
+  ```bash
+  choco install curl
+  ```
+
+### 2. Execute the Generated Code
+
+Once you have cURL installed, follow these steps to execute the generated code:
+
+1. **Copy the generated cURL command** from API Dash.
+2. **Open a terminal** (macOS/Linux) or **Command Prompt/PowerShell** (Windows).
+3. **Paste and run the command** directly in the terminal.
+
+The API response will be displayed in the terminal output.
+
+### 3. Tips for Using cURL
+
+- **Save output to a file**: Add `-o filename.txt` to save the response
+  ```bash
+  curl https://api.example.com -o response.txt
+  ```
+
+- **View response headers**: Add `-i` or `--include` flag
+  ```bash
+  curl -i https://api.example.com
+  ```
+
+- **Follow redirects**: Add `-L` or `--location` flag
+  ```bash
+  curl -L https://api.example.com
+  ```
+
+- **Verbose output** (for debugging): Add `-v` or `--verbose` flag
+  ```bash
+  curl -v https://api.example.com
+  ```
 
 ## C (libcurl)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in C (using `libcurl`) for macOS, Windows, and Linux:
+
+### 1. Install C Compiler and libcurl
+
+#### macOS:
+1. **Install Xcode Command Line Tools** (includes GCC/Clang compiler):
+   ```bash
+   xcode-select --install
+   ```
+
+2. **Install libcurl** (usually pre-installed on macOS):
+   - Verify installation:
+     ```bash
+     curl-config --version
+     ```
+   - If not installed, use Homebrew:
+     ```bash
+     brew install curl
+     ```
+
+#### Windows:
+1. **Install a C Compiler**:
+   - Download and install [MinGW-w64](https://www.mingw-w64.org/) or [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
+   - Or install Visual Studio with C++ development tools
+
+2. **Install libcurl**:
+   - Download pre-built binaries from [curl.se/windows](https://curl.se/windows/)
+   - Or use [vcpkg](https://github.com/microsoft/vcpkg):
+     ```bash
+     vcpkg install curl
+     ```
+
+#### Linux:
+1. **Install GCC compiler and libcurl development files**:
+   - **Ubuntu/Debian**:
+     ```bash
+     sudo apt update
+     sudo apt install build-essential libcurl4-openssl-dev
+     ```
+   - **Fedora/CentOS**:
+     ```bash
+     sudo dnf install gcc libcurl-devel
+     ```
+   - **Arch Linux**:
+     ```bash
+     sudo pacman -S gcc curl
+     ```
+
+### 2. Execute the Generated Code
+
+Once you have GCC and libcurl installed, follow these steps to execute the generated code:
+
+1. **Open a text editor** and create a new file (e.g., `api_test.c`).
+2. **Copy the generated code** from API Dash and paste it into the file.
+3. **Save the file**.
+
+### 3. Compile and Run
+
+#### macOS and Linux:
+1. Open the terminal and navigate to the directory containing your C file.
+2. Compile the code with the following command:
+   ```bash
+   gcc api_test.c -o api_test -lcurl
+   ```
+3. Run the compiled program:
+   ```bash
+   ./api_test
+   ```
+
+#### Windows (MinGW):
+1. Open Command Prompt and navigate to the directory containing your C file.
+2. Compile the code:
+   ```bash
+   gcc api_test.c -o api_test.exe -lcurl
+   ```
+3. Run the program:
+   ```bash
+   api_test.exe
+   ```
+
+#### Windows (Visual Studio):
+1. Create a new C++ Console Application project.
+2. Add libcurl include and library paths to your project settings.
+3. Paste the generated code into your source file.
+4. Build and run the project (F5).
 
 ## C# (HttpClient)
 
@@ -690,7 +827,77 @@ After setting up Java and adding the `Unirest` library, follow these steps to ex
 
 ## Julia (HTTP)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in **Julia (using `HTTP.jl`)** for macOS, Windows, and Linux:
+
+### 1. Install Julia
+
+#### macOS and Windows:
+1. Visit the official **[Julia Downloads Page](https://julialang.org/downloads/)**.
+2. Download the installer for your operating system.
+3. Run the installer and follow the installation instructions.
+
+#### Linux:
+1. Visit the **[Julia Downloads Page](https://julialang.org/downloads/)** or use your package manager:
+   - **Ubuntu/Debian**:
+     ```bash
+     sudo apt update
+     sudo apt install julia
+     ```
+   - **Fedora**:
+     ```bash
+     sudo dnf install julia
+     ```
+   - **Arch Linux**:
+     ```bash
+     sudo pacman -S julia
+     ```
+
+2. Verify the installation:
+   ```bash
+   julia --version
+   ```
+
+### 2. Install the HTTP.jl Package
+
+Julia uses a built-in package manager. To install the `HTTP` package:
+
+1. **Start Julia REPL** by typing `julia` in your terminal.
+2. **Enter package mode** by pressing `]` (the prompt will change from `julia>` to `pkg>`).
+3. **Install HTTP.jl**:
+   ```julia
+   add HTTP
+   ```
+4. **Exit package mode** by pressing backspace or Ctrl+C.
+5. **Exit Julia REPL** by typing `exit()` or pressing Ctrl+D.
+
+Alternatively, you can install it from a script:
+```julia
+using Pkg
+Pkg.add("HTTP")
+```
+
+### 3. Execute the Generated Code
+
+Once you have Julia and the `HTTP` package installed, follow these steps to execute the generated code:
+
+1. **Create a new Julia file**: Save the generated code into a file with a `.jl` extension, such as `api_test.jl`.
+2. **Open a terminal** and navigate to the directory containing the file.
+3. **Run the Julia script**:
+   ```bash
+   julia api_test.jl
+   ```
+
+#### Alternative: Using Julia REPL
+1. Start Julia REPL by typing `julia` in the terminal.
+2. Include and run the file:
+   ```julia
+   include("api_test.jl")
+   ```
+
+#### Using Julia in VS Code
+1. Install the **Julia extension** for Visual Studio Code.
+2. Open your `.jl` file.
+3. Press `Ctrl+Enter` (or `Cmd+Enter` on macOS) to run the code in the integrated Julia REPL.
 
 ## Kotlin (okhttp3)
 
@@ -826,11 +1033,154 @@ Once you have everything needed installed, follow these steps to execute the gen
 
 ## PHP (guzzle)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in PHP (using `Guzzle`) for macOS, Windows, and Linux:
+
+### 1. Install and Set Up PHP
+
+Before starting, you need to install PHP on your system. Follow the instructions from the [PHP (curl)](#php-curl) section above to install PHP for your operating system.
+
+Verify PHP installation:
+```bash
+php --version
+```
+
+### 2. Install Composer
+
+Composer is a dependency manager for PHP. Guzzle is installed via Composer.
+
+#### macOS and Linux:
+1. Download and install Composer:
+   ```bash
+   curl -sS https://getcomposer.org/installer | php
+   sudo mv composer.phar /usr/local/bin/composer
+   ```
+
+2. Verify installation:
+   ```bash
+   composer --version
+   ```
+
+#### Windows:
+1. Download the [Composer Windows Installer](https://getcomposer.org/Composer-Setup.exe).
+2. Run the installer and follow the setup wizard.
+3. Verify installation in Command Prompt:
+   ```bash
+   composer --version
+   ```
+
+### 3. Install Guzzle
+
+Navigate to your project directory and install Guzzle using Composer:
+
+```bash
+composer require guzzlehttp/guzzle
+```
+
+This will create a `composer.json` file and a `vendor` directory with Guzzle installed.
+
+### 4. Execute the Generated Code
+
+Once you have PHP, Composer, and Guzzle installed, follow these steps to execute the generated code:
+
+1. **Create a PHP file** (e.g., `api_test.php`).
+2. **Copy the generated code** from API Dash and paste it into the file.
+3. **Add the Composer autoloader** at the top of your PHP file if not already present:
+   ```php
+   <?php
+   require 'vendor/autoload.php';
+
+   // Your generated API Dash code here
+   ```
+4. **Save the file**.
+
+### 5. Run the Code
+
+#### Using the CLI:
+1. Open the terminal at the project directory.
+2. Run the PHP file:
+   ```bash
+   php api_test.php
+   ```
+3. The terminal will display the API response.
+
+#### Using an IDE (e.g., VS Code, PhpStorm):
+1. Open the project in your IDE.
+2. Ensure the PHP interpreter is configured.
+3. Run the file using the IDE's run command (e.g., press F5 or use the Run button).
+4. The output will be displayed in the IDE's terminal/console.
 
 ## PHP (HTTPlug)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in PHP (using `HTTPlug`) for macOS, Windows, and Linux:
+
+### 1. Install and Set Up PHP
+
+Before starting, you need to install PHP on your system. Follow the instructions from the [PHP (curl)](#php-curl) section above to install PHP for your operating system.
+
+Verify PHP installation:
+```bash
+php --version
+```
+
+### 2. Install Composer
+
+Composer is a dependency manager for PHP. HTTPlug is installed via Composer.
+
+If you don't have Composer installed, follow the instructions in the [PHP (guzzle)](#2-install-composer) section above.
+
+### 3. Install HTTPlug
+
+HTTPlug is a HTTP client abstraction library. You need to install both HTTPlug and an HTTP client adapter.
+
+Navigate to your project directory and install HTTPlug with a client implementation (e.g., Guzzle adapter):
+
+```bash
+composer require php-http/httplug
+composer require php-http/guzzle7-adapter
+composer require guzzlehttp/psr7
+```
+
+Alternatively, you can use cURL adapter:
+```bash
+composer require php-http/httplug
+composer require php-http/curl-client
+composer require guzzlehttp/psr7
+```
+
+### 4. Execute the Generated Code
+
+Once you have PHP, Composer, and HTTPlug installed, follow these steps to execute the generated code:
+
+1. **Create a PHP file** (e.g., `api_test.php`).
+2. **Copy the generated code** from API Dash and paste it into the file.
+3. **Add the Composer autoloader** at the top of your PHP file if not already present:
+   ```php
+   <?php
+   require 'vendor/autoload.php';
+
+   // Your generated API Dash code here
+   ```
+4. **Save the file**.
+
+### 5. Run the Code
+
+#### Using the CLI:
+1. Open the terminal at the project directory.
+2. Run the PHP file:
+   ```bash
+   php api_test.php
+   ```
+3. The terminal will display the API response.
+
+#### Using an IDE (e.g., VS Code, PhpStorm):
+1. Open the project in your IDE.
+2. Ensure the PHP interpreter is configured.
+3. Run the file using the IDE's run command (e.g., press F5 or use the Run button).
+4. The output will be displayed in the IDE's terminal/console.
+
+### 6. Additional Information
+
+HTTPlug is a standardized HTTP client interface that allows you to write reusable code independent of the HTTP client implementation. You can switch between different HTTP clients (Guzzle, cURL, Socket, etc.) without changing your application code.
 
 ## Python (requests)
 
@@ -876,6 +1226,33 @@ pip3 install requests
 
 #### Windows:
 Open Command Prompt (or PowerShell) and type the following command to install the `requests` library using `pip`:
+
+```bash
+pip install requests
+```
+  
+💡 **[Optional] Recommended: Use a Virtual Environment**
+
+It is recommended to run API Dash generated Python code inside a virtual environment 
+to avoid dependency conflicts with other Python projects.
+
+#### Create and activate a virtual environment:
+
+**macOS / Linux**
+
+```bash
+python3 -m venv myenv
+source myenv/bin/activate
+```
+
+**Windows**
+
+```bash
+python -m venv myenv
+myenv\Scripts\activate
+```
+
+After activation, install dependencies:
 
 ```bash
 pip install requests
@@ -934,15 +1311,225 @@ Check out the instructions [here](#3-execute-the-generated-code) for detailed st
 
 ## Ruby (faraday)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in **Ruby (using `Faraday`)** for macOS, Windows, and Linux:
+
+### 1. Install Ruby
+
+#### macOS:
+Ruby comes pre-installed on macOS. Verify by running:
+```bash
+ruby --version
+```
+
+For the latest version, you can use Homebrew:
+```bash
+brew install ruby
+```
+
+#### Windows:
+1. Download and install Ruby from [RubyInstaller](https://rubyinstaller.org/).
+2. During installation, check "Add Ruby executables to your PATH".
+3. Verify installation in Command Prompt:
+   ```bash
+   ruby --version
+   ```
+
+#### Linux:
+- **Ubuntu/Debian**:
+  ```bash
+  sudo apt update
+  sudo apt install ruby-full
+  ```
+- **Fedora/CentOS**:
+  ```bash
+  sudo dnf install ruby
+  ```
+- **Arch Linux**:
+  ```bash
+  sudo pacman -S ruby
+  ```
+
+Verify installation:
+```bash
+ruby --version
+```
+
+### 2. Install Faraday Gem
+
+Faraday is installed using Ruby's package manager, `gem`.
+
+Install Faraday:
+```bash
+gem install faraday
+```
+
+For projects using Bundler, add to your `Gemfile`:
+```ruby
+gem 'faraday'
+```
+
+Then run:
+```bash
+bundle install
+```
+
+### 3. Execute the Generated Code
+
+Once you have Ruby and Faraday installed, follow these steps to execute the generated code:
+
+1. **Create a Ruby file**: Save the generated code into a file with a `.rb` extension, such as `api_test.rb`.
+2. **Open a terminal** and navigate to the directory containing the file.
+3. **Run the Ruby script**:
+   ```bash
+   ruby api_test.rb
+   ```
+
+The API response will be displayed in the terminal.
+
+### 4. Using an IDE
+
+#### VS Code:
+1. Install the Ruby extension for VS Code.
+2. Open your `.rb` file.
+3. Run the file using the integrated terminal or the Run button.
+
+#### RubyMine:
+1. Open the project in RubyMine.
+2. Right-click the Ruby file and select "Run".
+3. The output will appear in the Run window.
 
 ## Ruby (net/http)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in **Ruby (using `net/http`)** for macOS, Windows, and Linux:
+
+### 1. Install Ruby
+
+Follow the instructions from the [Ruby (faraday)](#1-install-ruby) section above to install Ruby for your operating system.
+
+Verify Ruby installation:
+```bash
+ruby --version
+```
+
+### 2. `net/http` is a Built-in Library
+
+`net/http` is part of Ruby's standard library, so no additional installation is required. You can use it directly in your Ruby scripts.
+
+### 3. Execute the Generated Code
+
+Once you have Ruby installed, follow these steps to execute the generated code:
+
+1. **Create a Ruby file**: Save the generated code into a file with a `.rb` extension, such as `api_test.rb`.
+2. **Open a terminal** and navigate to the directory containing the file.
+3. **Run the Ruby script**:
+   ```bash
+   ruby api_test.rb
+   ```
+
+The API response will be displayed in the terminal.
+
+### 4. Using an IDE
+
+#### VS Code:
+1. Install the Ruby extension for VS Code.
+2. Open your `.rb` file.
+3. Run the file using the integrated terminal or by pressing the Run button.
+
+#### RubyMine:
+1. Open the project in RubyMine.
+2. Right-click the Ruby file and select "Run".
+3. The output will appear in the Run window.
+
+### 5. Additional Tips
+
+- **View detailed output**: You can add debugging to see request/response details by enabling debug mode:
+  ```ruby
+  require 'net/http'
+  Net::HTTP.set_debug_output($stdout)
+  ```
+
+- **Handle HTTPS**: For HTTPS requests, you may need to configure SSL:
+  ```ruby
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+  ```
 
 ## Rust (hyper)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in **Rust (using `hyper`)** for macOS, Windows, and Linux:
+
+### 1. Download and Install Rust
+
+#### Windows
+1. Download and install `rustup` from [Rustup Official Site](https://rustup.rs).
+2. Run the installer (`rustup-init.exe`) and follow the instructions.
+3. Restart your terminal (Command Prompt or PowerShell).
+4. Verify the installation:
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+#### macOS/Linux
+1. Run the following in your terminal:
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+   Then follow the on-screen instructions.
+
+2. Restart the terminal and verify:
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+> Note: If you prefer not to use rustup for some reason, please see the Other [Rust Installation Methods](https://forge.rust-lang.org/infra/other-installation-methods.html) page for more options.
+
+### 2. Set Up a New Rust Project
+
+1. Open a terminal and create a new Rust project:
+   ```sh
+   cargo new hyper-demo
+   ```
+2. Navigate into the project directory:
+   ```sh
+   cd hyper-demo
+   ```
+
+   Or open this project directory in your preferred code editor.
+
+### 3. Add Necessary Dependencies
+
+Open the `Cargo.toml` file and add the following dependencies under `[dependencies]`:
+
+```toml
+[dependencies]
+hyper = { version = "1.1", features = ["full"] }
+hyper-util = { version = "0.1", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
+http-body-util = "0.1"
+```
+
+Then run the following command to fetch dependencies:
+```sh
+cargo build
+```
+
+### 4. Execute Code
+
+1. Copy the generated code from API Dash.
+2. Paste the code into your project's `src/main.rs` file.
+
+Run the generated code:
+```sh
+cargo run
+```
+
+### 5. Additional Notes
+
+- Hyper is an asynchronous HTTP library, so it requires an async runtime like Tokio.
+- Make sure the generated code includes the `#[tokio::main]` attribute on the main function.
+- For more advanced usage, refer to the [Hyper documentation](https://docs.rs/hyper/).
 
 ## Rust (reqwest)
 
@@ -1072,7 +1659,86 @@ cargo run
 
 ## Rust (Actix Client)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in **Rust (using `Actix Client`)** for macOS, Windows, and Linux:
+
+### 1. Download and Install Rust
+
+#### Windows
+1. Download and install `rustup` from [Rustup Official Site](https://rustup.rs).
+2. Run the installer (`rustup-init.exe`) and follow the instructions.
+3. Restart your terminal (Command Prompt or PowerShell).
+4. Verify the installation:
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+#### macOS/Linux
+1. Run the following in your terminal:
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+   Then follow the on-screen instructions.
+
+2. Restart the terminal and verify:
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+> Note: If you prefer not to use rustup for some reason, please see the Other [Rust Installation Methods](https://forge.rust-lang.org/infra/other-installation-methods.html) page for more options.
+
+### 2. Set Up a New Rust Project
+
+1. Open a terminal and create a new Rust project:
+   ```sh
+   cargo new actix-client-demo
+   ```
+2. Navigate into the project directory:
+   ```sh
+   cd actix-client-demo
+   ```
+
+   Or open this project directory in your preferred code editor.
+
+### 3. Add Necessary Dependencies
+
+Add the Actix Web client dependencies to your project:
+
+```sh
+cargo add awc
+cargo add actix-rt
+```
+
+Alternatively, you can manually edit `Cargo.toml` and add:
+
+```toml
+[dependencies]
+awc = "3.5"
+actix-rt = "2.10"
+```
+
+Run the following command to fetch dependencies:
+```sh
+cargo build
+```
+
+### 4. Execute Code
+
+1. Copy the generated code from API Dash.
+2. Paste the code into your project's `src/main.rs` file.
+
+Run the generated code:
+```sh
+cargo run
+```
+
+### 5. Additional Notes
+
+- **awc** (Actix Web Client) is the HTTP client for the Actix ecosystem.
+- It requires the Actix runtime (`actix-rt`) to execute asynchronous operations.
+- Make sure your `main` function is annotated with `#[actix_rt::main]` for async support.
+- For more information, refer to the [Actix Web Client documentation](https://docs.rs/awc/).
 
 ## Swift (URLSession)
 

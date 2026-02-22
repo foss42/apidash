@@ -18,7 +18,7 @@ class EnvironmentEditor extends ConsumerWidget {
     return Padding(
       padding: context.isMediumWindow
           ? kPb10
-          : (kIsMacOS || kIsWindows)
+          : kIsMacOS
               ? kPt28o8
               : kP8,
       child: Column(
