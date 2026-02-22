@@ -1,11 +1,9 @@
 ### About
 
-1. 
-**Full Name** - Shreyansh Jain 
+1.  **Full Name** - Shreyansh Jain 
 
 
-2. 
-**Contact info** - shreyansh_jain2005@yahoo.com 
+2.  **Contact info** - shreyansh_jain2005@yahoo.com 
 
 
 3. **Discord handle** - shreyanshjain05
@@ -25,20 +23,16 @@
 
 ### University Info
 
-1. 
-**University name** - SRM Institute of Science and Technology 
+1. **University name** - SRM Institute of Science and Technology 
 
 
-2. 
-**Program you are enrolled in** - B.Tech in Computer Science and Engineering 
+2. **Program you are enrolled in** - B.Tech in Computer Science and Engineering 
 
 
-3. 
-**Year** - 3rd year 
+3. **Year** - 3rd year 
 
 
-4. 
-**Expected graduation date** - May 2027 
+4. **Expected graduation date** - May 2027 
 
 
 
