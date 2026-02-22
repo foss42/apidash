@@ -217,5 +217,6 @@ class TerminalController extends StateNotifier<TerminalState> {
         final s = e.system!;
         return s.message;
     }
+    return null;
   }
 }

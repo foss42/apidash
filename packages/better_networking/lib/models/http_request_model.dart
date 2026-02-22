@@ -31,15 +31,18 @@ class HttpRequestModel with _$HttpRequestModel {
   factory HttpRequestModel.fromJson(Map<String, Object?> json) =>
       _$HttpRequestModelFromJson(json);
 
-  Map<String, String> get headersMap => rowsToMap(headers) ?? {};
-  Map<String, String> get paramsMap => rowsToMap(params) ?? {};
+  // FIX: Updated return types to Map<String, List<String>> to match the new rowsToMap
+  Map<String, List<String>> get headersMap => rowsToMap(headers) ?? {};
+  Map<String, List<String>> get paramsMap => rowsToMap(params) ?? {};
+  
   List<NameValueModel>? get enabledHeaders =>
       getEnabledRows(headers, isHeaderEnabledList);
   List<NameValueModel>? get enabledParams =>
       getEnabledRows(params, isParamEnabledList);
 
-  Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
-  Map<String, String> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
+  // FIX: Updated return types to Map<String, List<String>>
+  Map<String, List<String>> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
+  Map<String, List<String>> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;

@@ -20,6 +20,7 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.showUrlPreview = true, // Added field
   });
 
   final bool isDark;
@@ -36,6 +37,7 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
+  final bool showUrlPreview; // Added field
 
   SettingsModel copyWith({
     bool? isDark,
@@ -52,6 +54,7 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    bool? showUrlPreview, // Added parameter
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -70,6 +73,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+      showUrlPreview: showUrlPreview ?? this.showUrlPreview, // Updated
     );
   }
 
@@ -91,6 +95,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      showUrlPreview: showUrlPreview,
     );
   }
 
@@ -149,6 +154,10 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+    
+    // New: Parse showUrlPreview
+    final showUrlPreview = data["showUrlPreview"] as bool? ?? true;
+
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -167,6 +176,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      showUrlPreview: showUrlPreview,
     );
   }
 
@@ -188,6 +198,7 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "showUrlPreview": showUrlPreview, // Added
     };
   }
 
@@ -214,7 +225,8 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
-        mapEquals(other.defaultAIModel, defaultAIModel);
+        mapEquals(other.defaultAIModel, defaultAIModel) &&
+        other.showUrlPreview == showUrlPreview; // Added
   }
 
   @override
@@ -235,6 +247,7 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      showUrlPreview, // Added
     );
   }
 }

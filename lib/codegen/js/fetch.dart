@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 import '../../utils/utils.dart';
 
@@ -100,7 +101,15 @@ fetch(url, options)
           if (i["name"] == kHeaderContentType && requestModel.hasFormData) {
             continue;
           }
-          m[i["name"]] = i["value"];
+          if (m.containsKey(i["name"])) {
+            String separator = ", ";
+            if (i["name"].toLowerCase() == HttpHeaders.cookieHeader) {
+              separator = "; ";
+            }
+            m[i["name"]] = "${m[i["name"]]}$separator${i["value"]}";
+          } else {
+            m[i["name"]] = i["value"];
+          }
         }
         if (m.isNotEmpty) {
           result += templateHeader.render({

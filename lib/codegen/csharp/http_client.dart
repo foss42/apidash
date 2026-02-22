@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 
 class CSharpHttpClientCodeGen {
@@ -100,7 +101,15 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       }));
 
       // Set request headers
-      var headers = requestModel.enabledHeadersMap;
+      var headers = requestModel.enabledHeadersMap.map(
+        (key, value) {
+          String separator = ", ";
+          if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+            separator = "; ";
+          }
+          return MapEntry(key, value.join(separator));
+        },
+      );
       if (headers.isNotEmpty) {
         result.writeln(
             jj.Template(kTemplateHeaders).render({"headers": headers}));

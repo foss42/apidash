@@ -43,7 +43,7 @@ class PromptBuilder {
     final http = req?.httpRequestModel;
     if (req == null || http == null) return null;
     final headers = http.headersMap.entries
-        .map((e) => '"${e.key}": "${e.value}"')
+        .map((e) => '"${e.key}": "${e.value.join(', ')}"')
         .join(', ');
     return '''<request_context>
   Request Name: ${req.name}
@@ -74,7 +74,7 @@ class PromptBuilder {
           responseStatus: req.responseStatus,
           bodyContentType: http?.bodyContentType.name,
           message: resp?.body,
-          headersMap: http?.headersMap,
+          headersMap: http?.headersMap.map((k, v) => MapEntry(k, v.join(', '))),
           body: http?.body,
         );
       case ChatMessageType.debugError:
@@ -84,14 +84,14 @@ class PromptBuilder {
           responseStatus: req.responseStatus,
           bodyContentType: http?.bodyContentType.name,
           message: resp?.body,
-          headersMap: http?.headersMap,
+          headersMap: http?.headersMap.map((k, v) => MapEntry(k, v.join(', '))),
           body: http?.body,
         );
       case ChatMessageType.generateTest:
         return prompts.generateTestCasesPrompt(
           url: http?.url,
           method: http?.method.name.toUpperCase(),
-          headersMap: http?.headersMap,
+          headersMap: http?.headersMap.map((k, v) => MapEntry(k, v.join(', '))),
           body: http?.body,
         );
       case ChatMessageType.generateDoc:
@@ -101,7 +101,7 @@ class PromptBuilder {
           responseStatus: req.responseStatus,
           bodyContentType: http?.bodyContentType.name,
           message: resp?.body,
-          headersMap: http?.headersMap,
+          headersMap: http?.headersMap.map((k, v) => MapEntry(k, v.join(', '))),
           body: http?.body,
         );
       case ChatMessageType.generateCode:
@@ -109,20 +109,22 @@ class PromptBuilder {
           return prompts.codeGenerationIntroPrompt(
             url: http?.url,
             method: http?.method.name.toUpperCase(),
-            headersMap: http?.headersMap,
+            headersMap:
+                http?.headersMap.map((k, v) => MapEntry(k, v.join(', '))),
             body: http?.body,
             bodyContentType: http?.bodyContentType.name,
-            paramsMap: http?.paramsMap,
+            paramsMap: http?.paramsMap.map((k, v) => MapEntry(k, v.join(', '))),
             authType: http?.authModel?.type.name,
           );
         } else {
           return prompts.generateCodePrompt(
             url: http?.url,
             method: http?.method.name.toUpperCase(),
-            headersMap: http?.headersMap,
+            headersMap:
+                http?.headersMap.map((k, v) => MapEntry(k, v.join(', '))),
             body: http?.body,
             bodyContentType: http?.bodyContentType.name,
-            paramsMap: http?.paramsMap,
+            paramsMap: http?.paramsMap.map((k, v) => MapEntry(k, v.join(', '))),
             authType: http?.authModel?.type.name,
             language: overrideLanguage,
           );
