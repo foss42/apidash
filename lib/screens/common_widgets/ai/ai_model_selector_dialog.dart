@@ -1,4 +1,5 @@
 // import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -7,7 +8,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AIModelSelectorDialog extends ConsumerStatefulWidget {
   final AIRequestModel? aiRequestModel;
-  const AIModelSelectorDialog({super.key, this.aiRequestModel});
+  const AIModelSelectorDialog({
+    super.key,
+    this.aiRequestModel,
+  });
 
   @override
   ConsumerState<AIModelSelectorDialog> createState() =>
@@ -33,6 +37,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   Widget build(BuildContext context) {
     // ref.watch(aiApiCredentialProvider);
     final width = MediaQuery.of(context).size.width * 0.8;
+    final updateModelButton = ElevatedButton(
+      onPressed: null,
+      // TODO: Add update model logic
+      //() async {
+      // await LLMManager.fetchAvailableLLMs();
+      // setState(() {});
+      //},
+      child: Text(kLabelUpdateModels),
+    );
+
     return FutureBuilder(
       future: aM,
       builder: (context, snapshot) {
@@ -48,19 +62,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ElevatedButton(
-                    onPressed: null,
-                    // TODO: Add update model logic
-                    //() async {
-                    // await LLMManager.fetchAvailableLLMs();
-                    // setState(() {});
-                    //},
-                    child: Text('Update Models'),
-                  ),
+                  updateModelButton,
                   kVSpacer10,
                   Row(
                     children: [
-                      Text('Select Model Provider'),
+                      Text(kMsgSelectModelProvider),
                       kHSpacer20,
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
@@ -97,15 +103,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(
-                          onPressed: null,
-                          // TODO: Add update model logic
-                          //() async {
-                          // await LLMManager.fetchAvailableLLMs();
-                          // setState(() {});
-                          //},
-                          child: Text('Update Models'),
-                        ),
+                        updateModelButton,
                         SizedBox(height: 20),
                         ...data.modelProviders.map(
                           (x) => ListTile(
@@ -145,7 +143,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
 
   _buildModelSelector(AIModelProvider? aiModelProvider) {
     if (aiModelProvider == null) {
-      return Center(child: Text("Please select an AI API Provider"));
+      return Center(child: Text(kMsgSelectAIProvider));
     }
     // final currentCredential =
     //     ref.watch(aiApiCredentialProvider)[aiModelProvider.providerId!] ?? "";
@@ -159,7 +157,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         ),
         SizedBox(height: 20),
         if (aiModelProvider.providerId != ModelAPIProvider.ollama) ...[
-          Text('API Key / Credential'),
+          Text(kLabelAPIKey),
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
@@ -176,7 +174,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           ),
           kVSpacer10,
         ],
-        Text('Endpoint'),
+        Text(kLabelEndpoint),
         kVSpacer8,
         BoundedTextField(
           key: ValueKey(aiModelProvider.providerName ?? ""),
@@ -191,7 +189,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Models'),
+            Text(kLabelModels),
+            // TODO: Adding a new model
             // IconButton(
             //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
           ],
@@ -242,7 +241,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             onPressed: () {
               Navigator.of(context).pop(newAIRequestModel);
             },
-            child: Text('Save'),
+            child: Text(kLabelSave),
           ),
         ),
       ],
