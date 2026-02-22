@@ -153,13 +153,33 @@ int main() {
               requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n');
         }
         result += templateRawBody.render({"body": body});
-      } else if (requestModel.hasFormData) {
+      } else if (requestModel.hasFormDataContentType &&
+          requestModel.formDataList.isNotEmpty) {
         hasBody = true;
         var templateFormData = jj.Template(kTemplateFormData);
         result += templateFormData.render({
           "hasFileInFormData": requestModel.hasFileInFormData,
           "fields": requestModel.formDataMapList,
         });
+      } else if (requestModel.hasUrlencodedContentType &&
+          requestModel.formDataList.isNotEmpty) {
+        hasBody = true;
+        // Build URL-encoded body string for CURLOPT_POSTFIELDS
+        final encoded = requestModel.formDataList
+            .where((f) => f.type == FormDataType.text)
+            .map((f) =>
+                '${Uri.encodeQueryComponent(f.name)}=${Uri.encodeQueryComponent(f.value)}')
+            .join('&');
+        final escapedBody = encoded.replaceAll('"', '\\"');
+        var templateRawBody = jj.Template(kTemplateBody);
+        result += templateRawBody.render({"body": escapedBody});
+        // Add content-type header if not already set
+        if (!requestModel.hasContentTypeHeader) {
+          var headers = requestModel.enabledHeadersMap;
+          headers[kHeaderContentType] = ContentType.urlencoded.header;
+          var templateHeader = jj.Template(kTemplateHeader);
+          result += templateHeader.render({"headers": headers});
+        }
       }
       if (requestModel.hasTextData) {}
       if (uri.hasQuery) {
@@ -175,7 +195,8 @@ int main() {
           requestModel.hasJsonData;
       var templateEnd = jj.Template(kTemplateEnd);
       result += templateEnd.render({
-        "formdata": requestModel.hasFormData,
+        "formdata": requestModel.hasFormDataContentType &&
+            requestModel.formDataList.isNotEmpty,
         "headers": allow,
       });
 

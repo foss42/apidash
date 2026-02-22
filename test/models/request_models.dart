@@ -143,6 +143,13 @@ const requestModelPost6 = RequestModel(
   httpRequestModel: httpRequestModelPost6,
 );
 
+/// POST request model with urlencoded body (text-only fields)
+const requestModelPost4Urlencoded = RequestModel(
+  id: 'post4u',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelPost4Urlencoded,
+);
+
 /// POST request model with multipart body and requestBody (the requestBody shouldn't be in codegen)
 const requestModelPost7 = RequestModel(
   id: 'post7',

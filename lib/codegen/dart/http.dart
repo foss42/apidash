@@ -48,14 +48,32 @@ class DartHttpCodeGen {
         declareVar('uri').assign(refer('Uri.parse').call([literalString(url)]));
 
     Expression? dataExp;
+    // For urlencoded, we'll build a map body directly — http package encodes it
+    Expression? urlencodedBodyExp;
     if (kMethodsWithBody.contains(method) &&
         (body?.isNotEmpty ?? false) &&
-        contentType != ContentType.formdata) {
+        contentType != ContentType.formdata &&
+        contentType != ContentType.urlencoded) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
       if (!hasContentTypeHeader) {
         headers.putIfAbsent(
             HttpHeaders.contentTypeHeader, () => contentType.header);
+      }
+    }
+    if (contentType == ContentType.urlencoded && formData.isNotEmpty) {
+      // Build a Map<String, String> for url-encoded fields
+      final encodedMap = <String, String>{};
+      for (final field in formData) {
+        if (field['type'] == 'text') {
+          encodedMap['${field['name']}'] = '${field['value']}';
+        }
+      }
+      urlencodedBodyExp = declareVar('body', type: refer('Map<String, String>'))
+          .assign(literalMap(encodedMap.map((k, v) => MapEntry(k, v))));
+      if (!hasContentTypeHeader) {
+        headers.putIfAbsent(
+            HttpHeaders.contentTypeHeader, () => ContentType.urlencoded.header);
       }
     }
 
@@ -166,6 +184,10 @@ class DartHttpCodeGen {
           if (uriReassignExps != null) {
             b.statements.addAll(uriReassignExps.map((e) => e.statement));
           }
+          if (urlencodedBodyExp != null) {
+            b.statements.add(const Code('\n'));
+            b.statements.add(urlencodedBodyExp.statement);
+          }
           if (dataExp != null) {
             b.statements.add(const Code('\n'));
             b.statements.add(dataExp.statement);
@@ -188,6 +210,24 @@ class DartHttpCodeGen {
             }
             b.statements.add(multiPartRequestSend.statement);
             b.statements.add(multiPartResponseBody.statement);
+            b.statements.add(declareVar('statusCode', type: refer('int'))
+                .assign(refer('response').property('statusCode'))
+                .statement);
+            b.statements.add(const Code('\n'));
+          } else if (urlencodedBodyExp != null) {
+            // urlencoded — use regular http call with Map body
+            final urlencodedResponseExp =
+                declareFinal('response').assign(InvokeExpression.newOf(
+              refer('http.${method.name}'),
+              [refer('uri')],
+              {
+                if (headerExp != null) 'headers': refer('headers'),
+                'body': refer('body'),
+              },
+              [],
+            ).awaited);
+            b.statements.add(urlencodedResponseExp.statement);
+            b.statements.add(const Code('\n'));
             b.statements.add(declareVar('statusCode', type: refer('int'))
                 .assign(refer('response').property('statusCode'))
                 .statement);
@@ -227,7 +267,10 @@ class DartHttpCodeGen {
 
     return DartFormatter(
       languageVersion: Version(3, 2, 4),
-      pageWidth: contentType == ContentType.formdata ? 70 : 160,
+      pageWidth: (contentType == ContentType.formdata ||
+              contentType == ContentType.urlencoded)
+          ? 70
+          : 160,
     ).format(sbf.toString());
   }
 }

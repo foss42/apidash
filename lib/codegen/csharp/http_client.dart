@@ -81,9 +81,11 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       StringBuffer result = StringBuffer();
 
       // Include necessary C# namespace
-      String formdataImport = requestModel.hasFormData
-          ? "multipart" //(requestModel.hasFileInFormData ? "multipart" : "urlencoded")
-          : "nodata";
+      String formdataImport = requestModel.hasFormDataContentType
+          ? "multipart"
+          : requestModel.hasUrlencodedContentType
+              ? "urlencoded"
+              : "nodata";
       result.writeln(jj.Template(kTemplateNamespaces)
           .render({"formdata": formdataImport}));
 
@@ -119,11 +121,16 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
             "body": requestBody,
             "mediaType": requestModel.bodyContentType.header,
           }));
-        } else if (requestModel.hasFormData) {
-          // final String renderingTemplate = requestModel.hasFileInFormData
-          //     ? kTemplateMultipartFormDataContent
-          //     : kTemplateFormUrlEncodedContent;
-
+        } else if (requestModel.hasUrlencodedContentType &&
+            requestModel.formDataList.isNotEmpty) {
+          // URL-encoded: use FormUrlEncodedContent
+          result.writeln(jj.Template(kTemplateFormUrlEncodedContent).render({
+            "formdata": requestModel.formDataMapList
+                .where((m) => m['type'] == 'text')
+                .toList(),
+          }));
+        } else if (requestModel.hasFormDataContentType) {
+          // Multipart: use MultipartFormDataContent
           final String renderingTemplate = kTemplateMultipartFormDataContent;
           result.writeln(jj.Template(renderingTemplate).render({
             "formdata": requestModel.formDataMapList,
