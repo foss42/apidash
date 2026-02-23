@@ -28,14 +28,8 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
   late Future<void> _initializeVideoPlayerFuture;
   late File _tempVideoFile;
   bool _showControls = false;
-  // Whether the controller is ready for playback operations.
   bool _isControllerReady = false;
-  // Tracks the last known tab-visibility from TickerMode. Kept as a plain
-  // field so it can safely be read from async callbacks and setState bodies,
-  // where calling TickerMode.valuesOf(context) directly is not allowed.
   bool _isCurrentlyVisible = true;
-  // Tracks if the video was playing when the tab was hidden, so we can
-  // resume it when the tab becomes visible again.
   bool _wasPlayingBeforeHidden = false;
 
   @override
@@ -52,9 +46,6 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Always read TickerMode first so this State registers as a dependent and
-    // didChangeDependencies is called again whenever visibility changes — even
-    // if the controller is not ready yet.
     final isVisible = TickerMode.valuesOf(context).enabled;
     _isCurrentlyVisible = isVisible;
     if (!_isControllerReady) return;
@@ -90,12 +81,6 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
       _isControllerReady = true;
       if (mounted) {
         setState(() {
-          // Only auto-play when both conditions hold:
-          //   1. autoPlay is enabled (false for history, true for requests)
-          //   2. the hosting tab is currently visible
-          // _isCurrentlyVisible is maintained by didChangeDependencies; reading
-          // it here is safe (TickerMode.valuesOf must NOT be called inside a
-          // setState callback — only in build/didChangeDependencies).
           if (widget.autoPlay && _isCurrentlyVisible) {
             _videoController.play();
           }

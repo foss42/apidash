@@ -29,8 +29,6 @@ class Previewer extends StatefulWidget {
   final String? type;
   final String? subtype;
   final bool hasRaw;
-  /// Forwarded to [VideoPreviewer] and [Uint8AudioPlayer]. Pass [false] when
-  /// showing media in read-only / history contexts.
   final bool autoPlay;
 
   @override
