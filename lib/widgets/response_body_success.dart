@@ -126,6 +126,10 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         type: widget.mediaType.type,
                         subtype: widget.mediaType.subtype,
                         hasRaw: widget.options.contains(ResponseBodyView.raw),
+                        // Never autoplay in history — the user must press play.
+                        // In the requests pane autoPlay defaults to true so
+                        // video responses start immediately as before.
+                        autoPlay: !widget.isPartOfHistory,
                       ),
                     ),
                   ),

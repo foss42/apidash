@@ -21,6 +21,7 @@ class Previewer extends StatefulWidget {
     this.type,
     this.subtype,
     this.hasRaw = false,
+    this.autoPlay = true,
   });
 
   final Uint8List bytes;
@@ -28,6 +29,9 @@ class Previewer extends StatefulWidget {
   final String? type;
   final String? subtype;
   final bool hasRaw;
+  /// Forwarded to [VideoPreviewer] and [Uint8AudioPlayer]. Pass [false] when
+  /// showing media in read-only / history contexts.
+  final bool autoPlay;
 
   @override
   State<Previewer> createState() => _PreviewerState();
@@ -99,6 +103,7 @@ class _PreviewerState extends State<Previewer> {
         bytes: widget.bytes,
         type: widget.type!,
         subtype: widget.subtype!,
+        autoPlay: widget.autoPlay,
         errorBuilder: (context, error, stacktrace) {
           return ErrorMessage(
             message: errorTemplate.render({
@@ -124,7 +129,7 @@ class _PreviewerState extends State<Previewer> {
     }
     if (widget.type == kTypeVideo) {
       try {
-        var preview = VideoPreviewer(videoBytes: widget.bytes);
+        var preview = VideoPreviewer(videoBytes: widget.bytes, autoPlay: widget.autoPlay);
         return preview;
       } catch (e) {
         return ErrorMessage(

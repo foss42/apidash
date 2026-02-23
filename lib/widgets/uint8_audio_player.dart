@@ -39,12 +39,17 @@ class Uint8AudioPlayer extends StatefulWidget {
     required this.type,
     required this.subtype,
     required this.errorBuilder,
+    this.autoPlay = false,
   });
 
   final Uint8List bytes;
   final String type;
   final String subtype;
   final AudioErrorWidgetBuilder errorBuilder;
+  /// Whether to start playback automatically once the source is ready.
+  /// Audio defaults to [false] (user must press play) — this flag is kept
+  /// for symmetry with [VideoPreviewer] and future use.
+  final bool autoPlay;
 
   @override
   State<Uint8AudioPlayer> createState() => _Uint8AudioPlayerState();
@@ -52,6 +57,9 @@ class Uint8AudioPlayer extends StatefulWidget {
 
 class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
   final player = AudioPlayer();
+  // Tracks if the audio was playing when the tab was hidden, so we can
+  // resume it when the tab becomes visible again.
+  bool _wasPlayingBeforeHidden = false;
 
   @override
   void initState() {
@@ -60,6 +68,25 @@ class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
       contentType: '${widget.type}/${widget.subtype}',
     ));
     super.initState();
+  }
+
+  /// Called whenever an [InheritedWidget] dependency (including [TickerMode])
+  /// changes. [IndexedStack] uses [Offstage] which wraps hidden children with
+  /// [TickerMode(enabled: false)]. We use this to pause/resume playback
+  /// automatically when the user switches tabs.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isVisible = TickerMode.valuesOf(context).enabled;
+    if (!isVisible) {
+      if (player.playerState.playing) {
+        _wasPlayingBeforeHidden = true;
+        player.pause();
+      }
+    } else if (_wasPlayingBeforeHidden) {
+      _wasPlayingBeforeHidden = false;
+      player.play();
+    }
   }
 
   @override
