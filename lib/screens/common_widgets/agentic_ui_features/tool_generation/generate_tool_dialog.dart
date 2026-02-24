@@ -102,7 +102,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       setState(() {
         index = 0;
       });
-      String errMsg = 'Unexpected Error Occured';
+      String errMsg = 'Unexpected Error Occurred';
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = "Please Select Default AI Model in Settings";
       }

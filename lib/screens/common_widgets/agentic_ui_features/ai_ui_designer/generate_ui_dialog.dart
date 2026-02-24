@@ -62,7 +62,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       }
       return res;
     } catch (e) {
-      String errMsg = 'Unexpected Error Occured';
+      String errMsg = 'Unexpected Error Occurred';
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = "Please Select Default AI Model in Settings";
       }
