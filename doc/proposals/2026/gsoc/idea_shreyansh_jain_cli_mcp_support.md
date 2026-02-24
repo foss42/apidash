@@ -93,7 +93,7 @@ Once connected, users interact with API Dash entirely through natural language â
 
 ## Architecture
 
-![CLI & MCP Support Architecture](doc/proposals/2026/gsoc/images/shreyansh_cli_mcp_support.png)
+![CLI & MCP Support Architecture](images/shreyansh_cli_mcp_support.png)
 
 ---
 
