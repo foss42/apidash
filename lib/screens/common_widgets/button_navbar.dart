@@ -49,7 +49,7 @@ class NavbarButton extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: isCompact ? 36 : 36,
+              height: 36,
               child: TextButton(
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
