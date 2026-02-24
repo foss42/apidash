@@ -38,6 +38,8 @@ Future<void> addNewModel(BuildContext context) async {
           ),
         );
       });
+  iC.dispose();
+  nC.dispose();
   if (z == null) return;
   // TODO: Add logic to add a new model
   // setState(() {});

@@ -41,6 +41,13 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
   }
 
   @override
+  void dispose() {
+    _privateKeyController.dispose();
+    _payloadController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
