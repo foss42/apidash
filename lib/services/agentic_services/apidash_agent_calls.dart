@@ -99,6 +99,6 @@ Future<String?> generateAPIToolUsingRequestData({
   if (toolres == null) {
     return null;
   }
-  String toolDefinition = toolres!['TOOL'];
+  String toolDefinition = toolres!['REQUEST_BODY'];
   return toolDefinition;
 }

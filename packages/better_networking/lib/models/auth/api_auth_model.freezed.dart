@@ -91,40 +91,39 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
   }) {
     return _then(
       _value.copyWith(
-            type: null == type
-                ? _value.type
-                : type // ignore: cast_nullable_to_non_nullable
-                      as APIAuthType,
-            apikey: freezed == apikey
-                ? _value.apikey
-                : apikey // ignore: cast_nullable_to_non_nullable
-                      as AuthApiKeyModel?,
-            bearer: freezed == bearer
-                ? _value.bearer
-                : bearer // ignore: cast_nullable_to_non_nullable
-                      as AuthBearerModel?,
-            basic: freezed == basic
-                ? _value.basic
-                : basic // ignore: cast_nullable_to_non_nullable
-                      as AuthBasicAuthModel?,
-            jwt: freezed == jwt
-                ? _value.jwt
-                : jwt // ignore: cast_nullable_to_non_nullable
-                      as AuthJwtModel?,
-            digest: freezed == digest
-                ? _value.digest
-                : digest // ignore: cast_nullable_to_non_nullable
-                      as AuthDigestModel?,
-            oauth1: freezed == oauth1
-                ? _value.oauth1
-                : oauth1 // ignore: cast_nullable_to_non_nullable
-                      as AuthOAuth1Model?,
-            oauth2: freezed == oauth2
-                ? _value.oauth2
-                : oauth2 // ignore: cast_nullable_to_non_nullable
-                      as AuthOAuth2Model?,
-          )
-          as $Val,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                as APIAuthType,
+        apikey: freezed == apikey
+            ? _value.apikey
+            : apikey // ignore: cast_nullable_to_non_nullable
+                as AuthApiKeyModel?,
+        bearer: freezed == bearer
+            ? _value.bearer
+            : bearer // ignore: cast_nullable_to_non_nullable
+                as AuthBearerModel?,
+        basic: freezed == basic
+            ? _value.basic
+            : basic // ignore: cast_nullable_to_non_nullable
+                as AuthBasicAuthModel?,
+        jwt: freezed == jwt
+            ? _value.jwt
+            : jwt // ignore: cast_nullable_to_non_nullable
+                as AuthJwtModel?,
+        digest: freezed == digest
+            ? _value.digest
+            : digest // ignore: cast_nullable_to_non_nullable
+                as AuthDigestModel?,
+        oauth1: freezed == oauth1
+            ? _value.oauth1
+            : oauth1 // ignore: cast_nullable_to_non_nullable
+                as AuthOAuth1Model?,
+        oauth2: freezed == oauth2
+            ? _value.oauth2
+            : oauth2 // ignore: cast_nullable_to_non_nullable
+                as AuthOAuth2Model?,
+      ) as $Val,
     );
   }
 
@@ -291,35 +290,35 @@ class __$$AuthModelImplCopyWithImpl<$Res>
         type: null == type
             ? _value.type
             : type // ignore: cast_nullable_to_non_nullable
-                  as APIAuthType,
+                as APIAuthType,
         apikey: freezed == apikey
             ? _value.apikey
             : apikey // ignore: cast_nullable_to_non_nullable
-                  as AuthApiKeyModel?,
+                as AuthApiKeyModel?,
         bearer: freezed == bearer
             ? _value.bearer
             : bearer // ignore: cast_nullable_to_non_nullable
-                  as AuthBearerModel?,
+                as AuthBearerModel?,
         basic: freezed == basic
             ? _value.basic
             : basic // ignore: cast_nullable_to_non_nullable
-                  as AuthBasicAuthModel?,
+                as AuthBasicAuthModel?,
         jwt: freezed == jwt
             ? _value.jwt
             : jwt // ignore: cast_nullable_to_non_nullable
-                  as AuthJwtModel?,
+                as AuthJwtModel?,
         digest: freezed == digest
             ? _value.digest
             : digest // ignore: cast_nullable_to_non_nullable
-                  as AuthDigestModel?,
+                as AuthDigestModel?,
         oauth1: freezed == oauth1
             ? _value.oauth1
             : oauth1 // ignore: cast_nullable_to_non_nullable
-                  as AuthOAuth1Model?,
+                as AuthOAuth1Model?,
         oauth2: freezed == oauth2
             ? _value.oauth2
             : oauth2 // ignore: cast_nullable_to_non_nullable
-                  as AuthOAuth2Model?,
+                as AuthOAuth2Model?,
       ),
     );
   }
@@ -383,16 +382,16 @@ class _$AuthModelImpl implements _AuthModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    type,
-    apikey,
-    bearer,
-    basic,
-    jwt,
-    digest,
-    oauth1,
-    oauth2,
-  );
+        runtimeType,
+        type,
+        apikey,
+        bearer,
+        basic,
+        jwt,
+        digest,
+        oauth1,
+        oauth2,
+      );
 
   /// Create a copy of AuthModel
   /// with the given fields replaced by the non-null parameter values.

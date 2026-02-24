@@ -126,7 +126,8 @@ multipart/form-data; boundary={{boundary}}''';
       Uri? uri = rec.$1;
       var method = requestModel.method;
       var requestBody = requestModel.body;
-      if (requestModel.bodyContentType == ContentType.json && requestBody?.isNotEmpty == true){
+      if (requestModel.bodyContentType == ContentType.json &&
+          requestBody?.isNotEmpty == true) {
         result += kJsonImport;
       }
       if (uri != null) {
@@ -136,8 +137,7 @@ multipart/form-data; boundary={{boundary}}''';
           'isFormDataRequest': requestModel.hasFormData,
           "method": requestModel.method.name.toLowerCase()
         });
-          
-        
+
         if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {

@@ -6,11 +6,11 @@ class RandomStringGenerator {
   static Random rnd = Random();
 
   static String getRandomString(int length) => String.fromCharCodes(
-    Iterable.generate(
-      length,
-      (_) => _chars.codeUnitAt(rnd.nextInt(_chars.length)),
-    ),
-  );
+        Iterable.generate(
+          length,
+          (_) => _chars.codeUnitAt(rnd.nextInt(_chars.length)),
+        ),
+      );
 
   static String getRandomStringLines(int lines, int length) {
     List<String> result = [];

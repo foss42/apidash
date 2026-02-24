@@ -112,76 +112,75 @@ class _$AuthOAuth2ModelCopyWithImpl<$Res, $Val extends AuthOAuth2Model>
   }) {
     return _then(
       _value.copyWith(
-            grantType: null == grantType
-                ? _value.grantType
-                : grantType // ignore: cast_nullable_to_non_nullable
-                      as OAuth2GrantType,
-            authorizationUrl: null == authorizationUrl
-                ? _value.authorizationUrl
-                : authorizationUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
-            accessTokenUrl: null == accessTokenUrl
-                ? _value.accessTokenUrl
-                : accessTokenUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
-            clientId: null == clientId
-                ? _value.clientId
-                : clientId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            clientSecret: null == clientSecret
-                ? _value.clientSecret
-                : clientSecret // ignore: cast_nullable_to_non_nullable
-                      as String,
-            credentialsFilePath: freezed == credentialsFilePath
-                ? _value.credentialsFilePath
-                : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            redirectUrl: freezed == redirectUrl
-                ? _value.redirectUrl
-                : redirectUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            scope: freezed == scope
-                ? _value.scope
-                : scope // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            state: freezed == state
-                ? _value.state
-                : state // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            codeChallengeMethod: null == codeChallengeMethod
-                ? _value.codeChallengeMethod
-                : codeChallengeMethod // ignore: cast_nullable_to_non_nullable
-                      as String,
-            codeVerifier: freezed == codeVerifier
-                ? _value.codeVerifier
-                : codeVerifier // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            codeChallenge: freezed == codeChallenge
-                ? _value.codeChallenge
-                : codeChallenge // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            username: freezed == username
-                ? _value.username
-                : username // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            password: freezed == password
-                ? _value.password
-                : password // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            refreshToken: freezed == refreshToken
-                ? _value.refreshToken
-                : refreshToken // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            identityToken: freezed == identityToken
-                ? _value.identityToken
-                : identityToken // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            accessToken: freezed == accessToken
-                ? _value.accessToken
-                : accessToken // ignore: cast_nullable_to_non_nullable
-                      as String?,
-          )
-          as $Val,
+        grantType: null == grantType
+            ? _value.grantType
+            : grantType // ignore: cast_nullable_to_non_nullable
+                as OAuth2GrantType,
+        authorizationUrl: null == authorizationUrl
+            ? _value.authorizationUrl
+            : authorizationUrl // ignore: cast_nullable_to_non_nullable
+                as String,
+        accessTokenUrl: null == accessTokenUrl
+            ? _value.accessTokenUrl
+            : accessTokenUrl // ignore: cast_nullable_to_non_nullable
+                as String,
+        clientId: null == clientId
+            ? _value.clientId
+            : clientId // ignore: cast_nullable_to_non_nullable
+                as String,
+        clientSecret: null == clientSecret
+            ? _value.clientSecret
+            : clientSecret // ignore: cast_nullable_to_non_nullable
+                as String,
+        credentialsFilePath: freezed == credentialsFilePath
+            ? _value.credentialsFilePath
+            : credentialsFilePath // ignore: cast_nullable_to_non_nullable
+                as String?,
+        redirectUrl: freezed == redirectUrl
+            ? _value.redirectUrl
+            : redirectUrl // ignore: cast_nullable_to_non_nullable
+                as String?,
+        scope: freezed == scope
+            ? _value.scope
+            : scope // ignore: cast_nullable_to_non_nullable
+                as String?,
+        state: freezed == state
+            ? _value.state
+            : state // ignore: cast_nullable_to_non_nullable
+                as String?,
+        codeChallengeMethod: null == codeChallengeMethod
+            ? _value.codeChallengeMethod
+            : codeChallengeMethod // ignore: cast_nullable_to_non_nullable
+                as String,
+        codeVerifier: freezed == codeVerifier
+            ? _value.codeVerifier
+            : codeVerifier // ignore: cast_nullable_to_non_nullable
+                as String?,
+        codeChallenge: freezed == codeChallenge
+            ? _value.codeChallenge
+            : codeChallenge // ignore: cast_nullable_to_non_nullable
+                as String?,
+        username: freezed == username
+            ? _value.username
+            : username // ignore: cast_nullable_to_non_nullable
+                as String?,
+        password: freezed == password
+            ? _value.password
+            : password // ignore: cast_nullable_to_non_nullable
+                as String?,
+        refreshToken: freezed == refreshToken
+            ? _value.refreshToken
+            : refreshToken // ignore: cast_nullable_to_non_nullable
+                as String?,
+        identityToken: freezed == identityToken
+            ? _value.identityToken
+            : identityToken // ignore: cast_nullable_to_non_nullable
+                as String?,
+        accessToken: freezed == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                as String?,
+      ) as $Val,
     );
   }
 }
@@ -253,71 +252,71 @@ class __$$AuthOAuth2ModelImplCopyWithImpl<$Res>
         grantType: null == grantType
             ? _value.grantType
             : grantType // ignore: cast_nullable_to_non_nullable
-                  as OAuth2GrantType,
+                as OAuth2GrantType,
         authorizationUrl: null == authorizationUrl
             ? _value.authorizationUrl
             : authorizationUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         accessTokenUrl: null == accessTokenUrl
             ? _value.accessTokenUrl
             : accessTokenUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         clientId: null == clientId
             ? _value.clientId
             : clientId // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         clientSecret: null == clientSecret
             ? _value.clientSecret
             : clientSecret // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         credentialsFilePath: freezed == credentialsFilePath
             ? _value.credentialsFilePath
             : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         redirectUrl: freezed == redirectUrl
             ? _value.redirectUrl
             : redirectUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         scope: freezed == scope
             ? _value.scope
             : scope // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         state: freezed == state
             ? _value.state
             : state // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         codeChallengeMethod: null == codeChallengeMethod
             ? _value.codeChallengeMethod
             : codeChallengeMethod // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         codeVerifier: freezed == codeVerifier
             ? _value.codeVerifier
             : codeVerifier // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         codeChallenge: freezed == codeChallenge
             ? _value.codeChallenge
             : codeChallenge // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         username: freezed == username
             ? _value.username
             : username // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         password: freezed == password
             ? _value.password
             : password // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         refreshToken: freezed == refreshToken
             ? _value.refreshToken
             : refreshToken // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         identityToken: freezed == identityToken
             ? _value.identityToken
             : identityToken // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         accessToken: freezed == accessToken
             ? _value.accessToken
             : accessToken // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
       ),
     );
   }
@@ -433,25 +432,25 @@ class _$AuthOAuth2ModelImpl implements _AuthOAuth2Model {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    grantType,
-    authorizationUrl,
-    accessTokenUrl,
-    clientId,
-    clientSecret,
-    credentialsFilePath,
-    redirectUrl,
-    scope,
-    state,
-    codeChallengeMethod,
-    codeVerifier,
-    codeChallenge,
-    username,
-    password,
-    refreshToken,
-    identityToken,
-    accessToken,
-  );
+        runtimeType,
+        grantType,
+        authorizationUrl,
+        accessTokenUrl,
+        clientId,
+        clientSecret,
+        credentialsFilePath,
+        redirectUrl,
+        scope,
+        state,
+        codeChallengeMethod,
+        codeVerifier,
+        codeChallenge,
+        username,
+        password,
+        refreshToken,
+        identityToken,
+        accessToken,
+      );
 
   /// Create a copy of AuthOAuth2Model
   /// with the given fields replaced by the non-null parameter values.

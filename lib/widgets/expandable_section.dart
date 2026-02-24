@@ -88,8 +88,12 @@ class _ExpandableSectionState extends State<ExpandableSection> {
       fontWeight: FontWeight.w600,
     );
     while ((idx = lower.indexOf(lowerQ, start)) != -1) {
-      if (idx > start) spans.add(TextSpan(text: widget.title.substring(start, idx), style: style));
-      spans.add(TextSpan(text: widget.title.substring(idx, idx + lowerQ.length), style: hlStyle));
+      if (idx > start)
+        spans.add(
+            TextSpan(text: widget.title.substring(start, idx), style: style));
+      spans.add(TextSpan(
+          text: widget.title.substring(idx, idx + lowerQ.length),
+          style: hlStyle));
       start = idx + lowerQ.length;
     }
     if (start < widget.title.length) {

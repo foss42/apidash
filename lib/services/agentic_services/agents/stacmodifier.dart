@@ -8,35 +8,36 @@ class StacModifierBot extends AIAgent {
   String get agentName => 'STAC_MODIFIER';
 
   @override
-  String getSystemPrompt() {
-    return kPromptStacModifier;
+  String getSystemPrompt() => kPromptStacModifier;
+
+  // 🛡️ Helper: Unifies cleaning logic for a clean, non-redundant codebase.
+  String _clean(String input) {
+    return input.replaceAll(RegExp(r'```[a-zA-Z]*\n?|```'), '').trim();
   }
 
   @override
   Future<bool> validator(String aiResponse) async {
-    aiResponse = aiResponse.replaceAll('```json', '').replaceAll('```', '');
-    //JSON CHECK
+    final cleanResponse = _clean(aiResponse);
+
+    // 🛡️ JSON Integrity: Essential for the UI to successfully re-render.
     try {
-      jsonDecode(aiResponse);
+      jsonDecode(cleanResponse);
+      return true;
     } catch (e) {
-      debugPrint("JSON PARSE ERROR: $e");
+      debugPrint("STAC_MODIFIER JSON PARSE ERROR: $e");
       return false;
     }
-    return true;
   }
 
   @override
-  Future outputFormatter(String validatedResponse) async {
-    validatedResponse = validatedResponse
-        .replaceAll('```json', '')
-        .replaceAll('```json\n', '')
-        .replaceAll('```', '');
+  Future<Map<String, dynamic>> outputFormatter(String validatedResponse) async {
+    String cleanSTAC = _clean(validatedResponse);
 
-    //Stac Specific Changes
-    validatedResponse = validatedResponse.replaceAll('bold', 'w700');
+    // 🛡️ STAC Mapping: Ensuring consistent font-weight standards.
+    cleanSTAC = cleanSTAC.replaceAll('bold', 'w700');
 
     return {
-      'STAC': validatedResponse,
+      'STAC': cleanSTAC,
     };
   }
 }

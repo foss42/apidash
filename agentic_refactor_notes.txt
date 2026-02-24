@@ -1,0 +1,15 @@
+Project: API Dash (FOSS42)
+Contributor: AI/ML Engineer | Full-Stack Developer
+Scope: Strengthening Agentic Services Pipeline
+
+Core Improvements:
+
+Standardized Regex Cleaning: Replaced brittle, hardcoded .replaceAll chains with a robust RegExp(r'```[a-zA-Z]*\n?|```') across all agents (BodyGen, FuncGen, StacGen, StacModifier). This ensures markdown artifacts from any LLM do not corrupt the JSON payload.
+
+Schema Validation: Implemented jsonDecode validation in the validator() methods for all code-generating agents. This prevents "logic leaks" where malformed AI output could crash the UI or API calls.
+
+Semantic Integrity: Enhanced the ResponseSemanticAnalyser with strict plain-text paragraph validation to ensure the "Brain" of the pipeline provides clean, descriptive context for downstream agents.
+
+Orchestrator Alignment: Updated apidash_agent_calls.dart to sync with refined output keys (REQUEST_BODY), ensuring the orchestrator and agents communicate without null-reference errors.
+
+Impact: Increased the resilience of the Generative AI features against non-deterministic model responses, making the transition between different LLM providers (Gemini, local models, etc.) significantly more stable.

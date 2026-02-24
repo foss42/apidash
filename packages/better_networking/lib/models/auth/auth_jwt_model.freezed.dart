@@ -88,44 +88,43 @@ class _$AuthJwtModelCopyWithImpl<$Res, $Val extends AuthJwtModel>
   }) {
     return _then(
       _value.copyWith(
-            secret: null == secret
-                ? _value.secret
-                : secret // ignore: cast_nullable_to_non_nullable
-                      as String,
-            privateKey: freezed == privateKey
-                ? _value.privateKey
-                : privateKey // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            payload: null == payload
-                ? _value.payload
-                : payload // ignore: cast_nullable_to_non_nullable
-                      as String,
-            addTokenTo: null == addTokenTo
-                ? _value.addTokenTo
-                : addTokenTo // ignore: cast_nullable_to_non_nullable
-                      as String,
-            algorithm: null == algorithm
-                ? _value.algorithm
-                : algorithm // ignore: cast_nullable_to_non_nullable
-                      as String,
-            isSecretBase64Encoded: null == isSecretBase64Encoded
-                ? _value.isSecretBase64Encoded
-                : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            headerPrefix: null == headerPrefix
-                ? _value.headerPrefix
-                : headerPrefix // ignore: cast_nullable_to_non_nullable
-                      as String,
-            queryParamKey: null == queryParamKey
-                ? _value.queryParamKey
-                : queryParamKey // ignore: cast_nullable_to_non_nullable
-                      as String,
-            header: null == header
-                ? _value.header
-                : header // ignore: cast_nullable_to_non_nullable
-                      as String,
-          )
-          as $Val,
+        secret: null == secret
+            ? _value.secret
+            : secret // ignore: cast_nullable_to_non_nullable
+                as String,
+        privateKey: freezed == privateKey
+            ? _value.privateKey
+            : privateKey // ignore: cast_nullable_to_non_nullable
+                as String?,
+        payload: null == payload
+            ? _value.payload
+            : payload // ignore: cast_nullable_to_non_nullable
+                as String,
+        addTokenTo: null == addTokenTo
+            ? _value.addTokenTo
+            : addTokenTo // ignore: cast_nullable_to_non_nullable
+                as String,
+        algorithm: null == algorithm
+            ? _value.algorithm
+            : algorithm // ignore: cast_nullable_to_non_nullable
+                as String,
+        isSecretBase64Encoded: null == isSecretBase64Encoded
+            ? _value.isSecretBase64Encoded
+            : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
+                as bool,
+        headerPrefix: null == headerPrefix
+            ? _value.headerPrefix
+            : headerPrefix // ignore: cast_nullable_to_non_nullable
+                as String,
+        queryParamKey: null == queryParamKey
+            ? _value.queryParamKey
+            : queryParamKey // ignore: cast_nullable_to_non_nullable
+                as String,
+        header: null == header
+            ? _value.header
+            : header // ignore: cast_nullable_to_non_nullable
+                as String,
+      ) as $Val,
     );
   }
 }
@@ -181,39 +180,39 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
         secret: null == secret
             ? _value.secret
             : secret // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         privateKey: freezed == privateKey
             ? _value.privateKey
             : privateKey // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         payload: null == payload
             ? _value.payload
             : payload // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         addTokenTo: null == addTokenTo
             ? _value.addTokenTo
             : addTokenTo // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         algorithm: null == algorithm
             ? _value.algorithm
             : algorithm // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         isSecretBase64Encoded: null == isSecretBase64Encoded
             ? _value.isSecretBase64Encoded
             : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
-                  as bool,
+                as bool,
         headerPrefix: null == headerPrefix
             ? _value.headerPrefix
             : headerPrefix // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         queryParamKey: null == queryParamKey
             ? _value.queryParamKey
             : queryParamKey // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         header: null == header
             ? _value.header
             : header // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
       ),
     );
   }
@@ -286,17 +285,17 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    secret,
-    privateKey,
-    payload,
-    addTokenTo,
-    algorithm,
-    isSecretBase64Encoded,
-    headerPrefix,
-    queryParamKey,
-    header,
-  );
+        runtimeType,
+        secret,
+        privateKey,
+        payload,
+        addTokenTo,
+        algorithm,
+        isSecretBase64Encoded,
+        headerPrefix,
+        queryParamKey,
+        header,
+      );
 
   /// Create a copy of AuthJwtModel
   /// with the given fields replaced by the non-null parameter values.

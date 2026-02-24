@@ -8,35 +8,35 @@ class StacGenBot extends AIAgent {
   String get agentName => 'STAC_GEN';
 
   @override
-  String getSystemPrompt() {
-    return kPromptStacGen;
+  String getSystemPrompt() => kPromptStacGen;
+
+  // 🛡️ Helper: Ensures consistent cleaning across the agent.
+  // Handles all language tags (json, dart, etc.) and whitespace.
+  String _clean(String input) {
+    return input.replaceAll(RegExp(r'```[a-zA-Z]*\n?|```'), '').trim();
   }
 
   @override
   Future<bool> validator(String aiResponse) async {
-    aiResponse = aiResponse.replaceAll('```json', '').replaceAll('```', '');
-    //JSON CHECK
+    final cleanResponse = _clean(aiResponse);
     try {
-      jsonDecode(aiResponse);
+      jsonDecode(cleanResponse);
+      return true;
     } catch (e) {
-      debugPrint("JSON PARSE ERROR: $e");
+      debugPrint("STAC_GEN JSON PARSE ERROR: $e");
       return false;
     }
-    return true;
   }
 
   @override
-  Future outputFormatter(String validatedResponse) async {
-    validatedResponse = validatedResponse
-        .replaceAll('```json', '')
-        .replaceAll('```json\n', '')
-        .replaceAll('```', '');
+  Future<Map<String, dynamic>> outputFormatter(String validatedResponse) async {
+    String cleanSTAC = _clean(validatedResponse);
 
-    //Stac Specific Changes
-    validatedResponse = validatedResponse.replaceAll('bold', 'w700');
+    // 🛡️ STAC Mapping: Standardizes font weights for the UI renderer.
+    cleanSTAC = cleanSTAC.replaceAll('bold', 'w700');
 
     return {
-      'STAC': validatedResponse,
+      'STAC': cleanSTAC,
     };
   }
 }

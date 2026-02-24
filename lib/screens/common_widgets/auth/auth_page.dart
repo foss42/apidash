@@ -77,7 +77,7 @@ class AuthPage extends StatelessWidget {
                   authData: authModel,
                   updateAuth: updateAuthData,
                 ),
-                APIAuthType.oauth1 => OAuth1Fields(
+              APIAuthType.oauth1 => OAuth1Fields(
                   readOnly: readOnly,
                   authData: authModel,
                   updateAuth: updateAuthData,

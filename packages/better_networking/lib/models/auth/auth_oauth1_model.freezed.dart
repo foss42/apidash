@@ -104,64 +104,63 @@ class _$AuthOAuth1ModelCopyWithImpl<$Res, $Val extends AuthOAuth1Model>
   }) {
     return _then(
       _value.copyWith(
-            consumerKey: null == consumerKey
-                ? _value.consumerKey
-                : consumerKey // ignore: cast_nullable_to_non_nullable
-                      as String,
-            consumerSecret: null == consumerSecret
-                ? _value.consumerSecret
-                : consumerSecret // ignore: cast_nullable_to_non_nullable
-                      as String,
-            credentialsFilePath: freezed == credentialsFilePath
-                ? _value.credentialsFilePath
-                : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            accessToken: freezed == accessToken
-                ? _value.accessToken
-                : accessToken // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            tokenSecret: freezed == tokenSecret
-                ? _value.tokenSecret
-                : tokenSecret // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            signatureMethod: null == signatureMethod
-                ? _value.signatureMethod
-                : signatureMethod // ignore: cast_nullable_to_non_nullable
-                      as OAuth1SignatureMethod,
-            parameterLocation: null == parameterLocation
-                ? _value.parameterLocation
-                : parameterLocation // ignore: cast_nullable_to_non_nullable
-                      as String,
-            version: null == version
-                ? _value.version
-                : version // ignore: cast_nullable_to_non_nullable
-                      as String,
-            realm: freezed == realm
-                ? _value.realm
-                : realm // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            callbackUrl: freezed == callbackUrl
-                ? _value.callbackUrl
-                : callbackUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            verifier: freezed == verifier
-                ? _value.verifier
-                : verifier // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            nonce: freezed == nonce
-                ? _value.nonce
-                : nonce // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            timestamp: freezed == timestamp
-                ? _value.timestamp
-                : timestamp // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            includeBodyHash: null == includeBodyHash
-                ? _value.includeBodyHash
-                : includeBodyHash // ignore: cast_nullable_to_non_nullable
-                      as bool,
-          )
-          as $Val,
+        consumerKey: null == consumerKey
+            ? _value.consumerKey
+            : consumerKey // ignore: cast_nullable_to_non_nullable
+                as String,
+        consumerSecret: null == consumerSecret
+            ? _value.consumerSecret
+            : consumerSecret // ignore: cast_nullable_to_non_nullable
+                as String,
+        credentialsFilePath: freezed == credentialsFilePath
+            ? _value.credentialsFilePath
+            : credentialsFilePath // ignore: cast_nullable_to_non_nullable
+                as String?,
+        accessToken: freezed == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                as String?,
+        tokenSecret: freezed == tokenSecret
+            ? _value.tokenSecret
+            : tokenSecret // ignore: cast_nullable_to_non_nullable
+                as String?,
+        signatureMethod: null == signatureMethod
+            ? _value.signatureMethod
+            : signatureMethod // ignore: cast_nullable_to_non_nullable
+                as OAuth1SignatureMethod,
+        parameterLocation: null == parameterLocation
+            ? _value.parameterLocation
+            : parameterLocation // ignore: cast_nullable_to_non_nullable
+                as String,
+        version: null == version
+            ? _value.version
+            : version // ignore: cast_nullable_to_non_nullable
+                as String,
+        realm: freezed == realm
+            ? _value.realm
+            : realm // ignore: cast_nullable_to_non_nullable
+                as String?,
+        callbackUrl: freezed == callbackUrl
+            ? _value.callbackUrl
+            : callbackUrl // ignore: cast_nullable_to_non_nullable
+                as String?,
+        verifier: freezed == verifier
+            ? _value.verifier
+            : verifier // ignore: cast_nullable_to_non_nullable
+                as String?,
+        nonce: freezed == nonce
+            ? _value.nonce
+            : nonce // ignore: cast_nullable_to_non_nullable
+                as String?,
+        timestamp: freezed == timestamp
+            ? _value.timestamp
+            : timestamp // ignore: cast_nullable_to_non_nullable
+                as String?,
+        includeBodyHash: null == includeBodyHash
+            ? _value.includeBodyHash
+            : includeBodyHash // ignore: cast_nullable_to_non_nullable
+                as bool,
+      ) as $Val,
     );
   }
 }
@@ -227,59 +226,59 @@ class __$$AuthOAuth1ModelImplCopyWithImpl<$Res>
         consumerKey: null == consumerKey
             ? _value.consumerKey
             : consumerKey // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         consumerSecret: null == consumerSecret
             ? _value.consumerSecret
             : consumerSecret // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         credentialsFilePath: freezed == credentialsFilePath
             ? _value.credentialsFilePath
             : credentialsFilePath // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         accessToken: freezed == accessToken
             ? _value.accessToken
             : accessToken // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         tokenSecret: freezed == tokenSecret
             ? _value.tokenSecret
             : tokenSecret // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         signatureMethod: null == signatureMethod
             ? _value.signatureMethod
             : signatureMethod // ignore: cast_nullable_to_non_nullable
-                  as OAuth1SignatureMethod,
+                as OAuth1SignatureMethod,
         parameterLocation: null == parameterLocation
             ? _value.parameterLocation
             : parameterLocation // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         version: null == version
             ? _value.version
             : version // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         realm: freezed == realm
             ? _value.realm
             : realm // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         callbackUrl: freezed == callbackUrl
             ? _value.callbackUrl
             : callbackUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         verifier: freezed == verifier
             ? _value.verifier
             : verifier // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         nonce: freezed == nonce
             ? _value.nonce
             : nonce // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         timestamp: freezed == timestamp
             ? _value.timestamp
             : timestamp // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         includeBodyHash: null == includeBodyHash
             ? _value.includeBodyHash
             : includeBodyHash // ignore: cast_nullable_to_non_nullable
-                  as bool,
+                as bool,
       ),
     );
   }
@@ -381,22 +380,22 @@ class _$AuthOAuth1ModelImpl implements _AuthOAuth1Model {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    consumerKey,
-    consumerSecret,
-    credentialsFilePath,
-    accessToken,
-    tokenSecret,
-    signatureMethod,
-    parameterLocation,
-    version,
-    realm,
-    callbackUrl,
-    verifier,
-    nonce,
-    timestamp,
-    includeBodyHash,
-  );
+        runtimeType,
+        consumerKey,
+        consumerSecret,
+        credentialsFilePath,
+        accessToken,
+        tokenSecret,
+        signatureMethod,
+        parameterLocation,
+        version,
+        realm,
+        callbackUrl,
+        verifier,
+        nonce,
+        timestamp,
+        includeBodyHash,
+      );
 
   /// Create a copy of AuthOAuth1Model
   /// with the given fields replaced by the non-null parameter values.

@@ -26,8 +26,8 @@ String generateOAuth1AuthHeader(
   // Build OAuth parameters map
   final oauthParams = <String, String>{
     'oauth_consumer_key': oauth1Model.consumerKey,
-    'oauth_signature_method': oauth1Model.signatureMethod.displayType
-        .toUpperCase(),
+    'oauth_signature_method':
+        oauth1Model.signatureMethod.displayType.toUpperCase(),
     'oauth_timestamp': timestamp,
     'oauth_nonce': nonce,
     'oauth_version': oauth1Model.version,
@@ -113,11 +113,9 @@ String _createSignatureBaseString(
   final List<String> sortedEncodedKeys = encodedParams.keys.toList()..sort();
 
   // 3-7. Create parameter string
-  final String baseParams = sortedEncodedKeys
-      .map((String k) {
-        return '$k=${encodedParams[k]}';
-      })
-      .join('&');
+  final String baseParams = sortedEncodedKeys.map((String k) {
+    return '$k=${encodedParams[k]}';
+  }).join('&');
 
   // Create base URI (origin + path)
   final baseUri = uri.origin + uri.path;
@@ -140,13 +138,11 @@ String _generateSignature(
 ) {
   switch (signatureMethod) {
     case OAuth1SignatureMethod.hmacSha1:
-      final signingKey =
-          '${Uri.encodeComponent(oauth1Model.consumerSecret)}&'
+      final signingKey = '${Uri.encodeComponent(oauth1Model.consumerSecret)}&'
           '${Uri.encodeComponent(oauth1Model.tokenSecret ?? '')}';
       return _generateHmacSha1Signature(baseString, signingKey);
     case OAuth1SignatureMethod.plaintext:
-      final signingKey =
-          '${Uri.encodeComponent(oauth1Model.consumerSecret)}&'
+      final signingKey = '${Uri.encodeComponent(oauth1Model.consumerSecret)}&'
           '${Uri.encodeComponent(oauth1Model.tokenSecret ?? '')}';
       return signingKey;
   }

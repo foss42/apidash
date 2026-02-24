@@ -58,8 +58,7 @@ void main() {
     expect(find.text('entering 123 for cell field'), findsOneWidget);
   });
 
-  testWidgets('Cell Field refreshes when initialValue changes',
-      (tester) async {
+  testWidgets('Cell Field refreshes when initialValue changes', (tester) async {
     // Build widget with initial value "first value"
     await tester.pumpWidget(
       MaterialApp(

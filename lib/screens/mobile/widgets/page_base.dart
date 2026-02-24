@@ -37,23 +37,23 @@ class PageBase extends ConsumerWidget {
       ),
     );
     return //Stack(
-      // children: [
+        // children: [
         Container(
-          padding: (addBottomPadding && context.isMediumWindow
-                  ? kPb70
-                  : EdgeInsets.zero) +
-              (kIsMacOS ? kPt28 : EdgeInsets.zero),
-          color: Theme.of(context).colorScheme.surfaceContainerLowest,
-          child: scaffold,
-        // ),
-        // if (kIsWindows)
-        //   SizedBox(
-        //     height: 29,
-        //     child: WindowCaption(
-        //       backgroundColor: Colors.transparent,
-        //       brightness: isDarkMode ? Brightness.dark : Brightness.light,
-        //     ),
-        //   ),
+      padding: (addBottomPadding && context.isMediumWindow
+              ? kPb70
+              : EdgeInsets.zero) +
+          (kIsMacOS ? kPt28 : EdgeInsets.zero),
+      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+      child: scaffold,
+      // ),
+      // if (kIsWindows)
+      //   SizedBox(
+      //     height: 29,
+      //     child: WindowCaption(
+      //       backgroundColor: Colors.transparent,
+      //       brightness: isDarkMode ? Brightness.dark : Brightness.light,
+      //     ),
+      //   ),
       // ],
     );
   }

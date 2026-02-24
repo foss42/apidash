@@ -90,14 +90,14 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.3
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.5
-  freezed: ^2.5.7
+  freezed: 3.2.5
   json_serializable: ^6.9.4
   integration_test:
     sdk: flutter
   melos: ^6.3.2
   mocktail: ^1.0.4
   spot: ^0.17.0
-  test: ^1.25.2
+  test: any
 
 flutter:
   uses-material-design: true

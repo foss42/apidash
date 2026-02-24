@@ -96,22 +96,22 @@ task.resume()
 semaphore.wait()
 """;
 
-
   String? getCode(HttpRequestModel requestModel) {
     try {
       String result = kTemplateStart;
 
-      var rec = getValidRequestUri(requestModel.url, requestModel.enabledParams);
+      var rec =
+          getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
 
       if (requestModel.hasFormData) {
         result += kTemplateFormDataImport;
-        
+
         var formDataList = requestModel.formDataMapList.map((param) {
           if (param['type'] == 'file') {
             final filePath = param['value'] as String;
             final fileName = path.basename(filePath);
-            final fileExtension = 
+            final fileExtension =
                 path.extension(fileName).toLowerCase().replaceFirst('.', '');
             return {
               'type': 'file',
@@ -133,20 +133,16 @@ semaphore.wait()
         result += templateFormData.render({
           "formData": formDataList,
         });
-      } 
+      }
       // Handle JSON data
       else if (requestModel.hasJsonData) {
         var templateJsonData = jj.Template(kTemplateJsonData);
-        result += templateJsonData.render({
-          "jsonData": requestModel.body!
-                    });
-      } 
+        result += templateJsonData.render({"jsonData": requestModel.body!});
+      }
       // Handle text data
       else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
-        result += templateTextData.render({
-          "textData": requestModel.body!
-        });
+        result += templateTextData.render({"textData": requestModel.body!});
       }
 
       var templateRequest = jj.Template(kTemplateRequest);
@@ -157,11 +153,11 @@ semaphore.wait()
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasFormData) {
-        headers['Content-Type'] = 
+        headers['Content-Type'] =
             "multipart/form-data; boundary=\\(boundary.stringValue)";
-      } else if(requestModel.hasJsonData||requestModel.hasTextData){
+      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         headers['Content-Type'] = 'application/json';
-    }
+      }
 
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeaders);

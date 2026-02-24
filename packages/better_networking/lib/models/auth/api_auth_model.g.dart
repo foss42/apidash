@@ -7,41 +7,42 @@ part of 'api_auth_model.dart';
 // **************************************************************************
 
 _$AuthModelImpl _$$AuthModelImplFromJson(Map json) => _$AuthModelImpl(
-  type: $enumDecode(_$APIAuthTypeEnumMap, json['type']),
-  apikey: json['apikey'] == null
-      ? null
-      : AuthApiKeyModel.fromJson(
-          Map<String, dynamic>.from(json['apikey'] as Map),
-        ),
-  bearer: json['bearer'] == null
-      ? null
-      : AuthBearerModel.fromJson(
-          Map<String, dynamic>.from(json['bearer'] as Map),
-        ),
-  basic: json['basic'] == null
-      ? null
-      : AuthBasicAuthModel.fromJson(
-          Map<String, dynamic>.from(json['basic'] as Map),
-        ),
-  jwt: json['jwt'] == null
-      ? null
-      : AuthJwtModel.fromJson(Map<String, dynamic>.from(json['jwt'] as Map)),
-  digest: json['digest'] == null
-      ? null
-      : AuthDigestModel.fromJson(
-          Map<String, dynamic>.from(json['digest'] as Map),
-        ),
-  oauth1: json['oauth1'] == null
-      ? null
-      : AuthOAuth1Model.fromJson(
-          Map<String, dynamic>.from(json['oauth1'] as Map),
-        ),
-  oauth2: json['oauth2'] == null
-      ? null
-      : AuthOAuth2Model.fromJson(
-          Map<String, dynamic>.from(json['oauth2'] as Map),
-        ),
-);
+      type: $enumDecode(_$APIAuthTypeEnumMap, json['type']),
+      apikey: json['apikey'] == null
+          ? null
+          : AuthApiKeyModel.fromJson(
+              Map<String, dynamic>.from(json['apikey'] as Map),
+            ),
+      bearer: json['bearer'] == null
+          ? null
+          : AuthBearerModel.fromJson(
+              Map<String, dynamic>.from(json['bearer'] as Map),
+            ),
+      basic: json['basic'] == null
+          ? null
+          : AuthBasicAuthModel.fromJson(
+              Map<String, dynamic>.from(json['basic'] as Map),
+            ),
+      jwt: json['jwt'] == null
+          ? null
+          : AuthJwtModel.fromJson(
+              Map<String, dynamic>.from(json['jwt'] as Map)),
+      digest: json['digest'] == null
+          ? null
+          : AuthDigestModel.fromJson(
+              Map<String, dynamic>.from(json['digest'] as Map),
+            ),
+      oauth1: json['oauth1'] == null
+          ? null
+          : AuthOAuth1Model.fromJson(
+              Map<String, dynamic>.from(json['oauth1'] as Map),
+            ),
+      oauth2: json['oauth2'] == null
+          ? null
+          : AuthOAuth2Model.fromJson(
+              Map<String, dynamic>.from(json['oauth2'] as Map),
+            ),
+    );
 
 Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>
     <String, dynamic>{

@@ -117,7 +117,7 @@ void main() async {
       await Future.delayed(const Duration(seconds: 2));
     });
   });
-  
+
   group('CollectionStateNotifier Auth Tests', () {
     late ProviderContainer container;
     late CollectionStateNotifier notifier;

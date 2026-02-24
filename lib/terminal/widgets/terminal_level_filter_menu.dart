@@ -32,11 +32,28 @@ class TerminalLevelFilterMenu extends StatelessWidget {
   }
 }
 
-const _levelMeta = <TerminalLevel, ({IconData icon, Color? color, String label})>{
-  TerminalLevel.error: (icon: Icons.error_outline_rounded, color: Colors.red, label: 'Errors'),
-  TerminalLevel.warn: (icon: Icons.warning_amber_outlined, color: Colors.amber, label: 'Warnings'),
-  TerminalLevel.info: (icon: Icons.info_outline, color: Colors.blue, label: 'Info'),
-  TerminalLevel.debug: (icon: Icons.bug_report_outlined, color: null, label: 'Debug'),
+const _levelMeta =
+    <TerminalLevel, ({IconData icon, Color? color, String label})>{
+  TerminalLevel.error: (
+    icon: Icons.error_outline_rounded,
+    color: Colors.red,
+    label: 'Errors'
+  ),
+  TerminalLevel.warn: (
+    icon: Icons.warning_amber_outlined,
+    color: Colors.amber,
+    label: 'Warnings'
+  ),
+  TerminalLevel.info: (
+    icon: Icons.info_outline,
+    color: Colors.blue,
+    label: 'Info'
+  ),
+  TerminalLevel.debug: (
+    icon: Icons.bug_report_outlined,
+    color: null,
+    label: 'Debug'
+  ),
 };
 
 class _FilterDialog extends StatefulWidget {

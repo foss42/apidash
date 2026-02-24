@@ -1,2 +1,70 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-const kModelsData = {"version":1.0,"model_providers":[{"provider_id":"ollama","provider_name":"Ollama","source_url":null,"models":[{"id":"","name":"Custom"}]},{"provider_id":"openai","provider_name":"OpenAI","source_url":"https://platform.openai.com/docs/models","models":[{"id":"gpt-5","name":"GPT-5"},{"id":"gpt-5-mini","name":"GPT-5 mini"},{"id":"gpt-5-nano","name":"GPT-5 Nano"},{"id":"gpt-4.1","name":"GPT-4.1"},{"id":"gpt-oss-120b","name":"gpt-oss-120b"},{"id":"gpt-oss-20b","name":"gpt-oss-20b"},{"id":"o3-pro","name":"o3-pro"},{"id":"o3","name":"o3"},{"id":"o4-mini","name":"o4-mini"},{"id":"gpt-4o","name":"GPT-4o"},{"id":"gpt-4","name":"GPT-4"},{"id":"gpt-4o-mini","name":"GPT-4o Mini"},{"id":"","name":"Other"}]},{"provider_id":"anthropic","provider_name":"Anthropic","source_url":"https://docs.anthropic.com/en/docs/about-claude/models/overview","models":[{"id":"claude-opus-4-1","name":"Claude Opus 4.1"},{"id":"claude-opus-4-0","name":"Claude Opus 4"},{"id":"claude-sonnet-4-0","name":"Claude Sonnet 4"},{"id":"claude-3-7-sonnet-latest","name":"Claude Sonnet 3.7"},{"id":"claude-3-5-sonnet-latest","name":"Claude Sonnet 3.5"},{"id":"claude-3-5-haiku-latest","name":"Claude Haiku 3.5"},{"id":"","name":"Other"}]},{"provider_id":"gemini","provider_name":"Gemini","source_url":"https://ai.google.dev/gemini-api/docs/models","models":[{"id":"gemini-2.5-pro","name":"Gemini 2.5 Pro"},{"id":"gemini-2.5-flash","name":"Gemini 2.5 Flash"},{"id":"gemini-2.5-flash-lite","name":"Gemini 2.5 Flash-Lite"},{"id":"gemini-2.0-flash","name":"Gemini 2.0 Flash"},{"id":"gemini-2.0-flash-lite","name":"Gemini 2.0 Flash-Lite"},{"id":"","name":"Other"}]},{"provider_id":"azureopenai","provider_name":"Azure OpenAI","source_url":null,"models":[{"id":"","name":"Custom"}]}]};
+const kModelsData = {
+  "version": 1.0,
+  "model_providers": [
+    {
+      "provider_id": "ollama",
+      "provider_name": "Ollama",
+      "source_url": null,
+      "models": [
+        {"id": "", "name": "Custom"},
+      ],
+    },
+    {
+      "provider_id": "openai",
+      "provider_name": "OpenAI",
+      "source_url": "https://platform.openai.com/docs/models",
+      "models": [
+        {"id": "gpt-5", "name": "GPT-5"},
+        {"id": "gpt-5-mini", "name": "GPT-5 mini"},
+        {"id": "gpt-5-nano", "name": "GPT-5 Nano"},
+        {"id": "gpt-4.1", "name": "GPT-4.1"},
+        {"id": "gpt-oss-120b", "name": "gpt-oss-120b"},
+        {"id": "gpt-oss-20b", "name": "gpt-oss-20b"},
+        {"id": "o3-pro", "name": "o3-pro"},
+        {"id": "o3", "name": "o3"},
+        {"id": "o4-mini", "name": "o4-mini"},
+        {"id": "gpt-4o", "name": "GPT-4o"},
+        {"id": "gpt-4", "name": "GPT-4"},
+        {"id": "gpt-4o-mini", "name": "GPT-4o Mini"},
+        {"id": "", "name": "Other"},
+      ],
+    },
+    {
+      "provider_id": "anthropic",
+      "provider_name": "Anthropic",
+      "source_url":
+          "https://docs.anthropic.com/en/docs/about-claude/models/overview",
+      "models": [
+        {"id": "claude-opus-4-1", "name": "Claude Opus 4.1"},
+        {"id": "claude-opus-4-0", "name": "Claude Opus 4"},
+        {"id": "claude-sonnet-4-0", "name": "Claude Sonnet 4"},
+        {"id": "claude-3-7-sonnet-latest", "name": "Claude Sonnet 3.7"},
+        {"id": "claude-3-5-sonnet-latest", "name": "Claude Sonnet 3.5"},
+        {"id": "claude-3-5-haiku-latest", "name": "Claude Haiku 3.5"},
+        {"id": "", "name": "Other"},
+      ],
+    },
+    {
+      "provider_id": "gemini",
+      "provider_name": "Gemini",
+      "source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "models": [
+        {"id": "gemini-2.5-pro", "name": "Gemini 2.5 Pro"},
+        {"id": "gemini-2.5-flash", "name": "Gemini 2.5 Flash"},
+        {"id": "gemini-2.5-flash-lite", "name": "Gemini 2.5 Flash-Lite"},
+        {"id": "gemini-2.0-flash", "name": "Gemini 2.0 Flash"},
+        {"id": "gemini-2.0-flash-lite", "name": "Gemini 2.0 Flash-Lite"},
+        {"id": "", "name": "Other"},
+      ],
+    },
+    {
+      "provider_id": "azureopenai",
+      "provider_name": "Azure OpenAI",
+      "source_url": null,
+      "models": [
+        {"id": "", "name": "Custom"},
+      ],
+    },
+  ],
+};
