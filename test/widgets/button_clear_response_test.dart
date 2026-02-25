@@ -8,7 +8,7 @@ void main() {
   testWidgets('Testing for ClearResponseButton', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
-        title: 'ClearResponseButton',
+        title: 'DontclearResponseButton',
         theme: kThemeDataLight,
         home: const Scaffold(
           body: ClearResponseButton(),
