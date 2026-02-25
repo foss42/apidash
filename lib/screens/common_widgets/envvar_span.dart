@@ -27,9 +27,11 @@ class EnvVarSpan extends HookConsumerWidget {
     final showPopover = useState(false);
 
     final isMissingVariable = suggestion.isUnknown;
-    final String scope = isMissingVariable
-        ? 'unknown'
-        : getEnvironmentTitle(environments?[suggestion.environmentId]?.name);
+    final String scope = suggestion.environmentId == "Random" 
+        ? "Random" 
+        : isMissingVariable
+            ? 'unknown'
+            : getEnvironmentTitle(environments?[suggestion.environmentId]?.name);
     final colorScheme = Theme.of(context).colorScheme;
 
     var text = Text(
