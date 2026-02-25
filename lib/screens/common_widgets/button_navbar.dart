@@ -44,7 +44,6 @@ class NavbarButton extends ConsumerWidget {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: onPress,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
