@@ -22,6 +22,7 @@ import 'php/curl.dart';
 import 'php/guzzle.dart';
 import 'php/http_plug.dart';
 import 'python/http_client.dart';
+import 'python/httpx.dart';
 import 'python/requests.dart';
 import 'ruby/faraday.dart';
 import 'ruby/net_http.dart';
@@ -90,6 +91,8 @@ class Codegen {
             .getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
+      case CodegenLanguage.pythonHttpx:
+        return PythonHttpxCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rubyFaraday:
         return RubyFaradayCodeGen().getCode(rM);
       case CodegenLanguage.rubyNetHttp:

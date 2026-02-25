@@ -126,6 +126,7 @@ enum CodegenLanguage {
   phpGuzzle("PHP (guzzle)", "php", "php"),
   phpHttpPlug("PHP (httpPlug)", "php", "php"),
   pythonRequests("Python (requests)", "python", "py"),
+  pythonHttpx("Python (httpx)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
   rubyFaraday("Ruby (Faraday)", "ruby", "rb"),
   rubyNetHttp("Ruby (Net::Http)", "ruby", "rb"),
