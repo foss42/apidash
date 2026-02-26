@@ -167,6 +167,17 @@
           "name": "Custom"
         }
       ]
+    },
+    {
+      "provider_id": "other",
+      "provider_name": "Other",
+      "source_url": null,
+      "models": [
+        {
+          "id": "",
+          "name": "Custom"
+        }
+      ]
     }
   ]
 }

@@ -51,6 +51,7 @@ const _$ModelAPIProviderEnumMap = {
   ModelAPIProvider.gemini: 'gemini',
   ModelAPIProvider.azureopenai: 'azureopenai',
   ModelAPIProvider.ollama: 'ollama',
+  ModelAPIProvider.openaiCompatible: 'other',
 };
 
 _$ModelImpl _$$ModelImplFromJson(Map<String, dynamic> json) =>

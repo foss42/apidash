@@ -18,6 +18,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  bool isCustomModel = false;
 
   @override
   void initState() {
@@ -65,8 +66,10 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
                           onChanged: (x) {
+                            if (x == selectedProvider) return;
                             setState(() {
                               selectedProvider = x;
+                              isCustomModel = false;
                               newAIRequestModel = mappedData[selectedProvider]
                                   ?.toAiRequestModel();
                             });
@@ -117,8 +120,10 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                     backgroundColor: Colors.green,
                                   ),
                             onTap: () {
+                              if (x.providerId == selectedProvider) return;
                               setState(() {
                                 selectedProvider = x.providerId;
+                                isCustomModel = false;
                                 newAIRequestModel = mappedData[selectedProvider]
                                     ?.toAiRequestModel();
                               });
@@ -141,6 +146,18 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         return Center(child: CircularProgressIndicator());
       },
     );
+  }
+
+  bool _isCustomModelSelected(AIModelProvider aiModelProvider) {
+    if (isCustomModel) return true;
+    final currentModel = newAIRequestModel?.model;
+    if (currentModel == null) return false;
+    // Check if the model is NOT one of the predefined models (with non-empty ids)
+    final predefinedIds = (aiModelProvider.models ?? [])
+        .map((m) => m.id)
+        .where((id) => id != null && id.isNotEmpty)
+        .toSet();
+    return currentModel.isNotEmpty && !predefinedIds.contains(currentModel);
   }
 
   _buildModelSelector(AIModelProvider? aiModelProvider) {
@@ -224,6 +241,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       ),
                       onTap: () {
                         setState(() {
+                          isCustomModel = (x.id == null || x.id!.isEmpty);
                           newAIRequestModel =
                               newAIRequestModel?.copyWith(model: x.id);
                         });
@@ -235,6 +253,18 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             ),
           ),
         ),
+        if (_isCustomModelSelected(aiModelProvider)) ...[
+          kVSpacer10,
+          Text('Model Name'),
+          kVSpacer8,
+          BoundedTextField(
+            key: ValueKey('${aiModelProvider.providerName ?? ""}-custom-model'),
+            onChanged: (x) {
+              newAIRequestModel = newAIRequestModel?.copyWith(model: x.trim());
+            },
+            value: newAIRequestModel?.model ?? '',
+          ),
+        ],
         kVSpacer10,
         Align(
           alignment: Alignment.centerRight,

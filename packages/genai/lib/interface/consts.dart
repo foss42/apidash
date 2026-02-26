@@ -2,7 +2,14 @@ import '../consts.dart';
 import '../models/models.dart';
 import 'model_providers/model_providers.dart';
 
-enum ModelAPIProvider { openai, anthropic, gemini, azureopenai, ollama }
+enum ModelAPIProvider {
+  openai,
+  anthropic,
+  gemini,
+  azureopenai,
+  ollama,
+  openaiCompatible,
+}
 
 final kModelProvidersMap = {
   ModelAPIProvider.openai: OpenAIModel.instance,
@@ -10,6 +17,7 @@ final kModelProvidersMap = {
   ModelAPIProvider.gemini: GeminiModel.instance,
   ModelAPIProvider.azureopenai: AzureOpenAIModel.instance,
   ModelAPIProvider.ollama: OllamaModel.instance,
+  ModelAPIProvider.openaiCompatible: OpenAICompatibleModel.instance,
 };
 
 const kAnthropicUrl = 'https://api.anthropic.com/v1/messages';
