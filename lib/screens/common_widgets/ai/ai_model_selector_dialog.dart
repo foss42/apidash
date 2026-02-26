@@ -245,36 +245,20 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
 
               if (aiModelProvider.providerId != ModelAPIProvider.ollama &&
                   apiKey.isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('API Key Missing'),
-                    content: Text(
-                        'Please provide an API Key for ${aiModelProvider.providerName}.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
+                showTextDialog(
+                  context,
+                  dialogTitle: 'API Key Missing',
+                  content:
+                      'Please provide an API Key for ${aiModelProvider.providerName}.',
                 );
                 return;
               }
 
               if (url.isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Endpoint URL Missing'),
-                    content: const Text('Please provide an endpoint URL.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
+                showTextDialog(
+                  context,
+                  dialogTitle: 'Endpoint URL Missing',
+                  content: 'Please provide an endpoint URL.',
                 );
                 return;
               }
