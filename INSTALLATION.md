@@ -91,7 +91,7 @@ https://user-images.githubusercontent.com/1382619/227956871-87376f18-d80f-4a53-9
 
 ### Debian-based Linux Distributions (Debian, Ubuntu, Linux Mint, etc.)
 
-API Dash requires `mpv` as a runtime dependency for audio/video functionality.
+API Dash requires `mpv` as a runtime dependency for audio/video.
 
 **Installation Steps:**
 
