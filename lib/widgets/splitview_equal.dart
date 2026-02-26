@@ -76,6 +76,12 @@ class _EqualSplitViewState extends State<EqualSplitView> {
 
           return MultiSplitView(
             controller: _controller,
+            onDividerDoubleTap: (dividerIndex) {
+              _controller.areas = [
+                Area(id: "left", flex: 1, min: minWidth),
+                Area(id: "right", flex: 1, min: minWidth),
+              ];
+            },
             builder: (context, area) {
               return switch (area.id) {
                 "left" => widget.leftWidget,
