@@ -240,6 +240,45 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
+              final apiKey = (newAIRequestModel?.apiKey ?? "").trim();
+              final url = (newAIRequestModel?.url ?? "").trim();
+
+              if (aiModelProvider.providerId != ModelAPIProvider.ollama &&
+                  apiKey.isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('API Key Missing'),
+                    content: Text(
+                        'Please provide an API Key for ${aiModelProvider.providerName}.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+                return;
+              }
+
+              if (url.isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Endpoint URL Missing'),
+                    content: const Text('Please provide an endpoint URL.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+                return;
+              }
+
               Navigator.of(context).pop(newAIRequestModel);
             },
             child: Text('Save'),
