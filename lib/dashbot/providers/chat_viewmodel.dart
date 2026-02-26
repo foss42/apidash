@@ -14,6 +14,11 @@ import '../utils/utils.dart';
 import 'dashbot_active_route_provider.dart';
 import 'service_providers.dart';
 
+final chatViewmodelProvider =
+    StateNotifierProvider<ChatViewmodel, ChatState>((ref) {
+  return ChatViewmodel(ref);
+});
+
 class ChatViewmodel extends StateNotifier<ChatState> {
   ChatViewmodel(this._ref) : super(const ChatState());
 
@@ -21,6 +26,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
   ChatRemoteRepository get _repo => _ref.read(chatRepositoryProvider);
   RequestModel? get _currentRequest => _ref.read(selectedRequestModelProvider);
+  HttpRequestModel? get _currentSubstitutedHttpRequestModel =>
+      _ref.read(selectedSubstitutedHttpRequestModelProvider);
   AIRequestModel? get _selectedAIModel {
     final json = _ref.read(settingsProvider).defaultAIModel;
     if (json == null) return null;
@@ -120,9 +127,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final currentReq = _currentRequest;
     final substitutedReq = (currentReq?.httpRequestModel != null)
         ? currentReq!.copyWith(
-            httpRequestModel:
-                _getSubstitutedHttpRequestModel(currentReq.httpRequestModel!),
-          )
+            httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith())
         : currentReq;
     String systemPrompt;
     if (type == ChatMessageType.generateCode) {
@@ -469,7 +474,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
       debugPrint('[cURL] Original: $trimmed');
-      final curl = CurlImportService.tryParseCurl(trimmed);
+      final curl = Curl.tryParse(trimmed);
       if (curl == null) {
         _appendSystem(
           'I couldn\'t parse that cURL command. Please check that it:\n- Starts with `curl `\n- Has balanced quotes (wrap JSON bodies in single quotes)\n- Uses backslashes for multi-line commands (if any)\n\nFix the command and paste it again below.\n\nExample:\n\ncurl -X POST https://api.apidash.dev/users \\\n  -H \'Content-Type: application/json\'',
@@ -477,11 +482,13 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         );
         return;
       }
-      final currentCtx = _currentRequestContext();
+      final currentSubstitutedHttpRequestJson =
+          _currentSubstitutedHttpRequestModel?.toJson();
+      final payload = convertCurlToHttpRequestModel(curl).toJson();
       // Prepare base message first (without AI insights)
       var built = CurlImportService.buildResponseFromParsed(
-        curl,
-        current: currentCtx,
+        payload,
+        currentJson: currentSubstitutedHttpRequestJson,
       );
       var msg = jsonDecode(built.jsonMessage) as Map<String, dynamic>;
 
@@ -489,25 +496,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       try {
         final ai = _selectedAIModel;
         if (ai != null) {
-          final summary = CurlImportService.summaryForPayload(
-            jsonDecode(built.jsonMessage)['actions'][0]['value']
-                as Map<String, dynamic>,
-          );
-          final diff = CurlImportService.diffForPayload(
-            jsonDecode(built.jsonMessage)['actions'][0]['value']
-                as Map<String, dynamic>,
-            currentCtx,
-          );
+          final diff = jsonDecode(built.jsonMessage)['meta']['diff'] as String;
           final sys = dash.DashbotPrompts().curlInsightsPrompt(
-            curlSummary: summary,
             diff: diff,
-            current: currentCtx,
+            newReq: payload,
           );
           final res = await _repo.sendChat(
             request: ai.copyWith(
               systemPrompt: sys,
-              userPrompt:
-                  'Provide concise, actionable insights about this cURL import.',
               stream: false,
             ),
           );
@@ -530,7 +526,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
                 : <String, dynamic>{};
             final enriched = CurlImportService.buildActionMessageFromPayload(
               payload,
-              current: currentCtx,
+              current: currentSubstitutedHttpRequestJson,
               insights: insights,
             );
             msg = enriched;
@@ -575,39 +571,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   Map<String, dynamic>? _currentRequestContext() {
-    final originalRq = _currentRequest?.httpRequestModel;
+    final originalRq = _currentSubstitutedHttpRequestModel;
     if (originalRq == null) return null;
-    final rq = _getSubstitutedHttpRequestModel(originalRq);
-    final headers = <String, String>{};
-    for (final h in rq.headers ?? const []) {
-      final k = (h.name).toString();
-      final v = (h.value ?? '').toString();
-      if (k.isNotEmpty) headers[k] = v;
-    }
-    final params = <String, String>{};
-    for (final p in rq.params ?? const []) {
-      final k = (p.name).toString();
-      final v = (p.value ?? '').toString();
-      if (k.isNotEmpty) params[k] = v;
-    }
-    final body = rq.body ?? '';
-    final formData = (rq.formData ?? const [])
-        .map((f) => {
-              'name': f.name,
-              'value': f.value,
-              'type': f.type.name,
-            })
-        .toList();
-    final isForm = rq.bodyContentType == ContentType.formdata;
-    return {
-      'method': rq.method.name.toUpperCase(),
-      'url': rq.url,
-      'headers': headers,
-      'params': params,
-      'body': body,
-      'form': isForm,
-      'formData': formData,
-    };
+    return originalRq.toJson();
   }
 
   Future<void> handleOpenApiAttachment(ChatAttachment att) async {
@@ -827,99 +793,47 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   Future<void> _applyCurl(ChatAction action) async {
-    final requestId = _currentRequest?.id;
-    final collection = _ref.read(collectionStateNotifierProvider.notifier);
-    final payload = action.value is Map<String, dynamic>
-        ? (action.value as Map<String, dynamic>)
-        : <String, dynamic>{};
+    try {
+      final requestId = _currentRequest?.id;
+      final payload = action.value is Map<String, dynamic>
+          ? (action.value as Map<String, dynamic>)
+          : <String, dynamic>{};
+      final httpRequestModel = HttpRequestModel.fromJson(payload);
+      final baseUrl = _inferBaseUrl(httpRequestModel.url);
+      final withEnvUrl =
+          await _maybeSubstituteBaseUrl(httpRequestModel.url, baseUrl);
 
-    String methodStr = (payload['method'] as String?)?.toLowerCase() ?? 'get';
-    final method = HTTPVerb.values.firstWhere(
-      (m) => m.name == methodStr,
-      orElse: () => HTTPVerb.get,
-    );
-    final url = payload['url'] as String? ?? '';
-    final baseUrl = _inferBaseUrl(url);
-
-    final headersMap =
-        (payload['headers'] as Map?)?.cast<String, dynamic>() ?? {};
-    final headers = headersMap.entries
-        .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
-        .toList();
-
-    final body = payload['body'] as String?;
-    final formFlag = payload['form'] == true;
-    final formDataListRaw = (payload['formData'] as List?)?.cast<dynamic>();
-    final formData = formDataListRaw == null
-        ? <FormDataModel>[]
-        : formDataListRaw
-            .whereType<Map>()
-            .map((e) => FormDataModel(
-                  name: (e['name'] as String?) ?? '',
-                  value: (e['value'] as String?) ?? '',
-                  type: (() {
-                    final t = (e['type'] as String?) ?? 'text';
-                    try {
-                      return FormDataType.values
-                          .firstWhere((ft) => ft.name == t);
-                    } catch (_) {
-                      return FormDataType.text;
-                    }
-                  })(),
-                ))
-            .toList();
-
-    ContentType bodyContentType;
-    if (formFlag || formData.isNotEmpty) {
-      bodyContentType = ContentType.formdata;
-    } else if ((body ?? '').trim().isEmpty) {
-      bodyContentType = ContentType.text;
-    } else {
-      // Heuristic JSON detection
-      try {
-        jsonDecode(body!);
-        bodyContentType = ContentType.json;
-      } catch (_) {
-        bodyContentType = ContentType.text;
+      if (action.field == 'apply_to_selected') {
+        if (requestId == null) return;
+        _ref.read(collectionStateNotifierProvider.notifier).update(
+              method: httpRequestModel.method,
+              url: withEnvUrl,
+              headers: httpRequestModel.headers,
+              isHeaderEnabledList: List<bool>.filled(
+                  httpRequestModel.headers?.length ?? 0, true),
+              body: httpRequestModel.body,
+              bodyContentType: httpRequestModel.bodyContentType,
+              formData: httpRequestModel.formData,
+              params: httpRequestModel.params,
+              isParamEnabledList:
+                  List<bool>.filled(httpRequestModel.params?.length ?? 0, true),
+              authModel: null,
+            );
+        _appendSystem('Applied cURL to the selected request.',
+            ChatMessageType.importCurl);
+      } else if (action.field == 'apply_to_new') {
+        final model = httpRequestModel.copyWith(
+          url: withEnvUrl,
+        );
+        _ref
+            .read(collectionStateNotifierProvider.notifier)
+            .addRequestModel(model, name: 'Imported cURL');
+        _appendSystem(
+            'Created a new request from the cURL.', ChatMessageType.importCurl);
       }
-    }
-
-    final withEnvUrl = await _maybeSubstituteBaseUrl(url, baseUrl);
-    if (action.field == 'apply_to_selected') {
-      if (requestId == null) return;
-      // Replacement semantics: ensure previous body/formData are cleared if absent in cURL
-      final replacingBody =
-          (formFlag || formData.isNotEmpty) ? '' : (body ?? '');
-      final replacingFormData =
-          formData.isEmpty ? const <FormDataModel>[] : formData;
-      collection.update(
-        method: method,
-        url: withEnvUrl,
-        headers: headers,
-        isHeaderEnabledList: List<bool>.filled(headers.length, true),
-        body: replacingBody,
-        bodyContentType: bodyContentType,
-        formData: replacingFormData,
-        // Wipe existing parameters and authentication to ensure clean state
-        params: const [],
-        isParamEnabledList: const [],
-        authModel: null,
-      );
-      _appendSystem(
-          'Applied cURL to the selected request.', ChatMessageType.importCurl);
-    } else if (action.field == 'apply_to_new') {
-      final model = HttpRequestModel(
-        method: method,
-        url: withEnvUrl,
-        headers: headers,
-        isHeaderEnabledList: List<bool>.filled(headers.length, true),
-        body: body,
-        bodyContentType: bodyContentType,
-        formData: formData.isEmpty ? null : formData,
-      );
-      collection.addRequestModel(model, name: 'Imported cURL');
-      _appendSystem(
-          'Created a new request from the cURL.', ChatMessageType.importCurl);
+    } catch (e) {
+      _appendSystem('Error encountered while importing cURL - $e',
+          ChatMessageType.importCurl);
     }
   }
 
@@ -1004,21 +918,4 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       ),
     );
   }
-
-  HttpRequestModel _getSubstitutedHttpRequestModel(
-      HttpRequestModel httpRequestModel) {
-    final envMap = _ref.read(availableEnvironmentVariablesStateProvider);
-    final activeEnvId = _ref.read(activeEnvironmentIdStateProvider);
-    return substituteHttpRequestModel(
-      httpRequestModel,
-      envMap,
-      activeEnvId,
-    );
-  }
 }
-
-final chatViewmodelProvider = StateNotifierProvider<ChatViewmodel, ChatState>((
-  ref,
-) {
-  return ChatViewmodel(ref);
-});

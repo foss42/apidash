@@ -388,7 +388,7 @@ packages:
       path: "packages/curl_parser"
       relative: true
     source: path
-    version: "0.1.4-dev"
+    version: "0.1.5-dev"
   dart_jsonwebtoken:
     dependency: transitive
     description:
@@ -801,10 +801,10 @@ packages:
     dependency: transitive
     description:
       name: google_fonts
-      sha256: ba03d03bcaa2f6cb7bd920e3b5027181db75ab524f8891c8bc3aa603885b8055
+      sha256: c30eef5e7cd26eb89cc8065b4390ac86ce579f2fcdbe35220891c6278b5460da
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.3"
+    version: "8.0.1"
   graphs:
     dependency: transitive
     description:
