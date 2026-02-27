@@ -18,15 +18,47 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  final Map<ModelAPIProvider, AIRequestModel> _providerDrafts = {};
 
   @override
   void initState() {
     super.initState();
     selectedProvider = widget.aiRequestModel?.modelApiProvider;
-    if (selectedProvider != null && widget.aiRequestModel?.model != null) {
-      newAIRequestModel = widget.aiRequestModel?.copyWith();
+    final initialModel = widget.aiRequestModel;
+    if (selectedProvider != null && initialModel != null) {
+      final draft = initialModel.copyWith();
+      newAIRequestModel = draft;
+      _providerDrafts[selectedProvider!] = draft;
     }
     aM = ModelManager.fetchAvailableModels();
+  }
+
+  void _selectProvider(
+      ModelAPIProvider? provider, Map<ModelAPIProvider, AIModelProvider> data) {
+    if (provider == null) {
+      return;
+    }
+
+    final nextModel =
+        _providerDrafts[provider] ?? data[provider]?.toAiRequestModel();
+
+    setState(() {
+      selectedProvider = provider;
+      if (nextModel != null) {
+        newAIRequestModel = nextModel;
+        _providerDrafts[provider] = nextModel;
+      }
+    });
+  }
+
+  void _updateCurrentRequestModel(AIRequestModel updated) {
+    setState(() {
+      newAIRequestModel = updated;
+      final provider = updated.modelApiProvider;
+      if (provider != null) {
+        _providerDrafts[provider] = updated;
+      }
+    });
   }
 
   @override
@@ -65,11 +97,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
                           onChanged: (x) {
-                            setState(() {
-                              selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
-                            });
+                            _selectProvider(x, mappedData);
                           },
                           value: selectedProvider,
                           values: data.modelProviders
@@ -117,11 +145,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                     backgroundColor: Colors.green,
                                   ),
                             onTap: () {
-                              setState(() {
-                                selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
-                              });
+                              _selectProvider(x.providerId, mappedData);
                             },
                           ),
                         ),
@@ -163,13 +187,10 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
-              setState(() {
-                newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
-              });
+              final updated = newAIRequestModel?.copyWith(apiKey: x);
+              if (updated != null) {
+                _updateCurrentRequestModel(updated);
+              }
             },
             value: newAIRequestModel?.apiKey ?? "",
             // value: currentCredential,
@@ -181,9 +202,10 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         BoundedTextField(
           key: ValueKey(aiModelProvider.providerName ?? ""),
           onChanged: (x) {
-            setState(() {
-              newAIRequestModel = newAIRequestModel?.copyWith(url: x);
-            });
+            final updated = newAIRequestModel?.copyWith(url: x);
+            if (updated != null) {
+              _updateCurrentRequestModel(updated);
+            }
           },
           value: newAIRequestModel?.url ?? "",
         ),
@@ -223,10 +245,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                         ],
                       ),
                       onTap: () {
-                        setState(() {
-                          newAIRequestModel =
-                              newAIRequestModel?.copyWith(model: x.id);
-                        });
+                        final updated =
+                            newAIRequestModel?.copyWith(model: x.id);
+                        if (updated != null) {
+                          _updateCurrentRequestModel(updated);
+                        }
                       },
                     ),
                   ),
