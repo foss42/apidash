@@ -33,13 +33,21 @@ Get all dependencies of packages
 melos pub-get
 ```
 
-**Step 6 -** Get all dependencies of the app
+**Step 6 -** Update Flutter Dependencies (Optional)
+
+To fix compatibility issues, update the `freezed` package to version 3.2.5 by running:
+
+```
+flutter pub add dev:freezed:^3.2.5
+```
+
+**Step 7 -** Get all dependencies of the app
 
 ```
 flutter pub get
 ```
 
-**Step 7 -** Run the project by executing the below command
+**Step 8 -** Run the project by executing the below command
 
 ```
 flutter run
