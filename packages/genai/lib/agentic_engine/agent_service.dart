@@ -4,7 +4,7 @@ import '../utils/utils.dart';
 import 'blueprint.dart';
 
 class AIAgentService {
-  static Future<String?> _call_provider({
+  static Future<String?> _callProvider({
     required AIRequestModel baseAIRequestObject,
     required String systemPrompt,
     required String input,
@@ -31,7 +31,7 @@ class AIAgentService {
       }
     }
 
-    return await _call_provider(
+    return await _callProvider(
       systemPrompt: sP,
       input: query ?? '',
       baseAIRequestObject: baseAIRequestObject,
@@ -44,7 +44,7 @@ class AIAgentService {
     String? query,
     Map? variables,
   }) async {
-    int RETRY_COUNT = 0;
+    int retryCount = 0;
     List<int> backoffDelays = [200, 400, 800, 1600, 3200];
     do {
       try {
@@ -63,16 +63,14 @@ class AIAgentService {
         "AIAgentService::Governor: Exception Occured: $e";
       }
       // Exponential Backoff
-      if (RETRY_COUNT < backoffDelays.length) {
-        await Future.delayed(
-          Duration(milliseconds: backoffDelays[RETRY_COUNT]),
-        );
+      if (retryCount < backoffDelays.length) {
+        await Future.delayed(Duration(milliseconds: backoffDelays[retryCount]));
       }
-      RETRY_COUNT += 1;
+      retryCount += 1;
       debugPrint(
-        "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $RETRY_COUNT",
+        "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $retryCount",
       );
-    } while (RETRY_COUNT < 5);
+    } while (retryCount < 5);
     return null;
   }
 

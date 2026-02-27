@@ -1,0 +1,30 @@
+Analyzing apidash_websocket-support...                          
+
+   info • Use interpolation to compose strings and values • fix_context_warnings.dart:58:11 • prefer_interpolation_to_compose_strings
+   info • Don't invoke 'print' in production code • fix_deprecations.dart:29:3 • avoid_print
+   info • The constant name 'GENERAL_ARG_PROPERTY_FORMAT_PY' isn't a lowerCamelCase identifier • lib/templates/tool_templates.dart:1:7 • constant_identifier_names
+   info • The constant name 'GENERAL_PYTHON_TOOL_FORMAT' isn't a lowerCamelCase identifier • lib/templates/tool_templates.dart:6:7 • constant_identifier_names
+   info • The constant name 'GENERAL_JAVASCRIPT_TOOL_FORMAT' isn't a lowerCamelCase identifier • lib/templates/tool_templates.dart:26:7 • constant_identifier_names
+   info • The constant name 'LANGCHAIN_PYTHON_TOOL_FORMAT' isn't a lowerCamelCase identifier • lib/templates/tool_templates.dart:49:7 • constant_identifier_names
+   info • The constant name 'LANGCHAIN_JAVASCRIPT_TOOL_FORMAT' isn't a lowerCamelCase identifier • lib/templates/tool_templates.dart:65:7 • constant_identifier_names
+   info • The constant name 'MICROSOFT_AUTOGEN_TOOL_FORMAT' isn't a lowerCamelCase identifier • lib/templates/tool_templates.dart:83:7 • constant_identifier_names
+   info • 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre • lib/widgets/dialog_history_retention.dart:51:25 • deprecated_member_use
+   info • 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre • lib/widgets/dialog_history_retention.dart:52:25 • deprecated_member_use
+   info • The import of 'package:http_parser/http_parser.dart' is unnecessary because all of the used elements are also provided by the import of 'package:http/http.dart' • packages/better_networking/lib/models/http_response_model.dart:6:8 • unnecessary_import
+warning • Publishable packages can't have 'path' dependencies • packages/better_networking/pubspec.yaml:29:5 • invalid_dependency
+   info • Don't invoke 'print' in production code • packages/better_networking/test/services/websocket_stress_test.dart:77:7 • avoid_print
+warning • Publishable packages can't have 'path' dependencies • packages/curl_parser/pubspec.yaml:23:5 • invalid_dependency
+   info • The variable name '_call_provider' isn't a lowerCamelCase identifier • packages/genai/lib/agentic_engine/agent_service.dart:7:26 • non_constant_identifier_names
+   info • The variable name 'RETRY_COUNT' isn't a lowerCamelCase identifier • packages/genai/lib/agentic_engine/agent_service.dart:47:9 • non_constant_identifier_names
+warning • Publishable packages can't have 'path' dependencies • packages/genai/pubspec.yaml:21:5 • invalid_dependency
+warning • Unused import: 'package:flutter_test/flutter_test.dart' • packages/genai/test/genai_test.dart:1:8 • unused_import
+warning • Unused import: 'package:genai/genai.dart' • packages/genai/test/genai_test.dart:2:8 • unused_import
+   info • Don't invoke 'print' in production code • packages/genai/tool/json_to_dart.dart:16:3 • avoid_print
+   info • Library names are not necessary • packages/json_field_editor/lib/json_field_editor.dart:1:9 • unnecessary_library_name
+   info • Field overrides a field inherited from '_TextField' • packages/json_field_editor/lib/src/json_field.dart:132:34 • overridden_fields
+   info • Unnecessary escape in string literal • test/dashbot/services/curl_import_service_test.dart:22:94 • unnecessary_string_escapes
+   info • Unnecessary escape in string literal • test/dashbot/services/curl_import_service_test.dart:22:100 • unnecessary_string_escapes
+   info • Unnecessary escape in string literal • test/dashbot/services/curl_import_service_test.dart:22:103 • unnecessary_string_escapes
+   info • Unnecessary escape in string literal • test/dashbot/services/curl_import_service_test.dart:22:106 • unnecessary_string_escapes
+   info • The local variable '_parse' starts with an underscore • test/dashbot/widgets/openapi_operation_picker_dialog_test.dart:28:11 • no_leading_underscores_for_local_identifiers
+

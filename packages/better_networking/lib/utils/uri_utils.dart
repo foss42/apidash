@@ -65,3 +65,54 @@ String stripUrlParams(String url) {
   }
   return (uri, null);
 }
+
+(Uri?, String?) getValidWebSocketUri(
+  String? url,
+  List<NameValueModel>? requestParams, {
+  SupportedUriSchemes defaultUriScheme = SupportedUriSchemes.wss,
+}) {
+  url = url?.trim();
+  if (url == null || url == "") {
+    return (null, "URL is missing!");
+  }
+
+  // Handle common mistakes by mapping http/https to ws/wss
+  if (url.startsWith("http://")) {
+    url = url.replaceFirst("http://", "ws://");
+  } else if (url.startsWith("https://")) {
+    url = url.replaceFirst("https://", "wss://");
+  }
+
+  if (kLocalhostRegex.hasMatch(url) || kIPHostRegex.hasMatch(url)) {
+    url = '${SupportedUriSchemes.ws.name}://$url';
+  }
+
+  Uri? uri = Uri.tryParse(url);
+  if (uri == null) {
+    return (null, "Check URL (malformed)");
+  }
+
+  if (uri.hasScheme) {
+    String scheme = uri.scheme.toLowerCase();
+    if (scheme != 'ws' && scheme != 'wss') {
+      return (null, "Unsupported WebSocket Scheme ($scheme)");
+    }
+  } else {
+    url = "${defaultUriScheme.name}://$url";
+    uri = Uri.parse(url);
+  }
+
+  if (uri.hasFragment) {
+    uri = uri.removeFragment();
+  }
+
+  Map<String, String>? queryParams = rowsToMap(requestParams);
+  if (queryParams != null && queryParams.isNotEmpty) {
+    if (uri.hasQuery) {
+      Map<String, String> urlQueryParams = uri.queryParameters;
+      queryParams = mergeMaps(urlQueryParams, queryParams);
+    }
+    uri = uri.replace(queryParameters: queryParams);
+  }
+  return (uri, null);
+}

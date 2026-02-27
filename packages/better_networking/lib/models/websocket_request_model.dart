@@ -14,32 +14,30 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
   @JsonSerializable(explicitToJson: true, anyMap: true)
   const factory WebSocketRequestModel({
     @Default("") String url,
-
     List<NameValueModel>? headers,
     List<bool>? isHeaderEnabledList,
-
     List<NameValueModel>? params,
     List<bool>? isParamEnabledList,
-
     @Default(AuthModel(type: APIAuthType.none)) AuthModel? authModel,
-
     String? initialMessage,
-
     @Default(ContentType.json) ContentType messageContentType,
   }) = _WebSocketRequestModel;
 
   Map<String, String> get headersMap => rowsToMap(headers) ?? {};
   Map<String, String> get paramsMap => rowsToMap(params) ?? {};
 
-
   factory WebSocketRequestModel.fromJson(Map<String, Object?> json) =>
       _$WebSocketRequestModelFromJson(json);
 
-  Map<String, String> get enabledHeadersMap =>
-      rowsToMap(getEnabledRows(headers, isHeaderEnabledList)) ?? {};
+  Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
 
-  Map<String, String> get enabledParamsMap =>
-      rowsToMap(getEnabledRows(params, isParamEnabledList)) ?? {};
+  Map<String, String> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
+
+  List<NameValueModel>? get enabledHeaders =>
+      getEnabledRows(headers, isHeaderEnabledList);
+
+  List<NameValueModel>? get enabledParams =>
+      getEnabledRows(params, isParamEnabledList);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

@@ -626,11 +626,35 @@ class CollectionStateNotifier
 
     wsRequest = getSubstitutedWebSocketRequestModel(wsRequest);
 
-    final uri = Uri.parse(wsRequest.url).replace(
-      queryParameters: wsRequest.enabledParamsMap,
+    final (uri, error) = getValidWebSocketUri(
+      wsRequest.url,
+      wsRequest.params,
     );
 
     final terminal = ref.read(terminalStateProvider.notifier);
+
+    if (uri == null) {
+      final errorMessage = WebSocketMessageModel(
+        id: getNewUuid(),
+        type: WebSocketMessageType.error,
+        message: error!,
+        timestamp: DateTime.now(),
+      );
+
+      state = {
+        ...state!,
+        requestId: requestModel.copyWith(
+          isWorking: false,
+          isStreaming: false,
+          websocketConnectionModel: WebSocketConnectionModel(
+            isClosed: true,
+            messages: [errorMessage],
+          ),
+        ),
+      };
+      unsave();
+      return;
+    }
 
     final wsLogId = terminal.startNetwork(
       apiType: APIType.ws,

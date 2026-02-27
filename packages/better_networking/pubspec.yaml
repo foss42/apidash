@@ -1,6 +1,7 @@
 name: better_networking
 description: "Simplified Networking. Support for sending REST & GraphQL API Requests."
 version: 0.0.4-dev
+publish_to: none
 homepage: https://github.com/foss42/apidash
 
 topics:
@@ -33,6 +34,7 @@ dependencies:
   flutter_web_auth_2: ^5.0.0-alpha.3
   uuid: ^4.5.2
   web_socket_channel: ^3.0.3
+  freezed_annotation: ^3.1.0
 
 dev_dependencies:
   flutter_test:

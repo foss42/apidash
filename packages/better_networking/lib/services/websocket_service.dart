@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:better_networking/utils/uuid_utils.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
+import 'websockets/websocket_handler.dart';
 import '../models/models.dart';
 
 class WebSocketService {
@@ -17,13 +16,7 @@ class WebSocketService {
     String? initialMessage,
   }) async {
     try {
-
-      final socket = await WebSocket.connect(
-        uri.toString(),
-        headers: headers,
-      );
-      _wsChannel = IOWebSocketChannel(socket);
-
+      _wsChannel = await connectToWebSocket(uri, headers);
 
       final connectMessage = WebSocketMessageModel(
         id: getNewUuid(),
@@ -69,7 +62,6 @@ class WebSocketService {
 
     _wsSubscription = _wsChannel!.stream.listen(
       (data) {
-
         final msg = WebSocketMessageModel(
           id: getNewUuid(),
           type: WebSocketMessageType.received,
@@ -81,7 +73,6 @@ class WebSocketService {
         onMessage(msg);
       },
       onError: (error) {
-
         final errorMsg = WebSocketMessageModel(
           id: getNewUuid(),
           type: WebSocketMessageType.error,
@@ -92,7 +83,6 @@ class WebSocketService {
         onError(errorMsg);
       },
       onDone: () {
-
         final disconnectMsg = WebSocketMessageModel(
           id: getNewUuid(),
           type: WebSocketMessageType.disconnect,
@@ -193,4 +183,3 @@ class WebSocketConnectionResult {
     );
   }
 }
-

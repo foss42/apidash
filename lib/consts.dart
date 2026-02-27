@@ -135,7 +135,9 @@ enum CodegenLanguage {
   rustCurl("Rust (curl-rust)", "rust", "rs"),
   rustUreq("Rust (ureq)", "rust", "rs"),
   swiftAlamofire("Swift (Alamofire)", "swift", "swift"),
-  swiftUrlSession("Swift (URLSession)", "swift", "swift");
+  swiftUrlSession("Swift (URLSession)", "swift", "swift"),
+  pythonWebsocket("Python (WebSocket)", "python", "py"),
+  jsWebsocket("JavaScript (WebSocket)", "javascript", "js");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;

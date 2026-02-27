@@ -35,10 +35,13 @@ class WebSocketMessagesPane extends ConsumerWidget {
     }
 
     return ListView.builder(
+      reverse: true,
+      shrinkWrap: true,
       padding: const EdgeInsets.all(12),
       itemCount: messages.length,
       itemBuilder: (context, index) {
-        return WebSocketMessageTile(message: messages[index]);
+        final reversedIndex = messages.length - 1 - index;
+        return WebSocketMessageTile(message: messages[reversedIndex]);
       },
     );
   }
@@ -60,7 +63,7 @@ class WebSocketMessageTile extends StatelessWidget {
     };
 
     String formatTimestamp(DateTime? ts) {
-      return ts==null?"": DateFormat('yyyy-MM-dd HH:mm:ss').format(ts);
+      return ts == null ? "" : DateFormat('yyyy-MM-dd HH:mm:ss').format(ts);
     }
 
     final label = message.type.name.toUpperCase();
@@ -69,7 +72,7 @@ class WebSocketMessageTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
         border: Border(
           left: BorderSide(color: color, width: 4),

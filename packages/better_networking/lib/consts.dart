@@ -4,7 +4,7 @@ enum APIType {
   rest("HTTP", "HTTP"),
   ai("AI", "AI"),
   graphql("GraphQL", "GQL"),
-  ws("Websocket","WS");
+  ws("Websocket", "WS");
 
   const APIType(this.label, this.abbr);
   final String label;
@@ -82,11 +82,10 @@ enum HTTPVerb {
   final String abbr;
 }
 
-enum SupportedUriSchemes { https, http }
+enum SupportedUriSchemes { https, http, ws, wss }
 
-final kSupportedUriSchemes = SupportedUriSchemes.values
-    .map((i) => i.name)
-    .toList();
+final kSupportedUriSchemes =
+    SupportedUriSchemes.values.map((i) => i.name).toList();
 const kDefaultUriScheme = SupportedUriSchemes.https;
 final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
 final kIPHostRegex = RegExp(

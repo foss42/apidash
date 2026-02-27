@@ -1,6 +1,7 @@
 name: genai
 description: "A unified Dart/Flutter package for working with multiple Generative AI providers (Google Gemini, OpenAI, Anthropic, Azure OpenAI, Ollama, etc.) using a single request model."
 version: 0.0.2-dev
+publish_to: none
 homepage: https://github.com/foss42/apidash/tree/main/packages/genai
 
 topics:

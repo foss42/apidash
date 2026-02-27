@@ -1,9 +1,9 @@
-const GENERAL_ARG_PROPERTY_FORMAT_PY = """:ARG_NAME: {
+const generalArgPropertyFormatPy = """:ARG_NAME: {
   "type": ":ARG_TYPE:",
   "description: ":ARG_DESC:"
 }""";
 
-const GENERAL_PYTHON_TOOL_FORMAT = """
+const generalPythonToolFormat = """
 :FUNC:
 
 api_tool = {
@@ -23,7 +23,7 @@ api_tool = {
 __all__ = ["api_tool"]
 """;
 
-const GENERAL_JAVASCRIPT_TOOL_FORMAT = """
+const generalJavascriptToolFormat = """
 :FUNC:
 
 const apiTool = {
@@ -46,7 +46,7 @@ const apiTool = {
 export { apiTool };
 """;
 
-const LANGCHAIN_PYTHON_TOOL_FORMAT = """
+const langchainPythonToolFormat = """
 from langchain.tools import StructuredTool
 
 :INPUT_SCHEMA:
@@ -62,7 +62,7 @@ api_tool = StructuredTool.from_function(
 __all__ = ["api_tool"]
 """;
 
-const LANGCHAIN_JAVASCRIPT_TOOL_FORMAT = """
+const langchainJavascriptToolFormat = """
 import { DynamicStructuredTool } from 'langchain/tools';
 import { z } from 'zod';
 
@@ -80,7 +80,7 @@ const apiTool = new DynamicStructuredTool({
 export { apiTool };
 """;
 
-const MICROSOFT_AUTOGEN_TOOL_FORMAT = """
+const microsoftAutogenToolFormat = """
 :FUNC:
 
 api_tool = {
@@ -96,16 +96,16 @@ class APIToolGenTemplateSelector {
   static String getTemplate(String language, String agent) {
     if (language == 'PYTHON') {
       if (agent == 'MICROSOFT_AUTOGEN') {
-        return MICROSOFT_AUTOGEN_TOOL_FORMAT;
+        return microsoftAutogenToolFormat;
       } else if (agent == 'LANGCHAIN') {
-        return LANGCHAIN_PYTHON_TOOL_FORMAT;
+        return langchainPythonToolFormat;
       }
-      return GENERAL_PYTHON_TOOL_FORMAT;
+      return generalPythonToolFormat;
     } else if (language == 'JAVASCRIPT') {
       if (agent == 'LANGCHAIN') {
-        return LANGCHAIN_JAVASCRIPT_TOOL_FORMAT;
+        return langchainJavascriptToolFormat;
       }
-      return GENERAL_JAVASCRIPT_TOOL_FORMAT;
+      return generalJavascriptToolFormat;
     }
     return 'NO_TEMPLATE';
   }

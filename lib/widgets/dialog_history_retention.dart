@@ -48,7 +48,9 @@ showHistoryRetentionDialog(
                                 ? Theme.of(context).colorScheme.primary
                                 : Theme.of(context).colorScheme.outline),
                         value: e,
+                        // ignore: deprecated_member_use
                         groupValue: selectedRetentionPeriod,
+                        // ignore: deprecated_member_use
                         onChanged: (value) {
                           if (value != null) {
                             selectedRetentionPeriod = value;

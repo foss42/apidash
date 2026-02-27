@@ -33,6 +33,9 @@ import 'rust/ureq.dart';
 import 'swift/alamofire.dart';
 import 'swift/urlsession.dart';
 
+import 'python/websocket_client.dart';
+import 'js/websocket.dart';
+
 class Codegen {
   String? getCode(
     CodegenLanguage codegenLanguage,
@@ -40,6 +43,36 @@ class Codegen {
     SupportedUriSchemes defaultUriScheme, {
     String? boundary,
   }) {
+    if (requestModel.apiType == APIType.ws) {
+      var wsRequestModel = requestModel.websocketRequestModel;
+      if (wsRequestModel == null) return "";
+
+      String url = wsRequestModel.url.trim();
+
+      if (url.startsWith("http://")) {
+        url = url.replaceFirst("http://", "ws://");
+      } else if (url.startsWith("https://")) {
+        url = url.replaceFirst("https://", "wss://");
+      }
+
+      if (url.isEmpty) {
+        url = kDefaultUri;
+      }
+      if (!url.contains("://") && url.isNotEmpty) {
+        url = "wss://$url";
+      }
+      var wM = wsRequestModel.copyWith(url: url);
+
+      switch (codegenLanguage) {
+        case CodegenLanguage.pythonWebsocket:
+          return PythonWebSocketCodeGen().getCode(wM);
+        case CodegenLanguage.jsWebsocket:
+          return JsWebSocketCodeGen().getCode(wM);
+        default:
+          return "";
+      }
+    }
+
     var httpRequestModel = requestModel.httpRequestModel;
     if (httpRequestModel == null) {
       return "";
@@ -120,6 +153,9 @@ class Codegen {
         return SwiftAlamofireCodeGen().getCode(rM);
       case CodegenLanguage.swiftUrlSession:
         return SwiftURLSessionCodeGen().getCode(rM);
+      case CodegenLanguage.pythonWebsocket:
+      case CodegenLanguage.jsWebsocket:
+        return "";
     }
   }
 }
