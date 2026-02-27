@@ -1184,130 +1184,70 @@ HTTPlug is a standardized HTTP client interface that allows you to write reusabl
 
 ## Python (requests)
 
-Here are the detailed instructions for running the generated API Dash code in Python (using `requests`) for macOS, Windows, and Linux:
+Here are the instructions for running the generated API Dash code in Python using `requests`.
 
-### 1. Install Python:
-#### macOS:
-- Go to the official Python website: [https://www.python.org/downloads/macos/](https://www.python.org/downloads/macos/)
-- Download the latest version for macOS and follow the installation instructions.
+### 1. Install Python
 
-#### Windows:
-- Go to the official Python website: [https://www.python.org/downloads/](https://www.python.org/downloads/)
-- Download the latest version for Windows and run the installer. During installation, make sure to check the box that says "Add Python to PATH."
+Download and install the latest version of Python from:
+https://www.python.org/downloads/
 
-#### Linux:
-- Most Linux distributions come with Python pre-installed. To check if Python is already installed, open the terminal and type:
+After installation, verify:
+
+```bash
+python --version
+```
+
+On some systems you may need:
 
 ```bash
 python3 --version
 ```
+### 2. Install the requests Library
 
-- If it's not installed, you can install it via your package manager:
-  - On Ubuntu/Debian-based systems:
+Install using pip:
 
-    ```bash
-    sudo apt update
-    sudo apt install python3
-    ```
+```bash
+pip install requests
+```
 
-  - On Fedora/CentOS-based systems:
-
-    ```bash
-    sudo dnf install python3
-    ```
-
-### 2. Install the `requests` library:
-#### macOS and Linux:
-Open the terminal and type the following command to install the `requests` library using `pip`:
+If using Python 3:
 
 ```bash
 pip3 install requests
 ```
+### 3. Use a Virtual Environment (Optional but recommended)
 
-#### Windows:
-Open Command Prompt (or PowerShell) and type the following command to install the `requests` library using `pip`:
-
-```bash
-pip install requests
-```
-  
-💡 **[Optional] Recommended: Use a Virtual Environment**
-
-It is recommended to run API Dash generated Python code inside a virtual environment 
-to avoid dependency conflicts with other Python projects.
-
-#### Create and activate a virtual environment:
-
-**macOS / Linux**
+macOS / Linux:
 
 ```bash
-python3 -m venv myenv
-source myenv/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-**Windows**
+Windows:
 
 ```bash
-python -m venv myenv
-myenv\Scripts\activate
+python -m venv venv
+venv\Scripts\activate
 ```
 
-After activation, install dependencies:
+Then install requests inside the environment:
 
 ```bash
 pip install requests
 ```
 
-### 3. Execute the generated code:
-Once you have Python and `requests` installed, follow these steps to execute the generated code:
+### 4. Run the Generated Code
 
-1. **Open a text editor** ✍️ (like Notepad on Windows, TextEdit on macOS, or any code editor like Visual Studio Code).
-2. **Copy the generated code** 📋 from API Dash.
-3. **Paste the code** into the text editor 🔄.
-4. **Save the file** 💾 with a `.py` extension, such as `api_test.py`.
-
-This makes the steps a little more visual and fun!
-
-#### macOS and Linux:
-1. Open the **Terminal**.
-2. **Navigate to the directory** where you saved the `.py` file. For example:
-
-```bash
-cd /path/to/your/file
-```
-
-3. **Run the Python script** by typing the following command:
-
-```bash
-python3 api_test.py
-```
-
-#### Windows:
-1. Open **Command Prompt** (or PowerShell).
-2. **Navigate to the directory** where you saved the `.py` file. For example:
-
-```bash
-cd C:\path\to\your\file
-```
-
-3. **Run the Python script** by typing the following command:
+ 1. Save the generated code in a file named `api_test.py`
+ 2. Open a terminal in that directory.
+ 3. Run:
 
 ```bash
 python api_test.py
 ```
 
-## Python (http.client)
-
-Here are the detailed instructions for running the generated API Dash code in Python using `http.client`:
-
-### 1. Install Python:
-Check out the instructions [here](#1-install-python) for detailed steps on how to install Python on macOS, Windows, or Linux.
-
-### 2. `http.client` is a built-in library:
-Unlike other Python libraries (like `requests`), `http.client` is part of Python's standard library. You can directly use it without any additional installation steps.
-
-### 3. Execute the generated code:
-Check out the instructions [here](#3-execute-the-generated-code) for detailed steps on how to run the code.
+The API response will be displayed in the terminal.
 
 ## Ruby (faraday)
 
