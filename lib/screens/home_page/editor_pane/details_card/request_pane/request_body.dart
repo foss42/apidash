@@ -3,6 +3,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'request_form_data.dart';
@@ -62,16 +63,48 @@ class EditRequestBody extends ConsumerWidget {
                   ),
                 _ => Padding(
                     padding: kPt5o10,
-                    child: TextFieldEditor(
-                      key: Key("$selectedId-body"),
-                      fieldKey: "$selectedId-body-editor",
+                    child: EnvironmentTriggerField(
+                      key: Key("$selectedId-body-env-editor"),
+                      keyId: "$selectedId-body-env-editor",
                       initialValue: requestModel?.httpRequestModel?.body,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      expands: true,
+                      textAlignVertical: TextAlignVertical.top,
+                      enableTabInsertion: true,
+                      style: kCodeStyle.copyWith(
+                        fontSize:
+                            Theme.of(context).textTheme.bodyMedium?.fontSize,
+                      ),
                       onChanged: (String value) {
                         ref
                             .read(collectionStateNotifierProvider.notifier)
                             .update(body: value);
                       },
-                      hintText: kHintText,
+                      decoration: InputDecoration(
+                        hintText: kHintText,
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: kBorderRadius8,
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: kBorderRadius8,
+                          borderSide: BorderSide(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                          ),
+                        ),
+                        filled: true,
+                        hoverColor: kColorTransparent,
+                        fillColor:
+                            Theme.of(context).colorScheme.surfaceContainerLowest,
+                      ),
                     ),
                   ),
               },
