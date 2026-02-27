@@ -11,3 +11,4 @@
 - [How to Disable SSL for Requests](https://github.com/foss42/apidash/blob/main/doc/user_guide/disable_ssl.md)
 - [Dashbot User Guide](https://github.com/foss42/apidash/blob/main/doc/user_guide/dashbot_user_guide.md)
 - [How to Run Generated Code for a Programming Language](https://github.com/foss42/apidash/blob/main/doc/user_guide/instructions_to_run_generated_code.md)
+- [Run Generated Code Guide](https://github.com/foss42/apidash/blob/main/doc/run_generated_code.md)
