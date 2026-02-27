@@ -58,7 +58,8 @@ print('Response Body:', response.text)
 
 ## Running Generated Code
 
-For detailed setup and execution instructions for each language, see [How to Run Generated Code](./instructions_to_run_generated_code.md).
+- For quick setup and execution instructions (Python, JavaScript, Java), see [Run Generated Code Guide](https://github.com/foss42/apidash/blob/main/doc/run_generated_code.md).
+- For full language-by-language instructions, see [How to Run Generated Code](./instructions_to_run_generated_code.md).
 
 ## Generating Code via Dashbot
 

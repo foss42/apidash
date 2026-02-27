@@ -9,7 +9,10 @@
 7. [Adding a New Code Generator](https://github.com/foss42/apidash/blob/main/doc/dev_guide/adding_codegen.md)
 8. [Packaging API Dash](https://github.com/foss42/apidash/blob/main/doc/dev_guide/packaging.md)
 9. [OAuth Authentication Limitations](https://github.com/foss42/apidash/blob/main/doc/dev_guide/oauth_authentication_limitations.md)
-10. Other Topics
+10. User-Facing Code Generation Docs
+    - [Code Generation (User Guide)](https://github.com/foss42/apidash/blob/main/doc/user_guide/code_generation_guide.md)
+    - [Run Generated Code Guide](https://github.com/foss42/apidash/blob/main/doc/run_generated_code.md)
+11. Other Topics
     - [Flutter Rust Bridge Experiment for Parsing Hurl](https://github.com/foss42/apidash/blob/main/doc/dev_guide/flutter_rust_bridge_experiment.md)
     - [OpenAPI Import Details](https://github.com/foss42/apidash/blob/main/doc/dev_guide/openapi.md)
 
