@@ -24,6 +24,14 @@ class MockChatRemoteRepository extends ChatRemoteRepository {
     if (mockError != null) throw mockError!;
     return mockResponse;
   }
+
+  @override
+  Future<Stream<String?>> streamChat({required AIRequestModel request}) async {
+    if (mockError != null) throw mockError!;
+    final resp = mockResponse;
+    if (resp == null || resp.isEmpty) return const Stream.empty();
+    return Stream.value(resp);
+  }
 }
 
 class _PromptCaptureBuilder extends PromptBuilder {

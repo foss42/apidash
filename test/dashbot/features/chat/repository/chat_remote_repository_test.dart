@@ -91,6 +91,20 @@ void main() {
       });
     });
 
+    group('streamChat', () {
+      test('returns a stream without throwing', () async {
+        final request = AIRequestModel(
+          url: 'https://api.apidash.dev/test',
+          userPrompt: 'test prompt',
+        );
+
+        // streamGenAIRequest will return an empty stream for an invalid endpoint
+        expect(() async {
+          await repository.streamChat(request: request);
+        }, returnsNormally);
+      });
+    });
+
     group('chatRepositoryProvider', () {
       test('provides ChatRemoteRepositoryImpl instance', () {
         final container = ProviderContainer();
@@ -145,6 +159,8 @@ void main() {
       final testRequest = AIRequestModel(url: 'test', userPrompt: 'test');
       expect(
           () => implementation.sendChat(request: testRequest), returnsNormally);
+      expect(
+          () => implementation.streamChat(request: testRequest), returnsNormally);
     });
   });
 }
@@ -154,6 +170,11 @@ class TestChatRemoteRepository implements ChatRemoteRepository {
   @override
   Future<String?> sendChat({required AIRequestModel request}) async {
     return 'test response';
+  }
+
+  @override
+  Future<Stream<String?>> streamChat({required AIRequestModel request}) async {
+    return Stream.value('test response');
   }
 }
 

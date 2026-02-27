@@ -206,17 +206,30 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final enriched = ai!.copyWith(
       systemPrompt: systemPrompt,
       userPrompt: userPrompt,
-      stream: false,
+      stream: true,
     );
 
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
-      final response = await _repo.sendChat(request: enriched);
-      if (response != null && response.isNotEmpty) {
+      final responseStream = await _repo.streamChat(request: enriched);
+      final buffer = StringBuffer();
+
+      await for (final chunk in responseStream) {
+        if (!state.isGenerating) break; // respect cancel()
+        if (chunk != null && chunk.isNotEmpty) {
+          buffer.write(chunk);
+          state = state.copyWith(currentStreamingResponse: buffer.toString());
+        }
+      }
+
+      if (!state.isGenerating) return; // was cancelled mid-stream
+
+      final fullResponse = buffer.toString();
+      if (fullResponse.isNotEmpty) {
         List<ChatAction>? actions;
         try {
-          debugPrint('[Chat] Parsing non-streaming response');
-          final Map<String, dynamic> parsed = MessageJson.safeParse(response);
+          debugPrint('[Chat] Parsing streaming response');
+          final Map<String, dynamic> parsed = MessageJson.safeParse(fullResponse);
           if (parsed.containsKey('actions') && parsed['actions'] is List) {
             actions = (parsed['actions'] as List)
                 .whereType<Map<String, dynamic>>()
@@ -232,7 +245,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           requestId,
           ChatMessage(
             id: getNewUuid(),
-            content: response,
+            content: fullResponse,
             role: MessageRole.system,
             timestamp: DateTime.now(),
             messageType: type,
@@ -243,7 +256,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         _appendSystem('No response received from the AI.', type);
       }
     } catch (e) {
-      debugPrint('[Chat] sendChat error: $e');
+      debugPrint('[Chat] streamChat error: $e');
       _appendSystem('Error: $e', type);
     } finally {
       state = state.copyWith(
