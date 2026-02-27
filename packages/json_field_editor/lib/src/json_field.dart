@@ -84,6 +84,7 @@ class JsonField extends ExtendedTextField {
     this.showErrorMessage = false,
     this.isFormatting = true,
     this.doInitFormatting = false,
+    this.jsonSpecialTextSpanBuilder,
     this.onError,
   });
 
@@ -128,6 +129,12 @@ class JsonField extends ExtendedTextField {
 
   /// Callback for the error message.
   final Function(String?)? onError;
+
+  /// Optional special text span builder override.
+  ///
+  /// If null, JsonField uses the built-in JsonHighlight.
+  final SpecialTextSpanBuilder? jsonSpecialTextSpanBuilder;
+
   @override
   final JsonTextFieldController? controller;
 
@@ -236,16 +243,18 @@ class JsonFieldState extends State<JsonField> {
           showCursor: widget.showCursor,
           smartDashesType: widget.smartDashesType,
           smartQuotesType: widget.smartQuotesType,
-          specialTextSpanBuilder: JsonHighlight(
-            boolHighlightStyle: boolHighlightStyle,
-            keyHighlightStyle: keyHighlightStyle,
-            nullHighlightStyle: nullHighlightStyle,
-            numberHighlightStyle: numberHighlightStyle,
-            specialCharHighlightStyle: stringHighlightStyle,
-            stringHighlightStyle: stringHighlightStyle,
-            commonTextStyle: commonTextStyle,
-            isFormating: widget.isFormatting,
-          ),
+          specialTextSpanBuilder:
+              widget.jsonSpecialTextSpanBuilder ??
+              JsonHighlight(
+                boolHighlightStyle: boolHighlightStyle,
+                keyHighlightStyle: keyHighlightStyle,
+                nullHighlightStyle: nullHighlightStyle,
+                numberHighlightStyle: numberHighlightStyle,
+                specialCharHighlightStyle: stringHighlightStyle,
+                stringHighlightStyle: stringHighlightStyle,
+                commonTextStyle: commonTextStyle,
+                isFormating: widget.isFormatting,
+              ),
           style: widget.style,
           textAlign: widget.textAlign,
           textAlignVertical: widget.textAlignVertical,

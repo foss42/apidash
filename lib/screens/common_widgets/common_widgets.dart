@@ -13,6 +13,7 @@ export 'envfield_cell.dart';
 export 'envfield_header.dart';
 export 'envfield_url.dart';
 export 'environment_dropdown.dart';
+export 'json_env_highlight.dart';
 export 'envvar_indicator.dart';
 export 'envvar_popover.dart';
 export 'envvar_span.dart';
