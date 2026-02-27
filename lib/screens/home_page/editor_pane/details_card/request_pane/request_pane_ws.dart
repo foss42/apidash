@@ -8,7 +8,12 @@ import 'request_headers.dart';
 import 'request_params.dart';
 
 class EditWSRequestPane extends ConsumerWidget {
-  const EditWSRequestPane({super.key});
+  const EditWSRequestPane({
+    super.key,
+    this.showViewCodeButton = true,
+  });
+
+  final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,7 +33,7 @@ class EditWSRequestPane extends ConsumerWidget {
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
-      showViewCodeButton: false,
+      showViewCodeButton: showViewCodeButton,
       onPressedCodeButton: () {
         ref.read(codePaneVisibleStateProvider.notifier).state =
             !codePaneVisible;

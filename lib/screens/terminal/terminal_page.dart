@@ -63,23 +63,17 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                   }),
                 ),
                 const SizedBox(width: 4),
-                Tooltip(
-                  message: 'Show timestamps',
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Checkbox(
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        value: _showTimestamps,
-                        onChanged: (v) =>
-                            setState(() => _showTimestamps = v ?? false),
-                      ),
-                      const Text('Timestamp', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
+                // Timestamp toggle
+                IconButton(
+                  tooltip: 'Show timestamps',
+                  isSelected: _showTimestamps,
+                  icon: const Icon(Icons.access_time),
+                  selectedIcon: const Icon(Icons.access_time_filled),
+                  onPressed: () {
+                    setState(() => _showTimestamps = !_showTimestamps);
+                  },
                 ),
-
-                const Spacer(),
+                const SizedBox(width: 4),
                 // Clear button
                 ADIconButton(
                   tooltip: 'Clear logs',

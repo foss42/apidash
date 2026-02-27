@@ -7,7 +7,12 @@ import 'aireq_configs.dart';
 import 'aireq_prompt.dart';
 
 class EditAIRequestPane extends ConsumerWidget {
-  const EditAIRequestPane({super.key});
+  const EditAIRequestPane({
+    super.key,
+    this.showViewCodeButton = true,
+  });
+
+  final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,6 +23,7 @@ class EditAIRequestPane extends ConsumerWidget {
 
     return RequestPane(
       selectedId: selectedId,
+      showViewCodeButton: showViewCodeButton,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {

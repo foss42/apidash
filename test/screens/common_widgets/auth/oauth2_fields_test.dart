@@ -1237,6 +1237,8 @@ void main() {
             : authFields.last,
         matching: find.byType(ExtendedTextField),
       );
+      await tester.ensureVisible(identityTokenField);
+      await tester.pumpAndSettle();
       await tester.tap(identityTokenField);
       tester.testTextInput.enterText('new_identity');
       await tester.pumpAndSettle();
@@ -1248,6 +1250,8 @@ void main() {
         of: authFields.last,
         matching: find.byType(ExtendedTextField),
       );
+      await tester.ensureVisible(accessTokenField);
+      await tester.pumpAndSettle();
       await tester.tap(accessTokenField);
       tester.testTextInput.enterText('new_access');
       await tester.pumpAndSettle();
