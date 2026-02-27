@@ -1,6 +1,6 @@
 ### About
 
-1. **Full Name**: Samarth Sinh
+1. **Full Name**: Samarth vala
 2. **Contact Info**: samarthsinh2660@gmail.com
 3. **Discord Handle**: samarthsinh2660 *(API Dash Discord server)*
 4. **Home Page**: —
