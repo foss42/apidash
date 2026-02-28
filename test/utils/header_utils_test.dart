@@ -139,4 +139,29 @@ void main() {
       expect(getHeaderSuggestions(pattern), expected);
     });
   });
+
+  group("Testing getHeaderSize function", () {
+    test("Testing for null", () {
+      expect(getHeaderSize(null), 0);
+    });
+    test("Testing for empty map", () {
+      expect(getHeaderSize({}), 0);
+    });
+    test("Testing for single header", () {
+      Map<String, String> headers = {"Content-Type": "application/json"};
+      // "Content-Type: application/json\r\n"
+      // length: 12 + 2 + 16 + 2 = 32
+      expect(getHeaderSize(headers), 32);
+    });
+    test("Testing for multiple headers", () {
+      Map<String, String> headers = {
+        "Content-Type": "application/json",
+        "Connection": "keep-alive"
+      };
+      // "Content-Type: application/json\r\n" -> 32
+      // "Connection: keep-alive\r\n" -> 10 + 2 + 10 + 2 = 24
+      // Total: 32 + 24 = 56
+      expect(getHeaderSize(headers), 56);
+    });
+  });
 }
