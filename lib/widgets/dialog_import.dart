@@ -22,23 +22,26 @@ showImportDialog({
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(kLabelImport),
-                    kHSpacer8,
-                    DropdownButtonImportFormat(
-                      importFormat: fmt,
-                      onChanged: (format) {
-                        if (format != null) {
-                          onImportFormatChange?.call(format);
-                          setState(() {
-                            fmt = format;
-                          });
-                        }
-                      },
-                    ),
-                  ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(kLabelImport),
+                      kHSpacer8,
+                      DropdownButtonImportFormat(
+                        importFormat: fmt,
+                        onChanged: (format) {
+                          if (format != null) {
+                            onImportFormatChange?.call(format);
+                            setState(() {
+                              fmt = format;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 kVSpacer6,
                 DragAndDropArea(
