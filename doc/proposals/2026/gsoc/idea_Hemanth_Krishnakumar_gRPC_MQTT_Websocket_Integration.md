@@ -3,9 +3,9 @@
 
 - **Full Name**: Hemanth Krishnakumar
 - **University name**: Amrita Vishwa vidhyapeetham, Amritapuri
-- Program you are enrolled in (Degree & Major/Minor): Btech in Computer Science
+- **Program you are enrolled in**: Btech in Computer Science
 - **Year**: 4th Year
-- **Expected graduation date: May 2026
+- **Expected graduation date**: May 2026
 
 # Project Title: gRPC, MQTT and WebSocket Support (Idea 7).
 
