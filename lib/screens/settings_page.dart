@@ -64,6 +64,22 @@ class SettingsPage extends ConsumerWidget {
                       .update(isDashBotEnabled: value);
                 },
               ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Select default Large Language Model (LLM)'),
+                trailing: AIModelSelectorButton(
+                  aiRequestModel:
+                      AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
+                  onModelUpdated: (d) {
+                    ref.read(settingsProvider.notifier).update(
+                        defaultAIModel: d.copyWith(
+                            modelConfigs: [],
+                            stream: null,
+                            systemPrompt: '',
+                            userPrompt: '').toJson());
+                  },
+                ),
+              ),
               ADListTile(
                 type: ListTileType.switchOnOff,
                 title: 'Collection Pane Scrollbar Visiblity',
@@ -113,22 +129,6 @@ class SettingsPage extends ConsumerWidget {
                     ref
                         .read(settingsProvider.notifier)
                         .update(defaultCodeGenLang: value);
-                  },
-                ),
-              ),
-              ListTile(
-                hoverColor: kColorTransparent,
-                title: const Text('Default Large Language Model (LLM)'),
-                trailing: AIModelSelectorButton(
-                  aiRequestModel:
-                      AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
-                  onModelUpdated: (d) {
-                    ref.read(settingsProvider.notifier).update(
-                        defaultAIModel: d.copyWith(
-                            modelConfigs: [],
-                            stream: null,
-                            systemPrompt: '',
-                            userPrompt: '').toJson());
                   },
                 ),
               ),
