@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class EditEnvironmentSecretsState
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
     ref.watch(selectedEnvironmentModelProvider
@@ -54,24 +56,24 @@ class EditEnvironmentSecretsState
         : rows + [kEnvironmentSecretEmptyModel];
     isAddingRow = false;
 
-    List<DataColumn> columns = const [
+    List<DataColumn> columns = [
       DataColumn2(
-        label: Text(kNameCheckbox),
-        fixedWidth: 30,
+        label: const Text(kNameCheckbox),
+        fixedWidth: 30*ds.scaleFactor,
       ),
-      DataColumn2(
+      const DataColumn2(
         label: Text("Variable name"),
       ),
       DataColumn2(
-        label: Text('='),
-        fixedWidth: 30,
+        label: const Text('='),
+        fixedWidth: 30*ds.scaleFactor,
       ),
-      DataColumn2(
+      const DataColumn2(
         label: Text("Secret value"),
       ),
       DataColumn2(
-        label: Text(''),
-        fixedWidth: 32,
+        label: const Text(''),
+        fixedWidth: 32*ds.scaleFactor,
       ),
     ];
 
@@ -194,15 +196,15 @@ class EditEnvironmentSecretsState
                     dividerThickness: 0,
                     horizontalMargin: 0,
                     headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
-                    bottomMargin: kDataTableBottomPadding,
+                    dataRowHeight: kDataTableRowHeight*ds.scaleFactor,
+                    bottomMargin: kDataTableBottomPadding*ds.scaleFactor,
                     isVerticalScrollBarVisible: true,
                     columns: columns,
                     rows: dataRows,
                   ),
                 ),
               ),
-              kVSpacer40,
+              kVSpacer40(ds.scaleFactor),
             ],
           ),
         ),
@@ -216,9 +218,9 @@ class EditEnvironmentSecretsState
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
-              label: const Text(
+              label: Text(
                 "Add Secret",
-                style: kTextStyleButton,
+                style: kTextStyleButton(ds.scaleFactor),
               ),
             ),
           ),

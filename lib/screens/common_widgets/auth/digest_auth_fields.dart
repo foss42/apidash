@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -44,6 +45,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return SingleChildScrollView(
       child: ListView(
         shrinkWrap: true,
@@ -58,7 +60,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
               _updateDigestAuth();
             },
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12*ds.scaleFactor),
           EnvAuthField(
             readOnly: widget.readOnly,
             hintText: kHintPassword,
@@ -70,7 +72,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
               _updateDigestAuth();
             },
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12*ds.scaleFactor),
           EnvAuthField(
             readOnly: widget.readOnly,
             hintText: kHintRealm,
@@ -81,7 +83,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
               _updateDigestAuth();
             },
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12*ds.scaleFactor),
           EnvAuthField(
             readOnly: widget.readOnly,
             hintText: kHintNonce,
@@ -92,15 +94,15 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
               _updateDigestAuth();
             },
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12*ds.scaleFactor),
           Text(
             kAlgorithm,
             style: TextStyle(
               fontWeight: FontWeight.normal,
-              fontSize: 14,
+              fontSize: 14*ds.scaleFactor,
             ),
           ),
-          SizedBox(height: 4),
+          SizedBox(height: 4*ds.scaleFactor),
           ADPopupMenu<String>(
             value: _algorithmController.trim(),
             values: kDigestAlgos.map((i) => (i, i)),
@@ -117,7 +119,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
                     }
                   },
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12*ds.scaleFactor),
           EnvAuthField(
             readOnly: widget.readOnly,
             hintText: kHintQop,
@@ -128,7 +130,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
               _updateDigestAuth();
             },
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12*ds.scaleFactor),
           EnvAuthField(
             readOnly: widget.readOnly,
             hintText: kHintDataString,

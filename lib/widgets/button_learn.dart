@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,9 +17,10 @@ class LearnButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     var textLabel = label ?? 'Learn';
     return SizedBox(
-      height: 24,
+      height: 24*ds.scaleFactor,
       child: ADFilledButton(
         icon: Icons.help,
         iconSize: kButtonIconSizeSmall,

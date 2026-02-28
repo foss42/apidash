@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -8,13 +9,14 @@ class BottomNavBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final railIdx = ref.watch(navRailIndexStateProvider);
     return Wrap(
       children: [
         Container(
           alignment: Alignment.topCenter,
           height: 70 + MediaQuery.paddingOf(context).bottom,
-          width: MediaQuery.sizeOf(context).width,
+          width: MediaQuery.sizeOf(context).width*ds.scaleFactor,
           padding:
               EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
           decoration: BoxDecoration(

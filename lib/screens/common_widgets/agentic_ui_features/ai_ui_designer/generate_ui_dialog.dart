@@ -1,5 +1,6 @@
 import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash/widgets/widget_sending.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'framework_selector.dart';
@@ -108,6 +109,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Stack(
       children: [
         if (index == 0)
@@ -130,7 +132,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 40.0),
                 child: SizedBox(
-                  height: 500,
+                  height: 500*ds.scaleFactor,
                   child: SendingWidget(
                     startSendingTime: DateTime.now(),
                     showTimeElapsed: false,

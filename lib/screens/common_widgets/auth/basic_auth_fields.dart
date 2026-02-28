@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import '../common_widgets.dart';
@@ -32,6 +33,7 @@ class _BasicAuthFieldsState extends State<BasicAuthFields> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return ListView(
       shrinkWrap: true,
       children: [
@@ -44,7 +46,7 @@ class _BasicAuthFieldsState extends State<BasicAuthFields> {
             _updateBasicAuth();
           },
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16*ds.scaleFactor),
         EnvAuthField(
           readOnly: widget.readOnly,
           hintText: kHintPassword,

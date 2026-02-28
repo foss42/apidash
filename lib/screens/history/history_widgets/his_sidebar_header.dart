@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -10,13 +11,14 @@ class HistorySidebarHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
     final sm = ScaffoldMessenger.of(context);
     return Padding(
       padding: kPe4,
       child: Row(
         children: [
-          kHSpacer10,
+          kHSpacer10(ds.scaleFactor),
           Text(
             "History",
             style: Theme.of(context).textTheme.titleMedium,

@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -36,6 +37,7 @@ class _RequestPaneState extends State<RequestPane>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final TabController controller = useTabController(
       initialLength: widget.children.length,
       vsync: this,
@@ -49,7 +51,7 @@ class _RequestPaneState extends State<RequestPane>
             ? Padding(
                 padding: kP8,
                 child: SizedBox(
-                  height: kHeaderHeight,
+                  height: kHeaderHeight*ds.scaleFactor,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -66,7 +68,7 @@ class _RequestPaneState extends State<RequestPane>
                           size: 18,
                         ),
                         label: SizedBox(
-                          width: 80,
+                          width: 80*ds.scaleFactor,
                           child: Text(
                             widget.codePaneVisible
                                 ? kLabelHideCode
@@ -80,7 +82,7 @@ class _RequestPaneState extends State<RequestPane>
                   ),
                 ),
               )
-            : kVSpacer10,
+            : kVSpacer10(ds.scaleFactor),
         TabBar(
           key: Key(widget.selectedId!),
           controller: controller,
@@ -96,7 +98,7 @@ class _RequestPaneState extends State<RequestPane>
               )
               .toList(),
         ),
-        kVSpacer5,
+        kVSpacer5(ds.scaleFactor),
         Expanded(
           child: TabBarView(
             controller: controller,

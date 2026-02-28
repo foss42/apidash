@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
@@ -17,45 +18,46 @@ class WorkspaceSelector extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     var selectedDirectory = useState<String?>(null);
     var selectedDirectoryTextController = useTextEditingController();
     var workspaceName = useState<String?>(null);
     return Scaffold(
       body: Center(
         child: SizedBox(
-          width: 400,
+          width: 400*ds.scaleFactor,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 kMsgSelectWorkspace,
-                style: kTextStyleButton,
+                style: kTextStyleButton(ds.scaleFactor),
               ),
-              kVSpacer20,
+              kVSpacer20(ds.scaleFactor),
               Row(
                 children: [
                   Text(
                     "CHOOSE DIRECTORY",
                     style: kCodeStyle.copyWith(
-                      fontSize: 12,
+                      fontSize: 12*ds.scaleFactor,
                     ),
                   ),
                 ],
               ),
-              kVSpacer5,
+              kVSpacer5(ds.scaleFactor),
               Row(
                 children: [
                   Expanded(
                     child: ADOutlinedTextField(
                       keyId: "workspace-path",
                       controller: selectedDirectoryTextController,
-                      textStyle: kTextStyleButtonSmall,
+                      textStyle: kTextStyleButtonSmall(ds.scaleFactor),
                       readOnly: true,
                       isDense: true,
                       maxLines: null,
                     ),
                   ),
-                  kHSpacer10,
+                  kHSpacer10(ds.scaleFactor),
                   FilledButton.tonalIcon(
                     onPressed: () async {
                       selectedDirectory.value = await getDirectoryPath();
@@ -67,18 +69,18 @@ class WorkspaceSelector extends HookWidget {
                   ),
                 ],
               ),
-              kVSpacer10,
+              kVSpacer40(ds.scaleFactor),
               Row(
                 children: [
                   Text(
                     "WORKSPACE NAME [OPTIONAL]\n(FOLDER WILL BE CREATED IN THE SELECTED DIRECTORY)",
                     style: kCodeStyle.copyWith(
-                      fontSize: 12,
+                      fontSize: 12*ds.scaleFactor,
                     ),
                   ),
                 ],
               ),
-              kVSpacer5,
+              kVSpacer5(ds.scaleFactor),
               ADOutlinedTextField(
                 keyId: "workspace-name",
                 onChanged: (value) {
@@ -86,7 +88,7 @@ class WorkspaceSelector extends HookWidget {
                 },
                 isDense: true,
               ),
-              kVSpacer40,
+              kVSpacer40(ds.scaleFactor),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -104,7 +106,7 @@ class WorkspaceSelector extends HookWidget {
                           },
                     child: const Text(kLabelContinue),
                   ),
-                  kHSpacer10,
+                  kHSpacer10(ds.scaleFactor),
                   FilledButton(
                     onPressed: onCancel,
                     style: FilledButton.styleFrom(

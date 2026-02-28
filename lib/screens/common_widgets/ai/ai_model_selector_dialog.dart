@@ -1,4 +1,5 @@
 // import 'package:apidash/providers/providers.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -31,8 +32,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     // ref.watch(aiApiCredentialProvider);
-    final width = MediaQuery.of(context).size.width * 0.8;
+    final width = MediaQuery.of(context).size.width * 0.8*ds.scaleFactor;
     return FutureBuilder(
       future: aM,
       builder: (context, snapshot) {
@@ -44,7 +46,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           if (context.isMediumWindow) {
             return Container(
               padding: kP20,
-              width: width,
+              width: width*ds.scaleFactor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -57,11 +59,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                     //},
                     child: Text('Update Models'),
                   ),
-                  kVSpacer10,
+                  kVSpacer10(ds.scaleFactor),
                   Row(
                     children: [
                       Text('Select Model Provider'),
-                      kHSpacer20,
+                      kHSpacer20(ds.scaleFactor),
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
                           onChanged: (x) {
@@ -78,7 +80,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       ),
                     ],
                   ),
-                  kVSpacer10,
+                  kVSpacer10(ds.scaleFactor),
                   _buildModelSelector(mappedData[selectedProvider]),
                 ],
               ),
@@ -87,7 +89,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
 
           return Container(
             padding: kP20,
-            width: width,
+            width: width*ds.scaleFactor,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -106,7 +108,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                           //},
                           child: Text('Update Models'),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 20*ds.scaleFactor),
                         ...data.modelProviders.map(
                           (x) => ListTile(
                             title: Text(x.providerName ?? ""),
@@ -129,7 +131,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                     ),
                   ),
                 ),
-                SizedBox(width: 40),
+                SizedBox(width: 40*ds.scaleFactor),
                 Flexible(
                   flex: 3,
                   child: _buildModelSelector(mappedData[selectedProvider]),
@@ -144,6 +146,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   }
 
   _buildModelSelector(AIModelProvider? aiModelProvider) {
+    final ds = DesignSystemProvider.of(context);
     if (aiModelProvider == null) {
       return Center(child: Text("Please select an AI API Provider"));
     }
@@ -155,12 +158,12 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
       children: [
         Text(
           aiModelProvider.providerName ?? "",
-          style: TextStyle(fontSize: 28),
+          style: TextStyle(fontSize: 28*ds.scaleFactor),
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 20*ds.scaleFactor),
         if (aiModelProvider.providerId != ModelAPIProvider.ollama) ...[
           Text('API Key / Credential'),
-          kVSpacer8,
+          kVSpacer8(ds.scaleFactor),
           BoundedTextField(
             onChanged: (x) {
               // ref.read(aiApiCredentialProvider.notifier).state = {
@@ -174,10 +177,10 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             value: newAIRequestModel?.apiKey ?? "",
             // value: currentCredential,
           ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
         ],
         Text('Endpoint'),
-        kVSpacer8,
+        kVSpacer8(ds.scaleFactor),
         BoundedTextField(
           key: ValueKey(aiModelProvider.providerName ?? ""),
           onChanged: (x) {
@@ -187,7 +190,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           },
           value: newAIRequestModel?.url ?? "",
         ),
-        kVSpacer20,
+        kVSpacer20(ds.scaleFactor),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -196,9 +199,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
           ],
         ),
-        kVSpacer8,
+        kVSpacer8(ds.scaleFactor),
         Container(
-          height: 300,
+          height: 300*ds.scaleFactor,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: const Color.fromARGB(27, 0, 0, 0),
@@ -235,7 +238,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             ),
           ),
         ),
-        kVSpacer10,
+        kVSpacer10(ds.scaleFactor),
         Align(
           alignment: Alignment.centerRight,
           child: ElevatedButton(

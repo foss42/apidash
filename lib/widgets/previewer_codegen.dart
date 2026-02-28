@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
@@ -115,6 +116,7 @@ class ViewCodePane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
         : kDarkCodeTheme;
@@ -135,7 +137,7 @@ class ViewCodePane extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                height: kHeaderHeight,
+                height: kHeaderHeight*ds.scaleFactor,
                 child: Row(
                   children: [
                     Expanded(
@@ -161,10 +163,10 @@ class ViewCodePane extends StatelessWidget {
                   ],
                 ),
               ),
-              kVSpacer10,
+              kVSpacer10(ds.scaleFactor),
               Expanded(
                 child: Container(
-                  width: double.maxFinite,
+                  width: double.maxFinite*ds.scaleFactor,
                   padding: kP8,
                   decoration: textContainerdecoration,
                   child: CodeGenPreviewer(

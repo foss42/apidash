@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -37,6 +38,7 @@ class SavingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Center(
       child: Card(
         child: Padding(
@@ -46,13 +48,13 @@ class SavingOverlay extends StatelessWidget {
             children: [
               Lottie.asset(
                   saveCompleted ? kAssetSavedLottie : kAssetSavingLottie,
-                  width: 100,
-                  height: 100),
-              kHSpacer20,
+                  width: 100*ds.scaleFactor,
+                  height: 100*ds.scaleFactor),
+              kHSpacer20(ds.scaleFactor),
               Text(
                 saveCompleted ? kLabelSaved : kLabelSaving,
-                style: const TextStyle(
-                  fontSize: kDefaultFontSize,
+                style: TextStyle(
+                  fontSize: kDefaultFontSize*ds.scaleFactor,
                 ),
               )
             ],

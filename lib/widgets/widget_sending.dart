@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:apidash/utils/utils.dart';
@@ -48,6 +49,7 @@ class _SendingWidgetState extends State<SendingWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Stack(
       children: [
         Center(
@@ -65,15 +67,15 @@ class _SendingWidgetState extends State<SendingWidget> {
                     Icons.alarm,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(
-                    width: 10,
+                  SizedBox(
+                    width: 10*ds.scaleFactor,
                   ),
                   Text(
                     'Time elapsed: ${humanizeDuration(Duration(milliseconds: _millisecondsElapsed))}',
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.fade,
                     softWrap: false,
-                    style: kTextStyleButton.copyWith(
+                    style: kTextStyleButton(ds.scaleFactor).copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class EnvironmentsPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     return Padding(
       padding: (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
@@ -28,7 +30,7 @@ class EnvironmentsPane extends ConsumerWidget {
                   .addEnvironment();
             },
           ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
           SidebarFilter(
             filterHintText: "Filter by name",
             onFilterFieldChanged: (value) {
@@ -36,9 +38,9 @@ class EnvironmentsPane extends ConsumerWidget {
                   value.toLowerCase();
             },
           ),
-          kVSpacer10,
+          kVSpacer10(ds.scaleFactor),
           const Expanded(child: EnvironmentsList()),
-          kVSpacer5
+          kVSpacer5(ds.scaleFactor),
         ],
       ),
     );

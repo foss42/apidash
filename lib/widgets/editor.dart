@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -58,6 +59,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
@@ -76,7 +78,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         maxLines: null,
         readOnly: widget.readOnly,
         style: kCodeStyle.copyWith(
-          fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+          fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * ds.scaleFactor,
         ),
         textAlignVertical: TextAlignVertical.top,
         onChanged: widget.onChanged,

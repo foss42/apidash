@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
@@ -18,26 +19,27 @@ class RequestDataTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final clrScheme = Theme.of(context).colorScheme;
 
     final List<DataColumn> columns = [
-      const DataColumn2(
-        label: Text(''),
-        fixedWidth: 8,
+      DataColumn2(
+        label: const Text(''),
+        fixedWidth: 8*ds.scaleFactor,
       ),
       DataColumn2(
         label: Text(keyName ?? kNameField),
       ),
-      const DataColumn2(
-        label: Text('='),
-        fixedWidth: 30,
+      DataColumn2(
+        label: const Text('='),
+        fixedWidth: 30*ds.scaleFactor,
       ),
       DataColumn2(
         label: Text(valueName ?? kNameValue),
       ),
-      const DataColumn2(
-        label: Text(''),
-        fixedWidth: 8,
+      DataColumn2(
+        label: const Text(''),
+        fixedWidth: 8*ds.scaleFactor,
       ),
     ];
 
@@ -59,7 +61,7 @@ class RequestDataTable extends StatelessWidget {
         .map<DataRow>(
           (MapEntry<String, String> entry) => DataRow(
             cells: <DataCell>[
-              const DataCell(kHSpacer5),
+              DataCell(kHSpacer5(ds.scaleFactor)),
               DataCell(
                 ReadOnlyTextField(
                   initialValue: entry.key,
@@ -75,7 +77,7 @@ class RequestDataTable extends StatelessWidget {
                   decoration: fieldDecoration,
                 ),
               ),
-              const DataCell(kHSpacer5),
+              DataCell(kHSpacer5(ds.scaleFactor)),
             ],
           ),
         )
@@ -94,8 +96,8 @@ class RequestDataTable extends StatelessWidget {
                 dividerThickness: 0,
                 horizontalMargin: 0,
                 headingRowHeight: 0,
-                dataRowHeight: kDataTableRowHeight,
-                bottomMargin: kDataTableBottomPadding,
+                dataRowHeight: kDataTableRowHeight*ds.scaleFactor,
+                bottomMargin: kDataTableBottomPadding*ds.scaleFactor,
                 isVerticalScrollBarVisible: true,
                 columns: columns,
                 rows: dataRows,

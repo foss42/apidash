@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/collection_providers.dart';
@@ -14,6 +15,7 @@ class DashbotTaskButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final vm = ref.read(chatViewmodelProvider.notifier);
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
@@ -26,7 +28,7 @@ class DashbotTaskButtons extends ConsumerWidget {
                   fontWeight: FontWeight.w700,
                 ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12*ds.scaleFactor),
           Wrap(
             alignment: WrapAlignment.center,
             spacing: 8,

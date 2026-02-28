@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +20,7 @@ class ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final color = Theme.of(context).colorScheme.secondary;
     return Padding(
       padding: kPh20v10,
@@ -42,7 +44,7 @@ class ErrorMessage extends StatelessWidget {
                     .titleMedium
                     ?.copyWith(color: color),
               ),
-              kVSpacer20,
+              kVSpacer20(ds.scaleFactor),
               showIssueButton
                   ? FilledButton.tonalIcon(
                       onPressed: () {

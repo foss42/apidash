@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,6 +56,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     ref.listen(chatViewmodelProvider, (prev, next) {
       if (next.isGenerating) {
         _showTaskSuggestions = false;
@@ -107,7 +109,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
           Divider(
             color: Theme.of(context).colorScheme.surfaceContainerHigh,
-            height: 5,
+            height: 5*ds.scaleFactor,
             thickness: 6,
           ),
           if (_showTaskSuggestions)
@@ -166,7 +168,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     },
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8*ds.scaleFactor),
                 IconButton(
                   icon: const Icon(Icons.send_rounded),
                   onPressed: ref.watch(chatViewmodelProvider).isGenerating

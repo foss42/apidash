@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class SidebarFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Container(
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
@@ -23,13 +25,13 @@ class SidebarFilter extends StatelessWidget {
       ),
       child: Row(
         children: [
-          kHSpacer5,
+          kHSpacer5(ds.scaleFactor),
           Icon(
             Icons.filter_alt,
             size: 18,
             color: Theme.of(context).colorScheme.secondary,
           ),
-          kHSpacer5,
+          kHSpacer5(ds.scaleFactor),
           Expanded(
             child: ADRawTextField(
               style: Theme.of(context).textTheme.bodyMedium,

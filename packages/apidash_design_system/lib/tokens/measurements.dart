@@ -99,22 +99,57 @@ const kPb10 = EdgeInsets.only(bottom: 10);
 const kPb15 = EdgeInsets.only(bottom: 15);
 const kPb70 = EdgeInsets.only(bottom: 70);
 const kSizedBoxEmpty = SizedBox();
-const kHSpacer2 = SizedBox(width: 2);
-const kHSpacer4 = SizedBox(width: 4);
-const kHSpacer5 = SizedBox(width: 5);
-const kHSpacer6 = SizedBox(width: 6);
-const kHSpacer8 = SizedBox(width: 8);
-const kHSpacer10 = SizedBox(width: 10);
-const kHSpacer12 = SizedBox(width: 12);
-const kHSpacer20 = SizedBox(width: 20);
-const kHSpacer40 = SizedBox(width: 40);
-const kVSpacer3 = SizedBox(height: 3);
-const kVSpacer5 = SizedBox(height: 5);
-const kVSpacer6 = SizedBox(height: 6);
-const kVSpacer8 = SizedBox(height: 8);
-const kVSpacer10 = SizedBox(height: 10);
-const kVSpacer16 = SizedBox(height: 16);
-const kVSpacer20 = SizedBox(height: 20);
-const kVSpacer40 = SizedBox(height: 40);
+SizedBox kHSpacer2([double? scaleFactor]) {
+  return SizedBox(width: 2 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer4([double? scaleFactor]) {
+  return SizedBox(width: 4 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer5([double? scaleFactor]) {
+  return SizedBox(width: 5 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer6([double? scaleFactor]) {
+  return SizedBox(width: 6 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer8([double? scaleFactor]) {
+  return SizedBox(width: 8 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer10([double? scaleFactor]) {
+  return SizedBox(width: 10 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer12([double? scaleFactor]) {
+  return SizedBox(width: 12 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer20([double? scaleFactor]) {
+  return SizedBox(width: 20 * (scaleFactor ?? 1.0));
+}
+SizedBox kHSpacer40([double? scaleFactor]) {
+  return SizedBox(width: 40 * (scaleFactor ?? 1.0));
+}
+
+SizedBox kVSpacer3([double? scaleFactor]) {
+  return SizedBox(height: 3 * (scaleFactor ?? 1.0));
+}
+SizedBox kVSpacer5([double? scaleFactor]) {
+  return SizedBox(height: 5 * (scaleFactor ?? 1.0));
+}
+SizedBox kVSpacer6([double? scaleFactor]) {
+  return SizedBox(height: 6 * (scaleFactor ?? 1.0));
+}
+SizedBox kVSpacer8([double? scaleFactor]) {
+  return SizedBox(height: 8 * (scaleFactor ?? 1.0));
+}
+SizedBox kVSpacer10([double? scaleFactor]) {
+  return SizedBox(height: 10 * (scaleFactor ?? 1.0));
+}
+SizedBox kVSpacer16([double? scaleFactor]) {
+  return SizedBox(height: 16 * (scaleFactor ?? 1.0));
+}
+SizedBox kVSpacer20([double? scaleFactor]) {
+  return SizedBox(height: 20 * (scaleFactor ?? 1.0));
+}
+SizedBox kVSpacer40([double? scaleFactor]) {
+  return SizedBox(height: 40 * (scaleFactor ?? 1.0));
+}
 
 final kButtonSidebarStyle = ElevatedButton.styleFrom(padding: kPh12);

@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 typedef OpenApiOperationItem = ({String method, String path, Operation op});
@@ -48,6 +49,7 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
       context: context,
       useRootNavigator: true,
       builder: (ctx) {
+        final ds = DesignSystemProvider.of(context);
         return StatefulBuilder(builder: (ctx, setState) {
           // Filter operations based on search query
           final filteredOps = <int>[];
@@ -63,8 +65,8 @@ Future<List<OpenApiOperationItem>?> showOpenApiOperationPickerDialog({
           return AlertDialog(
             title: Text('Import from $title'),
             content: SizedBox(
-              width: 520,
-              height: 420,
+              width: 520*ds.scaleFactor,
+              height: 420*ds.scaleFactor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

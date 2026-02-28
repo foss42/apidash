@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final settings = ref.watch(settingsProvider);
     final clearingData = ref.watch(clearDataStateProvider);
     var sm = ScaffoldMessenger.of(context);
@@ -212,7 +214,7 @@ class SettingsPage extends ConsumerWidget {
                                   Theme.of(context).textTheme.titleLarge,
                               content: ConstrainedBox(
                                 constraints:
-                                    const BoxConstraints(maxWidth: 300),
+                                    BoxConstraints(maxWidth: 300*ds.scaleFactor),
                                 child: const Text(
                                     'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
                               ),
@@ -237,7 +239,7 @@ class SettingsPage extends ConsumerWidget {
                                   },
                                   child: Text(
                                     'Yes',
-                                    style: kTextStyleButton.copyWith(
+                                    style: kTextStyleButton(ds.scaleFactor).copyWith(
                                         color: settings.isDark
                                             ? kColorDarkDanger
                                             : kColorLightDanger),
@@ -262,7 +264,7 @@ class SettingsPage extends ConsumerWidget {
                   showAboutAppDialog(context);
                 },
               ),
-              kVSpacer20,
+              kVSpacer20(ds.scaleFactor),
             ],
           ),
         ),

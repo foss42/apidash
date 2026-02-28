@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +25,7 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final textContainerdecoration = BoxDecoration(
       color: Color.alphaBlend(
           (Theme.of(context).brightness == Brightness.dark
@@ -45,7 +47,7 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
         children: [
           Expanded(
             child: Container(
-              width: double.maxFinite,
+              width: double.maxFinite*ds.scaleFactor,
               padding: kP8,
               decoration: textContainerdecoration,
               child: SingleChildScrollView(
@@ -57,7 +59,7 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
               ),
             ),
           ),
-          kVSpacer20,
+          kVSpacer20(ds.scaleFactor),
           // Text(
           //   "Select Framework",
           //   style: TextStyle(

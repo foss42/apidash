@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 
 class DefaultUriSchemePopupMenu extends StatelessWidget {
@@ -14,11 +15,12 @@ class DefaultUriSchemePopupMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final double width = context.isCompactWindow ? 90 : 110;
     return ADPopupMenu<SupportedUriSchemes>(
       value: value?.name,
       values: SupportedUriSchemes.values.map((e) => (e, e.name)),
-      width: width,
+      width: width*ds.scaleFactor,
       tooltip: "Select Default URI Scheme",
       onChanged: onChanged,
       isOutlined: true,

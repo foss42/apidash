@@ -1,6 +1,7 @@
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/sdui_renderer.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/stac_to_flutter.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return Container(
       // width: MediaQuery.of(context).size.width * 0.6, // Large dialog
       padding: EdgeInsets.all(20),
@@ -74,7 +76,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
               Text(
                 "Generated Component",
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20*ds.scaleFactor,
                 ),
               ),
               Spacer(),
@@ -85,7 +87,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                   icon: Icon(Icons.close)),
             ],
           ),
-          kVSpacer20,
+          kVSpacer20(ds.scaleFactor),
           Expanded(
             child: Center(
               child: Container(
@@ -113,10 +115,10 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
               ),
             ),
           ),
-          kVSpacer20,
+          kVSpacer20(ds.scaleFactor),
           if (!exportingCode) ...[
             Container(
-              width: double.infinity,
+              width: double.infinity*ds.scaleFactor,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -130,7 +132,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                 maxLines: 3, // Makes the text box taller
               ),
             ),
-            kVSpacer20,
+            kVSpacer20(ds.scaleFactor),
           ],
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -141,7 +143,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                     ? Container(
                         margin: EdgeInsets.only(right: 10),
                         child: CircularProgressIndicator(
-                          strokeWidth: 1,
+                          strokeWidth: 1*ds.scaleFactor,
                         ),
                       )
                     : FilledButton.tonalIcon(
@@ -160,7 +162,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                         ),
                       ),
               ),
-              kHSpacer10,
+              kHSpacer10(ds.scaleFactor),
               if (!exportingCode)
                 Align(
                   alignment: Alignment.centerRight,

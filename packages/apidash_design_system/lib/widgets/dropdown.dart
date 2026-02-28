@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import '../tokens/tokens.dart';
 
@@ -27,6 +28,7 @@ class ADDropdownButton<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     final surfaceColor = Theme.of(context).colorScheme.surface;
     return DropdownButton<T>(
       isExpanded: isExpanded,
@@ -55,7 +57,7 @@ class ADDropdownButton<T> extends StatelessWidget {
             child: Text(
               value.$2 ?? value.$1.toString(),
               style:
-                  dropdownMenuItemtextStyle?.call(value.$1) ?? kTextStyleButton,
+                  dropdownMenuItemtextStyle?.call(value.$1) ?? kTextStyleButton(ds.scaleFactor),
               overflow: isExpanded ? TextOverflow.ellipsis : null,
               maxLines: isExpanded ? 1 : null,
             ),

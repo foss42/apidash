@@ -4,6 +4,7 @@ import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designe
 import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'generated_tool_codecopy.dart';
@@ -119,6 +120,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return LayoutBuilder(builder: (context, constraints) {
       final dialogWidth = constraints.maxWidth;
       final isExpandedWindow = dialogWidth > WindowWidth.expanded.value;
@@ -127,8 +129,8 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
 
       if (isExtraLargeWindow || isLargeWindow || isExpandedWindow) {
         return SizedBox(
-          height: 600,
-          width: MediaQuery.of(context).size.width * 0.8,
+          height: 600*ds.scaleFactor,
+          width: MediaQuery.of(context).size.width * 0.8*ds.scaleFactor,
           child: Row(
             children: [
               Flexible(
@@ -154,7 +156,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
         );
       } else {
         return SizedBox(
-          height: 600,
+          height: 600*ds.scaleFactor,
           // width: MediaQuery.of(context).size.width * 0.8,
           child: IndexedStack(
             index: index,

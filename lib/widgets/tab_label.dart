@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,9 @@ class TabLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ds = DesignSystemProvider.of(context);
     return SizedBox(
-      height: kTabHeight,
+      height: kTabHeight*ds.scaleFactor,
       child: Stack(
         children: [
           Center(
@@ -23,7 +25,7 @@ class TabLabel extends StatelessWidget {
               textAlign: TextAlign.center,
               overflow: TextOverflow.fade,
               softWrap: false,
-              style: kTextStyleTab,
+              style: kTextStyleTab(ds.scaleFactor),
             ),
           ),
           if (showIndicator)

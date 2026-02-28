@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/ui/design_system_provider.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,6 +18,7 @@ class SidebarHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ds = DesignSystemProvider.of(context);
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
 
     return Padding(
@@ -28,14 +30,14 @@ class SidebarHeader extends ConsumerWidget {
           ElevatedButton(
             onPressed: onAddNew,
             style: kButtonSidebarStyle,
-            child: const Text(
+            child: Text(
               kLabelPlusNew,
-              style: kTextStyleButton,
+              style: kTextStyleButton(ds.scaleFactor),
             ),
           ),
-          kHSpacer4,
+          kHSpacer4(ds.scaleFactor),
           SizedBox(
-            width: 24,
+            width: 24*ds.scaleFactor,
             child: SidebarTopMenu(
               tooltip: kLabelMoreOptions,
               onSelected: (option) => switch (option) {
@@ -43,7 +45,7 @@ class SidebarHeader extends ConsumerWidget {
               },
             ),
           ),
-          context.width <= kMinWindowSize.width
+          context.width <= kMinWindowSize.width*ds.scaleFactor
               ? IconButton(
                   style: IconButton.styleFrom(
                     padding: const EdgeInsets.all(4),
