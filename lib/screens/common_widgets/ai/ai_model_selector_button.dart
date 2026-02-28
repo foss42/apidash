@@ -28,7 +28,7 @@ class AIModelSelectorButton extends StatelessWidget {
           ? null
           : () async {
               onDialogOpen?.call();
-              final newAIRequestModel = await showDialog<AIRequestModel>(
+              final result = await showDialog<(AIRequestModel?, Map<String, String>?)>(
                 context: context,
                 useRootNavigator: useRootNavigator,
                 builder: (context) {
@@ -42,8 +42,13 @@ class AIModelSelectorButton extends StatelessWidget {
                 },
               );
               onDialogClose?.call();
-              if (newAIRequestModel == null) return;
+              if (result == null || result.$1 == null) return;
+              final newAIRequestModel = result.$1!;
+              final aiKeys = result.$2;
               onModelUpdated?.call(newAIRequestModel);
+              if (aiKeys != null) {
+                ref.read(settingsProvider.notifier).update(aiKeys: aiKeys);
+              }
             },
       child: Text(aiRequestModel?.model ?? 'Select Model'),
     );

@@ -18,6 +18,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  Map<String, String> localAIKeys = {};
 
   @override
   void initState() {
@@ -25,6 +26,13 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     selectedProvider = widget.aiRequestModel?.modelApiProvider;
     if (selectedProvider != null && widget.aiRequestModel?.model != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
+    }
+    final settings = ref.read(settingsProvider);
+    localAIKeys = Map<String, String>.from(settings.aiKeys);
+    if (newAIRequestModel != null &&
+        newAIRequestModel!.apiKey != null &&
+        selectedProvider != null) {
+      localAIKeys[selectedProvider!.name] = newAIRequestModel!.apiKey!;
     }
     aM = ModelManager.fetchAvailableModels();
   }
@@ -69,6 +77,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                               selectedProvider = x;
                               newAIRequestModel = mappedData[selectedProvider]
                                   ?.toAiRequestModel();
+                              if (newAIRequestModel != null &&
+                                  selectedProvider != null) {
+                                  newAIRequestModel = newAIRequestModel!.copyWith(
+                                      apiKey: localAIKeys[selectedProvider!.name]);
+                              }
                             });
                           },
                           value: selectedProvider,
@@ -117,11 +130,19 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                     backgroundColor: Colors.green,
                                   ),
                             onTap: () {
-                              setState(() {
-                                selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
-                              });
+                                setState(() {
+                                  selectedProvider = x.providerId;
+                                  newAIRequestModel =
+                                      mappedData[selectedProvider]
+                                          ?.toAiRequestModel();
+                                  if (newAIRequestModel != null &&
+                                      selectedProvider != null) {
+                                    newAIRequestModel =
+                                        newAIRequestModel!.copyWith(
+                                            apiKey:
+                                                localAIKeys[selectedProvider!.name]);
+                                  }
+                                });
                             },
                           ),
                         ),
@@ -162,17 +183,14 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           Text('API Key / Credential'),
           kVSpacer8,
           BoundedTextField(
+            key: ValueKey(aiModelProvider.providerId),
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
               setState(() {
+                localAIKeys[aiModelProvider.providerId!.name] = x;
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
               });
             },
-            value: newAIRequestModel?.apiKey ?? "",
-            // value: currentCredential,
+            value: localAIKeys[aiModelProvider.providerId!.name] ?? "",
           ),
           kVSpacer10,
         ],
@@ -240,7 +258,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(newAIRequestModel);
+              Navigator.of(context).pop((newAIRequestModel, localAIKeys));
             },
             child: Text('Save'),
           ),
