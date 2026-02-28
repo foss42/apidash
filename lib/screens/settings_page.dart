@@ -90,6 +90,46 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
+
+              kIsWeb
+                  ? ListTile(
+                      hoverColor: kColorTransparent,
+                      title: const Text('Gateway Proxy URL'),
+                      subtitle: const Text(
+                        'URL to be prepended to the API request URL',
+                      ),
+                      trailing: SizedBox(
+                        width: 300,
+                        child: TextFormField(
+                          initialValue: settings.proxyUriPrefix,
+                          decoration: const InputDecoration(
+                            hintText: 'https://proxy.example.com/',
+                            isDense: true,
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            ref
+                                .read(settingsProvider.notifier)
+                                .update(proxyUriPrefix: value.trim());
+                          },
+                        ),
+                      ),
+                    )
+                  : ListTile(
+                      title: const Text("Network Proxy"),
+                      subtitle: Text(settings.networkProxy != null && settings.networkProxy!.host.isNotEmpty && settings.networkProxy!.port.isNotEmpty
+                          ? "Enabled (${settings.networkProxy!.host}:${settings.networkProxy!.port})"
+                          : "Configure Network Proxy"),
+                      trailing: FilledButton.tonal(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => const ProxySettingsDialog(),
+                          );
+                        },
+                        child: const Text("Configure"),
+                      ),
+                    ),
               !kIsWeb
                   ? ADListTile(
                       type: ListTileType.switchOnOff,

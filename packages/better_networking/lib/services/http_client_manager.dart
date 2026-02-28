@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import '../models/models.dart';
 
 http.Client createHttpClientWithNoSSL() {
   var ioClient = HttpClient()
@@ -39,12 +40,43 @@ class HttpClientManager {
 
   HttpClientManager._internal();
 
-  http.Client createClient(String requestId, {bool noSSL = false}) {
-    final client = (noSSL && !kIsWeb)
-        ? createHttpClientWithNoSSL()
-        : http.Client();
-    _clients[requestId] = client;
-    return client;
+  http.Client createClient(String requestId,
+      {bool noSSL = false, ProxySettings? proxySettings}) {
+    if (kIsWeb) {
+      final client = http.Client();
+      _clients[requestId] = client;
+      return client;
+    } else {
+      var ioClient = HttpClient();
+      if (noSSL) {
+        ioClient.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+      }
+      if (proxySettings != null && proxySettings.host.isNotEmpty) {
+        ioClient.findProxy = (uri) {
+          return "PROXY ${proxySettings.host}:${proxySettings.port}";
+        };
+        if (proxySettings.username != null &&
+            proxySettings.username!.isNotEmpty) {
+          ioClient.authenticateProxy =
+              (String host, int port, String scheme, String? realm) {
+            ioClient.addProxyCredentials(
+              host,
+              port,
+              realm ?? '',
+              HttpClientBasicCredentials(
+                proxySettings.username!,
+                proxySettings.password ?? '',
+              ),
+            );
+            return Future.value(true);
+          };
+        }
+      }
+      final client = IOClient(ioClient);
+      _clients[requestId] = client;
+      return client;
+    }
   }
 
   void cancelRequest(String? requestId) {
