@@ -215,7 +215,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (newAIRequestModel?.model == x.id)
+                          if (newAIRequestModel?.model == x.id ||
+                              ((x.id?.isEmpty ?? true) &&
+                                  newAIRequestModel?.model == x.name))
                             CircleAvatar(
                               radius: 5,
                               backgroundColor: Colors.green,
@@ -224,8 +226,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       ),
                       onTap: () {
                         setState(() {
-                          newAIRequestModel =
-                              newAIRequestModel?.copyWith(model: x.id);
+                          newAIRequestModel = newAIRequestModel?.copyWith(
+                              model: (x.id?.isEmpty ?? true) ? x.name : x.id);
                         });
                       },
                     ),
