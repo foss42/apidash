@@ -42,7 +42,10 @@ A List of API endpoints that can be used for testing API Dash
 
 #### Audio
 
-- 
+- https://freesound.org/data/previews/337/337049_3232293-hq.mp3
+- https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
+- https://www.w3schools.com/html/horse.mp3
+- https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3
 
 ## SSE
 
