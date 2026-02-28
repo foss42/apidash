@@ -282,6 +282,7 @@ All docs are currently available in the [doc](https://github.com/foss42/apidash/
 
 - Developer Guide - [Read](https://github.com/foss42/apidash/blob/main/doc/dev_guide/README.md)
 - Code Walkthrough - [Video](https://www.youtube.com/live/rIlwCTKNz-A?si=iMxTxzkpY_ySo4Ow&t=339)
+- UI Styling Guide - Check the lib/widgets folder for reusable UI components.
 
 ## Contribute to API Dash
 
@@ -292,7 +293,7 @@ You can contribute to API Dash in any or all of the following ways:
 - [Request a new feature](https://github.com/foss42/apidash/issues/new/choose)
 - [Choose from our existing list of ideas](https://github.com/foss42/apidash/discussions/1054)
 - [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/apidash/issues/new/choose)
-- Add documentation
+- Add documentation or help others on [Discord](https://discord.com/invite/bBeSdtJ6Ue)
 - To add a new feature, resolve an existing issue or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Need Any Help?

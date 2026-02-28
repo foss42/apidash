@@ -46,6 +46,7 @@ class SaveInDownloadsButton extends StatelessWidget {
             onPressed: onPressed,
             tooltip: kLabelDownload,
             color: Theme.of(context).colorScheme.primary,
+            backgroundColor: Colors.orange,
             visualDensity: VisualDensity.compact,
           );
   }
