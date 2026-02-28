@@ -412,3 +412,7 @@ Coming from a background of working solo on personal projects, this opportunity 
 I'm truly grateful for getting this incredible opportunity to contribute to such an amazing project. Most of all, I want to extend my heartfelt thanks to my wonderful, amazing and caring, mentors— Ashita P, Ankit M, and Ragul Raj M. Your guidance, patience, and support made this entire journey possible. You created an environment where I could learn, experiment, fail, and succeed, all while feeling supported every step of the way.
 
 Looking ahead, I'm excited to see how future contributors will build upon this foundation and take API Dash to new heights.
+
+## 2026 GSoC Extension
+- Updated from 2025 proposal
+- ML model integration notes
