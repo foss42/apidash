@@ -55,6 +55,7 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
           responseStatus: responseStatus,
           message: message,
           time: responseModel?.time,
+          bytes: responseModel?.bodyBytes?.length,
         ),
         const Expanded(
           child: ResponseTabs(),

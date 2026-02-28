@@ -64,27 +64,38 @@ class CellField extends StatefulWidget {
 }
 
 class _CellFieldState extends State<CellField> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue ?? '');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
+
     return TextFormField(
       key: Key(widget.keyId),
-      initialValue: widget.initialValue,
+      controller: _controller,
       style: kCodeStyle.copyWith(
         color: colorScheme.onSurface,
       ),
       decoration: InputDecoration(
         hintStyle: kCodeStyle.copyWith(
-          color: colorScheme.outline.withOpacity(
-            kHintOpacity,
-          ),
+          color: colorScheme.outline.withOpacity(kHintOpacity),
         ),
         hintText: widget.hintText,
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: colorScheme.primary.withOpacity(
-              kHintOpacity,
-            ),
+            color: colorScheme.primary.withOpacity(kHintOpacity),
           ),
         ),
         enabledBorder: UnderlineInputBorder(

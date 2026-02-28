@@ -45,9 +45,11 @@ void main() {
         theme: kThemeDataLight,
         home: const Scaffold(
           body: ResponsePaneHeader(
-              responseStatus: 200,
-              message: 'Hi',
-              time: Duration(microseconds: 23)),
+            responseStatus: 200,
+            message: 'Hi',
+            time: Duration(microseconds: 23),
+            bytes: 2048,
+          ),
         ),
       ),
     );

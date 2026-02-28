@@ -55,11 +55,13 @@ class ResponsePaneHeader extends StatefulWidget {
     this.responseStatus,
     this.message,
     this.time,
+    this.bytes,
   });
 
   final int? responseStatus;
   final String? message;
   final Duration? time;
+  final int? bytes;
   @override
   State<ResponsePaneHeader> createState() => _ResponsePaneHeaderState();
 }
@@ -120,10 +122,30 @@ class _ResponsePaneHeaderState extends State<ResponsePaneHeader> {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
             ),
+            kHSpacer20,
+            Text(
+              formatBytes(widget.bytes),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    fontFamily: kCodeStyle.fontFamily,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  String formatBytes(int? bytes) {
+    if (bytes == null) return "";
+
+    if (bytes < 1024) {
+      return "$bytes B";
+    } else if (bytes < 1024 * 1024) {
+      return "${(bytes / 1024).toStringAsFixed(1)} KB";
+    } else {
+      return "${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB";
+    }
   }
 }
 
