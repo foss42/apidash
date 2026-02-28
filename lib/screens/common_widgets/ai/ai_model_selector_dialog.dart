@@ -1,4 +1,4 @@
-// import 'package:apidash/providers/providers.dart';
+import 'package:apidash/providers/ai_providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -19,14 +19,79 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
 
+  // Cache of credentials modified in this session (before saving)
+  final Map<ModelAPIProvider, AIRequestModel> _sessionCredentials = {};
+
   @override
   void initState() {
     super.initState();
     selectedProvider = widget.aiRequestModel?.modelApiProvider;
     if (selectedProvider != null && widget.aiRequestModel?.model != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
+      _sessionCredentials[selectedProvider!] = newAIRequestModel!;
+    } else if (selectedProvider != null) {
+      // Try to load saved credential for the initial provider
+      final savedCredential = ref
+          .read(aiProviderCredentialsProvider.notifier)
+          .getCredential(selectedProvider!);
+      if (savedCredential != null) {
+        newAIRequestModel = savedCredential;
+        _sessionCredentials[selectedProvider!] = savedCredential;
+      }
     }
     aM = ModelManager.fetchAvailableModels();
+  }
+
+  void _onProviderChanged(
+    ModelAPIProvider? newProvider,
+    Map<ModelAPIProvider, AIModelProvider> mappedData,
+  ) {
+    if (newProvider == null) return;
+
+    // Save current credentials to session cache before switching
+    if (selectedProvider != null && newAIRequestModel != null) {
+      _sessionCredentials[selectedProvider!] = newAIRequestModel!;
+    }
+
+    setState(() {
+      selectedProvider = newProvider;
+
+      // Try to load from session cache first
+      if (_sessionCredentials.containsKey(newProvider)) {
+        newAIRequestModel = _sessionCredentials[newProvider];
+      } else {
+        // Then try to load from persisted credentials
+        final savedCredential = ref
+            .read(aiProviderCredentialsProvider.notifier)
+            .getCredential(newProvider);
+        if (savedCredential != null) {
+          newAIRequestModel = savedCredential;
+        } else {
+          // Fall back to default model for this provider
+          newAIRequestModel = mappedData[newProvider]?.toAiRequestModel();
+        }
+        // Cache in session
+        if (newAIRequestModel != null) {
+          _sessionCredentials[newProvider] = newAIRequestModel!;
+        }
+      }
+    });
+  }
+
+  void _onSave() {
+    // Save current credential before closing
+    if (selectedProvider != null && newAIRequestModel != null) {
+      _sessionCredentials[selectedProvider!] = newAIRequestModel!;
+    }
+
+    // Persist all modified credentials
+    for (var entry in _sessionCredentials.entries) {
+      ref
+          .read(aiProviderCredentialsProvider.notifier)
+          .updateCredential(entry.key, entry.value);
+    }
+
+    Navigator.of(context).pop(newAIRequestModel);
   }
 
   @override
@@ -64,13 +129,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       kHSpacer20,
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
-                          onChanged: (x) {
-                            setState(() {
-                              selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
-                            });
-                          },
+                          onChanged: (x) =>
+                              _onProviderChanged(x, mappedData),
                           value: selectedProvider,
                           values: data.modelProviders
                               .map((e) => (e.providerId!, e.providerName)),
@@ -116,13 +176,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                     radius: 5,
                                     backgroundColor: Colors.green,
                                   ),
-                            onTap: () {
-                              setState(() {
-                                selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
-                              });
-                            },
+                            onTap: () =>
+                                _onProviderChanged(x.providerId, mappedData),
                           ),
                         ),
                       ],
@@ -162,17 +217,13 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           Text('API Key / Credential'),
           kVSpacer8,
           BoundedTextField(
+            key: ValueKey('apikey-${aiModelProvider.providerId?.name}'),
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
-            // value: currentCredential,
           ),
           kVSpacer10,
         ],
@@ -239,9 +290,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         Align(
           alignment: Alignment.centerRight,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop(newAIRequestModel);
-            },
+            onPressed: _onSave,
             child: Text('Save'),
           ),
         ),

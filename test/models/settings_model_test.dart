@@ -39,7 +39,8 @@ void main() {
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
-      "defaultAIModel": {"model": "llama"}
+      "defaultAIModel": {"model": "llama"},
+      "aiProviderCredentials": null,
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -111,7 +112,8 @@ void main() {
   "isDashBotEnabled": true,
   "defaultAIModel": {
     "model": "llama"
-  }
+  },
+  "aiProviderCredentials": null
 }''';
     expect(sm.toString(), expectedResult);
   });

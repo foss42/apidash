@@ -25,11 +25,17 @@ class _BoundedTextFieldState extends State<BoundedTextField> {
 
   @override
   void didUpdateWidget(covariant BoundedTextField oldWidget) {
-    //Assisting in Resetting on Change
-    if (widget.value == '') {
+    // Sync controller when parent value changes and differs from current text
+    if (widget.value != oldWidget.value && widget.value != controller.text) {
       controller.text = widget.value;
     }
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override

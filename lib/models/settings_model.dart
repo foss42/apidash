@@ -20,6 +20,7 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.aiProviderCredentials,
   });
 
   final bool isDark;
@@ -36,6 +37,7 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
+  final Map<String, Map<String, Object?>>? aiProviderCredentials;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -52,6 +54,7 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    Map<String, Map<String, Object?>>? aiProviderCredentials,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -70,6 +73,8 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+      aiProviderCredentials:
+          aiProviderCredentials ?? this.aiProviderCredentials,
     );
   }
 
@@ -91,6 +96,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      aiProviderCredentials: aiProviderCredentials,
     );
   }
 
@@ -149,6 +155,20 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+
+    // Parse per-provider credentials
+    final aiProviderCredentialsRaw = data["aiProviderCredentials"];
+    Map<String, Map<String, Object?>>? aiProviderCredentials;
+    if (aiProviderCredentialsRaw != null && aiProviderCredentialsRaw is Map) {
+      aiProviderCredentials = {};
+      for (var entry in aiProviderCredentialsRaw.entries) {
+        if (entry.value is Map) {
+          aiProviderCredentials[entry.key.toString()] =
+              Map<String, Object?>.from(entry.value);
+        }
+      }
+    }
+
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -167,6 +187,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      aiProviderCredentials: aiProviderCredentials,
     );
   }
 
@@ -188,6 +209,7 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "aiProviderCredentials": aiProviderCredentials,
     };
   }
 
@@ -214,7 +236,23 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
-        mapEquals(other.defaultAIModel, defaultAIModel);
+        mapEquals(other.defaultAIModel, defaultAIModel) &&
+        _deepMapEquals(other.aiProviderCredentials, aiProviderCredentials);
+  }
+
+  static bool _deepMapEquals(
+    Map<String, Map<String, Object?>>? a,
+    Map<String, Map<String, Object?>>? b,
+  ) {
+    if (a == null && b == null) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+    for (final key in a.keys) {
+      if (!b.containsKey(key) || !mapEquals(a[key], b[key])) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
@@ -235,6 +273,7 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      aiProviderCredentials,
     );
   }
 }
