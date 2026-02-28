@@ -10,6 +10,7 @@ class JsonTextFieldEditor extends StatefulWidget {
     super.key,
     required this.fieldKey,
     this.onChanged,
+    this.onError,
     this.initialValue,
     this.hintText,
     this.readOnly = false,
@@ -18,6 +19,9 @@ class JsonTextFieldEditor extends StatefulWidget {
 
   final String fieldKey;
   final Function(String)? onChanged;
+  /// Called when JSON parse error changes. Error message or null when valid.
+  /// Use e.g. to show the error in the global status bar (Terminal).
+  final Function(String?)? onError;
   final String? initialValue;
   final String? hintText;
   final bool readOnly;
@@ -138,8 +142,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
             //       ),
             //   borderRadius: kBorderRadius8,
             // ),
-            // TODO: Show error message in Global Status bar
-            // showErrorMessage: true,
+            onError: widget.onError,
             isFormatting: true,
             controller: controller,
             focusNode: editorFocusNode,

@@ -3,6 +3,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/terminal/terminal.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'request_form_data.dart';
@@ -56,6 +57,17 @@ class EditRequestBody extends ConsumerWidget {
                         ref
                             .read(collectionStateNotifierProvider.notifier)
                             .update(body: value);
+                      },
+                      onError: (String? error) {
+                        if (error != null) {
+                          ref.read(terminalStateProvider.notifier).logSystem(
+                                category: 'validation',
+                                message: error,
+                                level: TerminalLevel.error,
+                              );
+                          ref.read(showTerminalBadgeProvider.notifier).state =
+                              true;
+                        }
                       },
                       hintText: kHintJson,
                     ),
