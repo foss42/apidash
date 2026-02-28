@@ -6,7 +6,7 @@ part 'environment_model.freezed.dart';
 part 'environment_model.g.dart';
 
 @freezed
-class EnvironmentModel with _$EnvironmentModel {
+abstract class EnvironmentModel with _$EnvironmentModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -15,6 +15,7 @@ class EnvironmentModel with _$EnvironmentModel {
     required String id,
     @Default("") String name,
     @Default([]) List<EnvironmentVariableModel> values,
+    @Default(null) int? color, // Color value as int (nullable - null means no color assigned)
   }) = _EnvironmentModel;
 
   factory EnvironmentModel.fromJson(Map<String, Object?> json) =>
@@ -22,7 +23,7 @@ class EnvironmentModel with _$EnvironmentModel {
 }
 
 @freezed
-class EnvironmentVariableModel with _$EnvironmentVariableModel {
+abstract class EnvironmentVariableModel with _$EnvironmentVariableModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,

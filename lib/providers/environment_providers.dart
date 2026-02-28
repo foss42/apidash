@@ -95,6 +95,7 @@ class EnvironmentsStateNotifier
             id: environmentModelFromJson.id,
             name: environmentModelFromJson.name,
             values: environmentModelFromJson.values,
+            color: environmentModelFromJson.color,
           );
           environmentsMap[environmentId] = environmentModel;
         }
@@ -126,17 +127,24 @@ class EnvironmentsStateNotifier
     String id, {
     String? name,
     List<EnvironmentVariableModel>? values,
+    int? color,
   }) {
     final environment = state![id]!;
     final updatedEnvironment = environment.copyWith(
       name: name ?? environment.name,
       values: values ?? environment.values,
+      color: color ?? environment.color,
     );
     state = {
       ...state!,
       id: updatedEnvironment,
     };
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
+  }
+
+  /// Update the color of an environment
+  void updateEnvironmentColor(String id, int? color) {
+    updateEnvironment(id, color: color);
   }
 
   void duplicateEnvironment(String id) {
