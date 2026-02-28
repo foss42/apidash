@@ -172,11 +172,15 @@ Map<String, dynamic> requestModelToHARJsonRequest(
           json["headers"].add(m);
         }
         for (final k in headers.keys) {
-          var m = {"name": k, "value": headers[k]};
-          if (exportMode) {
-            m["comment"] = "";
+          if (headers[k] != null) {
+            for (final v in headers[k]!) {
+              var m = {"name": k, "value": v};
+              if (exportMode) {
+                m["comment"] = "";
+              }
+              json["headers"].add(m);
+            }
           }
-          json["headers"].add(m);
         }
       }
     }

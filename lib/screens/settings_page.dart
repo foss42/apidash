@@ -24,10 +24,14 @@ class SettingsPage extends ConsumerWidget {
         !context.isMediumWindow
             ? Padding(
                 padding: kPh20t40,
-                child: kIsDesktop
-                    ? Text("Settings",
-                        style: Theme.of(context).textTheme.headlineLarge)
-                    : kSizedBoxEmpty,
+                child: kSizedBoxEmpty,
+              )
+            : kSizedBoxEmpty,
+        kIsDesktop
+            ? Padding(
+                padding: kPh20,
+                child: Text("Settings",
+                    style: Theme.of(context).textTheme.headlineLarge),
               )
             : kSizedBoxEmpty,
         kIsDesktop
@@ -64,9 +68,23 @@ class SettingsPage extends ConsumerWidget {
                       .update(isDashBotEnabled: value);
                 },
               ),
+              // --- NEW SETTING START ---
               ADListTile(
                 type: ListTileType.switchOnOff,
-                title: 'Collection Pane Scrollbar Visiblity',
+                title: 'URL Preview Visibility',
+                subtitle:
+                    'Current selection: ${settings.showUrlPreview ? "Visible" : "Hidden"}',
+                value: settings.showUrlPreview,
+                onChanged: (bool? value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(showUrlPreview: value);
+                },
+              ),
+              // --- NEW SETTING END ---
+              ADListTile(
+                type: ListTileType.switchOnOff,
+                title: 'Collection Pane Scrollbar Visibility',
                 subtitle:
                     'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
                 value: settings.alwaysShowCollectionPaneScrollbar,

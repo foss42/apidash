@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -13,8 +14,18 @@ class DartDioCodeGen {
       final next = generatedDartCode(
         url: requestModel.url,
         method: requestModel.method,
-        queryParams: requestModel.enabledParamsMap,
-        headers: requestModel.enabledHeadersMap,
+        queryParams: requestModel.enabledParamsMap.map(
+          (key, value) => MapEntry(key, value.join(", ")),
+        ),
+        headers: requestModel.enabledHeadersMap.map(
+          (key, value) {
+            String separator = ", ";
+            if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+              separator = "; ";
+            }
+            return MapEntry(key, value.join(separator));
+          },
+        ),
         body: requestModel.body,
         contentType: requestModel.bodyContentType,
         formData: requestModel.formDataMapList,

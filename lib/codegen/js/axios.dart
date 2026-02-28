@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 import '../../utils/utils.dart';
 
@@ -85,7 +86,15 @@ axios(config)
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
         for (var i in headers) {
-          m[i["name"]] = i["value"];
+          if (m.containsKey(i["name"])) {
+            String separator = ", ";
+            if (i["name"].toLowerCase() == HttpHeaders.cookieHeader) {
+              separator = "; ";
+            }
+            m[i["name"]] = "${m[i["name"]]}$separator${i["value"]}";
+          } else {
+            m[i["name"]] = i["value"];
+          }
         }
         if (requestModel.hasFormData) {
           m[kHeaderContentType] = ContentType.formdata.header;

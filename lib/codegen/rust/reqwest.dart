@@ -144,7 +144,15 @@ class RustReqwestCodeGen {
 
         var headersList = requestModel.enabledHeaders;
         if (headersList != null || hasBody) {
-          var headers = requestModel.enabledHeadersMap;
+          var headers = requestModel.enabledHeadersMap.map(
+            (key, value) {
+              String separator = ", ";
+              if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+                separator = "; ";
+              }
+              return MapEntry(key, value.join(separator));
+            },
+          );
           if (hasBody) {
             headers[HttpHeaders.contentTypeHeader] =
                 requestModel.bodyContentType.header;

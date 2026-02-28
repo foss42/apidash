@@ -19,7 +19,7 @@ class VideoPreviewer extends StatefulWidget {
 }
 
 class _VideoPreviewerState extends State<VideoPreviewer> {
-  late VideoPlayerController _videoController;
+  VideoPlayerController? _videoController;
   late Future<void> _initializeVideoPlayerFuture;
   bool _isPlaying = false;
   late File _tempVideoFile;
@@ -33,6 +33,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
   }
 
   void registerWithAllPlatforms() {
+    if (kIsRunningTests) return;
     try {
       fvp.registerWith();
     } catch (e) {
@@ -47,11 +48,11 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
     try {
       await _tempVideoFile.writeAsBytes(widget.videoBytes);
       _videoController = VideoPlayerController.file(_tempVideoFile);
-      await _videoController.initialize();
+      await _videoController!.initialize();
       if (mounted) {
         setState(() {
-          _videoController.play();
-          _videoController.setLooping(true);
+          _videoController!.play();
+          _videoController!.setLooping(true);
         });
       }
     } catch (e) {
@@ -73,7 +74,8 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
         future: _initializeVideoPlayerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (_videoController.value.isInitialized) {
+            if (_videoController != null &&
+                _videoController!.value.isInitialized) {
               return MouseRegion(
                 onEnter: (_) => setState(() => _showControls = true),
                 onExit: (_) => setState(() => _showControls = false),
@@ -81,8 +83,8 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
                   children: [
                     Center(
                       child: AspectRatio(
-                        aspectRatio: _videoController.value.aspectRatio,
-                        child: VideoPlayer(_videoController),
+                        aspectRatio: _videoController!.value.aspectRatio,
+                        child: VideoPlayer(_videoController!),
                       ),
                     ),
                     Positioned(
@@ -92,7 +94,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
                       child: SizedBox(
                         height: 50.0,
                         child: VideoProgressIndicator(
-                          _videoController,
+                          _videoController!,
                           allowScrubbing: true,
                           padding: const EdgeInsets.all(20),
                           colors: progressBarColors,
@@ -103,10 +105,10 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
                       Center(
                         child: GestureDetector(
                           onTap: () {
-                            if (_videoController.value.isPlaying) {
-                              _videoController.pause();
+                            if (_videoController!.value.isPlaying) {
+                              _videoController!.pause();
                             } else {
-                              _videoController.play();
+                              _videoController!.play();
                             }
                             setState(() {
                               _isPlaying = !_isPlaying;
@@ -135,8 +137,8 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
 
   @override
   void dispose() {
-    _videoController.pause();
-    _videoController.dispose();
+    _videoController?.pause();
+    _videoController?.dispose();
     if (!kIsRunningTests) {
       Future.delayed(const Duration(seconds: 1), () async {
         try {

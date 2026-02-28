@@ -78,11 +78,15 @@ void main() {
     });
     test('Testing for string KVRow values', () {
       const kvRow1 = NameValueModel(name: "code", value: "IN");
-      expect(rowsToMap([kvRow1]), {"code": "IN"});
+      expect(rowsToMap([kvRow1]), {
+        "code": ["IN"]
+      });
     });
     test('Testing when header is True', () {
       const kvRow2 = NameValueModel(name: "Text", value: "ABC");
-      expect(rowsToMap([kvRow2], isHeader: true), {"text": "ABC"});
+      expect(rowsToMap([kvRow2], isHeader: true), {
+        "text": ["ABC"]
+      });
     });
     test('Testing when header is false and key is in upper case', () {
       const kvRow3 = <NameValueModel>[
@@ -91,9 +95,9 @@ void main() {
         NameValueModel(name: "month", value: 4),
       ];
       expect(rowsToMap(kvRow3), {
-        "TEXT": "ABC",
-        "version": "0.1",
-        "month": "4",
+        "TEXT": ["ABC"],
+        "version": ["0.1"],
+        "month": ["4"],
       });
     });
   });

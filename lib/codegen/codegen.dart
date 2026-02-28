@@ -121,5 +121,6 @@ class Codegen {
       case CodegenLanguage.swiftUrlSession:
         return SwiftURLSessionCodeGen().getCode(rM);
     }
+    return null;
   }
 }

@@ -55,10 +55,11 @@ String stripUrlParams(String url) {
     uri = uri.removeFragment();
   }
 
-  Map<String, String>? queryParams = rowsToMap(requestParams);
+  Map<String, List<String>>? queryParams = rowsToMap(requestParams);
+  
   if (queryParams != null && queryParams.isNotEmpty) {
     if (uri.hasQuery) {
-      Map<String, String> urlQueryParams = uri.queryParameters;
+      Map<String, List<String>> urlQueryParams = uri.queryParametersAll;
       queryParams = mergeMaps(urlQueryParams, queryParams);
     }
     uri = uri.replace(queryParameters: queryParams);

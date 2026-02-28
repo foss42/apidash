@@ -27,7 +27,9 @@ class HistoryRequestPane extends ConsumerWidget {
     final headersMap = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.httpRequestModel!.headersMap;
+            return value?.httpRequestModel!.headersMap.map(
+              (key, value) => MapEntry(key, value.join(", ")),
+            );
           },
         )) ??
         {};
@@ -36,7 +38,9 @@ class HistoryRequestPane extends ConsumerWidget {
     final paramsMap = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.httpRequestModel!.paramsMap;
+            return value?.httpRequestModel!.paramsMap.map(
+              (key, value) => MapEntry(key, value.join(", ")),
+            );
           },
         )) ??
         {};
