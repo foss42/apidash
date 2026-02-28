@@ -298,3 +298,7 @@ You can contribute to API Dash in any or all of the following ways:
 ## Need Any Help?
 
 In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://discord.com/invite/bBeSdtJ6Ue) and we can have a chat in the **#gsoc-foss-apidash** channel.
+
+## GSoC 2025 → 2026
+Problem statement: Update docs for new contributors.
+Added notes from udhay_adithya_j.md.
