@@ -4,6 +4,13 @@ APIDash allows you to write JavaScript code that runs either **before** a reques
 
 The primary way to interact with APIDash data and functionality within these scripts is through the global `ad` object. This object provides structured access to request data, response data, environment variables, and logging utilities.
 
+> [!NOTE]
+> When you first open the **Pre-request** or **Post-response** script tabs, the editor might appear completely empty without any placeholder or hint text (this is a known UI limitation). To get started quickly, you can use the following example to verify it's working:
+> ```javascript
+> // Use JavaScript to modify this request dynamically
+> ad.console.log("Hello from APIDash Scripting!");
+> ```
+
 
 ## `ad.request` (Available in Pre-request Scripts Only)
 
