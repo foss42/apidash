@@ -1,0 +1,5 @@
+# melos_managed_dependency_overrides: json_explorer,win32
+dependency_overrides:
+  json_explorer:
+    path: ..
+  win32: ^5.5.3

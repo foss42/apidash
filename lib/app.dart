@@ -1,9 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
+import 'widgets/widgets.dart';
 import 'providers/providers.dart';
+import 'services/services.dart';
 import 'screens/screens.dart';
-import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -17,6 +23,19 @@ class _AppState extends ConsumerState<App> with WindowListener {
   void initState() {
     super.initState();
     windowManager.addListener(this);
+    _init();
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+  void _init() async {
+    // Add this line to override the default close handler
+    await windowManager.setPreventClose(true);
+    setState(() {});
   }
 
   @override
@@ -37,47 +56,114 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return const DashApp();
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      if (ref.watch(
+              settingsProvider.select((value) => value.promptBeforeClosing)) &&
+          ref.watch(hasUnsavedChangesProvider)) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Save Changes'),
+            content:
+                const Text('Want to save changes before you close API Dash?'),
+            actions: [
+              OutlinedButton(
+                child: const Text('No'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await windowManager.destroy();
+                },
+              ),
+              FilledButton(
+                child: const Text('Save'),
+                onPressed: () async {
+                  await ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .saveData();
+                  Navigator.of(context).pop();
+                  await windowManager.destroy();
+                },
+              ),
+            ],
+          ),
+        );
+      } else {
+        await windowManager.destroy();
+      }
+    }
   }
 
   @override
-  void dispose() {
-    windowManager.removeListener(this);
-    super.dispose();
+  Widget build(BuildContext context) {
+    return context.isMediumWindow ? const MobileDashboard() : const Dashboard();
   }
 }
 
-class DashApp extends ConsumerStatefulWidget {
+class DashApp extends ConsumerWidget {
   const DashApp({super.key});
 
   @override
-  ConsumerState<DashApp> createState() => _DashAppState();
-}
-
-class _DashAppState extends ConsumerState<DashApp> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: kFontFamily,
-        fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: kColorSchemeSeed,
-        useMaterial3: true,
-        brightness: Brightness.light,
+    final workspaceFolderPath = ref
+        .watch(settingsProvider.select((value) => value.workspaceFolderPath));
+    final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
+    final userOnboarded = ref.watch(userOnboardedProvider);
+    return Portal(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: kLightMaterialAppTheme,
+        darkTheme: kDarkMaterialAppTheme,
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        home: showWorkspaceSelector
+            ? WorkspaceSelector(
+                onContinue: (val) async {
+                  await initHiveBoxes(kIsDesktop, val);
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(workspaceFolderPath: val);
+                },
+                onCancel: () async {
+                  try {
+                    await windowManager.destroy();
+                  } catch (e) {
+                    debugPrint(e.toString());
+                  }
+                },
+              )
+            : //Stack(
+              //  children: [
+                  !kIsLinux && !kIsMobile
+                      ? const App()
+                      : context.isMediumWindow
+                          ? (kIsMobile && !userOnboarded)
+                              ? OnboardingScreen(
+                                  onComplete: () async {
+                                    await setOnboardingStatusToSharedPrefs(
+                                      isOnboardingComplete: true,
+                                    );
+                                    ref
+                                        .read(userOnboardedProvider.notifier)
+                                        .state = true;
+                                  },
+                                )
+                              : const MobileDashboard()
+                          : const Dashboard(),
+              //     if (kIsWindows)
+              //       SizedBox(
+              //         height: 29,
+              //         child: WindowCaption(
+              //           backgroundColor: Colors.transparent,
+              //           brightness:
+              //               isDarkMode ? Brightness.dark : Brightness.light,
+              //         ),
+              //       ),
+              //   ],
+              // ),
       ),
-      darkTheme: ThemeData(
-        fontFamily: kFontFamily,
-        fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: kColorSchemeSeed,
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const Dashboard(),
     );
   }
 }

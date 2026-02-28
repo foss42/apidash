@@ -1,16 +1,17 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash_core/apidash_core.dart';
+import '../../utils/utils.dart';
 
 class HARCodeGen {
   String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+    HttpRequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
-      var harString = kEncoder.convert(requestModelToHARJsonRequest(
-          requestModel,
-          defaultUriScheme: defaultUriScheme));
+      var harString = kJsonEncoder.convert(requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
+        boundary: boundary,
+      ));
       return harString;
     } catch (e) {
       return null;

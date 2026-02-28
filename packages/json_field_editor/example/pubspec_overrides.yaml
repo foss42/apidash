@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: json_field_editor
+dependency_overrides:
+  json_field_editor:
+    path: ..

@@ -1,33 +1,57 @@
+import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 @immutable
 class SettingsModel {
-  const SettingsModel(
-      {this.isDark = false,
-      this.alwaysShowCollectionPaneScrollbar = true,
-      this.size,
-      this.offset,
-      this.defaultUriScheme = kDefaultUriScheme,
-      this.defaultCodeGenLang = CodegenLanguage.curl,
-      this.saveResponses = true});
+  const SettingsModel({
+    this.isDark = false,
+    this.alwaysShowCollectionPaneScrollbar = true,
+    this.size,
+    this.offset,
+    this.defaultUriScheme = kDefaultUriScheme,
+    this.defaultCodeGenLang = CodegenLanguage.curl,
+    this.saveResponses = true,
+    this.promptBeforeClosing = true,
+    this.activeEnvironmentId,
+    this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
+    this.workspaceFolderPath,
+    this.isSSLDisabled = false,
+    this.isDashBotEnabled = true,
+    this.defaultAIModel,
+  });
 
   final bool isDark;
   final bool alwaysShowCollectionPaneScrollbar;
   final Size? size;
   final Offset? offset;
-  final String defaultUriScheme;
+  final SupportedUriSchemes defaultUriScheme;
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
+  final bool promptBeforeClosing;
+  final String? activeEnvironmentId;
+  final HistoryRetentionPeriod historyRetentionPeriod;
+  final String? workspaceFolderPath;
+  final bool isSSLDisabled;
+  final bool isDashBotEnabled;
+  final Map<String, Object?>? defaultAIModel;
 
   SettingsModel copyWith({
     bool? isDark,
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
-    String? defaultUriScheme,
+    SupportedUriSchemes? defaultUriScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
+    bool? promptBeforeClosing,
+    String? activeEnvironmentId,
+    HistoryRetentionPeriod? historyRetentionPeriod,
+    String? workspaceFolderPath,
+    bool? isSSLDisabled,
+    bool? isDashBotEnabled,
+    Map<String, Object?>? defaultAIModel,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -38,6 +62,35 @@ class SettingsModel {
       defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
+      promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
+      historyRetentionPeriod:
+          historyRetentionPeriod ?? this.historyRetentionPeriod,
+      workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
+      isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
+      defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+    );
+  }
+
+  SettingsModel copyWithPath({
+    String? workspaceFolderPath,
+  }) {
+    return SettingsModel(
+      isDark: isDark,
+      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
+      size: size,
+      defaultUriScheme: defaultUriScheme,
+      defaultCodeGenLang: defaultCodeGenLang,
+      offset: offset,
+      saveResponses: saveResponses,
+      promptBeforeClosing: promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod: historyRetentionPeriod,
+      workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
+      isDashBotEnabled: isDashBotEnabled,
+      defaultAIModel: defaultAIModel,
     );
   }
 
@@ -57,7 +110,16 @@ class SettingsModel {
     if (dx != null && dy != null) {
       offset = Offset(dx, dy);
     }
-    final defaultUriScheme = data["defaultUriScheme"] as String?;
+    final defaultUriSchemeStr = data["defaultUriScheme"] as String?;
+    SupportedUriSchemes? defaultUriScheme;
+    if (defaultUriSchemeStr != null) {
+      try {
+        defaultUriScheme =
+            SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+      } catch (e) {
+        // pass
+      }
+    }
     final defaultCodeGenLangStr = data["defaultCodeGenLang"] as String?;
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
@@ -69,7 +131,24 @@ class SettingsModel {
       }
     }
     final saveResponses = data["saveResponses"] as bool?;
-
+    final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
+    final activeEnvironmentId = data["activeEnvironmentId"] as String?;
+    final historyRetentionPeriodStr = data["historyRetentionPeriod"] as String?;
+    HistoryRetentionPeriod? historyRetentionPeriod;
+    if (historyRetentionPeriodStr != null) {
+      try {
+        historyRetentionPeriod =
+            HistoryRetentionPeriod.values.byName(historyRetentionPeriodStr);
+      } catch (e) {
+        // pass
+      }
+    }
+    final workspaceFolderPath = data["workspaceFolderPath"] as String?;
+    final isSSLDisabled = data["isSSLDisabled"] as bool?;
+    final isDashBotEnabled = data["isDashBotEnabled"] as bool?;
+    final defaultAIModel = data["defaultAIModel"] == null
+        ? null
+        : Map<String, Object?>.from(data["defaultAIModel"]);
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -80,6 +159,14 @@ class SettingsModel {
       defaultUriScheme: defaultUriScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
+      promptBeforeClosing: promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod:
+          historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
+      workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
+      isDashBotEnabled: isDashBotEnabled,
+      defaultAIModel: defaultAIModel,
     );
   }
 
@@ -91,14 +178,63 @@ class SettingsModel {
       "height": size?.height,
       "dx": offset?.dx,
       "dy": offset?.dy,
-      "defaultUriScheme": defaultUriScheme,
+      "defaultUriScheme": defaultUriScheme.name,
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
+      "promptBeforeClosing": promptBeforeClosing,
+      "activeEnvironmentId": activeEnvironmentId,
+      "historyRetentionPeriod": historyRetentionPeriod.name,
+      "workspaceFolderPath": workspaceFolderPath,
+      "isSSLDisabled": isSSLDisabled,
+      "isDashBotEnabled": isDashBotEnabled,
+      "defaultAIModel": defaultAIModel,
     };
   }
 
   @override
   String toString() {
-    return toJson().toString();
+    return kJsonEncoder.convert(toJson());
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SettingsModel &&
+        other.runtimeType == runtimeType &&
+        other.isDark == isDark &&
+        other.alwaysShowCollectionPaneScrollbar ==
+            alwaysShowCollectionPaneScrollbar &&
+        other.size == size &&
+        other.offset == offset &&
+        other.defaultUriScheme == defaultUriScheme &&
+        other.defaultCodeGenLang == defaultCodeGenLang &&
+        other.saveResponses == saveResponses &&
+        other.promptBeforeClosing == promptBeforeClosing &&
+        other.activeEnvironmentId == activeEnvironmentId &&
+        other.historyRetentionPeriod == historyRetentionPeriod &&
+        other.workspaceFolderPath == workspaceFolderPath &&
+        other.isSSLDisabled == isSSLDisabled &&
+        other.isDashBotEnabled == isDashBotEnabled &&
+        mapEquals(other.defaultAIModel, defaultAIModel);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      isDark,
+      alwaysShowCollectionPaneScrollbar,
+      size,
+      offset,
+      defaultUriScheme,
+      defaultCodeGenLang,
+      saveResponses,
+      promptBeforeClosing,
+      activeEnvironmentId,
+      historyRetentionPeriod,
+      workspaceFolderPath,
+      isSSLDisabled,
+      isDashBotEnabled,
+      defaultAIModel,
+    );
   }
 }

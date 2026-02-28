@@ -1,517 +1,900 @@
-import 'package:apidash/codegen/js/fetch.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
+import '../models/request_models.dart';
 
 void main() {
-  final fetchCodeGen = FetchCodeGen(isNodeJs: true);
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com';
+const url = 'https://api.apidash.dev';
 
-let options = {
+const options = {
   method: 'GET'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('GET 2', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com/country/data?code=US';
+const url = 'https://api.apidash.dev/country/data?code=US';
 
-let options = {
+const options = {
   method: 'GET'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('GET 3', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com/country/data?code=IND';
+const url = 'https://api.apidash.dev/country/data?code=IND';
 
-let options = {
+const options = {
   method: 'GET'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('GET 4', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true';
+const url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true';
 
-let options = {
+const options = {
   method: 'GET'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('GET 5', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.github.com/repos/foss42/apidash';
+const url = 'https://api.github.com/repos/foss42/apidash';
 
-let options = {
+const options = {
   method: 'GET',
   headers: {
     "User-Agent": "Test Agent"
   }
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('GET 6', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.github.com/repos/foss42/apidash?raw=true';
+const url = 'https://api.github.com/repos/foss42/apidash?raw=true';
 
-let options = {
+const options = {
   method: 'GET',
   headers: {
     "User-Agent": "Test Agent"
   }
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('GET 7', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com';
+const url = 'https://api.apidash.dev';
 
-let options = {
+const options = {
   method: 'GET'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('GET 8', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.github.com/repos/foss42/apidash?raw=true';
+const url = 'https://api.github.com/repos/foss42/apidash?raw=true';
 
-let options = {
+const options = {
   method: 'GET',
   headers: {
     "User-Agent": "Test Agent"
   }
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
+    });
+
+    test('GET 9', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+
+const url = 'https://api.apidash.dev/humanize/social?num=8700000&add_space=true';
+
+const options = {
+  method: 'GET'
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+
+const url = 'https://api.apidash.dev/humanize/social';
+
+const options = {
+  method: 'GET',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet10,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+
+const url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3';
+
+const options = {
+  method: 'GET',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+
+const url = 'https://api.apidash.dev/humanize/social';
+
+const options = {
+  method: 'GET'
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
   });
 
   group('HEAD Request', () {
     test('HEAD 1', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com';
+const url = 'https://api.apidash.dev';
 
-let options = {
+const options = {
   method: 'HEAD'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('HEAD 2', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'http://api.foss42.com';
+const url = 'http://api.apidash.dev';
 
-let options = {
+const options = {
   method: 'HEAD'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
+          expectedCode);
     });
   });
 
   group('POST Request', () {
     test('POST 1', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com/case/lower';
+const url = 'https://api.apidash.dev/case/lower';
 
-let options = {
+const options = {
   method: 'POST',
   headers: {
     "Content-Type": "text/plain"
   },
-  body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+  body: "{\n\"text\": \"I LOVE Flutter\"\n}"
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('POST 2', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com/case/lower';
+const url = 'https://api.apidash.dev/case/lower';
 
-let options = {
+const options = {
   method: 'POST',
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+  body: "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}"
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('POST 3', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://api.foss42.com/case/lower';
+const url = 'https://api.apidash.dev/case/lower';
 
-let options = {
+const options = {
   method: 'POST',
   headers: {
     "Content-Type": "application/json",
     "User-Agent": "Test Agent"
   },
-  body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+  body: "{\n\"text\": \"I LOVE Flutter\"\n}"
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
+    });
+    test('POST 4', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+import { FormData } from 'node-fetch'
+
+const payload = new FormData();
+payload.append("text", "API")
+payload.append("sep", "|")
+payload.append("times", "3")
+
+const url = 'https://api.apidash.dev/io/form';
+
+const options = {
+  method: 'POST',
+  body: payload
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelPost4,
+              SupportedUriSchemes.https,
+              boundary: "test"),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+import { FormData } from 'node-fetch'
+
+const payload = new FormData();
+payload.append("text", "API")
+payload.append("sep", "|")
+payload.append("times", "3")
+
+const url = 'https://api.apidash.dev/io/form';
+
+const options = {
+  method: 'POST',
+  headers: {
+    "User-Agent": "Test Agent"
+  },
+  body: payload
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelPost5,
+              SupportedUriSchemes.https,
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 6', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+import { fileFromSync, FormData } from 'node-fetch'
+
+const payload = new FormData();
+payload.append("token", "xyz")
+payload.append("imfile", fileFromSync("/Documents/up/1.png"))
+
+const url = 'https://api.apidash.dev/io/img';
+
+const options = {
+  method: 'POST',
+  body: payload
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelPost6,
+              SupportedUriSchemes.https,
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+import { fileFromSync, FormData } from 'node-fetch'
+
+const payload = new FormData();
+payload.append("token", "xyz")
+payload.append("imfile", fileFromSync("/Documents/up/1.png"))
+
+const url = 'https://api.apidash.dev/io/img';
+
+const options = {
+  method: 'POST',
+  body: payload
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelPost7,
+              SupportedUriSchemes.https,
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+import { FormData } from 'node-fetch'
+
+const payload = new FormData();
+payload.append("text", "API")
+payload.append("sep", "|")
+payload.append("times", "3")
+
+const url = 'https://api.apidash.dev/io/form?size=2&len=3';
+
+const options = {
+  method: 'POST',
+  body: payload
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelPost8,
+              SupportedUriSchemes.https,
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+import { fileFromSync, FormData } from 'node-fetch'
+
+const payload = new FormData();
+payload.append("token", "xyz")
+payload.append("imfile", fileFromSync("/Documents/up/1.png"))
+
+const url = 'https://api.apidash.dev/io/img?size=2&len=3';
+
+const options = {
+  method: 'POST',
+  headers: {
+    "User-Agent": "Test Agent",
+    "Keep-Alive": "true"
+  },
+  body: payload
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelPost9,
+              SupportedUriSchemes.https,
+              boundary: "test"),
+          expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://reqres.in/api/users/2';
+const url = 'https://reqres.in/api/users/2';
 
-let options = {
+const options = {
   method: 'PUT',
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
+  body: "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
   });
 
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://reqres.in/api/users/2';
+const url = 'https://reqres.in/api/users/2';
 
-let options = {
+const options = {
   method: 'PATCH',
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
+  body: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
   });
 
   group('DELETE Request', () {
     test('DELETE 1', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://reqres.in/api/users/2';
+const url = 'https://reqres.in/api/users/2';
 
-let options = {
+const options = {
   method: 'DELETE'
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
 
     test('DELETE 2', () {
-      const expectedCode = r"""import fetch from 'node-fetch';
+      const expectedCode = r"""import fetch from 'node-fetch'
 
-let url = 'https://reqres.in/api/users/2';
+const url = 'https://reqres.in/api/users/2';
 
-let options = {
+const options = {
   method: 'DELETE',
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
+  body: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
 """;
-      expect(fetchCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
     });
   });
 }

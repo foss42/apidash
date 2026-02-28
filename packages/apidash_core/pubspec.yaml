@@ -1,0 +1,35 @@
+name: apidash_core
+description: "API Dash Core"
+version: 0.0.1
+homepage:
+publish_to: none
+
+environment:
+  sdk: ^3.5.3
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  curl_parser:
+    path: ../curl_parser
+  freezed_annotation: ^3.0.0
+  genai:
+    path: ../genai
+  har:
+    path: ../har
+  insomnia_collection:
+    path: ../insomnia_collection
+  openapi_spec: ^0.15.0
+  postman:
+    path: ../postman
+  xml: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.12
+  flutter_lints: ^6.0.0
+  freezed: ^3.0.6
+  json_serializable: ^6.7.1
+  test: ^1.25.2

@@ -1,52 +1,74 @@
+import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import '../providers/providers.dart';
-import '../widgets/widgets.dart';
+import '../services/services.dart';
 import '../utils/utils.dart';
-import 'package:apidash/consts.dart';
+import '../widgets/widgets.dart';
+import '../consts.dart';
+import 'common_widgets/common_widgets.dart';
 
-class SettingsPage extends ConsumerStatefulWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
-  ConsumerState<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends ConsumerState<SettingsPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final clearingData = ref.watch(clearDataStateProvider);
     var sm = ScaffoldMessenger.of(context);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          constraints: const BoxConstraints(maxWidth: 800),
+        !context.isMediumWindow
+            ? Padding(
+                padding: kPh20t40,
+                child: kIsDesktop
+                    ? Text("Settings",
+                        style: Theme.of(context).textTheme.headlineLarge)
+                    : kSizedBoxEmpty,
+              )
+            : kSizedBoxEmpty,
+        kIsDesktop
+            ? const Padding(
+                padding: kPh20,
+                child: Divider(
+                  height: 1,
+                ),
+              )
+            : kSizedBoxEmpty,
+        Expanded(
           child: ListView(
-            padding: kPh20t40,
             shrinkWrap: true,
             children: [
-              Text("Settings",
-                  style: Theme.of(context).textTheme.headlineLarge),
-              const Divider(),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                hoverColor: kColorTransparent,
-                title: const Text('Switch Theme Mode'),
-                subtitle: Text(
-                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
+              ADListTile(
+                type: ListTileType.switchOnOff,
+                title: 'Switch Theme Mode',
+                subtitle:
+                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}',
                 value: settings.isDark,
                 onChanged: (bool? value) {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                hoverColor: kColorTransparent,
-                title: const Text('Collection Pane Scrollbar Visiblity'),
-                subtitle: Text(
-                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}'),
+              ADListTile(
+                type: ListTileType.switchOnOff,
+                title: 'DashBot',
+                subtitle:
+                    'Current selection: ${settings.isDashBotEnabled ? "Enabled" : "Disabled"}',
+                value: settings.isDashBotEnabled,
+                onChanged: (bool? value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(isDashBotEnabled: value);
+                },
+              ),
+              ADListTile(
+                type: ListTileType.switchOnOff,
+                title: 'Collection Pane Scrollbar Visiblity',
+                subtitle:
+                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
                 value: settings.alwaysShowCollectionPaneScrollbar,
                 onChanged: (bool? value) {
                   ref
@@ -55,47 +77,62 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 },
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
-                    'api.foss42.com → ${settings.defaultUriScheme}://api.foss42.com'),
-                trailing: DropdownMenu(
-                    onSelected: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultUriScheme: value);
-                    },
-                    initialSelection: settings.defaultUriScheme,
-                    dropdownMenuEntries: kSupportedUriSchemes
-                        .map<DropdownMenuEntry<String>>((value) {
-                      return DropdownMenuEntry<String>(
-                        value: value,
-                        label: value,
-                      );
-                    }).toList()),
+                    '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
+                trailing: DefaultUriSchemePopupMenu(
+                  value: settings.defaultUriScheme,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultUriScheme: value);
+                  },
+                ),
               ),
+              !kIsWeb
+                  ? ADListTile(
+                      type: ListTileType.switchOnOff,
+                      title: 'Disable SSL verification',
+                      subtitle:
+                          'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
+                      value: settings.isSSLDisabled,
+                      onChanged: (bool? value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(isSSLDisabled: value ?? false);
+                      },
+                    )
+                  : kSizedBoxEmpty,
               ListTile(
-                contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
-                trailing: DropdownMenu(
-                    onSelected: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultCodeGenLang: value);
-                    },
-                    initialSelection: settings.defaultCodeGenLang,
-                    dropdownMenuEntries: CodegenLanguage.values
-                        .map<DropdownMenuEntry<CodegenLanguage>>((value) {
-                      return DropdownMenuEntry<CodegenLanguage>(
-                        value: value,
-                        label: value.label,
-                      );
-                    }).toList()),
+                trailing: CodegenPopupMenu(
+                  value: settings.defaultCodeGenLang,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultCodeGenLang: value);
+                  },
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Default Large Language Model (LLM)'),
+                trailing: AIModelSelectorButton(
+                  aiRequestModel:
+                      AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
+                  onModelUpdated: (d) {
+                    ref.read(settingsProvider.notifier).update(
+                        defaultAIModel: d.copyWith(
+                            modelConfigs: [],
+                            stream: null,
+                            systemPrompt: '',
+                            userPrompt: '').toJson());
+                  },
+                ),
               ),
               CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
                 title: const Text("Save Responses"),
                 subtitle:
                     const Text("Save disk space by not storing API responses"),
@@ -106,54 +143,79 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       .update(saveResponses: value);
                 },
               ),
+              CheckboxListTile(
+                title: const Text("Show Save Alert on App Close"),
+                subtitle: const Text(
+                    "Show a confirmation dialog to save workspace when the user closes the app"),
+                value: settings.promptBeforeClosing,
+                onChanged: (value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(promptBeforeClosing: value);
+                },
+              ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('History Retention Period'),
+                subtitle: Text(
+                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
+                trailing: HistoryRetentionPopupMenu(
+                  value: settings.historyRetentionPeriod,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(historyRetentionPeriod: value);
+                  },
+                ),
+              ),
+              ListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Export Data'),
                 subtitle: const Text(
                     'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
-                trailing: FilledButton(
+                trailing: FilledButton.icon(
                   onPressed: () async {
-                    var message = "";
-                    try {
-                      var data = await ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .exportDataToHAR();
-                      var pth = await getFileDownloadpath(null, "har");
-                      if (pth != null) {
-                        await saveFile(pth, jsonMapToBytes(data));
-                        var sp = getShortPath(pth);
-                        message = 'Saved to $sp';
-                      }
-                    } catch (e) {
-                      message = "An error occurred while exporting.";
-                    }
-                    sm.hideCurrentSnackBar();
-                    sm.showSnackBar(getSnackBar(message, small: false));
+                    var data = await ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .exportDataToHAR();
+                    await saveCollection(data, sm);
                   },
-                  child: const Text("Export Data"),
+                  label: const Text("Export"),
+                  icon: const Icon(
+                    Icons.arrow_outward_rounded,
+                    size: 20,
+                  ),
                 ),
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
                 title: const Text('Clear Data'),
                 subtitle: const Text('Delete all requests data from the disk'),
-                trailing: FilledButton.tonal(
+                trailing: FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
-                      backgroundColor: settings.isDark
-                          ? kColorDarkDanger
-                          : kColorLightDanger,
-                      surfaceTintColor: kColorRed,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary),
+                    backgroundColor:
+                        settings.isDark ? kColorDarkDanger : kColorLightDanger,
+                    surfaceTintColor: kColorRed,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   onPressed: clearingData
                       ? null
                       : () => showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
+                              icon: const Icon(Icons.manage_history_rounded),
+                              iconColor: settings.isDark
+                                  ? kColorDarkDanger
+                                  : kColorLightDanger,
                               title: const Text('Clear Data'),
-                              content: const Text(
-                                  'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              titleTextStyle:
+                                  Theme.of(context).textTheme.titleLarge,
+                              content: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 300),
+                                child: const Text(
+                                    'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              ),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () =>
@@ -163,6 +225,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 TextButton(
                                   onPressed: () async {
                                     Navigator.pop(context, 'Yes');
+                                    await clearSharedPrefs();
                                     await ref
                                         .read(collectionStateNotifierProvider
                                             .notifier)
@@ -183,9 +246,23 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               ],
                             ),
                           ),
-                  child: const Text("Clear Data"),
+                  label: const Text("Clear"),
+                  icon: Icon(
+                    Icons.delete_forever_rounded,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
               ),
+              ListTile(
+                title: const Text('About'),
+                subtitle: const Text(
+                    'Release Details, Support Channel, Report Bug / Request New Feature'),
+                onTap: () {
+                  showAboutAppDialog(context);
+                },
+              ),
+              kVSpacer20,
             ],
           ),
         ),

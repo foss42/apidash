@@ -5,29 +5,27 @@ import '../consts.dart';
 import 'markdown.dart';
 import 'error_message.dart';
 
-class IntroMessage extends StatefulWidget {
+class IntroMessage extends StatelessWidget {
   const IntroMessage({
     super.key,
   });
 
-  @override
-  State<IntroMessage> createState() => _IntroMessageState();
-}
-
-class _IntroMessageState extends State<IntroMessage> {
   @override
   Widget build(BuildContext context) {
     late String text;
     late final String version;
 
     Future<void> introData() async {
-      text = await rootBundle.loadString('assets/intro.md');
+      text = await rootBundle.loadString(kAssetIntroMd);
       version = (await PackageInfo.fromPlatform()).version;
     }
 
     return FutureBuilder(
       future: introData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.hasError) {
+          return const ErrorMessage(message: "An error occurred");
+        }
         if (snapshot.connectionState == ConnectionState.done) {
           if (Theme.of(context).brightness == Brightness.dark) {
             text = text.replaceAll("{{mode}}", "dark");
@@ -39,11 +37,8 @@ class _IntroMessageState extends State<IntroMessage> {
 
           return CustomMarkdown(
             data: text,
-            padding: kPh60,
+            padding: EdgeInsets.zero,
           );
-        }
-        if (snapshot.hasError) {
-          return const ErrorMessage(message: "An error occured");
         }
         return const Center(child: CircularProgressIndicator());
       },

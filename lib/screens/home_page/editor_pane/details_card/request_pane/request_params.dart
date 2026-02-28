@@ -1,11 +1,12 @@
 import 'dart:math';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:davi/davi.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({super.key});
@@ -16,9 +17,11 @@ class EditRequestURLParams extends ConsumerStatefulWidget {
 }
 
 class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
-  late List<NameValueModel> rows;
-  final random = Random.secure();
   late int seed;
+  final random = Random.secure();
+  late List<NameValueModel> paramRows;
+  late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -26,134 +29,199 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     seed = random.nextInt(kRandMax);
   }
 
-  void _onFieldChange(String activeId) {
-    ref
-        .read(collectionStateNotifierProvider.notifier)
-        .update(activeId, requestParams: rows);
+  void _onFieldChange() {
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          params: paramRows.sublist(0, paramRows.length - 1),
+          isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final length = ref.watch(activeRequestModelProvider
-        .select((value) => value?.requestParams?.length));
-    var rP = ref.read(activeRequestModelProvider)?.requestParams;
-    rows = (rP == null || rP.isEmpty)
+    dataTableShowLogs = false;
+    final selectedId = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.params?.length));
+    var rP = ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
+    bool isParamsEmpty = rP == null || rP.isEmpty;
+    paramRows = isParamsEmpty
         ? [
             kNameValueEmptyModel,
           ]
-        : rP;
+        : rP + [kNameValueEmptyModel];
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.httpRequestModel
+              ?.isParamEnabledList ??
+          List.filled(rP?.length ?? 0, true, growable: true))
+    ];
+    isRowEnabledList.add(false);
+    isAddingRow = false;
 
-    DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
-      rows: rows,
-      columns: [
-        DaviColumn(
-          name: 'URL Parameter',
-          grow: 1,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            return CellField(
-              keyId: "$activeId-$idx-params-k-$seed",
-              initialValue: rows[idx].name,
-              hintText: "Add URL Parameter",
-              onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(name: value);
-                _onFieldChange(activeId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          width: 30,
-          cellBuilder: (_, row) {
-            return Text(
-              "=",
-              style: kCodeStyle,
-            );
-          },
-        ),
-        DaviColumn(
-          name: 'Value',
-          grow: 1,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            return CellField(
-              keyId: "$activeId-$idx-params-v-$seed",
-              initialValue: rows[idx].value,
-              hintText: "Add Value",
-              onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(value: value);
-                _onFieldChange(activeId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          pinStatus: PinStatus.none,
-          width: 30,
-          cellBuilder: (_, row) {
-            return InkWell(
-              child: Theme.of(context).brightness == Brightness.dark
-                  ? kIconRemoveDark
-                  : kIconRemoveLight,
-              onTap: () {
-                seed = random.nextInt(kRandMax);
-                if (rows.length == 1) {
-                  setState(() {
-                    rows = [
-                      kNameValueEmptyModel,
-                    ];
-                  });
-                } else {
-                  rows.removeAt(row.index);
-                }
-                _onFieldChange(activeId!);
-              },
-            );
-          },
-        ),
-      ],
+    List<DataColumn> columns = const [
+      DataColumn2(
+        label: Text(kNameCheckbox),
+        fixedWidth: 30,
+      ),
+      DataColumn2(
+        label: Text(kNameURLParam),
+      ),
+      DataColumn2(
+        label: Text('='),
+        fixedWidth: 30,
+      ),
+      DataColumn2(
+        label: Text(kNameValue),
+      ),
+      DataColumn2(
+        label: Text(''),
+        fixedWidth: 32,
+      ),
+    ];
+
+    List<DataRow> dataRows = List<DataRow>.generate(
+      paramRows.length,
+      (index) {
+        bool isLast = index + 1 == paramRows.length;
+        return DataRow(
+          key: ValueKey("$selectedId-$index-params-row-$seed"),
+          cells: <DataCell>[
+            DataCell(
+              ADCheckBox(
+                keyId: "$selectedId-$index-params-c-$seed",
+                value: isRowEnabledList[index],
+                onChanged: isLast
+                    ? null
+                    : (value) {
+                        setState(() {
+                          isRowEnabledList[index] = value!;
+                        });
+                        _onFieldChange();
+                      },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              EnvCellField(
+                keyId: "$selectedId-$index-params-k-$seed",
+                initialValue: paramRows[index].name,
+                hintText: kHintAddURLParam,
+                onChanged: (value) {
+                  paramRows[index] = paramRows[index].copyWith(name: value);
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
+                    isRowEnabledList[index] = true;
+                    paramRows.add(kNameValueEmptyModel);
+                    isRowEnabledList.add(false);
+                  }
+                  _onFieldChange();
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              Center(
+                child: Text(
+                  "=",
+                  style: kCodeStyle,
+                ),
+              ),
+            ),
+            DataCell(
+              EnvCellField(
+                keyId: "$selectedId-$index-params-v-$seed",
+                initialValue: paramRows[index].value,
+                hintText: kHintAddValue,
+                onChanged: (value) {
+                  paramRows[index] = paramRows[index].copyWith(value: value);
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
+                    isRowEnabledList[index] = true;
+                    paramRows.add(kNameValueEmptyModel);
+                    isRowEnabledList.add(false);
+                  }
+                  _onFieldChange();
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              InkWell(
+                onTap: isLast
+                    ? null
+                    : () {
+                        seed = random.nextInt(kRandMax);
+                        if (paramRows.length == 2) {
+                          setState(() {
+                            paramRows = [
+                              kNameValueEmptyModel,
+                            ];
+                            isRowEnabledList = [false];
+                          });
+                        } else {
+                          paramRows.removeAt(index);
+                          isRowEnabledList.removeAt(index);
+                        }
+                        _onFieldChange();
+                      },
+                child: Theme.of(context).brightness == Brightness.dark
+                    ? kIconRemoveDark
+                    : kIconRemoveLight,
+              ),
+            ),
+          ],
+        );
+      },
     );
+
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: kBorderRadius12,
-          ),
-          margin: kP10,
+          margin: kPh10t10,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: DaviTheme(
-                  data: kTableThemeData,
-                  child: Davi<NameValueModel>(model),
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  child: DataTable2(
+                    columnSpacing: 12,
+                    dividerThickness: 0,
+                    horizontalMargin: 0,
+                    headingRowHeight: 0,
+                    dataRowHeight: kDataTableRowHeight,
+                    bottomMargin: kDataTableBottomPadding,
+                    isVerticalScrollBarVisible: true,
+                    columns: columns,
+                    rows: dataRows,
+                  ),
                 ),
               ),
+              if (!kIsMobile) kVSpacer40,
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                rows.add(kNameValueEmptyModel);
-                _onFieldChange(activeId!);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Param",
-                style: kTextStyleButton,
+        if (!kIsMobile)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: kPb15,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  paramRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                  _onFieldChange();
+                },
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  kLabelAddParam,
+                  style: kTextStyleButton,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

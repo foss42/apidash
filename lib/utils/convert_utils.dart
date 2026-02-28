@@ -1,7 +1,21 @@
 import 'dart:typed_data';
 import 'dart:convert';
-import '../models/models.dart';
-import '../consts.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:intl/intl.dart';
+
+String humanizeDate(DateTime? date) {
+  if (date == null) {
+    return "";
+  }
+  return DateFormat('MMMM d, yyyy').format(date);
+}
+
+String humanizeTime(DateTime? time) {
+  if (time == null) {
+    return "";
+  }
+  return DateFormat('hh:mm:ss a').format(time);
+}
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -32,21 +46,9 @@ String audioPosition(Duration? duration) {
   return "$min:$secondsPadding$secs";
 }
 
-String capitalizeFirstLetter(String? text) {
-  if (text == null || text == "") {
-    return "";
-  } else if (text.length == 1) {
-    return text.toUpperCase();
-  } else {
-    var first = text[0];
-    var rest = text.substring(1);
-    return first.toUpperCase() + rest;
-  }
-}
-
 String formatHeaderCase(String text) {
   var sp = text.split("-");
-  sp = sp.map((e) => capitalizeFirstLetter(e)).toList();
+  sp = sp.map((e) => e.capitalize()).toList();
   return sp.join("-");
 }
 
@@ -58,35 +60,6 @@ String padMultilineString(String text, int padding,
     lines[start] = ' ' * padding + lines[start];
   }
   return lines.join("\n");
-}
-
-Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
-    {bool isHeader = false}) {
-  if (kvRows == null) {
-    return null;
-  }
-  Map<String, String> finalMap = {};
-  for (var row in kvRows) {
-    if (row.name.trim() != "") {
-      String key = row.name;
-      if (isHeader) {
-        key = key.toLowerCase();
-      }
-      finalMap[key] = row.value.toString();
-    }
-  }
-  return finalMap;
-}
-
-List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
-  if (kvMap == null) {
-    return null;
-  }
-  List<NameValueModel> finalRows = [];
-  for (var k in kvMap.keys) {
-    finalRows.add(NameValueModel(name: k, value: kvMap[k]));
-  }
-  return finalRows;
 }
 
 Uint8List? stringToBytes(String? text) {
@@ -103,7 +76,7 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
   if (map == null) {
     return Uint8List.fromList([]);
   } else {
-    String text = kEncoder.convert(map);
+    String text = kJsonEncoder.convert(map);
     var l = utf8.encode(text);
     var bytes = Uint8List.fromList(l);
     return bytes;

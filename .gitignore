@@ -5,10 +5,14 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
 migrate_working_dir/
+.fvm
+.fvmrc
 
 # IntelliJ related
 *.iml
@@ -50,9 +54,14 @@ macos/
 windows/
 web/
 ios/
+android/
 .vscode/*
 icons/
 coverage/*
 installers/*
 .metadata
 .fvm/
+
+# Testing Files & Folders
+test-hive-storage
+/logs

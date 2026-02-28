@@ -2,22 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
-import 'buttons.dart';
+import 'button_discord.dart';
+import 'button_repo.dart';
 
-class CustomMarkdown extends StatefulWidget {
+class CustomMarkdown extends StatelessWidget {
   const CustomMarkdown({
     super.key,
     required this.data,
     this.padding = const EdgeInsets.all(16.0),
+    this.onTapLink,
   });
+
   final String data;
   final EdgeInsets padding;
+  final void Function(String text, String? href, String title)? onTapLink;
 
-  @override
-  State<CustomMarkdown> createState() => _CustomMarkdownState();
-}
-
-class _CustomMarkdownState extends State<CustomMarkdown> {
   @override
   Widget build(BuildContext context) {
     final mdStyleSheet = MarkdownStyleSheet(
@@ -25,14 +24,15 @@ class _CustomMarkdownState extends State<CustomMarkdown> {
       p: Theme.of(context).textTheme.titleMedium,
     );
     return Markdown(
-      padding: widget.padding,
+      padding: padding,
       styleSheet: mdStyleSheet,
-      data: widget.data,
+      data: data,
       selectable: true,
       extensionSet: md.ExtensionSet.gitHubFlavored,
-      onTapLink: (text, href, title) {
-        launchUrl(Uri.parse(href ?? ""));
-      },
+      onTapLink: onTapLink ??
+          (text, href, title) {
+            launchUrl(Uri.parse(href ?? ""));
+          },
       builders: {
         "inlineButton": InlineButton(),
       },

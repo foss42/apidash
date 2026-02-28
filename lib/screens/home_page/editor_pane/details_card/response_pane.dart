@@ -1,54 +1,60 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
-class ResponsePane extends ConsumerStatefulWidget {
+class ResponsePane extends ConsumerWidget {
   const ResponsePane({super.key});
 
   @override
-  ConsumerState<ResponsePane> createState() => _ResponsePaneState();
-}
-
-class _ResponsePaneState extends ConsumerState<ResponsePane> {
-  @override
-  Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final sentRequestId = ref.watch(sentRequestIdStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isWorking = ref.watch(
+            selectedRequestModelProvider.select((value) => value?.isWorking)) ??
+        false;
+    final startSendingTime = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.sendingTime));
     final responseStatus = ref.watch(
-        activeRequestModelProvider.select((value) => value?.responseStatus));
-    final message =
-        ref.watch(activeRequestModelProvider.select((value) => value?.message));
-    if (sentRequestId != null && sentRequestId == activeId) {
-      return const SendingWidget();
+        selectedRequestModelProvider.select((value) => value?.responseStatus));
+    final message = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.message));
+
+    if (isWorking) {
+      return SendingWidget(
+        startSendingTime: startSendingTime,
+      );
     }
     if (responseStatus == null) {
       return const NotSentWidget();
     }
     if (responseStatus == -1) {
-      return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
+      return message == kMsgRequestCancelled
+          ? ErrorMessage(
+              message: message,
+              icon: Icons.cancel,
+              showIssueButton: false,
+            )
+          : ErrorMessage(
+              message: '$message. $kUnexpectedRaiseIssue',
+            );
     }
     return const ResponseDetails();
   }
 }
 
-class ResponseDetails extends ConsumerStatefulWidget {
+class ResponseDetails extends ConsumerWidget {
   const ResponseDetails({super.key});
 
   @override
-  ConsumerState<ResponseDetails> createState() => _ResponseDetailsState();
-}
-
-class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final responseStatus = ref.watch(
-        activeRequestModelProvider.select((value) => value?.responseStatus));
-    final message =
-        ref.watch(activeRequestModelProvider.select((value) => value?.message));
-    final responseModel = ref.watch(
-        activeRequestModelProvider.select((value) => value?.responseModel));
+        selectedRequestModelProvider.select((value) => value?.responseStatus));
+    final message = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.message));
+    final responseModel = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpResponseModel));
+
     return Column(
       children: [
         ResponsePaneHeader(
@@ -56,6 +62,9 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
           message: message,
           time: responseModel?.time,
           bytes: responseModel?.bodyBytes?.length,
+          onClearResponse: () {
+            ref.read(collectionStateNotifierProvider.notifier).clearResponse();
+          },
         ),
         const Expanded(
           child: ResponseTabs(),
@@ -65,19 +74,14 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
   }
 }
 
-class ResponseTabs extends ConsumerStatefulWidget {
+class ResponseTabs extends ConsumerWidget {
   const ResponseTabs({super.key});
 
   @override
-  ConsumerState<ResponseTabs> createState() => _ResponseTabsState();
-}
-
-class _ResponseTabsState extends ConsumerState<ResponseTabs> {
-  @override
-  Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
     return ResponseTabView(
-      activeId: activeId,
+      selectedId: selectedId,
       children: const [
         ResponseBodyTab(),
         ResponseHeadersTab(),
@@ -86,39 +90,35 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs> {
   }
 }
 
-class ResponseBodyTab extends ConsumerStatefulWidget {
+class ResponseBodyTab extends ConsumerWidget {
   const ResponseBodyTab({super.key});
 
   @override
-  ConsumerState<ResponseBodyTab> createState() => _ResponseBodyTabState();
-}
-
-class _ResponseBodyTabState extends ConsumerState<ResponseBodyTab> {
-  @override
-  Widget build(BuildContext context) {
-    final activeRequestModel = ref.watch(activeRequestModelProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedRequestModel = ref.watch(selectedRequestModelProvider);
     return ResponseBody(
-      activeRequestModel: activeRequestModel,
+      selectedRequestModel: selectedRequestModel,
     );
   }
 }
 
-class ResponseHeadersTab extends ConsumerStatefulWidget {
+class ResponseHeadersTab extends ConsumerWidget {
   const ResponseHeadersTab({super.key});
 
   @override
-  ConsumerState<ResponseHeadersTab> createState() => _ResponseHeadersTabState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final requestHeaders =
+        ref.watch(selectedRequestModelProvider.select((value) {
+              return value?.httpResponseModel!.requestHeaders;
+            })) ??
+            {};
 
-class _ResponseHeadersTabState extends ConsumerState<ResponseHeadersTab> {
-  @override
-  Widget build(BuildContext context) {
-    final requestHeaders = ref.watch(activeRequestModelProvider
-            .select((value) => value?.responseModel?.requestHeaders)) ??
-        {};
-    final responseHeaders = ref.watch(activeRequestModelProvider
-            .select((value) => value?.responseModel?.headers)) ??
-        {};
+    final responseHeaders =
+        ref.watch(selectedRequestModelProvider.select((value) {
+              return value?.httpResponseModel!.headers;
+            })) ??
+            {};
+
     return ResponseHeaders(
       responseHeaders: responseHeaders,
       requestHeaders: requestHeaders,

@@ -1,5 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+class ScreenSize {
+  const ScreenSize(this.name, this.width, this.height, this.pixelDensity);
+  final String name;
+  final double width, height, pixelDensity;
+}
+
+const compactWidthDevice = ScreenSize('compact__width_device', 500, 600, 1);
+const mediumWidthDevice = ScreenSize('medium__width_device', 800, 800, 1);
+const largeWidthDevice = ScreenSize('large_width_device', 1300, 800, 1);
 
 final kThemeDataDark = ThemeData(
   useMaterial3: true,
@@ -12,6 +22,8 @@ final kThemeDataLight = ThemeData(
   colorSchemeSeed: Colors.blue,
   brightness: Brightness.light,
 );
+
+const kTestUrl = 'https://api.apidash.dev';
 
 Uint8List kBodyBytesJpeg = Uint8List.fromList([
   255,

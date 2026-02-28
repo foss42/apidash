@@ -1,22 +1,29 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/dashbot/dashbot.dart';
+import 'common_widgets/common_widgets.dart';
+import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
-import 'intro_page.dart';
+import 'history/history_page.dart';
 import 'settings_page.dart';
+import 'terminal/terminal_page.dart';
 
-class Dashboard extends ConsumerStatefulWidget {
+class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
 
   @override
-  ConsumerState<Dashboard> createState() => _DashboardState();
-}
-
-class _DashboardState extends ConsumerState<Dashboard> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+    final isDashBotEnabled =
+        ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
+    final isDashBotActive = ref
+        .watch(dashbotWindowNotifierProvider.select((value) => value.isActive));
+    final isDashBotPopped = ref
+        .watch(dashbotWindowNotifierProvider.select((value) => value.isPopped));
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -42,6 +49,53 @@ class _DashboardState extends ConsumerState<Dashboard> {
                       'Requests',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 1,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 1;
+                      },
+                      icon: const Icon(Icons.laptop_windows_outlined),
+                      selectedIcon: const Icon(Icons.laptop_windows),
+                    ),
+                    Text(
+                      'Variables',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 2,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 2;
+                      },
+                      icon: const Icon(Icons.history_outlined),
+                      selectedIcon: const Icon(Icons.history_rounded),
+                    ),
+                    Text(
+                      'History',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
+                    Badge(
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      isLabelVisible:
+                          ref.watch(showTerminalBadgeProvider) && railIdx != 3,
+                      child: IconButton(
+                        isSelected: railIdx == 3,
+                        onPressed: () {
+                          ref.read(navRailIndexStateProvider.notifier).state =
+                              3;
+                          ref.read(showTerminalBadgeProvider.notifier).state =
+                              false;
+                        },
+                        icon: const Icon(Icons.terminal_outlined),
+                        selectedIcon: const Icon(Icons.terminal),
+                      ),
+                    ),
+                    Text(
+                      'Logs',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
@@ -50,35 +104,39 @@ class _DashboardState extends ConsumerState<Dashboard> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, railIdx, 1, Icons.help,
-                            Icons.help_outline),
+                        child: NavbarButton(
+                          railIdx: railIdx,
+                          selectedIcon: Icons.help,
+                          icon: Icons.help_outline,
+                          label: 'About',
+                          showLabel: false,
+                          isCompact: true,
+                          onTap: () {
+                            showAboutAppDialog(context);
+                          },
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, railIdx, 2, Icons.settings,
-                            Icons.settings_outlined),
+                        child: NavbarButton(
+                          railIdx: railIdx,
+                          buttonIdx: 4,
+                          selectedIcon: Icons.settings,
+                          icon: Icons.settings_outlined,
+                          label: 'Settings',
+                          showLabel: false,
+                          isCompact: true,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
-              // destinations: const <NavigationRailDestination>[
-              //   // NavigationRailDestination(
-              //   //   icon: Icon(Icons.home_outlined),
-              //   //   selectedIcon: Icon(Icons.home),
-              //   //   label: Text('Home'),
-              //   // ),
-              //   NavigationRailDestination(
-              //     icon: Icon(Icons.auto_awesome_mosaic_outlined),
-              //     selectedIcon: Icon(Icons.auto_awesome_mosaic),
-              //     label: Text('Requests'),
-              //   ),
-              // ],
             ),
             VerticalDivider(
               thickness: 1,
               width: 1,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
             ),
             Expanded(
               child: IndexedStack(
@@ -86,7 +144,9 @@ class _DashboardState extends ConsumerState<Dashboard> {
                 index: railIdx,
                 children: const [
                   HomePage(),
-                  IntroPage(),
+                  EnvironmentPage(),
+                  HistoryPage(),
+                  TerminalPage(),
                   SettingsPage(),
                 ],
               ),
@@ -94,32 +154,21 @@ class _DashboardState extends ConsumerState<Dashboard> {
           ],
         ),
       ),
-    );
-  }
-
-  TextButton bottomButton(
-    BuildContext context,
-    int railIdx,
-    int buttonIdx,
-    IconData selectedIcon,
-    IconData icon,
-  ) {
-    bool isSelected = railIdx == buttonIdx;
-    return TextButton(
-      style: isSelected
-          ? TextButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      floatingActionButton: isDashBotEnabled &&
+              !isDashBotActive &&
+              isDashBotPopped
+          ? FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              onPressed: () => showDashbotWindow(context, ref),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6.0,
+                  horizontal: 10,
+                ),
+                child: DashbotIcons.getDashbotIcon1(),
+              ),
             )
           : null,
-      onPressed: isSelected
-          ? null
-          : () {
-              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
-            },
-      child: Icon(
-        isSelected ? selectedIcon : icon,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
-      ),
     );
   }
 }

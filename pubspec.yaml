@@ -1,64 +1,106 @@
 name: apidash
-description: API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
+description: API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate API integration code on the go.
 publish_to: "none"
-version: 0.3.0+3
+version: 0.5.0+5
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.7.2"
+  flutter: ">=3.38.7"
 
 dependencies:
   flutter:
     sdk: flutter
-  multi_split_view: ^2.4.0
-  url_launcher: ^6.1.12
-  flutter_riverpod: ^2.3.7
-  uuid: ^4.1.0
-  davi: ^3.4.1
-  http: ^1.1.0
-  http_parser: ^4.0.2
-  collection: ^1.17.2
-  google_fonts: ^6.1.0
+  apidash_core:
+    path: packages/apidash_core
+  apidash_design_system:
+    path: packages/apidash_design_system
+  carousel_slider: ^5.0.0
+  code_builder: ^4.10.0
+  csv: ^6.0.0
+  data_table_2: 2.5.16
+  dart_style: ^3.0.1
+  desktop_drop: ^0.5.0
+  extended_text_field: ^16.0.0
+  file_selector: ^1.0.3
+  flex_color_scheme: ^8.3.0
+  flutter_code_editor: ^0.3.3
+  flutter_highlight: ^0.7.0
+  flutter_highlighter: ^0.1.0
+  flutter_hooks: ^0.21.2
+  flutter_js: ^0.8.5
+  flutter_markdown: ^0.7.6+2
+  flutter_portal: ^1.1.4
+  flutter_riverpod: ^2.5.1
+  flutter_svg: ^2.0.17
+  fvp: ^0.32.1
+  highlight: ^0.7.0
   highlighter: ^0.1.1
-  xml: ^6.3.0
-  jinja: ^0.5.0
+  hive_ce_flutter: ^2.3.3
+  hooks_riverpod: ^2.5.2
+  intl: ^0.19.0
+  jinja: ^0.6.1
+  json_annotation: ^4.9.0
+  json_explorer:
+    path: packages/json_explorer
+  json_field_editor:
+    path: packages/json_field_editor
+  just_audio: ^0.9.46
+  just_audio_mpv: ^0.1.7
+  just_audio_windows: ^0.2.0
+  lottie: ^3.3.1
+  markdown: ^7.3.0
+  mime_dart: ^3.0.0
+  multi_split_view: ^3.2.2
+  multi_trigger_autocomplete_plus:
+    path: packages/multi_trigger_autocomplete_plus
+  ollama_dart: ^0.2.2
+  package_info_plus: ^8.3.0
+  path: ^1.8.3
+  path_provider: ^2.1.2
+  printing: ^5.13.4
+  provider: ^6.1.2
+  pub_semver: ^2.1.5
+  riverpod: ^2.5.1
+  scrollable_positioned_list: ^0.3.8
+  share_plus: ^10.1.4
+  shared_preferences: ^2.5.2
+  stac: ^1.0.0-dev.7
+  url_launcher: ^6.2.5
+  uuid: ^4.5.0
+  vector_graphics_compiler: ^1.1.9+1
+  video_player: ^2.9.3
+  video_player_platform_interface: ^6.3.0
+  window_manager: ^0.4.2
   window_size:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
-  hive_flutter: ^1.1.0
-  lottie: ^2.6.0
-  mime_dart: ^3.0.0
-  path_provider: ^2.1.0
-  window_manager: ^0.3.5
-  path: ^1.8.3
-  flutter_markdown: ^0.6.17+1
-  markdown: ^7.1.1
-  just_audio: ^0.9.34
-  just_audio_mpv: ^0.1.7
-  just_audio_windows: ^0.2.0
-  freezed_annotation: ^2.4.1
-  json_annotation: ^4.8.1
-  printing: ^5.11.0
-  package_info_plus: ^4.1.0
-  flutter_typeahead: ^4.8.0
-  provider: ^6.0.5
-  json_data_explorer: ^0.1.0
-  scrollable_positioned_list: ^0.2.3
+
+dependency_overrides:
+  extended_text_field: ^16.0.0
+  pdf_widget_wrapper: ^1.0.4
+  web: ^1.1.1
+  freezed_annotation: ^2.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1
-  test: ^1.24.3
-  build_runner: ^2.4.6
-  freezed: ^2.4.1
-  json_serializable: ^6.7.1
+  build_runner: ^2.4.15
+  file_selector_platform_interface: ^2.6.2
+  flutter_launcher_icons: ^0.14.3
+  flutter_lints: ^5.0.0
+  flutter_native_splash: ^2.4.5
+  freezed: ^2.5.7
+  json_serializable: ^6.9.4
+  integration_test:
+    sdk: flutter
+  melos: ^6.3.2
+  mocktail: ^1.0.4
+  spot: ^0.17.0
+  test: ^1.25.2
 
 flutter:
   uses-material-design: true
   assets:
-    - google_fonts/
     - assets/
-    - assets/intro/
+    - assets/dashbot/

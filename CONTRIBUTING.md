@@ -2,7 +2,7 @@
 
 We value your participation in this open source project. This page will give you a quick overview of how to get involved.
 
-You can contribute to the project in any or all of the following ways: 
+You can contribute to the project in any or all of the following ways:
 
 - [Ask a question](https://github.com/foss42/apidash/discussions)
 - [Submit a bug report](https://github.com/foss42/apidash/issues/new/choose)
@@ -11,23 +11,41 @@ You can contribute to the project in any or all of the following ways:
 - Add documentation
 - Add a new feature, resolve an existing issue or add a new test to the project. (Goto [Code Contribution Guidelines](#code-contribution-guidelines)).
 
+## Resources for New Contributors
+
+- API Dash Code Walkthrough - [Video](https://www.youtube.com/live/rIlwCTKNz-A?si=iMxTxzkpY_ySo4Ow&t=339)
+- Getting Started with Flutter - [Video](https://www.youtube.com/watch?v=8K2gV1P6ZHI)
+- API Dash Developer Guide - [Read](https://github.com/foss42/apidash/blob/main/doc/dev_guide/README.md)
+
+## Code Contribution Guidelines
+
+### Why we do not assign issues to anyone?
+
+- By not assigning issues upfront, anyone can feel welcome to contribute without feeling like the issue is already "taken."
+- This also prevents discouraging new contributors who might feel locked out if issues are pre-assigned.
+- Contributors are encouraged to pick issues that align with their skills and interests. To take initiative rather than waiting for permission or being "assigned" work.
+- Sometimes contributors express interest but never follow through. If issues are assigned prematurely, others might avoid working on them, delaying progress.
+- Leaving issues unassigned ensures that work can proceed without bottlenecks if someone goes inactive.
+- Open issues encourage community discussion and brainstorming. Prematurely assigning an issue can stifle input from others who might have better ideas or solutions.
+- As open-source work is often voluntary, and contributors' availability can change. Keeping issues unassigned allows anyone to step in if the original contributor becomes unavailable.
+  This also supports multiple contributors collaborating on larger or complex issues.
+
 ### I have not contributed to any open source project before. Will I get any guidance?
 
 In case you are new to the open source ecosystem, we would be more than happy to guide you through the entire process. Just join our [Discord server](https://bit.ly/heyfoss) and drop a message in the **#foss** channel.
-
-## Code Contribution Guidelines
 
 ### Some things to keep in mind before opening a PR
 
 > PRs with precise changes (like adding a new test, resolving a bug/issue, adding a new feature) are always preferred over a single PR with a ton of file changes as they are easier to review and merge.
 
 We currently do not accept PRs that involve:
+
 - Code refactoring without any new feature addition/existing issue resolution.
 - Bumping of dependency versions (SDKs, Packages).
 
 ### Resolving an existing issue / Adding a requested feature
 
-You can find all existing issues [here](https://github.com/foss42/apidash/issues). A good place to start is to take a look at ["good first issues"](https://github.com/foss42/apidash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). 
+You can find all existing issues [here](https://github.com/foss42/apidash/issues). A good place to start is to take a look at ["good first issues"](https://github.com/foss42/apidash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 **Step 1** - Identify the issue you want to work on.  
 **Step 2** - Comment on the issue so that we can discuss how to approach and solve the problem.  
@@ -43,7 +61,7 @@ You can find all existing issues [here](https://github.com/foss42/apidash/issues
 
 **Step 1** - Open an [issue](https://github.com/foss42/apidash/issues/new/choose) so that we can discuss on the new feature.  
 **Step 2** - Fork the [`foss42/apidash`](https://github.com/foss42/apidash) repo to your account.  
-**Step 3** - Create a new branch in your fork and name it `add-feature-xyz`.   
+**Step 3** - Create a new branch in your fork and name it `add-feature-xyz`.  
 **Step 4** - Run API Dash locally (More details [here](#how-to-run-api-dash-locally)).  
 **Step 5** - Make the necessary code changes required to implement the feature in the branch.  
 **Step 6** - Once the feature is implemented. Make sure you add the relevant tests in the `test` folder and run tests (More details [here](#how-to-run-tests)).  
@@ -53,11 +71,12 @@ You can find all existing issues [here](https://github.com/foss42/apidash/issues
 ### Adding a new test
 
 You can contribute by adding missing/new tests for:
+
 - Widgets (`lib/widgets/`)
 - Models (`lib/models/`)
 - Utilities (`lib/utils/`)
 - Riverpod providers (`lib/providers/`)
-- Code generation (`lib/codegen/`) 
+- Code generation (`lib/codegen/`)
 - Services (`lib/services/`).
 
 **Step 1** - Identify the test you want to add or improve.  
@@ -68,11 +87,11 @@ You can contribute by adding missing/new tests for:
 **Step 6** - [Open a Pull Request](https://help.github.com/articles/using-pull-requests/) with a clear title and description of the tests you are adding.  
 **Step 7** - Wait for feedback and review. We will closely work with you on the Pull Request.
 
-## General Instructions 
+## General Instructions
 
 ### What is the supported Flutter/Dart version?
 
-This project supports the latest Dart 3 & Flutter version. If you are using older Flutter version that does not support Dart 3, you might get errors. 
+This project supports the latest Dart 3 & Flutter version. If you are using older Flutter version that does not support Dart 3, you might get errors.
 
 In case you are setting up Flutter for the first time, just go ahead and download the latest (Stable) SDK from the [Flutter SDK Archive](https://docs.flutter.dev/release/archive). Then proceed with the Flutter installation.
 
@@ -80,51 +99,44 @@ In case you have already setup Flutter, make sure to switch to `stable` branch a
 
 ### How to run API Dash locally?
 
-1. Fork the project.
-2. Create a clone of the forked project on your computer to run it locally.
-3. Based on your desktop environment, enable Windows, macOS or Linux for the project. Select the same target device.
-4. This project uses [Records feature in Dart](https://github.com/dart-lang/language/blob/main/accepted/future-releases/records/records-feature-specification.md), so to run the project execute the following command:
-
-```
-flutter run
-```
+Check out [here](https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md)
 
 ### How to run tests?
 
-To run tests execute the following command:
-
-```
-flutter test --coverage
-```
-
-To generate coverage report as html execute:
-
-```
-genhtml coverage/lcov.info -o coverage/html  
-```
-
-**Note**: On macOS you need to have `lcov` installed on your system (`brew install lcov`) to run the above command.
-
-To view the coverage report in the browser for further analysis, execute: 
-
-```
-open coverage/html/index.html
-```
-
-#### Testing a single file
-
-To run tests specified in a single file, execute the following command:
-
-```
-flutter test <file_path>.dart
-```
-
-Example:
-
-```
-flutter test test/widgets/codegen_previewer_test.dart
-```
+Check out [here](https://github.com/foss42/apidash/blob/main/doc/dev_guide/testing.md)
 
 ### How to add a new package to pubspec.yaml?
 
 Instead of copy pasting from pub.dev, it is recommended that you use `flutter pub add package_name` to add a new package to `pubspec.yaml`. You can read more [here](https://docs.flutter.dev/packages-and-plugins/using-packages#adding-a-package-dependency-to-an-app-using-flutter-pub-add).
+
+## AI Usage Policy
+
+We welcome the responsible use of AI tools (e.g., code assistants, LLMs, copilots) to improve productivity, learning, and developer experience. However, contributors are fully accountable for all submitted work.
+
+### Acceptable Use
+
+- AI tools may be used for **ideation, refactoring, debugging, new feature code generation, documentation, and test generation**.
+- AI can assist in exploring, but must not replace understanding.
+
+### Contributor Responsibility
+
+- **You must understand the code you submit.**
+  Do not contribute AI-generated code you cannot explain, maintain, or debug.
+- All contributions **must meet the same review bar as human-written code**.
+- **You are responsible for correctness, security, performance, and maintainability**, regardless of how the code was produced.
+- Ensure your contributions comply with our project's license.
+- Do **not** submit AI-generated content that may:
+  - Reproduce copyrighted or proprietary code
+  - Violate third-party licenses
+  - Include text or code with unclear provenance
+- When in doubt, rewrite the code in your own words or consult maintainers.
+- Review AI-assisted code for:
+  - Hidden bugs or incorrect assumptions
+  - Security vulnerabilities
+  - Inconsistent style or architectural violations
+- If a contribution is AI-assisted, **mentioning it in the PR description** is encouraged, especially for large or complex changes.
+- You are prohibited from:
+  - Blindly copying AI output without review
+  - Using AI to bypass project guidelines, reviews, or contributor responsibilities
+
+> AI is a tool, not an author. Use it to move faster—but think, verify, and take ownership of what you ship.

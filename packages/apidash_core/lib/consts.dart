@@ -1,0 +1,1 @@
+enum EnvironmentVariableType { variable, secret }

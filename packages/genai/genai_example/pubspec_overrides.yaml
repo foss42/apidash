@@ -1,0 +1,8 @@
+# melos_managed_dependency_overrides: better_networking,genai,seed
+dependency_overrides:
+  better_networking:
+    path: ../../better_networking
+  genai:
+    path: ..
+  seed:
+    path: ../../seed
