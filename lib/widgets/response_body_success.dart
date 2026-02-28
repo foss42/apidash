@@ -126,6 +126,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         type: widget.mediaType.type,
                         subtype: widget.mediaType.subtype,
                         hasRaw: widget.options.contains(ResponseBodyView.raw),
+                        isPartOfHistory: widget.isPartOfHistory,
                       ),
                     ),
                   ),

@@ -21,6 +21,7 @@ class Previewer extends StatefulWidget {
     this.type,
     this.subtype,
     this.hasRaw = false,
+    this.isPartOfHistory = false,
   });
 
   final Uint8List bytes;
@@ -28,6 +29,7 @@ class Previewer extends StatefulWidget {
   final String? type;
   final String? subtype;
   final bool hasRaw;
+  final bool isPartOfHistory;
 
   @override
   State<Previewer> createState() => _PreviewerState();
@@ -124,7 +126,10 @@ class _PreviewerState extends State<Previewer> {
     }
     if (widget.type == kTypeVideo) {
       try {
-        var preview = VideoPreviewer(videoBytes: widget.bytes);
+        var preview = VideoPreviewer(
+          videoBytes: widget.bytes,
+          isPartOfHistory: widget.isPartOfHistory,
+        );
         return preview;
       } catch (e) {
         return ErrorMessage(
