@@ -3,15 +3,17 @@
 Full Name: Anish Shrestha
 University name: UCSI University
 Program you are enrolled in (Degree & Major/Minor): Bachelor of Computer Science and Information Technology (Hons) in Software Engineering
-Graduated date: 2021
+Year: Graduated
+Expected graduation date: 2021
 
 Project Title: Comprehensive gRPC and ConnectRPC Support
-Relevant issues: https://github.com/foss42/apidash/issues/11
+Relevant issues: https://github.com/foss42/apidash/issues/14
 
 Idea description:
 
 **The Problem & Motivation**
 While building and scaling high-performance backends—particularly in ecosystems like Go—developers are increasingly adopting gRPC and ConnectRPC for efficient, type-safe communication. However, testing these endpoints remains a significant friction point. Standard REST clients aren't equipped for it, and existing gRPC GUI tools often lack cross-platform polish or fail to support the newer, web-friendly Connect protocol. My goal is to solve this workflow bottleneck by bringing native gRPC and ConnectRPC support to API Dash.
+Basically, I am trying to solve problem I am facing while building my own backend.
 
 **Implementation Approach**
 
@@ -19,6 +21,8 @@ To integrate these protocols seamlessly into API Dash's existing Flutter archite
 
 1. Protocol Selection & UI Integration
 Currently, API Dash defaults to standard HTTP methods. I will introduce a protocol selector (HTTP, gRPC, ConnectRPC) at the workspace level. When gRPC or Connect is selected, the UI will adapt to accept standard RPC parameters (Package, Service, Method) instead of standard URL paths.
+
+![gRPC UI Mockup](images/grpc_demo_ai.png)
 
 2. Schema Management & Reflection
 RPC clients require an understanding of the data structure. I will implement a two-pronged approach:
