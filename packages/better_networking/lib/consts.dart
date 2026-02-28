@@ -83,9 +83,8 @@ enum HTTPVerb {
 
 enum SupportedUriSchemes { https, http }
 
-final kSupportedUriSchemes = SupportedUriSchemes.values
-    .map((i) => i.name)
-    .toList();
+final kSupportedUriSchemes =
+    SupportedUriSchemes.values.map((i) => i.name).toList();
 const kDefaultUriScheme = SupportedUriSchemes.https;
 final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
 final kIPHostRegex = RegExp(
@@ -165,7 +164,8 @@ List<String> kStreamingResponseTypes = [
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
-  formdata("$kTypeMultipart/$kSubTypeFormData");
+  formdata("$kTypeMultipart/$kSubTypeFormData"),
+  urlencoded("$kTypeApplication/$kSubTypeXWwwFormUrlencoded");
 
   const ContentType(this.header);
   final String header;

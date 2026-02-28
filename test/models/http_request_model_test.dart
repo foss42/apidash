@@ -48,6 +48,7 @@ void main() {
     expect(httpRequestModel.hasContentTypeHeader, true);
 
     expect(httpRequestModel.hasFormDataContentType, false);
+    expect(httpRequestModel.hasUrlencodedContentType, false);
     expect(httpRequestModel.hasJsonContentType, true);
     expect(httpRequestModel.hasTextContentType, false);
     expect(httpRequestModel.hasFormData, false);
@@ -71,6 +72,12 @@ void main() {
       {'name': 'imfile', 'value': '/Documents/up/1.png', 'type': 'file'}
     ]);
     expect(httpRequestModel.hasFileInFormData, true);
+
+    httpRequestModel =
+        httpRequestModel.copyWith(bodyContentType: ContentType.urlencoded);
+    expect(httpRequestModel.hasFormDataContentType, false);
+    expect(httpRequestModel.hasUrlencodedContentType, true);
+    expect(httpRequestModel.hasFormData, true);
   });
 
   test('Testing immutability', () {

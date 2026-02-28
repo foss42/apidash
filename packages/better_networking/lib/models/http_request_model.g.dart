@@ -8,50 +8,56 @@ part of 'http_request_model.dart';
 
 _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(
   Map json,
-) => _$HttpRequestModelImpl(
-  method:
-      $enumDecodeNullable(_$HTTPVerbEnumMap, json['method']) ?? HTTPVerb.get,
-  url: json['url'] as String? ?? "",
-  headers: (json['headers'] as List<dynamic>?)
-      ?.map((e) => NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
-      .toList(),
-  params: (json['params'] as List<dynamic>?)
-      ?.map((e) => NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
-      .toList(),
-  authModel: json['authModel'] == null
-      ? const AuthModel(type: APIAuthType.none)
-      : AuthModel.fromJson(Map<String, dynamic>.from(json['authModel'] as Map)),
-  isHeaderEnabledList: (json['isHeaderEnabledList'] as List<dynamic>?)
-      ?.map((e) => e as bool)
-      .toList(),
-  isParamEnabledList: (json['isParamEnabledList'] as List<dynamic>?)
-      ?.map((e) => e as bool)
-      .toList(),
-  bodyContentType:
-      $enumDecodeNullable(_$ContentTypeEnumMap, json['bodyContentType']) ??
-      ContentType.json,
-  body: json['body'] as String?,
-  query: json['query'] as String?,
-  formData: (json['formData'] as List<dynamic>?)
-      ?.map((e) => FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
-      .toList(),
-);
+) =>
+    _$HttpRequestModelImpl(
+      method: $enumDecodeNullable(_$HTTPVerbEnumMap, json['method']) ??
+          HTTPVerb.get,
+      url: json['url'] as String? ?? "",
+      headers: (json['headers'] as List<dynamic>?)
+          ?.map((e) =>
+              NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
+          .toList(),
+      params: (json['params'] as List<dynamic>?)
+          ?.map((e) =>
+              NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
+          .toList(),
+      authModel: json['authModel'] == null
+          ? const AuthModel(type: APIAuthType.none)
+          : AuthModel.fromJson(
+              Map<String, dynamic>.from(json['authModel'] as Map)),
+      isHeaderEnabledList: (json['isHeaderEnabledList'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList(),
+      isParamEnabledList: (json['isParamEnabledList'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList(),
+      bodyContentType:
+          $enumDecodeNullable(_$ContentTypeEnumMap, json['bodyContentType']) ??
+              ContentType.json,
+      body: json['body'] as String?,
+      query: json['query'] as String?,
+      formData: (json['formData'] as List<dynamic>?)
+          ?.map((e) =>
+              FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
+          .toList(),
+    );
 
 Map<String, dynamic> _$$HttpRequestModelImplToJson(
   _$HttpRequestModelImpl instance,
-) => <String, dynamic>{
-  'method': _$HTTPVerbEnumMap[instance.method]!,
-  'url': instance.url,
-  'headers': instance.headers?.map((e) => e.toJson()).toList(),
-  'params': instance.params?.map((e) => e.toJson()).toList(),
-  'authModel': instance.authModel?.toJson(),
-  'isHeaderEnabledList': instance.isHeaderEnabledList,
-  'isParamEnabledList': instance.isParamEnabledList,
-  'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
-  'body': instance.body,
-  'query': instance.query,
-  'formData': instance.formData?.map((e) => e.toJson()).toList(),
-};
+) =>
+    <String, dynamic>{
+      'method': _$HTTPVerbEnumMap[instance.method]!,
+      'url': instance.url,
+      'headers': instance.headers?.map((e) => e.toJson()).toList(),
+      'params': instance.params?.map((e) => e.toJson()).toList(),
+      'authModel': instance.authModel?.toJson(),
+      'isHeaderEnabledList': instance.isHeaderEnabledList,
+      'isParamEnabledList': instance.isParamEnabledList,
+      'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
+      'body': instance.body,
+      'query': instance.query,
+      'formData': instance.formData?.map((e) => e.toJson()).toList(),
+    };
 
 const _$HTTPVerbEnumMap = {
   HTTPVerb.get: 'get',
@@ -67,4 +73,5 @@ const _$ContentTypeEnumMap = {
   ContentType.json: 'json',
   ContentType.text: 'text',
   ContentType.formdata: 'formdata',
+  ContentType.urlencoded: 'urlencoded',
 };

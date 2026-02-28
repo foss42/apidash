@@ -6,7 +6,7 @@ import '../codegen_utils.dart';
 
 class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
-{% if hasFormData %}from requests_toolbelt.multipart.encoder import MultipartEncoder
+{% if hasMultipartFormData %}from requests_toolbelt.multipart.encoder import MultipartEncoder
 {% endif %}
 url = '{{url}}'
 
@@ -48,6 +48,14 @@ payload = MultipartEncoder({
 }{% if boundary != '' %}, 
     boundary="{{boundary}}"
 {% endif %})
+
+''';
+
+  final String kTemplateUrlencodedBody = r'''
+
+payload = {
+{{formdata_payload}}
+}
 
 ''';
 
@@ -97,7 +105,7 @@ print('Response Body:', response.text)
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
-          'hasFormData': requestModel.hasFormData
+          'hasMultipartFormData': requestModel.hasFormDataContentType
         });
 
         if (uri.hasQuery) {
@@ -128,13 +136,21 @@ print('Response Body:', response.text)
               }));
             }
           }
-          var formDataBodyData = jj.Template(kTemplateFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "formdata_payload": formdataPayload.join("\n"),
-              "boundary": boundary ?? '',
-            },
-          );
+          if (requestModel.hasUrlencodedContentType) {
+            // URL-encoded: use plain dict, no MultipartEncoder
+            var urlencodedBodyData = jj.Template(kTemplateUrlencodedBody);
+            result += urlencodedBodyData.render(
+              {"formdata_payload": formdataPayload.join("\n")},
+            );
+          } else {
+            var formDataBodyData = jj.Template(kTemplateFormDataBody);
+            result += formDataBodyData.render(
+              {
+                "formdata_payload": formdataPayload.join("\n"),
+                "boundary": boundary ?? '',
+              },
+            );
+          }
         } else if (requestModel.hasJsonData) {
           hasJsonBody = true;
           var templateBody = jj.Template(kTemplateJson);
@@ -150,10 +166,11 @@ print('Response Body:', response.text)
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (hasBody) {
-            if (requestModel.hasFormData) {
+            if (requestModel.hasFormDataContentType) {
               headers[HttpHeaders.contentTypeHeader] =
                   kStringFormDataContentType;
-            } else {
+            } else if (!requestModel.hasUrlencodedContentType) {
+              // For urlencoded, the requests library sets it automatically via data=dict
               headers[HttpHeaders.contentTypeHeader] =
                   requestModel.bodyContentType.header;
             }

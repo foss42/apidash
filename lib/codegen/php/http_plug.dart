@@ -83,7 +83,7 @@ echo \$response->getBody();
       if (uri != null) {
         var templateStart = jj.Template(kTemplateStart);
         result += templateStart.render({
-          "hasFormData": requestModel.hasFormData,
+          "hasFormData": requestModel.hasFormDataContentType,
         });
 
         var templateUri = jj.Template(kTemplateUri);
@@ -116,7 +116,9 @@ echo \$response->getBody();
             var templateBody = jj.Template(kTemplateBody);
             result += templateBody.render({"body": requestBody});
           }
-        } else if (requestModel.hasFormData) {
+        } else if (requestModel.hasFormDataContentType &&
+            requestModel.formDataList.isNotEmpty) {
+          // Multipart form-data
           String formDataFields = "";
           String formDataFiles = "";
 
@@ -144,6 +146,15 @@ echo \$response->getBody();
               "formDataFields": formDataFields,
             });
           }
+        } else if (requestModel.hasUrlencodedContentType &&
+            requestModel.formDataList.isNotEmpty) {
+          // URL-encoded: use http_build_query
+          final fields = requestModel.formDataList
+              .where((f) => f.type == FormDataType.text)
+              .map((f) => "'${f.name}' => '${f.value}'")
+              .join(', ');
+          result +=
+              "\$body = http_build_query([$fields]);\n\$request = \$request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream(\$body));\n\n";
         }
 
         var headers = requestModel.enabledHeadersMap;
@@ -152,9 +163,12 @@ echo \$response->getBody();
             headers[kHeaderContentType] =
                 "'${requestModel.bodyContentType.header}'";
           }
-          if (requestModel.hasFormData) {
+          if (requestModel.hasFormDataContentType) {
             headers[kHeaderContentType] =
                 "'${ContentType.formdata.header}; boundary=' . \$builder->getBoundary()";
+          }
+          if (requestModel.hasUrlencodedContentType) {
+            headers[kHeaderContentType] = "'${ContentType.urlencoded.header}'";
           }
         }
 
