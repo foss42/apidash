@@ -14,7 +14,7 @@ String postmanCollectionToJsonStr(PostmanCollection data) =>
     JsonEncoder.withIndent('  ').convert(data);
 
 @freezed
-class PostmanCollection with _$PostmanCollection {
+abstract class PostmanCollection with _$PostmanCollection {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -30,7 +30,7 @@ class PostmanCollection with _$PostmanCollection {
 }
 
 @freezed
-class Info with _$Info {
+abstract class Info with _$Info {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -47,7 +47,7 @@ class Info with _$Info {
 }
 
 @freezed
-class Item with _$Item {
+abstract class Item with _$Item {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -64,7 +64,7 @@ class Item with _$Item {
 }
 
 @freezed
-class Request with _$Request {
+abstract class Request with _$Request {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -82,7 +82,7 @@ class Request with _$Request {
 }
 
 @freezed
-class Header with _$Header {
+abstract class Header with _$Header {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -99,7 +99,7 @@ class Header with _$Header {
 }
 
 @freezed
-class Url with _$Url {
+abstract class Url with _$Url {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -117,7 +117,7 @@ class Url with _$Url {
 }
 
 @freezed
-class Query with _$Query {
+abstract class Query with _$Query {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -133,7 +133,7 @@ class Query with _$Query {
 }
 
 @freezed
-class Body with _$Body {
+abstract class Body with _$Body {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -150,7 +150,7 @@ class Body with _$Body {
 }
 
 @freezed
-class Options with _$Options {
+abstract class Options with _$Options {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -165,7 +165,7 @@ class Options with _$Options {
 }
 
 @freezed
-class Raw with _$Raw {
+abstract class Raw with _$Raw {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -179,7 +179,7 @@ class Raw with _$Raw {
 }
 
 @freezed
-class Formdatum with _$Formdatum {
+abstract class Formdatum with _$Formdatum {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,

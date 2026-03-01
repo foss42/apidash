@@ -41,7 +41,7 @@ class DurationConverter implements JsonConverter<Duration?, int?> {
 }
 
 @freezed
-class HttpResponseModel with _$HttpResponseModel {
+abstract class HttpResponseModel with _$HttpResponseModel {
   const HttpResponseModel._();
 
   @JsonSerializable(explicitToJson: true, anyMap: true)

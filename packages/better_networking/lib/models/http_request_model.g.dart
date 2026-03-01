@@ -6,9 +6,7 @@ part of 'http_request_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(
-  Map json,
-) => _$HttpRequestModelImpl(
+_HttpRequestModel _$HttpRequestModelFromJson(Map json) => _HttpRequestModel(
   method:
       $enumDecodeNullable(_$HTTPVerbEnumMap, json['method']) ?? HTTPVerb.get,
   url: json['url'] as String? ?? "",
@@ -37,21 +35,20 @@ _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(
       .toList(),
 );
 
-Map<String, dynamic> _$$HttpRequestModelImplToJson(
-  _$HttpRequestModelImpl instance,
-) => <String, dynamic>{
-  'method': _$HTTPVerbEnumMap[instance.method]!,
-  'url': instance.url,
-  'headers': instance.headers?.map((e) => e.toJson()).toList(),
-  'params': instance.params?.map((e) => e.toJson()).toList(),
-  'authModel': instance.authModel?.toJson(),
-  'isHeaderEnabledList': instance.isHeaderEnabledList,
-  'isParamEnabledList': instance.isParamEnabledList,
-  'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
-  'body': instance.body,
-  'query': instance.query,
-  'formData': instance.formData?.map((e) => e.toJson()).toList(),
-};
+Map<String, dynamic> _$HttpRequestModelToJson(_HttpRequestModel instance) =>
+    <String, dynamic>{
+      'method': _$HTTPVerbEnumMap[instance.method]!,
+      'url': instance.url,
+      'headers': instance.headers?.map((e) => e.toJson()).toList(),
+      'params': instance.params?.map((e) => e.toJson()).toList(),
+      'authModel': instance.authModel?.toJson(),
+      'isHeaderEnabledList': instance.isHeaderEnabledList,
+      'isParamEnabledList': instance.isParamEnabledList,
+      'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
+      'body': instance.body,
+      'query': instance.query,
+      'formData': instance.formData?.map((e) => e.toJson()).toList(),
+    };
 
 const _$HTTPVerbEnumMap = {
   HTTPVerb.get: 'get',

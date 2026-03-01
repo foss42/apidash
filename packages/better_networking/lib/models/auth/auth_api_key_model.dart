@@ -4,7 +4,7 @@ part 'auth_api_key_model.g.dart';
 part 'auth_api_key_model.freezed.dart';
 
 @freezed
-class AuthApiKeyModel with _$AuthApiKeyModel {
+abstract class AuthApiKeyModel with _$AuthApiKeyModel {
   const factory AuthApiKeyModel({
     required String key,
     @Default('header') String location, // 'header' or 'query'

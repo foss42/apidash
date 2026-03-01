@@ -5,7 +5,7 @@ part 'auth_oauth2_model.g.dart';
 part 'auth_oauth2_model.freezed.dart';
 
 @freezed
-class AuthOAuth2Model with _$AuthOAuth2Model {
+abstract class AuthOAuth2Model with _$AuthOAuth2Model {
   const factory AuthOAuth2Model({
     @Default(OAuth2GrantType.authorizationCode) OAuth2GrantType grantType,
     required String authorizationUrl,

@@ -6,7 +6,7 @@ part of 'request_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
+_RequestModel _$RequestModelFromJson(Map json) => _RequestModel(
       id: json['id'] as String,
       apiType: $enumDecodeNullable(_$APITypeEnumMap, json['apiType']) ??
           APIType.rest,
@@ -36,7 +36,7 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
               Map<String, Object?>.from(json['aiRequestModel'] as Map)),
     );
 
-Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
+Map<String, dynamic> _$RequestModelToJson(_RequestModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'apiType': _$APITypeEnumMap[instance.apiType]!,

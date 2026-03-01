@@ -5,7 +5,7 @@ homepage:
 publish_to: none
 
 environment:
-  sdk: ^3.5.3
+  sdk: ^3.8.0
   flutter: ">=1.17.0"
 
 dependencies:
@@ -14,6 +14,7 @@ dependencies:
   curl_parser:
     path: ../curl_parser
   freezed_annotation: ^3.0.0
+  json_annotation: ^4.11.0
   genai:
     path: ../genai
   har:
