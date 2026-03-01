@@ -55,12 +55,12 @@ class EditorTitleActions extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 4),
                   ),
                 ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+              ), // Row
+            ), // IntrinsicHeight
+          ), // SizedBox
+        ), // Ink
+      ), // Material
+    ); // ClipRRect
   }
 
   Widget iconButton(
@@ -77,8 +77,8 @@ class EditorTitleActions extends StatelessWidget {
         icon: Icon(
           iconData,
           size: 16,
-        ),
-      ),
-    );
+        ), 
+      ), 
+    ); 
   }
 }

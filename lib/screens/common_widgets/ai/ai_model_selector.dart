@@ -36,6 +36,6 @@ class AIModelSelector extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(aiRequestModel: newAIRequestModel.copyWith());
       },
-    );
+    ); // AIModelSelectorButton
   }
 }

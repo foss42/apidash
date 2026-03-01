@@ -5,6 +5,10 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Dialog to pick an AI model and provider.
+///
+/// Loads available models from `ModelManager` and allows selecting a
+/// provider, updating credentials/endpoint, and choosing a model.
 class AIModelSelectorDialog extends ConsumerStatefulWidget {
   final AIRequestModel? aiRequestModel;
   const AIModelSelectorDialog({super.key, this.aiRequestModel});
@@ -219,20 +223,20 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                             CircleAvatar(
                               radius: 5,
                               backgroundColor: Colors.green,
-                            ),
+                            ), // CircleAvatar
                         ],
-                      ),
+                      ), // Row
                       onTap: () {
                         setState(() {
                           newAIRequestModel =
                               newAIRequestModel?.copyWith(model: x.id);
                         });
                       },
-                    ),
+                    ), // ListTile
                   ),
                 ],
-              ),
-            ),
+              ), // Column
+            ), // SingleChildScrollView
           ),
         ),
         kVSpacer10,
@@ -243,9 +247,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               Navigator.of(context).pop(newAIRequestModel);
             },
             child: Text('Save'),
-          ),
+          ), // ElevatedButton
         ),
       ],
-    );
+    ); // Column
   }
 }

@@ -15,12 +15,12 @@ Future<void> addNewModel(BuildContext context) async {
               ADOutlinedTextField(
                 controller: iC,
                 hintText: 'Model ID',
-              ),
+              ), // ADOutlinedTextField
               kVSpacer10,
               ADOutlinedTextField(
                 controller: nC,
                 hintText: 'Model Display Name',
-              ),
+              ), // ADOutlinedTextField
               kVSpacer10,
               SizedBox(
                 width: double.infinity,
@@ -32,11 +32,11 @@ Future<void> addNewModel(BuildContext context) async {
                     ]);
                   },
                   child: Text('Add Model'),
-                ),
-              )
+                ), // ElevatedButton
+              ) // SizedBox
             ],
-          ),
-        );
+          ), // Column
+        ); // AlertDialog
       });
   if (z == null) return;
   // TODO: Add logic to add a new model

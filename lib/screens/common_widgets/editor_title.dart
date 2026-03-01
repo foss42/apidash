@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
+/// A compact title widget used in editor panes.
+///
+/// Shows the provided `title` and, when `showMenu` is true, wraps the
+/// title with an `ItemCardMenu` so consumers can show actions (rename,
+/// duplicate, delete, etc.). When `showMenu` is false the menu gestures
+/// are disabled via `IgnorePointer`.
 class EditorTitle extends StatelessWidget {
   const EditorTitle({
     super.key,

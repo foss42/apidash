@@ -3,6 +3,11 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'ai_model_selector_dialog.dart';
 
+/// Button that opens the AI model selector dialog.
+///
+/// Shows the current model (or a prompt) and opens
+/// `AIModelSelectorDialog` when pressed. Provides callbacks for dialog
+/// lifecycle and model updates.
 class AIModelSelectorButton extends StatelessWidget {
   final AIRequestModel? aiRequestModel;
   final bool readonly;
@@ -37,8 +42,8 @@ class AIModelSelectorButton extends StatelessWidget {
                     content: AIModelSelectorDialog(
                       aiRequestModel: aiRequestModel,
                     ),
-                    contentPadding: kP10,
-                  );
+                      contentPadding: kP10,
+                    );
                 },
               );
               onDialogClose?.call();

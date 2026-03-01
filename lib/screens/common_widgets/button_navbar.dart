@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/utils.dart';
 
+/// A navigation button used in side rails and mobile navbars.
+///
+/// Displays an icon (or `selectedIcon` when active) and an optional
+/// label. When tapped it updates the app's navigation providers and
+/// optionally calls `onTap`.
 class NavbarButton extends ConsumerWidget {
   const NavbarButton({
     super.key,
@@ -29,6 +34,8 @@ class NavbarButton extends ConsumerWidget {
     final mobileScaffoldKeyNotifier =
         ref.watch(mobileScaffoldKeyStateProvider.notifier);
     final bool isSelected = railIdx == buttonIdx;
+    // When not selected, change the nav rail index and update active
+    // scaffold key so the corresponding page is shown.
     var onPress = isSelected
         ? null
         : () {
