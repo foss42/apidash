@@ -6,46 +6,39 @@
 **Year:** 2nd Year  
 **Expected graduation date:** 2028  
 
-**Project Title:** Local-First Next.js Architecture for Multimodal AI Eval Framework (Idea #2)  
-**Relevant issues:** N/A (Greenfield Web Architecture)  
+**Project Title:** Local-First Desktop Architecture for Multimodal AI Eval Framework (Idea #2)  
+**Relevant issues:** Relates to #1054  
 
 ### Idea description:
 
-To build a robust, scalable Multimodal AI and Agent API Eval Framework, I propose a decoupled, local-first web architecture. While the GSoC idea lists React, Node.js, and TypeScript, I propose unifying these using **Next.js** as the core framework. This will serve as the heavy data-visualization dashboard, interfacing with a **FastAPI (Python)** wrapper around underlying Python evaluation frameworks (e.g., `lm-harness`, `lighteval`, or custom benchmark scripts).
+I propose a local-first, decoupled architecture for the Multimodal AI and Agent API Eval Framework, designed to align directly with API Dash's zero-config desktop philosophy.
 
-#### Why Next.js? (Unifying React and Node.js)
-Instead of building a separate React Single Page Application (SPA) and a separate Node.js Express backend, Next.js provides a unified TypeScript environment perfectly suited for this tool. 
-* **The BFF (Backend-for-Frontend) Pattern:** Next.js API Routes (Node.js) allow us to securely handle local file parsing, middleware, and API key management without exposing logic or secrets to the client-side browser.
-* **Complex Data Rendering:** React's virtual DOM is purpose-built for rendering the massive, deeply nested JSON benchmarking results and evaluation trace logs that AI frameworks generate.
+While the GSoC idea lists React, Node.js, and TypeScript, requiring users to run `npm run dev` to start a local web server breaks the standard desktop experience. Instead of a Node server, I suggest bundling a **React (Vite) Single Page Application** inside a native **Tauri** wrapper. This frontend will communicate with a **FastAPI (Python)** backend (bundled via PyInstaller) that executes the underlying Python evaluation scripts (e.g., `lm-harness`, `lighteval`).
+
+#### Why a React Subsystem + Tauri? (The Lightweight Companion)
+API Dash is a lightweight, native Flutter app. To handle the complex data-visualization requirements of AI evaluations without bloating the main app, this framework will act as a **specialized companion subsystem**. 
+
+Packaging the React SPA with **Tauri** strictly avoids the heavy RAM overhead associated with Electron/Chromium bundles. This provides a standard double-click desktop executable that can handle React's heavy data rendering while maintaining API Dash's low-resource profile.
+
+* **Tabbed UI Architecture:** Evaluations take time. The **Execution Tab** focuses entirely on live SSE streaming logs and progress metrics to prevent UI freezing. Once the run finishes, the **Analysis Tab** handles the heavy rendering components (category bar charts, failure triage tables).
 
 #### Architectural Justification: Learning from GSoC 2025
-This decoupled, web-based approach directly addresses several architectural constraints identified during previous API Dash development cycles:
+This architecture solves specific constraints documented in past API Dash development cycles:
 
-1. **Bypassing the Flutter Reflection Limit:** During GSoC 2025, Manas noted that Dart lacks full runtime reflection for dynamically rendering complex UI from LLM outputs. Relying on Server-Driven UI (Stac) led to issues where massive JSON payloads caused context-window clipping and visual crashes. By moving the heavy data-visualization of the Eval Framework entirely to React (Next.js), we bypass these SDUI limits and can natively, safely render massive data tables, interactive charts, and markdown.
-2. **Streaming & SSE:** Manas successfully integrated Server-Sent Events (SSE) into the core API Dash networking package because AI responses require streaming. This Next.js architecture heavily adopts that philosophy. Standard REST calls for running 1,000-prompt AI benchmarks will inevitably time out the browser. Innstead, our FastAPI engine will stream execution logs back to Next.js via SSE, keeping the UI responsive via state managers like Zustand.
-3. **Respecting Mobile & Native Constraints:** The historical attempt to embed native Rust code (`flutter_rust_bridge_experiment.md`) proved that compiling heavy non-Dart binaries for mobile targets (iOS/Android) is highly problematic. Keeping Python evaluation scripts completely isolated in a local FastAPI web server protects the core Flutter app from heavy dependencies.
-4. **Privacy-First Local Execution:** API Dash is strictly a privacy-first client. Therefore, this Next.js dashboard (`localhost:3000`) and the FastAPI wrapper (`localhost:8000`) will be designed to run entirely on the developer's local machine. This ensures proprietary test datasets never leave the local environment. Furthermore, running FastAPI on port `8000` safely avoids conflicting with the `8080-8090` range Udhay established for local OAuth callback servers.
+1. **Bypassing the Flutter Reflection Limit:** Manas noted in GSoC 2025 that Dart lacks full runtime reflection for dynamically rendering complex UI from LLM outputs. Server-Driven UI (Stac) struggled with massive JSON payloads, causing UI crashes. Moving the data-visualization layer to React bypasses these SDUI limitations, allowing us to render large data tables and charts safely.
+2. **Streaming & SSE:** Manas implemented Server-Sent Events (SSE) in the core networking package because AI responses need streaming. A standard REST call for a 1,000-prompt benchmark will inevitably time out. Using FastAPI to stream execution logs back to the React UI via SSE keeps the app responsive (managed via Zustand).
+3. **Respecting Mobile & Native Constraints:** The `flutter_rust_bridge_experiment.md` document showed that compiling native C/Rust binaries (like `libxml2`) for mobile targets is highly problematic and breaks the iOS/Android build pipeline. Isolating the heavy Python AI evaluation scripts in a local FastAPI server protects the core Flutter app's mobile compatibility.
+4. **Privacy-First Local Execution:** Since API Dash is a privacy-first client, this architecture runs entirely on the developer's local machine. Proprietary test datasets and API keys never leave the host environment.
 
-#### Proposed Architecture Flow
+#### Proposed Architecture Flow & UI Mockup
 
-```mermaid
-sequenceDiagram
-    participant UI as Next.js Dashboard (localhost:3000)
-    participant API as Next.js API Routes (Node.js BFF)
-    participant Engine as FastAPI Wrapper (localhost:8000)
-    participant Eval as Python Scripts (lm-harness, etc.)
+![Architecture Flow](./images/architecture_lokesh.png)
 
-    UI->>API: 1. Upload dataset (.csv/.json) via React UI
-    API->>Engine: 2. Forward Eval Request (REST POST)
-    Engine->>Eval: 3. Start Benchmarking Pipeline
-    Engine-->>API: 4. Stream real-time logs via SSE
-    API-->>UI: 5. Zustand updates React UI state dynamically
-    Eval->>Engine: 6. Completion & Scoring Metrics
-    Engine-->>UI: 7. Final JSON Benchmark Report Rendered
-```
-Integration Strategy: The API Dash JSON Contract
-To ensure a frictionless developer experience, users should not have to manually re-enter their AI API keys, headers, or parameters into the web dashboard.
+![UI Mockup](./images/ui_mock_ai_eval_lokesh.png)
 
-The Next.js app will implement an Export/Import Contract. Developers will export their workspace from the API Dash desktop app. The Next.js Node backend will natively parse this HttpRequestModel JSON to instantly populate the web testing environment with the correct target URLs, auth headers, and system prompts, ready for mass evaluation.
+#### Integration Strategy: The API Dash JSON Contract
+Users shouldn't have to duplicate their API keys, headers, or parameters between the main app and the eval framework. 
 
-This architecture ensures the heavy Python execution remains strictly decoupled, respects API Dash's privacy-first nature by running locally, and leverages Next.js to deliver a resilient, modern UI. I look forward to your feedback on this integration approach!
+Developers will export their workspace directly from the API Dash desktop app. The Tauri app will parse the resulting `HttpRequestModel` JSON to instantly populate the testing environment with the correct target URLs, auth headers, and system prompts.
+
+This keeps the heavy Python execution decoupled, respects local-first privacy, and uses native bundling to deliver a stable UI. I look forward to your feedback.
