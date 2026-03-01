@@ -6,10 +6,12 @@ class BoundedTextField extends StatefulWidget {
     super.key,
     required this.value,
     required this.onChanged,
+    this.errorText,
   });
 
   final String value;
   final void Function(String value) onChanged;
+  final String? errorText; //nullable string (can be used globally)
 
   @override
   State<BoundedTextField> createState() => _BoundedTextFieldState();
@@ -33,13 +35,21 @@ class _BoundedTextFieldState extends State<BoundedTextField> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final double width = context.isCompactWindow ? 150 : 220;
     return Container(
-      height: 40,
+      height: widget.errorText != null ? 60 : 40,
       decoration: BoxDecoration(
         border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          color: widget.errorText != null
+              ? Theme.of(context).colorScheme.error
+              : Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         borderRadius: kBorderRadius8,
       ),
@@ -52,6 +62,7 @@ class _BoundedTextFieldState extends State<BoundedTextField> {
           decoration: InputDecoration(
             border: InputBorder.none,
             contentPadding: EdgeInsets.only(left: 10),
+            errorText: widget.errorText,
           ),
           onChanged: widget.onChanged,
         ),
