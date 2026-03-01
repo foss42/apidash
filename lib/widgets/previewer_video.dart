@@ -10,9 +10,14 @@ class VideoPreviewer extends StatefulWidget {
   const VideoPreviewer({
     super.key,
     required this.videoBytes,
+    this.autoPlay = true,
   });
 
   final Uint8List videoBytes;
+  /// Whether to start playback automatically once the controller is ready.
+  /// Pass [false] for history/read-only contexts where the user should
+  /// explicitly press play.
+  final bool autoPlay;
 
   @override
   State<VideoPreviewer> createState() => _VideoPreviewerState();
@@ -21,15 +26,40 @@ class VideoPreviewer extends StatefulWidget {
 class _VideoPreviewerState extends State<VideoPreviewer> {
   late VideoPlayerController _videoController;
   late Future<void> _initializeVideoPlayerFuture;
-  bool _isPlaying = false;
   late File _tempVideoFile;
   bool _showControls = false;
+  bool _isControllerReady = false;
+  bool _isCurrentlyVisible = true;
+  bool _wasPlayingBeforeHidden = false;
 
   @override
   void initState() {
     super.initState();
     registerWithAllPlatforms();
     _initializeVideoPlayerFuture = _initializeVideoPlayer();
+  }
+
+  /// Called whenever an [InheritedWidget] dependency (including [TickerMode])
+  /// changes. [IndexedStack] uses [Offstage] which wraps hidden children with
+  /// [TickerMode(enabled: false)]. We use this to pause/resume playback
+  /// automatically when the user switches tabs.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isVisible = TickerMode.valuesOf(context).enabled;
+    _isCurrentlyVisible = isVisible;
+    if (!_isControllerReady) return;
+    if (!isVisible) {
+      if (_videoController.value.isPlaying) {
+        _wasPlayingBeforeHidden = true;
+        _videoController.setVolume(0);
+        _videoController.pause();
+      }
+    } else if (_wasPlayingBeforeHidden) {
+      _wasPlayingBeforeHidden = false;
+      _videoController.setVolume(1.0);
+      _videoController.play();
+    }
   }
 
   void registerWithAllPlatforms() {
@@ -48,9 +78,12 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
       await _tempVideoFile.writeAsBytes(widget.videoBytes);
       _videoController = VideoPlayerController.file(_tempVideoFile);
       await _videoController.initialize();
+      _isControllerReady = true;
       if (mounted) {
         setState(() {
-          _videoController.play();
+          if (widget.autoPlay && _isCurrentlyVisible) {
+            _videoController.play();
+          }
           _videoController.setLooping(true);
         });
       }
@@ -104,20 +137,24 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
                         child: GestureDetector(
                           onTap: () {
                             if (_videoController.value.isPlaying) {
+                              _videoController.setVolume(0);
                               _videoController.pause();
                             } else {
+                              _videoController.setVolume(1.0);
                               _videoController.play();
                             }
-                            setState(() {
-                              _isPlaying = !_isPlaying;
-                            });
                           },
                           child: Container(
                             color: Colors.transparent,
-                            child: Icon(
-                              _isPlaying ? Icons.play_arrow : Icons.pause,
-                              size: 64,
-                              color: iconColor,
+                            child: ValueListenableBuilder<VideoPlayerValue>(
+                              valueListenable: _videoController,
+                              builder: (context, value, _) => Icon(
+                                value.isPlaying
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
+                                size: 64,
+                                color: iconColor,
+                              ),
                             ),
                           ),
                         ),
@@ -135,6 +172,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
 
   @override
   void dispose() {
+    _videoController.setVolume(0);
     _videoController.pause();
     _videoController.dispose();
     if (!kIsRunningTests) {

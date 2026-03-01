@@ -39,12 +39,14 @@ class Uint8AudioPlayer extends StatefulWidget {
     required this.type,
     required this.subtype,
     required this.errorBuilder,
+    this.autoPlay = false,
   });
 
   final Uint8List bytes;
   final String type;
   final String subtype;
   final AudioErrorWidgetBuilder errorBuilder;
+  final bool autoPlay;
 
   @override
   State<Uint8AudioPlayer> createState() => _Uint8AudioPlayerState();
@@ -52,6 +54,7 @@ class Uint8AudioPlayer extends StatefulWidget {
 
 class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
   final player = AudioPlayer();
+  bool _wasPlayingBeforeHidden = false;
 
   @override
   void initState() {
@@ -60,6 +63,21 @@ class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
       contentType: '${widget.type}/${widget.subtype}',
     ));
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isVisible = TickerMode.valuesOf(context).enabled;
+    if (!isVisible) {
+      if (player.playerState.playing) {
+        _wasPlayingBeforeHidden = true;
+        player.pause();
+      }
+    } else if (_wasPlayingBeforeHidden) {
+      _wasPlayingBeforeHidden = false;
+      player.play();
+    }
   }
 
   @override
