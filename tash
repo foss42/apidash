@@ -1,0 +1,185 @@
+[1mdiff --git a/lib/utils/validation_utils.dart b/lib/utils/validation_utils.dart[m
+[1mindex 261faa08..496ed7ef 100644[m
+[1m--- a/lib/utils/validation_utils.dart[m
+[1m+++ b/lib/utils/validation_utils.dart[m
+[36m@@ -16,3 +16,4 @@[m [mString? getValidationResult(HttpRequestModel requestModel) {[m
+   }[m
+   return null;[m
+ }[m
+[41m+[m
+[1mdiff --git a/packages/better_networking/example/pubspec.lock b/packages/better_networking/example/pubspec.lock[m
+[1mindex a231489f..c8e2ae15 100644[m
+[1m--- a/packages/better_networking/example/pubspec.lock[m
+[1m+++ b/packages/better_networking/example/pubspec.lock[m
+[36m@@ -259,10 +259,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: meta[m
+[31m-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"[m
+[32m+[m[32m      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "1.17.0"[m
+[32m+[m[32m    version: "1.16.0"[m
+   oauth1:[m
+     dependency: transitive[m
+     description:[m
+[36m@@ -423,10 +423,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: test_api[m
+[31m-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55[m
+[32m+[m[32m      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "0.7.7"[m
+[32m+[m[32m    version: "0.7.6"[m
+   typed_data:[m
+     dependency: transitive[m
+     description:[m
+[1mdiff --git a/packages/genai/genai_example/pubspec.lock b/packages/genai/genai_example/pubspec.lock[m
+[1mindex 0e28715c..fad68262 100644[m
+[1m--- a/packages/genai/genai_example/pubspec.lock[m
+[1m+++ b/packages/genai/genai_example/pubspec.lock[m
+[36m@@ -266,10 +266,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: meta[m
+[31m-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"[m
+[32m+[m[32m      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "1.17.0"[m
+[32m+[m[32m    version: "1.16.0"[m
+   nanoid:[m
+     dependency: transitive[m
+     description:[m
+[36m@@ -438,10 +438,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: test_api[m
+[31m-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55[m
+[32m+[m[32m      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "0.7.7"[m
+[32m+[m[32m    version: "0.7.6"[m
+   typed_data:[m
+     dependency: transitive[m
+     description:[m
+[1mdiff --git a/packages/json_field_editor/example/pubspec.lock b/packages/json_field_editor/example/pubspec.lock[m
+[1mindex 4578116a..7cb41593 100644[m
+[1m--- a/packages/json_field_editor/example/pubspec.lock[m
+[1m+++ b/packages/json_field_editor/example/pubspec.lock[m
+[36m@@ -150,10 +150,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: meta[m
+[31m-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"[m
+[32m+[m[32m      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "1.17.0"[m
+[32m+[m[32m    version: "1.16.0"[m
+   path:[m
+     dependency: transitive[m
+     description:[m
+[36m@@ -211,10 +211,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: test_api[m
+[31m-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55[m
+[32m+[m[32m      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "0.7.7"[m
+[32m+[m[32m    version: "0.7.6"[m
+   vector_math:[m
+     dependency: transitive[m
+     description:[m
+[1mdiff --git a/packages/multi_trigger_autocomplete_plus/example/pubspec.lock b/packages/multi_trigger_autocomplete_plus/example/pubspec.lock[m
+[1mindex 13c6ae48..9c80306c 100644[m
+[1m--- a/packages/multi_trigger_autocomplete_plus/example/pubspec.lock[m
+[1m+++ b/packages/multi_trigger_autocomplete_plus/example/pubspec.lock[m
+[36m@@ -183,10 +183,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: meta[m
+[31m-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"[m
+[32m+[m[32m      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "1.17.0"[m
+[32m+[m[32m    version: "1.16.0"[m
+   multi_trigger_autocomplete_plus:[m
+     dependency: "direct main"[m
+     description:[m
+[36m@@ -315,10 +315,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: test_api[m
+[31m-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55[m
+[32m+[m[32m      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "0.7.7"[m
+[32m+[m[32m    version: "0.7.6"[m
+   typed_data:[m
+     dependency: transitive[m
+     description:[m
+[1mdiff --git a/pubspec.lock b/pubspec.lock[m
+[1mindex 2843229e..69ae74aa 100644[m
+[1m--- a/pubspec.lock[m
+[1m+++ b/pubspec.lock[m
+[36m@@ -1170,10 +1170,10 @@[m [mpackages:[m
+     dependency: transitive[m
+     description:[m
+       name: meta[m
+[31m-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"[m
+[32m+[m[32m      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "1.17.0"[m
+[32m+[m[32m    version: "1.16.0"[m
+   mime:[m
+     dependency: transitive[m
+     description:[m
+[36m@@ -1932,26 +1932,26 @@[m [mpackages:[m
+     dependency: "direct dev"[m
+     description:[m
+       name: test[m
+[31m-      sha256: "75906bf273541b676716d1ca7627a17e4c4070a3a16272b7a3dc7da3b9f3f6b7"[m
+[32m+[m[32m      sha256: "65e29d831719be0591f7b3b1a32a3cda258ec98c58c7b25f7b84241bc31215bb"[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "1.26.3"[m
+[32m+[m[32m    version: "1.26.2"[m
+   test_api:[m
+     dependency: transitive[m
+     description:[m
+       name: test_api[m
+[31m-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55[m
+[32m+[m[32m      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "0.7.7"[m
+[32m+[m[32m    version: "0.7.6"[m
+   test_core:[m
+     dependency: transitive[m
+     description:[m
+       name: test_core[m
+[31m-      sha256: "0cc24b5ff94b38d2ae73e1eb43cc302b77964fbf67abad1e296025b78deb53d0"[m
+[32m+[m[32m      sha256: "80bf5a02b60af04b09e14f6fe68b921aad119493e26e490deaca5993fef1b05a"[m
+       url: "https://pub.dev"[m
+     source: hosted[m
+[31m-    version: "0.6.12"[m
+[32m+[m[32m    version: "0.6.11"[m
+   textwrap:[m
+     dependency: transitive[m
+     description:[m
+[36m@@ -2267,4 +2267,4 @@[m [mpackages:[m
+     version: "2.2.2"[m
+ sdks:[m
+   dart: ">=3.9.0 <3.999.0"[m
+[31m-  flutter: ">=3.38.7"[m
+[32m+[m[32m  flutter: ">=3.35.2"[m
