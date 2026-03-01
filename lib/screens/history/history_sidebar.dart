@@ -103,6 +103,8 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
     final animation = Tween(begin: 0.0, end: 0.25).animate(animationController);
     final colorScheme = Theme.of(context).colorScheme;
     final selectedGroupId = ref.watch(selectedRequestGroupIdStateProvider);
+    final isSelectionMode = ref.watch(isHistorySelectionModeProvider);
+    final selectedIds = ref.watch(selectedHistoryItemIdsProvider);
     return ExpansionTile(
       dense: true,
       title: Row(
@@ -118,9 +120,9 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
           Text(
             humanizeDate(widget.date),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.outline,
-                ),
+              fontWeight: FontWeight.bold,
+              color: colorScheme.outline,
+            ),
           ),
         ],
       ),
@@ -138,6 +140,9 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
       initiallyExpanded: widget.initiallyExpanded,
       childrenPadding: kPv8 + kPe4,
       children: widget.requestGroups.values.map((item) {
+        final groupIds = item.map((e) => e.historyId).toSet();
+        final isItemChecked =
+            groupIds.isNotEmpty && selectedIds.containsAll(groupIds);
         return Padding(
           padding: kPv2 + kPh4,
           child: SidebarHistoryCard(
@@ -147,11 +152,24 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
             method: item.first.method,
             isSelected: selectedGroupId == getHistoryRequestKey(item.first),
             requestGroupSize: item.length,
+            isSelectionMode: isSelectionMode,
+            isItemChecked: isItemChecked,
             onTap: () {
-              ref
-                  .read(historyMetaStateNotifier.notifier)
-                  .loadHistoryRequest(item.first.historyId);
-              kHisScaffoldKey.currentState?.closeDrawer();
+              if (isSelectionMode) {
+                final newSelectedIds = Set<String>.from(selectedIds);
+                if (isItemChecked) {
+                  newSelectedIds.removeAll(groupIds);
+                } else {
+                  newSelectedIds.addAll(groupIds);
+                }
+                ref.read(selectedHistoryItemIdsProvider.notifier).state =
+                    newSelectedIds;
+              } else {
+                ref
+                    .read(historyMetaStateNotifier.notifier)
+                    .loadHistoryRequest(item.first.historyId);
+                kHisScaffoldKey.currentState?.closeDrawer();
+              }
             },
           ),
         );
