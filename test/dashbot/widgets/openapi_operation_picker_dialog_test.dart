@@ -25,11 +25,11 @@ const _sampleSpecJson = '''
 ''';
 
 void main() {
-  OpenApi _parse(String json) => OpenApi.fromString(source: json, format: null);
+  OpenApi parse(String json) => OpenApi.fromString(source: json, format: null);
 
   testWidgets('returns empty selection when spec has no operations',
       (tester) async {
-    final spec = _parse(_emptySpecJson);
+    final spec = parse(_emptySpecJson);
 
     List<OpenApiOperationItem>? resolved;
 
@@ -56,7 +56,7 @@ void main() {
 
   testWidgets('allows toggling select-all and individual operations',
       (tester) async {
-    final spec = _parse(_sampleSpecJson);
+    final spec = parse(_sampleSpecJson);
 
     late Future<List<OpenApiOperationItem>?> dialogFuture;
 
@@ -140,7 +140,7 @@ void main() {
   });
 
   testWidgets('returns null when cancelled', (tester) async {
-    final spec = _parse(_sampleSpecJson);
+    final spec = parse(_sampleSpecJson);
 
     late Future<List<OpenApiOperationItem>?> dialogFuture;
 
