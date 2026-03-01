@@ -104,7 +104,7 @@ MQTT support will be implemented using Dart’s mqtt_client package.
     - Streams messages to the UI in real time.
     - Logs messages with timestamps for filtering and debugging.
 
-### 4. UI / UX Design
+### 4. Mockups
 
 #### gRPC
 ![WebSocket UI Mockup](images/gRPC_mockup.png)
