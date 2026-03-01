@@ -1,5 +1,5 @@
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -9,236 +9,36 @@ part of 'history_meta_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-HistoryMetaModel _$HistoryMetaModelFromJson(Map<String, dynamic> json) {
-  return _HistoryMetaModel.fromJson(json);
-}
 
 /// @nodoc
 mixin _$HistoryMetaModel {
-  String get historyId => throw _privateConstructorUsedError;
-  String get requestId => throw _privateConstructorUsedError;
-  APIType get apiType => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get url => throw _privateConstructorUsedError;
-  HTTPVerb get method => throw _privateConstructorUsedError;
-  int get responseStatus => throw _privateConstructorUsedError;
-  DateTime get timeStamp => throw _privateConstructorUsedError;
-
-  /// Serializes this HistoryMetaModel to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String get historyId;
+  String get requestId;
+  APIType get apiType;
+  String get name;
+  String get url;
+  HTTPVerb get method;
+  int get responseStatus;
+  DateTime get timeStamp;
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $HistoryMetaModelCopyWith<HistoryMetaModel> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+      _$HistoryMetaModelCopyWithImpl<HistoryMetaModel>(
+          this as HistoryMetaModel, _$identity);
 
-/// @nodoc
-abstract class $HistoryMetaModelCopyWith<$Res> {
-  factory $HistoryMetaModelCopyWith(
-          HistoryMetaModel value, $Res Function(HistoryMetaModel) then) =
-      _$HistoryMetaModelCopyWithImpl<$Res, HistoryMetaModel>;
-  @useResult
-  $Res call(
-      {String historyId,
-      String requestId,
-      APIType apiType,
-      String name,
-      String url,
-      HTTPVerb method,
-      int responseStatus,
-      DateTime timeStamp});
-}
-
-/// @nodoc
-class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
-    implements $HistoryMetaModelCopyWith<$Res> {
-  _$HistoryMetaModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of HistoryMetaModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? historyId = null,
-    Object? requestId = null,
-    Object? apiType = null,
-    Object? name = null,
-    Object? url = null,
-    Object? method = null,
-    Object? responseStatus = null,
-    Object? timeStamp = null,
-  }) {
-    return _then(_value.copyWith(
-      historyId: null == historyId
-          ? _value.historyId
-          : historyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      requestId: null == requestId
-          ? _value.requestId
-          : requestId // ignore: cast_nullable_to_non_nullable
-              as String,
-      apiType: null == apiType
-          ? _value.apiType
-          : apiType // ignore: cast_nullable_to_non_nullable
-              as APIType,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as HTTPVerb,
-      responseStatus: null == responseStatus
-          ? _value.responseStatus
-          : responseStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeStamp: null == timeStamp
-          ? _value.timeStamp
-          : timeStamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$HistoryMetaModelImplCopyWith<$Res>
-    implements $HistoryMetaModelCopyWith<$Res> {
-  factory _$$HistoryMetaModelImplCopyWith(_$HistoryMetaModelImpl value,
-          $Res Function(_$HistoryMetaModelImpl) then) =
-      __$$HistoryMetaModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String historyId,
-      String requestId,
-      APIType apiType,
-      String name,
-      String url,
-      HTTPVerb method,
-      int responseStatus,
-      DateTime timeStamp});
-}
-
-/// @nodoc
-class __$$HistoryMetaModelImplCopyWithImpl<$Res>
-    extends _$HistoryMetaModelCopyWithImpl<$Res, _$HistoryMetaModelImpl>
-    implements _$$HistoryMetaModelImplCopyWith<$Res> {
-  __$$HistoryMetaModelImplCopyWithImpl(_$HistoryMetaModelImpl _value,
-      $Res Function(_$HistoryMetaModelImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of HistoryMetaModel
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? historyId = null,
-    Object? requestId = null,
-    Object? apiType = null,
-    Object? name = null,
-    Object? url = null,
-    Object? method = null,
-    Object? responseStatus = null,
-    Object? timeStamp = null,
-  }) {
-    return _then(_$HistoryMetaModelImpl(
-      historyId: null == historyId
-          ? _value.historyId
-          : historyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      requestId: null == requestId
-          ? _value.requestId
-          : requestId // ignore: cast_nullable_to_non_nullable
-              as String,
-      apiType: null == apiType
-          ? _value.apiType
-          : apiType // ignore: cast_nullable_to_non_nullable
-              as APIType,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as HTTPVerb,
-      responseStatus: null == responseStatus
-          ? _value.responseStatus
-          : responseStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeStamp: null == timeStamp
-          ? _value.timeStamp
-          : timeStamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$HistoryMetaModelImpl implements _HistoryMetaModel {
-  const _$HistoryMetaModelImpl(
-      {required this.historyId,
-      required this.requestId,
-      required this.apiType,
-      this.name = "",
-      required this.url,
-      required this.method,
-      required this.responseStatus,
-      required this.timeStamp});
-
-  factory _$HistoryMetaModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$HistoryMetaModelImplFromJson(json);
-
-  @override
-  final String historyId;
-  @override
-  final String requestId;
-  @override
-  final APIType apiType;
-  @override
-  @JsonKey()
-  final String name;
-  @override
-  final String url;
-  @override
-  final HTTPVerb method;
-  @override
-  final int responseStatus;
-  @override
-  final DateTime timeStamp;
-
-  @override
-  String toString() {
-    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, apiType: $apiType, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
-  }
+  /// Serializes this HistoryMetaModel to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$HistoryMetaModelImpl &&
+            other is HistoryMetaModel &&
             (identical(other.historyId, historyId) ||
                 other.historyId == historyId) &&
             (identical(other.requestId, requestId) ||
@@ -258,58 +58,450 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
   int get hashCode => Object.hash(runtimeType, historyId, requestId, apiType,
       name, url, method, responseStatus, timeStamp);
 
-  /// Create a copy of HistoryMetaModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$HistoryMetaModelImplCopyWith<_$HistoryMetaModelImpl> get copyWith =>
-      __$$HistoryMetaModelImplCopyWithImpl<_$HistoryMetaModelImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$HistoryMetaModelImplToJson(
-      this,
-    );
+  String toString() {
+    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, apiType: $apiType, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
   }
 }
 
-abstract class _HistoryMetaModel implements HistoryMetaModel {
-  const factory _HistoryMetaModel(
-      {required final String historyId,
-      required final String requestId,
-      required final APIType apiType,
-      final String name,
-      required final String url,
-      required final HTTPVerb method,
-      required final int responseStatus,
-      required final DateTime timeStamp}) = _$HistoryMetaModelImpl;
+/// @nodoc
+abstract mixin class $HistoryMetaModelCopyWith<$Res> {
+  factory $HistoryMetaModelCopyWith(
+          HistoryMetaModel value, $Res Function(HistoryMetaModel) _then) =
+      _$HistoryMetaModelCopyWithImpl;
+  @useResult
+  $Res call(
+      {String historyId,
+      String requestId,
+      APIType apiType,
+      String name,
+      String url,
+      HTTPVerb method,
+      int responseStatus,
+      DateTime timeStamp});
+}
 
-  factory _HistoryMetaModel.fromJson(Map<String, dynamic> json) =
-      _$HistoryMetaModelImpl.fromJson;
+/// @nodoc
+class _$HistoryMetaModelCopyWithImpl<$Res>
+    implements $HistoryMetaModelCopyWith<$Res> {
+  _$HistoryMetaModelCopyWithImpl(this._self, this._then);
+
+  final HistoryMetaModel _self;
+  final $Res Function(HistoryMetaModel) _then;
+
+  /// Create a copy of HistoryMetaModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? historyId = null,
+    Object? requestId = null,
+    Object? apiType = null,
+    Object? name = null,
+    Object? url = null,
+    Object? method = null,
+    Object? responseStatus = null,
+    Object? timeStamp = null,
+  }) {
+    return _then(_self.copyWith(
+      historyId: null == historyId
+          ? _self.historyId
+          : historyId // ignore: cast_nullable_to_non_nullable
+              as String,
+      requestId: null == requestId
+          ? _self.requestId
+          : requestId // ignore: cast_nullable_to_non_nullable
+              as String,
+      apiType: null == apiType
+          ? _self.apiType
+          : apiType // ignore: cast_nullable_to_non_nullable
+              as APIType,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _self.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      method: null == method
+          ? _self.method
+          : method // ignore: cast_nullable_to_non_nullable
+              as HTTPVerb,
+      responseStatus: null == responseStatus
+          ? _self.responseStatus
+          : responseStatus // ignore: cast_nullable_to_non_nullable
+              as int,
+      timeStamp: null == timeStamp
+          ? _self.timeStamp
+          : timeStamp // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [HistoryMetaModel].
+extension HistoryMetaModelPatterns on HistoryMetaModel {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_HistoryMetaModel value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _HistoryMetaModel() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_HistoryMetaModel value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _HistoryMetaModel():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_HistoryMetaModel value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _HistoryMetaModel() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            String historyId,
+            String requestId,
+            APIType apiType,
+            String name,
+            String url,
+            HTTPVerb method,
+            int responseStatus,
+            DateTime timeStamp)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _HistoryMetaModel() when $default != null:
+        return $default(
+            _that.historyId,
+            _that.requestId,
+            _that.apiType,
+            _that.name,
+            _that.url,
+            _that.method,
+            _that.responseStatus,
+            _that.timeStamp);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            String historyId,
+            String requestId,
+            APIType apiType,
+            String name,
+            String url,
+            HTTPVerb method,
+            int responseStatus,
+            DateTime timeStamp)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _HistoryMetaModel():
+        return $default(
+            _that.historyId,
+            _that.requestId,
+            _that.apiType,
+            _that.name,
+            _that.url,
+            _that.method,
+            _that.responseStatus,
+            _that.timeStamp);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            String historyId,
+            String requestId,
+            APIType apiType,
+            String name,
+            String url,
+            HTTPVerb method,
+            int responseStatus,
+            DateTime timeStamp)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _HistoryMetaModel() when $default != null:
+        return $default(
+            _that.historyId,
+            _that.requestId,
+            _that.apiType,
+            _that.name,
+            _that.url,
+            _that.method,
+            _that.responseStatus,
+            _that.timeStamp);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _HistoryMetaModel implements HistoryMetaModel {
+  const _HistoryMetaModel(
+      {required this.historyId,
+      required this.requestId,
+      required this.apiType,
+      this.name = "",
+      required this.url,
+      required this.method,
+      required this.responseStatus,
+      required this.timeStamp});
+  factory _HistoryMetaModel.fromJson(Map<String, dynamic> json) =>
+      _$HistoryMetaModelFromJson(json);
 
   @override
-  String get historyId;
+  final String historyId;
   @override
-  String get requestId;
+  final String requestId;
   @override
-  APIType get apiType;
+  final APIType apiType;
   @override
-  String get name;
+  @JsonKey()
+  final String name;
   @override
-  String get url;
+  final String url;
   @override
-  HTTPVerb get method;
+  final HTTPVerb method;
   @override
-  int get responseStatus;
+  final int responseStatus;
   @override
-  DateTime get timeStamp;
+  final DateTime timeStamp;
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$HistoryMetaModelImplCopyWith<_$HistoryMetaModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  _$HistoryMetaModelCopyWith<_HistoryMetaModel> get copyWith =>
+      __$HistoryMetaModelCopyWithImpl<_HistoryMetaModel>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$HistoryMetaModelToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _HistoryMetaModel &&
+            (identical(other.historyId, historyId) ||
+                other.historyId == historyId) &&
+            (identical(other.requestId, requestId) ||
+                other.requestId == requestId) &&
+            (identical(other.apiType, apiType) || other.apiType == apiType) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.method, method) || other.method == method) &&
+            (identical(other.responseStatus, responseStatus) ||
+                other.responseStatus == responseStatus) &&
+            (identical(other.timeStamp, timeStamp) ||
+                other.timeStamp == timeStamp));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, historyId, requestId, apiType,
+      name, url, method, responseStatus, timeStamp);
+
+  @override
+  String toString() {
+    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, apiType: $apiType, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
+  }
 }
+
+/// @nodoc
+abstract mixin class _$HistoryMetaModelCopyWith<$Res>
+    implements $HistoryMetaModelCopyWith<$Res> {
+  factory _$HistoryMetaModelCopyWith(
+          _HistoryMetaModel value, $Res Function(_HistoryMetaModel) _then) =
+      __$HistoryMetaModelCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String historyId,
+      String requestId,
+      APIType apiType,
+      String name,
+      String url,
+      HTTPVerb method,
+      int responseStatus,
+      DateTime timeStamp});
+}
+
+/// @nodoc
+class __$HistoryMetaModelCopyWithImpl<$Res>
+    implements _$HistoryMetaModelCopyWith<$Res> {
+  __$HistoryMetaModelCopyWithImpl(this._self, this._then);
+
+  final _HistoryMetaModel _self;
+  final $Res Function(_HistoryMetaModel) _then;
+
+  /// Create a copy of HistoryMetaModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? historyId = null,
+    Object? requestId = null,
+    Object? apiType = null,
+    Object? name = null,
+    Object? url = null,
+    Object? method = null,
+    Object? responseStatus = null,
+    Object? timeStamp = null,
+  }) {
+    return _then(_HistoryMetaModel(
+      historyId: null == historyId
+          ? _self.historyId
+          : historyId // ignore: cast_nullable_to_non_nullable
+              as String,
+      requestId: null == requestId
+          ? _self.requestId
+          : requestId // ignore: cast_nullable_to_non_nullable
+              as String,
+      apiType: null == apiType
+          ? _self.apiType
+          : apiType // ignore: cast_nullable_to_non_nullable
+              as APIType,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _self.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      method: null == method
+          ? _self.method
+          : method // ignore: cast_nullable_to_non_nullable
+              as HTTPVerb,
+      responseStatus: null == responseStatus
+          ? _self.responseStatus
+          : responseStatus // ignore: cast_nullable_to_non_nullable
+              as int,
+      timeStamp: null == timeStamp
+          ? _self.timeStamp
+          : timeStamp // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
+}
+
+// dart format on

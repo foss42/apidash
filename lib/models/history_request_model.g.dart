@@ -6,8 +6,8 @@ part of 'history_request_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
-    _$HistoryRequestModelImpl(
+_HistoryRequestModel _$HistoryRequestModelFromJson(Map json) =>
+    _HistoryRequestModel(
       historyId: json['historyId'] as String,
       metaData: HistoryMetaModel.fromJson(
           Map<String, Object?>.from(json['metaData'] as Map)),
@@ -29,8 +29,8 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
               Map<String, dynamic>.from(json['authModel'] as Map)),
     );
 
-Map<String, dynamic> _$$HistoryRequestModelImplToJson(
-        _$HistoryRequestModelImpl instance) =>
+Map<String, dynamic> _$HistoryRequestModelToJson(
+        _HistoryRequestModel instance) =>
     <String, dynamic>{
       'historyId': instance.historyId,
       'metaData': instance.metaData.toJson(),

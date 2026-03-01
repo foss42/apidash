@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:apidash/consts.dart';
-import 'package:fvp/fvp.dart' as fvp;
+//import 'package:fvp/fvp.dart' as fvp;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:video_player/video_player.dart';
@@ -34,7 +34,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
 
   void registerWithAllPlatforms() {
     try {
-      fvp.registerWith();
+     // fvp.registerWith();
     } catch (e) {
       debugPrint("VideoPreviewer registerWithAllPlatforms(): $e");
     }

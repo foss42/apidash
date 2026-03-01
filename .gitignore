@@ -65,3 +65,5 @@ installers/*
 # Testing Files & Folders
 test-hive-storage
 /logs
+wsl.localhost/Ubuntu/home/enovo
+.kiro/
