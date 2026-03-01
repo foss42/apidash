@@ -1076,7 +1076,8 @@ paths:
       expect(viewmodel.currentMessages, hasLength(1));
       expect(viewmodel.currentMessages.first.messageType,
           equals(ChatMessageType.importCurl));
-      expect(viewmodel.currentMessages.first.content, contains('cURL parsed'));
+      expect(viewmodel.currentMessages.first.content,
+          contains('"action":"apply_curl","target":"httpRequestModel"'));
     });
 
     test('handlePotentialCurlPaste should handle invalid cURL command',
@@ -1299,9 +1300,11 @@ paths:
         actionType: ChatActionType.applyCurl,
         targetType: ChatActionTarget.httpRequestModel,
         value: {
-          'method': 'POST',
+          'method': 'post',
           'url': 'https://api.apidash.dev/users',
-          'headers': {'Content-Type': 'application/json'},
+          'headers': [
+            {'name': 'Content-Type', 'value': 'application/json; charset=utf-8'}
+          ],
           'body': '{"name": "John"}',
         },
       );
@@ -1324,9 +1327,8 @@ paths:
         actionType: ChatActionType.applyCurl,
         targetType: ChatActionTarget.httpRequestModel,
         value: {
-          'method': 'POST',
-          'url': 'https://api.apidash.dev/upload',
-          'form': true,
+          'method': 'post',
+          'uri': 'https://api.apidash.dev/upload',
           'formData': [
             {'name': 'file', 'value': 'test.txt', 'type': 'text'},
             {'name': 'description', 'value': 'Test file', 'type': 'text'},
@@ -1445,8 +1447,8 @@ paths:
         actionType: ChatActionType.applyCurl,
         targetType: ChatActionTarget.httpRequestModel,
         value: {
-          'method': 'GET',
-          'url': 'https://api.apidash.dev/test',
+          'method': 'get',
+          'uri': 'https://api.apidash.dev/test',
         },
       );
 
@@ -1578,14 +1580,14 @@ paths:
         targetType: ChatActionTarget.httpRequestModel,
         value: {
           'method': 'INVALID_METHOD',
-          'url': '', // Invalid URL
+          'uri': '', // Invalid URL
         },
       );
 
       await viewmodel.applyAutoFix(complexAction);
 
       // Should handle provider errors gracefully
-      expect(viewmodel.currentMessages, isEmpty);
+      expect(viewmodel.currentMessages, isNotEmpty);
     });
 
     test('should maintain state consistency across provider interactions',

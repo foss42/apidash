@@ -3,9 +3,16 @@
 <a href="https://discord.com/invite/bBeSdtJ6Ue" target="_blank"><img src="https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white" alt="Discord Server Invite"></a><br>
 <img src="https://trendshift.io/api/badge/repositories/9734" alt="foss42%2Fapidash | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/> &nbsp;&nbsp;&nbsp; <a href="https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash" target="_blank"><img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="400"></a>
 
+| GSoC 2026         | Link                                                       |
+| ----------------- | ---------------------------------------------------------- |
+| List of Ideas     | [Link](https://github.com/foss42/apidash/discussions/1054)                |
+| Application Guide | [Link](https://github.com/foss42/apidash/discussions/1048) |
+| Weekly Connect Meeting for GSoC Participants | [Link](https://luma.com/embed/calendar/cal-ZTW02O2EsWRs6V4/events) |
+| Discord Channel   | [Link](https://discord.com/invite/bBeSdtJ6Ue)              |
+
 ### Please support this initiative by giving this project a Star ⭐️
 
-API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
+API Dash is a beautiful **AI powered open-source cross-platform** API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
 
 ![API Dash](screenshots/apidash.png)
 
@@ -18,7 +25,6 @@ API Dash can be downloaded from the links below:
         <tr>
             <th>OS</th>
             <th>Distribution</th>
-            <th>Installation Guide</th>
             <th>CPU/Architecture</th>
             <th>Download Link</th>
         </tr>
@@ -28,49 +34,43 @@ API Dash can be downloaded from the links below:
             <td>iOS/iPad</td>
           <td>App Store</td>
             <td></td>
-            <td></td>
             <td><a href="https://apps.apple.com/us/app/api-dash-api-client-testing/id6711353348">Link</a></td>
         </tr>
         <tr>
             <td>macOS</td>
           <td><code>.dmg</code></td>
-            <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#macos">Link</a></td>
             <td>Apple Silicon & Intel</td>
-            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-macos.dmg">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
         <tr>
             <td>Windows</td>
             <td><code>.exe</code></td>
-            <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#windows">Link</a></td>
             <td>64-bit</td>
-            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-windows-x86_64.exe">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
         <tr>
             <td rowspan=5>Linux</td>
-            <td rowspan=2><code>.deb</code></td>          
-            <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc">Link</a></td>
+            <td rowspan=2><code>.deb</code></td>
             <td>amd64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-amd64.deb">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
          <tr>
             <td>arm64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-arm64.deb">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
         <tr>
             <td rowspan=2><code>.rpm</code></td>
-            <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc">Link</a></td>
             <td>x86_64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-x86_64.rpm">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
          <tr>
             <td>aarch64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-aarch64.rpm">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
         <tr>
             <td><code>PKGBUILD</code> (Arch Linux)</td>
-            <td><a href="https://aur.archlinux.org/packages/apidash-bin">Link</a></td>
             <td>x86_64</td>
-            <td><a href="https://aur.archlinux.org/packages/apidash-bin">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/doc/dev_guide/setup_run.md">Link (Dev)</a></td>
         </tr>
     </tbody>
 </table>
@@ -136,6 +136,18 @@ API Dash can be downloaded from the links below:
 - Customize various options using a dedicated Settings screen.
 - Window Configuration (Size & Position) is persisted and restored on app start. (Only macOS & Windows)
 
+## AI Requests
+
+API Dash lets you test AI APIs of various providers (or your own).
+
+<img width="1053" height="712" alt="aireq1" src="https://github.com/user-attachments/assets/a696123a-24bb-4f1f-83d4-37d32da136fc" />
+
+## DashBot
+
+Dashbot is the AI assistant available in API Dash (powered by local or cloud LLM) so that you can interact with your requests to debug it, generate code, generate doc, and many more. 
+
+<img width="1470" height="956" alt="dashbot_tab" src="https://github.com/user-attachments/assets/b67b42dc-6281-4c71-bd85-b70199f3cfbd" />
+
 
 ## ❤️ Supported by
 
@@ -180,8 +192,6 @@ API Dash currently supports API integration code generation for the following la
 | Rust                   | `Actix Client` |        |
 | Swift                  | `Alamofire`   |         |
 | Swift                  | `URLSession`  |         |
-
-We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
 ## MIME Types supported by API Dash Response Previewer
 
@@ -262,7 +272,7 @@ Just click on the [Issue tab](https://github.com/foss42/apidash/issues) to raise
 
 ## Roadmap
 
-Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/blob/main/ROADMAP.md).
+Please find the Roadmap for API Dash [here](https://github.com/orgs/foss42/projects/1).
 
 ## Documentation (User Guide & Developer Guide)
 
@@ -277,14 +287,14 @@ All docs are currently available in the [doc](https://github.com/foss42/apidash/
 
 You can contribute to API Dash in any or all of the following ways:
 
-- [Ask a question](https://github.com/foss42/apidash/discussions)
+- [Ask a question](https://discord.com/invite/bBeSdtJ6Ue)
 - [Submit a bug report](https://github.com/foss42/apidash/issues/new/choose)
 - [Request a new feature](https://github.com/foss42/apidash/issues/new/choose)
-- [Choose from our existing list of ideas](https://github.com/foss42/apidash/discussions/565)
+- [Choose from our existing list of ideas](https://github.com/foss42/apidash/discussions/1054)
 - [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/apidash/issues/new/choose)
 - Add documentation
 - To add a new feature, resolve an existing issue or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Need Any Help?
 
-In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://discord.com/invite/bBeSdtJ6Ue) and we can have a chat in the **#foss-apidash** channel.
+In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://discord.com/invite/bBeSdtJ6Ue) and we can have a chat in the **#gsoc-foss-apidash** channel.

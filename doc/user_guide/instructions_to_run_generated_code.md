@@ -503,80 +503,90 @@ Navigate to network tab and refresh the page to see the requests and network act
 
 ## node.js (JavaScript, axios)
 
-### 1.Install Node.js:
-Ensure Node.js and npm are installed. Verify by running:
+### 1. Verify Node.js Installation
+
+Check if Node.js and npm are already installed:
 
 ```bash
 node --version
 npm --version
 ```
 
-If not, download from Node.js **[Official Website]((https://nodejs.org/en))**.
+If Node.js is not installed, download and install it from the official website:
 
-Initialize a new Node.js project:
+https://nodejs.org/en
 
-```bash
-npm init -y
-```
-
-Install Axios:
+Verify installation:
 
 ```bash
-npm install axios
+node --version
+npm --version
 ```
 
-### 2.Set Up a New Project:
-Create a new project directory:
+### 2. Create a New Project:
+
+Create and navigate to a new project folder:
 
 ```bash
 mkdir node-axios-example
 cd node-axios-example
 ```
 
-Initialize the project:
+Initialize a Node.js project:
 
 ```bash
 npm init -y
 ```
 
-### 3.Create and Run the Code:
+### 3. Install Axios:
 
-Save the generated code in a file(e.g., `app.js`).
+Install Axios using npm:
 
-Run the code:
+```bash
+npm install axios
+```
+### 4. Add the Generated Code
+
+1. Create a new file (e.g., `app.js`).
+2. Copy the generated code from API Dash.
+3. Paste it into `app.js`.
+4. Save the file.
+
+### 5. Run the code
+
+Execute the file using:
 
 ```bash
 node app.js
 ```
 
+The API response will be displayed in the terminal.
+
 ## node.js (JavaScript, fetch)
 
-### 1. Install Node.js:
-Ensure Node.js and npm are installed. Verify by running:
+### 1. Verify Node.js Installation
+
+Check if Node.js and npm are already installed:
 
 ```bash
 node --version
 npm --version
 ```
 
-If not, download from Node.js **[Official Website]((https://nodejs.org/en))**.
+If Node.js is not installed, download and install it from the official website:
 
-Initialize a new Node.js project:
+https://nodejs.org/en
 
-```bash
-npm init -y
-```
-
-If using Node.js 18 or newer, the Fetch API is already built-in.
-
-For older versions, install the `node-fetch` package:
+Verify installation:
 
 ```bash
-npm install node-fetch
+node --version
+npm --version
 ```
 
-### 2. Set Up a New Project:
-Create a project directory:
+### 2. Create a New Project:
+
+Create and navigate to a  project directory:
 
 ```bash
 mkdir node-fetch-example
@@ -589,19 +599,38 @@ Initialize the project:
 npm init -y
 ```
 
-### 3.Create and Run the Code:
-Save the generated code in a file( e.g., `app.js`).
-If using `node-fetch`, add the following line to the top of the file:
+### 3. Fetch API Support:
+
+Check your Node.js version:
+
+```bash
+node --version
+```
+
+If you are using Node.js 18 or later, the Fetch API is built-in.
+
+If you are using Node.js 17 or earlier, install node-fetch:
+
+```bash
+npm install node-fetch
+```
+
+If using node-fetch, add this line at the top of your file:
 
 ```javascript
 const fetch = require('node-fetch');
 ```
 
-Run the file:
+### 4. Run the Generated Code
+
+1. Save the generated code in a file (e.g., `app.js`).
+2. Run the file:
 
 ```bash
 node app.js
 ```
+
+The API response will be displayed in the terminal.
 
 ## Java (asynchttpclient)
 
