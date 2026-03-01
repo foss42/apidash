@@ -235,6 +235,19 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             ),
           ),
         ),
+        if (aiModelProvider.providerId == ModelAPIProvider.custom) ...[
+          kVSpacer10,
+          Text('Model Name'),
+          kVSpacer8,
+          BoundedTextField(
+            onChanged: (x) {
+              setState(() {
+                newAIRequestModel = newAIRequestModel?.copyWith(model: x);
+              });
+            },
+            value: newAIRequestModel?.model ?? "",
+          ),
+        ],
         kVSpacer10,
         Align(
           alignment: Alignment.centerRight,
