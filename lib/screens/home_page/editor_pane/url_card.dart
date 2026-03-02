@@ -109,8 +109,10 @@ class URLTextField extends ConsumerWidget {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
+    final urlFocusNode = ref.watch(urlFieldFocusNodeProvider);
     return EnvURLField(
       selectedId: selectedId,
+      focusNode: urlFocusNode,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,
