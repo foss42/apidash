@@ -14,8 +14,6 @@ class SidebarHistoryCard extends StatelessWidget {
     required this.method,
     this.isSelected = false,
     this.requestGroupSize = 1,
-    this.isSelectionMode = false,
-    this.isItemChecked = false,
     this.onTap,
   });
 
@@ -25,8 +23,6 @@ class SidebarHistoryCard extends StatelessWidget {
   final HTTPVerb method;
   final bool isSelected;
   final int requestGroupSize;
-  final bool isSelectionMode;
-  final bool isItemChecked;
   final Function()? onTap;
 
   @override
@@ -67,19 +63,6 @@ class SidebarHistoryCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  if (isSelectionMode) ...[
-                    SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: Checkbox(
-                        value: isItemChecked,
-                        onChanged: (value) {
-                          onTap?.call();
-                        },
-                      ),
-                    ),
-                    kHSpacer4,
-                  ],
                   SidebarRequestCardTextBox(
                     apiType: apiType,
                     method: method,

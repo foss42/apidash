@@ -3,10 +3,6 @@ import 'package:apidash/models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../utils/history_utils.dart';
 
-final isHistorySelectionModeProvider = StateProvider<bool>((ref) => false);
-
-final selectedHistoryItemIdsProvider = StateProvider<Set<String>>((ref) => {});
-
 final selectedHistoryIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestGroupIdStateProvider = StateProvider<String?>((ref) {
@@ -114,36 +110,5 @@ class HistoryMetaStateNotifier
     ref.read(selectedHistoryIdStateProvider.notifier).state = null;
     ref.read(selectedHistoryRequestModelProvider.notifier).state = null;
     loadHistoryMetas();
-  }
-
-  Future<void> deleteHistoryRequests(Set<String> ids) async {
-    if (ids.isEmpty || state == null) return;
-
-    // Remove from Hive
-    for (var id in ids) {
-      await hiveHandler.deleteHistoryRequest(id);
-      hiveHandler.deleteHistoryMeta(id);
-    }
-
-    // Update history ids list in Hive
-    final existingKeys = state!.keys.toList();
-    final updatedKeys = existingKeys.where((id) => !ids.contains(id)).toList();
-    hiveHandler.setHistoryIds(updatedKeys);
-
-    // Update State
-    final newState = Map<String, HistoryMetaModel>.from(state!);
-    newState.removeWhere((key, value) => ids.contains(key));
-    state = newState;
-
-    // Clear selection if current item got deleted
-    final currentSelectedId = ref.read(selectedHistoryIdStateProvider);
-    if (currentSelectedId != null && ids.contains(currentSelectedId)) {
-      ref.read(selectedHistoryIdStateProvider.notifier).state = null;
-      ref.read(selectedHistoryRequestModelProvider.notifier).state = null;
-    }
-
-    // Reset selection mode
-    ref.read(isHistorySelectionModeProvider.notifier).state = false;
-    ref.read(selectedHistoryItemIdsProvider.notifier).state = {};
   }
 }
