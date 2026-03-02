@@ -257,8 +257,6 @@ graph TB
   style HITL fill:#ffe1e1
 ```
 
-![High-Level Hybrid Architecture](images/High-Level%20Hybrid%20Architecture.png)
-
 What this diagram explains:
 This diagram gives the full system picture at a glance. It starts from the API Dash UI, where the user interacts through a conversational interface, and then moves into the orchestrator that controls the testing lifecycle. From there, responsibility is split across specialized agents (generation, execution, validation, and healing), so each stage stays focused and maintainable. The MCP layer sits between these agents and model providers, which keeps the AI integration flexible and provider-agnostic. Most importantly, human-in-the-loop checkpoints are built into the orchestration path itself, so user control is part of the design, not an afterthought.
 
@@ -318,8 +316,6 @@ sequenceDiagram
   Orchestrator->>User: "Tests fixed and saved ✓"
 ```
 
-![Conversational Test Generation Workflow](images/Conversational%20Test%20Generation%20Workflow.png)
-
 What this diagram explains:
 This sequence shows how the user and agents collaborate in practice. The flow begins with a simple natural-language request, then the system proposes tests, accepts user refinement, and only executes after confirmation. If failures happen, the workflow does not stop at reporting; it analyzes root causes, explains what changed, and asks for approval before applying fixes. The key idea is iterative collaboration: generate, review, execute, diagnose, improve, and re-validate—until the suite is reliable.
 
@@ -374,8 +370,6 @@ flowchart TD
   ShowReport --> End
 ```
 
-![Test Execution Workflow](images/Test%20Execution%20Workflow.png)
-
 What this diagram explains:
 This diagram explains what happens once tests are approved and executed. The pipeline prepares the environment, chooses execution mode (sequential or parallel), runs requests, and validates responses in layers: status checks, schema checks, and custom assertions. Results are accumulated into a report, and when failures appear, the system routes them for AI-assisted analysis before presenting final output. In short, it describes a structured execution engine designed for reliability, observability, and actionable feedback.
 
@@ -426,8 +420,6 @@ sequenceDiagram
     Detector->>UI: No updates needed
   end
 ```
-
-![Self-Healing Workflow](images/Self-Healing%20Workflow.png)
 
 What this diagram explains:
 This sequence explains how the system keeps test suites healthy as APIs evolve. It first detects spec changes, maps their impact to affected tests, and analyzes what needs to be updated. Instead of silently rewriting tests, it presents proposed changes to the user for approval, preserving transparency and trust. After approval, the updated tests are saved and re-validated, so healing is both controlled and verifiable.
