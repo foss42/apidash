@@ -38,6 +38,7 @@ class Dashboard extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
+                      tooltip: 'Requests',
                       isSelected: railIdx == 0,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 0;
@@ -51,6 +52,7 @@ class Dashboard extends ConsumerWidget {
                     ),
                     kVSpacer10,
                     IconButton(
+                      tooltip: 'Variables',
                       isSelected: railIdx == 1,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 1;
@@ -64,6 +66,7 @@ class Dashboard extends ConsumerWidget {
                     ),
                     kVSpacer10,
                     IconButton(
+                      tooltip: 'History',
                       isSelected: railIdx == 2,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 2;
@@ -81,6 +84,7 @@ class Dashboard extends ConsumerWidget {
                       isLabelVisible:
                           ref.watch(showTerminalBadgeProvider) && railIdx != 3,
                       child: IconButton(
+                        tooltip: 'Logs',
                         isSelected: railIdx == 3,
                         onPressed: () {
                           ref.read(navRailIndexStateProvider.notifier).state =
