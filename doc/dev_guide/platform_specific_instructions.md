@@ -85,7 +85,7 @@ For more information on:
 - Gradle and Java version compatibility, you can refer to [Compatibility Matrix](https://docs.gradle.org/current/userguide/compatibility.html).
 - Gradle and Android Gradle Plugin compatibility, you can refer to [Update Gradle](https://developer.android.com/build/releases/gradle-plugin).
 
-Note : It is highly recommended that always ensure gradle and agp versions are compatible with your JDK version not the vice-versa and having atleast JDK 17 is recommmended.
+Note : It is highly recommended that always ensure gradle and agp versions are compatible with your JDK version not the vice-versa and having at least JDK 17 is recommended.
 
 ## Web  
 

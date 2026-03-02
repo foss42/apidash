@@ -489,7 +489,7 @@ const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
 // TODO: CodeField widget does not allow this hint. To be solved.
-const kHintScript = "// Use Javacript to modify this request dynamically";
+const kHintScript = "// Use Javascript to modify this request dynamically";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
