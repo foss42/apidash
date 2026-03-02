@@ -2,119 +2,81 @@
 
 ## About
 
-### Personal Information
+1. **Full Name**: Aditya Suhane  
+2. **Contact info (public email)**: adityasuhane01@gmail.com  
+3. **Discord handle in API Dash server**: adityasuhane01  
+4. **GitHub profile**: https://github.com/adityasuhane-06  
+5. **Socials**: https://linkedin.com/in/aditya-suhane-530103255  
+6. **Time zone**: IST (UTC+5:30)  
+7. **Resume link (public)**: https://drive.google.com/file/d/12zJvrIma6cPOJ99OTc4Jiq7Fit1ld2_c/view?usp=sharing  
 
-1. **Full Name**: Aditya Suhane
-2. **Contact Email**: adityasuhane01@gmail.com
-3. **Discord Handle**: adityasuhane01 (API Dash server)
-4. **Phone**: +91-7869366189
-5. **GitHub Profile**: [github.com/adityasuhane-06](https://github.com/adityasuhane-06)
-6. **LinkedIn**: [linkedin.com/in/aditya-suhane-530103255](https://linkedin.com/in/aditya-suhane-530103255)
-7. **Time Zone**: IST (UTC +5:30)
-8. **Resume**: [Google Drive - Publicly Accessible](https://drive.google.com/file/d/12zJvrIma6cPOJ99OTc4Jiq7Fit1ld2_c/view?usp=sharing)
+## University Info
 
-## University Information
-
-1. **University**: Gyan Ganga Institute of Technology and Sciences, Jabalpur
-2. **Program**: Bachelor of Technology in Computer Science Engineering (Data Science)
-3. **Current Year**: Final Year (4th Year)
-4. **Expected Graduation**: June 2026
-5. **CGPA**: 8.08/10.0
+1. **University name**: Gyan Ganga Institute of Technology and Sciences, Jabalpur  
+2. **Program**: B.Tech, Computer Science Engineering (Data Science)  
+3. **Year**: Final Year (4th year)  
+4. **Expected graduation date**: June 2026  
 
 ## Motivation & Past Experience
 
-### 1. Have you worked on or contributed to a FOSS project before?
+### 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
 
-Yes, I have contributed to **Rocket.Chat**, a major open-source communication platform:
-- **Repository**: [github.com/RocketChat/Rocket.Chat](https://github.com/RocketChat/Rocket.Chat)
-- **Contributions**: Submitted PRs to refactor React components, reducing code duplication across avatar upload modules
-- **Technologies**: TypeScript, React, Meteor.js, MongoDB
-- **Experience**: Worked within established review processes and coding standards
+Yes. I am actively contributing to API Dash while preparing for GSoC 2026 and discussing architecture with maintainers.
 
-However, my **primary focus before GSoC has been building machine learning and agentic systems** (see below).
+Relevant links:
+- Idea discussion: https://github.com/foss42/apidash/discussions/1230#discussioncomment-15959507
+- PR #1248 (docs: add Testing and Assertions guide with essential examples): https://github.com/foss42/apidash/pull/1248
+- PR #1236 (closed: assertion framework exploration, then scope-aligned pivot): https://github.com/foss42/apidash/pull/1236
+- PR #1223 (Add tests for APIDashAgentCaller #1221): https://github.com/foss42/apidash/pull/1223
 
-### 2. What is your proudest project/achievement? Why?
+What I learned from these contributions:
+- Existing agentic and scripting infrastructure in API Dash must be reused, not duplicated.
+- Fast feedback loops with maintainers are essential for correct scoping.
+- Documentation quality and architecture clarity are as important as code.
 
-**Project Samarth - AI-Powered Agricultural Q&A System** ([GitHub](https://github.com/adityasuhane-06/Project-Samarth) | [Live Demo](https://projectsamarth.vercel.app/))
+### 2. What is your one project/achievement that you are most proud of? Why?
 
-This project showcases my expertise in **agentic AI systems** - directly relevant to GSoC Idea #4:
+My proudest project is **Project Samarth** (AI-powered agricultural Q&A assistant):
+- GitHub: https://github.com/adityasuhane-06/Project-Samarth
+- Live demo: https://project-samarth-beta.vercel.app/
 
-**Architectural Achievements:**
-- **Agentic System**: Architected orchestration using LangGraph state machines with 5 autonomous tools and memory management
-- **Vector Database Integration**: Integrated ChromaDB with embeddings for semantic search across 123 years of agricultural data
-- **Temporal Intelligence**: Implemented "temporal force-routing" prompt technique eliminating LLM hallucinations by injecting historical context awareness
+Why this is important for this proposal:
+- I implemented agent-style orchestration using LangGraph-like flows.
+- I built reliable fallback paths, retrieval components, and production deployment.
+- I optimized latency and reliability under real user traffic.
 
-**Engineering Excellence:**
-- **Data Integration**: Reverse-engineered APEDA API, discovering 113 undocumented product codes; integrated 6 diverse data sources (1901-2024)
-- **Performance Optimization**: Achieved **30x performance improvement** (3.5s → 100ms) using MongoDB Atlas caching with adaptive TTL patterns
-- **Reliability**: Built robust exception handling with intelligent fallback routing (agentic → parameter-based) ensuring 99.9% system uptime
+This experience is directly relevant to building agentic test workflows in API Dash.
 
-**Production Deployment:**
-- Full-stack: FastAPI async backend, React (Vite + Tailwind) frontend
-- Deployed on Render (backend) and Vercel (frontend) with health monitoring and real-time cache analytics
+### 3. What kind of problems or challenges motivate you the most to solve them?
 
-**Why I'm Proud**: This demonstrates my ability to design complex agentic systems with LangGraph - the exact pattern needed for Idea #4's hybrid agent orchestration architecture.
+I am motivated by problems where:
+- AI output must be reliable and auditable,
+- workflows have multiple dependent steps,
+- humans must stay in control at critical checkpoints,
+- and systems need to adapt as external APIs evolve.
 
-### 3. What kind of problems or challenges motivate you most to solve them?
+Agentic API testing is exactly this type of problem.
 
-I'm motivated by challenges that combine **AI autonomy with human oversight**:
+### 4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
 
-1. **Agentic AI Problems**: Building systems where AI agents understand context, make intelligent decisions, and adapt to failures without constant human intervention
-2. **Real-World Integration**: Connecting AI to existing systems (APIs, databases, external services) in production environments
-3. **Performance Under Constraints**: Optimizing complex systems for speed, reliability, and cost-effectiveness
-4. **Testing & Validation**: Ensuring AI-generated solutions are correct, safe, and maintainable
+Yes, I will work on GSoC full-time. I am in my final year and can dedicate focused weekly hours to deliverables and mentor sync.
 
-**Idea #4 aligns perfectly** because it combines all these: agentic AI testing, human-in-the-loop validation, real API workflows, and intelligent self-healing.
+### 5. Do you mind regularly syncing up with the project mentors?
 
-### 4. Will you be working on GSoC full-time?
+Not at all. I prefer frequent syncs and iterative review. I already attend mentor/community discussions and will continue weekly updates.
 
-**Yes, full-time.** I'm in my final year of B.Tech program with flexible scheduling. I can dedicate 40+ hours per week to GSoC without other work commitments.
+### 6. What interests you the most about API Dash?
 
-### 5. Do you mind regularly syncing up with project mentors?
+Three things:
+1. API Dash already has a practical base: request lifecycle scripting, agentic services, and DashBot.
+2. Idea 4 is high-impact: converting partial AI assistance into a complete testing lifecycle.
+3. The project values architecture discussion and iterative review, which matches how I work.
 
-**Absolutely not.** I actively attend:
-- Weekly mentor sync meetings with API Dash team
-- Community discussions on GitHub Discussions
-- Regular communication on Discord
+### 7. Can you mention some areas where the project can be improved?
 
-I believe transparent, frequent communication is essential for successful project execution.
-
-### 6. What interests you most about API Dash?
-
-**Three core reasons:**
-
-1. **Agentic AI Architecture**: API Dash is building intelligent testing systems. The opportunity to design LangGraph-style agent orchestration with MCP integration is exactly the type of challenging, production-grade system that excites me (as evidenced by Project Samarth).
-
-2. **Existing Infrastructure**: The project already has:
-   - Mature JavaScript runtime (`flutter_js`) for post-response scripting
-   - Complete `ad` object API for request/response manipulation
-   - Established data models and providers
-   - This gives me a solid foundation to build Phase 2 (agentic testing) on top of.
-
-3. **Real-World Impact**: API Dash serves developers worldwide. Building intelligent, human-in-the-loop testing improves developer experience and code quality - meaningful impact at scale.
-
-### 7. Can you mention some areas where the project can improve?
-
-**Three key areas for improvement:**
-
-1. **Documentation & Discovery**
-   - **Current State**: Scripting guide exists but lacks unified, searchable documentation
-   - **Proposal**: Build a comprehensive documentation webpage with:
-     - Setup guide with step-by-step tutorials
-     - Searchable documentation index
-     - Interactive examples for common patterns (authentication, pagination, error handling)
-     - API reference with code snippets
-   - **Impact**: Help users discover existing features like post-response scripting without trial-and-error
-
-2. **Docker Support**
-   - **Current State**: API Dash lacks official Docker image
-   - **Proposal**: Create Dockerfile with multi-stage builds, docker-compose for local development
-   - **Impact**: Easier onboarding for development, simplified CI/CD integration
-
-3. **Testing Infrastructure**
-   - **Current State**: Agentic testing is barely started
-   - **Proposal**: Our GSoC Idea #4 addresses this - human-in-the-loop agents that generate, execute, validate, and self-heal tests
-   - **Impact**: Transform API testing from manual scripting to intelligent automation
+1. **Testing lifecycle completeness**: generation exists, but execution-validation-healing orchestration can be stronger.
+2. **Feature discoverability**: scripting/testing capabilities need easier in-product discovery and better guidance.
+3. **Developer onboarding**: Docker-based local setup and clearer troubleshooting docs can reduce setup friction.
 
 ---
 
@@ -122,297 +84,451 @@ I believe transparent, frequent communication is essential for successful projec
 
 ### 1. Proposal Title
 
-**Agentic API Testing: Building an Intelligent, Autonomous API Testing System with Human-in-the-Loop Orchestration**
+**Agentic API Testing in API Dash: Human-in-the-Loop Orchestration for Generation, Execution, Validation, and Self-Healing**
 
-### 2. Abstract
+### 2. Abstract: A brief summary about the problem that you will be tackling & how.
 
-Currently, API Dash users rely on manual JavaScript post-response scripting for testing - powerful but time-consuming. We will build an **agentic AI testing system** that enables developers to conversationally generate, execute, validate, and maintain API tests through intelligent agents.
+API Dash already has strong foundations (DashBot, scripting runtime, and agentic services), but end-to-end autonomous testing workflows are still fragmented. This project will build an agentic testing orchestration layer that enables users to conversationally generate tests, execute them, validate failures, and apply self-healing updates with explicit user approval.
 
-**The Solution**: A **hybrid architecture** combining:
-- **LangGraph-style agent orchestration** for sequential test workflows with conditional routing
-- **MCP integration** for flexible multi-LLM support (Claude, GPT-4, Mistral, local models)
-- **Human-in-the-loop checkpoints** ensuring user control and transparency at critical points
+The implementation will combine:
+- a LangGraph-style state-machine orchestrator,
+- MCP-based model flexibility,
+- and human-in-the-loop checkpoints.
 
-**Key Outcomes**:
-- ✅ AI agents understand API specs and generate comprehensive tests (functional, edge cases, security)
-- ✅ Multi-step workflow testing with request chaining and state management
-- ✅ Intelligent failure analysis and self-healing when APIs evolve
-- ✅ Users maintain control through conversational feedback and approval checkpoints
+This proposal focuses on extending existing infrastructure (not replacing it) and delivering a practical testing workflow from prompt to stable test suite maintenance.
 
 ### 3. Detailed Description
 
-#### Problem Statement
+#### 3.1 Problem and Why This Project is Needed
 
-Modern API testing faces three critical challenges:
+API Dash already helps with API productivity, but testing still has a major gap between **generation** and **maintenance**.
 
-1. **Manual Effort**: Developers write repetitive test cases covering status codes, headers, JSON validation, edge cases, security scenarios - time-consuming and error-prone
-2. **API Evolution**: When APIs change (schema updates, field additions, endpoint changes), tests break and require manual fixing - high maintenance burden
-3. **Incomplete Coverage**: Comprehensive testing (happy paths + edge cases + security) is rarely achieved within project timelines
+Current pain points in real workflows:
+- Developers can generate or write tests, but there is no strong closed loop of generate → execute → validate → heal.
+- Multi-step API flows (register → login → profile) are harder to manage reliably with manual scripts.
+- When API contracts change, test suites break and updates are mostly manual.ea
+- Teams need AI help, but they also need explicit control and approval before changes are applied.
 
-#### Proposed Solution
+This project solves that by building a controlled, agentic testing lifecycle where agents understand API specifications and workflows, generate comprehensive strategies across functional correctness, edge cases, error handling, security, and performance, execute end-to-end flows, validate outcomes, and apply self-healing with human checkpoints for trust and control.
 
-We will build an **Agentic API Testing System** - the Phase 2 evolution of API Dash's testing capabilities.
+#### 3.2 Existing Baseline and Reuse Strategy
 
-**Architecture Overview**:
+This proposal is intentionally built on existing API Dash foundations:
+- DashBot and agentic services
+- JavaScript runtime for request/response scripting
+- Existing request/response/environment models
+- Existing provider/service architecture
 
-```
-┌──────────────────────────────────────┐
-│        User Interface (Flutter)       │
-│  - Conversational Chat Panel          │
-│  - Test Review & Approval UI          │
-│  - Execution Dashboard                │
-└─────────────┬────────────────────────┘
-              │
-┌─────────────▼────────────────────────┐
-│   Agent Orchestrator (LangGraph)      │
-│  - State Machine (Idle → Gen → Exec)  │
-│  - Human-in-Loop Checkpoints          │
-│  - Workflow State Management          │
-└─────────────┬────────────────────────┘
-              │
-    ┌─────────┼──────────┬──────────┐
-    │         │          │          │
-┌───▼──┐  ┌──▼──┐  ┌───▼─┐  ┌────▼──┐
-│ Test │  │Test │  │Test │  │Self   │
-│ Gen  │  │Exec │  │Val  │  │Heal   │
-│Agent │  │Agent│  │Agent│  │Agent  │
-└───┬──┘  └──┬──┘  └───┬─┘  └────┬──┘
-    │        │        │         │
-    └────────┴────────┴─────────┘
-             │
-    ┌────────▼─────────┐
-    │  MCP Router      │
-    │  - Cache         │
-    │  - Rate Limit    │
-    └────────┬─────────┘
-             │
-    ┌────────┴────────────────┐
-    │                         │
-┌───▼──┐  ┌──────┐  ┌────────▼──┐
-│Claude│  │GPT-4 │  │Local LLM   │
-└──────┘  └──────┘  └────────────┘
-```
+Reuse strategy (important for scope and stability):
+1. Reuse existing models and execution primitives where possible.
+2. Add orchestration and validation layers as incremental modules.
+3. Avoid replacing stable components; extend them with test lifecycle logic.
 
-#### Key Components
 
-**1. Agent Orchestrator**
-- State machine managing workflow: `Idle → GeneratingTests → AwaitingTestApproval → ExecutingTests → AwaitingExecutionReview → ValidatingResults → HealingIssues → AwaitingHealingApproval → Completed`
-- Human-in-loop checkpoints at test generation, execution completion, and before self-healing
-- Conditional routing based on results (e.g., skip self-healing if all tests pass)
+#### 3.3 What We Will Implement (Step-by-Step)
 
-**2. Test Generator Agent**
-- Receives API specification and user requirements
-- Generates comprehensive test cases:
-  - **Positive Tests**: Happy path, expected behavior
-  - **Negative Tests**: Invalid inputs, error scenarios
-  - **Edge Cases**: Boundary values, null inputs, empty arrays
-  - **Security Tests**: SQL injection, XSS, authentication bypass
-  - **Performance Tests**: Response time validation
-- Uses MCP to call Claude/GPT-4 for test generation
-- Returns test suite to user for review and refinement
+##### A) Workflow Orchestrator (State Machine Core)
 
-**3. Test Executor Agent**
-- Executes test suite against live API
-- Supports sequential and parallel execution
-- Manages authentication, headers, request chaining
-- Captures detailed results: status codes, response bodies, timing
-- Handles failures gracefully with retry logic
+Implementation approach:
+1. Define workflow states (`idle`, `generating`, `awaitingApproval`, `executing`, `validating`, `healing`, `completed`, `failed`).
+2. Define transition guards (example: no `healing` without failed validation).
+3. Persist workflow context (request ids, generated test ids, execution reports, healing proposals).
+4. Add resumability so interrupted runs can continue from last safe state.
 
-**4. Test Validator Agent**
-- Analyzes test results and identifies issues
-- Uses schema validation, assertion evaluation
-- Detects performance violations, security issues
-- Generates detailed validation reports
-- Suggests potential root causes for failures
+Expected output:
+- Deterministic orchestration with auditable transitions.
 
-**5. Self-Healing Agent**
-- Detects API changes (schema updates, new required fields, endpoint changes)
-- Proposes test updates to maintain compatibility
-- Validates fixes by re-running updated tests
-- Requires user approval before applying changes
-- Maintains test intent while adapting structure
+##### B) Test Generation Agent
 
-**6. MCP Integration Layer**
-- Abstracts AI model selection
-- Supports Claude, GPT-4, Mistral, Qwen, local LLMs
-- Implements caching and rate limiting
-- Easy to add new models without changing agent code
+Implementation approach:
+1. Parse endpoint metadata / optional OpenAPI context.
+2. Build prompt templates by test category (functional, edge, negative, security).
+3. Generate structured test definitions (`input`, `expected`, `assertions`, `metadata`).
+4. Present generated tests in review UI; user can approve/edit/regenerate.
 
-#### Integration with Existing API Dash
+Expected output:
+- Useful, categorized test cases with explicit assertions.
 
-**Leverage Existing Infrastructure**:
-- Use existing `flutter_js` runtime for test execution
-- Reuse `RequestModel` and collection system
-- Extend HTTP client for test batching
-- Build on established service patterns
+##### C) Test Execution Agent
 
-**New Services**:
-```
-lib/services/agentic_testing/
-├── orchestrator/
-│   ├── workflow_orchestrator.dart
-│   └── state_manager.dart
-├── agents/
-│   ├── test_generator_agent.dart
-│   ├── test_executor_agent.dart
-│   ├── validator_agent.dart
-│   └── healing_agent.dart
-├── mcp/
-│   ├── mcp_connector.dart
-│   ├── claude_connector.dart
-│   ├── gpt4_connector.dart
-│   └── mistral_connector.dart
-└── models/
-    ├── test_case.dart
-    ├── test_result.dart
-    ├── validation_report.dart
-    └── healing_action.dart
-```
+Implementation approach:
+1. Convert approved test definitions into executable requests.
+2. Support sequential and parallel execution modes.
+3. Handle auth/environment context and inter-request variable extraction.
+4. Store status, response payload, headers, latency, and assertion results.
 
-#### User Workflows
+Expected output:
+- Repeatable test runs with complete telemetry for diagnosis.
 
-**Workflow 1: Conversational Test Generation**
-```
-User: "Generate comprehensive tests for my authentication API"
-Agent: "I found /login, /register, /refresh. What should I test?
-        1. Valid credentials
-        2. Invalid credentials
-        3. Missing fields
-        4. Rate limiting
-        5. SQL injection"
-User: "All of the above, plus JWT token expiration"
-Agent: "Generating 12 test cases with edge cases...
-        Ready for review?"
-[User reviews and approves]
-Agent: "Tests saved. Execute now?"
-```
+##### D) Validation Agent
 
-**Workflow 2: Multi-Step Workflow Testing**
-```
-Test Suite: User Registration → Login → Get Profile → Update → Delete
-1. POST /register → Extract user_id, auth_token
-2. POST /login → Verify token matches
-3. GET /profile (with auth) → Validate user data
-4. PUT /profile (with auth) → Check update reflected
-5. DELETE /user (with auth) → Verify cleanup
-```
+Implementation approach:
+1. Validate status code, headers, schema, field-level assertions.
+2. Classify failures (contract drift, invalid test assumption, flaky/network, auth, server-side error).
+3. Generate human-readable summary + machine-readable validation report.
 
-**Workflow 3: Self-Healing on API Change**
-```
-[API Change Detected: /users now requires 'role' field]
-Agent: "12 tests affected by API change.
-        Proposed fix: Add required 'role' field.
-        Approve?"
-User: "Yes, use 'admin' as default"
-Agent: "Tests updated and re-executed.
-        All 12 passing ✓"
+Expected output:
+- Actionable failure insight, not only pass/fail counters.
+
+##### E) Self-Healing Agent
+
+Implementation approach:
+1. Detect change impact (which endpoints/tests are affected).
+2. Propose minimal patch for tests while preserving intent.
+3. Show diff and confidence score to user.
+4. Apply only after approval, then re-run changed tests.
+
+Expected output:
+- Controlled repair flow with verification after healing.
+
+##### F) MCP Layer
+
+Implementation approach:
+1. Add model/provider abstraction for agent prompts.
+2. Add provider fallback and retry policy.
+3. Add optional caching for repeated prompts.
+
+Expected output:
+- Flexible AI model routing without changing agent business logic.
+
+
+#### 3.4 Scope and Architecture
+
+### Workflow Diagrams
+
+#### High-Level Hybrid Architecture
+
+```mermaid
+graph TB
+  subgraph "User Interface"
+    UI[API Dash UI]
+    Chat[Conversational Interface]
+  end
+    
+  subgraph "Agent Orchestration Layer"
+    Orchestrator[Agent Orchestrator<br/>LangGraph-style State Machine]
+    HITL[Human-in-Loop<br/>Checkpoints]
+  end
+    
+  subgraph "Agent Nodes"
+    TestGen[Test Generator Agent]
+    TestExec[Test Executor Agent]
+    TestValid[Test Validator Agent]
+    SelfHeal[Self-Healing Agent]
+  end
+    
+  subgraph "AI Abstraction Layer"
+    MCPRouter[MCP Router]
+    Cache[Response Cache]
+    RateLimit[Rate Limiter]
+  end
+    
+  subgraph "AI Providers"
+    Claude[Claude API]
+    GPT[GPT-4 API]
+    Mistral[Mistral API]
+    Local[Local LLM]
+  end
+    
+  UI --> Chat
+  Chat --> Orchestrator
+  Orchestrator --> HITL
+    
+  Orchestrator -->|Sequential Flow| TestGen
+  TestGen -->|Conditional| TestExec
+  TestExec -->|Conditional| TestValid
+  TestValid -->|Conditional| SelfHeal
+    
+  TestGen --> MCPRouter
+  TestExec --> MCPRouter
+  TestValid --> MCPRouter
+  SelfHeal --> MCPRouter
+    
+  MCPRouter --> Cache
+  Cache --> RateLimit
+    
+  RateLimit --> Claude
+  RateLimit --> GPT
+  RateLimit --> Mistral
+  RateLimit --> Local
+    
+  style Orchestrator fill:#e1f5ff
+  style MCPRouter fill:#fff4e1
+  style HITL fill:#ffe1e1
 ```
 
-### 4. Weekly Timeline
+![High-Level Hybrid Architecture](images/High-Level%20Hybrid%20Architecture.png)
 
-**Duration**: 12 weeks (175 hours total)
+What this diagram explains:
+This diagram gives the full system picture at a glance. It starts from the API Dash UI, where the user interacts through a conversational interface, and then moves into the orchestrator that controls the testing lifecycle. From there, responsibility is split across specialized agents (generation, execution, validation, and healing), so each stage stays focused and maintainable. The MCP layer sits between these agents and model providers, which keeps the AI integration flexible and provider-agnostic. Most importantly, human-in-the-loop checkpoints are built into the orchestration path itself, so user control is part of the design, not an afterthought.
 
-#### **Week 1-2: Foundation & Architecture Setup**
-- Finalize hybrid architecture with mentors
-- Design data models (TestCase, TestResult, ValidationReport, HealingAction)
-- Set up MCP connector skeleton
-- Research LangGraph vs custom state machine implementation
-- **Deliverable**: Architecture document, data models, project structure
+#### Conversational Test Generation Workflow (Human-in-the-Loop)
 
-#### **Week 3-4: Agent Orchestrator Implementation**
-- Implement state machine for workflow management
-- Build human-in-the-loop checkpoint system
-- Create shared context management for agent transitions
-- Add error handling and retry logic
-- **Tests**: 10+ unit tests for state transitions
-- **Deliverable**: Fully functional orchestrator with checkpoint support
+```mermaid
+sequenceDiagram
+  actor User
+  participant Chat as Chat Interface
+  participant Orchestrator as Agent Orchestrator
+  participant TestGen as Test Generator
+  participant MCP as MCP Router
+  participant LLM as AI Model (Claude/GPT)
+  participant TestExec as Test Executor
+  participant TestValid as Test Validator
+    
+  User->>Chat: "Generate tests for /users API"
+  Chat->>Orchestrator: Process request
+  Orchestrator->>TestGen: Activate
+  TestGen->>MCP: Request test scenarios
+  MCP->>LLM: Generate scenarios
+  LLM-->>MCP: Return scenarios
+  MCP-->>TestGen: Test scenarios
+    
+  TestGen->>Orchestrator: Tests ready
+  Orchestrator->>User: "I suggest:<br/>1. Valid user creation<br/>2. Invalid email<br/>3. Missing fields<br/>4. SQL injection test<br/><br/>Should I proceed?"
+    
+  User->>Orchestrator: "Yes, and add rate limiting"
+  Orchestrator->>TestGen: Refine with feedback
+  TestGen->>MCP: Generate with rate limit
+  MCP->>LLM: Refined generation
+  LLM-->>TestGen: Complete test suite
+    
+  TestGen->>Orchestrator: Tests complete
+  Orchestrator->>User: "5 tests generated. Execute?"
+  User->>Orchestrator: "Execute"
+    
+  Orchestrator->>TestExec: Run tests
+  TestExec->>TestExec: Execute all tests
+  TestExec->>Orchestrator: 2 failed, 3 passed
+    
+  Orchestrator->>TestValid: Analyze failures
+  TestValid->>MCP: Analyze why tests failed
+  MCP->>LLM: Failure analysis
+  LLM-->>TestValid: Root cause + suggestions
+    
+  TestValid->>Orchestrator: Analysis complete
+  Orchestrator->>User: "2 tests failed:<br/>- Invalid email: API now requires specific format<br/>- SQL injection: New validation added<br/><br/>Should I update tests?"
+    
+  User->>Orchestrator: "Yes, fix them"
+  Orchestrator->>SelfHeal: Update tests
+  SelfHeal->>MCP: Generate fixes
+  MCP->>LLM: Updated test code
+  LLM-->>SelfHeal: Fixed tests
+    
+  SelfHeal->>Orchestrator: Tests updated
+  Orchestrator->>User: "Tests fixed and saved ✓"
+```
 
-#### **Week 5-6: Test Generator Agent**
-- Implement prompt templates for different test types (positive, negative, edge, security, performance)
-- Build MCP connector interface
-- Integrate with Claude for initial testing
-- Add test case data model serialization
-- **Tests**: Mock LLM responses, validate test case generation
-- **Deliverable**: Working test generator with prompt engineering
+![Conversational Test Generation Workflow](images/Conversational%20Test%20Generation%20Workflow.png)
 
-#### **Week 7-8: Test Executor Agent**
-- Implement test execution engine (sequential and parallel)
-- Integrate with existing `flutter_js` runtime
-- Build request chaining and state extraction
-- Add authentication handling (Bearer, API Key, OAuth)
-- **Tests**: Execute against mock APIs, validate results capture
-- **Deliverable**: Fully functional executor with result capture and reporting
+What this diagram explains:
+This sequence shows how the user and agents collaborate in practice. The flow begins with a simple natural-language request, then the system proposes tests, accepts user refinement, and only executes after confirmation. If failures happen, the workflow does not stop at reporting; it analyzes root causes, explains what changed, and asks for approval before applying fixes. The key idea is iterative collaboration: generate, review, execute, diagnose, improve, and re-validate—until the suite is reliable.
 
-#### **Week 9-10: Validator & Self-Healing Agents**
-- Implement validation logic (status codes, schemas, performance)
-- Build failure analysis with MCP calls
-- Implement self-healing strategies (test adjustment, request correction, retry logic)
-- Add confidence scoring for healing actions
-- **Tests**: Test validation edge cases, healing strategy validation
-- **Deliverable**: Functional validator and healer with approval workflow
+#### Test Execution Workflow
 
-#### **Week 11-12: MCP Integration & Polish**
-- Implement MCP connectors for Claude, GPT-4, Mistral
-- Add model selection UI
-- Build API key management interface
-- End-to-end testing of complete workflows
-- Performance optimization
-- Documentation and bug fixes
-- **Deliverable**: Production-ready system with multi-LLM support
+```mermaid
+flowchart TD
+  Start([User clicks Execute Tests]) --> LoadTests[Load Test Suite]
+  LoadTests --> CheckAuth{Authentication<br/>Required?}
+    
+  CheckAuth -->|Yes| GetCreds[Get API Credentials]
+  CheckAuth -->|No| PrepareEnv[Prepare Environment]
+  GetCreds --> PrepareEnv
+    
+  PrepareEnv --> Sequential{Execution<br/>Mode?}
+    
+  Sequential -->|Sequential| ExecSeq[Execute Tests One by One]
+  Sequential -->|Parallel| ExecPar[Execute Tests in Parallel]
+    
+  ExecSeq --> RunTest[Run Single Test]
+  ExecPar --> RunTest
+    
+  RunTest --> SendReq[Send HTTP Request]
+  SendReq --> GetResp[Receive Response]
+  GetResp --> Validate[Validate Response]
+    
+  Validate --> CheckStatus{Status Code<br/>Match?}
+  CheckStatus -->|Yes| CheckSchema{Schema<br/>Valid?}
+  CheckStatus -->|No| MarkFail[Mark Test Failed]
+    
+  CheckSchema -->|Yes| CheckAssert{Custom<br/>Assertions?}
+  CheckSchema -->|No| MarkFail
+    
+  CheckAssert -->|Pass| MarkPass[Mark Test Passed]
+  CheckAssert -->|Fail| MarkFail
+    
+  MarkPass --> MoreTests{More<br/>Tests?}
+  MarkFail --> MoreTests
+    
+  MoreTests -->|Yes| RunTest
+  MoreTests -->|No| GenReport[Generate Report]
+    
+  GenReport --> AIAnalysis{Any<br/>Failures?}
+    
+  AIAnalysis -->|Yes| GetAIHelp[AI Analyzes Failures]
+  AIAnalysis -->|No| ShowSuccess[Show Success Report]
+    
+  GetAIHelp --> SuggestFix[Suggest Fixes]
+  SuggestFix --> ShowReport[Show Report with Suggestions]
+    
+  ShowSuccess --> End([End])
+  ShowReport --> End
+```
 
-#### **Post-GSoC (Phase 3 roadmap)**
-- Visual test builder (drag-and-drop UI)
-- Test scheduling and CI/CD integration
-- Team collaboration features
-- Test analytics and health tracking
+![Test Execution Workflow](images/Test%20Execution%20Workflow.png)
 
-### Success Metrics
+What this diagram explains:
+This diagram explains what happens once tests are approved and executed. The pipeline prepares the environment, chooses execution mode (sequential or parallel), runs requests, and validates responses in layers: status checks, schema checks, and custom assertions. Results are accumulated into a report, and when failures appear, the system routes them for AI-assisted analysis before presenting final output. In short, it describes a structured execution engine designed for reliability, observability, and actionable feedback.
 
-**Quantitative**:
-- ✅ Generate 10+ test cases per endpoint
-- ✅ 90%+ code coverage for agentic testing module
-- ✅ Support 3+ AI models (Claude, GPT-4, Mistral)
-- ✅ < 2 second test generation time (per 5 tests)
-- ✅ 100% pass rate on internal test suite
+#### Self-Healing Workflow
 
-**Qualitative**:
-- ✅ Developers find test generation easier than manual scripting
-- ✅ Generated tests catch real API bugs
-- ✅ Conversational interface feels natural
-- ✅ Self-healing is reliable and requires minimal user overrides
+```mermaid
+sequenceDiagram
+  actor User
+  participant Detector as Change Detector
+  participant Analyzer as AI Analyzer
+  participant MCP as MCP Client
+  participant LLM as AI Model
+  participant Healer as Self-Healing Agent
+  participant Storage as Test Storage
+  participant UI as API Dash UI
+    
+  Note over Detector: Periodic check or<br/>user triggers update
+    
+  Detector->>Detector: Fetch latest OpenAPI spec
+  Detector->>Detector: Compare with stored spec
+    
+  alt Changes detected
+    Detector->>Analyzer: Spec changed
+    Analyzer->>Analyzer: Identify affected endpoints
+    Analyzer->>Storage: Load affected tests
+        
+    Analyzer->>MCP: Analyze impact
+    MCP->>LLM: "How do these changes affect tests?"
+    LLM-->>MCP: Impact analysis
+    MCP-->>Analyzer: Impact report
+        
+    Analyzer->>UI: Show changes to user
+    UI->>User: "API changed:<br/>- /users now requires 'role' field<br/>- /login endpoint removed<br/><br/>15 tests affected. Update?"
+        
+    User->>UI: Approve update
+    UI->>Healer: Update tests
+        
+    Healer->>MCP: Generate updated tests
+    MCP->>LLM: "Update tests for new schema"
+    LLM-->>MCP: Updated test code
+    MCP-->>Healer: New tests
+        
+    Healer->>Storage: Save updated tests
+    Storage-->>UI: Confirm saved
+    UI->>User: "Tests updated successfully"
+        
+  else No changes
+    Detector->>UI: No updates needed
+  end
+```
+
+![Self-Healing Workflow](images/Self-Healing%20Workflow.png)
+
+What this diagram explains:
+This sequence explains how the system keeps test suites healthy as APIs evolve. It first detects spec changes, maps their impact to affected tests, and analyzes what needs to be updated. Instead of silently rewriting tests, it presents proposed changes to the user for approval, preserving transparency and trust. After approval, the updated tests are saved and re-validated, so healing is both controlled and verifiable.
+
+#### 3.5 What is Different from Existing Capabilities
+
+Existing DashBot capabilities include AI assistance and test generation support.  
+This project’s added value is the **full lifecycle orchestration**:
+
+1. Generation is connected to execution through a state machine.
+2. Validation is explicit and structured, not ad-hoc.
+3. Self-healing is approval-based and re-validated.
+4. Multi-step workflow tests become first-class (shared state, chaining).
+5. Human-in-the-loop checkpoints are enforced in lifecycle transitions.
+
+In short: from "AI helps generate tests" to "AI + orchestration maintain trustworthy test suites over time".
+
+#### 3.6 Research Depth and Technical Rationale
+
+This design is based on practical constraints of API testing systems:
+- AI output quality varies, so approval checkpoints are required.
+- API specs drift, so impact-aware healing is needed.
+- Real APIs need auth/state chaining, so workflow context must persist.
+- Provider availability/cost varies, so MCP abstraction and fallback are necessary.
+
+Quality strategy:
+1. Unit tests for transitions, agents, and validators.
+2. Integration tests for full lifecycle scenarios.
+3. Dataset of representative API patterns (auth, pagination, CRUD, error flows).
+4. Evaluation metrics: pass stability, healing success rate, false-heal rate, execution latency.
+
+#### 3.7 Risks and Mitigation
+
+- **Risk**: Over-scoping in 175 hours.  
+  **Mitigation**: Core orchestrator + one provider + essential agent path first; advanced features phased later.
+- **Risk**: Poor generated tests.  
+  **Mitigation**: Human checkpoints, iterative refinement loop, validator gating.
+- **Risk**: Provider instability/rate limits.  
+  **Mitigation**: Retries, provider fallback, caching, and bounded concurrency.
+- **Risk**: Incorrect self-healing suggestions.  
+  **Mitigation**: Approval-required patches + automatic re-run verification.
+
+
+
+
+
+### 4. Weekly Timeline: A week-wise timeline of activities that you would undertake.
+
+**Week 1-2: Discovery and Architecture Finalization**
+- Confirm reusable components in existing API Dash code.
+- Finalize workflow states, contracts, and milestone acceptance criteria.
+- Deliverable: architecture notes + implementation plan.
+
+**Week 3-4: Orchestrator Foundation**
+- Implement state machine and workflow persistence.
+- Add initial human-in-the-loop checkpoints.
+- Deliverable: generate/review flow working.
+
+**Week 5-6: Test Execution Engine Integration**
+- Add suite execution (sequential + parallel mode).
+- Capture structured run results and logs.
+- Deliverable: end-to-end generate → execute path.
+
+**Week 7-8: Validation Layer**
+- Add failure categorization and report generation.
+- Add actionable suggestions for failed cases.
+- Deliverable: execute → validate path with user-facing reports.
+
+**Week 9-10: Self-Healing Workflow**
+- Add change detection impact mapping.
+- Add approval-based healing update flow.
+- Deliverable: validate → heal → re-run loop.
+
+**Week 11: MCP Provider Layer and Fallbacks**
+- Add model routing, fallback strategy, and settings.
+- Deliverable: multi-model support for core agent stages.
+
+**Week 12: Hardening, Tests, Docs, Demo**
+- Integration tests, performance checks, polish.
+- Final documentation and demo walkthrough.
+- Deliverable: stable, review-ready project handoff.
 
 ---
 
-## Additional Context
+## References
 
-### My Journey with API Dash
+- Idea discussion: https://github.com/foss42/apidash/discussions/1230
+- PR #1248 (docs: add Testing and Assertions guide with essential examples): https://github.com/foss42/apidash/pull/1248
+- PR #1236 (closed: assertion framework exploration, then scope-aligned pivot): https://github.com/foss42/apidash/pull/1236
+- PR #1223 (Add tests for APIDashAgentCaller #1221): https://github.com/foss42/apidash/pull/1223
+- Resume: https://drive.google.com/file/d/12zJvrIma6cPOJ99OTc4Jiq7Fit1ld2_c/view?usp=sharing
 
-1. **Week 1**: Explored codebase, discovered existing JavaScript runtime infrastructure
-2. **Week 2**: Raised PR #1223 adding tests for `APIDashAgentCaller` to understand agentic infrastructure
-3. **Week 3**: Studied Idea #4 requirements in detail
-4. **Week 4**: Shared comprehensive hybrid architecture proposal in Discussion #1230
-5. **Current**: Preparing GSoC application with mentor feedback incorporated
-
-### Why I'm the Right Fit
-
-- **Agentic AI Experience**: Built Project Samarth with LangGraph state machines, 5 autonomous tools, intelligent routing
-- **Architecture Design**: Familiar with hybrid systems, state machines, multi-agent orchestration patterns
-- **Full-Stack Skills**: Dart/Flutter (API Dash codebase), Python (AI/ML), TypeScript (frontend), JavaScript (testing)
-- **MLM Integration**: Experience with Claude/OpenAI APIs, prompt engineering, RAG systems
-- **Production Mindset**: Built systems deployed to production with monitoring, caching, error handling
-- **Communication**: Active community participant, clear documentation, regular sync-ups
-
-### Commitment
-
-I'm excited about Idea #4 and committed to delivering a production-grade agentic testing system that transforms how API Dash users test their APIs. The hybrid architecture balances AI autonomy with human oversight - creating trustworthy, maintainable tests at scale.
-
-Looking forward to collaborating with the API Dash team!
-
----
-
-**References**:
-- [Project Samarth - Agentic System](https://github.com/adityasuhane-06/Project-Samarth)
-- [SignSarthi - Deep Learning](https://github.com/adityasuhane-06/signature-rtsl)
-- [GSoC Idea #4 Discussion](https://github.com/foss42/apidash/discussions/1230)
-- [PR #1223 - APIDashAgentCaller Tests](https://github.com/foss42/apidash/pull/1223)
-- [Resume](https://drive.google.com/file/d/12zJvrIma6cPOJ99OTc4Jiq7Fit1ld2_c/view?usp=sharing)
+### Technical References
+- Issue #96: Unit testing / auto tests discussion
+- Issue #100: Stress testing with multiple concurrent requests
+- Model Context Protocol: https://modelcontextprotocol.io/
+- OpenAPI Specification: https://swagger.io/specification/
+- Human-in-the-Loop Patterns: https://developers.cloudflare.com/agents/guides/human-in-the-loop/
+- MCP Architecture: https://www.emergentmind.com/topics/mcp-architecture-and-workflow
+- Temporal HITL AI Agent: https://docs.temporal.io/ai-cookbook/human-in-the-loop-python
+- MLflow Conversation Simulation: https://mlflow.org/docs/latest/genai/eval-monitor/running-evaluation/conversation-simulation/
+- LangGraph Orchestration: https://docs.langchain.com/oss/python/langgraph/overview?_gl=1*79mbgi*_gcl_au*MTYzNDQyMjYyNi4xNzcwMjg2MzE5*_ga*MTY3OTk4OTU3Mi4xNzcwMjg2MzIx*_ga_47WX3HKKY2*czE3NzI0NjUwMDYkbzIkZzAkdDE3NzI0NjUwMDYkajYwJGwwJGgw
+- AI-assisted Test Generation Research: https://arxiv.org/pdf/2409.00411
+- GSOC 2025 Project: https://summerofcode.withgoogle.com/archive/2025/projects/1Yf6TmCm
