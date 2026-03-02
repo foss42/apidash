@@ -369,6 +369,9 @@ Notes and limits
 - Tests are self-contained (no external packages). They run with plain JavaScript features.
 - Add real credentials or tokens if needed; placeholders are used when values are unknown.
 
+> [!TIP]
+> For comprehensive testing patterns, advanced assertions, and AI agent testing examples, see the [**Testing and Assertions**](./scripting_user_guide.md#testing-and-assertions) section in the Scripting User Guide.
+
 ### Example: Try It Yourself
 
 Let's walk through generating thorough JavaScript tests for a user management API endpoint.
