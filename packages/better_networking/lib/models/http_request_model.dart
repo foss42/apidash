@@ -43,6 +43,8 @@ class HttpRequestModel with _$HttpRequestModel {
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
+  bool get hasUrlencodedContentType =>
+      bodyContentType == ContentType.urlencoded;
   bool get hasJsonContentType => bodyContentType == ContentType.json;
   bool get hasTextContentType => bodyContentType == ContentType.text;
   int get contentLength => utf8.encode(body ?? "").length;
@@ -50,7 +52,8 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasAnyBody =>
       (hasJsonContentType && contentLength > 0) ||
       (hasTextContentType && contentLength > 0) ||
-      (hasFormDataContentType && formDataMapList.isNotEmpty);
+      ((hasFormDataContentType || hasUrlencodedContentType) &&
+          formDataMapList.isNotEmpty);
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
@@ -61,7 +64,7 @@ class HttpRequestModel with _$HttpRequestModel {
       contentLength > 0;
   bool get hasFormData =>
       kMethodsWithBody.contains(method) &&
-      hasFormDataContentType &&
+      (hasFormDataContentType || hasUrlencodedContentType) &&
       formDataMapList.isNotEmpty;
   bool get hasQuery => query?.isNotEmpty ?? false;
   List<FormDataModel> get formDataList => formData ?? <FormDataModel>[];

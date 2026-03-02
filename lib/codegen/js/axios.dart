@@ -81,21 +81,26 @@ axios(config)
       }
 
       var headers = harJson["headers"];
-      if (headers.isNotEmpty || requestModel.hasFormData) {
+      if (headers.isNotEmpty ||
+          requestModel.hasFormData ||
+          requestModel.hasUrlencodedContentType) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
         for (var i in headers) {
           m[i["name"]] = i["value"];
         }
-        if (requestModel.hasFormData) {
+        if (requestModel.hasFormDataContentType) {
           m[kHeaderContentType] = ContentType.formdata.header;
+        } else if (requestModel.hasUrlencodedContentType) {
+          m[kHeaderContentType] = ContentType.urlencoded.header;
         }
         result += templateHeader.render(
             {"headers": padMultilineString(kJsonEncoder.convert(m), 2)});
       }
       var templateBody = jj.Template(kTemplateBody);
-      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        // Manually Create a JS Object
+      if (requestModel.hasFormDataContentType &&
+          requestModel.formDataMapList.isNotEmpty) {
+        // Multipart: Manually Create a JS FormData Object
         Map<String, String> formParams = {};
         int formFileCounter = 1;
         for (var element in requestModel.formDataMapList) {
@@ -110,6 +115,19 @@ axios(config)
             sanitzeJSObject(kJsonEncoder.convert(formParams));
         result += templateBody
             .render({"body": padMultilineString(sanitizedJSObject, 2)});
+      } else if (requestModel.hasUrlencodedContentType &&
+          requestModel.formDataMapList.isNotEmpty) {
+        // URL-encoded: use URLSearchParams
+        Map<String, String> formParams = {};
+        for (var element in requestModel.formDataMapList) {
+          if (element["type"] == "text") {
+            formParams["${element["name"]}"] = "${element["value"]}";
+          }
+        }
+        final paramsStr = kJsonEncoder.convert(formParams);
+        result += templateBody.render({
+          "body": "new URLSearchParams(${padMultilineString(paramsStr, 2)})"
+        });
       } else if (harJson["postData"]?["text"] != null) {
         result += templateBody.render(
             {"body": kJsonEncoder.convert(harJson["postData"]["text"])});

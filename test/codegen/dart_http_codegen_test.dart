@@ -630,6 +630,45 @@ void main() async {
           ),
           expectedCode);
     });
+    test('POST 4 Urlencoded', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/form');
+
+  Map<String, String> body = {
+    'text': 'API',
+    'sep': '|',
+    'times': '3',
+  };
+
+  var headers = {'content-type': 'application/x-www-form-urlencoded'};
+
+  final response = await http.post(
+    uri,
+    headers: headers,
+    body: body,
+  );
+
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.dartHttp,
+            requestModelPost4Urlencoded,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
+    });
     test('POST 5', () {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 

@@ -203,7 +203,7 @@ class HisRequestBody extends ConsumerWidget {
             kVSpacer5,
             Expanded(
               child: switch (contentType) {
-                ContentType.formdata => Padding(
+                ContentType.formdata || ContentType.urlencoded => Padding(
                     padding: kPh4,
                     child: RequestFormDataTable(
                         rows: requestModel?.formData ?? []),

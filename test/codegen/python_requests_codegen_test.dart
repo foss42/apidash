@@ -444,6 +444,31 @@ print('Response Body:', response.text)
           expectedCode);
     });
 
+    test('POST 4 Urlencoded', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.apidash.dev/io/form'
+
+payload = {
+  "text": "API",
+  "sep": "|",
+  "times": "3",
+}
+
+response = requests.post(url, data=payload)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.pythonRequests,
+            requestModelPost4Urlencoded,
+            SupportedUriSchemes.https,
+          ),
+          expectedCode);
+    });
+
     test('POST 5', () {
       const expectedCode = r"""import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder

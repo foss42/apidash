@@ -107,7 +107,7 @@ println("Response Body: \n$(String(response.body))")
           result += templateBody.render({"body": bodyStr});
         }
 
-        if (requestModel.hasFormData) {
+        if (requestModel.hasFormDataContentType) {
           final formDataBodyData = jj.Template(kTemplateFormDataBody);
           result += formDataBodyData.render(
             {
@@ -115,6 +115,15 @@ println("Response Body: \n$(String(response.body))")
               "formdata": requestModel.formDataMapList,
             },
           );
+        } else if (requestModel.hasUrlencodedContentType &&
+            requestModel.formDataList.isNotEmpty) {
+          // URL-encoded: build a string body
+          final encoded = requestModel.formDataList
+              .where((f) => f.type == FormDataType.text)
+              .map((f) =>
+                  '${Uri.encodeQueryComponent(f.name)}=${Uri.encodeQueryComponent(f.value)}')
+              .join('&');
+          result += jj.Template(kTemplateBody).render({"body": encoded});
         }
 
         var headersList = requestModel.enabledHeaders;
@@ -125,6 +134,9 @@ println("Response Body: \n$(String(response.body))")
             if (addHeaderForBody) {
               headers[HttpHeaders.contentTypeHeader] =
                   requestModel.bodyContentType.header;
+            } else if (requestModel.hasUrlencodedContentType) {
+              headers[HttpHeaders.contentTypeHeader] =
+                  ContentType.urlencoded.header;
             }
           }
 

@@ -62,6 +62,10 @@ puts "Response Code: #{response.code}"
           (requestModel.hasJsonData || requestModel.hasTextData)) {
         headers[kHeaderContentType] = requestModel.bodyContentType.header;
       }
+      if (!requestModel.hasContentTypeHeader &&
+          requestModel.hasUrlencodedContentType) {
+        headers[kHeaderContentType] = ContentType.urlencoded.header;
+      }
 
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
@@ -77,7 +81,8 @@ puts "Response Code: #{response.code}"
         });
       }
 
-      if (requestModel.hasFormData) {
+      if (requestModel.hasFormDataContentType &&
+          requestModel.formDataList.isNotEmpty) {
         result += "\n";
         result += "form_data = [";
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
@@ -100,6 +105,16 @@ puts "Response Code: #{response.code}"
         result += "]\n";
         result +=
             "request.set_form form_data, '${ContentType.formdata.header}'";
+      } else if (requestModel.hasUrlencodedContentType &&
+          requestModel.formDataList.isNotEmpty) {
+        // URL-encoded: use set_form_data with a hash
+        result += "\n";
+        final pairs = requestModel.formDataList
+            .where((f) => f.type == FormDataType.text)
+            .map((f) => '  "${f.name}" => "${f.value}"')
+            .join(',\n');
+        result += "form_data = {\n$pairs\n}\n";
+        result += "request.set_form_data form_data";
       }
 
       result += jj.Template(kStringRequest)
