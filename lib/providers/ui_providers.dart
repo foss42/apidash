@@ -33,6 +33,12 @@ final nameTextFieldFocusNodeProvider =
   return focusNode;
 });
 
+final urlFieldFocusNodeProvider = Provider.autoDispose<FocusNode>((ref) {
+  final focusNode = FocusNode();
+  ref.onDispose(focusNode.dispose);
+  return focusNode;
+});
+
 final collectionSearchQueryProvider = StateProvider<String>((ref) => '');
 final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
 final importFormatStateProvider =
