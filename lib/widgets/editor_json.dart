@@ -34,6 +34,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
   bool _isValidJson = true;
   String? _jsonError;
 
+
   void insertTab() {
     String sp = "  ";
     int offset = math.min(
@@ -51,26 +52,26 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     widget.onChanged?.call(text);
   }
 
-  void _validateJson(String value) {
+  /// Pure validation routine that doesn't call setState. Returns a map
+  /// containing "isValid", "error" and "parsed" keys.
+  Map<String, dynamic> _validateJsonSync(String value) {
     if (value.trim().isEmpty) {
-      setState(() {
-        _isValidJson = true;
-        _jsonError = null;
-      });
-      return;
+      return {'isValid': true, 'error': null, 'parsed': null};
     }
     try {
-      json.decode(value);
-      setState(() {
-        _isValidJson = true;
-        _jsonError = null;
-      });
+      final parsed = json.decode(value);
+      return {'isValid': true, 'error': null, 'parsed': parsed};
     } catch (e) {
-      setState(() {
-        _isValidJson = false;
-        _jsonError = e.toString();
-      });
+      return {'isValid': false, 'error': e.toString(), 'parsed': null};
     }
+  }
+
+  void _validateJson(String value) {
+    final result = _validateJsonSync(value);
+    setState(() {
+      _isValidJson = result['isValid'] as bool;
+      _jsonError = result['error'] as String?;
+    });
   }
 
   @override
@@ -78,13 +79,16 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     super.initState();
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
-      _validateJson(widget.initialValue!);
+      final result = _validateJsonSync(widget.initialValue!);
+      _isValidJson = result['isValid'] as bool;
+      _jsonError = result['error'] as String?;
     }
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
   }
 
   @override
   void dispose() {
+    controller.dispose();
     editorFocusNode.dispose();
     super.dispose();
   }
@@ -219,18 +223,19 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
                 ),
               ),
               // Format JSON button (top right)
-              Align(
-                alignment: Alignment.topRight,
-                child: ADIconButton(
-                  icon: Icons.format_align_left,
-                  tooltip: "Format JSON",
-                  onPressed: () {
-                    controller.formatJson(sortJson: false);
-                    _validateJson(controller.text);
-                    widget.onChanged?.call(controller.text);
-                  },
+              if (!widget.readOnly)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: ADIconButton(
+                    icon: Icons.format_align_left,
+                    tooltip: "Format JSON",
+                    onPressed: () {
+                      controller.formatJson(sortJson: false);
+                      _validateJson(controller.text);
+                      widget.onChanged?.call(controller.text);
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
         ),
