@@ -52,6 +52,9 @@ class RequestEditorDefault extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 ref.read(collectionStateNotifierProvider.notifier).add();
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ref.read(urlFieldFocusNodeProvider).requestFocus();
+                });
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
