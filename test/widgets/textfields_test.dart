@@ -58,8 +58,7 @@ void main() {
     expect(find.text('entering 123 for cell field'), findsOneWidget);
   });
 
-  testWidgets('Cell Field refreshes when initialValue changes',
-      (tester) async {
+  testWidgets('Cell Field refreshes when initialValue changes', (tester) async {
     // Build widget with initial value "first value"
     await tester.pumpWidget(
       MaterialApp(
@@ -105,6 +104,90 @@ void main() {
     expect(find.text("second value"), findsOneWidget);
     expect(find.text("first value"), findsNothing);
   });
+
+  testWidgets('CellField does not lose focus after first character',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'CellField',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: Column(
+            children: [
+              CellField(
+                keyId: "focus-test",
+                initialValue: "",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text(""), findsOneWidget);
+
+    var fieldFinder = find.byKey(const Key("focus-test"));
+    // focus field
+    await tester.tap(fieldFinder);
+    await tester.pump();
+
+    // type character
+    await tester.enterText(fieldFinder, "a");
+    await tester.pump();
+
+    // Verify text updated
+    expect(find.text("a"), findsOneWidget);
+
+    // Verify field is still focused
+    expect(FocusManager.instance.primaryFocus, isNotNull);
+  });
+
+  testWidgets(
+    'CellField preserves cursor position on initialValue update',
+    (tester) async {
+      const initialValue = 'hello world';
+      const updatedValue = 'hello world!';
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: kThemeDataLight,
+          home: Scaffold(
+            body: CellField(
+              keyId: 'cursor-test',
+              initialValue: initialValue,
+            ),
+          ),
+        ),
+      );
+
+      // Get controller
+      final editableText =
+          tester.widget<EditableText>(find.byType(EditableText));
+      final controller = editableText.controller;
+
+      // Set cursor to offset 5
+      controller.selection = const TextSelection.collapsed(offset: 2);
+
+      // updated initialValue
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: kThemeDataLight,
+          home: Scaffold(
+            body: CellField(
+              keyId: 'cursor-test',
+              initialValue: updatedValue,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Verify cursor position remains same.
+      expect(controller.text, updatedValue);
+      expect(controller.selection.baseOffset, 2);
+    },
+  );
 
   testWidgets('URL Field sends request on enter keystroke', (tester) async {
     bool wasSubmitCalled = false;
