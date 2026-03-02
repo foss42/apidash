@@ -16,6 +16,7 @@ class HistoryRequestModel with _$HistoryRequestModel {
     required HistoryMetaModel metaData,
     HttpRequestModel? httpRequestModel,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? webSocketRequestModel,
     required HttpResponseModel httpResponseModel,
     String? preRequestScript,
     String? postRequestScript,

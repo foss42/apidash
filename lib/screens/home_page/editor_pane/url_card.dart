@@ -36,6 +36,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -53,6 +54,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -113,6 +115,7 @@ class URLTextField extends ConsumerWidget {
       selectedId: selectedId,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
+        APIType.websocket => requestModel.webSocketRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,
       },
       onChanged: (value) {
@@ -120,6 +123,11 @@ class URLTextField extends ConsumerWidget {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
+        } else if (requestModel.apiType == APIType.websocket) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+              webSocketRequestModel: (requestModel.webSocketRequestModel ??
+                      const WebSocketRequestModel())
+                  .copyWith(url: value));
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }
@@ -145,6 +153,37 @@ class SendRequestButton extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.isWorking));
     final isStreaming = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isStreaming));
+    final responseStatus = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.responseStatus));
+
+    final isConnected = responseStatus == 101;
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+
+    if (apiType == APIType.websocket) {
+      return SendButton(
+        isStreaming: isConnected,
+        isWorking: isWorking ?? false,
+        onTap: () {
+          final id = ref.read(selectedIdStateProvider);
+          if (id != null) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .connectWebSocket(id);
+          }
+        },
+        onCancel: () {
+          final id = ref.read(selectedIdStateProvider);
+          if (id != null) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .disconnectWebSocket(id);
+          }
+        },
+        text: isConnected ? "Disconnect" : "Connect",
+        icon: isConnected ? Icons.stop : Icons.play_arrow,
+      );
+    }
 
     return SendButton(
       isStreaming: isStreaming ?? false,

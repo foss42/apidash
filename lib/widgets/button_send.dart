@@ -9,12 +9,16 @@ class SendButton extends StatelessWidget {
     required this.isWorking,
     required this.onTap,
     this.onCancel,
+    this.text,
+    this.icon,
   });
 
   final bool isStreaming;
   final bool isWorking;
   final void Function() onTap;
   final void Function()? onCancel;
+  final String? text;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +34,15 @@ class SendButton extends StatelessWidget {
               ),
               kHSpacer6,
             ]
-          : const [
+          : [
               Text(
-                kLabelSend,
+                text ?? kLabelSend,
                 style: kTextStyleButton,
               ),
               kHSpacer10,
               Icon(
                 size: 16,
-                Icons.send,
+                icon ?? Icons.send,
               ),
             ],
     );

@@ -14,6 +14,7 @@ dependencies:
   curl_parser:
     path: ../curl_parser
   freezed_annotation: ^3.0.0
+  json_annotation: ^4.8.0
   genai:
     path: ../genai
   har:
@@ -24,6 +25,8 @@ dependencies:
   postman:
     path: ../postman
   xml: ^6.3.0
+  seed:
+    path: ../seed
 
 dev_dependencies:
   flutter_test:
