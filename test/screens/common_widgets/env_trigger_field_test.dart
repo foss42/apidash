@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:extended_text_field/extended_text_field.dart';
@@ -223,5 +224,65 @@ void main() {
     expect(fieldKey.currentState!.controller.selection.baseOffset,
         newValue.length);
     expect(fieldKey.currentState!.controller.text, newValue);
+  });
+
+  testWidgets('EnvironmentTriggerField supports multiline editor settings',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              keyId: 'multiline-key',
+              initialValue: 'line-1\nline-2',
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              expands: true,
+              textAlignVertical: TextAlignVertical.top,
+              enableTabInsertion: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final field = tester.widget<ExtendedTextField>(find.byType(ExtendedTextField));
+    expect(field.keyboardType, TextInputType.multiline);
+    expect(field.maxLines, isNull);
+    expect(field.expands, true);
+    expect(field.textAlignVertical, TextAlignVertical.top);
+  });
+
+  testWidgets('EnvironmentTriggerField inserts tab spaces when enabled',
+      (WidgetTester tester) async {
+    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'tab-key',
+              initialValue: 'abcd',
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              expands: true,
+              enableTabInsertion: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(ExtendedTextField));
+    await tester.pump();
+    fieldKey.currentState!.controller.selection =
+        const TextSelection.collapsed(offset: 1);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+
+    expect(fieldKey.currentState!.controller.text, 'a  bcd');
   });
 }

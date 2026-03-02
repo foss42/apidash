@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'env_regexp_span_builder.dart';
@@ -17,6 +18,11 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.decoration,
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
+    this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
+    this.expands = false,
+    this.textAlignVertical,
+    this.enableTabInsertion = false,
     this.readOnly = false,
     this.obscureText = false,
   }) : assert(
@@ -34,6 +40,11 @@ class EnvironmentTriggerField extends StatefulWidget {
   final InputDecoration? decoration;
   final double? optionsWidthFactor;
   final AutocompleteNoTrigger? autocompleteNoTrigger;
+  final TextInputType keyboardType;
+  final int? maxLines;
+  final bool expands;
+  final TextAlignVertical? textAlignVertical;
+  final bool enableTabInsertion;
   final bool readOnly;
   final bool obscureText;
 
@@ -45,6 +56,26 @@ class EnvironmentTriggerField extends StatefulWidget {
 class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   late TextEditingController controller;
   late FocusNode _focusNode;
+
+  void _insertTab() {
+    const space = "  ";
+    final selection = controller.selection;
+    final baseOffset = selection.baseOffset;
+    final extentOffset = selection.extentOffset;
+    final start = baseOffset < extentOffset ? baseOffset : extentOffset;
+    final end = baseOffset > extentOffset ? baseOffset : extentOffset;
+    if (start < 0 || end < 0) {
+      return;
+    }
+    final text = controller.text;
+    final newText = text.replaceRange(start, end, space);
+    final newOffset = start + space.length;
+    controller.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newOffset),
+    );
+    widget.onChanged?.call(newText);
+  }
 
   @override
   void initState() {
@@ -129,19 +160,34 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             }),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
-        return ExtendedTextField(
+        final field = ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,
           decoration: widget.decoration,
           style: widget.style,
           onChanged: widget.onChanged,
           onSubmitted: widget.onFieldSubmitted,
+          keyboardType: widget.keyboardType,
+          maxLines: widget.maxLines,
+          expands: widget.expands,
+          textAlignVertical: widget.textAlignVertical,
           specialTextSpanBuilder: EnvRegExpSpanBuilder(),
           onTapOutside: (event) {
             _focusNode.unfocus();
           },
           readOnly: widget.readOnly,
           obscureText: widget.obscureText,
+        );
+
+        if (!widget.enableTabInsertion) {
+          return field;
+        }
+
+        return CallbackShortcuts(
+          bindings: {
+            const SingleActivator(LogicalKeyboardKey.tab): _insertTab,
+          },
+          child: field,
         );
       },
     );
