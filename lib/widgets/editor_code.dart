@@ -35,13 +35,7 @@ class CodeEditor extends StatelessWidget {
         smartDashesType: SmartDashesType.enabled,
         smartQuotesType: SmartQuotesType.enabled,
         background: Theme.of(context).colorScheme.surfaceContainerLowest,
-        gutterStyle: GutterStyle(
-          width: 0, // TODO: Fix numbers size
-          margin: 2,
-          textAlign: TextAlign.left,
-          showFoldingHandles: false,
-          showLineNumbers: false,
-        ),
+        gutterStyle: GutterStyle.none,
         cursorColor: Theme.of(context).colorScheme.primary,
         controller: controller,
         textStyle: kCodeStyle.copyWith(
