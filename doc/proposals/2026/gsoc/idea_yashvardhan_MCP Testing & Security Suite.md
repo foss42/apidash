@@ -23,16 +23,39 @@ Idea description:
 
 I propose building a **web-based MCP Testing & Security Suite** under the API Dash umbrella, a unified tool where developers can connect to any MCP server, functionally test it, and analyze its security posture, all from one interface with one shared connection.
 
-## UI Mockup
+## UI Wireframes
 
-![UI Mockup](images/mockup-ui.png)
+The interface follows a consistent four-panel layout: **Sidebar** (navigate between views), **Server Explorer** (left — connected server, discovered capabilities with pass/warn/fail status), **Workspace** (center — the active view), and a collapsible **Security Strip** (right — score and findings count at a glance).
 
-The interface has four panels:
+### 1. Connection Setup
 
-- **Sidebar** — Switch between connection manager, test workbench, security dashboard, collections, and settings
-- **Server Explorer** (left) — Shows the connected MCP server, its discovered tools/resources/prompts, and per-item pass/warn/fail status
-- **Workspace** (center) — Invoke tools with auto-generated parameter forms, build assertions, chain calls, inspect JSON-RPC logs
-- **Security Panel** (right) — Live security score (0–100), severity breakdown, and detailed findings per tool
+![Connection Setup](images/connection_mockup.png)
+
+The first screen a developer sees. Select a transport (stdio or Streamable HTTP per [MCP spec 2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports)), configure the server command, arguments, working directory, and environment variables. Recent connections are listed in the explorer for quick reconnect.
+
+### 2. Tool Invocation
+
+![Tool Invocation](images/invoke_mockup.png)
+
+The primary testing workspace. Auto-generated parameter forms from the tool's schema, keyboard shortcuts for power users (&#8984;&#9166; to invoke, &#8984;S to save), and a response viewer with Tree/Raw/Headers tabs. The security panel collapses to a thin strip showing the score (72) and findings count (7), expandable on demand.
+
+### 3. Test Assertions
+
+![Test Assertions](images/test_assertions.png)
+
+Build assertion suites per tool. Each assertion defines rules (e.g., `response.isError equals false`, `response.forecast[0].high is type number`) with pass/fail results. A summary bar shows the overall test run status with a visual progress indicator.
+
+### 4. Tool Chaining
+
+![Tool Chaining](images/tool_chaining_mockup.png)
+
+Chain multiple tool calls together with variable extraction. Output from one step (e.g., `$lat ← results[0].latitude`) feeds into the next step's parameters. Each step shows its status, extracted variables, and a response preview. This enables end-to-end workflow testing across multiple tools.
+
+### 5. Security Dashboard
+
+![Security Dashboard](images/security_mockup.png)
+
+A dedicated security view with score banner, pluggable analyzer results (Tool Poisoning, Input Injection, Auth/Credentials, Protocol Compliance), and a filterable findings table. Selecting a finding expands inline to show the flagged content and concrete remediation guidance.
 
 This will be a **separate web application** under the API Dash umbrella, built entirely in TypeScript (React frontend, Node.js runtime backend). This aligns with the tech stack listed for Idea #1.
 
@@ -40,7 +63,7 @@ The core architectural insight is that **functional testing and security analysi
 
 Key components:
 
-- **MCP Client Engine (shared core)** — Handles connection lifecycle, capability negotiation, and tool invocation across all three transports (stdio, SSE, Streamable HTTP) using the official `@modelcontextprotocol/sdk`
+- **MCP Client Engine (shared core)** — Handles connection lifecycle, capability negotiation, and tool invocation across both standard transports (stdio, Streamable HTTP) as defined in [MCP spec 2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports), with backwards-compatible support for the deprecated HTTP+SSE transport, using the official `@modelcontextprotocol/sdk`
 - **Test Execution Engine** — Runs functional tests, assertions, chained calls, manages test collections
 - **Security Analysis Engine** — Runs pluggable security analyzers against discovered capabilities
-- **Pluggable Analyzer Modules** — Tool poisoning detector, input injection tester, auth/credential analyzer, protocol compliance checker [against MCP spec 2025-11-25](https://modelcontextprotocol.io/specification/2025-11-25)
+- **Pluggable Analyzer Modules** — Tool poisoning detector, input injection tester, auth/credential analyzer, protocol compliance checker [against MCP spec 2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26)
