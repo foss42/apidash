@@ -30,25 +30,25 @@ Developers building MCP servers are forced to manually test by connecting to Cla
 Testing is not one-size-fits-all. We identified two distinct personas with very different needs:
 
 **Junior Developer** — Building their first MCP server:
-- *"My server works in Claude Desktop but breaks in Cursor — why?"* → They need **MCP Spec Compliance Checking** to tell them exactly what their server does wrong
-- *"Am I even returning the right JSON-RPC format?"* → They need **protocol-level visibility** to learn what happens under the hood
-- *"I copy-pasted an MCP server template but half the tools throw errors"* → They need **automated happy-path and negative testing** to catch issues instantly
+- "My server works in Claude Desktop but breaks in Cursor — why?" — They need **MCP Spec Compliance Checking** to tell them exactly what their server does wrong
+- "Am I even returning the right JSON-RPC format?" — They need **protocol-level visibility** to learn what happens under the hood
+- "I copy-pasted an MCP server template but half the tools throw errors" — They need **automated happy-path and negative testing** to catch issues instantly
 
 **Senior Developer** — Maintaining production MCP servers:
-- *"Did my latest commit break any tool responses?"* → They need **regression testing** and **manifest diff** across versions
-- *"Is my server secure? Can someone inject malicious inputs via tool arguments?"* → They need **security surface analysis** — automated mapping of what the server CAN do and what's exploitable
-- *"How does my server behave under 50 concurrent tool calls?"* → They need **chaos/resilience testing** — concurrent requests, mid-call disconnections, malformed JSON-RPC payloads
-- *"I need this in my CI/CD pipeline"* → They need **CLI export** and **GitHub Actions integration**
+- "Did my latest commit break any tool responses?" — They need **regression testing** and **manifest diff** across versions
+- "Is my server secure? Can someone inject malicious inputs via tool arguments?" — They need **security surface analysis** — automated mapping of what the server CAN do and what's exploitable
+- "How does my server behave under 50 concurrent tool calls?" — They need **chaos/resilience testing** — concurrent requests, mid-call disconnections, malformed JSON-RPC payloads
+- "I need this in my CI/CD pipeline" — They need **CLI export** and **GitHub Actions integration**
 
 | Need | Junior Dev | Senior Dev | MCP DevTools |
 |------|:---:|:---:|:---:|
-| "Does my server work at all?" | ✅ Critical | ✅ Baseline | **Auto-test generation** — 50+ tests in one click |
-| "Does it follow the MCP spec?" | ✅ Critical | ✅ Important | **Spec Compliance Checker** — validates protocol conformance |
-| "What's happening at the protocol layer?" | ✅ Learning tool | ✅ Debugging | **Protocol Inspector** — real-time JSON-RPC stream |
-| "Did my change break anything?" | ❌ Not yet | ✅ Critical | **Manifest Diff** — compare server versions side-by-side |
-| "Is my server secure?" | ❌ Unaware | ✅ Critical | **Security Surface Analysis** — flags risky capabilities |
-| "Does it survive production load?" | ❌ Not yet | ✅ Critical | **Chaos Testing** — concurrent calls, disconnections, malformed payloads |
-| "Can I automate this in CI?" | ❌ Not needed | ✅ Critical | **CLI Export** — run test suites in GitHub Actions |
+| "Does my server work at all?" | Yes (Critical) | Yes (Baseline) | **Auto-test generation** — 50+ tests in one click |
+| "Does it follow the MCP spec?" | Yes (Critical) | Yes (Important) | **Spec Compliance Checker** — validates protocol conformance |
+| "What's happening at the protocol layer?" | Yes (Learning tool) | Yes (Debugging) | **Protocol Inspector** — real-time JSON-RPC stream |
+| "Did my change break anything?" | No (Not yet) | Yes (Critical) | **Manifest Diff** — compare server versions side-by-side |
+| "Is my server secure?" | No (Unaware) | Yes (Critical) | **Security Surface Analysis** — flags risky capabilities |
+| "Does it survive production load?" | No (Not yet) | Yes (Critical) | **Chaos Testing** — concurrent calls, disconnections, malformed payloads |
+| "Can I automate this in CI?" | No (Not needed) | Yes (Critical) | **CLI Export** — run test suites in GitHub Actions |
 
 ### Proposed Solution & Architecture
 
@@ -82,9 +82,9 @@ How it works:
 
 ### Five Advanced Testing Pillars (Beyond Basic Test Generation)
 
-Our analysis showed that basic "send request → check response" testing only catches ~30% of production issues. The remaining 70% come from spec violations, security gaps, and resilience failures. MCP DevTools addresses this with 5 advanced pillars:
+Our analysis showed that basic "send request -> check response" testing only catches ~30% of production issues. The remaining 70% come from spec violations, security gaps, and resilience failures. MCP DevTools addresses this with 5 advanced pillars:
 
-#### 1. MCP Spec Compliance Checker 📋
+#### 1. MCP Spec Compliance Checker
 
 Not just "does the tool respond?" but "does the server follow the MCP specification correctly?"
 
@@ -98,21 +98,21 @@ Not just "does the tool respond?" but "does the server follow the MCP specificat
 
 **Result:** A **compliance scorecard** — "Your server is 85% compliant. 3 issues found: missing error codes on tool X, non-standard capability declaration, invalid schema on tool Y."
 
-#### 2. Security Surface Analysis 🛡️
+#### 2. Security Surface Analysis
 
 Automatically maps what an MCP server CAN do and flags risks:
 
 | Risk Level | Capability | Example | Flag |
 |:---:|-----------|---------|------|
-| 🔴 Critical | Code execution | `execute_command`, `run_script` | Can execute arbitrary code on host |
-| 🔴 Critical | File write/delete | `write_file`, `delete_file` | Can modify/destroy data |
-| 🟡 High | Network access | `fetch_url`, `http_request` | Can exfiltrate data or SSRF |
-| 🟡 High | Database write | `insert_record`, `drop_table` | Can corrupt data stores |
-| 🟢 Low | Read-only | `read_file`, `list_directory` | Information disclosure only |
+| Critical | Code execution | `execute_command`, `run_script` | Can execute arbitrary code on host |
+| Critical | File write/delete | `write_file`, `delete_file` | Can modify/destroy data |
+| High | Network access | `fetch_url`, `http_request` | Can exfiltrate data or SSRF |
+| High | Database write | `insert_record`, `drop_table` | Can corrupt data stores |
+| Low | Read-only | `read_file`, `list_directory` | Information disclosure only |
 
 **Result:** A **security report** — "This server has 2 critical-risk tools (execute_command, write_file), 1 high-risk tool (fetch_url), and 5 low-risk tools. Recommendation: sandbox critical tools before production deployment."
 
-#### 3. Chaos & Resilience Testing 💥
+#### 3. Chaos & Resilience Testing
 
 Tests how servers behave under real-world stress, not ideal conditions:
 
@@ -126,24 +126,24 @@ Tests how servers behave under real-world stress, not ideal conditions:
 
 **Result:** A **resilience report** — "Server survived 45/50 concurrent calls (90%). 5 calls timed out at >5s. Server crashed on malformed JSON-RPC (critical bug). Reconnection test: passed 10/10."
 
-#### 4. Contract Testing 📄
+#### 4. Contract Testing
 
 Developers define what a tool SHOULD do, and MCP DevTools continuously verifies it:
 
 ```
 Contract: "get_weather"
   When called with { city: "London" }:
-    ✅ Status must be "success"
-    ✅ Response must contain "temperature"
-    ✅ Response must contain "humidity"  
-    ✅ Latency must be < 2000ms
+    Status must be "success" (Verified)
+    Response must contain "temperature" (Verified)
+    Response must contain "humidity" (Verified)
+    Latency must be < 2000ms (Verified)
 ```
 
 This is like **snapshot testing for MCP** — if a server update changes the response shape, the contract catches it immediately.
 
 **Result:** "3/4 contracts passing. Contract 'get_weather → contains humidity' FAILED — field was renamed to 'relative_humidity' in v2.1."
 
-#### 5. Server Diff Testing 🔀
+#### 5. Server Diff Testing
 
 Compare two versions of the same server, or two entirely different servers:
 
