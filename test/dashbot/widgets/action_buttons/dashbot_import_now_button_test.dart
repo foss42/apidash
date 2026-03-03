@@ -41,12 +41,11 @@ void main() {
 
       late TestChatViewmodel notifier;
       late RecordingDashbotWindowNotifier windowNotifier;
-      final binding = TestWidgetsFlutterBinding.ensureInitialized();
-      binding.window.physicalSizeTestValue = const Size(1600, 1200);
-      binding.window.devicePixelRatioTestValue = 1.0;
+      tester.view.physicalSize = const Size(1600, 1200);
+      tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
-        binding.window.clearPhysicalSizeTestValue();
-        binding.window.clearDevicePixelRatioTestValue();
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
       });
       await tester.pumpWidget(
         ProviderScope(
