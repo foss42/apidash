@@ -89,6 +89,8 @@ Users can test their workflow directly within the Create tab:
 
 The Test tab provides a comprehensive environment for validating MCP servers, supporting both locally-built servers and external servers.
 
+I am looking at building the test suite upon the already existing mcp inspector, so all the features that exist within the suite are already avaible out of the box, so I would simply extend the ui to be more intuitive to use. 
+
 ### 2.1 Server Selection
 
 Users can test servers from two sources:
