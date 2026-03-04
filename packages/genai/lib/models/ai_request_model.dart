@@ -37,7 +37,11 @@ class AIRequestModel with _$AIRequestModel {
   Map<String, dynamic> getModelConfigMap() {
     Map<String, dynamic> m = {};
     for (var config in modelConfigs) {
-      m[config.id] = config.value.getPayloadValue();
+      final payloadValue = config.value.getPayloadValue();
+      if (payloadValue is num && !payloadValue.isFinite) {
+        continue;
+      }
+      m[config.id] = payloadValue;
     }
     return m;
   }

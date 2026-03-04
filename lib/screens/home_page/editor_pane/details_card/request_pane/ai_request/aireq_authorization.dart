@@ -10,15 +10,13 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final apiKey = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.apiKey));
-    final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(selectedId!);
-    final aiReqM = requestModel?.aiRequestModel;
-    if (aiReqM == null) {
+    final aiRequestModel = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.aiRequestModel),
+    );
+    if (aiRequestModel == null) {
       return kSizedBoxEmpty;
     }
+    final apiKey = aiRequestModel.apiKey;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -32,9 +30,16 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-authvalue-body",
                 initialValue: apiKey,
                 onChanged: (String value) {
+                  final latestAiRequestModel = ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .getRequestModel(selectedId!)
+                      ?.aiRequestModel;
+                  if (latestAiRequestModel == null) return;
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(aiRequestModel: aiReqM.copyWith(apiKey: value));
+                      .update(
+                          aiRequestModel:
+                              latestAiRequestModel.copyWith(apiKey: value));
                 },
                 hintText: 'Enter API key or Authorization Credentials',
               ),

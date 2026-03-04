@@ -10,17 +10,14 @@ class AIRequestPromptSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final systemPrompt = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.systemPrompt));
-    final userPrompt = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.userPrompt));
-    final aiRequestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(selectedId!)
-        ?.aiRequestModel;
+    final aiRequestModel = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.aiRequestModel),
+    );
     if (aiRequestModel == null) {
       return kSizedBoxEmpty;
     }
+    final systemPrompt = aiRequestModel.systemPrompt;
+    final userPrompt = aiRequestModel.userPrompt;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -42,9 +39,14 @@ class AIRequestPromptSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-sysprompt-body",
                 initialValue: systemPrompt,
                 onChanged: (String value) {
+                  final latestAiRequestModel = ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .getRequestModel(selectedId!)
+                      ?.aiRequestModel;
+                  if (latestAiRequestModel == null) return;
                   ref.read(collectionStateNotifierProvider.notifier).update(
                       aiRequestModel:
-                          aiRequestModel.copyWith(systemPrompt: value));
+                          latestAiRequestModel.copyWith(systemPrompt: value));
                 },
                 hintText: 'Enter System Prompt',
               ),
@@ -66,9 +68,14 @@ class AIRequestPromptSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-userprompt-body",
                 initialValue: userPrompt,
                 onChanged: (String value) {
+                  final latestAiRequestModel = ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .getRequestModel(selectedId!)
+                      ?.aiRequestModel;
+                  if (latestAiRequestModel == null) return;
                   ref.read(collectionStateNotifierProvider.notifier).update(
                       aiRequestModel:
-                          aiRequestModel.copyWith(userPrompt: value));
+                          latestAiRequestModel.copyWith(userPrompt: value));
                 },
                 hintText: 'Enter User Prompt',
               ),

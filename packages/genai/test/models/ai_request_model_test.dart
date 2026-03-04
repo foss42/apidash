@@ -55,5 +55,23 @@ void main() {
       expect(model.getModelConfigIdx('max_tokens'), equals(1));
       expect(model.getModelConfigIdx('foo'), isNull);
     });
+
+    test('should ignore non-finite numeric config values', () {
+      final model = AIRequestModel(
+        modelConfigs: [
+          kDefaultModelConfigMaxTokens.copyWith(
+            value: ConfigNumericValue(value: double.infinity),
+          ),
+          kDefaultModelConfigTemperature.copyWith(
+            value: ConfigSliderValue(value: (0, 0.8, 1)),
+          ),
+        ],
+      );
+
+      final configMap = model.getModelConfigMap();
+
+      expect(configMap.containsKey('max_tokens'), isFalse);
+      expect(configMap['temperature'], equals(0.8));
+    });
   });
 }
