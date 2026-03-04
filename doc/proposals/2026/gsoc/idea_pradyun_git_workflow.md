@@ -1,30 +1,59 @@
-### Initial Idea Submission
+# GSoC 2026 Idea Proposal: Git Support, Visual Workflow Builder & Collection Dashboard
 
 **Full Name:** Keerthi Pradyun
-**University name:** University of Hyderabad
-**Program you are enrolled in (Degree & Major/Minor):** Integrated M.Tech in CSE Major
-**Year:** 3rd
-**Expected graduation date:** June 2028
+**University:** University of Hyderabad
+**Program:** Integrated M.Tech in CSE Major (3rd Year, Exp. June 2028)
 
-**Project Title:** Git Support, Visual Workflow Builder & Collection Dashboard
-**Relevant issues:** * [Issue #502: Git Integration](https://github.com/foss42/apidash/issues/502)
-* [Issue #120: Drag & Drop UI API workflow builder](https://github.com/foss42/apidash/issues/120)
+**Project Info:**
+* **Length:** 175 hours
+* **Difficulty:** Medium-Hard
+* **Skills:** Git, UI/UX Design, AI, Agents, Node Flows, Dart, Flutter
+* **Related Issues:** #502, #120
 
-### Idea description:
+---
 
-My approach focuses on evolving API Dash from a tool for individual requests into a comprehensive environment for **Team Collaboration** and **Automated Workflows**. The implementation will be divided into three integrated modules:
+## Executive Summary
+This project re-architects API Dash from a localized, single-request executor into a collaborative, automated API orchestration platform. By migrating the storage layer to a decentralized file-system model, the application will support native Git version control. Building upon this, the project introduces a Directed Acyclic Graph (DAG) based visual workflow builder—orchestrated manually or via Agentic AI—and culminates in an observability dashboard equipped with automated CI/CD webhooks. 
 
-#### 1. Git Integration (Collaboration)
-To enable version control, I will implement a layer that maps API Dash collections to a local directory structure. 
-* **Implementation:** Instead of one large state file, collections will be saved as individual JSON files. I will use a Dart-native Git wrapper to allow users to `Commit` changes, `Push/Pull` from remote repositories, and view `Diffs` directly within a new "Version Control" view in the app.
-* **State Management:** I will utilize **Riverpod** to track file-system changes and ensure the UI reflects the current Git branch and "dirty" (unsaved) status in real-time.
+---
 
-#### 2. Visual Workflow Builder (Automation)
-I will build a drag-and-drop canvas to allow users to chain multiple API requests.
-* **Node-Link UI:** Using the `vyuh_node_flow` package (suggested in community discussions), I will create "Nodes" representing API requests and "Edges" representing data flow. This allows for passing variables (e.g., an auth token from a login response) into the headers of subsequent requests.
-* **Agentic AI:** I will implement a "Smart Prompt" feature. Users can describe a sequence in plain English, and an AI agent will generate the corresponding node graph by mapping the prompt to the existing collection schema.
+## Technical Architecture & Implementation Plan
 
-#### 3. Collection Dashboard (Observability)
-A central dashboard will provide high-level insights into the health of API collections.
-* **Analytics:** I will use `fl_chart` to visualize execution history, success/failure rates, and latency trends over time. 
-* **Automated Reporting:** I will implement a Webhook system that sends automated execution reports to platforms like Slack or Discord, facilitating better observability for API lifecycles and CI/CD pipelines.
+### 1. Git Integration (Version Control & Collaboration)
+The current monolithic state management limits collaboration. This module decouples the storage architecture to support true distributed version control natively within the Flutter app.
+
+
+
+* **Decentralized Serialization:** API requests, environments, and workflows will be migrated from a single state object to decentralized, human-readable JSON files using `json_serializable` and `Freezed` for immutable data models. This isolates changes and prevents massive merge conflicts.
+* **Reactive State Synchronization:** I will implement a custom `Riverpod` `StreamProvider` that hooks into Dart's `Directory.watch()`. This ensures the Flutter UI acts as a reactive reflection of the file system. If a user pulls a branch, the UI updates instantly without requiring a manual reload or custom file watcher polling.
+* **Native Git Wrapper:** Utilizing a pure Dart Git package (e.g., `dart_git` or standard `git`), the application will expose Git operations natively. The UI will feature a "Version Control" panel for staging files, committing, branch switching, and resolving conflicts via a built-in diff viewer.
+
+### 2. Visual Workflow Builder (AI-Powered & Manual Orchestration)
+This module introduces an asynchronous execution engine capable of running sequential and conditional API chains, bypassing the limitation of click-by-click execution.
+
+
+
+* **DAG Canvas Implementation:** Leveraging the `vyuh_node_flow` package, the UI will provide an interactive node-based canvas. Nodes will be strongly typed (e.g., `RequestNode`, `ConditionNode`, `TransformNode`, `DelayNode`).
+* **Context Passing & Execution Engine:** I will build an execution engine that traverses the DAG asynchronously. A shared `Map<String, dynamic>` execution context will be maintained. Using the `json_path` package, a `TransformNode` can extract an authentication token from Node A's response body and dynamically inject it into Node B's authorization headers.
+* **Agentic AI Orchestration:** To power the "Smart Prompt," I will integrate an LLM pipeline using structured JSON outputs. The AI agent will parse natural language (e.g., "Login, check if admin, then fetch user list") and map the intent against the existing collection's JSON schema. It will return a fully structured DAG payload that is instantly painted onto the `vyuh_node_flow` canvas.
+
+### 3. Collection Dashboard (Observability & Reporting)
+A centralized telemetry hub that aggregates local execution data to provide actionable team insights and external reporting.
+
+
+
+* **Telemetry Aggregation:** The dashboard will query the existing local database (Hive/SQLite) for historical execution logs. 
+* **Data Visualization:** Integrating `fl_chart`, the UI will render interactive visualizations, including time-series latency trends, success/error code distributions (2xx, 4xx, 5xx), and overall test coverage metrics.
+* **CI/CD Webhook Pipeline:** I will implement a background task system using Dart `Isolates` to prevent blocking the main UI thread. Upon the completion of a chained workflow, the system will construct a summary payload and dispatch an HTTP POST request to configured Webhooks (Slack, Discord, or custom CI runners).
+
+---
+
+## Proposed Timeline (175 Hours)
+Given the deep architectural complexities involved, the Git Integration and Visual Workflow Builder require extensive, iterative development. These two core systems will be developed concurrently over a long period of time to ensure absolute stability, state consistency, and backward compatibility. The Dashboard will be layered on top during the final phase to visualize the data generated by these new engines.
+
+| Phase | Weeks | Focus Area | Technical Deliverables |
+| :--- | :--- | :--- | :--- |
+| **Phase 1** | Weeks 1-4 | Git Architecture & State | `Freezed` JSON restructuring, `Directory.watch()` Riverpod integration, Dart-native Git operations, and Diff UI. |
+| **Phase 2** | Weeks 5-9 | Visual Workflow Engine | `vyuh_node_flow` DAG integration, asynchronous graph traversal engine, `json_path` variable passing, and Agentic AI prompt-to-graph mapping. |
+| **Phase 3** | Weeks 10-11 | Observability Dashboard | Hive data aggregation, `fl_chart` integration for telemetry metrics, and `Isolate`-based Webhook dispatcher. |
+| **Phase 4** | Week 12 | Buffer & Polish | E2E testing of the full pipeline (Git Pull -> Run Workflow -> Webhook Dispatch), documentation, and bug fixing. |
