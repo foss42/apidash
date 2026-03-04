@@ -33,11 +33,6 @@ Before writing this, I built a **working PoC covering all three protocols** — 
 
 **Fork:** [RishiAhuja/apidash](https://github.com/RishiAhuja/apidash/tree/feat/grpc-support)
 
-I also wrote detailed implementation guides for each protocol before and while writing the code:
-- [websocket_implementation.md](https://github.com/RishiAhuja/apidash/blob/feat/grpc-support/doc/dev_guide/websocket_implementation.md)
-- [mqtt_planning.md](https://github.com/RishiAhuja/apidash/blob/feat/grpc-support/doc/dev_guide/mqtt_planning.md)
-- [grpc_implementation.md](https://github.com/RishiAhuja/apidash/blob/feat/grpc-support/doc/dev_guide/grpc_implementation.md)
-
 #### Video Walkthrough
 
 <p align="center">
@@ -89,7 +84,7 @@ Each protocol gets a dedicated request model (not reusing HttpRequestModel — w
 
 **Issue:** [#15](https://github.com/foss42/apidash/issues/15) — oldest open feature request (April 2023). Five previous PRs were blocked by state persistence loss on tab switching.
 
-I read through the entire [RFC 6455](https://datatracker.ietf.org/doc/html/rfc6455) and wrote a [25-minute blog post](https://rishia.in/blogs/you-dont-know-websockets-yet) explaining every part of it. Understanding the protocol at the spec level informed key implementation decisions — for instance, awaiting `channel.ready` before emitting connected status, because the handshake is a distinct phase (Section 4) and the `web_socket_channel` package returns immediately from `connect()` before the TCP+TLS+HTTP upgrade completes.
+I'm already familiar with WebSocket internals — I previously read through the entire [RFC 6455](https://datatracker.ietf.org/doc/html/rfc6455) (every section: opening handshake, base framing protocol, masking algorithm, control frames, close semantics) and wrote a [25-minute blog post](https://rishia.in/blogs/you-dont-know-websockets-yet) breaking it all down. That spec-level understanding directly informed implementation decisions — like awaiting `channel.ready` before emitting connected status, because the `web_socket_channel` package returns immediately from `connect()` while the TCP+TLS+HTTP upgrade handshake (RFC 6455 §4) is still in progress.
 
 ### Implementation
 
@@ -117,7 +112,7 @@ Previous attempts ([#210](https://github.com/foss42/apidash/pull/210), [#215](ht
 
 **Issue:** [#115](https://github.com/foss42/apidash/issues/115) (Feb 2024). PR [#258](https://github.com/foss42/apidash/pull/258) was closed due to state persistence failure and reusing the HTTP request model. PR [#864](https://github.com/foss42/apidash/pull/864) remains a draft.
 
-I read the [MQTT v3.1.1 OASIS spec](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html) in detail and wrote a [planning document](https://github.com/RishiAhuja/apidash/blob/feat/grpc-support/doc/dev_guide/mqtt_planning.md) before writing any code — mapping every MQTT concept to the `mqtt_client` Dart package's API.
+I first used MQTT while building a robot controller for a [robowar competition](https://en.wikipedia.org/wiki/Robot_combat) at college — sending joystick commands from a phone to an ESP32 over WiFi via a public broker. That was a surface-level encounter (fire-and-forget QoS 0 on a single topic), so for this project I went significantly deeper into the [MQTT v3.1.1 OASIS spec](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html) and wrote a planning document before writing any code — mapping every MQTT concept to the `mqtt_client` Dart package's API.
 
 ### Core Concepts Implemented
 
@@ -164,7 +159,7 @@ v5 adds shared subscriptions, user properties, request/response correlation, and
 
 **Issue:** [#14](https://github.com/foss42/apidash/issues/14) (April 2023). No PR has ever reached a working implementation — the combined scope of reflection, protobuf encoding, streaming, and UI blocked every attempt.
 
-I read the [gRPC spec](https://grpc.io/docs/what-is-grpc/core-concepts/), [Protocol Buffers encoding guide](https://protobuf.dev/programming-guides/encoding/), and the [gRPC over HTTP/2 spec](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md), then wrote a detailed [implementation guide](https://github.com/RishiAhuja/apidash/blob/feat/grpc-support/doc/dev_guide/grpc_implementation.md) documenting the full architecture and every bug I found.
+gRPC was the protocol I was least familiar with going in. I'd worked with [serverpod](https://pub.dev/packages/serverpod) in Flutter before — similar RPC-over-binary-serialization pattern — but the actual wire format, HTTP/2 framing, and protobuf encoding were all new to me. I started by reading the [gRPC spec](https://grpc.io/docs/what-is-grpc/core-concepts/), the [Protocol Buffers encoding guide](https://protobuf.dev/programming-guides/encoding/), and the [gRPC over HTTP/2 spec](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md) — understanding how gRPC messages are length-prefixed (1-byte compressed flag + 4-byte message length + message bytes) inside HTTP/2 DATA frames was critical context for debugging the encoder later.
 
 ### What's Implemented
 
@@ -194,23 +189,11 @@ I read the [gRPC spec](https://grpc.io/docs/what-is-grpc/core-concepts/), [Proto
 
 **1. The Dual-Channel Problem:** gRPC Server Reflection uses a bidi-streaming RPC. Cancelling the reflection stream after reading sends an HTTP/2 `RST_STREAM` frame, which causes some servers (including `grpcb.in`) to respond with `GOAWAY` — killing the entire HTTP/2 connection. Fix: use a **separate ephemeral channel** for reflection, shut it down after discovery, then open a clean main channel for actual RPC calls.
 
-```
-Reflection Channel (ephemeral)     Main Channel (clean)
-        │                                  │
-  listServices ──►                         │
-  ◄── [service1, service2]                 │
-  fileContainingSymbol ──►                 │
-  ◄── FileDescriptorProto                  │
-        │ shutdown()                       │
-        X                           invokeMethod ──►
-                                    ◄── response
-```
-
 **2. Wire Type Bug:** Initial encoder mapped `FIXED32`/`SFIXED32` to varint wire type (0) instead of 32-bit fixed wire type (5). Since protobuf decoding uses the wire type to know how many bytes a field occupies, a wrong wire type corrupts every subsequent field. Fixed by writing the wire format directly using raw `ByteData`.
 
 **3. Raw Bytes Channel Trick:** The Dart `grpc` package expects compiled `ClientMethod<Req, Res>` types. Since we build messages dynamically, I declared `ClientMethod<List<int>, List<int>>` with identity serializer/deserializer — same approach as `grpcurl`.
 
-**4. Stale Closure & Reconnection Bugs:** Detailed in the [implementation guide](https://github.com/RishiAhuja/apidash/blob/feat/grpc-support/doc/dev_guide/grpc_implementation.md) — `onChanged` callbacks capturing stale model snapshots, broken channel reuse on reconnect, host:port auto-splitting for IPv6 safety.
+**4. Stale Closure & Reconnection Bugs:** `onChanged` callbacks capturing stale model snapshots, broken channel reuse on reconnect, host:port auto-splitting for IPv6 safety.
 
 ![gRPC PoC — unary call result](https://artifacts.rishia.in/apidash/proposal/images/grpc_poc_unary_call.png)
 
@@ -221,24 +204,6 @@ Request pane with four tabs: **Message** (JSON body → protobuf), **Metadata** 
 ![gRPC UI pane layout](https://artifacts.rishia.in/apidash/proposal/images/grpc_ui_pane.png)
 
 ---
-
-## Approach & Timeline Overview
-
-### Implementation Order
-
-1. **WebSocket** (smallest scope, already mostly working) → polish, test, persist
-2. **MQTT** (medium scope, v5 is the main new work) → harden, add v5, test
-3. **gRPC** (largest scope, encoder hardening and streaming) → complete streaming UI, .pb file picker, edge cases
-4. **Code generation** (stretch goal) → WebSocket/MQTT/gRPC codegen following existing `codegen/` architecture
-
-### What Remains Beyond the PoC
-
-| Protocol | Remaining Work |
-|----------|---------------|
-| **WebSocket** | Binary frame display, ping/pong visibility, auto-reconnect, message persistence to Hive, subprotocol negotiation, unit/widget tests |
-| **MQTT** | MQTT v5 (shared subscriptions, user properties, reason codes), TLS/SSL, topic auto-complete, wildcard tree visualization, message persistence, comprehensive tests |
-| **gRPC** | `oneof`/`map`/packed repeated fields, well-known types (Timestamp, Duration, Any, Struct), client streaming UI (message-by-message send), bidirectional streaming UI, `.pb` file picker, TLS certificate import, comprehensive tests |
-| **Codegen** | WebSocket (Dart/JS/Python), MQTT (Dart/Python/JS), gRPC (Dart/Python/Go) — following existing `codegen/` package architecture |
 
 ### Key Design Decisions
 
@@ -254,12 +219,7 @@ Request pane with four tabs: **Message** (JSON body → protobuf), **Metadata** 
 
 I'm a sophomore in IT at [NIT Jalandhar](https://www.nitj.ac.in/). I've been writing Flutter since v2→v3 and built [FernKit](https://fernkit.in/) — a UI toolkit rendering pixel-by-pixel for Linux and WASM, with its own CLI, networking layer, and TTF text rasterizer in C++.
 
-**Professional:** Flutter at [Stack Wealth](https://stackwealth.in/) (YC S21, [#2 contributor](https://artifacts.rishia.in/resume/rishi-resume-v9.pdf)), AI infra at [Annam.ai](https://www.annam.ai/) (IIT Ropar), DevOps at [Zenbase Technologies](http://silentninja.tech) (Singapore). Two research papers under review (IJCAI 2026, ICLR 2026 TSALM Workshop).
-
-**Open Source:**
-- API Dash: [#918](https://github.com/foss42/apidash/pull/918) (Hurl import via Rust FFI), [#1121](https://github.com/foss42/apidash/pull/1121) (background media fix)
-- AppFlowy: [#8278](https://github.com/AppFlowy-IO/AppFlowy/pull/8278) (merged), [#8261](https://github.com/AppFlowy-IO/AppFlowy/pull/8261)
-- asdf-vm: [#2245](https://github.com/asdf-vm/asdf/pull/2245) (interrupted install fix)
+**Professional:** Flutter at [Stack Wealth](https://stackwealth.in/) (YC S21), AI infra at [Annam.ai](https://www.annam.ai/) (IIT Ropar), DevOps at [Zenbase Technologies](http://silentninja.tech) (Singapore). Research paper published at ICLR 2026 TSALM Workshop, another under review at IJCAI 2026 ([rishia.in/research](https://rishia.in/research)).
 
 **Blog:** [rishia.in/blogs](https://rishia.in/blogs) — 11 in-depth technical posts, including a [deep dive into WebSocket internals](https://rishia.in/blogs/you-dont-know-websockets-yet) after reading the full RFC.  
 **GitHub:** [RishiAhuja](https://github.com/RishiAhuja)  
