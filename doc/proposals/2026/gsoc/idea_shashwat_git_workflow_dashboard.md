@@ -1,12 +1,17 @@
 ### Initial Idea Submission
 
 **Full Name:** Shashwat Pratap Singh
+
 **University name:** APJ Abdul Kalam University (AKTU)
+
 **Program you are enrolled in (Degree & Major/Minor):** Bachelor of Technology
+
 **Year:** 3rd year
+
 **Expected graduation date:** 2027
 
 **Project Title:** Git Support, Visual Workflow Builder & Collection Dashboard
+
 **Relevant Issues:** [#502](https://github.com/foss42/apidash/issues/502), [#120](https://github.com/foss42/apidash/issues/120)
 **Discussion:** [#1054 — Idea #3](https://github.com/foss42/apidash/discussions/1054)
 
