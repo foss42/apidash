@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 
 class JavaAsyncHttpClientGen {
@@ -164,7 +165,15 @@ public class Main {
         result += templateUrlQueryParam.render({"queryParams": params});
       }
 
-      var headers = requestModel.enabledHeadersMap;
+      var headers = requestModel.enabledHeadersMap.map(
+        (key, value) {
+          String separator = ", ";
+          if (key.toLowerCase() == HttpHeaders.cookieHeader) {
+            separator = "; ";
+          }
+          return MapEntry(key, value.join(separator));
+        },
+      );
       if (hasBody && !requestModel.hasContentTypeHeader) {
         headers[kHeaderContentType] = requestModel.bodyContentType.header;
       }

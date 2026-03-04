@@ -283,6 +283,57 @@ class CollectionStateNotifier
                 : AIRequestModel.fromJson(defaultModel)),
       };
     } else {
+      // --- LOGIC START: URL Param Extraction (Issue #166 & #268) ---
+
+      String? effectiveUrl = url;
+      List<NameValueModel>? effectiveParams = params;
+      List<bool>? effectiveIsParamEnabledList = isParamEnabledList;
+
+      // 1. Check if the updated URL contains query parameters (e.g. ?key=value)
+      if (effectiveUrl != null && effectiveUrl.contains('?')) {
+        int idx = effectiveUrl.indexOf('?');
+        String baseUrl = effectiveUrl.substring(0, idx);
+        String queryString = effectiveUrl.substring(idx + 1);
+
+        // FIX: Remove fragment if present (e.g. ?foo=bar#section -> foo=bar)
+        int fragmentIdx = queryString.indexOf('#');
+        if (fragmentIdx >= 0) {
+          queryString = queryString.substring(0, fragmentIdx);
+        }
+
+        if (queryString.trim().isNotEmpty) {
+          try {
+            // Use Uri.parse to handle standard query string decoding
+            final dummyUri = Uri.parse("http://dummy.com?$queryString");
+
+            List<NameValueModel> extractedParams = [];
+            List<bool> extractedEnabled = [];
+
+            // FIX FOR #268: queryParametersAll supports multiple values for the same key
+            // e.g. ?id=1&id=2 -> key 'id' has values ['1', '2']
+            dummyUri.queryParametersAll.forEach((key, values) {
+              for (var value in values) {
+                // Add a separate row for each value
+                extractedParams.add(NameValueModel(name: key, value: value));
+                extractedEnabled.add(true);
+              }
+            });
+
+            // FIX: Replace parameters instead of appending to avoid duplicates
+            // (e.g., preventing ?foo=1 and ?foo=2 from existing simultaneously)
+            effectiveParams = extractedParams;
+            effectiveIsParamEnabledList = extractedEnabled;
+
+            // Clean the URL (remove params)
+            effectiveUrl = baseUrl;
+          } catch (e) {
+            debugPrint("Error extracting params from URL: $e");
+          }
+        }
+      }
+
+      // --- LOGIC END ---
+
       newModel = currentModel.copyWith(
         apiType: apiType ?? currentModel.apiType,
         name: name ?? currentModel.name,
@@ -290,14 +341,16 @@ class CollectionStateNotifier
         requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
         httpRequestModel: currentHttpRequestModel?.copyWith(
           method: method ?? currentHttpRequestModel.method,
-          url: url ?? currentHttpRequestModel.url,
+          url: effectiveUrl ?? currentHttpRequestModel.url, // Clean URL
           headers: headers ?? currentHttpRequestModel.headers,
-          params: params ?? currentHttpRequestModel.params,
+          params: effectiveParams ??
+              currentHttpRequestModel.params, // Updated Params
           authModel: authModel ?? currentHttpRequestModel.authModel,
+          // FIX: Ensure Header state is independent of Param state
           isHeaderEnabledList: isHeaderEnabledList ??
               currentHttpRequestModel.isHeaderEnabledList,
-          isParamEnabledList:
-              isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+          isParamEnabledList: effectiveIsParamEnabledList ??
+              currentHttpRequestModel.isParamEnabledList,
           bodyContentType:
               bodyContentType ?? currentHttpRequestModel.bodyContentType,
           body: body ?? currentHttpRequestModel.body,
@@ -388,7 +441,9 @@ class CollectionStateNotifier
       method: substitutedHttpRequestModel.method,
       url: substitutedHttpRequestModel.url,
       requestId: requestId,
-      requestHeaders: substitutedHttpRequestModel.enabledHeadersMap,
+      requestHeaders: substitutedHttpRequestModel.enabledHeadersMap.map(
+        (key, value) => MapEntry(key, value.join(", ")),
+      ),
       requestBodyPreview: substitutedHttpRequestModel.body,
       isStreaming: true,
     );
