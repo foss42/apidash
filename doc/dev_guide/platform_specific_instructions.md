@@ -121,3 +121,11 @@ script.innerHTML =
 ```
 
 Read more about it here - https://github.com/DavBfr/dart_pdf/issues/1791
+
+## Windows
+
+Windows instances will use the default Flutter icon when built. To change this, run the following dart file.
+```dart
+dart run tool/setup_windows_icon.dart
+```
+(Make sure to create the windows package first.)
