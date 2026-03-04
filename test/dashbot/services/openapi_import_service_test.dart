@@ -293,4 +293,66 @@ void main() {
       expect(picker['explanation'], contains('No operations'));
     });
   });
+
+  test('payloadForOperation extracts direct form schema properties', () {
+  const formSpecJson = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Form API", "version": "1.0.0"},
+  "servers": [{"url": "https://api.test.dev"}],
+  "paths": {
+    "/upload": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {"type": "string"},
+                  "avatar": {"type": "string", "format": "binary"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "ok"}
+        }
+      }
+    }
+  }
+}
+''';
+
+  final spec = OpenApiImportService.tryParseSpec(formSpecJson)!;
+  final op = spec.paths!['/upload']!.post!;
+
+  final payload = OpenApiImportService.payloadForOperation(
+    baseUrl: spec.servers!.first.url!,
+    path: '/upload',
+    method: 'post',
+    op: op,
+  );
+
+  expect(payload['form'], true);
+
+  final formData = payload['formData'] as List;
+
+  expect(formData.length, 2);
+
+  expect(
+    formData.any((f) =>
+        f['name'] == 'username' &&
+        f['type'] == 'text'),
+    true,
+  );
+
+  expect(
+    formData.any((f) =>
+        f['name'] == 'avatar' &&
+        f['type'] == 'file'),
+    true,
+  );
+});
 }

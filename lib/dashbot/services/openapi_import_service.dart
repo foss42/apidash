@@ -230,18 +230,25 @@ class OpenApiImportService {
           headers['Content-Type'] = content.containsKey('multipart/form-data')
               ? 'multipart/form-data'
               : 'application/x-www-form-urlencoded';
-          // Populate fields from schema properties if available
-          // final key = content.containsKey('multipart/form-data')
-          //     ? 'multipart/form-data'
-          //     : 'application/x-www-form-urlencoded';
-          // TODO: Extract form field names from schema if available
-          // if (props != null && props.isNotEmpty) {
-          //   for (final entry in props.entries) {
-          //     final n = entry.key;
-          //     // Using empty placeholder values
-          //     formData.add({'name': n, 'value': '', 'type': 'text'});
-          //   }
-          // }
+          final key = content.containsKey('multipart/form-data')
+              ? 'multipart/form-data'
+              : 'application/x-www-form-urlencoded';
+          final media=content[key];
+          final schema=media?.schema;
+          final schemaJson=schema?.toJson();
+          if(schemaJson!.isNotEmpty){
+            if (schemaJson?['type'] == 'object') {
+            final props =schemaJson['properties'] as Map<String, dynamic>?;
+            props?.forEach((propName, propSchema) {
+                final format = propSchema['format'];
+                final type = format == 'binary' ? 'file' : 'text';
+                formData.add({
+                    'name': propName,
+                    'value': '',
+                    'type': type,});
+              });
+            }
+          }
         }
       }
     }
