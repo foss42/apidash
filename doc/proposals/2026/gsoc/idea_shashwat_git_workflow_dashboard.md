@@ -36,7 +36,7 @@ Every collection's sidebar header gets a new GitHub button. This button has two 
 
 PR #1061 already stores each request independently in a Hive LazyBox. We add a FileSyncService that hooks into the same autosave path. Every time a request saves to Hive, it also writes a JSON file to disk. This means each request becomes an individual, human-readable, diffable file that Git can track. A manifest file stores the request ordering and collection metadata. A `.gitignore` is auto-generated to exclude Hive binary files and lock files.
 
-A GitService wraps the git package which calls the local git CLI. It handles init, clone, commit, push, pull, branch management, and reading changed files. A FileWatcherService detects when files change on disk after a pull or branch switch, and triggers a re-import into Hive so the UI updates automatically.
+A GitService wraps the git package (by kevmoo from the Google Dart team, 210K+ downloads) which calls the local git CLI. It handles init, clone, commit, push, pull, branch management, and reading changed files. A FileWatcherService detects when files change on disk after a pull or branch switch, and triggers a re-import into Hive so the UI updates automatically.
 
 **Example — How Alice, Bob, and Carol collaborate:**
 
@@ -92,6 +92,15 @@ The Dashboard also gets its own nav rail item. It aggregates data from the exist
 All data is derived from what API Dash already stores — no new data collection needed. Charts are rendered with fl_chart (7K+ likes, MIT license), the most popular Flutter charting library.
 
 
+### Questions for Mentors
+
+1. Since the `git` package relies on the local Git CLI, is Git support desktop-only or do we need a read-only mobile view?
+2. For conflict resolution — per-file theirs/mine or per-field JSON merge? We can have a "view on GitHub" fallback for heavy conflicts.
+3. Can workflow nodes only reference existing collection requests, or do they also need standalone URLs?
+4. For AI workflow generation, does it plug into DashBot's existing action schemas or live as a separate service?
+5. What data sources feed the dashboard — just request history, or also workflow execution results?
+
+
 ### Timeline (175 hours over 12 weeks)
 
 | Week | Focus | Deliverables |
@@ -100,7 +109,7 @@ All data is derived from what API Dash already stores — no new data collection
 | 3-4 | Git Features | Commit, push, pull, branch management, diff view, commit history, conflict resolution |
 | 5-6 | Workflow Foundation | Data models, canvas integration, node types (Request, Condition, Transform, Delay), save/load |
 | 7-8 | Workflow Execution | Execution engine, real-time status on canvas, data passing between nodes |
-| 9 | Workflow Advanced | AI workflow generation |
+| 9 | Workflow Advanced |
 | 10-11 | Dashboard | KPI cards, response time trend, status code distribution, method breakdown, webhook reporting |
 | 12 | Testing and Polish | Unit tests, integration tests, documentation, bug fixes |
 
@@ -108,8 +117,8 @@ All data is derived from what API Dash already stores — no new data collection
 
 ### Technical Dependencies
 
-| Package | Purpose |
-|---------|---------|
+| Package |
+|---------|
 | [`git: ^2.3.2`](https://pub.dev/packages/git) 
 | [`vyuh_node_flow: ^0.27.3`](https://pub.dev/packages/vyuh_node_flow)
 | [`fl_chart: ^1.1.1`](https://pub.dev/packages/fl_chart) 
