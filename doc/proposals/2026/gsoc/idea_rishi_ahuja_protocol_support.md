@@ -35,21 +35,21 @@ Before writing this, I built a **working PoC covering all three protocols** — 
 
 #### Video Walkthrough
 
-<p align="center">
-  <a href="https://artifacts.rishia.in/apidash/proposal/videos/full-demo.mp4" target="_blank">
-    <img 
-      src="https://artifacts.rishia.in/apidash/proposal/images/video-thumbail.png"
-      alt="Watch Full PoC Demo"
-      width="800"
-    />
-  </a>
-</p>
+https://github.com/user-attachments/assets/63516dee-221d-40a8-8841-821325021229
 
-<p align="center">
-  <b>Click the thumbnail to watch the complete PoC walkthrough (gRPC + WebSocket + MQTT)</b>
-</p>
+Individual protocol demos:
 
-Individual protocol demos: [WebSocket](https://artifacts.rishia.in/apidash/proposal/videos/ws-demo.mp4) · [MQTT](https://artifacts.rishia.in/apidash/proposal/videos/mqtt-demo.mp4) · [gRPC](https://artifacts.rishia.in/apidash/proposal/videos/grpc-demo.mp4)
+**WebSocket**
+
+https://github.com/user-attachments/assets/1b736f8b-b870-4230-a222-a7a30739f854
+
+**MQTT**
+
+https://github.com/user-attachments/assets/acfb61c5-61e4-4a5b-b8a4-81e5926bf739
+
+**gRPC**
+
+https://github.com/user-attachments/assets/4fedf065-138d-4836-a56f-e1074233e640
 
 ---
 
@@ -57,24 +57,7 @@ Individual protocol demos: [WebSocket](https://artifacts.rishia.in/apidash/propo
 
 All three protocols follow the **same layered pattern** API Dash already uses for REST:
 
-```
-┌─────────────────────────────────────────────────┐
-│                    UI Layer                      │
-│  (Protocol-specific request & response panes)    │
-├─────────────────────────────────────────────────┤
-│               State Layer (Riverpod)             │
-│  (Family providers keyed by request ID)          │
-├─────────────────────────────────────────────────┤
-│             Transport / Service Layer            │
-│  (WebSocketManager, MqttClientManager,           │
-│   GrpcClientManager — in better_networking pkg)  │
-├─────────────────────────────────────────────────┤
-│                  Data Models                     │
-│  (WsMessage, MqttRequestModel, GrpcRequestModel) │
-└─────────────────────────────────────────────────┘
-```
-
-![Architecture Diagram](https://artifacts.rishia.in/apidash/proposal/images/start-artitecture.jpg)
+![Architecture Diagram](./images/start-artitecture.jpg)
 
 Each protocol gets a dedicated request model (not reusing HttpRequestModel — which was the failure point in previous PRs), and Riverpod family providers keyed by request ID so tab-switching preserves state.
 
@@ -84,7 +67,7 @@ Each protocol gets a dedicated request model (not reusing HttpRequestModel — w
 
 **Issue:** [#15](https://github.com/foss42/apidash/issues/15) — oldest open feature request (April 2023). Five previous PRs were blocked by state persistence loss on tab switching.
 
-I'm already familiar with WebSocket internals — I previously read through the entire [RFC 6455](https://datatracker.ietf.org/doc/html/rfc6455) (every section: opening handshake, base framing protocol, masking algorithm, control frames, close semantics) and wrote a [25-minute blog post](https://rishia.in/blogs/you-dont-know-websockets-yet) breaking it all down. That spec-level understanding directly informed implementation decisions — like awaiting `channel.ready` before emitting connected status, because the `web_socket_channel` package returns immediately from `connect()` while the TCP+TLS+HTTP upgrade handshake (RFC 6455 §4) is still in progress.
+I'm already familiar with WebSocket internals — I previously read through the entire [RFC 6455](https://datatracker.ietf.org/doc/html/rfc6455) (every section: opening handshake, base framing protocol, masking algorithm, control frames, close semantics) and wrote a [25-minute blog post](https://rishia.in/blogs/you-dont-know-websockets-yet) breaking it all down. That spec-level understanding paid off practically. When I first implemented the connect flow, messages I sent immediately after connecting were silently vanishing — the send was succeeding but the server never saw them. It took me a while to realize what was happening: `web_socket_channel` returns from `connect()` immediately, while the TCP+TLS+HTTP upgrade handshake (RFC 6455 §4) is still in progress. I was writing to a channel that wasn't open yet. Once I understood the handshake is a distinct phase, I looked for a way to wait for it and found `channel.ready`. That one `await` fixed it.
 
 ### Implementation
 
@@ -96,11 +79,11 @@ await channel.ready;  // Wait for handshake to complete (RFC 6455 §4)
 _channels[requestId] = channel;
 ```
 
-**State — `WsStateNotifier`**: Riverpod `StateNotifier` wrapping the manager. Subscribes to the broadcast stream *before* calling `connect()` so no early status messages are missed. Messages tracked as immutable list so Riverpod detects state changes.
+**State — `WsStateNotifier`**: Riverpod `StateNotifier` wrapping the manager. Subscribes to the broadcast stream *before* calling `connect()` — I learned this the hard way when early status messages (like the initial `connected` event) were getting dropped because the listener wasn't set up yet. Messages tracked as immutable list so Riverpod detects state changes.
 
-**UI — Chat-style message feed**: Sent messages right-aligned, received left-aligned, status centered, errors in red. Request pane reuses existing `EditRequestURLParams` and `EditRequestHeaders` widgets — because the WebSocket handshake *is* an HTTP upgrade request.
+**UI — Chat-style message feed**: Sent messages right-aligned, received left-aligned, status centered, errors in red. Request pane reuses existing `EditRequestURLParams` and `EditRequestHeaders` widgets — I realized the WebSocket handshake *is* an HTTP upgrade request, so the existing REST widgets map directly onto it. No new widgets needed for that.
 
-![WebSocket echo test](https://artifacts.rishia.in/apidash/proposal/images/ws_poc_echo_test.png)
+![WebSocket echo test](./images/ws_poc_echo_test.png)
 
 ### Why Previous PRs Failed & How This Fixes It
 
@@ -114,6 +97,8 @@ Previous attempts ([#210](https://github.com/foss42/apidash/pull/210), [#215](ht
 
 I first used MQTT while building a robot controller for a [robowar competition](https://en.wikipedia.org/wiki/Robot_combat) at college — sending joystick commands from a phone to an ESP32 over WiFi via a public broker. That was a surface-level encounter (fire-and-forget QoS 0 on a single topic), so for this project I went significantly deeper into the [MQTT v3.1.1 OASIS spec](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html) and wrote a planning document before writing any code — mapping every MQTT concept to the `mqtt_client` Dart package's API.
 
+Reading the spec also surfaced details that directly shaped implementation. The CONNACK return codes section (§3.2.2.3) specifies that code 4 is "bad username or password" and code 5 is "not authorized" — easy to confuse from the outside. I mapped all five codes to human-readable messages in the service layer so users get specific errors instead of a generic "connection refused". Another non-obvious behavior I ran into: `client.updates` is `null` until the client is fully connected. I had wired up the message listener right after calling `connect()`, before the connection was confirmed, and incoming messages were silently dropping. The fix was gating the listener behind a `MqttConnectionState.connected` check.
+
 ### Core Concepts Implemented
 
 - **Pub/Sub via broker** with all three **QoS levels** (0: at-most-once, 1: at-least-once, 2: exactly-once)
@@ -123,7 +108,7 @@ I first used MQTT while building a robot controller for a [robowar competition](
 - **Authentication** — username/password with environment variable support
 - **Topic wildcards** — `+` (single level) and `#` (multi-level)
 
-![MQTT Architecture](https://artifacts.rishia.in/apidash/proposal/images/mqtt-artitecture.jpg)
+![MQTT Architecture](./images/mqtt-artitecture.jpg)
 
 ### Implementation
 
@@ -145,9 +130,9 @@ I first used MQTT while building a robot controller for a [robowar competition](
 
 A bottom publish bar (`[Retain] [QoS dropdown] [topic] [Send]`) keeps publish controls always visible.
 
-![MQTT UI — topics tab](https://artifacts.rishia.in/apidash/proposal/images/mqtt-topics.png)
+![MQTT UI — topics tab](./images/mqtt-topics.png)
 
-![MQTT response pane — message bubbles](https://artifacts.rishia.in/apidash/proposal/images/mqtt-response-pane.png)
+![MQTT response pane — message bubbles](./images/mqtt-response-pane.png)
 
 ### MQTT v5 — Planned
 
@@ -159,7 +144,7 @@ v5 adds shared subscriptions, user properties, request/response correlation, and
 
 **Issue:** [#14](https://github.com/foss42/apidash/issues/14) (April 2023). No PR has ever reached a working implementation — the combined scope of reflection, protobuf encoding, streaming, and UI blocked every attempt.
 
-gRPC was the protocol I was least familiar with going in. I'd worked with [serverpod](https://pub.dev/packages/serverpod) in Flutter before — similar RPC-over-binary-serialization pattern — but the actual wire format, HTTP/2 framing, and protobuf encoding were all new to me. I started by reading the [gRPC spec](https://grpc.io/docs/what-is-grpc/core-concepts/), the [Protocol Buffers encoding guide](https://protobuf.dev/programming-guides/encoding/), and the [gRPC over HTTP/2 spec](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md) — understanding how gRPC messages are length-prefixed (1-byte compressed flag + 4-byte message length + message bytes) inside HTTP/2 DATA frames was critical context for debugging the encoder later.
+gRPC was the protocol I was least familiar with going in. I'd worked with [serverpod](https://pub.dev/packages/serverpod) in Flutter before — similar RPC-over-binary-serialization pattern — but the actual wire format, HTTP/2 framing, and protobuf encoding were all new to me. I started by reading the [gRPC spec](https://grpc.io/docs/what-is-grpc/core-concepts/), the [Protocol Buffers encoding guide](https://protobuf.dev/programming-guides/encoding/), and the [gRPC over HTTP/2 spec](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md). How gRPC messages are length-prefixed inside HTTP/2 DATA frames felt abstract at first — it only clicked when I was debugging a broken encode and traced the failure back to a wrong wire type corrupting the length prefix. Reading the spec didn't feel wasted after that.
 
 ### What's Implemented
 
@@ -172,7 +157,7 @@ gRPC was the protocol I was least familiar with going in. I'd worked with [serve
 | Client streaming | N messages | 1 message |
 | Bidirectional | N messages | N messages |
 
-**Server Reflection** — runtime service/method discovery without needing `.proto` files. I created a local monorepo package (`packages/grpc_reflection/`) that exports the generated Dart stubs for Google's official `reflection.proto` and `descriptor.proto`.
+**Server Reflection** — runtime service/method discovery without needing `.proto` files. Sending requests like "list all services" or "give me the schema for X" requires Dart stubs generated from Google's official `reflection.proto` and `descriptor.proto` — and no pub.dev package ships them (I confirmed this by grepping the `grpc` package cache for `ServerReflectionClient`, which returned empty). So I copied the two official proto files, ran `protoc --dart_out=grpc` against them, and packaged the output as a local monorepo package (`packages/grpc_reflection/`).
 
 **Dynamic Protobuf Encoder/Decoder** — since API Dash doesn't have compiled `.proto` files (users type JSON, we have the runtime descriptor from reflection), I wrote a custom `jsonToProtobuf` encoder handling all 15 protobuf field types:
 - **Varints** (wire type 0): int32, uint32, sint32 (ZigZag), int64, uint64, sint64 (ZigZag), bool, enum
@@ -183,25 +168,25 @@ gRPC was the protocol I was least familiar with going in. I'd worked with [serve
 
 **`GrpcTypeRegistry`** — runtime type resolution for nested messages and enums during encoding/decoding.
 
-![gRPC call types](https://artifacts.rishia.in/apidash/proposal/images/grpc-calltypes.jpg)
+![gRPC call types](./images/grpc-calltypes.jpg)
 
 ### Key Technical Challenges Solved
 
-**1. The Dual-Channel Problem:** gRPC Server Reflection uses a bidi-streaming RPC. Cancelling the reflection stream after reading sends an HTTP/2 `RST_STREAM` frame, which causes some servers (including `grpcb.in`) to respond with `GOAWAY` — killing the entire HTTP/2 connection. Fix: use a **separate ephemeral channel** for reflection, shut it down after discovery, then open a clean main channel for actual RPC calls.
+**1. The Dual-Channel Problem:** The first major bug I hit wasn't in my code at all — it was a protocol-level interaction I hadn't anticipated. gRPC Server Reflection uses a bidi-streaming RPC. After I finished reading the services list and cancelled that stream, Dart sends an HTTP/2 `RST_STREAM` frame. Some servers (including `grpcb.in`) treat that as severe enough to send `GOAWAY` back — which kills the *entire* HTTP/2 connection, not just that one stream. So reflection would succeed, I'd see all the services, and then the actual RPC call would fail with a connection error because the shared channel had been nuked. Once I traced the sequence of HTTP/2 frames to figure out what was happening, the fix was clear: **separate ephemeral channel** for reflection only, shut it down cleanly after discovery, then open a fresh main channel for actual calls.
 
-**2. Wire Type Bug:** Initial encoder mapped `FIXED32`/`SFIXED32` to varint wire type (0) instead of 32-bit fixed wire type (5). Since protobuf decoding uses the wire type to know how many bytes a field occupies, a wrong wire type corrupts every subsequent field. Fixed by writing the wire format directly using raw `ByteData`.
+**2. Wire Type Bug:** Most of my debugging time went into the protobuf encoder. The core issue: protobuf uses the wire type (embedded in each field's tag) to know how many bytes to read — wrong wire type means wrong byte count, and every subsequent field is at the wrong offset. The whole message becomes garbage. My initial encoder mapped `FIXED32`/`SFIXED32` to varint wire type (0) instead of 32-bit fixed wire type (5). The server expected 4 bytes, got a varint, and the frame was corrupted from that point on. I spent a while trying to make the `protobuf` package's `CodedBufferWriter` work dynamically (it's designed for generated code), and eventually gave up and wrote the wire format directly using raw `ByteData`. Once I did that, all 15 field types fell into place correctly.
 
-**3. Raw Bytes Channel Trick:** The Dart `grpc` package expects compiled `ClientMethod<Req, Res>` types. Since we build messages dynamically, I declared `ClientMethod<List<int>, List<int>>` with identity serializer/deserializer — same approach as `grpcurl`.
+**3. Raw Bytes Channel Trick:** The Dart `grpc` package expects compiled `ClientMethod<Req, Res>` types with pre-generated serializers. Since we're building messages dynamically, I declared `ClientMethod<List<int>, List<int>>` with identity functions — handling protobuf encoding ourselves before handing to the channel. Same approach as `grpcurl`.
 
-**4. Stale Closure & Reconnection Bugs:** `onChanged` callbacks capturing stale model snapshots, broken channel reuse on reconnect, host:port auto-splitting for IPv6 safety.
+**4. Stale Closure & Reconnection Bugs:** Two reconnect bugs took a while to track down. The port field's `onChanged` callback was closing over the request model captured at build time — when `connectGrpc()` cleaned up and wrote back a parsed host:port, then the user edited the port, `copyWith` was being called on the stale snapshot and reverting the host. Fixed by reading state fresh inside the callback. Separately, disconnect-then-reconnect was returning the old broken channel from the singleton map — fixed by calling `remove()` before creating a new manager. And there was an obvious-in-hindsight one: I had `useTls: true` and `port: 443` as defaults. Almost every development gRPC server, including the one I was testing against, runs cleartext h2c. Every single connection was silently failing until I flipped the defaults.
 
-![gRPC PoC — unary call result](https://artifacts.rishia.in/apidash/proposal/images/grpc_poc_unary_call.png)
+![gRPC PoC — unary call result](./images/grpc_poc_unary_call.png)
 
 ### gRPC UI
 
 Request pane with four tabs: **Message** (JSON body → protobuf), **Metadata** (gRPC headers), **Service Definition** (service/method browser), and **Settings** (TLS, reflection toggle, .pb import). Response pane streams incoming messages as separate timestamped cards.
 
-![gRPC UI pane layout](https://artifacts.rishia.in/apidash/proposal/images/grpc_ui_pane.png)
+![gRPC UI pane layout](./images/grpc_ui_pane.png)
 
 ---
 
