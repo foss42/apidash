@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart' show MediaType;
 import 'package:test/test.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart' show MediaType, HTTPVerb;
 
 void main() {
   group("Testing getRequestTitleFromUrl function", () {
@@ -104,5 +105,91 @@ void main() {
       expect(result10.$1, kRawBodyViewOptions);
       expect(result10.$2, "calendar");
     });
+
+      group("Testing deriveRequestName function", () {
+    test('Full URL with path returns METHOD /path', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, "https://api.example.com/v1/users/123"),
+        "GET /v1/users/123",
+      );
+    });
+
+    test('URL with query params strips them', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, "https://api.example.com/users?page=1&limit=20"),
+        "GET /users",
+      );
+    });
+
+    test('POST request shows correct method', () {
+      expect(
+        deriveRequestName(HTTPVerb.post, "https://api.example.com/login"),
+        "POST /login",
+      );
+    });
+
+    test('DELETE request shows correct method', () {
+      expect(
+        deriveRequestName(HTTPVerb.delete, "https://api.example.com/posts/1"),
+        "DELETE /posts/1",
+      );
+    });
+
+    test('PUT request shows correct method', () {
+      expect(
+        deriveRequestName(HTTPVerb.put, "https://api.example.com/posts/1"),
+        "PUT /posts/1",
+      );
+    });
+
+    test('PATCH request shows correct method', () {
+      expect(
+        deriveRequestName(HTTPVerb.patch, "https://api.example.com/posts/1"),
+        "PATCH /posts/1",
+      );
+    });
+
+    test('URL without scheme is handled', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, "api.example.com/users"),
+        "GET /users",
+      );
+    });
+
+    test('URL with only host (no path) returns METHOD /', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, "https://api.example.com"),
+        "GET /",
+      );
+    });
+
+    test('Empty URL returns just the method', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, ""),
+        "GET",
+      );
+    });
+
+    test('Null URL returns just the method', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, null),
+        "GET",
+      );
+    });
+
+    test('URL with trailing slash', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, "https://api.example.com/"),
+        "GET /",
+      );
+    });
+
+    test('Deeply nested path', () {
+      expect(
+        deriveRequestName(HTTPVerb.get, "https://api.example.com/v2/org/teams/members/123"),
+        "GET /v2/org/teams/members/123",
+      );
+    });
   });
+});
 }

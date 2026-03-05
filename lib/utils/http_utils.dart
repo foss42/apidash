@@ -15,6 +15,24 @@ String getRequestTitleFromUrl(String? url) {
   return url;
 }
 
+String deriveRequestName(HTTPVerb method, String? url) {
+  final methodStr = method.name.toUpperCase();
+
+  if (url == null || url.trim().isEmpty) {
+    return methodStr;
+  }
+
+  final normalizedUrl = url.contains("://") ? url : "https://$url";
+  final uri = Uri.tryParse(normalizedUrl);
+
+  if (uri == null) {
+    return "$methodStr $url";
+  }
+
+  final path = (uri.path.isEmpty || uri.path == "/") ? "/" : uri.path;
+  return "$methodStr $path";
+}
+
 (List<ResponseBodyView>, String?) getResponseBodyViewOptions(
     MediaType? mediaType) {
   if (mediaType == null) {
