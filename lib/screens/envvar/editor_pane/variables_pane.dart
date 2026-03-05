@@ -35,147 +35,138 @@ class EditEnvironmentVariablesState
   void _onFieldChange(String selectedId) {
     final environment = ref.read(selectedEnvironmentModelProvider);
     final secrets = getEnvironmentSecrets(environment);
-    ref.read(environmentsStateNotifierProvider.notifier).updateEnvironment(
-      selectedId,
-      values: [...variableRows.sublist(0, variableRows.length - 1), ...secrets],
-    );
+    ref
+        .read(environmentsStateNotifierProvider.notifier)
+        .updateEnvironment(
+          selectedId,
+          values: [
+            ...variableRows.sublist(0, variableRows.length - 1),
+            ...secrets,
+          ],
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
-    ref.watch(selectedEnvironmentModelProvider
-        .select((environment) => getEnvironmentVariables(environment).length));
-    var rows =
-        getEnvironmentVariables(ref.read(selectedEnvironmentModelProvider));
+    ref.watch(
+      selectedEnvironmentModelProvider.select(
+        (environment) => getEnvironmentVariables(environment).length,
+      ),
+    );
+    var rows = getEnvironmentVariables(
+      ref.read(selectedEnvironmentModelProvider),
+    );
     variableRows = rows.isEmpty
-        ? [
-            kEnvironmentVariableEmptyModel,
-          ]
+        ? [kEnvironmentVariableEmptyModel]
         : rows + [kEnvironmentVariableEmptyModel];
     isAddingRow = false;
 
     List<DataColumn> columns = const [
-      DataColumn2(
-        label: Text(kNameCheckbox),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text("Variable name"),
-      ),
-      DataColumn2(
-        label: Text('='),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text("Variable value"),
-      ),
-      DataColumn2(
-        label: Text(''),
-        fixedWidth: 32,
-      ),
+      DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
+      DataColumn2(label: Text(kLabelVariableName)),
+      DataColumn2(label: Text('='), fixedWidth: 30),
+      DataColumn2(label: Text(kLabelVariableValue)),
+      DataColumn2(label: Text(''), fixedWidth: 32),
     ];
 
-    List<DataRow> dataRows = List<DataRow>.generate(
-      variableRows.length,
-      (index) {
-        bool isLast = index + 1 == variableRows.length;
-        return DataRow(
-          key: ValueKey("$selectedId-$index-variables-row-$seed"),
-          cells: <DataCell>[
-            DataCell(
-              ADCheckBox(
-                keyId: "$selectedId-$index-variables-c-$seed",
-                value: variableRows[index].enabled,
-                onChanged: isLast
-                    ? null
-                    : (value) {
-                        if (value != null) {
-                          setState(() {
-                            variableRows[index] =
-                                variableRows[index].copyWith(enabled: value);
-                          });
-                        }
-                        _onFieldChange(selectedId!);
-                      },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+    List<DataRow> dataRows = List<DataRow>.generate(variableRows.length, (
+      index,
+    ) {
+      bool isLast = index + 1 == variableRows.length;
+      return DataRow(
+        key: ValueKey("$selectedId-$index-variables-row-$seed"),
+        cells: <DataCell>[
+          DataCell(
+            ADCheckBox(
+              keyId: "$selectedId-$index-variables-c-$seed",
+              value: variableRows[index].enabled,
+              onChanged: isLast
+                  ? null
+                  : (value) {
+                      if (value != null) {
+                        setState(() {
+                          variableRows[index] = variableRows[index].copyWith(
+                            enabled: value,
+                          );
+                        });
+                      }
+                      _onFieldChange(selectedId!);
+                    },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              CellField(
-                keyId: "$selectedId-$index-variables-k-$seed",
-                initialValue: variableRows[index].key,
-                hintText: "Add Variable",
-                onChanged: (value) {
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    variableRows[index] =
-                        variableRows[index].copyWith(key: value, enabled: true);
-                    variableRows.add(kEnvironmentVariableEmptyModel);
-                  } else {
-                    variableRows[index] =
-                        variableRows[index].copyWith(key: value);
-                  }
-                  _onFieldChange(selectedId!);
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+          ),
+          DataCell(
+            CellField(
+              keyId: "$selectedId-$index-variables-k-$seed",
+              initialValue: variableRows[index].key,
+              hintText: kHintAddVariable,
+              onChanged: (value) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  variableRows[index] = variableRows[index].copyWith(
+                    key: value,
+                    enabled: true,
+                  );
+                  variableRows.add(kEnvironmentVariableEmptyModel);
+                } else {
+                  variableRows[index] = variableRows[index].copyWith(
+                    key: value,
+                  );
+                }
+                _onFieldChange(selectedId!);
+              },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              Center(
-                child: Text(
-                  "=",
-                  style: kCodeStyle,
-                ),
-              ),
+          ),
+          DataCell(Center(child: Text("=", style: kCodeStyle))),
+          DataCell(
+            CellField(
+              keyId: "$selectedId-$index-variables-v-$seed",
+              initialValue: variableRows[index].value,
+              hintText: kHintAddValue,
+              onChanged: (value) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  variableRows[index] = variableRows[index].copyWith(
+                    value: value,
+                    enabled: true,
+                  );
+                  variableRows.add(kEnvironmentVariableEmptyModel);
+                } else {
+                  variableRows[index] = variableRows[index].copyWith(
+                    value: value,
+                  );
+                }
+                _onFieldChange(selectedId!);
+              },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              CellField(
-                keyId: "$selectedId-$index-variables-v-$seed",
-                initialValue: variableRows[index].value,
-                hintText: kHintAddValue,
-                onChanged: (value) {
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    variableRows[index] = variableRows[index]
-                        .copyWith(value: value, enabled: true);
-                    variableRows.add(kEnvironmentVariableEmptyModel);
-                  } else {
-                    variableRows[index] =
-                        variableRows[index].copyWith(value: value);
-                  }
-                  _onFieldChange(selectedId!);
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+          ),
+          DataCell(
+            InkWell(
+              onTap: isLast
+                  ? null
+                  : () {
+                      seed = random.nextInt(kRandMax);
+                      if (variableRows.length == 2) {
+                        setState(() {
+                          variableRows = [kEnvironmentVariableEmptyModel];
+                        });
+                      } else {
+                        variableRows.removeAt(index);
+                      }
+                      _onFieldChange(selectedId!);
+                    },
+              child: Theme.of(context).brightness == Brightness.dark
+                  ? kIconRemoveDark
+                  : kIconRemoveLight,
             ),
-            DataCell(
-              InkWell(
-                onTap: isLast
-                    ? null
-                    : () {
-                        seed = random.nextInt(kRandMax);
-                        if (variableRows.length == 2) {
-                          setState(() {
-                            variableRows = [
-                              kEnvironmentVariableEmptyModel,
-                            ];
-                          });
-                        } else {
-                          variableRows.removeAt(index);
-                        }
-                        _onFieldChange(selectedId!);
-                      },
-                child: Theme.of(context).brightness == Brightness.dark
-                    ? kIconRemoveDark
-                    : kIconRemoveLight,
-              ),
-            ),
-          ],
-        );
-      },
-    );
+          ),
+        ],
+      );
+    });
 
     return Column(
       children: [
@@ -264,17 +255,17 @@ class EditEnvironmentVariablesState
                 ),
         ),
         if (!kIsMobile && !isBulkMode)
-          Padding(
-            padding: kPb15,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                variableRows.add(kEnvironmentVariableEmptyModel);
-                _onFieldChange(selectedId!);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelAddVariable,
-                style: kTextStyleButton,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: kPb15,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  variableRows.add(kEnvironmentVariableEmptyModel);
+                  _onFieldChange(selectedId!);
+                },
+                icon: const Icon(Icons.add),
+                label: const Text(kLabelAddVariable, style: kTextStyleButton),
               ),
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'framework_selector.dart';
 import 'sdui_preview.dart';
 
-Future<T?> showCustomDialog<T>(BuildContext context, Widget dialogContent,
-    {bool useRootNavigator = true}) {
+Future<T?> showCustomDialog<T>(
+  BuildContext context,
+  Widget dialogContent, {
+  bool useRootNavigator = true,
+}) {
   return showDialog<T>(
     context: context,
     useRootNavigator: useRootNavigator,
@@ -23,10 +27,7 @@ Future<T?> showCustomDialog<T>(BuildContext context, Widget dialogContent,
 
 class GenerateUIDialog extends ConsumerStatefulWidget {
   final String content;
-  const GenerateUIDialog({
-    super.key,
-    required this.content,
-  });
+  const GenerateUIDialog({super.key, required this.content});
 
   @override
   ConsumerState<GenerateUIDialog> createState() => _GenerateUIDialogState();
@@ -51,7 +52,6 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         setState(() {
           index = 0;
         });
-        if (!mounted) return null;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Preview Generation Failed!",
@@ -63,11 +63,10 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       }
       return res;
     } catch (e) {
-      String errMsg = 'Unexpected Error Occured';
+      String errMsg = kMsgUnexpectedError;
       if (e.toString().contains('NO_DEFAULT_LLM')) {
-        errMsg = "Please Select Default AI Model in Settings";
+        errMsg = kMsgSelectDefaultAIModel;
       }
-      if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           errMsg,
@@ -93,7 +92,6 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       setState(() {
         index = 2;
       });
-      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Modification Request Failed!",
@@ -147,7 +145,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
             key: ValueKey(generatedSDUI.hashCode),
             onModificationRequestMade: modifySDUICode,
             sduiCode: generatedSDUI,
-          )
+          ),
       ],
     );
   }
