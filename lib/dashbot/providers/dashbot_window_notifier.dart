@@ -32,6 +32,10 @@ class DashbotWindowNotifier extends StateNotifier<DashbotWindowModel> {
     state = state.copyWith(isPopped: !state.isPopped);
   }
 
+  void setIsPopped(bool value) {
+    state = state.copyWith(isPopped: value);
+  }
+
   void hide() {
     if (!state.isHidden) state = state.copyWith(isHidden: true);
   }
