@@ -56,7 +56,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                     // await LLMManager.fetchAvailableLLMs();
                     // setState(() {});
                     //},
-                    child: Text('Update Models'),
+                    child: Text(kLabelUpdateModels),
                   ),
                   kVSpacer10,
                   Row(

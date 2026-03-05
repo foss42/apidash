@@ -168,7 +168,7 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
             Padding(
               padding: EdgeInsets.only(left: 3),
               child: Text(
-                "with",
+                kLabelWith,
                 style: TextStyle(
                   color: Theme.of(context).brightness == Brightness.light
                       ? Colors.black54

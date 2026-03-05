@@ -639,6 +639,43 @@ const kHintAddSecretValue = "Add Secret Value";
 const kLabelAddSecret = "Add Secret";
 const kLabelSelectContentType = "Select Content Type:";
 
+// EnvVar Popover
+const kLabelVALUE = "VALUE";
+const kLabelSCOPE = "SCOPE";
+const kLabelUnknown = "unknown";
+
+// AI Model Selector
+const kLabelSelectModel = "Select Model";
+
+// Code Pane Messages
+const kMsgCodegenAINotAvailable =
+    "Code generation for AI Requests is currently not available.";
+const kMsgCodegenGraphQLNotAvailable =
+    "Code generation for GraphQL is currently not available.";
+const kMsgCodegenError =
+    "An error was encountered while generating code. $kRaiseIssue";
+
+// Scripts Tabs
+const kLabelPreRequest = "Pre Request";
+const kLabelPostResponse = "Post Response";
+
+// History Bottombar
+const kLabelShowAll = "Show All";
+
+// AI Request Pane Tabs
+const kLabelPrompt = "Prompt";
+const kLabelPrompts = "Prompts";
+const kLabelAuthorization = "Authorization";
+const kLabelConfiguration = "Configuration";
+const kLabelConfigurations = "Configurations";
+
+// History Request Pane
+const kLabelContentType = "Content Type: ";
+const kLabelDefaultContentType = "text";
+
+// Tool Requirements Selector
+const kLabelWith = "with";
+
 // AI Request
 const kLabelSystemPrompt = "System Prompt";
 const kHintEnterSystemPrompt = "Enter System Prompt";
