@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/screens/common_widgets/ai/ai_model_selector_button.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -7,8 +8,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ToolRequirementSelectorPage extends StatefulWidget {
   final Function(String agent, String lang) onGenerateCallback;
-  const ToolRequirementSelectorPage(
-      {super.key, required this.onGenerateCallback});
+  const ToolRequirementSelectorPage({
+    super.key,
+    required this.onGenerateCallback,
+  });
 
   @override
   State<ToolRequirementSelectorPage> createState() =>
@@ -31,7 +34,7 @@ class _ToolRequirementSelectorPageState
 
   Map languageMapping = {
     'PYTHON': 'Python 3',
-    'JAVASCRIPT': 'JavaScript / NodeJS'
+    'JAVASCRIPT': 'JavaScript / NodeJS',
   };
 
   @override
@@ -46,27 +49,23 @@ class _ToolRequirementSelectorPageState
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            "Generate API Tool",
-            style: TextStyle(
-              fontSize: 24,
-            ),
-          ),
+          Text(kLabelGenerateAPITool, style: TextStyle(fontSize: 24)),
           kVSpacer5,
           Padding(
             padding: EdgeInsets.only(left: 3),
             child: Text(
-              "Select an agent framework & language",
+              kLabelSelectFrameworkAndLang,
               style: TextStyle(
-                  color: lightMode ? Colors.black54 : Colors.white60,
-                  fontSize: 15),
+                color: lightMode ? Colors.black54 : Colors.white60,
+                fontSize: 15,
+              ),
             ),
           ),
           kVSpacer20,
           Padding(
             padding: EdgeInsets.only(left: 3),
             child: Text(
-              "Agent Framework",
+              kLabelAgentFramework,
               style: TextStyle(
                 color: lightMode ? Colors.black54 : Colors.white60,
               ),
@@ -76,8 +75,9 @@ class _ToolRequirementSelectorPageState
           ADPopupMenu<String>(
             value: frameworkMapping[agentFramework],
             values: [
-              ...frameworkMapping.keys
-                  .map((e) => (e.toString(), frameworkMapping[e].toString())),
+              ...frameworkMapping.keys.map(
+                (e) => (e.toString(), frameworkMapping[e].toString()),
+              ),
             ],
             width: MediaQuery.of(context).size.width * 0.35,
             tooltip: '',
@@ -97,7 +97,7 @@ class _ToolRequirementSelectorPageState
           Padding(
             padding: EdgeInsets.only(left: 3),
             child: Text(
-              "Target Language",
+              kLabelTargetLanguage,
               style: TextStyle(
                 color: lightMode ? Colors.black54 : Colors.white60,
               ),
@@ -107,8 +107,9 @@ class _ToolRequirementSelectorPageState
           ADPopupMenu<String>(
             value: languageMapping[targetLanguage],
             values: [
-              ...languageMapping.keys
-                  .map((e) => (e.toString(), languageMapping[e].toString())),
+              ...languageMapping.keys.map(
+                (e) => (e.toString(), languageMapping[e].toString()),
+              ),
             ],
             width: MediaQuery.of(context).size.width * 0.35,
             tooltip: '',
@@ -139,14 +140,8 @@ class _ToolRequirementSelectorPageState
                 onPressed: () {
                   widget.onGenerateCallback(agentFramework, targetLanguage);
                 },
-                icon: Icon(
-                  Icons.token_outlined,
-                ),
-                label: const SizedBox(
-                  child: Text(
-                    "Generate Tool",
-                  ),
-                ),
+                icon: Icon(Icons.token_outlined),
+                label: const SizedBox(child: Text(kLabelGenerateTool)),
               ),
               kHSpacer5,
               DefaultLLModelSelectorWidget(),
@@ -173,25 +168,33 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
             Padding(
               padding: EdgeInsets.only(left: 3),
               child: Text(
-                "with",
+                kLabelWith,
                 style: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.black54
-                        : Colors.white60,
-                    fontSize: 15),
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black54
+                      : Colors.white60,
+                  fontSize: 15,
+                ),
               ),
             ),
             SizedBox(width: 5),
             AIModelSelectorButton(
-              aiRequestModel:
-                  AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
+              aiRequestModel: AIRequestModel.fromJson(
+                settings.defaultAIModel ?? {},
+              ),
               onModelUpdated: (d) {
-                ref.read(settingsProvider.notifier).update(
-                    defaultAIModel: d.copyWith(
-                        modelConfigs: [],
-                        stream: null,
-                        systemPrompt: '',
-                        userPrompt: '').toJson());
+                ref
+                    .read(settingsProvider.notifier)
+                    .update(
+                      defaultAIModel: d
+                          .copyWith(
+                            modelConfigs: [],
+                            stream: null,
+                            systemPrompt: '',
+                            userPrompt: '',
+                          )
+                          .toJson(),
+                    );
               },
             ),
             kVSpacer5,
