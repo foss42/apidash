@@ -182,6 +182,27 @@ void main() {
           expected);
     });
 
+    test('substituteVariables with dot in variable name (api.url)', () {
+      const input = 'https://{{api.url}}/endpoint';
+      final envMap = {'api.url': 'example.com'};
+      expect(
+          substituteVariables(input, envMap), 'https://example.com/endpoint');
+    });
+
+    test('substituteVariables does NOT substitute similar‑looking keys', () {
+      const input = 'https://{{apiXurl}}/endpoint';
+      final envMap = {'api.url': 'example.com'};
+      expect(
+          substituteVariables(input, envMap), 'https://{{apiXurl}}/endpoint');
+    });
+
+    test('substituteVariables with regex‑special chars in key does not throw',
+        () {
+      const input = 'token={{auth(v2)}}';
+      final envMap = {'auth(v2)': 'secret'};
+      expect(substituteVariables(input, envMap), 'token=secret');
+    });
+
     test("Testing substituteHttpRequestModel with non-empty", () {
       const httpRequestModel = HttpRequestModel(
         url: "{{url}}/humanize/social",
