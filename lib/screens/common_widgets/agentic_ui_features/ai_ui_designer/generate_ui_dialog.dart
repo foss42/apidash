@@ -96,7 +96,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            "Modification Request Failed!",
+            kMsgModificationRequestFailed,
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.redAccent,

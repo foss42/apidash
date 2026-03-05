@@ -598,6 +598,7 @@ const kLabelGeneratedComponent = "Generated Component";
 const kLabelExportCode = "Export Code";
 const kLabelMakeModifications = "Make Modifications";
 const kHintAnyModifications = "Any Modifications?";
+const kLabelComponentPreview = "Component Preview";
 const kMsgExportFailed = "Export Failed";
 const kMsgCopiedToClipboard = "Copied to clipboard!";
 const kMsgFailedToDisplayPreview = "Failed to Display Preview";
