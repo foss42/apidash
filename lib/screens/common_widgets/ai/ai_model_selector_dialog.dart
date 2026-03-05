@@ -7,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AIModelSelectorDialog extends ConsumerStatefulWidget {
   final AIRequestModel? aiRequestModel;
-  const AIModelSelectorDialog({super.key, this.aiRequestModel});
+  final Future<AvailableModels>? availableModelsFuture;
+  const AIModelSelectorDialog(
+      {super.key, this.aiRequestModel, this.availableModelsFuture});
 
   @override
   ConsumerState<AIModelSelectorDialog> createState() =>
@@ -27,7 +29,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     if (selectedProvider != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
     }
-    aM = ModelManager.fetchAvailableModels();
+    aM = widget.availableModelsFuture ?? ModelManager.fetchAvailableModels();
   }
 
   @override
