@@ -437,10 +437,11 @@ void main() async {
         final newNotifier =
             newContainer.read(collectionStateNotifierProvider.notifier);
 
-        // Give some time for the microtask in the constructor to complete
-        await Future.delayed(const Duration(milliseconds: 10));
+        // Give enough time for the microtask in the constructor to complete
+        await Future.delayed(const Duration(milliseconds: 100));
 
-        final loadedRequest = newNotifier.getRequestModel(id);
+        // Use ensureRequestLoaded to trigger full lazy load from dataBox
+        final loadedRequest = await newNotifier.ensureRequestLoaded(id);
 
         expect(
             loadedRequest?.httpRequestModel?.authModel?.type, APIAuthType.jwt);
@@ -899,10 +900,11 @@ void main() async {
         final newNotifier =
             newContainer.read(collectionStateNotifierProvider.notifier);
 
-        // Give some time for the microtask in the constructor to complete
-        await Future.delayed(const Duration(milliseconds: 10));
+        // Give enough time for the microtask in the constructor to complete
+        await Future.delayed(const Duration(milliseconds: 100));
 
-        final loadedRequest = newNotifier.getRequestModel(id);
+        // Use ensureRequestLoaded to trigger full lazy load from dataBox
+        final loadedRequest = await newNotifier.ensureRequestLoaded(id);
 
         expect(loadedRequest?.preRequestScript, equals(preRequestScript));
         expect(loadedRequest?.postRequestScript, equals(postResponseScript));
