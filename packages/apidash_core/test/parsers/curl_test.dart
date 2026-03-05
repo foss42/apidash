@@ -140,5 +140,92 @@ void main() {
 
       expect(result, isNull);
     });
+
+    test('should return null for empty string', () {
+      const curl = '';
+      final result = curlImport.getHttpRequestModelList(curl);
+      expect(result, isNull);
+    });
+
+    test('should return null for whitespace-only string', () {
+      const curl = '   \n  \t  ';
+      final result = curlImport.getHttpRequestModelList(curl);
+      expect(result, isNull);
+    });
+
+    test('should parse curl with query parameters in URL', () {
+      const curl =
+          'curl "https://api.apidash.dev/search?q=flutter&page=1"';
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result, isNotNull);
+      expect(result!.length, 1);
+      expect(result[0].url, 'https://api.apidash.dev/search');
+      expect(result[0].params?.length, 2);
+    });
+
+    test('should parse curl with PUT method', () {
+      const curl = '''
+        curl -X PUT https://api.apidash.dev/users/1 
+        -H "Content-Type: application/json" 
+        -d '{"name": "updated"}'
+      ''';
+
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result, isNotNull);
+      expect(result![0].method, HTTPVerb.put);
+      expect(result[0].url, 'https://api.apidash.dev/users/1');
+      expect(result[0].body, '{"name": "updated"}');
+    });
+
+    test('should parse curl with DELETE method', () {
+      const curl = 'curl -X DELETE https://api.apidash.dev/users/1';
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result, isNotNull);
+      expect(result![0].method, HTTPVerb.delete);
+      expect(result[0].url, 'https://api.apidash.dev/users/1');
+    });
+
+    test('should parse curl with PATCH method', () {
+      const curl = '''
+        curl -X PATCH https://api.apidash.dev/users/1 
+        -H "Content-Type: application/json" 
+        -d '{"status": "active"}'
+      ''';
+
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result, isNotNull);
+      expect(result![0].method, HTTPVerb.patch);
+    });
+
+    test('should parse curl with multiple headers', () {
+      const curl = '''
+        curl https://api.apidash.dev/data 
+        -H "Accept: application/json" 
+        -H "Authorization: Bearer mytoken" 
+        -H "X-Custom-Header: customvalue"
+      ''';
+
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result, isNotNull);
+      expect(result![0].headers?.length, 3);
+    });
+
+    test('should handle curl with --data flag instead of -d', () {
+      const curl = '''
+        curl -X POST https://api.apidash.dev/data 
+        --data '{"key": "value"}'
+      ''';
+
+      final result = curlImport.getHttpRequestModelList(curl);
+
+      expect(result, isNotNull);
+      expect(result![0].method, HTTPVerb.post);
+      expect(result[0].body, '{"key": "value"}');
+    });
   });
 }
