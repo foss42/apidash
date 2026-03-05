@@ -300,17 +300,30 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
         getMediaTypeFromHeaders(streamedResponse.headers)?.mimeType ?? '';
     final chunkList = <List<int>>[];
 
-    subscription = streamedResponse.stream.listen(
-      (bytes) async {
-        if (controller.isClosed) return;
-        final isStreaming = kStreamingResponseTypes.contains(contentType);
-        if (isStreaming) {
-          final response = _createResponseFromBytes(bytes);
-          controller.add((true, response, stopwatch.elapsed, null));
-        } else {
-          chunkList.add(bytes);
-        }
-      },
+    //SSE - Raw response doesn't show all entries #873
+    //the bug is comming due to bytes only takes the last chunks not the full response
+
+   final sseBuffer = <int>[];
+
+subscription = streamedResponse.stream.listen(
+  (bytes) async {
+    if (controller.isClosed) return;
+
+    final isStreaming = kStreamingResponseTypes.contains(contentType);
+
+    if (isStreaming) {
+      // Append incoming SSE bytes
+      sseBuffer.addAll(bytes);
+
+      // Create response with ALL collected SSE data
+      final response = _createResponseFromBytes(sseBuffer);
+
+      controller.add((true, response, stopwatch.elapsed, null));
+    } else {
+      chunkList.add(bytes);
+    }
+  },
+
       onDone: () async {
         if (chunkList.isNotEmpty && !controller.isClosed) {
           final allBytes = chunkList.expand((x) => x).toList();
