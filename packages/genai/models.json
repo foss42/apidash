@@ -77,6 +77,14 @@
       "source_url": "https://docs.anthropic.com/en/docs/about-claude/models/overview",
       "models": [
         {
+          "id": "claude-opus-4-6",
+          "name": "Claude Opus 4.6"
+        },
+        {
+          "id": "claude-opus-4-5-20251101",
+          "name": "Claude Opus 4.5"
+        },
+        {
           "id": "claude-opus-4-1",
           "name": "Claude Opus 4.1"
         },
@@ -85,20 +93,20 @@
           "name": "Claude Opus 4"
         },
         {
+          "id": "claude-sonnet-4-6",
+          "name": "Claude Sonnet 4.6"
+        },
+        {
+          "id": "claude-sonnet-4-5-20250929",
+          "name": "Claude Sonnet 4.5"
+        },
+        {
           "id": "claude-sonnet-4-0",
           "name": "Claude Sonnet 4"
         },
         {
-          "id": "claude-3-7-sonnet-latest",
-          "name": "Claude Sonnet 3.7"
-        },
-        {
-          "id": "claude-3-5-sonnet-latest",
-          "name": "Claude Sonnet 3.5"
-        },
-        {
-          "id": "claude-3-5-haiku-latest",
-          "name": "Claude Haiku 3.5"
+          "id": "claude-haiku-4-5-20251001",
+          "name": "Claude Haiku 4.5"
         },
         {
           "id": "",
@@ -111,6 +119,18 @@
       "provider_name": "Gemini",
       "source_url": "https://ai.google.dev/gemini-api/docs/models",
       "models": [
+        {
+          "id": "gemini-3.1-pro-preview",
+          "name": "Gemini 3.1 Pro"
+        },
+        {
+          "id": "gemini-3-pro-preview",
+          "name": "Gemini 3 Pro"
+        },
+        {
+          "id": "gemini-3-flash-preview",
+          "name": "Gemini 3 Flash"
+        },
         {
           "id": "gemini-2.5-pro",
           "name": "Gemini 2.5 Pro"

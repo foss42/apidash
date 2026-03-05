@@ -222,7 +222,7 @@ void main() {
   });
 
   testWidgets(
-      'Testing Response Body, no mediaType; shoud be default plaintext preview',
+      'Testing Response Body, no mediaType; should be default plaintext preview',
       (tester) async {
     var responseModelNoHeaders = responseModel.copyWith(
       headers: null,
