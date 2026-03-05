@@ -2,7 +2,7 @@ import '../consts.dart';
 import '../models/models.dart';
 import 'model_providers/model_providers.dart';
 
-enum ModelAPIProvider { openai, anthropic, gemini, azureopenai, ollama }
+enum ModelAPIProvider { openai, anthropic, gemini, azureopenai, ollama, groq, openrouter, mistral, custom }
 
 final kModelProvidersMap = {
   ModelAPIProvider.openai: OpenAIModel.instance,
@@ -10,12 +10,19 @@ final kModelProvidersMap = {
   ModelAPIProvider.gemini: GeminiModel.instance,
   ModelAPIProvider.azureopenai: AzureOpenAIModel.instance,
   ModelAPIProvider.ollama: OllamaModel.instance,
+  ModelAPIProvider.groq: GroqModel.instance,
+  ModelAPIProvider.openrouter: OpenRouterModel.instance,
+  ModelAPIProvider.mistral: MistralModel.instance,
+  ModelAPIProvider.custom: CustomModel.instance,
 };
 
 const kAnthropicUrl = 'https://api.anthropic.com/v1/messages';
 const kGeminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 const kOpenAIUrl = 'https://api.openai.com/v1/chat/completions';
 const kOllamaUrl = '$kBaseOllamaUrl/v1/chat/completions';
+const kGroqUrl = 'https://api.groq.com/openai/v1/chat/completions';
+const kOpenRouterUrl = 'https://openrouter.ai/api/v1/chat/completions';
+const kMistralUrl = 'https://api.mistral.ai/v1/chat/completions';
 
 final kDefaultAiRequestModel = AIRequestModel(
   url: '',

@@ -147,6 +147,90 @@
           "name": "Custom"
         }
       ]
+    },
+    {
+      "provider_id": "groq",
+      "provider_name": "Groq",
+      "source_url": "https://console.groq.com/docs/models",
+      "models": [
+        {
+          "id": "llama-3.3-70b-versatile",
+          "name": "Llama 3.3 70B"
+        },
+        {
+          "id": "llama-3.1-70b-versatile",
+          "name": "Llama 3.1 70B"
+        },
+        {
+          "id": "llama-3.1-8b-instant",
+          "name": "Llama 3.1 8B"
+        },
+        {
+          "id": "mixtral-8x7b-32768",
+          "name": "Mixtral 8x7B"
+        },
+        {
+          "id": "",
+          "name": "Other"
+        }
+      ]
+    },
+    {
+      "provider_id": "openrouter",
+      "provider_name": "OpenRouter",
+      "source_url": "https://openrouter.ai/models",
+      "models": [
+        {
+          "id": "openai/gpt-4o",
+          "name": "GPT-4o"
+        },
+        {
+          "id": "anthropic/claude-3.5-sonnet",
+          "name": "Claude 3.5 Sonnet"
+        },
+        {
+          "id": "google/gemini-2.0-flash",
+          "name": "Gemini 2.0 Flash"
+        },
+        {
+          "id": "",
+          "name": "Other"
+        }
+      ]
+    },
+    {
+      "provider_id": "mistral",
+      "provider_name": "Mistral",
+      "source_url": "https://docs.mistral.ai/getting-started/models/",
+      "models": [
+        {
+          "id": "mistral-large-latest",
+          "name": "Mistral Large"
+        },
+        {
+          "id": "mistral-medium-latest",
+          "name": "Mistral Medium"
+        },
+        {
+          "id": "mistral-small-latest",
+          "name": "Mistral Small"
+        },
+        {
+          "id": "",
+          "name": "Other"
+        }
+      ]
+    },
+    {
+      "provider_id": "custom",
+      "provider_name": "Custom (OpenAI-Compatible)",
+      "source_url": null,
+      "models": [
+        {
+          "id": "",
+          "name": "Custom"
+        }
+      ]
     }
   ]
 }
