@@ -82,3 +82,52 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
     return bytes;
   }
 }
+
+String nameValueModelsToText(List<NameValueModel> rows) {
+  return rows
+      .where((e) => e.name.isNotEmpty)
+      .map((e) => "${e.name}: ${e.value}")
+      .join("\n");
+}
+
+List<NameValueModel> textToNameValueModels(String text) {
+  var lines = text.split("\n");
+  List<NameValueModel> rows = [];
+  for (var line in lines) {
+    if (line.trim().isEmpty) continue;
+    var idx = line.indexOf(":");
+    if (idx != -1) {
+      var key = line.substring(0, idx).trim();
+      var value = line.substring(idx + 1).trim();
+      rows.add(NameValueModel(name: key, value: value));
+    } else {
+      rows.add(NameValueModel(name: line.trim(), value: ""));
+    }
+  }
+  return rows;
+}
+
+String envVarsToText(List<EnvironmentVariableModel> rows) {
+  return rows
+      .where((e) => e.key.isNotEmpty)
+      .map((e) => "${e.key}: ${e.value}")
+      .join("\n");
+}
+
+List<EnvironmentVariableModel> textToEnvVars(String text) {
+  var lines = text.split("\n");
+  List<EnvironmentVariableModel> rows = [];
+  for (var line in lines) {
+    if (line.trim().isEmpty) continue;
+    var idx = line.indexOf(":");
+    if (idx != -1) {
+      var key = line.substring(0, idx).trim();
+      var value = line.substring(idx + 1).trim();
+      rows.add(EnvironmentVariableModel(key: key, value: value, enabled: true));
+    } else {
+      rows.add(EnvironmentVariableModel(
+          key: line.trim(), value: "", enabled: true));
+    }
+  }
+  return rows;
+}

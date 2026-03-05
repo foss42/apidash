@@ -7,9 +7,9 @@ bool showButtonLabelsInBodySuccess(int options, double maxWidth) {
     case 1:
       return (maxWidth < 300) ? false : true;
     case 2:
-      return (maxWidth < 430) ? false : true;
+      return (maxWidth < 520) ? false : true;
     case 3:
-      return (maxWidth < 500) ? false : true;
+      return (maxWidth < 620) ? false : true;
     default:
       return false;
   }

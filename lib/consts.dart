@@ -224,11 +224,12 @@ const Map<String, Map<String, List<ResponseBodyView>>>
   },
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
+    kSubTypePlain: kPreviewRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
     kSubTypeHtml: kCodeRawBodyViewOptions,
     kSubTypeCsv: kPreviewRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
-    kSubTypeMarkdown: kCodeRawBodyViewOptions,
+    kSubTypeMarkdown: kPreviewCodeRawBodyViewOptions,
     kSubTypeTextXml: kCodeRawBodyViewOptions,
     kSubTypeTextYaml: kCodeRawBodyViewOptions,
     kSubTypeTextYml: kCodeRawBodyViewOptions,

@@ -570,12 +570,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
   }
 
-  Map<String, dynamic>? _currentRequestContext() {
-    final originalRq = _currentSubstitutedHttpRequestModel;
-    if (originalRq == null) return null;
-    return originalRq.toJson();
-  }
-
   Future<void> handleOpenApiAttachment(ChatAttachment att) async {
     try {
       final content = utf8.decode(att.data);

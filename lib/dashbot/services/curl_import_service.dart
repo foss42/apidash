@@ -160,15 +160,4 @@ class CurlImportService {
     return value.toString();
   }
 
-  static bool _looksLikeJson(String s) {
-    final t = s.trim();
-    if (t.isEmpty) return false;
-    if (!(t.startsWith('{') || t.startsWith('['))) return false;
-    try {
-      jsonDecode(t);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
 }

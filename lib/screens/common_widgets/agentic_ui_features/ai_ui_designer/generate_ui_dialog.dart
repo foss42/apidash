@@ -51,6 +51,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         setState(() {
           index = 0;
         });
+        if (!mounted) return null;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "Preview Generation Failed!",
@@ -66,6 +67,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = "Please Select Default AI Model in Settings";
       }
+      if (!mounted) return null;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           errMsg,
@@ -91,6 +93,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       setState(() {
         index = 2;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           "Modification Request Failed!",

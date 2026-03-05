@@ -85,6 +85,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
           generatedToolCode = '';
           index = 0;
         });
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
             "API Tool generation failed!",
@@ -106,6 +107,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = "Please Select Default AI Model in Settings";
       }
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(
           errMsg,
