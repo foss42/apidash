@@ -18,6 +18,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  String? _apiKeyError;
+  String? _endpointError;
 
   @override
   void initState() {
@@ -69,6 +71,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                               selectedProvider = x;
                               newAIRequestModel = mappedData[selectedProvider]
                                   ?.toAiRequestModel();
+                              _apiKeyError = null;
+                              _endpointError = null;
                             });
                           },
                           value: selectedProvider,
@@ -121,6 +125,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                 selectedProvider = x.providerId;
                                 newAIRequestModel = mappedData[selectedProvider]
                                     ?.toAiRequestModel();
+                                _apiKeyError = null;
+                                _endpointError = null;
                               });
                             },
                           ),
@@ -163,17 +169,24 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
+                _apiKeyError = null;
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
-            // value: currentCredential,
           ),
+          if (_apiKeyError != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                _apiKeyError!,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error,
+                  fontSize: 12,
+                ),
+              ),
+            ),
           kVSpacer10,
         ],
         Text('Endpoint'),
@@ -183,10 +196,22 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           onChanged: (x) {
             setState(() {
               newAIRequestModel = newAIRequestModel?.copyWith(url: x);
+              _endpointError = null;
             });
           },
           value: newAIRequestModel?.url ?? "",
         ),
+        if (_endpointError != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              _endpointError!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontSize: 12,
+              ),
+            ),
+          ),
         kVSpacer20,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -240,6 +265,28 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
+              final isOllama =
+                  aiModelProvider.providerId == ModelAPIProvider.ollama;
+              final apiKey = newAIRequestModel?.apiKey?.trim() ?? "";
+              final endpoint = newAIRequestModel?.url.trim() ?? "";
+
+              bool hasError = false;
+
+              if (!isOllama && apiKey.isEmpty) {
+                _apiKeyError = "API Key is required";
+                hasError = true;
+              }
+
+              if (endpoint.isEmpty) {
+                _endpointError = "Endpoint URL is required";
+                hasError = true;
+              }
+
+              if (hasError) {
+                setState(() {});
+                return;
+              }
+
               Navigator.of(context).pop(newAIRequestModel);
             },
             child: Text('Save'),
