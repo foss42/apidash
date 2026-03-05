@@ -204,6 +204,7 @@ class MultiTriggerAutocompleteState extends State<MultiTriggerAutocomplete> {
   AutocompleteTrigger? _currentTrigger;
 
   bool _hideOptions = false;
+  bool _skipNextFieldCheck = false;
   String _lastFieldText = '';
 
   // True if the state indicates that the options should be visible.
@@ -249,6 +250,24 @@ class MultiTriggerAutocompleteState extends State<MultiTriggerAutocomplete> {
       text: newText,
       selection: newSelection,
     );
+
+    return closeOptions();
+  }
+
+  void replaceFieldWithAutocompleteOption(
+    String option, {
+    bool keepTrigger = true,
+    void Function(String)? onOptionSelected,
+  }) {
+    if (option.isEmpty) return;
+
+    _skipNextFieldCheck = true;
+    _textEditingController.value = TextEditingValue(
+      text: option,
+      selection: TextSelection.collapsed(offset: option.length),
+    );
+    
+    onOptionSelected?.call(option);
 
     return closeOptions();
   }
@@ -313,6 +332,13 @@ class MultiTriggerAutocompleteState extends State<MultiTriggerAutocomplete> {
 
       // If the content has not changed, then there is nothing to do.
       if (textEditingValue.text == _lastFieldText) return;
+
+      // Skip if set from autocomplete selection
+      if (_skipNextFieldCheck) {
+        _skipNextFieldCheck = false;
+        _lastFieldText = textEditingValue.text;
+        return;
+      }
 
       // Make sure the options are no longer hidden if the content of the
       // field changes.
