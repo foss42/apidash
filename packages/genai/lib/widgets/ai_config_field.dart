@@ -18,12 +18,36 @@ class AIConfigField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: configuration.value.value.toString(),
+      decoration: const InputDecoration(
+        errorMaxLines: 2,
+      ),
+      validator: numeric
+          ? (value) {
+              if (value == null || value.isEmpty) {
+                return 'Value cannot be empty';
+              }
+              final parsed = num.tryParse(value);
+              if (parsed == null) {
+                return 'Please enter a valid number';
+              }
+              if (parsed is double && (parsed.isNaN || parsed.isInfinite)) {
+                return 'Invalid value: Infinity and NaN are not allowed';
+              }
+              return null;
+            }
+          : null,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       onChanged: (x) {
         if (readonly) return;
         if (numeric) {
           if (x.isEmpty) x = '0';
-          if (num.tryParse(x) == null) return;
-          configuration.value.value = num.parse(x);
+          final parsed = num.tryParse(x);
+          if (parsed == null) return;
+          // Reject Infinity and NaN
+          if (parsed is double && (parsed.isNaN || parsed.isInfinite)) {
+            return;
+          }
+          configuration.value.value = parsed;
         } else {
           configuration.value.value = x;
         }

@@ -40,6 +40,46 @@ void main() {
       final nullValue = ConfigNumericValue.deserialize('not_a_number');
       expect(nullValue.value, null);
     });
+
+    test('deserialize rejects Infinity values', () {
+      final infinity = ConfigNumericValue.deserialize('Infinity');
+      expect(infinity.value, null);
+
+      final negInfinity = ConfigNumericValue.deserialize('-Infinity');
+      expect(negInfinity.value, null);
+
+      final largeNumber = ConfigNumericValue.deserialize('1e309');
+      expect(largeNumber.value, null);
+    });
+
+    test('deserialize rejects NaN values', () {
+      final nanValue = ConfigNumericValue.deserialize('NaN');
+      expect(nanValue.value, null);
+    });
+
+    test('getPayloadValue throws on Infinity', () {
+      final value = ConfigNumericValue(value: double.infinity);
+      expect(
+        () => value.getPayloadValue(),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('getPayloadValue throws on NaN', () {
+      final value = ConfigNumericValue(value: double.nan);
+      expect(
+        () => value.getPayloadValue(),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('getPayloadValue works with valid numbers', () {
+      final value = ConfigNumericValue(value: 3.14);
+      expect(value.getPayloadValue(), 3.14);
+
+      final intValue = ConfigNumericValue(value: 42);
+      expect(intValue.getPayloadValue(), 42);
+    });
   });
 
   group('ConfigSliderValue', () {
