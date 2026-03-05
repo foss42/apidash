@@ -28,9 +28,6 @@ class CollectionPane extends ConsumerWidget {
           SidebarHeader(
             onAddNew: () {
               ref.read(collectionStateNotifierProvider.notifier).add();
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ref.read(urlFieldFocusNodeProvider).requestFocus();
-              });
             },
             onImport: () {
               importToCollectionPane(context, ref, sm);
