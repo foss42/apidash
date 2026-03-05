@@ -94,23 +94,52 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
   }
 }
 
-class URLTextField extends ConsumerWidget {
+class URLTextField extends ConsumerStatefulWidget {
   const URLTextField({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<URLTextField> createState() => _URLTextFieldState();
+}
+
+class _URLTextFieldState extends ConsumerState<URLTextField> {
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.url));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.url));
+    ref.listen(newRequestTriggerProvider, (previous, next) {
+      if (previous != next && next > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _focusNode.requestFocus();
+          }
+        });
+      }
+    });
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
     return EnvURLField(
       selectedId: selectedId,
+      focusNode: _focusNode,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,

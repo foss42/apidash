@@ -94,6 +94,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+    ref.read(newRequestTriggerProvider.notifier).update((state) => state + 1);
     unsave();
   }
 

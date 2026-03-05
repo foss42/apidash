@@ -37,6 +37,7 @@ final collectionSearchQueryProvider = StateProvider<String>((ref) => '');
 final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
 final importFormatStateProvider =
     StateProvider<ImportFormat>((ref) => ImportFormat.curl);
+final newRequestTriggerProvider = StateProvider<int>((ref) => 0);
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
 
 final dashbotShowMobileProvider = StateProvider<bool>((ref) => false);
