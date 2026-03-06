@@ -6,10 +6,12 @@ class BoundedTextField extends StatefulWidget {
     super.key,
     required this.value,
     required this.onChanged,
+    this.errorText,
   });
 
   final String value;
   final void Function(String value) onChanged;
+  final String? errorText;
 
   @override
   State<BoundedTextField> createState() => _BoundedTextFieldState();
@@ -35,27 +37,46 @@ class _BoundedTextFieldState extends State<BoundedTextField> {
   @override
   Widget build(BuildContext context) {
     // final double width = context.isCompactWindow ? 150 : 220;
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        ),
-        borderRadius: kBorderRadius8,
-      ),
-      width: double.infinity,
-      child: Container(
-        transform: Matrix4.translationValues(0, -5, 0),
-        child: TextField(
-          controller: controller,
-          // obscureText: true,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.only(left: 10),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          height: 40,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: widget.errorText != null
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
+            borderRadius: kBorderRadius8,
           ),
-          onChanged: widget.onChanged,
+          width: double.infinity,
+          child: Container(
+            transform: Matrix4.translationValues(0, -5, 0),
+            child: TextField(
+              controller: controller,
+              // obscureText: true,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(left: 10),
+              ),
+              onChanged: widget.onChanged,
+            ),
+          ),
         ),
-      ),
+        if (widget.errorText != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 4, top: 4),
+            child: Text(
+              widget.errorText!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

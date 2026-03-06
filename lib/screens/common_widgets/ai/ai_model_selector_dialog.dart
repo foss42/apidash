@@ -18,6 +18,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  bool apiKeyError = false;
+  bool endpointError = false;
 
   @override
   void initState() {
@@ -69,6 +71,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                               selectedProvider = x;
                               newAIRequestModel = mappedData[selectedProvider]
                                   ?.toAiRequestModel();
+                              apiKeyError = false;
+                              endpointError = false;
                             });
                           },
                           value: selectedProvider,
@@ -121,6 +125,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                 selectedProvider = x.providerId;
                                 newAIRequestModel = mappedData[selectedProvider]
                                     ?.toAiRequestModel();
+                                apiKeyError = false;
+                                endpointError = false;
                               });
                             },
                           ),
@@ -169,9 +175,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
+                apiKeyError = false;
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
+            errorText: apiKeyError ? "API Key is required" : null,
             // value: currentCredential,
           ),
           kVSpacer10,
@@ -183,9 +191,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           onChanged: (x) {
             setState(() {
               newAIRequestModel = newAIRequestModel?.copyWith(url: x);
+              endpointError = false;
             });
           },
           value: newAIRequestModel?.url ?? "",
+          errorText: endpointError ? "Endpoint URL is required" : null,
         ),
         kVSpacer20,
         Row(
@@ -240,6 +250,27 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
+              // Validate Endpoint URL (always required)
+              final endpoint = (newAIRequestModel?.url ?? '').trim();
+              if (endpoint.isEmpty) {
+                setState(() {
+                  endpointError = true;
+                });
+                return;
+              }
+
+              // Validate API Key (required for non-Ollama providers)
+              if (aiModelProvider.providerId != ModelAPIProvider.ollama) {
+                final apiKey = (newAIRequestModel?.apiKey ?? '').trim();
+                if (apiKey.isEmpty) {
+                  setState(() {
+                    apiKeyError = true;
+                  });
+                  return;
+                }
+              }
+
+              // All validations passed, save and close
               Navigator.of(context).pop(newAIRequestModel);
             },
             child: Text('Save'),
