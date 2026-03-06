@@ -8,7 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AIModelSelectorDialog extends ConsumerStatefulWidget {
   final AIRequestModel? aiRequestModel;
-  const AIModelSelectorDialog({super.key, this.aiRequestModel});
+  final Future<AvailableModels>? availableModelsFuture;
+  const AIModelSelectorDialog(
+      {super.key, this.aiRequestModel, this.availableModelsFuture});
 
   @override
   ConsumerState<AIModelSelectorDialog> createState() =>
@@ -19,15 +21,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  String? errorMessage;
 
   @override
   void initState() {
     super.initState();
     selectedProvider = widget.aiRequestModel?.modelApiProvider;
-    if (selectedProvider != null && widget.aiRequestModel?.model != null) {
+    if (selectedProvider != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
     }
-    aM = ModelManager.fetchAvailableModels();
+    aM = widget.availableModelsFuture ?? ModelManager.fetchAvailableModels();
   }
 
   @override
@@ -68,8 +71,15 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                           onChanged: (x) {
                             setState(() {
                               selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
+                              errorMessage = null;
+                              if (widget.aiRequestModel?.modelApiProvider ==
+                                  selectedProvider) {
+                                newAIRequestModel =
+                                    widget.aiRequestModel?.copyWith();
+                              } else {
+                                newAIRequestModel = mappedData[selectedProvider]
+                                    ?.toAiRequestModel();
+                              }
                             });
                           },
                           value: selectedProvider,
@@ -121,8 +131,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                             onTap: () {
                               setState(() {
                                 selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
+                                errorMessage = null;
+                                if (widget.aiRequestModel?.modelApiProvider ==
+                                    selectedProvider) {
+                                  newAIRequestModel =
+                                      widget.aiRequestModel?.copyWith();
+                                } else {
+                                  newAIRequestModel =
+                                      mappedData[selectedProvider]
+                                          ?.toAiRequestModel();
+                                }
                               });
                             },
                           ),
@@ -171,6 +189,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
+                errorMessage = null;
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
@@ -185,6 +204,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           onChanged: (x) {
             setState(() {
               newAIRequestModel = newAIRequestModel?.copyWith(url: x);
+              errorMessage = null;
             });
           },
           value: newAIRequestModel?.url ?? "",
@@ -238,11 +258,34 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             ),
           ),
         ),
+        if (errorMessage != null) ...[
+          kVSpacer10,
+          Text(
+            errorMessage!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        ],
         kVSpacer10,
         Align(
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
+              if (newAIRequestModel?.modelApiProvider !=
+                      ModelAPIProvider.ollama &&
+                  (newAIRequestModel?.apiKey == null ||
+                      newAIRequestModel!.apiKey!.trim().isEmpty)) {
+                setState(() {
+                  errorMessage = "API Key is required";
+                });
+                return;
+              }
+              if (newAIRequestModel == null ||
+                  newAIRequestModel!.url.trim().isEmpty) {
+                setState(() {
+                  errorMessage = "Endpoint URL is required";
+                });
+                return;
+              }
               Navigator.of(context).pop(newAIRequestModel);
             },
             child: Text(kLabelSave),

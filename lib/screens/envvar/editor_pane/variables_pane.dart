@@ -23,6 +23,8 @@ class EditEnvironmentVariablesState
   final random = Random.secure();
   late List<EnvironmentVariableModel> variableRows;
   bool isAddingRow = false;
+  bool isBulkMode = false;
+  final TextEditingController bulkController = TextEditingController();
 
   @override
   void initState() {
@@ -166,40 +168,93 @@ class EditEnvironmentVariablesState
       );
     });
 
-    return Stack(
+    return Column(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: kBorderRadius12,
-          ),
-          margin: kPh10t10,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Expanded(
-                child: Theme(
-                  data: Theme.of(
-                    context,
-                  ).copyWith(scrollbarTheme: kDataTableScrollbarTheme),
-                  child: DataTable2(
-                    columnSpacing: 12,
-                    dividerThickness: 0,
-                    horizontalMargin: 0,
-                    headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
-                    bottomMargin: kDataTableBottomPadding,
-                    isVerticalScrollBarVisible: true,
-                    columns: columns,
-                    rows: dataRows,
-                  ),
-                ),
+              Text(
+                "Bulk Edit",
+                style: Theme.of(context).textTheme.bodySmall,
               ),
-              if (!kIsMobile) kVSpacer40,
+              kHSpacer5,
+              Switch.adaptive(
+                value: isBulkMode,
+                onChanged: (value) {
+                  setState(() {
+                    isBulkMode = value;
+                    if (isBulkMode) {
+                      var rV = getEnvironmentVariables(
+                          ref.read(selectedEnvironmentModelProvider));
+                      bulkController.text = envVarsToText(rV);
+                    }
+                  });
+                },
+              ),
             ],
           ),
         ),
-        if (!kIsMobile)
+        Expanded(
+          child: isBulkMode
+              ? Padding(
+                  padding: kPh20,
+                  child: TextField(
+                    controller: bulkController,
+                    onChanged: (value) {
+                      var rows = textToEnvVars(value);
+                      final environment = ref.read(selectedEnvironmentModelProvider);
+                      final secrets = getEnvironmentSecrets(environment);
+                      ref
+                          .read(environmentsStateNotifierProvider.notifier)
+                          .updateEnvironment(
+                            selectedId!,
+                            values: [...rows, ...secrets],
+                          );
+                    },
+                    style: kCodeStyle,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      hintText: "KEY: VALUE\nKEY: VALUE",
+                      hintStyle: kCodeStyle.copyWith(
+                          color: Theme.of(context).colorScheme.outlineVariant),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: kBorderRadius12,
+                  ),
+                  margin: kPh10t10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                              scrollbarTheme: kDataTableScrollbarTheme),
+                          child: DataTable2(
+                            columnSpacing: 12,
+                            dividerThickness: 0,
+                            horizontalMargin: 0,
+                            headingRowHeight: 0,
+                            dataRowHeight: kDataTableRowHeight,
+                            bottomMargin: kDataTableBottomPadding,
+                            isVerticalScrollBarVisible: true,
+                            columns: columns,
+                            rows: dataRows,
+                          ),
+                        ),
+                      ),
+                      if (!kIsMobile) kVSpacer40,
+                    ],
+                  ),
+                ),
+        ),
+        if (!kIsMobile && !isBulkMode)
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(

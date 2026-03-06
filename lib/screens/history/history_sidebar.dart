@@ -7,6 +7,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'history_widgets/history_widgets.dart';
 
 class HistoryPane extends ConsumerWidget {
@@ -19,11 +20,22 @@ class HistoryPane extends ConsumerWidget {
     return Padding(
       padding: (!context.isMediumWindow && kIsMacOS ? kPt24 : kPt8) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          HistorySidebarHeader(),
-          Expanded(child: HistoryList()),
+          const HistorySidebarHeader(),
+          kVSpacer10,
+          Padding(
+            padding: kPs8,
+            child: SidebarFilter(
+              filterHintText: "Search History",
+              onFilterFieldChanged: (value) {
+                ref.read(historySearchStateProvider.notifier).state = value;
+              },
+            ),
+          ),
+          kVSpacer10,
+          const Expanded(child: HistoryList()),
           kVSpacer5,
         ],
       ),

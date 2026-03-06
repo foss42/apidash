@@ -52,15 +52,13 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         setState(() {
           index = 0;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              kMsgPreviewGenerationFailed,
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.redAccent,
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "Preview Generation Failed!",
+            style: TextStyle(color: Colors.white),
           ),
-        );
+          backgroundColor: Colors.redAccent,
+        ));
         return null;
       }
       return res;
@@ -69,12 +67,13 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = kMsgSelectDefaultAIModel;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errMsg, style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.redAccent,
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          errMsg,
+          style: TextStyle(color: Colors.white),
         ),
-      );
+        backgroundColor: Colors.redAccent,
+      ));
       Navigator.pop(context);
       return null;
     }
@@ -93,15 +92,13 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       setState(() {
         index = 2;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            kMsgModificationRequestFailed,
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.redAccent,
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Modification Request Failed!",
+          style: TextStyle(color: Colors.white),
         ),
-      );
+        backgroundColor: Colors.redAccent,
+      ));
       return;
     }
     setState(() {
