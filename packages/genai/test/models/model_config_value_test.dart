@@ -40,6 +40,25 @@ void main() {
       final nullValue = ConfigNumericValue.deserialize('not_a_number');
       expect(nullValue.value, null);
     });
+
+    test('tryParseFinite returns null for non-finite values', () {
+      expect(ConfigNumericValue.tryParseFinite('1e309'), isNull);
+      expect(ConfigNumericValue.tryParseFinite('-1e309'), isNull);
+      expect(ConfigNumericValue.tryParseFinite('NaN'), isNull);
+      expect(ConfigNumericValue.tryParseFinite('Infinity'), isNull);
+      expect(ConfigNumericValue.tryParseFinite('abc'), isNull);
+    });
+
+    test('getPayloadValue excludes non-finite values', () {
+      final finite = ConfigNumericValue(value: 42);
+      expect(finite.getPayloadValue(), 42);
+
+      final infinity = ConfigNumericValue(value: double.infinity);
+      expect(infinity.getPayloadValue(), isNull);
+
+      final nan = ConfigNumericValue(value: double.nan);
+      expect(nan.getPayloadValue(), isNull);
+    });
   });
 
   group('ConfigSliderValue', () {
