@@ -2,7 +2,7 @@
 
 ## Summary
 
-I want to approach **MCP Testing** as a reliable and repeatable testing workflow for MCP developers, instead of treating it only as a live debugging tool.
+I want to approach **MCP Testing** as a reliable testing workflow for MCP developers, instead of treating it only as a live debugging tool.
 
 My current direction is to build the project in layers:
 
@@ -12,7 +12,7 @@ My current direction is to build the project in layers:
 - a **reproducible artifact model** so test runs can be saved, replayed, and compared,
 - and then a **minimal React interface** to define, run, and inspect MCP test scenarios.
 
-The main goal is to make MCP testing practical for developers: something they can rerun, inspect, compare, and use during development, instead of limiting the experience to one-off live inspection.
+The main goal is to make MCP testing practical for developers through rerunnable scenarios, clear validation, and reusable test artifacts.
 
 ---
 
@@ -194,7 +194,7 @@ Responsible for:
 
 ## Milestones
 
-## Milestone 1 â€” Execution and Validation Foundation
+### Milestone 1 — Execution and Validation Foundation
 
 The first milestone should focus on the smallest complete slice that proves the project direction.
 
@@ -208,7 +208,7 @@ Deliverables:
 
 This is the most important milestone because it creates the technical foundation for the rest of the project.
 
-## Milestone 2 â€” Reusable Test Scenarios
+### Milestone 2 — Reusable Test Scenarios
 
 Once the execution core works, the next step is to make tests reusable.
 
@@ -221,7 +221,7 @@ Deliverables:
 
 At this stage, testing becomes repeatable rather than ad hoc.
 
-## Milestone 3 â€” Minimal React UI
+### Milestone 3 — Minimal React UI
 
 After the core testing flow is stable, add a focused interface.
 
@@ -235,15 +235,14 @@ Deliverables:
 
 The UI should stay intentionally lightweight and centered on execution and inspection.
 
-## Milestone 4 â€” Coverage Expansion and Polish
+### Milestone 4 — Expansion and Polish
 
 Depending on mentor feedback and timeline, the final phase can include:
 
-- support for additional transports,
-- better scenario authoring flow,
-- improved failure visualization,
-- result grouping and reporting,
-- cleaner integration with the broader API Dash workflow.
+- adding one more transport if the first adapter is stable,
+- improving scenario authoring and saved-run replay,
+- refining failure visualization in the UI,
+- integrating artifact export/import more cleanly with the surrounding API Dash workflow.
 
 ---
 
@@ -264,8 +263,8 @@ By the end of the project, I would like to have:
 
 To keep the project realistic and deliverable, I would not treat the following as mandatory goals for the first version:
 
-- full dashboard-heavy DevTools surface,
-- broad CI/CD plugin ecosystem,
+- a full dashboard-heavy DevTools surface,
+- a broad CI/CD plugin ecosystem,
 - deep analytics/reporting from day one,
 - solving every MCP workflow at maximum depth immediately,
 - building a large visual platform before the execution core is stable.
@@ -277,15 +276,19 @@ These are all interesting future directions, but they should not weaken the firs
 ## Risks and Mitigation
 
 ### Risk 1: Transport support becomes too wide too early
+
 **Mitigation:** start with one transport done properly and keep transport support behind a stable adapter interface.
 
 ### Risk 2: UI work grows too early
+
 **Mitigation:** build the execution core and artifact model first, then keep the first UI intentionally minimal.
 
 ### Risk 3: Validation becomes too tied to one flow
+
 **Mitigation:** keep validation as a separate module so it can be reused cleanly across execution and UI layers.
 
 ### Risk 4: Artifact format becomes hard to evolve
+
 **Mitigation:** keep the format small and versioned from the start.
 
 ---
@@ -312,17 +315,17 @@ That makes the project useful not only for debugging, but also for development a
 I would especially appreciate mentor feedback on the following:
 
 1. Should the first implementation prioritize:
-   - one transport done well end-to-end,
-   - or a thinner abstraction across multiple transports from the beginning?
+   - one transport done well end-to-end, or
+   - a thinner abstraction across multiple transports from the beginning?
 
 2. For the initial vertical slice, should the focus be on:
    - MCP server testing,
-   - MCP client testing,
-   - or a minimal flow that supports both?
+   - MCP client testing, or
+   - a minimal flow that supports both?
 
 3. Should the artifact format be designed mainly for:
-   - local replay and debugging first,
-   - or with early CI-style usage also in mind?
+   - local replay and debugging first, or
+   - with early CI-style usage also in mind?
 
 ---
 
