@@ -44,4 +44,5 @@ const _$ModelAPIProviderEnumMap = {
   ModelAPIProvider.gemini: 'gemini',
   ModelAPIProvider.azureopenai: 'azureopenai',
   ModelAPIProvider.ollama: 'ollama',
+  ModelAPIProvider.custom: 'custom',
 };
