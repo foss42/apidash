@@ -641,8 +641,36 @@ if (ad.response.time > maxTime) {
   ad.console.log(`Response time OK: ${ad.response.time}ms`);
 }
 
-// Save for tracking
+// Save most recent response time (gets overwritten on each run)
 ad.environment.set("last_response_time", ad.response.time);
+```
+
+#### Example 3b: Track Performance Over Time
+
+```javascript
+// Track response times across multiple runs for trend analysis
+const history = JSON.parse(ad.environment.get("response_time_history") || "[]");
+
+history.push({
+  time: ad.response.time,
+  timestamp: Date.now(),
+  url: ad.request.url.get()
+});
+
+// Keep only last 10 runs to avoid growing indefinitely
+if (history.length > 10) {
+  history.shift();
+}
+
+ad.environment.set("response_time_history", JSON.stringify(history));
+
+// Calculate average and detect degradation
+const avgTime = history.reduce((sum, h) => sum + h.time, 0) / history.length;
+ad.console.log(`Current: ${ad.response.time}ms, Average: ${avgTime.toFixed(2)}ms`);
+
+if (ad.response.time > avgTime * 1.5) {
+  ad.console.warn(`Performance degradation detected! 50% slower than average`);
+}
 ```
 
 ### Checking JSON Responses
