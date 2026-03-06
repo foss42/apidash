@@ -18,6 +18,7 @@ class ReadOnlyTextField extends StatelessWidget {
     return TextField(
       readOnly: true,
       controller: TextEditingController(text: initialValue),
+      maxLines: 1,
       style: style,
       decoration: decoration ??
           const InputDecoration(

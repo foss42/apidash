@@ -134,6 +134,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
           focusNode: focusnode,
           decoration: widget.decoration,
           style: widget.style,
+          maxLines: 1,
           onChanged: widget.onChanged,
           onSubmitted: widget.onFieldSubmitted,
           specialTextSpanBuilder: EnvRegExpSpanBuilder(),
