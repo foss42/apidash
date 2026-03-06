@@ -64,8 +64,21 @@ class ConfigNumericValue extends ConfigValue {
     return value.toString();
   }
 
+  @override
+  dynamic getPayloadValue() {
+    final v = value;
+    if (v is double && (v.isInfinite || v.isNaN)) {
+      throw ArgumentError('Invalid numeric value: Infinity and NaN are not allowed');
+    }
+    return v;
+  }
+
   static ConfigNumericValue deserialize(String x) {
-    return ConfigNumericValue(value: num.tryParse(x));
+    final parsed = num.tryParse(x);
+    if (parsed is double && (parsed.isInfinite || parsed.isNaN)) {
+      return ConfigNumericValue(value: null);
+    }
+    return ConfigNumericValue(value: parsed);
   }
 }
 
