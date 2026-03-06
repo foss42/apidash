@@ -18,6 +18,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  final Map<ModelAPIProvider, AIRequestModel> _providerModels = {};
 
   @override
   void initState() {
@@ -25,6 +26,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     selectedProvider = widget.aiRequestModel?.modelApiProvider;
     if (selectedProvider != null && widget.aiRequestModel?.model != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
+      if (newAIRequestModel != null) {
+        _providerModels[selectedProvider!] = newAIRequestModel!;
+      }
     }
     aM = ModelManager.fetchAvailableModels();
   }
@@ -65,10 +69,20 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
                           onChanged: (x) {
+                            if (x == null) return;
                             setState(() {
                               selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
+                              final cachedModel = _providerModels[x];
+                              if (cachedModel != null) {
+                                newAIRequestModel = cachedModel;
+                              } else {
+                                final generatedModel =
+                                mappedData[x]?.toAiRequestModel();
+                                if (generatedModel != null) {
+                                  _providerModels[x] = generatedModel;
+                                }
+                                newAIRequestModel = generatedModel;
+                              }
                             });
                           },
                           value: selectedProvider,
@@ -108,19 +122,32 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                         ),
                         SizedBox(height: 20),
                         ...data.modelProviders.map(
-                          (x) => ListTile(
+                              (x) => ListTile(
                             title: Text(x.providerName ?? ""),
                             trailing: selectedProvider != x.providerId
                                 ? null
                                 : CircleAvatar(
-                                    radius: 5,
-                                    backgroundColor: Colors.green,
-                                  ),
+                              radius: 5,
+                              backgroundColor: Colors.green,
+                            ),
                             onTap: () {
+                              final providerId = x.providerId;
+                              if (providerId == null) return;
                               setState(() {
-                                selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
+                                selectedProvider = providerId;
+                                final cachedModel =
+                                _providerModels[providerId];
+                                if (cachedModel != null) {
+                                  newAIRequestModel = cachedModel;
+                                } else {
+                                  final generatedModel = mappedData[providerId]
+                                      ?.toAiRequestModel();
+                                  if (generatedModel != null) {
+                                    _providerModels[providerId] =
+                                        generatedModel;
+                                  }
+                                  newAIRequestModel = generatedModel;
+                                }
                               });
                             },
                           ),
@@ -169,6 +196,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
+                if (selectedProvider != null && newAIRequestModel != null) {
+                  _providerModels[selectedProvider!] = newAIRequestModel!;
+                }
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
@@ -183,6 +213,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           onChanged: (x) {
             setState(() {
               newAIRequestModel = newAIRequestModel?.copyWith(url: x);
+              if (selectedProvider != null && newAIRequestModel != null) {
+                _providerModels[selectedProvider!] = newAIRequestModel!;
+              }
             });
           },
           value: newAIRequestModel?.url ?? "",
@@ -210,7 +243,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               child: Column(
                 children: [
                   ...(aiModelProvider.models ?? []).map(
-                    (x) => ListTile(
+                        (x) => ListTile(
                       title: Text(x.name ?? ""),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -226,6 +259,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                         setState(() {
                           newAIRequestModel =
                               newAIRequestModel?.copyWith(model: x.id);
+                          if (selectedProvider != null &&
+                              newAIRequestModel != null) {
+                            _providerModels[selectedProvider!] =
+                            newAIRequestModel!;
+                          }
                         });
                       },
                     ),
