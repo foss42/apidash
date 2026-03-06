@@ -487,15 +487,39 @@ class CollectionStateNotifier
 
     final (response, duration, errorMessage) = await completer.future;
 
+    // NOTE:
+// On Windows, certain network or SSL failures (e.g. TLS handshake or
+// certificate verification issues) can occur before a valid HTTP response
+// is produced. In such cases, we intentionally surface a clear error message
+// and keep the "Raise Issue" action available, as this indicates a
+// platform-specific or environment-related problem rather than a user error.
+// This helps improve diagnostics without bypassing OS security mechanisms.
+
     if (response == null) {
+      String userMessage = errorMessage ?? 'Unknown network error';
+
+      if (errorMessage != null) {
+        if (errorMessage.contains('Failed host lookup')) {
+          userMessage =
+              'DNS resolution failed. The host could not be resolved on this system (possible firewall, proxy, or network configuration issue).';
+        } else if (errorMessage.contains('HandshakeException')) {
+          userMessage =
+              'SSL handshake failed. The server certificate could not be verified on this system.';
+        } else if (errorMessage.contains('SocketException')) {
+          userMessage =
+              'Network connection failed before a response was received. Please check your internet connection.';
+        }
+      }
+
       newRequestModel = newRequestModel.copyWith(
         responseStatus: -1,
-        message: errorMessage,
+        message: userMessage,
         isWorking: false,
         isStreaming: false,
       );
-      terminal.failNetwork(logId, errorMessage ?? 'Unknown error');
-    } else {
+
+      terminal.failNetwork(logId, userMessage);
+    }  else {
       final statusCode = response.statusCode;
       httpResponseModel = baseHttpResponseModel.fromResponse(
         response: response,
