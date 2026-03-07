@@ -119,6 +119,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
               method: authenticatedRequestModel.method.name.toUpperCase(),
               headers: headers,
               body: body,
+              overrideContentType: overrideContentType,
             );
             final streamed = await client.send(request);
             response = await http.Response.fromStream(streamed);
@@ -181,13 +182,30 @@ http.Request prepareHttpRequest({
   required String method,
   required Map<String, String> headers,
   required String? body,
+  bool overrideContentType = false,
 }) {
   var request = http.Request(method, url);
+  final contentType = headers.getValueContentType();
+  headers.removeKeyContentType();
+
+  // When not overriding, set content-type before body so Dart's
+  // body setter appends '; charset=utf-8'
+  if (contentType != null && !overrideContentType) {
+    request.headers[HttpHeaders.contentTypeHeader] = contentType;
+  }
+
   if (body != null) {
     request.body = body;
     headers[HttpHeaders.contentLengthHeader] =
         request.bodyBytes.length.toString();
   }
+
+  // When overriding, set content-type after body to preserve
+  // the exact user-provided value
+  if (contentType != null && overrideContentType) {
+    request.headers[HttpHeaders.contentTypeHeader] = contentType;
+  }
+
   request.headers.addAll(headers);
   return request;
 }
@@ -389,6 +407,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
       method: requestModel.method.name.toUpperCase(),
       headers: headers,
       body: body,
+      overrideContentType: overrideContentType,
     );
     streamedResponse = await client.send(request);
   }
