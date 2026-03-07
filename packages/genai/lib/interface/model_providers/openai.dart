@@ -26,7 +26,7 @@ class OpenAIModel extends ModelProvider {
               bearer: AuthBearerModel(token: aiRequestModel.apiKey!),
             ),
       body: kJsonEncoder.convert({
-        "model": aiRequestModel.model,
+        "model": aiRequestModel.model ?? "",
         "messages": [
           {"role": "system", "content": aiRequestModel.systemPrompt},
           if (aiRequestModel.userPrompt.isNotEmpty) ...{

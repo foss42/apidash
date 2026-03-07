@@ -6,7 +6,15 @@ import 'package:nanoid/nanoid.dart';
 import '../models/models.dart';
 
 Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
-  final httpRequestModel = aiRequestModel?.httpRequestModel;
+  if (aiRequestModel == null) return null;
+  if (aiRequestModel.model == null || aiRequestModel.model!.trim().isEmpty) {
+    throw Exception("AI request failed: Model not selected.");
+  }
+  if (aiRequestModel.url.trim().isEmpty) {
+    throw Exception("AI request failed: URL is required.");
+  }
+
+  final httpRequestModel = aiRequestModel.httpRequestModel;
   if (httpRequestModel == null) {
     debugPrint("executeGenAIRequest -> httpRequestModel is null");
     return null;
@@ -19,17 +27,41 @@ Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
   if (response == null) return null;
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
-    return aiRequestModel?.getFormattedOutput(data);
+    return aiRequestModel.getFormattedOutput(data);
   } else {
-    debugPrint('LLM_EXCEPTION: ${response.statusCode}\n${response.body}');
-    return null;
+    String errorMsg = "${response.statusCode} - ${response.body}";
+    try {
+      final decoded = jsonDecode(response.body);
+      if (decoded["error"] != null) {
+        if (decoded["error"] is Map && decoded["error"]["message"] != null) {
+          errorMsg = decoded["error"]["message"].toString();
+        } else {
+          errorMsg = decoded["error"].toString();
+        }
+      }
+    } catch (_) {}
+
+    String providerName = aiRequestModel.modelApiProvider?.name ?? 'Unknown';
+    if (providerName.isNotEmpty && providerName != 'Unknown') {
+      providerName = "${providerName[0].toUpperCase()}${providerName.substring(1)}";
+    }
+
+    throw Exception("AI Request Failed\nProvider: $providerName\nError: $errorMsg");
   }
 }
 
 Future<Stream<String?>> streamGenAIRequest(
   AIRequestModel? aiRequestModel,
 ) async {
-  final httpRequestModel = aiRequestModel?.httpRequestModel;
+  if (aiRequestModel == null) return const Stream.empty();
+  if (aiRequestModel.model == null || aiRequestModel.model!.trim().isEmpty) {
+    throw Exception("AI request failed: Model not selected.");
+  }
+  if (aiRequestModel.url.trim().isEmpty) {
+    throw Exception("AI request failed: URL is required.");
+  }
+
+  final httpRequestModel = aiRequestModel.httpRequestModel;
   final streamController = StreamController<String?>();
   if (httpRequestModel == null) {
     debugPrint("streamGenAIRequest -> httpRequestModel is null");
