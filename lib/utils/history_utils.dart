@@ -66,7 +66,7 @@ Map<DateTime, List<HistoryMetaModel>> getTemporalGroups(
   }
   for (HistoryMetaModel model in models!) {
     List<DateTime> existingKeys = temporalGroups.keys.toList();
-    DateTime key = getDateTimeKey(existingKeys, model.timeStamp);
+    DateTime key = getDateTimeKey(existingKeys, model.timeStamp ?? DateTime.now());
     if (existingKeys.contains(key)) {
       temporalGroups[key]!.add(model);
     } else {
@@ -74,7 +74,7 @@ Map<DateTime, List<HistoryMetaModel>> getTemporalGroups(
     }
   }
   temporalGroups.forEach((key, value) {
-    value.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
+    value.sort((a, b) => (b.timeStamp ?? DateTime.now()).compareTo(a.timeStamp ?? DateTime.now()));
   });
   return temporalGroups;
 }
@@ -94,7 +94,7 @@ Map<String, List<HistoryMetaModel>> getRequestGroups(
     }
   }
   historyGroups.forEach((key, value) {
-    value.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
+    value.sort((a, b) => (b.timeStamp ?? DateTime.now()).compareTo(a.timeStamp ?? DateTime.now()));
   });
   return historyGroups;
 }
@@ -112,7 +112,7 @@ List<HistoryMetaModel> getRequestGroup(
       requestGroup.add(model);
     }
   }
-  requestGroup.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
+  requestGroup.sort((a, b) => (b.timeStamp ?? DateTime.now()).compareTo(a.timeStamp ?? DateTime.now()));
   return requestGroup;
 }
 

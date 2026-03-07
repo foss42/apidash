@@ -22,7 +22,7 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
         var jsonMap = Map<String, Object?>.from(jsonModel);
         HistoryMetaModel historyMetaModelFromJson =
             HistoryMetaModel.fromJson(jsonMap);
-        if (historyMetaModelFromJson.timeStamp.isBefore(retentionDate)) {
+        if ((historyMetaModelFromJson.timeStamp ?? DateTime.now()).isBefore(retentionDate)) {
           toRemoveIds.add(historyId);
         }
       }

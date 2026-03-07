@@ -68,8 +68,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                           onChanged: (x) {
                             setState(() {
                               selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
+                              final provData = mappedData[selectedProvider];
+                              newAIRequestModel = provData?.toAiRequestModel();
+                              // Preserve existing model if provider is same
+                              if (selectedProvider == widget.aiRequestModel?.modelApiProvider) {
+                                newAIRequestModel = newAIRequestModel?.copyWith(
+                                  model: widget.aiRequestModel?.model,
+                                  apiKey: widget.aiRequestModel?.apiKey,
+                                  url: widget.aiRequestModel?.url ?? "",
+                                );
+                              }
                             });
                           },
                           value: selectedProvider,
@@ -121,8 +129,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                             onTap: () {
                               setState(() {
                                 selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
+                                final provData = mappedData[selectedProvider];
+                                newAIRequestModel = provData?.toAiRequestModel();
+                                // Preserve existing model if provider is same
+                                if (selectedProvider == widget.aiRequestModel?.modelApiProvider) {
+                                  newAIRequestModel = newAIRequestModel?.copyWith(
+                                    model: widget.aiRequestModel?.model,
+                                    apiKey: widget.aiRequestModel?.apiKey,
+                                    url: widget.aiRequestModel?.url ?? "",
+                                  );
+                                }
                               });
                             },
                           ),
@@ -189,6 +205,19 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           },
           value: newAIRequestModel?.url ?? "",
         ),
+        if (newAIRequestModel?.model == "") ...[
+          Text(kLabelModelName),
+          kVSpacer8,
+          BoundedTextField(
+            onChanged: (x) {
+              setState(() {
+                newAIRequestModel = newAIRequestModel?.copyWith(model: x);
+              });
+            },
+            value: newAIRequestModel?.model ?? "",
+          ),
+          kVSpacer10,
+        ],
         kVSpacer20,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

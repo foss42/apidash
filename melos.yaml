@@ -1,4 +1,7 @@
 name: apidash
+command:
+  bootstrap:
+    usePubspecOverrides: true
 
 packages:
   - packages/**
