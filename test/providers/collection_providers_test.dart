@@ -32,9 +32,8 @@ void main() async {
 
       // Build the EditRequestBody widget
       await tester.pumpWidget(
-        ProviderScope(
-          // ignore: deprecated_member_use
-          parent: container,
+        UncontrolledProviderScope(
+          container: container,
           child: const MaterialApp(home: Scaffold(body: EditRequestBody())),
         ),
       );
@@ -89,9 +88,8 @@ void main() async {
 
     // Render the widget
     await tester.pumpWidget(
-      ProviderScope(
-        // ignore: deprecated_member_use
-        parent: container,
+      UncontrolledProviderScope(
+        container: container,
         child: MaterialApp(
           home: Scaffold(body: ResponseBody(selectedRequestModel: rm)),
         ),

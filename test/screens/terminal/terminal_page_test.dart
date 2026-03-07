@@ -13,9 +13,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   Widget build(ProviderContainer container) {
-    return ProviderScope(
-      // ignore: deprecated_member_use
-      parent: container,
+    return UncontrolledProviderScope(
+      container: container,
       child: const MaterialApp(home: TerminalPage()),
     );
   }
