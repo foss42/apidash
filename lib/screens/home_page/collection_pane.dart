@@ -146,10 +146,7 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (item.httpRequestModel!.url.toLowerCase().contains(
-                      filterQuery,
-                    ) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
+                if (_matchesFilter(item, filterQuery)) {
                   return Padding(
                     padding: kP1,
                     child: RequestItem(id: id, requestModel: item),
@@ -161,6 +158,14 @@ class _RequestListState extends ConsumerState<RequestList> {
     );
   }
 }
+
+bool _matchesFilter(RequestModel item, String query) {
+  final matchName = item.name.toLowerCase().contains(query);
+  final matchUrl =
+      item.httpRequestModel?.url?.toLowerCase().contains(query) == true;
+  return matchName || matchUrl;
+}
+
 
 class RequestItem extends ConsumerWidget {
   const RequestItem({super.key, required this.id, required this.requestModel});
