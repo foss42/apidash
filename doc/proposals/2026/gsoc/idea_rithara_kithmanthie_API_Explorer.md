@@ -138,7 +138,6 @@ quality without manual review of every file.
   title, description, and tags
 - Add a horizontal category filter chip row above the grid 
   (All / AI / Finance / Weather / DevTools / Social)
-- Connect th
 
 ---
 
