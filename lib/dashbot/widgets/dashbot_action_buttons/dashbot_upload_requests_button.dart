@@ -28,12 +28,12 @@ class DashbotUploadRequestButton extends ConsumerWidget
               .map((e) => e.trim())
               .toList();
           if (exts.isNotEmpty) {
-            types.add(XTypeGroup(label: 'Allowed', mimeTypes: exts));
+            types.add(XTypeGroup(label: 'Allowed', mimeTypes: exts,uniformTypeIdentifiers: const ['public.json','public.yaml','public.data'],));
           }
         }
         final file = await openFile(
             acceptedTypeGroups:
-                types.isEmpty ? [const XTypeGroup(label: 'Any')] : types);
+                types.isEmpty ? [const XTypeGroup(label: 'Any',uniformTypeIdentifiers: ['public.data'],)] : types);
         if (file == null) return;
         final bytes = await file.readAsBytes();
         final att = ref.read(attachmentsProvider.notifier).add(
