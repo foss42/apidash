@@ -82,7 +82,8 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       final currentSelection = controller.selection;
       controller.text = widget.initialValue!;
       // Restore the selection if it's still valid
-      if (currentSelection.baseOffset <= controller.text.length) {
+      if (currentSelection.isValid &&
+          currentSelection.end <= controller.text.length) {
         controller.selection = currentSelection;
       }
     }
