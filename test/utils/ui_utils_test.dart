@@ -173,6 +173,52 @@ void main() {
     });
   });
 
+  group('Testing matchesNameOrUrlFilter function', () {
+    test('Matches AI request by name when url is null', () {
+      expect(
+        matchesNameOrUrlFilter(
+          query: 'summarize',
+          name: 'Summarize Notes',
+          url: null,
+        ),
+        true,
+      );
+    });
+
+    test('Matches HTTP request by url', () {
+      expect(
+        matchesNameOrUrlFilter(
+          query: 'apidash.dev',
+          name: 'Get Users',
+          url: 'https://api.apidash.dev/users',
+        ),
+        true,
+      );
+    });
+
+    test('Returns false when neither name nor url matches', () {
+      expect(
+        matchesNameOrUrlFilter(
+          query: 'billing',
+          name: 'Summarize Notes',
+          url: null,
+        ),
+        false,
+      );
+    });
+
+    test('Returns true for empty query', () {
+      expect(
+        matchesNameOrUrlFilter(
+          query: '   ',
+          name: 'Any Request',
+          url: null,
+        ),
+        true,
+      );
+    });
+  });
+
   group('Testing getScaffoldKey function', () {
     test('Returns kEnvScaffoldKey for railIdx 1', () {
       expect(getScaffoldKey(1), kEnvScaffoldKey);
