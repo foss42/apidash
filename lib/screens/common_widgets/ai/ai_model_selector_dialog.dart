@@ -68,8 +68,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                           onChanged: (x) {
                             setState(() {
                               selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
+                              final defaultModel = mappedData[selectedProvider]
                                   ?.toAiRequestModel();
+                              if (newAIRequestModel != null) {
+                                newAIRequestModel = newAIRequestModel!.copyWith(
+                                  modelApiProvider: selectedProvider,
+                                  model: defaultModel?.model,
+                                );
+                              } else {
+                                newAIRequestModel = defaultModel;
+                              }
                             });
                           },
                           value: selectedProvider,
@@ -121,8 +129,16 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                             onTap: () {
                               setState(() {
                                 selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
+                                final defaultModel = mappedData[selectedProvider]
                                     ?.toAiRequestModel();
+                                if (newAIRequestModel != null) {
+                                  newAIRequestModel = newAIRequestModel!.copyWith(
+                                    modelApiProvider: selectedProvider,
+                                    model: defaultModel?.model,
+                                  );
+                                } else {
+                                  newAIRequestModel = defaultModel;
+                                }
                               });
                             },
                           ),
@@ -181,7 +197,6 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         Text(kLabelEndpoint),
         kVSpacer8,
         BoundedTextField(
-          key: ValueKey(aiModelProvider.providerName ?? ""),
           onChanged: (x) {
             setState(() {
               newAIRequestModel = newAIRequestModel?.copyWith(url: x);
