@@ -96,7 +96,8 @@ class DashbotWindow extends ConsumerWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
+                                Expanded(
+                                  child: Row(
                                   children: [
                                     kHSpacer20,
                                     DashbotIcons.getDashbotIcon1(width: 38),
@@ -112,7 +113,8 @@ class DashbotWindow extends ConsumerWidget {
                                       ),
                                     ),
                                     kHSpacer4,
-                                    AIModelSelectorButton(
+                                      Flexible(
+                                        child: AIModelSelectorButton(
                                       aiRequestModel: AIRequestModel.fromJson(
                                           settings.defaultAIModel ?? {}),
                                       useRootNavigator: true,
@@ -134,10 +136,11 @@ class DashbotWindow extends ConsumerWidget {
                                                     systemPrompt: '',
                                                     userPrompt: '').toJson());
                                       },
+                                      ),
                                     ),
                                   ],
+                                  ),
                                 ),
-                                Spacer(),
                                 IconButton(
                                   icon: Icon(
                                     Icons.open_in_new,
