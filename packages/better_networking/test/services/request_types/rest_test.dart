@@ -192,30 +192,31 @@ void main() {
     });
   });
 
-  group('Testing overrideContentType functionality', () {
+  group(
+      'Testing overrideContentType functionality not required due to http v1.6.0 breaking change',
+      () {
     test('overrideContentType is true', () async {
       final request = prepareHttpRequest(
         url: Uri.parse('https://www.example.com'),
         method: 'POST',
         body: 'Hello',
         headers: {'content-type': 'application/json'},
-        overrideContentType: true,
       );
       expect(request.headers['content-type'], 'application/json');
     });
 
-    test('overrideContentType is false', () async {
+    test('; charset=utf-8 is not appended due to http v1.6.0 breaking change',
+        () async {
       final request = prepareHttpRequest(
         url: Uri.parse('https://www.example.com'),
         method: 'POST',
         body: 'Hello',
         headers: {'content-type': 'application/json'},
-        overrideContentType: false,
       );
-      expect(request.headers['content-type'], isNot('application/json'));
+      expect(request.headers['content-type'], 'application/json');
       expect(
         request.headers['content-type'],
-        'application/json; charset=utf-8',
+        isNot('application/json; charset=utf-8'),
       );
     });
   });

@@ -119,7 +119,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
               method: authenticatedRequestModel.method.name.toUpperCase(),
               headers: headers,
               body: body,
-              overrideContentType: overrideContentType,
             );
             final streamed = await client.send(request);
             response = await http.Response.fromStream(streamed);
@@ -182,20 +181,12 @@ http.Request prepareHttpRequest({
   required String method,
   required Map<String, String> headers,
   required String? body,
-  bool overrideContentType = false,
 }) {
   var request = http.Request(method, url);
-  if (headers.getValueContentType() != null) {
-    request.headers[HttpHeaders.contentTypeHeader] = headers
-        .getValueContentType()!;
-    if (!overrideContentType) {
-      headers.removeKeyContentType();
-    }
-  }
   if (body != null) {
     request.body = body;
-    headers[HttpHeaders.contentLengthHeader] = request.bodyBytes.length
-        .toString();
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
   }
   request.headers.addAll(headers);
   return request;
@@ -398,7 +389,6 @@ Future<http.StreamedResponse> makeStreamedRequest({
       method: requestModel.method.name.toUpperCase(),
       headers: headers,
       body: body,
-      overrideContentType: overrideContentType,
     );
     streamedResponse = await client.send(request);
   }
