@@ -21,6 +21,22 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   }
 });
 
+final selectedSubstitutedHttpRequestModelProvider =
+    StateProvider<HttpRequestModel?>((ref) {
+  final selectedRequestModel = ref.watch(selectedRequestModelProvider);
+  final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+  final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+  if (selectedRequestModel?.httpRequestModel == null) {
+    return null;
+  } else {
+    return substituteHttpRequestModel(
+      selectedRequestModel!.httpRequestModel!,
+      envMap,
+      activeEnvId,
+    );
+  }
+});
+
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
   return ids ?? [];
@@ -487,7 +503,7 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
-      //AI-FORMATTING for Non Streaming Varaint
+      //AI-FORMATTING for Non Streaming Variant
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {

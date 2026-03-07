@@ -99,8 +99,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(networkTitle, findsNothing);
 
-    // Toggle timestamp checkbox
-    await tester.tap(find.byType(Checkbox));
+    // Toggle timestamp icon button
+    await tester.tap(find.byIcon(Icons.access_time));
     await tester.pumpAndSettle();
 
     // We won't parse time, but ensure list still renders with entries

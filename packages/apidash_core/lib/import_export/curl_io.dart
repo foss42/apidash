@@ -1,39 +1,35 @@
 import 'package:curl_parser/curl_parser.dart';
 import 'package:genai/genai.dart';
+import '../utils/utils.dart';
 
 class CurlIO {
+  /// Parses curl command(s) from a string and converts them to a list of [HttpRequestModel].
+  ///
+  /// Supports both single and multiple curl commands in the content string.
+  /// Multiple commands should be separated by newlines or whitespace.
+  /// Skips curl commands that fail to parse and only returns successfully parsed models.
+  ///
+  /// Returns a list of [HttpRequestModel] if at least one curl command is successfully parsed,
+  /// or null if no valid curl commands are found.
   List<HttpRequestModel>? getHttpRequestModelList(String content) {
     content = content.trim();
-    try {
-      // TODO: Allow files with multiple curl commands and create
-      // a request model for each
-      final curl = Curl.parse(content);
-      final url = stripUriParams(curl.uri);
-      final method = HTTPVerb.values.byName(curl.method.toLowerCase());
-      final headers = mapToRows(curl.headers);
-      final params = mapToRows(curl.uri.queryParameters);
-      final body = curl.data;
-      // TODO: formdata with file paths must be set to empty as
-      // there will be permission issue while trying to access the path
-      final formData = curl.formData;
-      // Determine content type based on form data and headers
-      final ContentType contentType = curl.form
-          ? ContentType.formdata
-          : (getContentTypeFromHeadersMap(curl.headers) ?? ContentType.text);
-
-      return [
-        HttpRequestModel(
-          method: method,
-          url: url,
-          headers: headers,
-          params: params,
-          body: body,
-          bodyContentType: contentType,
-          formData: formData,
-        ),
-      ];
-    } catch (e) {
-      return null;
+    
+    // Split content into potential curl commands
+    final curlCommands = splitCurlCommands(content);
+    
+    // Parse each curl command, skipping those that fail
+    final httpRequestModels = <HttpRequestModel>[];
+    for (final curlCommand in curlCommands) {
+      try {
+        final curl = Curl.parse(curlCommand);
+        final httpRequestModel = convertCurlToHttpRequestModel(curl);
+        httpRequestModels.add(httpRequestModel);
+      } catch (e) {
+        // Skip curls that fail to parse
+        continue;
+      }
     }
+    
+    return httpRequestModels.isEmpty ? null : httpRequestModels;
   }
 }

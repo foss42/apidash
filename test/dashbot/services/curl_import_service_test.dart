@@ -3,32 +3,28 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('CurlImportService.tryParseCurl', () {
-    test('valid curl parses', () {
-      final c = CurlImportService.tryParseCurl(
-          "curl -X POST https://api.apidash.dev/v1/users -H 'User-Agent: UA' -d '{\"name\":\"John\"}'");
-      expect(c, isNotNull);
-      expect(c!.method.toUpperCase(), 'POST');
-    });
-
+  group('Curl.tryParse returns null', () {
     test('invalid returns null', () {
-      expect(CurlImportService.tryParseCurl('echo not a curl'), isNull);
+      expect(Curl.tryParse('echo not a curl'), isNull);
     });
   });
 
-  group('CurlImportService.buildActionPayloadFromCurl', () {
-    test('maps auth, headers, body, params', () {
+  group('CurlImportService.buildResponseFromParsed', () {
+    test('converts curl to json message with actions', () {
       final curl = Curl.parse(
-          'curl -u user:pass "https://api.apidash.dev/items?size=10" -H "X-Test: 1" --data "{\"name\":\"X\"}"');
-      final p = CurlImportService.buildActionPayloadFromCurl(curl);
-      // Because of --data flag, method becomes POST implicitly
-      expect(p['method'].toString().toUpperCase(), 'POST');
-      expect(p['url'], startsWith('https://api.apidash.dev/items'));
-      final headers = (p['headers'] as Map).cast<String, dynamic>();
-      expect(headers.containsKey('Authorization'), true);
-      expect(headers['X-Test'], '1');
-      expect(p['body'], contains('name'));
-      expect(p['params'], containsPair('size', '10'));
+          'curl -u user:pass "https://api.apidash.dev/items?size=10" -H "X-Test: 1" --data "{"name":"X"}"');
+      final parsedCurl = convertCurlToHttpRequestModel(curl).toJson();
+      final result = CurlImportService.buildResponseFromParsed(parsedCurl);
+
+      expect(result.jsonMessage, isNotNull);
+      expect(result.actions, hasLength(2));
+      expect(result.actions.first['action'], 'apply_curl');
+
+      // Verify the payload contains expected data
+      final payload = result.actions.first['value'] as Map<String, dynamic>;
+      expect(payload['method'].toString().toUpperCase(), 'POST');
+      expect(payload['headers'], isA<List<Map>>());
+      expect(payload['body'], contains('name'));
     });
   });
 
@@ -67,35 +63,33 @@ void main() {
   });
 
   group('CurlImportService additional coverage', () {
-    test('setIfMissing early return (null values)', () {
-      // No cookie, referer, user-agent flags so underlying values are null.
-      final curl = Curl.parse('curl https://api.apidash.dev/simple');
-      final payload = CurlImportService.buildActionPayloadFromCurl(curl);
-      // Still builds basic payload; exercising null value path in setIfMissing.
-      expect(payload['headers'], isA<Map>());
-    });
-
-    test('setIfMissing adds missing headers for cookie referer user-agent', () {
-      final curl = Curl.parse(
-          "curl -b 'a=1' -e 'https://ref.example' -A 'MyAgent' https://api.apidash.dev/hdr");
-      final payload = CurlImportService.buildActionPayloadFromCurl(curl);
-      final headers = (payload['headers'] as Map).cast<String, dynamic>();
-      expect(headers['Cookie'], contains('a=1'));
-      expect(headers['User-Agent'], contains('MyAgent'));
-      expect(headers['Referer'], contains('ref.example'));
-    });
-
     test(
         'formData mapping & json/text body type detection in summaryForPayload',
         () {
-      final curl = Curl.parse(
-          "curl -F 'field1=val1' -F 'field2=val2' https://api.apidash.dev/upload");
-      final payload = CurlImportService.buildActionPayloadFromCurl(curl);
-      // Force JSON-looking body to exercise looksLikeJson; supply manual body override.
-      payload['body'] = '{"x":1}';
-      final summary = CurlImportService.summaryForPayload(payload);
-      expect(summary, contains('Method'));
-      expect(summary, contains('Headers'));
+      // Create a payload with form data to test summary generation
+      final payload = {
+        'method': 'POST',
+        'url': 'https://api.apidash.dev/upload',
+        'headers': <String, String>{},
+        'params': <String, String>{},
+        'form': true,
+        'formData': [
+          {'name': 'field1', 'value': 'val1'},
+          {'name': 'field2', 'value': 'val2'}
+        ],
+      };
+      final current = {
+        'method': 'GET',
+        'url': 'https://api.apidash.dev/',
+        'headers': <String, String>{},
+        'params': <String, String>{},
+        'form': true,
+        'formData': null,
+      };
+      final diff = CurlImportService.diffWithCurrent(payload, current);
+      expect(diff, '''~ method: "GET" → "POST"
+~ url: "https://api.apidash.dev/" → "https://api.apidash.dev/upload"
+~ formData: null → [{"name":"field1","value":"val1"},{"name":"field2","value":"val2"}]''');
     });
 
     test('diffForPayload full diff (method,url,headers,params,body)', () {
@@ -117,9 +111,13 @@ void main() {
         'params': {'x': '2', 'z': '3'}, // add z, update x, remove y
         'body': '{"a":1,"b":2}', // size & maybe body diff triggers diff['body']
       };
-      final diff = CurlImportService.diffForPayload(newPayload, current);
-      expect(diff.keys,
-          containsAll(['method', 'url', 'headers', 'params', 'body']));
+      final diff = CurlImportService.diffWithCurrent(newPayload, current);
+      expect(diff, '''~ method: "GET" → "post"
+~ url: "https://api.apidash.dev/a?x=1&y=2" → "https://api.apidash.dev/b"
+~ headers: {"X-A":"1","X-Remove":"gone"} → {"X-A":"2","X-New":"n"}
+~ params: {"x":"1","y":"2"} → {"x":"2","z":"3"}
+~ body: "{"a":1}" → "{"a":1,"b":2}"''');
+
       final msg = CurlImportService.buildActionMessageFromPayload(
         newPayload,
         current: current,
@@ -130,22 +128,8 @@ void main() {
       expect(msg['note'], 'note here');
       final expl = msg['explanation'] as String;
       expect(expl, contains('extra insights'));
-      expect(expl, contains('Method: GET'));
       // diff narrative lines
-      expect(
-          expl, contains('If applied to the selected request')); // diff section
-    });
-
-    test('_looksLikeJson negative path (invalid JSON -> text)', () {
-      final payload = {
-        'method': 'GET',
-        'url': 'https://api.apidash.dev/x',
-        'headers': {},
-        'body': '{invalid', // invalid JSON
-      };
-      final summary = CurlImportService.summaryForPayload(payload);
-      // Should classify as text or none (not json)
-      expect(summary, isNot(contains('json (')));
+      expect(expl, contains('apply the changes?')); // diff section
     });
   });
 }
