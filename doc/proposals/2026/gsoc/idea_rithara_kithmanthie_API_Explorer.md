@@ -146,4 +146,5 @@ quality without manual review of every file.
 **GitHub:** [github.com/rithakith](https://github.com/rithakith)  
 **Portfolio:** [rithara.dev](https://rithara.dev)  
 **LinkedIn:** [linkedin.com/in/ritharak](https://linkedin.com/in/ritharak)
+
 **Medium:** [medium.com/@ritharaedirisinghe](https://medium.com/@ritharaedirisinghe)
