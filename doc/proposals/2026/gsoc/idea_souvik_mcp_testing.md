@@ -1,3 +1,15 @@
+### Initial Idea Submission
+
+**Full Name:** Souvik Ghosh  
+**University name:** Indian Institute of Engineering Science and Technology, Shibpur  
+**Program you are enrolled in (Degree & Major/Minor):** B.Tech in Computer Science and Engineering  
+**Year:** 3rd Year  
+**Expected graduation date:** 2027  
+
+**Project Title:** MCP Testing  
+**Relevant issues:** #1225  
+
+**Idea description:**  
 # GSoC 2026: Initial Idea Submission for MCP Testing
 
 ## Summary
@@ -194,7 +206,7 @@ Responsible for:
 
 ## Milestones
 
-### Milestone 1 — Execution and Validation Foundation
+### Milestone 1 â€” Execution and Validation Foundation
 
 The first milestone should focus on the smallest complete slice that proves the project direction.
 
@@ -208,7 +220,7 @@ Deliverables:
 
 This is the most important milestone because it creates the technical foundation for the rest of the project.
 
-### Milestone 2 — Reusable Test Scenarios
+### Milestone 2 â€” Reusable Test Scenarios
 
 Once the execution core works, the next step is to make tests reusable.
 
@@ -221,7 +233,7 @@ Deliverables:
 
 At this stage, testing becomes repeatable rather than ad hoc.
 
-### Milestone 3 — Minimal React UI
+### Milestone 3 â€” Minimal React UI
 
 After the core testing flow is stable, add a focused interface.
 
@@ -235,7 +247,7 @@ Deliverables:
 
 The UI should stay intentionally lightweight and centered on execution and inspection.
 
-### Milestone 4 — Expansion and Polish
+### Milestone 4 â€” Expansion and Polish
 
 Depending on mentor feedback and timeline, the final phase can include:
 
