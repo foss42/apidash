@@ -16,6 +16,7 @@ dependencies:
     path: packages/apidash_design_system
   carousel_slider: ^5.0.0
   code_builder: ^4.10.0
+  crypto: ^3.0.3
   csv: ^6.0.0
   data_table_2: 2.5.16
   dart_style: ^3.0.1
@@ -31,6 +32,7 @@ dependencies:
   flutter_markdown: ^0.7.6+2
   flutter_portal: ^1.1.4
   flutter_riverpod: ^2.5.1
+  flutter_secure_storage: ^9.0.0
   flutter_svg: ^2.0.17
   fvp: ^0.32.1
   highlight: ^0.7.0
@@ -47,6 +49,7 @@ dependencies:
   just_audio: ^0.9.46
   just_audio_mpv: ^0.1.7
   just_audio_windows: ^0.2.0
+  logging: ^1.2.0
   lottie: ^3.3.1
   markdown: ^7.3.0
   mime_dart: ^3.0.0
