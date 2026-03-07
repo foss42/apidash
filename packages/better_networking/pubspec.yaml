@@ -11,8 +11,10 @@ topics:
   - graphql
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
   flutter: ">=1.17.0"
+
+resolution: workspace
 
 dependencies:
   flutter:
@@ -26,8 +28,7 @@ dependencies:
   http_parser: ^4.1.2
   json5: ^0.8.2
   json_annotation: ^4.9.0
-  seed:
-    path: ../seed
+  seed: any
   xml: ^6.3.0
   oauth1: ^2.1.0
   oauth2: ^2.0.5

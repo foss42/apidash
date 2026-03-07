@@ -41,20 +41,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  apidash_core:
-    dependency: "direct main"
-    description:
-      path: "packages/apidash_core"
-      relative: true
-    source: path
-    version: "0.0.1"
-  apidash_design_system:
-    dependency: "direct main"
-    description:
-      path: "packages/apidash_design_system"
-      relative: true
-    source: path
-    version: "0.0.1"
   archive:
     dependency: transitive
     description:
@@ -103,13 +89,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.9"
-  better_networking:
-    dependency: transitive
-    description:
-      path: "packages/better_networking"
-      relative: true
-    source: path
-    version: "0.0.4-dev"
   bidi:
     dependency: transitive
     description:
@@ -362,17 +341,10 @@ packages:
     dependency: "direct main"
     description:
       name: csv
-      sha256: bef2950f7a753eb82f894a2eabc3072e73cf21c17096296a5a992797e50b1d0d
+      sha256: e122a402b966b93a4e98925da241ecb3d58d2e62c0aa6486b0c8de4bd405dad5
       url: "https://pub.dev"
     source: hosted
-    version: "7.1.0"
-  curl_parser:
-    dependency: transitive
-    description:
-      path: "packages/curl_parser"
-      relative: true
-    source: path
-    version: "0.1.5-dev"
+    version: "7.2.0"
   dart_jsonwebtoken:
     dependency: transitive
     description:
@@ -445,6 +417,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  effective_dart:
+    dependency: transitive
+    description:
+      name: effective_dart
+      sha256: "6a69783c808344084b65667e87ff600823531e95810a8a15882cb542fe22de80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.2"
   equatable:
     dependency: transitive
     description:
@@ -691,10 +671,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
-      sha256: "87fbd7c534435b6c5d9d98b01e1fd527812b82e68ddd8bd35fc45ed0fa8f0a95"
+      sha256: "1ded017b39c8e15c8948ea855070a5ff8ff8b3d5e83f3446e02d6bb12add7ad9"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.3"
+    version: "2.2.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -758,13 +738,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.35.2"
-  genai:
-    dependency: transitive
-    description:
-      path: "packages/genai"
-      relative: true
-    source: path
-    version: "0.0.2-dev"
   glob:
     dependency: transitive
     description:
@@ -773,6 +746,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
+  golden_toolkit:
+    dependency: transitive
+    description:
+      name: golden_toolkit
+      sha256: "8f74adab33154fe7b731395782797021f97d2edc52f7bfb85ff4f1b5c4a215f0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.0"
   google_fonts:
     dependency: transitive
     description:
@@ -789,13 +770,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
-  har:
-    dependency: transitive
-    description:
-      path: "packages/har"
-      relative: true
-    source: path
-    version: "0.0.2-dev"
   highlight:
     dependency: "direct main"
     description:
@@ -900,13 +874,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.4"
-  insomnia_collection:
-    dependency: transitive
-    description:
-      path: "packages/insomnia_collection"
-      relative: true
-    source: path
-    version: "0.0.2-dev"
   integration_test:
     dependency: "direct dev"
     description: flutter
@@ -976,20 +943,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.11.0"
-  json_explorer:
-    dependency: "direct main"
-    description:
-      path: "packages/json_explorer"
-      relative: true
-    source: path
-    version: "0.1.3"
-  json_field_editor:
-    dependency: "direct main"
-    description:
-      path: "packages/json_field_editor"
-      relative: true
-    source: path
-    version: "1.2.2"
   json_serializable:
     dependency: "direct dev"
     description:
@@ -1114,10 +1067,10 @@ packages:
     dependency: transitive
     description:
       name: matcher
-      sha256: "12956d0ad8390bbcc63ca2e1469c0619946ccb52809807067a7020d57e647aa6"
+      sha256: dc0b7dc7651697ea4ff3e69ef44b0407ea32c487a39fff6a4004fa585e901861
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.18"
+    version: "0.12.19"
   material_color_utilities:
     dependency: transitive
     description:
@@ -1198,13 +1151,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.1"
-  multi_trigger_autocomplete_plus:
-    dependency: "direct main"
-    description:
-      path: "packages/multi_trigger_autocomplete_plus"
-      relative: true
-    source: path
-    version: "1.0.3"
   mustache_template:
     dependency: transitive
     description:
@@ -1273,10 +1219,10 @@ packages:
     dependency: "direct main"
     description:
       name: ollama_dart
-      sha256: "7ced51fa4151bef696a9e1571ca7b4ac4bc4b35331e45ae5e0684560fcd26d99"
+      sha256: fbd34efbf46dec74351a1bd38768b9c774db989c10c814b82a5f73c28d183b99
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0+1"
+    version: "1.3.0"
   openapi_spec:
     dependency: transitive
     description:
@@ -1437,13 +1383,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.2"
-  postman:
-    dependency: transitive
-    description:
-      path: "packages/postman"
-      relative: true
-    source: path
-    version: "0.1.3-dev"
   printing:
     dependency: "direct main"
     description:
@@ -1524,6 +1463,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  rows_lint:
+    dependency: transitive
+    description:
+      name: rows_lint
+      sha256: "772b3e0759a62282365c16ea3e51e2bab5823b916f6ae6f4bfe2012e28028afc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   rxdart:
     dependency: transitive
     description:
@@ -1588,13 +1535,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.8"
-  seed:
-    dependency: transitive
-    description:
-      path: "packages/seed"
-      relative: true
-    source: path
-    version: "0.0.4-dev"
   share_plus:
     dependency: "direct main"
     description:
@@ -1916,26 +1856,26 @@ packages:
     dependency: "direct dev"
     description:
       name: test
-      sha256: "54c516bbb7cee2754d327ad4fca637f78abfc3cbcc5ace83b3eda117e42cd71a"
+      sha256: "280d6d890011ca966ad08df7e8a4ddfab0fb3aa49f96ed6de56e3521347a9ae7"
       url: "https://pub.dev"
     source: hosted
-    version: "1.29.0"
+    version: "1.30.0"
   test_api:
     dependency: transitive
     description:
       name: test_api
-      sha256: "93167629bfc610f71560ab9312acdda4959de4df6fac7492c89ff0d3886f6636"
+      sha256: "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.9"
+    version: "0.7.10"
   test_core:
     dependency: transitive
     description:
       name: test_core
-      sha256: "394f07d21f0f2255ec9e3989f21e54d3c7dc0e6e9dbce160e5a9c1a6be0e2943"
+      sha256: "0381bd1585d1a924763c308100f2138205252fb90c9d4eeaf28489ee65ccde51"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.15"
+    version: "0.6.16"
   textwrap:
     dependency: transitive
     description:

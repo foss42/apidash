@@ -8,21 +8,18 @@ environment:
   sdk: ^3.5.3
   flutter: ">=1.17.0"
 
+resolution: workspace
+
 dependencies:
   flutter:
     sdk: flutter
-  curl_parser:
-    path: ../curl_parser
+  curl_parser: any
   freezed_annotation: ^3.0.0
-  genai:
-    path: ../genai
-  har:
-    path: ../har
-  insomnia_collection:
-    path: ../insomnia_collection
+  genai: any
+  har: any
+  insomnia_collection: any
   openapi_spec: ^0.15.0
-  postman:
-    path: ../postman
+  postman: any
   xml: ^6.6.1
 
 dev_dependencies:

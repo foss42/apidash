@@ -14,13 +14,14 @@ topics:
   - network
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
+
+resolution: workspace
 
 dependencies:
   args: ^2.5.0
   json_annotation: ^4.11.0
-  seed:
-    path: ../seed
+  seed: any
   shlex: ^2.0.2
 
 dev_dependencies:

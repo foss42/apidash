@@ -6,8 +6,10 @@ repository: https://github.com/foss42/apidash/tree/main/packages/multi_trigger_a
 issue_tracker: https://github.com/foss42/apidash/issues
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
   flutter: ">=3.3.0"
+
+resolution: workspace
 
 dependencies:
   flutter:

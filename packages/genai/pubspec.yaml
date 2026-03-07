@@ -14,11 +14,12 @@ environment:
   sdk: ^3.8.0
   flutter: ">=1.17.0"
 
+resolution: workspace
+
 dependencies:
   flutter:
     sdk: flutter
-  better_networking:
-    path: ../better_networking
+  better_networking: any
   json_annotation: ^4.11.0
   nanoid: ^1.0.0
 
