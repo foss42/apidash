@@ -69,8 +69,12 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                           onChanged: (x) {
                             setState(() {
                               selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
+                              final providerModel = mappedData[selectedProvider]
                                   ?.toAiRequestModel();
+                              newAIRequestModel = providerModel?.copyWith(
+                                url: newAIRequestModel?.url ?? providerModel.url,
+                                apiKey: newAIRequestModel?.apiKey ?? providerModel.apiKey,
+                              );
                               apiKeyError = false;
                               endpointError = false;
                             });
@@ -123,8 +127,12 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                             onTap: () {
                               setState(() {
                                 selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
+                                final providerModel = mappedData[selectedProvider]
                                     ?.toAiRequestModel();
+                                newAIRequestModel = providerModel?.copyWith(
+                                  url: newAIRequestModel?.url ?? providerModel.url,
+                                  apiKey: newAIRequestModel?.apiKey ?? providerModel.apiKey,
+                                );
                                 apiKeyError = false;
                                 endpointError = false;
                               });
