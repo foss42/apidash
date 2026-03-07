@@ -24,7 +24,7 @@ class IntroMessage extends StatelessWidget {
       future: introData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.hasError) {
-          return const ErrorMessage(message: "An error occured");
+          return const ErrorMessage(message: "An error occurred");
         }
         if (snapshot.connectionState == ConnectionState.done) {
           if (Theme.of(context).brightness == Brightness.dark) {

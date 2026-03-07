@@ -10,15 +10,16 @@ import 'environments_pane.dart';
 import 'environment_editor.dart';
 
 class EnvironmentPage extends ConsumerWidget {
-  const EnvironmentPage({
-    super.key,
-  });
+  const EnvironmentPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(selectedEnvironmentIdStateProvider);
-    final name = getEnvironmentTitle(ref.watch(
-        selectedEnvironmentModelProvider.select((value) => value?.name)));
+    final name = getEnvironmentTitle(
+      ref.watch(
+        selectedEnvironmentModelProvider.select((value) => value?.name),
+      ),
+    );
     if (context.isMediumWindow) {
       return DrawerSplitView(
         scaffoldKey: kEnvScaffoldKey,
@@ -28,7 +29,7 @@ class EnvironmentPage extends ConsumerWidget {
           showMenu: id != kGlobalEnvironmentId,
           onSelected: (ItemMenuOption item) {
             if (item == ItemMenuOption.edit) {
-              showRenameDialog(context, "Rename Environment", name, (val) {
+              showRenameDialog(context, kLabelRenameEnvironment, name, (val) {
                 ref
                     .read(environmentsStateNotifierProvider.notifier)
                     .updateEnvironment(id!, name: val);

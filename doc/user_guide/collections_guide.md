@@ -12,7 +12,7 @@ API Dash organizes your API requests in a single, ordered collection. You can ad
 
 Give your requests meaningful names to find them quickly:
 
-- **Desktop:** Double-click a request in the sidebar to edit its name inline. Press **Enter** to save or **Escape** to cancel.
+- **Desktop:** Right-click a request in the sidebar and select **Rename** from the context menu, or click the **⋮** menu icon on the selected card and choose **Rename**. Edit the name inline, then press **Enter** to save or click outside to confirm.
 - **Mobile:** Long-press a request to see the full name tooltip, or use the context menu to rename.
 
 > **Tip:** Hovering on Desktop or long-pressing on Mobile displays a tooltip with the full request name for requests with long names.

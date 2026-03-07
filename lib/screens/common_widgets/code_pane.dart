@@ -10,20 +10,19 @@ import 'package:apidash/consts.dart';
 final Codegen codegen = Codegen();
 
 class CodePane extends ConsumerWidget {
-  const CodePane({
-    super.key,
-    this.isHistoryRequest = false,
-  });
+  const CodePane({super.key, this.isHistoryRequest = false});
 
   final bool isHistoryRequest;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final CodegenLanguage codegenLanguage =
-        ref.watch(codegenLanguageStateProvider);
+    final CodegenLanguage codegenLanguage = ref.watch(
+      codegenLanguageStateProvider,
+    );
 
-    final selectedHistoryRequestModel =
-        ref.watch(selectedHistoryRequestModelProvider);
+    final selectedHistoryRequestModel = ref.watch(
+      selectedHistoryRequestModelProvider,
+    );
 
     final selectedRequestModel = isHistoryRequest
         ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
@@ -31,34 +30,36 @@ class CodePane extends ConsumerWidget {
 
     // TODO: Add AI Request Codegen
     if (selectedRequestModel?.apiType == APIType.ai) {
-      return const ErrorMessage(
-        message: "Code generation for AI Requests is currently not available.",
-      );
+      return const ErrorMessage(message: kMsgCodegenAINotAvailable);
     }
 
-    final defaultUriScheme =
-        ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
+    final defaultUriScheme = ref.watch(
+      settingsProvider.select((value) => value.defaultUriScheme),
+    );
 
     var envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
 
     final substitutedRequestModel = selectedRequestModel?.copyWith(
-        httpRequestModel: substituteHttpRequestModel(
-            selectedRequestModel.httpRequestModel!, envMap, activeEnvId));
+      httpRequestModel: substituteHttpRequestModel(
+        selectedRequestModel.httpRequestModel!,
+        envMap,
+        activeEnvId,
+      ),
+    );
 
     final code = codegen.getCode(
-        codegenLanguage, substitutedRequestModel!, defaultUriScheme);
+      codegenLanguage,
+      substitutedRequestModel!,
+      defaultUriScheme,
+    );
 
     // TODO: Add GraphQL Codegen
     if (substitutedRequestModel.apiType == APIType.graphql) {
-      return const ErrorMessage(
-        message: "Code generation for GraphQL is currently not available.",
-      );
+      return const ErrorMessage(message: kMsgCodegenGraphQLNotAvailable);
     }
     if (code == null) {
-      return const ErrorMessage(
-        message: "An error was encountered while generating code. $kRaiseIssue",
-      );
+      return const ErrorMessage(message: kMsgCodegenError);
     }
     return ViewCodePane(
       code: code,

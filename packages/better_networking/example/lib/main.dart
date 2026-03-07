@@ -129,7 +129,7 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                 );
                 stream.listen(
                   (data) {
-                    debugPrint('Recieved Data: $data');
+                    debugPrint('Received Data: $data');
                   },
                   onDone: () {
                     debugPrint('Streaming Complete');
