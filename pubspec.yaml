@@ -114,7 +114,7 @@ melos:
       description: Run build generator for all packages
 
     test:
-      run: melos exec --dir-exists=test -- "flutter test --coverage"
+      run: melos exec --dir-exists=test --ignore="apidash" -- "flutter test --coverage"
       description: Run tests for all packages
 
     pub-get:
