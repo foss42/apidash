@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/screens/terminal/terminal_page.dart';
 import 'package:apidash/providers/terminal_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
