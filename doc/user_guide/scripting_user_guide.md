@@ -543,3 +543,440 @@ if (data && data.user && data.user.id) {
     ad.console.log(`User ID ${data.user.id} saved to environment.`);
 }
 ```
+
+## Scripting Assertions
+
+APIDash provides a comprehensive assertion library for validating API responses in your post-response scripts. Assertions help you verify that your API behaves as expected by checking status codes, headers, response times, data types, and more.
+
+The `assert()` function creates an assertion chain that allows you to perform fluent, chainable validations. When an assertion fails, it throws an error that is captured by APIDash and displayed in the terminal.
+
+### Basic Assertion Syntax
+
+```javascript
+assert(value).method(expected);
+```
+
+All assertion methods return the assertion chain, allowing you to chain multiple checks:
+
+```javascript
+assert(value).isNumber().greaterThan(0).lessThan(100);
+```
+
+---
+
+### A. Status Code Assertions
+
+Validate HTTP status codes to ensure your API returns the expected response status.
+
+#### Examples
+
+**Check for successful response (200):**
+
+```javascript
+assert(ad.response.status).equals(200);
+```
+
+**Verify status is not an error:**
+
+```javascript
+assert(ad.response.status).notEquals(500);
+assert(ad.response.status).notEquals(404);
+```
+
+**Check status is in success range (2xx):**
+
+```javascript
+assert(ad.response.status).greaterThan(199);
+assert(ad.response.status).lessThan(300);
+```
+
+**Ensure created status (201):**
+
+```javascript
+assert(ad.response.status).equals(201);
+ad.console.log("Resource created successfully!");
+```
+
+**Verify redirect status (3xx  range):**
+
+```javascript
+assert(ad.response.status).greaterThanOrEqual(300);
+assert(ad.response.status).lessThan(400);
+```
+
+---
+
+### B. Header Assertions
+
+Validate response headers to ensure proper content types, authentication tokens, caching directives, and more.
+
+#### Examples
+
+**Check if header exists:**
+
+```javascript
+const contentType = ad.response.getHeader("content-type");
+assert(contentType).isString();
+```
+
+**Verify header contains expected value:**
+
+```javascript
+const contentType = ad.response.getHeader("content-type");
+assert(contentType).contains("application/json");
+```
+
+**Check exact header value:**
+
+```javascript
+const cacheControl = ad.response.getHeader("cache-control");
+assert(cacheControl).equals("no-cache");
+```
+
+**Validate authentication header exists:**
+
+```javascript
+const authHeader = ad.response.getHeader("x-auth-token");
+assert(authHeader).isString();
+ad.environment.set("sessionToken", authHeader);
+```
+
+**Verify CORS header:**
+
+```javascript
+const corsHeader = ad.response.getHeader("access-control-allow-origin");
+assert(corsHeader).contains("*");
+```
+
+---
+
+### C. Performance Assertions
+
+Monitor API performance by validating response times to ensure your endpoints meet performance requirements.
+
+#### Examples
+
+**Ensure response time is under threshold:**
+
+```javascript
+assert(ad.response.time).lessThan(500);
+ad.console.log(`Response time: ${ad.response.time}ms - within acceptable range`);
+```
+
+**Check for fast response:**
+
+```javascript
+assert(ad.response.time).lessThan(100);
+ad.console.log("Lightning fast response!");
+```
+
+**Track performance across requests:**
+
+```javascript
+const currentTime = ad.response.time;
+const lastTime = parseFloat(ad.environment.get("lastResponseTime") || "0");
+
+if (lastTime > 0) {
+  const difference = currentTime - lastTime;
+  ad.console.log(`Performance change: ${difference > 0 ? '+' : ''}${difference}ms`);
+}
+
+ad.environment.set("lastResponseTime", currentTime.toString());
+assert(currentTime).lessThan(1000);
+```
+
+**Verify consistent performance:**
+
+```javascript
+const maxResponseTime = 300;
+assert(ad.response.time).lessThanOrEqual(maxResponseTime);
+ad.console.log(`Response completed in ${ad.response.time}ms (target: <${maxResponseTime}ms)`);
+```
+
+---
+
+### D. Required Field Assertions
+
+Ensure that required fields exist in JSON responses, validating the structure of your API responses.
+
+#### Examples
+
+**Check for required top-level keys:**
+
+```javascript
+const response = ad.response.json();
+assert(response).hasKey("data");
+assert(response).hasKey("status");
+assert(response).hasKey("message");
+```
+
+**Validate nested object structure:**
+
+```javascript
+const response = ad.response.json();
+assert(response).hasKey("data");
+assert(response.data).hasKey("user");
+assert(response.data.user).hasKey("id");
+assert(response.data.user).hasKey("email");
+```
+
+**Verify array response structure:**
+
+```javascript
+const response = ad.response.json();
+assert(response).hasKey("results");
+assert(response.results).isArray();
+assert(response.results).hasLength(10);
+```
+
+**Check pagination fields:**
+
+```javascript
+const response = ad.response.json();
+assert(response).hasKey("pagination");
+assert(response.pagination).hasKey("page");
+assert(response.pagination).hasKey("total");
+assert(response.pagination).hasKey("limit");
+```
+
+**Validate error response structure:**
+
+```javascript
+if (ad.response.status >= 400) {
+  const response = ad.response.json();
+  assert(response).hasKey("error");
+  assert(response.error).hasKey("code");
+  assert(response.error).hasKey("message");
+}
+```
+
+---
+
+### E. Data Type Assertions
+
+Verify that response values match expected data types to ensure data consistency and prevent type-related bugs.
+
+#### Examples
+
+**Validate numeric fields:**
+
+```javascript
+const response = ad.response.json();
+assert(response.id).isNumber();
+assert(response.count).isNumber();
+assert(response.price).isNumber();
+```
+
+**Check string fields:**
+
+```javascript
+const response = ad.response.json();
+assert(response.name).isString();
+assert(response.email).isString();
+assert(response.description).isString();
+```
+
+**Verify boolean flags:**
+
+```javascript
+const response = ad.response.json();
+assert(response.isActive).isBoolean();
+assert(response.verified).isBoolean();
+```
+
+**Validate object type:**
+
+```javascript
+const response = ad.response.json();
+assert(response.user).isObject();
+assert(response.settings).isObject();
+```
+
+**Check array type:**
+
+```javascript
+const response = ad.response.json();
+assert(response.items).isArray();
+assert(response.tags).isArray();
+```
+
+**Validate null values:**
+
+```javascript
+const response = ad.response.json();
+assert(response.deletedAt).isNull();
+```
+
+**Combined type and value checks:**
+
+```javascript
+const response = ad.response.json();
+assert(response.id).isNumber().greaterThan(0);
+assert(response.status).isString().equals("active");
+assert(response.items).isArray().hasLength(5);
+```
+
+---
+
+### F. Complete Assertion Examples
+
+Here are comprehensive examples demonstrating how to use assertions in real-world scenarios.
+
+#### Example 1: User Creation Validation
+
+```javascript
+// Validate user creation response
+assert(ad.response.status).equals(201);
+
+const response = ad.response.json();
+assert(response).hasKey("user");
+assert(response.user).hasKey("id");
+assert(response.user).hasKey("email");
+assert(response.user).hasKey("createdAt");
+
+assert(response.user.id).isNumber().greaterThan(0);
+assert(response.user.email).isString().contains("@");
+assert(response.user.createdAt).isString();
+
+ad.console.log("User creation validated successfully!");
+ad.environment.set("newUserId", response.user.id.toString());
+```
+
+#### Example 2: API List Response Validation
+
+```javascript
+// Validate paginated list response
+assert(ad.response.status).equals(200);
+assert(ad.response.time).lessThan(500);
+
+const contentType = ad.response.getHeader("content-type");
+assert(contentType).contains("application/json");
+
+const response = ad.response.json();
+assert(response).hasKey("data");
+assert(response).hasKey("pagination");
+
+assert(response.data).isArray();
+assert(response.pagination).hasKey("page");
+assert(response.pagination).hasKey("total");
+
+assert(response.pagination.page).isNumber();
+assert(response.pagination.total).isNumber();
+
+ad.console.log(`Validated ${response.data.length} items on page ${response.pagination.page}`);
+```
+
+#### Example 3: Error Response Validation
+
+```javascript
+// Validate error handling
+assert(ad.response.status).equals(400);
+
+const response = ad.response.json();
+assert(response).hasKey("error");
+assert(response.error).hasKey("code");
+assert(response.error).hasKey("message");
+
+assert(response.error.code).isString();
+assert(response.error.message).isString().contains("invalid");
+
+ad.console.log("Error response structure validated");
+```
+
+#### Example 4: Performance and Data Quality Check
+
+```javascript
+// Combined performance and data validation
+assert(ad.response.status).equals(200);
+assert(ad.response.time).lessThan(300);
+
+const response = ad.response.json();
+assert(response).hasKey("items");
+assert(response.items).isArray();
+
+response.items.forEach(function(item, index) {
+  assert(item).hasKey("id");
+  assert(item).hasKey("name");
+  assert(item.id).isNumber().greaterThan(0);
+  assert(item.name).isString();
+});
+
+ad.console.log(`Validated ${response.items.length} items in ${ad.response.time}ms`);
+```
+
+---
+
+### Available Assertion Methods
+
+Here's a complete reference of all available assertion methods:
+
+#### Equality Assertions
+- **`equals(expected)`** - Asserts that the value equals the expected value
+- **`notEquals(expected)`** - Asserts that the value does not equal the expected value
+
+#### Numeric Comparisons
+- **`greaterThan(expected)`** - Asserts that the value is greater than expected (requires numbers)
+- **`lessThan(expected)`** - Asserts that the value is less than expected (requires numbers)
+- **`greaterThanOrEqual(expected)`** - Asserts that the value is ≥ expected
+- **`lessThanOrEqual(expected)`** - Asserts that the value is ≤ expected
+
+#### String Assertions
+- **`contains(substring)`** - Asserts that the string contains the substring
+
+#### Object/Array Assertions
+- **`hasKey(key)`** - Asserts that the object has the specified key
+- **`hasLength(expected)`** - Asserts that the array or string has the expected length
+
+#### Type Assertions
+- **`isNumber()`** - Asserts that the value is a number
+- **`isString()`** - Asserts that the value is a string
+- **`isBoolean()`** - Asserts that the value is a boolean
+- **`isObject()`** - Asserts that the value is an object (not array or null)
+- **`isArray()`** - Asserts that the value is an array
+- **`isNull()`** - Asserts that the value is null
+- **`isUndefined()`** - Asserts that the value is undefined
+
+#### Truthy/Falsy Assertions
+- **`isTruthy()`** - Asserts that the value is truthy
+- **`isFalsy()`** - Asserts that the value is falsy
+
+---
+
+### Best Practices
+
+1. **Start with critical assertions**: Always validate status codes and response structure first
+2. **Use descriptive console logs**: Add `ad.console.log()` statements to track successful validations
+3. **Chain related assertions**: Keep related checks together for better readability
+4. **Handle errors gracefully**: Consider checking conditions before asserting if you need custom error messages
+5. **Test performance consistently**: Track response times across multiple runs to identify trends
+6. **Validate data types**: Always check types before performing operations on values
+7. **Store validated data**: After successful assertions, store important values in environment variables for use in subsequent requests
+
+---
+
+### Error Handling
+
+When an assertion fails, it throws an error that APIDash captures and displays in the terminal. The error message clearly indicates what was expected versus what was received.
+
+Example error output:
+```
+Assertion failed: expected 404 to equal 200
+Assertion failed: expected "text/html" to contain "application/json"
+Assertion failed: expected 1524 to be less than 500
+```
+
+You can catch assertion errors manually if you need custom behavior:
+
+```javascript
+try {
+  assert(ad.response.status).equals(200);
+  ad.console.log("Status check passed!");
+} catch (error) {
+  ad.console.error("Status check failed:", error.message);
+  // Optionally do something else, like set a flag
+  ad.environment.set("lastRequestFailed", "true");
+}
+```
+
+---
+

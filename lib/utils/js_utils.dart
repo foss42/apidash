@@ -609,6 +609,256 @@ const ad = {
 
 };
 
+// --- 3. Assertion Chain for Testing ---
+// Provides a fluent API for making assertions in post-response scripts.
+// Example: assert(response.status).equals(200)
+
+/**
+ * Creates an assertion chain for the given value.
+ * @param {any} value The value to assert on.
+ * @returns {AssertionChain} An object with chainable assertion methods.
+ */
+function assert(value) {
+    return new AssertionChain(value);
+}
+
+/**
+ * AssertionChain class providing fluent assertion methods.
+ */
+class AssertionChain {
+    constructor(value) {
+        this._value = value;
+    }
+
+    /**
+     * Asserts that the value equals the expected value.
+     * @param {any} expected The expected value.
+     * @returns {AssertionChain} this for chaining.
+     */
+    equals(expected) {
+        if (this._value !== expected) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to equal ' + JSON.stringify(expected));
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value does not equal the expected value.
+     * @param {any} expected The value that should not match.
+     * @returns {AssertionChain} this for chaining.
+     */
+    notEquals(expected) {
+        if (this._value === expected) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to not equal ' + JSON.stringify(expected));
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is greater than the expected value.
+     * @param {number} expected The value to compare against.
+     * @returns {AssertionChain} this for chaining.
+     */
+    greaterThan(expected) {
+        if (typeof this._value !== 'number' || typeof expected !== 'number') {
+            throw new Error('Assertion failed: greaterThan requires numeric values');
+        }
+        if (this._value <= expected) {
+            throw new Error('Assertion failed: expected ' + this._value + ' to be greater than ' + expected);
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is less than the expected value.
+     * @param {number} expected The value to compare against.
+     * @returns {AssertionChain} this for chaining.
+     */
+    lessThan(expected) {
+        if (typeof this._value !== 'number' || typeof expected !== 'number') {
+            throw new Error('Assertion failed: lessThan requires numeric values');
+        }
+        if (this._value >= expected) {
+            throw new Error('Assertion failed: expected ' + this._value + ' to be less than ' + expected);
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is greater than or equal to the expected value.
+     * @param {number} expected The value to compare against.
+     * @returns {AssertionChain} this for chaining.
+     */
+    greaterThanOrEqual(expected) {
+        if (typeof this._value !== 'number' || typeof expected !== 'number') {
+            throw new Error('Assertion failed: greaterThanOrEqual requires numeric values');
+        }
+        if (this._value < expected) {
+            throw new Error('Assertion failed: expected ' + this._value + ' to be greater than or equal to ' + expected);
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is less than or equal to the expected value.
+     * @param {number} expected The value to compare against.
+     * @returns {AssertionChain} this for chaining.
+     */
+    lessThanOrEqual(expected) {
+        if (typeof this._value !== 'number' || typeof expected !== 'number') {
+            throw new Error('Assertion failed: lessThanOrEqual requires numeric values');
+        }
+        if (this._value > expected) {
+            throw new Error('Assertion failed: expected ' + this._value + ' to be less than or equal to ' + expected);
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the string value contains the expected substring.
+     * @param {string} expected The substring to look for.
+     * @returns {AssertionChain} this for chaining.
+     */
+    contains(expected) {
+        if (typeof this._value !== 'string' || typeof expected !== 'string') {
+            throw new Error('Assertion failed: contains requires string values');
+        }
+        if (this._value.indexOf(expected) === -1) {
+            throw new Error('Assertion failed: expected "' + this._value + '" to contain "' + expected + '"');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the object/map has the specified key.
+     * @param {string} key The key to check for.
+     * @returns {AssertionChain} this for chaining.
+     */
+    hasKey(key) {
+        if (typeof this._value !== 'object' || this._value === null) {
+            throw new Error('Assertion failed: hasKey requires an object');
+        }
+        if (!(key in this._value)) {
+            throw new Error('Assertion failed: expected object to have key "' + key + '"');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is a number.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isNumber() {
+        if (typeof this._value !== 'number' || isNaN(this._value)) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be a number');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is a string.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isString() {
+        if (typeof this._value !== 'string') {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be a string');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is a boolean.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isBoolean() {
+        if (typeof this._value !== 'boolean') {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be a boolean');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is an object.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isObject() {
+        if (typeof this._value !== 'object' || this._value === null || Array.isArray(this._value)) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be an object');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is an array.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isArray() {
+        if (!Array.isArray(this._value)) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be an array');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is null.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isNull() {
+        if (this._value !== null) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be null');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is undefined.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isUndefined() {
+        if (this._value !== undefined) {
+            throw new Error('Assertion failed: expected value to be undefined');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is truthy.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isTruthy() {
+        if (!this._value) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be truthy');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the value is falsy.
+     * @returns {AssertionChain} this for chaining.
+     */
+    isFalsy() {
+        if (this._value) {
+            throw new Error('Assertion failed: expected ' + JSON.stringify(this._value) + ' to be falsy');
+        }
+        return this;
+    }
+
+    /**
+     * Asserts that the array has the specified length.
+     * @param {number} expected The expected length.
+     * @returns {AssertionChain} this for chaining.
+     */
+    hasLength(expected) {
+        if (!Array.isArray(this._value) && typeof this._value !== 'string') {
+            throw new Error('Assertion failed: hasLength requires an array or string');
+        }
+        if (this._value.length !== expected) {
+            throw new Error('Assertion failed: expected length ' + this._value.length + ' to equal ' + expected);
+        }
+        return this;
+    }
+}
+
 // Provide a global console shim so user scripts using `console.*` are captured.
 // We support log/info/warn/error. `info` aliases to `log`.
 try {
