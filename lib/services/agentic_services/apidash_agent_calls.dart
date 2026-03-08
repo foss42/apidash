@@ -5,7 +5,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-Future<String?> generateSDUICodeFromResponse({
+Future<AgentResult<String>> generateSDUICodeFromResponse({
   required WidgetRef ref,
   required String apiResponse,
 }) async {
@@ -23,17 +23,33 @@ Future<String?> generateSDUICodeFromResponse({
       }),
     ),
   ]);
-  final sa = step1Res[0]?['SEMANTIC_ANALYSIS'];
-  final ir = step1Res[1]?['INTERMEDIATE_REPRESENTATION'];
+
+  final saResult = step1Res[0];
+  final irResult = step1Res[1];
+
+  // Return the first failure encountered
+  if (saResult.isFailure) {
+    return AgentFailure((saResult as AgentFailure).exception);
+  }
+  if (irResult.isFailure) {
+    return AgentFailure((irResult as AgentFailure).exception);
+  }
+
+  final sa = saResult.valueOrNull?['SEMANTIC_ANALYSIS'];
+  final ir = irResult.valueOrNull?['INTERMEDIATE_REPRESENTATION'];
 
   if (sa == null || ir == null) {
-    return null;
+    return AgentFailure(AgentException(
+      type: AgentErrorType.validationFailed,
+      message: 'Semantic analysis or intermediate representation was empty.',
+      agentName: 'SDUICodeGeneration',
+    ));
   }
 
   debugPrint("Semantic Analysis: $sa");
   debugPrint("Intermediate Representation: $ir");
 
-  final sduiCode = await APIDashAgentCaller.instance.call(
+  final sduiResult = await APIDashAgentCaller.instance.call(
     StacGenBot(),
     ref: ref,
     input: AgentInputs(variables: {
@@ -42,20 +58,29 @@ Future<String?> generateSDUICodeFromResponse({
       'VAR_SEMANTIC_ANALYSIS': sa,
     }),
   );
-  final stacCode = sduiCode?['STAC']?.toString();
-  if (stacCode == null) {
-    return null;
+
+  if (sduiResult.isFailure) {
+    return AgentFailure((sduiResult as AgentFailure).exception);
   }
 
-  return sduiCode['STAC'].toString();
+  final stacCode = sduiResult.valueOrNull?['STAC']?.toString();
+  if (stacCode == null) {
+    return AgentFailure(AgentException(
+      type: AgentErrorType.validationFailed,
+      message: 'STAC code generation returned empty output.',
+      agentName: 'StacGenBot',
+    ));
+  }
+
+  return AgentSuccess(stacCode);
 }
 
-Future<String?> modifySDUICodeUsingPrompt({
+Future<AgentResult<String>> modifySDUICodeUsingPrompt({
   required WidgetRef ref,
   required String generatedSDUI,
   required String modificationRequest,
 }) async {
-  final res = await APIDashAgentCaller.instance.call(
+  final result = await APIDashAgentCaller.instance.call(
     StacModifierBot(),
     ref: ref,
     input: AgentInputs(variables: {
@@ -63,17 +88,30 @@ Future<String?> modifySDUICodeUsingPrompt({
       'VAR_CLIENT_REQUEST': modificationRequest,
     }),
   );
-  final sdui = res?['STAC'];
-  return sdui;
+
+  if (result.isFailure) {
+    return AgentFailure((result as AgentFailure).exception);
+  }
+
+  final sdui = result.valueOrNull?['STAC'];
+  if (sdui == null) {
+    return AgentFailure(AgentException(
+      type: AgentErrorType.validationFailed,
+      message: 'STAC modification returned empty output.',
+      agentName: 'StacModifierBot',
+    ));
+  }
+
+  return AgentSuccess(sdui);
 }
 
-Future<String?> generateAPIToolUsingRequestData({
+Future<AgentResult<String>> generateAPIToolUsingRequestData({
   required WidgetRef ref,
   required String requestData,
   required String targetLanguage,
   required String selectedAgent,
 }) async {
-  final toolfuncRes = await APIDashAgentCaller.instance.call(
+  final toolfuncResult = await APIDashAgentCaller.instance.call(
     APIToolFunctionGenerator(),
     ref: ref,
     input: AgentInputs(variables: {
@@ -81,13 +119,23 @@ Future<String?> generateAPIToolUsingRequestData({
       'TARGET_LANGUAGE': targetLanguage,
     }),
   );
-  if (toolfuncRes == null) {
-    return null;
+
+  if (toolfuncResult.isFailure) {
+    return AgentFailure((toolfuncResult as AgentFailure).exception);
   }
 
-  String toolCode = toolfuncRes!['FUNC'];
+  final toolFunc = toolfuncResult.valueOrNull;
+  if (toolFunc == null) {
+    return AgentFailure(AgentException(
+      type: AgentErrorType.validationFailed,
+      message: 'API tool function generation returned empty output.',
+      agentName: 'APIToolFunctionGenerator',
+    ));
+  }
 
-  final toolres = await APIDashAgentCaller.instance.call(
+  String toolCode = toolFunc['FUNC'];
+
+  final toolResult = await APIDashAgentCaller.instance.call(
     ApiToolBodyGen(),
     ref: ref,
     input: AgentInputs(variables: {
@@ -96,9 +144,19 @@ Future<String?> generateAPIToolUsingRequestData({
               .substitutePromptVariable('FUNC', toolCode),
     }),
   );
-  if (toolres == null) {
-    return null;
+
+  if (toolResult.isFailure) {
+    return AgentFailure((toolResult as AgentFailure).exception);
   }
-  String toolDefinition = toolres!['TOOL'];
-  return toolDefinition;
+
+  final toolBody = toolResult.valueOrNull;
+  if (toolBody == null) {
+    return AgentFailure(AgentException(
+      type: AgentErrorType.validationFailed,
+      message: 'API tool body generation returned empty output.',
+      agentName: 'ApiToolBodyGen',
+    ));
+  }
+
+  return AgentSuccess(toolBody['TOOL'] as String);
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
+import 'agent_result.dart';
 import 'blueprint.dart';
 
 class AIAgentService {
-  static Future<String?> _call_provider({
+  static Future<String?> _callProvider({
     required AIRequestModel baseAIRequestObject,
     required String systemPrompt,
     required String input,
@@ -31,21 +32,31 @@ class AIAgentService {
       }
     }
 
-    return await _call_provider(
+    return await _callProvider(
       systemPrompt: sP,
       input: query ?? '',
       baseAIRequestObject: baseAIRequestObject,
     );
   }
 
-  static Future<dynamic> _governor(
+  static Future<AgentResult<dynamic>> _governor(
     AIAgent agent,
     AIRequestModel baseAIRequestObject, {
     String? query,
     Map? variables,
   }) async {
-    int RETRY_COUNT = 0;
-    List<int> backoffDelays = [200, 400, 800, 1600, 3200];
+    if (baseAIRequestObject.httpRequestModel == null) {
+      return AgentFailure(AgentException(
+        type: AgentErrorType.invalidRequest,
+        message: 'Could not build HTTP request from AI model configuration.',
+        agentName: agent.agentName,
+      ));
+    }
+
+    int retryCount = 0;
+    Object? lastError;
+    const backoffDelays = [200, 400, 800, 1600, 3200];
+
     do {
       try {
         final res = await _orchestrator(
@@ -56,27 +67,93 @@ class AIAgentService {
         );
         if (res != null) {
           if (await agent.validator(res)) {
-            return agent.outputFormatter(res);
+            final output = await agent.outputFormatter(res);
+            return AgentSuccess(output);
           }
         }
       } catch (e) {
-        "AIAgentService::Governor: Exception Occurred: $e";
+        lastError = e;
+        debugPrint(
+          "AIAgentService::Governor: Exception in ${agent.agentName}: $e",
+        );
+
+        final errorType = _classifyError(e);
+        // Don't retry auth failures — they won't self-resolve.
+        if (errorType == AgentErrorType.authFailure) {
+          return AgentFailure(AgentException(
+            type: AgentErrorType.authFailure,
+            message:
+                'Authentication failed. Please check your API key in Settings.',
+            agentName: agent.agentName,
+            retryAttempts: retryCount,
+            cause: e,
+          ));
+        }
       }
+
       // Exponential Backoff
-      if (RETRY_COUNT < backoffDelays.length) {
+      if (retryCount < backoffDelays.length) {
         await Future.delayed(
-          Duration(milliseconds: backoffDelays[RETRY_COUNT]),
+          Duration(milliseconds: backoffDelays[retryCount]),
         );
       }
-      RETRY_COUNT += 1;
+      retryCount += 1;
       debugPrint(
-        "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $RETRY_COUNT",
+        "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $retryCount",
       );
-    } while (RETRY_COUNT < 5);
-    return null;
+    } while (retryCount < 5);
+
+    // All retries exhausted
+    final errorType =
+        lastError != null ? _classifyError(lastError) : AgentErrorType.validationFailed;
+    return AgentFailure(AgentException(
+      type: errorType,
+      message: _messageForErrorType(errorType, agent.agentName),
+      agentName: agent.agentName,
+      retryAttempts: retryCount,
+      cause: lastError,
+    ));
   }
 
-  static Future<dynamic> callAgent(
+  /// Classifies an error into an [AgentErrorType] based on common patterns.
+  static AgentErrorType _classifyError(Object error) {
+    final msg = error.toString().toLowerCase();
+    if (msg.contains('401') ||
+        msg.contains('403') ||
+        msg.contains('unauthorized') ||
+        msg.contains('forbidden')) {
+      return AgentErrorType.authFailure;
+    }
+    if (msg.contains('429') || msg.contains('rate limit')) {
+      return AgentErrorType.rateLimited;
+    }
+    if (msg.contains('socketexception') ||
+        msg.contains('connection') ||
+        msg.contains('timeout') ||
+        msg.contains('network')) {
+      return AgentErrorType.networkError;
+    }
+    return AgentErrorType.unexpected;
+  }
+
+  static String _messageForErrorType(AgentErrorType type, String agentName) {
+    return switch (type) {
+      AgentErrorType.authFailure =>
+        'Authentication failed. Please check your API key in Settings.',
+      AgentErrorType.rateLimited =>
+        'Rate limit exceeded. Please try again later.',
+      AgentErrorType.invalidRequest =>
+        'Invalid request configuration for $agentName.',
+      AgentErrorType.validationFailed =>
+        'Agent $agentName could not produce a valid response after multiple attempts.',
+      AgentErrorType.networkError =>
+        'Network error. Please check your internet connection.',
+      AgentErrorType.unexpected =>
+        'An unexpected error occurred in $agentName.',
+    };
+  }
+
+  static Future<AgentResult<dynamic>> callAgent(
     AIAgent agent,
     AIRequestModel baseAIRequestObject, {
     String? query,
