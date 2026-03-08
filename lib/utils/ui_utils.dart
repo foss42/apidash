@@ -58,6 +58,20 @@ Color getHTTPMethodColor(HTTPVerb? method) {
   return col;
 }
 
+bool matchesNameOrUrlFilter({
+  required String query,
+  required String name,
+  String? url,
+}) {
+  final normalizedQuery = query.trim().toLowerCase();
+  if (normalizedQuery.isEmpty) {
+    return true;
+  }
+
+  return name.toLowerCase().contains(normalizedQuery) ||
+      (url?.toLowerCase().contains(normalizedQuery) ?? false);
+}
+
 double? getJsonPreviewerMaxRootNodeWidth(double w) {
   if (w < 300) {
     return 150;
