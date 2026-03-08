@@ -20,6 +20,7 @@ void main() {
     isSSLDisabled: true,
     isDashBotEnabled: true,
     defaultAIModel: {"model": "llama"},
+    aiKeys: {"openai": "test-key"},
   );
 
   test('Testing toJson()', () {
@@ -39,7 +40,8 @@ void main() {
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
-      "defaultAIModel": {"model": "llama"}
+      "defaultAIModel": {"model": "llama"},
+      "aiKeys": {"openai": "test-key"}
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -61,7 +63,8 @@ void main() {
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
-      "defaultAIModel": {"model": "llama"}
+      "defaultAIModel": {"model": "llama"},
+      "aiKeys": {"openai": "test-key"}
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -81,6 +84,7 @@ void main() {
       isSSLDisabled: false,
       isDashBotEnabled: false,
       defaultAIModel: {"model": "llama"},
+      aiKeys: {"openai": "test-key"},
     );
     expect(
         sm.copyWith(
@@ -111,6 +115,9 @@ void main() {
   "isDashBotEnabled": true,
   "defaultAIModel": {
     "model": "llama"
+  },
+  "aiKeys": {
+    "openai": "test-key"
   }
 }''';
     expect(sm.toString(), expectedResult);
