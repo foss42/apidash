@@ -42,11 +42,5 @@ flutter pub get
 **Step 7 -** Run the project by executing the below command
 
 ```
-flutter pub get
-```
-
-**Step 8 -** Run the project by executing the below command
-
-```
 flutter run
 ```
