@@ -23,6 +23,23 @@ Idea description:
 
 I propose building a **web-based MCP Testing & Security Suite** under the API Dash umbrella, a unified tool where developers can connect to any MCP server, functionally test it, and analyze its security posture, all from one interface with one shared connection.
 
+The core architectural insight is that functional testing and security analysis share ~70% of the infrastructure. The security engine is essentially a specialized set of analyzers running against the same server connection that the MCP test engine uses.
+
+## Engineering Differentiators
+
+|Capability|MCP Inspector|mcp-scan / Cisco Scanner|This Project|
+|---|---|---|---|
+|Interactive tool invocation|✓|✗|✓|
+|Test suites & assertions|✗|✗|✓|
+|Chained multi-step tests|✗|✗|✓|
+|Environment variables|✗|✗|✓|
+|Security scanning|✗|✓ (CLI only)|✓ (integrated UI)|
+|Unified functional + security view|✗|✗|✓|
+|Visual security dashboard|✗|✗|✓|
+|Unified server scorecard|✗|✗|✓|
+|CI/CD integration|✗|Partial|✓|
+|Saved connection profiles|✗|✗|✓|
+
 ## UI Wireframes
 
 The interface follows a consistent four-panel layout: **Sidebar** (navigate between views), **Server Explorer** (left — connected server, discovered capabilities with pass/warn/fail status), **Workspace** (center — the active view), and a collapsible **Security Strip** (right — score and findings count at a glance).
@@ -57,13 +74,76 @@ Chain multiple tool calls together with variable extraction. Output from one ste
 
 A dedicated security view with score banner, pluggable analyzer results (Tool Poisoning, Input Injection, Auth/Credentials, Protocol Compliance), and a filterable findings table. Selecting a finding expands inline to show the flagged content and concrete remediation guidance.
 
+## Architecture
+
+![Architecture Diagram](images/architecture_diagram.png)
+
 This will be a **separate web application** under the API Dash umbrella, built entirely in TypeScript (React frontend, Node.js runtime backend). This aligns with the tech stack listed for Idea #1.
 
-The core architectural insight is that **functional testing and security analysis share ~70% of the infrastructure**, the same MCP client connection, the same capability discovery, the same response data. The security engine is essentially a specialized set of analyzers running against the same server connection that the test engine uses.
+The system in organized into four layers:
 
-Key components:
+### 1. Presentation Layer (React + TypeScript)
+- **Connection Manager** : for configuring and saving server connections.
+- **Test Workbench** : for interactive tool invocation and assertion building.
+- **Security Dashboard** : for visualizing scan results and compliance status.
+- **Report Generator** : for exporting unified reports
 
-- **MCP Client Engine (shared core)** — Handles connection lifecycle, capability negotiation, and tool invocation across both standard transports (stdio, Streamable HTTP) as defined in [MCP spec 2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports), with backwards-compatible support for the deprecated HTTP+SSE transport, using the official `@modelcontextprotocol/sdk`
-- **Test Execution Engine** — Runs functional tests, assertions, chained calls, manages test collections
-- **Security Analysis Engine** — Runs pluggable security analyzers against discovered capabilities
-- **Pluggable Analyzer Modules** — Tool poisoning detector, input injection tester, auth/credential analyzer, protocol compliance checker [against MCP spec 2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26)
+### 2. Backend Services (TypeScript on Node.js runtime)
+- The MCP Client Engine is the shared core that handles connection lifecycle, capability negotiation, and tool invocation across both standard transports (stdio, Streamable HTTP) as defined in [MCP spec 2025-03-26](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports), with backwards-compatible support for the deprecated HTTP+SSE transport.
+- The Test Execution Engine runs functional test suites with schema validation, assertions, and chained calls. The Security Analysis Engine runs pluggable security analyzers against discovered capabilities.
+
+### 3. Pluggable Analyzer Modules
+ - **Tool Poisoning Detector**
+ - **Auth & Credential Analyzer** 
+ - **Protocol Compliance Checker** 
+ - **Injection Tester**
+
+ ### 4. Target Layer
+ The MCP server under test, which can be a local server (spawned via stdio), a remote server (Streamable HTTP with optional OAuth), or a containerized server (Docker sandbox for untrusted servers).
+
+ ## User Flow
+ ![Request Flow Diagram](images/request-flow-diagram-2.png)
+
+ ## Pain Points Addressed
+
+This project directly addresses real-world pain points faced by MCP developers:
+
+- **Manual-only tool invocation** with no way to save, replay, or automate → Test collections and reusable suites
+- **No assertion framework** for validating responses → Assertion builder with JSON path, schema, regex matching
+- **No multi-step workflow testing** for real agent scenarios → Chained tool calls with output piping
+- **No environment variable support** for switching between dev/staging/prod → Env variables in collections
+- **Poor debugging visibility** when things fail → Full JSON-RPC message log inspector
+- **Tool poisoning attacks** via hidden instructions in tool descriptions that manipulate AI model behavior → Two-pass poisoning detector (rule-based + optional LLM-as-a-judge)
+- **Command/SQL injection vulnerabilities** in tool parameters due to unsanitized input reaching backend systems → Input injection tester with known attack payloads
+- **Rug-pull attacks** where trusted servers are later updated with malicious code → Schema hashing and change detection between scans
+- **Credential exposure** with servers relying on static API keys in plaintext configs instead of secure auth flows → Auth/credential hygiene checks
+- **Protocol compliance gaps** with servers implementing outdated spec versions and missing security improvements → Validation against MCP spec 2025-11-25
+- **Error message information leakage** exposing stack traces and internal paths in tool error responses → Security engine flags sensitive data in error responses
+- **Fragmented tooling** requiring 3+ separate tools for testing and security → Single unified interface
+- **No CI/CD integration** for automated test gates → CLI mode with SARIF export and severity gates
+- **No unified reporting** across functional and security dimensions → Single server scorecard
+
+## Tech Stack
+
+||Technology|
+|---|---|
+|Language|TypeScript (end to end)|
+|Frontend|React + Shadcn/ui + Recharts|
+|Backend Runtime|Node.js|
+|MCP Communication|`@modelcontextprotocol/sdk`|
+|Schema Validation|Zod|
+|Report Formats|JSON, PDF, SARIF|
+
+
+## Relevant Links
+
+- [MCP Specification (2025-11-25 — Latest)](https://modelcontextprotocol.io/specification/2025-11-25)
+- [MCP Specification (2025-03-26 — Transport Spec)](https://modelcontextprotocol.io/specification/2025-03-26/basic/transports)
+- [MCP TypeScript SDK](https://www.npmjs.com/package/@modelcontextprotocol/sdk)
+- [MCP Inspector](https://github.com/modelcontextprotocol/inspector)
+- [SlowMist MCP Security Checklist](https://github.com/slowmist/MCP-Security-Checklist)
+- [Snyk mcp-scan](https://github.com/invariantlabs-ai/mcp-scan)
+- [Cisco MCP Scanner](https://github.com/cisco-ai-defense/mcp-scanner)
+- [API Dash GSoC 2026 Ideas](https://github.com/foss42/apidash/discussions/1054)
+- [MCP Authentication & Authorization Pain Points](https://medium.com/@mustafaturan/mcp-authentication-authorization-pain-points-5506e63dd799)
+- [Top 6 MCP Vulnerabilities (and How to Fix Them)](https://www.descope.com/blog/post/mcp-vulnerabilities)
