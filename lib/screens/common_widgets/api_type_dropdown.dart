@@ -14,6 +14,12 @@ class APITypeDropdown extends ConsumerWidget {
     return APITypePopupMenu(
       apiType: apiType,
       onChanged: (type) {
+        final selectedId = ref.read(selectedIdStateProvider);
+        if (selectedId != null) {
+          ref
+              .read(apiTypeManualOverrideProvider.notifier)
+              .update((overrides) => {...overrides, selectedId});
+        }
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(apiType: type);

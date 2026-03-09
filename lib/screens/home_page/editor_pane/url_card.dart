@@ -124,42 +124,47 @@ class URLTextField extends ConsumerWidget {
 
         // Auto-detect API type from the URL (if enabled in settings)
         if (isAutoDetectEnabled) {
-          // Resolve env variables
-          final envMap = ref.read(availableEnvironmentVariablesStateProvider);
-          final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
-          final Map<String, String> combinedEnvVarMap = {};
-          final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
-          final activeEnv = envMap[activeEnvId] ?? [];
-          for (var v in globalEnv) {
-            combinedEnvVarMap[v.key] = v.value;
-          }
-          for (var v in activeEnv) {
-            combinedEnvVarMap[v.key] = v.value;
-          }
-          final resolvedUrl = substituteVariables(value, combinedEnvVarMap);
-
-          final detectedType = detectApiTypeFromUrl(resolvedUrl);
-          if (detectedType != null && detectedType != requestModel.apiType) {
-            ref
-                .read(collectionStateNotifierProvider.notifier)
-                .update(apiType: detectedType);
-            if (detectedType == APIType.ai) {
-              final updatedModel = ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .getRequestModel(selectedId)!;
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(
-                    aiRequestModel: updatedModel.aiRequestModel?.copyWith(
-                      url: value,
-                    ),
-                  );
-            } else {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(url: value);
+          final manualOverrides = ref.read(apiTypeManualOverrideProvider);
+          if (manualOverrides.contains(selectedId)) {
+            // User manually picked the type - don't override their choice
+          } else {
+            // Resolve env variables
+            final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+            final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+            final Map<String, String> combinedEnvVarMap = {};
+            final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
+            final activeEnv = envMap[activeEnvId] ?? [];
+            for (var v in globalEnv) {
+              combinedEnvVarMap[v.key] = v.value;
             }
-            return;
+            for (var v in activeEnv) {
+              combinedEnvVarMap[v.key] = v.value;
+            }
+            final resolvedUrl = substituteVariables(value, combinedEnvVarMap);
+
+            final detectedType = detectApiTypeFromUrl(resolvedUrl);
+            if (detectedType != null && detectedType != requestModel.apiType) {
+              ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .update(apiType: detectedType);
+              if (detectedType == APIType.ai) {
+                final updatedModel = ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .getRequestModel(selectedId)!;
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .update(
+                      aiRequestModel: updatedModel.aiRequestModel?.copyWith(
+                        url: value,
+                      ),
+                    );
+              } else {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .update(url: value);
+              }
+              return;
+            }
           }
         }
 

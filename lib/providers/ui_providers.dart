@@ -43,3 +43,5 @@ final importFormatStateProvider = StateProvider<ImportFormat>(
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
 
 final dashbotShowMobileProvider = StateProvider<bool>((ref) => false);
+
+final apiTypeManualOverrideProvider = StateProvider<Set<String>>((ref) => {});
