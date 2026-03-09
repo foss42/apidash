@@ -1,3 +1,4 @@
+export 'api_type_utils.dart';
 export 'convert_utils.dart';
 export 'envvar_utils.dart';
 export 'file_utils.dart';

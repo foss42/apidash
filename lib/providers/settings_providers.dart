@@ -39,6 +39,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
+    bool? isApiTypeAutoDetectEnabled,
     Map<String, Object?>? defaultAIModel,
   }) async {
     state = state.copyWith(
@@ -55,6 +56,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      isApiTypeAutoDetectEnabled: isApiTypeAutoDetectEnabled,
       defaultAIModel: defaultAIModel,
     );
     await setSettingsToSharedPrefs(state);

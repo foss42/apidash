@@ -19,6 +19,7 @@ class SettingsModel {
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
+    this.isApiTypeAutoDetectEnabled = false,
     this.defaultAIModel,
   });
 
@@ -35,6 +36,7 @@ class SettingsModel {
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
+  final bool isApiTypeAutoDetectEnabled;
   final Map<String, Object?>? defaultAIModel;
 
   SettingsModel copyWith({
@@ -51,6 +53,7 @@ class SettingsModel {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
+    bool? isApiTypeAutoDetectEnabled,
     Map<String, Object?>? defaultAIModel,
   }) {
     return SettingsModel(
@@ -69,6 +72,8 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
+      isApiTypeAutoDetectEnabled:
+          isApiTypeAutoDetectEnabled ?? this.isApiTypeAutoDetectEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
     );
   }
@@ -90,6 +95,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      isApiTypeAutoDetectEnabled: isApiTypeAutoDetectEnabled,
       defaultAIModel: defaultAIModel,
     );
   }
@@ -146,6 +152,8 @@ class SettingsModel {
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final isDashBotEnabled = data["isDashBotEnabled"] as bool?;
+    final isApiTypeAutoDetectEnabled =
+        data["isApiTypeAutoDetectEnabled"] as bool?;
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
@@ -166,6 +174,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      isApiTypeAutoDetectEnabled: isApiTypeAutoDetectEnabled,
       defaultAIModel: defaultAIModel,
     );
   }
@@ -187,6 +196,7 @@ class SettingsModel {
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
+      "isApiTypeAutoDetectEnabled": isApiTypeAutoDetectEnabled,
       "defaultAIModel": defaultAIModel,
     };
   }
@@ -214,6 +224,7 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
+        other.isApiTypeAutoDetectEnabled == isApiTypeAutoDetectEnabled &&
         mapEquals(other.defaultAIModel, defaultAIModel);
   }
 
@@ -234,6 +245,7 @@ class SettingsModel {
       workspaceFolderPath,
       isSSLDisabled,
       isDashBotEnabled,
+      isApiTypeAutoDetectEnabled,
       defaultAIModel,
     );
   }

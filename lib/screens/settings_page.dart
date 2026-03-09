@@ -63,6 +63,18 @@ class SettingsPage extends ConsumerWidget {
               ),
               ADListTile(
                 type: ListTileType.switchOnOff,
+                title: 'URL API Type Auto-Detection',
+                subtitle:
+                    '$kLabelCurrentSelectionPrefix${settings.isApiTypeAutoDetectEnabled ? kLabelEnabled : kLabelDisabled}',
+                value: settings.isApiTypeAutoDetectEnabled,
+                onChanged: (bool? value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(isApiTypeAutoDetectEnabled: value);
+                },
+              ),
+              ADListTile(
+                type: ListTileType.switchOnOff,
                 title: kLabelCollectionPaneScrollbar,
                 subtitle:
                     '$kLabelCurrentSelectionPrefix${settings.alwaysShowCollectionPaneScrollbar ? kLabelAlwaysShow : kLabelShowOnlyWhenScrolling}',

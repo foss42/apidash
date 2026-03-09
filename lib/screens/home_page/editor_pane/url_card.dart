@@ -2,7 +2,9 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
 
@@ -116,6 +118,51 @@ class URLTextField extends ConsumerWidget {
         _ => requestModel.httpRequestModel?.url,
       },
       onChanged: (value) {
+        final isAutoDetectEnabled = ref
+            .read(settingsProvider)
+            .isApiTypeAutoDetectEnabled;
+
+        // Auto-detect API type from the URL (if enabled in settings)
+        if (isAutoDetectEnabled) {
+          // Resolve env variables
+          final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+          final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+          final Map<String, String> combinedEnvVarMap = {};
+          final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
+          final activeEnv = envMap[activeEnvId] ?? [];
+          for (var v in globalEnv) {
+            combinedEnvVarMap[v.key] = v.value;
+          }
+          for (var v in activeEnv) {
+            combinedEnvVarMap[v.key] = v.value;
+          }
+          final resolvedUrl = substituteVariables(value, combinedEnvVarMap);
+
+          final detectedType = detectApiTypeFromUrl(resolvedUrl);
+          if (detectedType != null && detectedType != requestModel.apiType) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .update(apiType: detectedType);
+            if (detectedType == APIType.ai) {
+              final updatedModel = ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .getRequestModel(selectedId)!;
+              ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .update(
+                    aiRequestModel: updatedModel.aiRequestModel?.copyWith(
+                      url: value,
+                    ),
+                  );
+            } else {
+              ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .update(url: value);
+            }
+            return;
+          }
+        }
+
         if (requestModel.apiType == APIType.ai) {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
