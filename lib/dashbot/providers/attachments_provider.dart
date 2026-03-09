@@ -1,6 +1,6 @@
 import 'package:apidash/utils/utils.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/models.dart';
 
 class AttachmentsState {
@@ -35,5 +35,5 @@ class AttachmentsNotifier extends StateNotifier<AttachmentsState> {
 
 final attachmentsProvider =
     StateNotifierProvider<AttachmentsNotifier, AttachmentsState>((ref) {
-  return AttachmentsNotifier();
-});
+      return AttachmentsNotifier();
+    });

@@ -2,6 +2,14 @@
 
 ## macOS
 
+Install CocoaPods (First-Time Setup)
+
+If this is your first time running API Dash on macOS, install CocoaPods to manage native plugin dependencies:
+
+```bash
+brew install cocoapods
+pod setup (should return Setup completed)
+```
 Add below keys to `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`.
 
 ```

@@ -14,34 +14,21 @@ class CsvPreviewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      final List<List<dynamic>> csvData =
-          const CsvToListConverter().convert(body, eol: '\n');
+      final List<List<dynamic>> csvData = csv.decode(body);
       return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
             columns: csvData[0]
-                .map(
-                  (item) => DataColumn(
-                    label: Text(
-                      item.toString(),
-                    ),
-                  ),
-                )
+                .map((item) => DataColumn(label: Text(item.toString())))
                 .toList(),
             rows: csvData
                 .skip(1)
                 .map(
                   (csvrow) => DataRow(
                     cells: csvrow
-                        .map(
-                          (csvItem) => DataCell(
-                            Text(
-                              csvItem.toString(),
-                            ),
-                          ),
-                        )
+                        .map((csvItem) => DataCell(Text(csvItem.toString())))
                         .toList(),
                   ),
                 )

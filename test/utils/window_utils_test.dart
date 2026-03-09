@@ -38,11 +38,11 @@ void main() {
       });
 
       test('Test case 2 options 3', () {
-        expect(showButtonLabelsInBodySuccess(3, 450), false);
+        expect(showButtonLabelsInBodySuccess(3, 400), false);
       });
 
       test('Test case 3 options 3', () {
-        expect(showButtonLabelsInBodySuccess(3, 550), true);
+        expect(showButtonLabelsInBodySuccess(3, 500), true);
       });
     },
   );
