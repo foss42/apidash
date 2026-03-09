@@ -65,10 +65,8 @@ class ModelManager {
   static Future<List<Model>?> fetchInstalledOllamaModels({
     String? ollamaUrl,
   }) async {
-    // All available models
-    // final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
-    // All loaded models
-    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/ps";
+    // Fetch all available/installed models
+    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
 
     try {
       final (resp, _, msg) = await sendHttpRequest(
