@@ -84,6 +84,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
           generatedToolCode = '';
           index = 0;
         });
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -107,6 +108,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       if (e.toString().contains('NO_DEFAULT_LLM')) {
         errMsg = kMsgSelectDefaultAIModel;
       }
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errMsg, style: TextStyle(color: Colors.white)),

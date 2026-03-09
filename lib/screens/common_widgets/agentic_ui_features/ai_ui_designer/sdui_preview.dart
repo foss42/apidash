@@ -40,6 +40,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
       setState(() {
         exportingCode = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -54,6 +55,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
     }
 
     Clipboard.setData(ClipboardData(text: ans['CODE']));
+    if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(kMsgCopiedToClipboard)));
@@ -97,6 +99,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                     stacRepresentation: widget.sduiCode,
                     onError: () {
                       Future.delayed(Duration(milliseconds: 200), () {
+                        if (!mounted || !context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(

@@ -13,5 +13,5 @@ const kModelsData = ${jsonEncode(jsonData)};
 ''';
 
   outputFile.writeAsStringSync(dartCode);
-  print('✅ Generated data.g.dart from data.json');
+  stdout.writeln('✅ Generated data.g.dart from data.json');
 }
