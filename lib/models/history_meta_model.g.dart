@@ -17,6 +17,9 @@ _$HistoryMetaModelImpl _$$HistoryMetaModelImplFromJson(
       method: $enumDecode(_$HTTPVerbEnumMap, json['method']),
       responseStatus: (json['responseStatus'] as num).toInt(),
       timeStamp: DateTime.parse(json['timeStamp'] as String),
+      latency: json['latency'] == null
+          ? null
+          : Duration(microseconds: (json['latency'] as num).toInt()),
     );
 
 Map<String, dynamic> _$$HistoryMetaModelImplToJson(
@@ -30,6 +33,7 @@ Map<String, dynamic> _$$HistoryMetaModelImplToJson(
       'method': _$HTTPVerbEnumMap[instance.method]!,
       'responseStatus': instance.responseStatus,
       'timeStamp': instance.timeStamp.toIso8601String(),
+      'latency': instance.latency?.inMicroseconds,
     };
 
 const _$APITypeEnumMap = {

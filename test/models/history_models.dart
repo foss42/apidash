@@ -51,6 +51,7 @@ final Map<String, dynamic> historyMetaModelJson1 = {
   "method": "get",
   "timeStamp": '2024-01-01T00:00:00.000',
   "responseStatus": 200,
+  "latency": null,
 };
 
 final Map<String, dynamic> historyRequestModelJson1 = {
@@ -82,6 +83,7 @@ final Map<String, dynamic> historyMetaModelJson2 = {
   "method": "post",
   "timeStamp": '2024-01-01T00:00:00.000',
   "responseStatus": 200,
+  "latency": null,
 };
 
 final Map<String, dynamic> historyRequestModelJson2 = {
