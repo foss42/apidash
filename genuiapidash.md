@@ -1,7 +1,9 @@
 # Implementation Plan: Open Responses & Generative UI Integration
 
 ## Discussion Reference
-Issue #1227 - Open Responses & Generative UI
+- **GitHub Discussion**: [#1227 - Open Responses & Generative UI](https://github.com/foss42/apidash/discussions/1227)
+- **Started by**: animator
+- **Summary**: Open Responses is an open-source specification for vendor-neutral AI interfaces. A2UI provides guidelines for building Generative UIs with Flutter's GenUI SDK. Task is to build rich API response UI visualization in API Dash.
 
 ---
 
