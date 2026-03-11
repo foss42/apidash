@@ -10,7 +10,7 @@ A proof-of-concept demonstrating MCP server connection, tool discovery, invocati
 
 ## Demo Video for the POC
 
-![Demo Video for the POC](demo/Demo_Video.mp4)
+<video src="demo/Demo_Video.mp4" controls width="100%"></video>
 
 ## Architecture
 
