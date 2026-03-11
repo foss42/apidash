@@ -9,8 +9,10 @@ A proof-of-concept demonstrating MCP server connection, tool discovery, invocati
 3. **Web UI** — Clean light-themed dashboard built with Mantine UI to connect, explore tools, invoke them, and run security scans with a visual score ring + expandable findings
 
 ## Demo Video for the POC
+https://github.com/user-attachments/assets/448fa305-c871-4d76-b613-8c74e7c5eaf0
 
-<video src="demo/Demo_Video.mp4" controls width="100%"></video>
+
+
 
 ## Architecture
 
