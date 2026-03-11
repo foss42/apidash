@@ -16,12 +16,19 @@ const String kHistoryLazyBox = "apidash-history-lazy";
 const String kDashBotBox = "apidash-dashbot-data";
 const String kKeyDashBotBoxIds = 'messages';
 
+const String kUrlHistory = "apidash-url-history-data";
+const String kUrlHistoryIds = "urls";
+const String kUrlHistoryKeyRaw = 'raw';
+const String kUrlHistoryKeyResolved = 'resolved';
+const int kUrlHistoryLimit = 10;
+
 const kHiveBoxes = [
   (kDataBox, HiveBoxType.normal),
   (kEnvironmentBox, HiveBoxType.normal),
   (kHistoryMetaBox, HiveBoxType.normal),
   (kHistoryLazyBox, HiveBoxType.lazy),
   (kDashBotBox, HiveBoxType.lazy),
+  (kUrlHistory, HiveBoxType.normal)
 ];
 
 Future<bool> initHiveBoxes(
@@ -102,6 +109,7 @@ class HiveHandler {
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
   late final LazyBox dashBotBox;
+  late final Box urlHistoryBox;
 
   HiveHandler() {
     debugPrint("Trying to open Hive boxes");
@@ -110,6 +118,7 @@ class HiveHandler {
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
     dashBotBox = Hive.lazyBox(kDashBotBox);
+    urlHistoryBox = Hive.box(kUrlHistory);
   }
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
@@ -189,5 +198,55 @@ class HiveHandler {
         }
       }
     }
+  }
+
+  Future<void> saveUrlToHistory(
+      String rawUrl, String resolvedUrl, String method) async {
+    if (rawUrl.isEmpty || resolvedUrl.isEmpty) return;
+
+    final List<dynamic> urlHistory =
+        List<dynamic>.from(urlHistoryBox.get(kUrlHistoryIds, defaultValue: []));
+
+    int existingIndex = urlHistory.indexWhere((item) {
+      if (item is Map) {
+        return item[kUrlHistoryKeyResolved] == resolvedUrl;
+      }
+      return false;
+    });
+
+    if (existingIndex != -1) {
+      final existingEntry = urlHistory[existingIndex] as Map;
+      final updatedEntry = {
+        'raw': rawUrl,
+        'resolved': resolvedUrl,
+        'count': (existingEntry['count'] as int? ?? 1) + 1,
+        'method': method,
+      };
+      urlHistory.removeAt(existingIndex);
+      urlHistory.insert(0, updatedEntry);
+    } else {
+      // new entry
+      urlHistory.insert(0, {
+        'raw': rawUrl,
+        'resolved': resolvedUrl,
+        'count': 1,
+        'method': method,
+      });
+    }
+
+    // history limit
+    if (urlHistory.length > kUrlHistoryLimit) {
+      urlHistory.removeRange(kUrlHistoryLimit, urlHistory.length);
+    }
+
+    await urlHistoryBox.put(kUrlHistoryIds, urlHistory);
+  }
+
+  List<Map<String, dynamic>> getUrlHistory() {
+    final List<dynamic> urlHistory = List<dynamic>.from(
+      urlHistoryBox.get(kUrlHistoryIds, defaultValue: []),
+    );
+
+    return urlHistory.whereType<Map<String, dynamic>>().toList();
   }
 }
