@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
+import '../../../dashbot/widgets/dashbot_action_buttons/dashbot_suggest_button.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -45,6 +46,13 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   const Expanded(
                     child: URLTextField(),
                   ),
+                  switch (apiType) {
+                    APIType.rest => const Padding(
+                        padding: EdgeInsets.only(left: 5),
+                        child: DashbotSuggestButton(),
+                      ),
+                    _ => kSizedBoxEmpty,
+                  },
                 ],
               )
             : Row(
@@ -62,6 +70,13 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   const Expanded(
                     child: URLTextField(),
                   ),
+                  switch (apiType) {
+                    APIType.rest => const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: DashbotSuggestButton(),
+                      ),
+                    _ => kSizedBoxEmpty,
+                  },
                   kHSpacer20,
                   const SizedBox(
                     height: 36,

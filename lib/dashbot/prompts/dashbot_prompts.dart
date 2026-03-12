@@ -7,6 +7,7 @@ import 'generate_code.dart';
 import 'generate_documentation.dart';
 import 'generate_test_cases.dart';
 import 'openapi_insights.dart';
+import 'suggest_request.dart';
 
 class DashbotPrompts {
 // ACTION SCHEMA
@@ -176,6 +177,24 @@ class DashbotPrompts {
     return buildCurlInsightsPrompt(
       diff: diff,
       newReq: newReq,
+    );
+  }
+
+  String suggestRequestPrompt({
+    String? url,
+    String? method,
+    Map<String, String>? headersMap,
+    String? bodyContentType,
+    Map<String, String>? paramsMap,
+    String? body,
+  }) {
+    return buildSuggestRequestPrompt(
+      url: url,
+      method: method,
+      headersMap: headersMap,
+      bodyContentType: bodyContentType,
+      paramsMap: paramsMap,
+      body: body,
     );
   }
 }

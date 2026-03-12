@@ -159,6 +159,18 @@ void main() {
       expect(http.paramsMap['limit'], '5');
     });
 
+    test('addQueryParam actionType.addQueryParam', () async {
+      await auto.apply(const ChatAction(
+        action: 'add_query_param',
+        target: 'httpRequestModel',
+        path: 'limit',
+        value: '10',
+        actionType: ChatActionType.addQueryParam,
+        targetType: ChatActionTarget.httpRequestModel,
+      ));
+      expect(http.paramsMap['limit'], '10');
+    });
+
     test('applyCurl dispatches to requestApply', () async {
       lastSystemMessage = await auto.apply(const ChatAction(
         action: 'apply_curl',
