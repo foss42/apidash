@@ -290,6 +290,73 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     await sendMessage(text: '', type: type, countAsUser: false);
   }
 
+  Future<String?> suggestRequestConfig() async {
+    final ai = _selectedAIModel;
+    if (ai == null) {
+      return 'AI model is not configured. Please set one.';
+    }
+
+    final currentReq = _currentRequest;
+    if (currentReq == null || (currentReq.httpRequestModel?.url ?? '').isEmpty) {
+      return 'Please enter a URL first.';
+    }
+
+    final promptBuilder = _ref.read(promptBuilderProvider);
+    final substitutedReq = currentReq.copyWith(
+        httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith());
+
+    final systemPrompt = promptBuilder.buildSystemPrompt(
+      substitutedReq,
+      ChatMessageType.suggestRequest,
+      history: const [],
+    );
+
+    final enriched = ai.copyWith(
+      systemPrompt: systemPrompt,
+      userPrompt: 'Please suggest a configuration for this request.',
+      stream: false,
+    );
+
+    state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
+    try {
+      final response = await _repo.sendChat(request: enriched);
+      if (response != null && response.isNotEmpty) {
+        List<ChatAction>? actions;
+        try {
+          final Map<String, dynamic> parsed = MessageJson.safeParse(response);
+          if (parsed.containsKey('actions') && parsed['actions'] is List) {
+            actions = (parsed['actions'] as List)
+                .whereType<Map<String, dynamic>>()
+                .map(ChatAction.fromJson)
+                .toList();
+          }
+        } catch (e) {
+          debugPrint('[Chat] Error parsing suggest actions: $e');
+          return 'Failed to parse AI response.';
+        }
+
+        if (actions != null && actions.isNotEmpty) {
+          for (final action in actions) {
+            await applyAutoFix(action);
+          }
+          return null; // success
+        } else {
+          return 'No suggestions found or format was invalid.';
+        }
+      } else {
+        return 'No response received from the AI model.';
+      }
+    } catch (e) {
+      debugPrint('[Chat] suggestRequestConfig error: $e');
+      return 'Error: $e';
+    } finally {
+      state = state.copyWith(
+        isGenerating: false,
+        currentStreamingResponse: '',
+      );
+    }
+  }
+
   Future<void> applyAutoFix(ChatAction action) async {
     try {
       if (action.actionType == ChatActionType.applyOpenApi) {

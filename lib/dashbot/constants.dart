@@ -9,7 +9,8 @@ enum ChatMessageType {
   generateCode,
   importCurl,
   importOpenApi,
-  general
+  general,
+  suggestRequest,
 }
 
 enum ChatActionType {
@@ -20,6 +21,7 @@ enum ChatActionType {
   updateBody('update_body'),
   updateUrl('update_url'),
   updateMethod('update_method'),
+  addQueryParam('add_query_param'),
   showLanguages('show_languages'),
   applyCurl('apply_curl'),
   applyOpenApi('apply_openapi'),

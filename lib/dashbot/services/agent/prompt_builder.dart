@@ -131,6 +131,15 @@ class PromptBuilder {
         return null;
       case ChatMessageType.importOpenApi:
         return null;
+      case ChatMessageType.suggestRequest:
+        return prompts.suggestRequestPrompt(
+          url: http?.url,
+          method: http?.method.name.toUpperCase(),
+          headersMap: http?.headersMap,
+          bodyContentType: http?.bodyContentType.name,
+          paramsMap: http?.paramsMap,
+          body: http?.body,
+        );
       case ChatMessageType.general:
         return prompts.generalInteractionPrompt();
     }
@@ -165,6 +174,8 @@ class PromptBuilder {
         return "I'd like to import a cURL command";
       case ChatMessageType.importOpenApi:
         return "I'd like to import an OpenAPI specification";
+      case ChatMessageType.suggestRequest:
+        return "Can you suggest a configuration for this request?";
       case ChatMessageType.general:
         return "Hello";
     }

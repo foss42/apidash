@@ -45,6 +45,9 @@ class AutoFixService {
       case ChatActionType.updateMethod:
         await _applyMethodUpdate(action, requestId);
         return null;
+      case ChatActionType.addQueryParam:
+        await _applyQueryParamAdd(action, requestId);
+        return null;
       case ChatActionType.applyCurl:
         {
           final payload = (action.value is Map<String, dynamic>)
@@ -180,5 +183,22 @@ class AutoFixService {
       orElse: () => HTTPVerb.get,
     );
     updateSelected(id: requestId, method: method);
+  }
+
+  Future<void> _applyQueryParamAdd(ChatAction action, String? requestId) async {
+    if (requestId == null || action.path == null) return;
+    final current = readCurrentRequest();
+    final http = current?.httpRequestModel;
+    if (http == null) return;
+
+    final params = List<NameValueModel>.from(http.params ?? const []);
+    params.add(
+        NameValueModel(name: action.path!, value: action.value as String));
+
+    updateSelected(
+      id: requestId,
+      params: params,
+      isParamEnabledList: List<bool>.filled(params.length, true),
+    );
   }
 }
