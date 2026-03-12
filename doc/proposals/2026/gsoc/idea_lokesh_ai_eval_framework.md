@@ -42,3 +42,22 @@ Users shouldn't have to duplicate their API keys, headers, or parameters between
 Developers will export their workspace directly from the API Dash desktop app. The Tauri app will parse the resulting `HttpRequestModel` JSON to instantly populate the testing environment with the correct target URLs, auth headers, and system prompts.
 
 This keeps the heavy Python execution decoupled, respects local-first privacy, and uses native bundling to deliver a stable UI. I look forward to your feedback.
+
+
+## Recently added(12th march)
+## Proof of Concept Validation(Adding new section after developing poc)
+As requested, I have built a fully functional, end-to-end Proof of Concept to validate the technical feasibility of this project. 
+
+* **Repository:** [AI-Eval-POC](https://github.com/Spark960/ai-eval)
+* **Demo:** A gif demonstration of the live evaluation pipeline is available in the repo README.
+
+**Key Technical Validations:**
+1. **The Proxy Middleware Pattern:** I successfully bypassed the strict schema validation errors (e.g., `400 Bad Request`) present in APIs like Google Gemini and Groq by building a native FastAPI proxy. This intercepts `lm-eval` payloads, strips vendor-incompatible parameters (like `seed` or `type`), and forwards the sanitized requests.(this was the most interesting part)
+2. **Live Log Streaming:** I verified that we can pipe real-time execution logs from Python's background threads directly to a React frontend using Server-Sent Events (SSE) and a custom `logging.Handler`.
+3. **Zero-File I/O Execution:** The entire `lm-eval` execution, including the proxy routing, runs safely in-memory without generating temporary files.
+
+**Test Results:**
+The pipeline was successfully verified using the `gsm8k` generative task:
+* **Llama 3.3 70B (via Groq Adapter):** `1.0000` (100%) Exact Match (5 samples).
+* **Gemini 2.0 Flash (via Gemini Adapter):** `0.2000` (20%) Exact Match (5 samples).
+*(Note: I utilized Groq's strict OpenAI-compatible endpoint for primary testing due to the lack of an active OpenAI API key, which successfully proved the architecture's universal compatibility).*
