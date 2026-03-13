@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
@@ -61,6 +62,28 @@ class ResponseBody extends StatelessWidget {
     if (formattedBody == null) {
       options = [...options];
       options.remove(ResponseBodyView.code);
+    }
+
+    // Detect OpenResponses payloads for JSON media types
+    if (mediaType.type == kTypeApplication &&
+        mediaType.subtype.contains(kSubTypeJson)) {
+      try {
+        final dynamic decoded = jsonDecode(body);
+        if (decoded is Map<String, dynamic>) {
+          final output = decoded['output'];
+          if (output is List &&
+              output.isNotEmpty &&
+              output.every(
+                (e) => e is Map && (e).containsKey('type'),
+              )) {
+            if (!options.contains(ResponseBodyView.structured)) {
+              options = [...options, ResponseBodyView.structured];
+            }
+          }
+        }
+      } catch (_) {
+        // Ignore JSON parse errors for OpenResponses detection
+      }
     }
 
     return ResponseBodySuccess(
