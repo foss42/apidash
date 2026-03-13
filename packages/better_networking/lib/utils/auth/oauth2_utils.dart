@@ -22,6 +22,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   required File? credentialsFile,
   String? state,
   String? scope,
+  Duration? timeout,
 }) async {
   // Check for existing credentials first
   if (credentialsFile != null && await credentialsFile.exists()) {
@@ -43,7 +44,10 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   // Create a unique request ID for this OAuth flow
   final requestId = 'oauth2-${DateTime.now().millisecondsSinceEpoch}';
   final httpClientManager = HttpClientManager();
-  final baseClient = httpClientManager.createClientWithJsonAccept(requestId);
+  final baseClient = httpClientManager.createClientWithJsonAccept(
+    requestId,
+    timeout: timeout,
+  );
 
   OAuthCallbackServer? callbackServer;
   Uri actualRedirectUrl = redirectUrl;
@@ -149,6 +153,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
 Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
   required AuthOAuth2Model oauth2Model,
   required File? credentialsFile,
+  Duration? timeout,
 }) async {
   // Try to use saved credentials
   if (credentialsFile != null && await credentialsFile.exists()) {
@@ -171,7 +176,10 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
   // Create a unique request ID for this OAuth flow
   final requestId = 'oauth2-client-${DateTime.now().millisecondsSinceEpoch}';
   final httpClientManager = HttpClientManager();
-  final baseClient = httpClientManager.createClientWithJsonAccept(requestId);
+  final baseClient = httpClientManager.createClientWithJsonAccept(
+    requestId,
+    timeout: timeout,
+  );
 
   try {
     // Otherwise, perform the client credentials grant
@@ -206,6 +214,7 @@ Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
 Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
   required AuthOAuth2Model oauth2Model,
   required File? credentialsFile,
+  Duration? timeout,
 }) async {
   // Try to use saved credentials
   if (credentialsFile != null && await credentialsFile.exists()) {
@@ -232,7 +241,10 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
   // Create a unique request ID for this OAuth flow
   final requestId = 'oauth2-password-${DateTime.now().millisecondsSinceEpoch}';
   final httpClientManager = HttpClientManager();
-  final baseClient = httpClientManager.createClientWithJsonAccept(requestId);
+  final baseClient = httpClientManager.createClientWithJsonAccept(
+    requestId,
+    timeout: timeout,
+  );
 
   try {
     // Otherwise, perform the owner password grant

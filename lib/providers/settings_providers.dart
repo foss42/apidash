@@ -38,6 +38,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    int? requestTimeoutSeconds,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
   }) async {
@@ -54,6 +55,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      requestTimeoutSeconds: requestTimeoutSeconds,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
     );
