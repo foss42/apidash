@@ -13,8 +13,9 @@ class RequestEditorTopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final name =
-        ref.watch(selectedRequestModelProvider.select((value) => value?.name));
+    final name = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.name),
+    );
     return Padding(
       padding: kP4,
       child: Row(
@@ -32,7 +33,7 @@ class RequestEditorTopBar extends ConsumerWidget {
           kHSpacer10,
           EditorTitleActions(
             onRenamePressed: () {
-              showRenameDialog(context, "Rename Request", name, (val) {
+              showRenameDialog(context, kLabelRenameRequest, name, (val) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)
                     .update(name: val);

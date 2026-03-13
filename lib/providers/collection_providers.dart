@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
@@ -506,7 +507,7 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
-      //AI-FORMATTING for Non Streaming Varaint
+      //AI-FORMATTING for Non Streaming Variant
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {

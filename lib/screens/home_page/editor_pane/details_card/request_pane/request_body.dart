@@ -16,13 +16,17 @@ class EditRequestBody extends ConsumerWidget {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!);
-    final contentType = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.bodyContentType));
-    final apiType = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
-    final darkMode = ref.watch(settingsProvider.select(
-      (value) => value.isDark,
-    ));
+    final contentType = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.bodyContentType,
+      ),
+    );
+    final apiType = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.apiType),
+    );
+    final darkMode = ref.watch(
+      settingsProvider.select((value) => value.isDark),
+    );
 
     return Column(
       children: [
@@ -32,9 +36,7 @@ class EditRequestBody extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Select Content Type:",
-                    ),
+                    Text(kLabelSelectContentType),
                     DropdownButtonBodyContentType(),
                   ],
                 ),
@@ -42,73 +44,76 @@ class EditRequestBody extends ConsumerWidget {
             : kSizedBoxEmpty,
         switch (apiType) {
           APIType.rest => Expanded(
-              child: switch (contentType) {
-                ContentType.formdata =>
-                  const Padding(padding: kPh4, child: FormDataWidget()),
-                ContentType.json => Padding(
-                    padding: kPt5o10,
-                    child: JsonTextFieldEditor(
-                      key: Key("$selectedId-json-body"),
-                      fieldKey: "$selectedId-json-body-editor-$darkMode",
-                      isDark: darkMode,
-                      initialValue: requestModel?.httpRequestModel?.body,
-                      onChanged: (String value) {
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(body: value);
-                      },
-                      hintText: kHintJson,
-                    ),
-                  ),
-                _ => Padding(
-                    padding: kPt5o10,
-                    child: TextFieldEditor(
-                      key: Key("$selectedId-body"),
-                      fieldKey: "$selectedId-body-editor",
-                      initialValue: requestModel?.httpRequestModel?.body,
-                      onChanged: (String value) {
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(body: value);
-                      },
-                      hintText: kHintText,
-                    ),
-                  ),
-              },
-            ),
-          APIType.graphql => Expanded(
-              child: Padding(
+            child: switch (contentType) {
+              ContentType.formdata => const Padding(
+                padding: kPh4,
+                child: FormDataWidget(),
+              ),
+              ContentType.json => Padding(
                 padding: kPt5o10,
-                child: TextFieldEditor(
-                  key: Key("$selectedId-query"),
-                  fieldKey: "$selectedId-query-editor",
-                  initialValue: requestModel?.httpRequestModel?.query,
+                child: JsonTextFieldEditor(
+                  key: Key("$selectedId-json-body"),
+                  fieldKey: "$selectedId-json-body-editor-$darkMode",
+                  isDark: darkMode,
+                  initialValue: requestModel?.httpRequestModel?.body,
                   onChanged: (String value) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)
-                        .update(query: value);
+                        .update(body: value);
                   },
-                  hintText: kHintQuery,
+                  hintText: kHintJson,
                 ),
               ),
+              _ => Padding(
+                padding: kPt5o10,
+                child: TextFieldEditor(
+                  key: Key("$selectedId-body"),
+                  fieldKey: "$selectedId-body-editor",
+                  initialValue: requestModel?.httpRequestModel?.body,
+                  onChanged: (String value) {
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .update(body: value);
+                  },
+                  hintText: kHintText,
+                ),
+              ),
+            },
+          ),
+          APIType.graphql => Expanded(
+            child: Padding(
+              padding: kPt5o10,
+              child: TextFieldEditor(
+                key: Key("$selectedId-query"),
+                fieldKey: "$selectedId-query-editor",
+                initialValue: requestModel?.httpRequestModel?.query,
+                onChanged: (String value) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(query: value);
+                },
+                hintText: kHintQuery,
+              ),
             ),
+          ),
           _ => kSizedBoxEmpty,
-        }
+        },
       ],
     );
   }
 }
 
 class DropdownButtonBodyContentType extends ConsumerWidget {
-  const DropdownButtonBodyContentType({
-    super.key,
-  });
+  const DropdownButtonBodyContentType({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final requestBodyContentType = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.bodyContentType));
+    final requestBodyContentType = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.bodyContentType,
+      ),
+    );
     return DropdownButtonContentType(
       contentType: requestBodyContentType,
       onChanged: (ContentType? value) {

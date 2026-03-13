@@ -1,18 +1,16 @@
 import 'package:apidash/terminal/terminal.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:uuid/uuid.dart';
 import 'package:apidash_core/apidash_core.dart';
 
 final terminalStateProvider =
     StateNotifierProvider<TerminalController, TerminalState>((ref) {
-  return TerminalController();
-});
+      return TerminalController();
+    });
 
 class TerminalState {
   TerminalState({required this.entries})
-      : index = {
-          for (var i = 0; i < entries.length; i++) entries[i].id: i,
-        };
+    : index = {for (var i = 0; i < entries.length; i++) entries[i].id: i};
 
   final List<TerminalEntry> entries; // newest first
   final Map<String, int> index;
@@ -85,9 +83,7 @@ class TerminalController extends StateNotifier<TerminalState> {
       final n = e.network;
       if (n == null) return e;
       n.chunks.add(chunk);
-      return e.copyWith(
-        network: n.copyWith(phase: NetworkPhase.progress),
-      );
+      return e.copyWith(network: n.copyWith(phase: NetworkPhase.progress));
     });
   }
 
@@ -139,23 +135,25 @@ class TerminalController extends StateNotifier<TerminalState> {
     String? context,
     String? contextRequestId,
   }) {
-    append(TerminalEntry(
-      id: _newId(),
-      source: TerminalSource.js,
-      level: switch (level) {
-        'warn' => TerminalLevel.warn,
-        'error' || 'fatal' => TerminalLevel.error,
-        _ => TerminalLevel.info,
-      },
-      requestId: contextRequestId,
-      js: JsLogData(
-        level: level,
-        args: args,
-        stack: stack,
-        context: context,
-        contextRequestId: contextRequestId,
+    append(
+      TerminalEntry(
+        id: _newId(),
+        source: TerminalSource.js,
+        level: switch (level) {
+          'warn' => TerminalLevel.warn,
+          'error' || 'fatal' => TerminalLevel.error,
+          _ => TerminalLevel.info,
+        },
+        requestId: contextRequestId,
+        js: JsLogData(
+          level: level,
+          args: args,
+          stack: stack,
+          context: context,
+          contextRequestId: contextRequestId,
+        ),
       ),
-    ));
+    );
   }
 
   void logSystem({
@@ -165,13 +163,19 @@ class TerminalController extends StateNotifier<TerminalState> {
     TerminalLevel level = TerminalLevel.info,
     List<String> tags = const <String>[],
   }) {
-    append(TerminalEntry(
-      id: _newId(),
-      source: TerminalSource.system,
-      level: level,
-      tags: tags,
-      system: SystemLogData(category: category, message: message, stack: stack),
-    ));
+    append(
+      TerminalEntry(
+        id: _newId(),
+        source: TerminalSource.system,
+        level: level,
+        tags: tags,
+        system: SystemLogData(
+          category: category,
+          message: message,
+          stack: stack,
+        ),
+      ),
+    );
   }
 
   // Serialization
