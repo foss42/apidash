@@ -18,6 +18,7 @@ class SettingsModel {
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
+    this.requestTimeoutSeconds = 0,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
   });
@@ -34,6 +35,7 @@ class SettingsModel {
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
+  final int requestTimeoutSeconds;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
 
@@ -50,12 +52,14 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    int? requestTimeoutSeconds,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
-      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
+      alwaysShowCollectionPaneScrollbar:
+          alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
@@ -68,14 +72,14 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
+      requestTimeoutSeconds:
+          requestTimeoutSeconds ?? this.requestTimeoutSeconds,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
     );
   }
 
-  SettingsModel copyWithPath({
-    String? workspaceFolderPath,
-  }) {
+  SettingsModel copyWithPath({String? workspaceFolderPath}) {
     return SettingsModel(
       isDark: isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
@@ -89,6 +93,7 @@ class SettingsModel {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      requestTimeoutSeconds: requestTimeoutSeconds,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
     );
@@ -114,8 +119,9 @@ class SettingsModel {
     SupportedUriSchemes? defaultUriScheme;
     if (defaultUriSchemeStr != null) {
       try {
-        defaultUriScheme =
-            SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+        defaultUriScheme = SupportedUriSchemes.values.byName(
+          defaultUriSchemeStr,
+        );
       } catch (e) {
         // pass
       }
@@ -124,8 +130,9 @@ class SettingsModel {
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
       try {
-        defaultCodeGenLang =
-            CodegenLanguage.values.byName(defaultCodeGenLangStr);
+        defaultCodeGenLang = CodegenLanguage.values.byName(
+          defaultCodeGenLangStr,
+        );
       } catch (e) {
         // pass
       }
@@ -137,14 +144,16 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod;
     if (historyRetentionPeriodStr != null) {
       try {
-        historyRetentionPeriod =
-            HistoryRetentionPeriod.values.byName(historyRetentionPeriodStr);
+        historyRetentionPeriod = HistoryRetentionPeriod.values.byName(
+          historyRetentionPeriodStr,
+        );
       } catch (e) {
         // pass
       }
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
+    final requestTimeoutSeconds = data["requestTimeoutSeconds"] as int?;
     final isDashBotEnabled = data["isDashBotEnabled"] as bool?;
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
@@ -165,6 +174,7 @@ class SettingsModel {
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      requestTimeoutSeconds: requestTimeoutSeconds,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
     );
@@ -186,6 +196,7 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
+      "requestTimeoutSeconds": requestTimeoutSeconds,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
     };
@@ -213,6 +224,7 @@ class SettingsModel {
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
+        other.requestTimeoutSeconds == requestTimeoutSeconds &&
         other.isDashBotEnabled == isDashBotEnabled &&
         mapEquals(other.defaultAIModel, defaultAIModel);
   }
@@ -233,6 +245,7 @@ class SettingsModel {
       historyRetentionPeriod,
       workspaceFolderPath,
       isSSLDisabled,
+      requestTimeoutSeconds,
       isDashBotEnabled,
       defaultAIModel,
     );

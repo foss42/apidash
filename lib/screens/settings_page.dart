@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import '../providers/providers.dart';
@@ -12,6 +13,75 @@ import 'common_widgets/common_widgets.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
+
+  Future<int?> _showTimeoutDialog(
+    BuildContext context,
+    int currentValue,
+  ) async {
+    final controller = TextEditingController(
+      text: currentValue == 0 ? '' : currentValue.toString(),
+    );
+    String? errorText;
+
+    return showDialog<int>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Default Request Timeout'),
+              content: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Enter timeout in seconds. Use 0 to disable.'),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: controller,
+                      autofocus: true,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: 'Seconds',
+                        hintText: '0',
+                        errorText: errorText,
+                        border: const OutlineInputBorder(),
+                      ),
+                      onChanged: (_) {
+                        if (errorText != null) {
+                          setState(() => errorText = null);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final input = controller.text.trim();
+                    final parsed = input.isEmpty ? 0 : int.tryParse(input);
+                    if (parsed == null || parsed < 0) {
+                      setState(() => errorText = 'Enter a valid number');
+                      return;
+                    }
+                    Navigator.pop(context, parsed);
+                  },
+                  child: const Text('Save'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -102,6 +172,29 @@ class SettingsPage extends ConsumerWidget {
                       },
                     )
                   : kSizedBoxEmpty,
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Default Request Timeout'),
+                subtitle: Text(
+                  settings.requestTimeoutSeconds == 0
+                      ? 'Current selection: Disabled'
+                      : 'Current selection: ${settings.requestTimeoutSeconds} seconds',
+                ),
+                trailing: FilledButton.tonal(
+                  onPressed: () async {
+                    final seconds = await _showTimeoutDialog(
+                      context,
+                      settings.requestTimeoutSeconds,
+                    );
+                    if (seconds != null) {
+                      await ref
+                          .read(settingsProvider.notifier)
+                          .update(requestTimeoutSeconds: seconds);
+                    }
+                  },
+                  child: const Text('Configure'),
+                ),
+              ),
               ListTile(
                 hoverColor: kColorTransparent,
                 title: const Text(kLabelDefaultCodeGen),

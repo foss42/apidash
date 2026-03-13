@@ -35,9 +35,14 @@ String? formatBody(String? body, MediaType? mediaType) {
 }
 
 Future<http.Response> convertStreamedResponse(
-  http.StreamedResponse streamedResponse,
-) async {
-  Uint8List bodyBytes = await streamedResponse.stream.toBytes();
+  http.StreamedResponse streamedResponse, {
+  Duration? timeout,
+}) async {
+  Future<Uint8List> bytesFuture = streamedResponse.stream.toBytes();
+  if (timeout != null) {
+    bytesFuture = bytesFuture.timeout(timeout);
+  }
+  Uint8List bodyBytes = await bytesFuture;
 
   http.Response response = http.Response.bytes(
     bodyBytes,

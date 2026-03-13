@@ -612,11 +612,13 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         ],
         isHeaderEnabledList: const [true],
       );
+      final timeoutSeconds = _ref.read(settingsProvider).requestTimeoutSeconds;
 
       final (resp, _, err) = await sendHttpRequest(
         getNewUuid(),
         APIType.rest,
         httpModel,
+        timeout: timeoutSeconds > 0 ? Duration(seconds: timeoutSeconds) : null,
       );
 
       if (err != null) {

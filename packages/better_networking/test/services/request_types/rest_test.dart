@@ -25,6 +25,23 @@ void main() {
       expect(resp?.statusCode == 200, true, reason: 'Response must be 200');
       expect(jsonEncode(output), contains('doc'));
     });
+
+    test('GET should respect configured timeout', () async {
+      const model = HttpRequestModel(
+        url: 'https://api.apidash.dev/io/delay',
+        method: HTTPVerb.get,
+        params: [NameValueModel(name: 'wait', value: '3')],
+      );
+      final (resp, _, err) = await sendHttpRequest(
+        'get_timeout_test',
+        APIType.rest,
+        model,
+        timeout: const Duration(seconds: 1),
+      );
+
+      expect(resp, isNull);
+      expect(err, 'Request timed out after 1 second.');
+    });
   });
 
   group('streamHttpRequest: MULTIPART', () {
@@ -189,6 +206,25 @@ void main() {
       final output = await stream.first;
       final errMsg = output?.$4;
       expect(errMsg, 'Request Cancelled');
+    });
+
+    test('REST: Stream timeout should return readable error', () async {
+      const model = HttpRequestModel(
+        url: 'https://api.apidash.dev/io/delay',
+        method: HTTPVerb.get,
+        params: [NameValueModel(name: 'wait', value: '3')],
+      );
+
+      final stream = await streamHttpRequest(
+        'get_test_timeout_stream',
+        APIType.rest,
+        model,
+        timeout: const Duration(seconds: 1),
+      );
+      final output = await stream.first;
+
+      expect(output?.$2, isNull);
+      expect(output?.$4, 'Request timed out after 1 second.');
     });
   });
 

@@ -11,8 +11,9 @@ import 'oauth1_utils.dart';
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
-  AuthModel? authData,
-) async {
+  AuthModel? authData, {
+  Duration? timeout,
+}) async {
   if (authData == null || authData.type == APIAuthType.none) {
     return httpRequestModel;
   }
@@ -115,6 +116,7 @@ Future<HttpRequestModel> handleAuth(
             "digest-${Random.secure()}",
             APIType.rest,
             httpRequestModel,
+            timeout: timeout,
           );
           final httpResponse = httpResult.$1;
 
@@ -206,6 +208,7 @@ Future<HttpRequestModel> handleAuth(
             tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
             credentialsFile: credentialsFile,
             scope: oauth2.scope,
+            timeout: timeout,
           );
 
           // Clean up the callback server if it exists and is still running
@@ -237,6 +240,7 @@ Future<HttpRequestModel> handleAuth(
           final client = await oAuth2ClientCredentialsGrantHandler(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
+            timeout: timeout,
           );
           debugPrint(client.credentials.accessToken);
 
@@ -254,6 +258,7 @@ Future<HttpRequestModel> handleAuth(
           final client = await oAuth2ResourceOwnerPasswordGrantHandler(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
+            timeout: timeout,
           );
           debugPrint(client.credentials.accessToken);
 
