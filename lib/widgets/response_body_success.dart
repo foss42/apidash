@@ -20,6 +20,7 @@ class ResponseBodySuccess extends StatefulWidget {
     this.isAIResponse = false,
     this.aiRequestModel,
     this.isPartOfHistory = false,
+    this.openResponsesRoot,
   });
   final MediaType mediaType;
   final List<ResponseBodyView> options;
@@ -31,6 +32,7 @@ class ResponseBodySuccess extends StatefulWidget {
   final bool isAIResponse;
   final AIRequestModel? aiRequestModel;
   final bool isPartOfHistory;
+  final Map<String, dynamic>? openResponsesRoot;
 
   @override
   State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
@@ -178,6 +180,16 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       child: SSEDisplay(
                         sseOutput: widget.sseOutput,
                         aiRequestModel: widget.aiRequestModel,
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.structured => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: OpenResponsesStructuredViewer(
+                        root: widget.openResponsesRoot,
                       ),
                     ),
                   ),
