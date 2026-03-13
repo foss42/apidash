@@ -5,14 +5,18 @@ import '../models/models.dart';
 import '../services/services.dart';
 import '../consts.dart';
 
-final codegenLanguageStateProvider = StateProvider<CodegenLanguage>((ref) =>
-    ref.watch(settingsProvider.select((value) => value.defaultCodeGenLang)));
+final codegenLanguageStateProvider = StateProvider<CodegenLanguage>(
+  (ref) =>
+      ref.watch(settingsProvider.select((value) => value.defaultCodeGenLang)),
+);
 
-final activeEnvironmentIdStateProvider = StateProvider<String?>((ref) =>
-    ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)));
+final activeEnvironmentIdStateProvider = StateProvider<String?>(
+  (ref) =>
+      ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)),
+);
 
 final StateNotifierProvider<ThemeStateNotifier, SettingsModel>
-    settingsProvider = StateNotifierProvider((ref) => ThemeStateNotifier());
+settingsProvider = StateNotifierProvider((ref) => ThemeStateNotifier());
 
 class ThemeStateNotifier extends StateNotifier<SettingsModel> {
   ThemeStateNotifier({this.settingsModel}) : super(const SettingsModel()) {
@@ -33,6 +37,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    int? requestTimeoutSeconds,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
   }) async {
@@ -49,6 +54,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      requestTimeoutSeconds: requestTimeoutSeconds,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
     );
