@@ -161,6 +161,7 @@ enum ResponseBodyView {
   raw("Raw", Icons.text_snippet_rounded),
   answer("Answer", Icons.abc),
   sse("SSE", Icons.stream),
+  structured("Structured", Icons.view_agenda_rounded),
   none("Preview", Icons.warning);
 
   const ResponseBodyView(this.label, this.icon);
