@@ -1,18 +1,23 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/models.dart';
 import '../services/services.dart';
 import '../consts.dart';
 
-final codegenLanguageStateProvider = StateProvider<CodegenLanguage>((ref) =>
-    ref.watch(settingsProvider.select((value) => value.defaultCodeGenLang)));
+final codegenLanguageStateProvider = StateProvider<CodegenLanguage>(
+  (ref) =>
+      ref.watch(settingsProvider.select((value) => value.defaultCodeGenLang)),
+);
 
-final activeEnvironmentIdStateProvider = StateProvider<String?>((ref) =>
-    ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)));
+final activeEnvironmentIdStateProvider = StateProvider<String?>(
+  (ref) =>
+      ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)),
+);
 
 final StateNotifierProvider<ThemeStateNotifier, SettingsModel>
-    settingsProvider = StateNotifierProvider((ref) => ThemeStateNotifier());
+settingsProvider = StateNotifierProvider((ref) => ThemeStateNotifier());
 
 class ThemeStateNotifier extends StateNotifier<SettingsModel> {
   ThemeStateNotifier({this.settingsModel}) : super(const SettingsModel()) {

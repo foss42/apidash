@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/dashbot/services/services.dart';
@@ -71,16 +72,19 @@ class FakeEnvironmentsNotifier
   String? lastEnvId;
 
   FakeEnvironmentsNotifier()
-      : super({
-          'test-env-id': const EnvironmentModel(
-            id: 'test-env-id',
-            name: 'Test Environment',
-            values: [],
-          ),
-        });
+    : super({
+        'test-env-id': const EnvironmentModel(
+          id: 'test-env-id',
+          name: 'Test Environment',
+          values: [],
+        ),
+      });
 
-  void updateEnvironment(String id,
-      {String? name, List<EnvironmentVariableModel>? values}) {
+  void updateEnvironment(
+    String id, {
+    String? name,
+    List<EnvironmentVariableModel>? values,
+  }) {
     updateEnvironmentCalled = true;
     lastEnvId = id;
 
@@ -123,7 +127,9 @@ void main() {
                 url: 'https://api.apidash.dev/test',
                 headers: [
                   NameValueModel(
-                      name: 'Content-Type', value: 'application/json'),
+                    name: 'Content-Type',
+                    value: 'application/json',
+                  ),
                 ],
                 body: '{"test": "data"}',
               ),
@@ -136,36 +142,39 @@ void main() {
             final requestApply = ref.read(requestApplyServiceProvider);
             return AutoFixService(
               requestApply: requestApply,
-              updateSelected: ({
-                required String id,
-                HTTPVerb? method,
-                String? url,
-                List<NameValueModel>? headers,
-                List<bool>? isHeaderEnabledList,
-                String? body,
-                ContentType? bodyContentType,
-                List<FormDataModel>? formData,
-                List<NameValueModel>? params,
-                List<bool>? isParamEnabledList,
-                String? postRequestScript,
-              }) {
-                fakeCollection.update(
-                  id: id,
-                  method: method,
-                  url: url,
-                  headers: headers,
-                  isHeaderEnabledList: isHeaderEnabledList,
-                  body: body,
-                  bodyContentType: bodyContentType,
-                  formData: formData,
-                  params: params,
-                  isParamEnabledList: isParamEnabledList,
-                  postRequestScript: postRequestScript,
-                );
-              },
+              updateSelected:
+                  ({
+                    required String id,
+                    HTTPVerb? method,
+                    String? url,
+                    List<NameValueModel>? headers,
+                    List<bool>? isHeaderEnabledList,
+                    String? body,
+                    ContentType? bodyContentType,
+                    List<FormDataModel>? formData,
+                    List<NameValueModel>? params,
+                    List<bool>? isParamEnabledList,
+                    String? postRequestScript,
+                  }) {
+                    fakeCollection.update(
+                      id: id,
+                      method: method,
+                      url: url,
+                      headers: headers,
+                      isHeaderEnabledList: isHeaderEnabledList,
+                      body: body,
+                      bodyContentType: bodyContentType,
+                      formData: formData,
+                      params: params,
+                      isParamEnabledList: isParamEnabledList,
+                      postRequestScript: postRequestScript,
+                    );
+                  },
               addNewRequest: (model, {name}) {
-                fakeCollection.addRequestModel(model,
-                    name: name ?? 'New Request');
+                fakeCollection.addRequestModel(
+                  model,
+                  name: name ?? 'New Request',
+                );
               },
               readCurrentRequestId: () =>
                   ref.read(selectedRequestModelProvider)?.id,
@@ -212,18 +221,23 @@ void main() {
 
     group('requestApplyServiceProvider', () {
       test(
-          'should create RequestApplyService instance with urlEnvService dependency',
-          () {
-        final requestApplyService = container.read(requestApplyServiceProvider);
-        expect(requestApplyService, isA<RequestApplyService>());
-        expect(requestApplyService.urlEnv, isA<UrlEnvService>());
-      });
+        'should create RequestApplyService instance with urlEnvService dependency',
+        () {
+          final requestApplyService = container.read(
+            requestApplyServiceProvider,
+          );
+          expect(requestApplyService, isA<RequestApplyService>());
+          expect(requestApplyService.urlEnv, isA<UrlEnvService>());
+        },
+      );
 
       test('should return same instance on multiple reads', () {
-        final requestApplyService1 =
-            container.read(requestApplyServiceProvider);
-        final requestApplyService2 =
-            container.read(requestApplyServiceProvider);
+        final requestApplyService1 = container.read(
+          requestApplyServiceProvider,
+        );
+        final requestApplyService2 = container.read(
+          requestApplyServiceProvider,
+        );
         expect(requestApplyService1, same(requestApplyService2));
       });
     });
@@ -241,77 +255,90 @@ void main() {
       });
 
       test(
-          'updateSelected callback should call collection.update with correct parameters',
-          () {
-        final autoFixService = container.read(autoFixServiceProvider);
-        fakeCollection.reset();
+        'updateSelected callback should call collection.update with correct parameters',
+        () {
+          final autoFixService = container.read(autoFixServiceProvider);
+          fakeCollection.reset();
 
-        // Test the updateSelected callback
-        autoFixService.updateSelected(
-          id: 'test-id',
-          method: HTTPVerb.post,
-          url: 'https://api.apidash.dev',
-        );
+          // Test the updateSelected callback
+          autoFixService.updateSelected(
+            id: 'test-id',
+            method: HTTPVerb.post,
+            url: 'https://api.apidash.dev',
+          );
 
-        expect(fakeCollection.updateCalled, true);
-        expect(fakeCollection.lastUpdatedId, 'test-id');
-        expect(fakeCollection.lastMethod, HTTPVerb.post);
-        expect(fakeCollection.lastUrl, 'https://api.apidash.dev');
-      });
+          expect(fakeCollection.updateCalled, true);
+          expect(fakeCollection.lastUpdatedId, 'test-id');
+          expect(fakeCollection.lastMethod, HTTPVerb.post);
+          expect(fakeCollection.lastUrl, 'https://api.apidash.dev');
+        },
+      );
 
       test(
-          'addNewRequest callback should call collection.addRequestModel with custom name',
-          () {
-        final autoFixService = container.read(autoFixServiceProvider);
-        fakeCollection.reset();
+        'addNewRequest callback should call collection.addRequestModel with custom name',
+        () {
+          final autoFixService = container.read(autoFixServiceProvider);
+          fakeCollection.reset();
 
-        // Test the addNewRequest callback
-        autoFixService.addNewRequest(
-          HttpRequestModel(
-              method: HTTPVerb.get, url: 'https://api.apidash.dev'),
-          name: 'Test Request',
-        );
+          // Test the addNewRequest callback
+          autoFixService.addNewRequest(
+            HttpRequestModel(
+              method: HTTPVerb.get,
+              url: 'https://api.apidash.dev',
+            ),
+            name: 'Test Request',
+          );
 
-        expect(fakeCollection.addRequestModelCalled, true);
-        expect(fakeCollection.lastRequestName, 'Test Request');
-      });
+          expect(fakeCollection.addRequestModelCalled, true);
+          expect(fakeCollection.lastRequestName, 'Test Request');
+        },
+      );
 
-      test('addNewRequest callback should use default name when none provided',
-          () {
-        final autoFixService = container.read(autoFixServiceProvider);
-        fakeCollection.reset();
+      test(
+        'addNewRequest callback should use default name when none provided',
+        () {
+          final autoFixService = container.read(autoFixServiceProvider);
+          fakeCollection.reset();
 
-        // Test the addNewRequest callback without name
-        autoFixService.addNewRequest(
-          HttpRequestModel(
-              method: HTTPVerb.get, url: 'https://api.apidash.dev'),
-        );
+          // Test the addNewRequest callback without name
+          autoFixService.addNewRequest(
+            HttpRequestModel(
+              method: HTTPVerb.get,
+              url: 'https://api.apidash.dev',
+            ),
+          );
 
-        expect(fakeCollection.addRequestModelCalled, true);
-        expect(fakeCollection.lastRequestName, 'New Request');
-      });
+          expect(fakeCollection.addRequestModelCalled, true);
+          expect(fakeCollection.lastRequestName, 'New Request');
+        },
+      );
 
-      test('readCurrentRequestId callback should return selected request ID',
-          () {
-        final autoFixService = container.read(autoFixServiceProvider);
-        final result = autoFixService.readCurrentRequestId();
-        expect(result, 'test-request-id');
-      });
+      test(
+        'readCurrentRequestId callback should return selected request ID',
+        () {
+          final autoFixService = container.read(autoFixServiceProvider);
+          final result = autoFixService.readCurrentRequestId();
+          expect(result, 'test-request-id');
+        },
+      );
 
       test('ensureBaseUrl callback should return base URL', () async {
         final autoFixService = container.read(autoFixServiceProvider);
-        final result =
-            await autoFixService.ensureBaseUrl('https://api.apidash.dev');
+        final result = await autoFixService.ensureBaseUrl(
+          'https://api.apidash.dev',
+        );
         expect(result, isA<String>());
       });
 
-      test('readCurrentRequest callback should return selected request model',
-          () {
-        final autoFixService = container.read(autoFixServiceProvider);
-        final result = autoFixService.readCurrentRequest();
-        expect(result, isA<RequestModel>());
-        expect(result?.id, 'test-request-id');
-      });
+      test(
+        'readCurrentRequest callback should return selected request model',
+        () {
+          final autoFixService = container.read(autoFixServiceProvider);
+          final result = autoFixService.readCurrentRequest();
+          expect(result, isA<RequestModel>());
+          expect(result?.id, 'test-request-id');
+        },
+      );
 
       test('updateSelected callback should handle all parameter types', () {
         final autoFixService = container.read(autoFixServiceProvider);
@@ -324,14 +351,17 @@ void main() {
             method: HTTPVerb.post,
             url: 'https://api.apidash.dev',
             headers: [
-              NameValueModel(name: 'Authorization', value: 'Bearer token')
+              NameValueModel(name: 'Authorization', value: 'Bearer token'),
             ],
             isHeaderEnabledList: [true],
             body: '{"key": "value"}',
             bodyContentType: ContentType.json,
             formData: [
               FormDataModel(
-                  name: 'field', value: 'value', type: FormDataType.text)
+                name: 'field',
+                value: 'value',
+                type: FormDataType.text,
+              ),
             ],
             params: [NameValueModel(name: 'param1', value: 'value1')],
             isParamEnabledList: [true],
@@ -345,8 +375,9 @@ void main() {
       test('ensureBaseUrl callback should read environments state', () async {
         // Test ensureBaseUrl directly from the provider
         final autoFixService = container.read(autoFixServiceProvider);
-        final result =
-            await autoFixService.ensureBaseUrl('https://api.apidash.dev');
+        final result = await autoFixService.ensureBaseUrl(
+          'https://api.apidash.dev',
+        );
         expect(result, isA<String>());
         expect(result, 'test-base-url');
       });
@@ -378,11 +409,18 @@ void main() {
 
         // Test that callbacks don't throw when called
         expect(
-            () => autoFixService.updateSelected(id: 'test'), returnsNormally);
+          () => autoFixService.updateSelected(id: 'test'),
+          returnsNormally,
+        );
         expect(
-            () => autoFixService.addNewRequest(HttpRequestModel(
-                method: HTTPVerb.get, url: 'https://api.apidash.dev')),
-            returnsNormally);
+          () => autoFixService.addNewRequest(
+            HttpRequestModel(
+              method: HTTPVerb.get,
+              url: 'https://api.apidash.dev',
+            ),
+          ),
+          returnsNormally,
+        );
       });
     });
 
@@ -406,8 +444,9 @@ void main() {
                 ),
               );
             }),
-            activeEnvironmentIdStateProvider
-                .overrideWith((ref) => 'test-env-id'),
+            activeEnvironmentIdStateProvider.overrideWith(
+              (ref) => 'test-env-id',
+            ),
           ],
         );
       });
@@ -417,58 +456,68 @@ void main() {
       });
 
       test(
-          'real autoFixService readCurrentRequestId returns selected request ID',
-          () {
-        final autoFixService = realContainer.read(autoFixServiceProvider);
+        'real autoFixService readCurrentRequestId returns selected request ID',
+        () {
+          final autoFixService = realContainer.read(autoFixServiceProvider);
 
-        final result = autoFixService.readCurrentRequestId();
+          final result = autoFixService.readCurrentRequestId();
 
-        expect(result, 'real-test-request-id');
-      });
-
-      test(
-          'real autoFixService readCurrentRequest returns selected request model',
-          () {
-        final autoFixService = realContainer.read(autoFixServiceProvider);
-
-        final result = autoFixService.readCurrentRequest();
-
-        expect(result, isA<RequestModel>());
-        expect(result?.id, 'real-test-request-id');
-      });
+          expect(result, 'real-test-request-id');
+        },
+      );
 
       test(
-          'real autoFixService ensureBaseUrl executes environment-related code paths',
-          () async {
-        final autoFixService = realContainer.read(autoFixServiceProvider);
+        'real autoFixService readCurrentRequest returns selected request model',
+        () {
+          final autoFixService = realContainer.read(autoFixServiceProvider);
 
-        // This should exercise the real implementation's ensureBaseUrl callback
-        final result =
-            await autoFixService.ensureBaseUrl('https://api.apidash.dev');
+          final result = autoFixService.readCurrentRequest();
 
-        expect(result, isA<String>());
-        // The result should contain some base URL or environment variable reference
-        expect(result.isNotEmpty, true);
-      });
+          expect(result, isA<RequestModel>());
+          expect(result?.id, 'real-test-request-id');
+        },
+      );
+
+      test(
+        'real autoFixService ensureBaseUrl executes environment-related code paths',
+        () async {
+          final autoFixService = realContainer.read(autoFixServiceProvider);
+
+          // This should exercise the real implementation's ensureBaseUrl callback
+          final result = await autoFixService.ensureBaseUrl(
+            'https://api.apidash.dev',
+          );
+
+          expect(result, isA<String>());
+          // The result should contain some base URL or environment variable reference
+          expect(result.isNotEmpty, true);
+        },
+      );
 
       test('real autoFixService callbacks execute without errors', () {
         final autoFixService = realContainer.read(autoFixServiceProvider);
 
         // Test that the real callbacks don't throw for basic operations
         expect(
-            () => autoFixService.addNewRequest(
-                  HttpRequestModel(
-                      method: HTTPVerb.post, url: 'https://real-test.com'),
-                  name: 'Real Test Request',
-                ),
-            returnsNormally);
+          () => autoFixService.addNewRequest(
+            HttpRequestModel(
+              method: HTTPVerb.post,
+              url: 'https://real-test.com',
+            ),
+            name: 'Real Test Request',
+          ),
+          returnsNormally,
+        );
 
         expect(
-            () => autoFixService.addNewRequest(
-                  HttpRequestModel(
-                      method: HTTPVerb.post, url: 'https://real-test.com'),
-                ),
-            returnsNormally);
+          () => autoFixService.addNewRequest(
+            HttpRequestModel(
+              method: HTTPVerb.post,
+              url: 'https://real-test.com',
+            ),
+          ),
+          returnsNormally,
+        );
 
         // updateSelected might fail without a proper collection setup,
         // but we can test it doesn't crash the provider creation

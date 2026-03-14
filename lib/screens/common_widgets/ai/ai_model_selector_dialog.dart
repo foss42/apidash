@@ -1,5 +1,6 @@
 // import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -55,12 +56,12 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                     // await LLMManager.fetchAvailableLLMs();
                     // setState(() {});
                     //},
-                    child: Text('Update Models'),
+                    child: Text(kLabelUpdateModels),
                   ),
                   kVSpacer10,
                   Row(
                     children: [
-                      Text('Select Model Provider'),
+                      Text(kLabelSelectModelProvider),
                       kHSpacer20,
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
@@ -72,8 +73,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                             });
                           },
                           value: selectedProvider,
-                          values: data.modelProviders
-                              .map((e) => (e.providerId!, e.providerName)),
+                          values: data.modelProviders.map(
+                            (e) => (e.providerId!, e.providerName),
+                          ),
                         ),
                       ),
                     ],
@@ -104,7 +106,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                           // await LLMManager.fetchAvailableLLMs();
                           // setState(() {});
                           //},
-                          child: Text('Update Models'),
+                          child: Text(kLabelUpdateModels),
                         ),
                         SizedBox(height: 20),
                         ...data.modelProviders.map(
@@ -145,7 +147,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
 
   _buildModelSelector(AIModelProvider? aiModelProvider) {
     if (aiModelProvider == null) {
-      return Center(child: Text("Please select an AI API Provider"));
+      return Center(child: Text(kLabelSelectAIProvider));
     }
     // final currentCredential =
     //     ref.watch(aiApiCredentialProvider)[aiModelProvider.providerId!] ?? "";
@@ -159,7 +161,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         ),
         SizedBox(height: 20),
         if (aiModelProvider.providerId != ModelAPIProvider.ollama) ...[
-          Text('API Key / Credential'),
+          Text(kLabelApiKeyCredential),
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
@@ -176,7 +178,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           ),
           kVSpacer10,
         ],
-        Text('Endpoint'),
+        Text(kLabelEndpoint),
         kVSpacer8,
         BoundedTextField(
           key: ValueKey(aiModelProvider.providerName ?? ""),
@@ -191,7 +193,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Models'),
+            Text(kLabelModels),
             // IconButton(
             //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
           ],
@@ -224,8 +226,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       ),
                       onTap: () {
                         setState(() {
-                          newAIRequestModel =
-                              newAIRequestModel?.copyWith(model: x.id);
+                          newAIRequestModel = newAIRequestModel?.copyWith(
+                            model: x.id,
+                          );
                         });
                       },
                     ),
@@ -242,7 +245,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             onPressed: () {
               Navigator.of(context).pop(newAIRequestModel);
             },
-            child: Text('Save'),
+            child: Text(kLabelSave),
           ),
         ),
       ],
