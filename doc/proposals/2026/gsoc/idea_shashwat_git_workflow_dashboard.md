@@ -31,42 +31,51 @@ Currently API Dash has no collection concept — all requests live in a single f
 
 **Design principle:** Hive is the single source of truth. There are no local Git repos, no on-disk files to sync, no file watchers. Everything goes through the GitHub REST API over HTTPS, which means Git Support works identically on macOS, Windows, Linux, Android, iOS, and web.
 
-**Why a serialization layer is needed:** Hive stores data in a proprietary binary format (`.hive` files) — not human-readable, not diffable, and not something Git can meaningfully track. To bridge this gap, every request model is serialized to clean, structured JSON before being pushed to GitHub. On pull or rollback, the JSON is deserialized back into Hive. This Hive ↔ JSON conversion layer is what makes the entire Git integration possible: GitHub sees a repo of readable JSON files, while the app keeps using Hive as its fast local store.
+**Why a serialization layer is needed:** Hive stores data in a proprietary binary format — not human-readable or diffable. Every request is serialized to JSON before push, and deserialized on pull or rollback. GitHub sees readable JSON; the app keeps using Hive locally.
 
 **How it works in the UI:**
 
 A new collection dropdown sits above the sidebar's request list. Each collection has a GitHub icon button with two states:
 
-- **Not connected** — The collection is local-only. Clicking the button opens a **Connect to GitHub** dialog where the user types a repo name and clicks Connect. If this is the first time, the app shows a short authorization code and opens the system browser to github.com/login/device — the user enters the code, clicks "Authorize", and the app picks up the token automatically (one-time, takes ~15 seconds). API Dash then creates the repo via the GitHub API, serializes all requests to JSON, and pushes them as the first commit.
+- **Not connected** — Local-only. Clicking opens **Connect to GitHub**: user types a repo name and clicks Connect. On first use, the app shows a short code and opens github.com/login/device — user enters it, authorizes, and the app picks up the token. API Dash creates the repo, serializes requests to JSON, and pushes the first commit.
+
+![Authorize with GitHub](images/git-auth-dialog.png)
+*In-app auth dialog: device code + link to github.com/login/device*
+
+![GitHub device page](images/git-github-browser.png)
+*User enters code in browser*
 
 - **Connected** — The collection is linked to a GitHub repo. Clicking the button opens a **Git panel** with three tabs:
-  - **Commit & Push** — Lists every request that was added, modified, or deleted since the last push (for example, "POST /auth — modified", "GET /orders — new"). The user can review exactly what changed, write a commit message, and push with one click. Under the hood, API Dash serializes each request to JSON, creates blobs and a tree via the Git Data API, creates a commit object pointing to the current branch head, and fast-forwards the branch ref — all in one atomic API call sequence.
-  - **History** — A scrollable list of commits on the current branch. Each row shows the commit message, author, and timestamp. Clicking any commit triggers a **one-click rollback**: API Dash fetches the full tree for that commit, deserializes every request JSON, and replaces the entire collection in Hive. The user's sidebar instantly reflects the older version.
-  - **Branches** — Lists all remote branches. The user can switch branches (which triggers the same full-tree fetch and Hive replace), create a new branch from the current HEAD, or delete a branch.
+  - **Commit & Push** — Lists added, modified, or deleted requests since last push. User reviews changes, writes a commit message, and pushes. API Dash serializes to JSON, creates blobs and a tree, commits, and fast-forwards the branch — one atomic operation.
+  - **History** — Scrollable list of commits. Each row shows message, author, timestamp. Click any commit for **one-click rollback**: API Dash fetches that commit's tree, deserializes, and replaces the collection in Hive.
+  - **Branches** — Lists remote branches. User can switch, create from current HEAD, or delete.
 
-There is also an **Import from GitHub** option (accessible from the collection dropdown's "+" menu). The user pastes a GitHub repo URL, API Dash fetches the default branch's tree, deserializes all request JSONs, and creates a brand-new local collection populated with those requests.
+![Git panel — History tab](images/git-history-tab.png)
+*Connected state: commit history with one-click rollback*
 
-**How it works under the hood:**
+**Import from GitHub** (from the collection dropdown) lets the user paste a repo URL — API Dash fetches the tree, deserializes, and creates a new local collection.
 
-A `GitHubApiAdapter` class handles all GitHub communication using the GitHub REST API. No local git CLI or `git` Dart package is used.
+**How it works:**
 
-- **Authentication:** GitHub's OAuth device flow — the recommended approach for desktop and mobile apps with no backend server. On first connect, the app requests a short user code from GitHub, displays it in a dialog ("Go to github.com/login/device and enter code ABCD-1234"), and opens the system browser. The user enters the code and clicks "Authorize" on GitHub's page. Meanwhile, the app polls GitHub in the background until authorization completes. Only the public `client_id` is embedded in the app — no secrets, no WebView, no redirect URI, no platform-specific deep links. The resulting token is stored in `flutter_secure_storage` (encrypted, per-platform keychain — Keychain on macOS/iOS, EncryptedSharedPreferences on Android). The token never expires, so this happens **once in the app's lifetime**. Every subsequent Connect, Push, Pull, or Import call just uses the saved token — no login screen, no prompts. All API calls attach `Authorization: Bearer <token>`.
+A `GitHubApiAdapter` class handles all GitHub communication using the GitHub REST API.
 
-- **Push (atomic multi-file commit):** When the user pushes, the adapter: (1) serializes each request in the collection to JSON, (2) calls `POST /repos/{owner}/{repo}/git/blobs` for each file to get blob SHAs, (3) calls `POST /repos/{owner}/{repo}/git/trees` with all blob SHAs and the current branch's base tree to get a new tree SHA, (4) calls `POST /repos/{owner}/{repo}/git/commits` with the new tree SHA and the parent commit SHA, (5) calls `PATCH /repos/{owner}/{repo}/git/refs/heads/{branch}` to fast-forward the branch. This is one atomic commit containing the entire collection state.
+- **Authentication:** OAuth device flow — no backend needed. App shows a short code and opens github.com/login/device; user enters it and authorizes. App polls until done. Token stored in `flutter_secure_storage`. One-time; all later operations use the saved token.
 
-- **Pull / Rollback / Branch switch:** All three do the same thing internally — fetch a tree at a specific commit. The adapter calls `GET /repos/{owner}/{repo}/git/trees/{tree_sha}?recursive=1` to get every file in the tree, fetches each blob's content, deserializes the JSON into `RequestModel` objects, and bulk-replaces the collection in Hive. The sidebar rebuilds instantly via Riverpod.
+- **Push:** Serialize to JSON → create blobs → create tree → create commit → update branch ref. One atomic commit.
 
-- **Commit history:** `GET /repos/{owner}/{repo}/commits?sha={branch}` returns the commit log. Each entry shows message, author, date, and SHA. Tapping a commit calls the pull/rollback flow with that commit's tree SHA.
+- **Pull / Rollback / Branch switch:** Same flow — fetch tree at commit, get blobs, deserialize to `RequestModel`, replace collection in Hive.
 
-- **Branches:** `GET /repos/{owner}/{repo}/branches` lists branches. Creating a branch calls `POST /repos/{owner}/{repo}/git/refs` with the current HEAD SHA. Switching branches fetches that branch's latest commit tree and replaces the collection.
+- **Commit history:** API returns log with message, author, date, SHA. Tapping a commit triggers rollback.
+
+- **Branches:** List, create, switch, delete via GitHub API.
 
 **Example — How Alice, Bob, and Carol collaborate:**
 
-Alice has 15 API requests in her "Payment API" collection. She clicks the GitHub button, selects **Connect to GitHub**, enters a repo name, and authorizes via the device flow (enters a short code in her browser — one-time). API Dash serializes all 15 requests to JSON, creates an atomic commit via the Git Data API, and pushes to `main`. Her collection now lives on GitHub. She shares the repo URL with her team.
+Alice has 15 requests in her "Payment API" collection. She clicks **Connect to GitHub**, enters a repo name, authorizes via device flow. API Dash serializes to JSON, creates an atomic commit, pushes to `main`. She shares the repo URL.
 
-Bob opens API Dash, clicks **Import from GitHub** in his collection dropdown, and pastes Alice's repo URL. API Dash fetches the latest tree from `main`, deserializes all 15 request JSONs, and creates a new "Payment API" collection in Bob's Hive — all 15 requests appear in his sidebar, ready to use. He edits a request, opens the Git panel, writes a commit message, and pushes.
+Bob pastes Alice's repo URL into **Import from GitHub**. API Dash fetches the tree, deserializes, creates a "Payment API" collection — 15 requests in his sidebar. He edits one, opens the Git panel, and pushes.
 
-Carol already has the collection connected. She opens her Git panel's History tab and sees Bob's new commit. She clicks **Pull** (or clicks Bob's specific commit). API Dash fetches that commit's tree, deserializes the requests, and replaces her collection in Hive. Her sidebar updates instantly. Later, Carol realizes Bob's change broke something — she scrolls down in History, clicks the previous commit, and her entire collection rolls back to Alice's original version with one click.
+Carol has the collection connected. She sees Bob's commit in History, clicks it to pull. Later she rolls back: clicks the previous commit — collection reverts to Alice's version.
 
 The key insight: the user never thinks about blobs, trees, or API calls. They think about their collection. GitHub is just a button that lets them share it, version it, and roll back with one click — and it works on every platform.
 
@@ -117,7 +126,7 @@ All data is derived from what API Dash already stores — no new data collection
 
 | Week | Focus | Deliverables |
 |------|-------|-------------|
-| 1-2 | Git Foundation | CollectionModel + collection dropdown UI, GitHub OAuth via in-app WebView, GitHubApiAdapter (push: blobs → tree → commit → update ref), Connect to GitHub dialog |
+| 1-2 | Git Foundation | CollectionModel + collection dropdown UI, GitHub OAuth, GitHubApiAdapter (push: blobs → tree → commit → update ref), Connect to GitHub dialog |
 | 3-4 | Git Features | Commit history view with one-click rollback, branch list/create/switch, Import from GitHub, pull (fetch tree → replace Hive collection) |
 | 5-6 | Workflow Foundation | Data models, canvas integration, node types (Request, Condition, Transform, Delay), save/load |
 | 7-8 | Workflow Execution | Execution engine, real-time status on canvas, data passing between nodes |
