@@ -17,7 +17,7 @@ void main() {
     test('identical field values -> objects equal & same hashCode', () {
       final msg1 = ChatMessage(
         id: 'm1',
-        content: 'Hello',
+        explanation: 'Hello',
         role: MessageRole.user,
         timestamp: ts,
         messageType: ChatMessageType.general,
@@ -25,7 +25,7 @@ void main() {
       );
       final msg2 = ChatMessage(
         id: 'm1',
-        content: 'Hello',
+        explanation: 'Hello',
         role: MessageRole.user,
         timestamp: ts,
         messageType: ChatMessageType.general,
@@ -40,9 +40,9 @@ void main() {
     test('different id -> not equal', () {
       final a = ChatMessage(
         id: 'a',
-        content: 'Hi',
+        explanation: 'Hi',
         role: MessageRole.user,
-        timestamp: ts,
+        timestamp: ts, actions: [],
       );
       final b = a.copyWith(id: 'b');
       expect(a == b, isFalse);
@@ -51,12 +51,12 @@ void main() {
     test('copyWith returns updated instance only for provided fields', () {
       final base = ChatMessage(
         id: 'base',
-        content: 'Original',
+        explanation: 'Original',
         role: MessageRole.system,
-        timestamp: ts,
+        timestamp: ts, actions: [],
       );
-      final updated = base.copyWith(content: 'Updated');
-      expect(updated.content, 'Updated');
+      final updated = base.copyWith(explanation: 'Updated');
+      expect(updated.explanation, 'Updated');
       expect(updated.id, 'base');
       expect(updated.role, MessageRole.system);
     });

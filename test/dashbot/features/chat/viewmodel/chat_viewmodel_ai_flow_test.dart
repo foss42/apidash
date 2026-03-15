@@ -18,11 +18,25 @@ import '../../../../providers/helpers.dart';
 class MockChatRemoteRepository extends ChatRemoteRepository {
   String? mockResponse;
   Exception? mockError;
+  List<String>? mockChunks; // New: Allow simulating multiple chunks
 
   @override
   Future<String?> sendChat({required AIRequestModel request}) async {
     if (mockError != null) throw mockError!;
     return mockResponse;
+  }
+
+  @override
+  Future<Stream<String?>> streamChat({required AIRequestModel request}) async {
+    if (mockError != null) throw mockError!;
+
+    // If we provided specific chunks, stream them
+    if (mockChunks != null) {
+      return Stream.fromIterable(mockChunks!);
+    }
+
+    // Fallback: stream the single mockResponse as one chunk
+    return Stream.value(mockResponse);
   }
 }
 
@@ -121,7 +135,7 @@ void main() {
       expect(system.role, MessageRole.system);
       expect(system.actions, isNotNull);
       expect(system.actions!.length, equals(1));
-      expect(system.content, contains('Here is your code'));
+      expect(system.explanation, contains('Here is your code'));
       expect(promptCapture.lastSystemPrompt, isNotNull);
       expect(promptCapture.lastSystemPrompt, contains('Generate'));
     });
@@ -136,7 +150,7 @@ void main() {
 
       final msgs = vm.currentMessages;
       expect(msgs, isNotEmpty);
-      expect(msgs.last.content, contains('No response'));
+      expect(msgs.last.explanation, contains('No response'));
     });
 
     test('handles null AI response (adds fallback message)', () async {
@@ -146,7 +160,7 @@ void main() {
       await vm.sendMessage(text: 'Debug', type: ChatMessageType.debugError);
       final msgs = vm.currentMessages;
       expect(msgs, isNotEmpty);
-      expect(msgs.last.content, contains('No response'));
+      expect(msgs.last.explanation, contains('No response'));
     });
 
     test('handles malformed actions field gracefully', () async {
@@ -159,21 +173,21 @@ void main() {
       final msgs = vm.currentMessages;
       expect(msgs, isNotEmpty);
       final sys = msgs.last;
-      expect(sys.content, contains('Something'));
+      expect(sys.explanation, contains('Something'));
     });
 
     test('handles malformed top-level JSON gracefully (no crash, fallback)',
         () async {
       container = createTestContainer();
-      // This will cause MessageJson.safeParse to catch and ignore malformed content
+      // This will cause MessageJson.safeParse to catch and ignore malformed explanation
       mockRepo.mockResponse =
           '{"explanation":"ok","actions": [ { invalid json }';
       final vm = container.read(chatViewmodelProvider.notifier);
       await vm.sendMessage(
           text: 'Gen code', type: ChatMessageType.generateCode);
       final msgs = vm.currentMessages;
-      expect(msgs.length, equals(2)); // user + system with raw content
-      expect(msgs.last.content, contains('explanation'));
+      expect(msgs.length, equals(2)); // user + system with raw explanation
+      expect(msgs.last.explanation, contains('explanation'));
     });
 
     test('handles missing explanation key (still stores raw response)',
@@ -185,7 +199,7 @@ void main() {
           text: 'Explain', type: ChatMessageType.explainResponse);
       final msgs = vm.currentMessages;
       expect(msgs.length, equals(2));
-      expect(msgs.last.content, contains('note'));
+      expect(msgs.last.explanation, contains('note'));
     });
 
     test('catches repository exception and appends error system message',
@@ -196,7 +210,7 @@ void main() {
       await vm.sendMessage(text: 'Doc', type: ChatMessageType.generateDoc);
       final msgs = vm.currentMessages;
       expect(msgs, isNotEmpty);
-      expect(msgs.last.content, contains('Error:'));
+      expect(msgs.last.explanation, contains('Error:'));
     });
   });
 }

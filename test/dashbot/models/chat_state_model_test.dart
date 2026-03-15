@@ -8,9 +8,10 @@ void main() {
     test('copyWith updates provided fields only', () {
       final msg = ChatMessage(
         id: '1',
-        content: 'Ping',
+        explanation: 'Ping',
         role: MessageRole.user,
         timestamp: DateTime.fromMillisecondsSinceEpoch(0),
+        actions: const [],
       );
       const failure = ChatFailure('generic');
       const base = ChatState();
