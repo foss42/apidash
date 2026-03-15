@@ -39,7 +39,15 @@ melos pub-get
 flutter pub get
 ```
 
-**Step 7 -** Run the project by executing the below command
+**Step 7 -** Run code generation
+
+API Dash uses Freezed for immutable models. Generate the required files:
+
+```
+melos build-gen
+```
+
+**Step 8 -** Run the project by executing the below command
 
 ```
 flutter run
