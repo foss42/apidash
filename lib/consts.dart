@@ -542,6 +542,15 @@ const kMsgClearDataConfirmation =
     "This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?";
 const kLabelYes = "Yes";
 const kLabelClear = "Clear";
+const kLabelDelete = "Delete";
+
+// Delete Confirmation Dialogs
+const kTitleDeleteRequest = "Delete Request";
+const kMsgDeleteRequest =
+    "Are you sure you want to delete this request? This action cannot be undone.";
+const kTitleDeleteEnvironment = "Delete Environment";
+const kMsgDeleteEnvironment =
+    "Are you sure you want to delete this environment? This action cannot be undone.";
 const kLabelAboutSubtitle =
     "Release Details, Support Channel, Report Bug / Request New Feature";
 const kMsgRequestsDataCleared = "Requests Data Cleared";

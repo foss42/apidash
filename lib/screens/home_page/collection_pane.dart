@@ -221,7 +221,17 @@ class RequestItem extends ConsumerWidget {
           );
         }
         if (item == ItemMenuOption.delete) {
-          ref.read(collectionStateNotifierProvider.notifier).remove(id: id);
+          showOkCancelDialog(
+            context,
+            dialogTitle: kTitleDeleteRequest,
+            content: kMsgDeleteRequest,
+            buttonLabelOk: kLabelDelete,
+            onClickOk: () {
+              ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .remove(id: id);
+            },
+          );
         }
         if (item == ItemMenuOption.duplicate) {
           ref.read(collectionStateNotifierProvider.notifier).duplicate(id: id);

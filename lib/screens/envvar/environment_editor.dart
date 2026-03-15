@@ -56,11 +56,20 @@ class EnvironmentEditor extends ConsumerWidget {
                       onDeletePressed: id == kGlobalEnvironmentId
                           ? null
                           : () {
-                              ref
-                                  .read(
-                                    environmentsStateNotifierProvider.notifier,
-                                  )
-                                  .removeEnvironment(id!);
+                              showOkCancelDialog(
+                                context,
+                                dialogTitle: kTitleDeleteEnvironment,
+                                content: kMsgDeleteEnvironment,
+                                buttonLabelOk: kLabelDelete,
+                                onClickOk: () {
+                                  ref
+                                      .read(
+                                        environmentsStateNotifierProvider
+                                            .notifier,
+                                      )
+                                      .removeEnvironment(id!);
+                                },
+                              );
                             },
                     ),
                     kHSpacer4,

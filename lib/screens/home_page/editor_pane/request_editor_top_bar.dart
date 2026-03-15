@@ -41,8 +41,14 @@ class RequestEditorTopBar extends ConsumerWidget {
             },
             onDuplicatePressed: () =>
                 ref.read(collectionStateNotifierProvider.notifier).duplicate(),
-            onDeletePressed: () =>
-                ref.read(collectionStateNotifierProvider.notifier).remove(),
+            onDeletePressed: () => showOkCancelDialog(
+              context,
+              dialogTitle: kTitleDeleteRequest,
+              content: kMsgDeleteRequest,
+              buttonLabelOk: kLabelDelete,
+              onClickOk: () =>
+                  ref.read(collectionStateNotifierProvider.notifier).remove(),
+            ),
           ),
           kHSpacer10,
           const EnvironmentDropdown(),

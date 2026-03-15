@@ -212,9 +212,17 @@ class EnvironmentItem extends ConsumerWidget {
           );
         }
         if (item == ItemMenuOption.delete) {
-          ref
-              .read(environmentsStateNotifierProvider.notifier)
-              .removeEnvironment(id);
+          showOkCancelDialog(
+            context,
+            dialogTitle: kTitleDeleteEnvironment,
+            content: kMsgDeleteEnvironment,
+            buttonLabelOk: kLabelDelete,
+            onClickOk: () {
+              ref
+                  .read(environmentsStateNotifierProvider.notifier)
+                  .removeEnvironment(id);
+            },
+          );
         }
         if (item == ItemMenuOption.duplicate) {
           ref
