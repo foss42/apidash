@@ -2,9 +2,7 @@
 
 ## macOS
 
-### Prerequisites (First-Time Setup)
-
-To run Flutter apps on macOS refer to the [official macOS setup guide](https://docs.flutter.dev/platform-integration/macos/setup).
+> To run Flutter apps on macOS refer to the [official macOS setup guide](https://docs.flutter.dev/platform-integration/macos/setup).
 
 Install CocoaPods (First-Time Setup)
 
