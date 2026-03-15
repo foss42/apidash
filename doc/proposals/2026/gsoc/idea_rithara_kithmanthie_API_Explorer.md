@@ -29,7 +29,17 @@ I have also added the UI/UX design I made here so you can try it out yourself:
 Below this, I have attached a video demonstrating the overall UI flow of the feature I am making.
 https://drive.google.com/file/d/1FuewlwVKeZo9vP9PpnzHBG6AYmvUprs8/view?usp=sharing
 
-I will research the technical aspects of the implementation and add them into my idea next week.
+### Backend Pipeline Implementation
+
+I have now implemented and tested the backend pipeline for the API Explorer. This pipeline automates the process of fetching, parsing, and generating ready-to-use templates from thousands of APIs.
+
+- **Phase Breakdown & Implementation Details:** [Medium Post: Building the API Explorer Pipeline Backend](https://medium.com/@ritharaedirisinghe/building-the-api-explorer-pipeline-backend-3d4e775deebb)
+
+- **Feature Branch:** [feature/api-explorer-pipeline](https://github.com/rithakith/apidash/tree/feature/api-explorer-pipeline)
+
+- **GitHub Actions Execution:** [Live Pipeline Run](https://github.com/rithakith/apidash/actions/runs/23108105688/attempts/1)
+
+I plan to integrate this with the API Dash Flutter app next. But before I start coding the UI, I'd love to get your feedback on this approach to see if it's the right way to go or if you have a different architecture in mind. Once the approach is confirmed, I will start the integration within the API Dash app.
 
 Please let me know if there are any other suggestions!
 
