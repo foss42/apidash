@@ -353,7 +353,11 @@ class CollectionStateNotifier
     }
 
     APIType apiType = executionRequestModel.apiType;
-    bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+    final settings = ref.read(settingsProvider);
+    bool noSSL = settings.isSSLDisabled;
+    final requestTimeout = settings.requestTimeoutSeconds > 0
+        ? Duration(seconds: settings.requestTimeoutSeconds)
+        : null;
     HttpRequestModel substitutedHttpRequestModel;
 
     if (apiType == APIType.ai) {
@@ -406,6 +410,7 @@ class CollectionStateNotifier
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      timeout: requestTimeout,
     );
 
     HttpResponseModel? httpResponseModel;

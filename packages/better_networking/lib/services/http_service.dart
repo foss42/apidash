@@ -20,27 +20,63 @@ typedef HttpStreamOutput = (
 
 final httpClientManager = HttpClientManager();
 
+String _formatTimeoutMessage(Duration timeout) {
+  final seconds = timeout.inSeconds;
+  final label = seconds == 1 ? 'second' : 'seconds';
+  return '$kMsgRequestTimedOutPrefix $seconds $label.';
+}
+
+String _getErrorMessage(dynamic error, {Duration? timeout}) {
+  if (error is TimeoutException && timeout != null) {
+    return _formatTimeoutMessage(timeout);
+  }
+  return error.toString();
+}
+
+Future<T> _withTimeout<T>(Future<T> future, Duration? timeout) {
+  if (timeout == null) {
+    return future;
+  }
+  return future.timeout(timeout);
+}
+
+Future<HttpResponse> _readResponseWithTimeout(
+  http.StreamedResponse response,
+  Duration? timeout,
+) {
+  return convertStreamedResponse(response, timeout: timeout);
+}
+
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
   String requestId,
   APIType apiType,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  Duration? timeout,
 }) async {
   final authData = requestModel.authModel;
   if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
   }
-  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+  final client = httpClientManager.createClient(
+    requestId,
+    noSSL: noSSL,
+    timeout: timeout,
+  );
 
   HttpRequestModel authenticatedRequestModel = requestModel.copyWith();
 
   try {
     if (authData != null && authData.type != APIAuthType.none) {
-      authenticatedRequestModel = await handleAuth(requestModel, authData);
+      authenticatedRequestModel = await handleAuth(
+        requestModel,
+        authData,
+        timeout: timeout,
+      );
     }
   } catch (e) {
-    return (null, null, e.toString());
+    return (null, null, _getErrorMessage(e, timeout: timeout));
   }
 
   (Uri?, String?) uriRec = getValidRequestUri(
@@ -92,22 +128,32 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
                 );
               }
             }
-            http.StreamedResponse multiPartResponse = await client.send(
-              multiPartRequest,
+            http.StreamedResponse multiPartResponse = await _withTimeout(
+              client.send(multiPartRequest),
+              timeout,
             );
 
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
-                await convertStreamedResponse(multiPartResponse);
+                await _readResponseWithTimeout(
+              multiPartResponse,
+              timeout,
+            );
             return (convertedMultiPartResponse, stopwatch.elapsed, null);
           }
         }
         switch (authenticatedRequestModel.method) {
           case HTTPVerb.get:
-            response = await client.get(requestUrl, headers: headers);
+            response = await _withTimeout(
+              client.get(requestUrl, headers: headers),
+              timeout,
+            );
             break;
           case HTTPVerb.head:
-            response = await client.head(requestUrl, headers: headers);
+            response = await _withTimeout(
+              client.head(requestUrl, headers: headers),
+              timeout,
+            );
             break;
           case HTTPVerb.post:
           case HTTPVerb.put:
@@ -121,8 +167,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
               body: body,
               overrideContentType: overrideContentType,
             );
-            final streamed = await client.send(request);
-            response = await http.Response.fromStream(streamed);
+            final streamed = await _withTimeout(client.send(request), timeout);
+            response = await _readResponseWithTimeout(streamed, timeout);
             break;
         }
       }
@@ -138,7 +184,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
             }
           }
         }
-        response = await client.post(requestUrl, headers: headers, body: body);
+        response = await _withTimeout(
+          client.post(requestUrl, headers: headers, body: body),
+          timeout,
+        );
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
@@ -146,7 +195,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
       if (httpClientManager.wasRequestCancelled(requestId)) {
         return (null, null, kMsgRequestCancelled);
       }
-      return (null, null, e.toString());
+      return (null, null, _getErrorMessage(e, timeout: timeout));
     } finally {
       httpClientManager.closeClient(requestId);
     }
@@ -161,6 +210,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  Duration? timeout,
 }) async {
   final stream = await streamHttpRequest(
     requestId,
@@ -168,6 +218,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     requestModel,
     defaultUriScheme: defaultUriScheme,
     noSSL: noSSL,
+    timeout: timeout,
   );
   final output = await stream.first;
   return (output?.$2, output?.$3, output?.$4);
@@ -216,10 +267,11 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
   HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  Duration? timeout,
 }) async {
   final authData = httpRequestModel.authModel;
   final controller = StreamController<HttpStreamOutput>();
-  StreamSubscription<List<int>?>? subscription;
+  StreamSubscription<List<int>>? subscription;
   final stopwatch = Stopwatch()..start();
 
   Future<void> _cleanup() async {
@@ -243,7 +295,8 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     if (httpClientManager.wasRequestCancelled(requestId)) {
       await _addCancelledMessage();
     } else {
-      controller.add((null, null, null, error.toString()));
+      controller
+          .add((null, null, null, _getErrorMessage(error, timeout: timeout)));
       await _cleanup();
     }
   }
@@ -258,7 +311,11 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     return controller.stream;
   }
 
-  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+  final client = httpClientManager.createClient(
+    requestId,
+    noSSL: noSSL,
+    timeout: timeout,
+  );
 
   HttpRequestModel authenticatedHttpRequestModel = httpRequestModel.copyWith();
 
@@ -267,10 +324,11 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
       authenticatedHttpRequestModel = await handleAuth(
         httpRequestModel,
         authData,
+        timeout: timeout,
       );
     }
   } catch (e) {
-    await _addErrorMessage(e.toString());
+    await _addErrorMessage(e);
     return controller.stream;
   }
 
@@ -291,6 +349,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
       uri: uri,
       requestModel: authenticatedHttpRequestModel,
       apiType: apiType,
+      timeout: timeout,
     );
 
     HttpResponse _createResponseFromBytes(List<int> bytes) {
@@ -309,7 +368,11 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
         getMediaTypeFromHeaders(streamedResponse.headers)?.mimeType ?? '';
     final chunkList = <List<int>>[];
 
-    subscription = streamedResponse.stream.listen(
+    final responseStream = timeout != null
+        ? streamedResponse.stream.timeout(timeout)
+        : streamedResponse.stream;
+
+    subscription = responseStream.listen(
       (bytes) async {
         if (controller.isClosed) return;
         final isStreaming = kStreamingResponseTypes.contains(contentType);
@@ -347,6 +410,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
   required Uri uri,
   required HttpRequestModel requestModel,
   required APIType apiType,
+  Duration? timeout,
 }) async {
   final headers = requestModel.enabledHeadersMap;
   final hasBody = kMethodsWithBody.contains(requestModel.method);
@@ -370,7 +434,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
         );
       }
     }
-    streamedResponse = await client.send(multipart);
+    streamedResponse = await _withTimeout(client.send(multipart), timeout);
   } else if (apiType == APIType.graphql) {
     // Handling GraphQL Requests
     var requestBody = getGraphQLBody(requestModel);
@@ -388,7 +452,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
     final request = http.Request('POST', uri)
       ..headers.addAll(headers)
       ..body = body ?? '';
-    streamedResponse = await client.send(request);
+    streamedResponse = await _withTimeout(client.send(request), timeout);
   } else {
     //Handling regular REST Requests
     String? body;
@@ -409,7 +473,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
       body: body,
       overrideContentType: overrideContentType,
     );
-    streamedResponse = await client.send(request);
+    streamedResponse = await _withTimeout(client.send(request), timeout);
   }
   return streamedResponse;
 }

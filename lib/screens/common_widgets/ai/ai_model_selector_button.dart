@@ -1,5 +1,4 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'ai_model_selector_dialog.dart';
@@ -33,12 +32,35 @@ class AIModelSelectorButton extends StatelessWidget {
                 context: context,
                 useRootNavigator: useRootNavigator,
                 builder: (context) {
-                  return AlertDialog(
-                    scrollable: true,
-                    content: AIModelSelectorDialog(
+                  final screenSize = MediaQuery.sizeOf(context);
+                  final useCompactDialog =
+                      useCompactAiModelSelectorDialogLayout(screenSize);
+
+                  if (useCompactDialog) {
+                    final isPortrait = screenSize.width < screenSize.height;
+                    return Dialog(
+                      insetPadding: EdgeInsets.symmetric(
+                        horizontal: isPortrait ? 16 : 20,
+                        vertical: isPortrait ? 20 : 16,
+                      ),
+                      child: SizedBox(
+                        width: screenSize.width * (isPortrait ? 0.9 : 0.92),
+                        height: screenSize.height * 0.9,
+                        child: AIModelSelectorDialog(
+                          aiRequestModel: aiRequestModel,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Dialog(
+                    insetPadding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 24,
+                    ),
+                    child: AIModelSelectorDialog(
                       aiRequestModel: aiRequestModel,
                     ),
-                    contentPadding: kP10,
                   );
                 },
               );
