@@ -4,22 +4,7 @@
 
 ### Prerequisites (First-Time Setup)
 
-To run Flutter apps on macOS and compile native code:
-
-1. **Install Xcode**: Install or update to the latest version of Xcode [here](https://developer.apple.com/xcode/)
-
-2. **Configure Xcode Command-Line Tools**:
-   ```bash
-   sudo sh -c 'xcode-select -s /Applications/Xcode.app/Contents/Developer && xcodebuild -runFirstLaunch'
-   ```
-   *(If Xcode is installed elsewhere, replace `/Applications/Xcode.app` with your custom path).*
-3. **Agree to Xcode Licenses**:
-   ```bash
-   sudo xcodebuild -license
-   ```
-
-> For more details, refer to the [official macOS setup guide](https://docs.flutter.dev/platform-integration/macos/setup).
-
+To run Flutter apps on macOS refer to the [official macOS setup guide](https://docs.flutter.dev/platform-integration/macos/setup).
 
 Install CocoaPods (First-Time Setup)
 
