@@ -33,7 +33,7 @@ class PromptBuilder {
 \t''');
     for (final m in recent) {
       final role = m.role == MessageRole.user ? 'user' : 'assistant';
-      buf.writeln('- $role: ${m.content}');
+      buf.writeln('- $role: ${m.explanation}');
     }
     buf.writeln('</conversation_context>');
     return buf.toString();

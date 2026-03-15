@@ -24,8 +24,7 @@ class GeminiModel extends ModelProvider {
     List<NameValueModel> params = [];
     String endpoint = "${aiRequestModel.url}/${aiRequestModel.model}:";
     if (aiRequestModel.stream ?? false) {
-      endpoint += 'streamGenerateContent';
-      params.add(const NameValueModel(name: "alt", value: "sse"));
+      endpoint += 'streamGenerateContent?alt=sse';
     } else {
       endpoint += 'generateContent';
     }

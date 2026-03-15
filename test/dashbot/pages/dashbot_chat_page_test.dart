@@ -170,15 +170,17 @@ void main() {
     final messages = [
       ChatMessage(
         id: '1',
-        content: 'First',
+        explanation: 'First',
         role: MessageRole.user,
         timestamp: DateTime(2024),
+        actions: const [],
       ),
       ChatMessage(
         id: '2',
-        content: 'Second',
+        explanation: 'Second',
         role: MessageRole.system,
         timestamp: DateTime(2024, 2),
+        actions: const [],
       ),
     ];
 
@@ -285,7 +287,7 @@ void main() {
     );
     await tester.pump();
 
-    // Verify scrolling behavior by checking that the new content is rendered
+    // Verify scrolling behavior by checking that the new explanation is rendered
     expect(find.text('Updated streaming response...'), findsOneWidget);
   });
 
@@ -296,9 +298,10 @@ void main() {
     final messages = [
       ChatMessage(
         id: '1',
-        content: 'Generated response',
+        explanation: 'Generated response',
         role: MessageRole.system,
         timestamp: DateTime(2024),
+        actions: const [],
       ),
     ];
 

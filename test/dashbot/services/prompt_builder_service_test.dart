@@ -127,20 +127,20 @@ void main() {
         expect(builder.buildHistoryBlock(const []), isEmpty);
       });
 
-      test('non-empty history includes roles and content', () {
+      test('non-empty history includes roles and explanation', () {
         final now = DateTime.now();
         final history = [
           ChatMessage(
             id: 'h1',
             role: MessageRole.user,
-            content: 'Hello',
-            timestamp: now,
+            explanation: 'Hello',
+            timestamp: now, actions: const[],
           ),
           ChatMessage(
             id: 'h2',
             role: MessageRole.system,
-            content: 'Hi there',
-            timestamp: now.add(const Duration(seconds: 1)),
+            explanation: 'Hi there',
+            timestamp: now.add(const Duration(seconds: 1)), actions: const[],
           ),
         ];
         final block = builder.buildHistoryBlock(history);
@@ -157,8 +157,8 @@ void main() {
           return ChatMessage(
             id: 'm$i',
             role: i % 2 == 0 ? MessageRole.user : MessageRole.system,
-            content: 'm$i',
-            timestamp: base.add(Duration(seconds: i)),
+            explanation: 'm$i',
+            timestamp: base.add(Duration(seconds: i)), actions: const[],
           );
         });
         final block = builder.buildHistoryBlock(msgs); // default maxTurns = 8
@@ -178,8 +178,8 @@ void main() {
           return ChatMessage(
             id: 'c$i',
             role: MessageRole.user,
-            content: 'c$i',
-            timestamp: base.add(Duration(seconds: i)),
+            explanation: 'c$i',
+            timestamp: base.add(Duration(seconds: i)), actions: const[],
           );
         });
         final block = builder.buildHistoryBlock(msgs, maxTurns: 2);
