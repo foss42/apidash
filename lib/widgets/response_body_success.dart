@@ -77,15 +77,17 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                               .map<ButtonSegment<ResponseBodyView>>(
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
-                                  label: Text(e.label),
-                                  icon: constraints.maxWidth >
-                                          kMinWindowSize.width
+                                  label: constraints.maxWidth > 500
+                                      ? Text(e.label)
+                                      : null,
+                                  icon: constraints.maxWidth > 350
                                       ? Icon(e.icon)
                                       : null,
                                 ),
                               )
                               .toList(),
                           selected: {currentSeg},
+                          showSelectedIcon: false,
                           onSelectionChanged: (newSelection) {
                             setState(() {
                               segmentIdx =
@@ -94,7 +96,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           },
                         ),
                   const Spacer(),
-                  ((widget.options == kPreviewRawBodyViewOptions) ||
+                  (widget.options.contains(ResponseBodyView.raw) ||
+                          widget.options.contains(ResponseBodyView.code) ||
                           kCodeRawBodyViewOptions.contains(currentSeg))
                       ? CopyButton(
                           toCopy: widget.formattedBody ?? widget.body,

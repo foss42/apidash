@@ -7,6 +7,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
+import 'package:apidash/utils/utils.dart';
 
 class EditRequestHeaders extends ConsumerStatefulWidget {
   const EditRequestHeaders({super.key});
@@ -21,6 +22,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   late List<NameValueModel> headerRows;
   late List<bool> isRowEnabledList;
   bool isAddingRow = false;
+  bool isBulkMode = false;
+  final TextEditingController bulkController = TextEditingController();
 
   @override
   void initState() {
@@ -175,49 +178,99 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       },
     );
 
-    return Stack(
+    return Column(
       children: [
-        Container(
-          margin: kPh10t10,
-          child: Column(
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Expanded(
-                child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
-                  child: DataTable2(
-                    columnSpacing: 12,
-                    dividerThickness: 0,
-                    horizontalMargin: 0,
-                    headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
-                    bottomMargin: kDataTableBottomPadding,
-                    isVerticalScrollBarVisible: true,
-                    columns: columns,
-                    rows: dataRows,
-                  ),
-                ),
+              Text(
+                "Bulk Edit",
+                style: Theme.of(context).textTheme.bodySmall,
               ),
-              if (!kIsMobile) kVSpacer40,
+              kHSpacer5,
+              Switch.adaptive(
+                value: isBulkMode,
+                onChanged: (value) {
+                  setState(() {
+                    isBulkMode = value;
+                    if (isBulkMode) {
+                      var rH = ref.read(selectedRequestModelProvider)
+                              ?.httpRequestModel
+                              ?.headers ??
+                          [];
+                      bulkController.text = nameValueModelsToText(rH);
+                    }
+                  });
+                },
+              ),
             ],
           ),
         ),
-        if (!kIsMobile)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: kPb15,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  headerRows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(false);
-                  _onFieldChange();
-                },
-                icon: const Icon(Icons.add),
-                label: const Text(
-                  kLabelAddHeader,
-                  style: kTextStyleButton,
+        Expanded(
+          child: isBulkMode
+              ? Padding(
+                  padding: kPh20,
+                  child: TextField(
+                    controller: bulkController,
+                    onChanged: (value) {
+                      var rows = textToNameValueModels(value);
+                      ref.read(collectionStateNotifierProvider.notifier).update(
+                            headers: rows,
+                            isHeaderEnabledList: List.filled(rows.length, true),
+                          );
+                    },
+                    style: kCodeStyle,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      hintText: "KEY: VALUE\nKEY: VALUE",
+                      hintStyle: kCodeStyle.copyWith(
+                          color: Theme.of(context).colorScheme.outlineVariant),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                )
+              : Container(
+                  margin: kPh10t10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                              scrollbarTheme: kDataTableScrollbarTheme),
+                          child: DataTable2(
+                            columnSpacing: 12,
+                            dividerThickness: 0,
+                            horizontalMargin: 0,
+                            headingRowHeight: 0,
+                            dataRowHeight: kDataTableRowHeight,
+                            bottomMargin: kDataTableBottomPadding,
+                            isVerticalScrollBarVisible: true,
+                            columns: columns,
+                            rows: dataRows,
+                          ),
+                        ),
+                      ),
+                      if (!kIsMobile) kVSpacer40,
+                    ],
+                  ),
                 ),
+        ),
+        if (!kIsMobile && !isBulkMode)
+          Padding(
+            padding: kPb15,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                headerRows.add(kNameValueEmptyModel);
+                isRowEnabledList.add(false);
+                _onFieldChange();
+              },
+              icon: const Icon(Icons.add),
+              label: const Text(
+                kLabelAddHeader,
+                style: kTextStyleButton,
               ),
             ),
           ),

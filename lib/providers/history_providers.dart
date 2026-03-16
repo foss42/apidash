@@ -19,11 +19,24 @@ final selectedHistoryRequestModelProvider = StateProvider<HistoryRequestModel?>(
   (ref) => null,
 );
 
+final historySearchStateProvider = StateProvider<String>((ref) => "");
+
 final historySequenceProvider =
     StateProvider<Map<DateTime, List<HistoryMetaModel>>?>((ref) {
-      final historyMetas = ref.watch(historyMetaStateNotifier);
-      return getTemporalGroups(historyMetas?.values.toList());
-    });
+  final historyMetas = ref.watch(historyMetaStateNotifier);
+  final searchTerm = ref.watch(historySearchStateProvider).toLowerCase();
+
+  if (historyMetas == null) return null;
+
+  final filteredList = historyMetas.values.where((item) {
+    if (searchTerm.isEmpty) return true;
+    return item.url.toLowerCase().contains(searchTerm) ||
+        item.name.toLowerCase().contains(searchTerm) ||
+        item.method.name.toLowerCase().contains(searchTerm);
+  }).toList();
+
+  return getTemporalGroups(filteredList);
+});
 
 final StateNotifierProvider<
   HistoryMetaStateNotifier,

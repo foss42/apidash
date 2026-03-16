@@ -9,6 +9,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
 import 'previewer_csv.dart';
 import 'previewer_json.dart';
+import 'previewer_markdown.dart';
 import 'previewer_video.dart';
 import 'uint8_audio_player.dart';
 import '../consts.dart';
@@ -120,6 +121,13 @@ class _PreviewerState extends State<Previewer> {
             "type": kSubTypeCsv,
           }),
         ),
+      );
+    }
+    if (widget.type == kTypeText &&
+        (widget.subtype == kSubTypeMarkdown ||
+            widget.subtype == kSubTypePlain)) {
+      return MarkdownPreviewer(
+        body: widget.body,
       );
     }
     if (widget.type == kTypeVideo) {

@@ -78,7 +78,7 @@ class ModelManager {
         noSSL: true,
       );
       // debugPrint("fetchInstalledOllamaModels -> $url -> ${resp?.body} -> $msg");
-      if (resp == null) {
+      if (resp == null || resp.body.trim().isEmpty) {
         return null;
       }
       final output = jsonDecode(resp.body);
