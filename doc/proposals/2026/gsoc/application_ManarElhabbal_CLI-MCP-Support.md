@@ -164,10 +164,9 @@ API Dash is a beautiful AI-powered open-source cross-platform API client built w
  
 This project implements two core capabilities:
  
-1. **Command Line Interface (CLI):** Enables developers to run requests, import/export collections, execute batch tests, and view request history and more from the terminal. 
-This allows automation, scripting, and seamless integration with developer workflows.
+1. **Command Line Interface (CLI):** Enables a focused, automation-friendly subset of API Dash workflows from the terminal: run HTTP requests, import/export collections, and run a collection as a batch. This supports scripting and CI use-cases without requiring the GUI.
  
-2. **Model Context Protocol (MCP) Server:** Exposes API Dash functionality to AI tools, enabling AI assistants to execute requests, generate client code, import collections, and run tests from MCP clients like Claude, Cursor, and VS Code.
+2. **Model Context Protocol (MCP) Server:** Exposes the same runner capabilities to MCP clients (e.g., Claude Desktop, Cursor, VS Code) so an AI assistant can list collections and execute requests/collections through structured tool calls.
  
 Both the CLI and MCP server will share a common core from `apidash_core` to ensure consistent behavior across interfaces. 
 
@@ -204,9 +203,7 @@ The diagram below illustrates these relationships:
 To bring API Dash to the terminal, I will implement a dedicated
 `apidash_cli` dart package which will be published on [pub.dev](https://pub.dev).
 
-This package gives developers full access to the core functionality
-of the API Dash GUI app — sending requests, managing collections,
-generating code, and more — without ever leaving the terminal.
+This package provides a **headless runner** for the most important API testing workflows (request execution + collection execution + import/export) without replicating the full GUI feature set.
 
 Once published, any developer can install it globally with a single command:
 
@@ -226,7 +223,7 @@ Once published, any developer can install it globally with a single command:
 
 ---
 
-### 2. Package Structure
+### 2. Packages Structure
 
 ```dart
 |packages/
@@ -265,32 +262,6 @@ Once published, any developer can install it globally with a single command:
 
 ---
 
-### 4. Core Dependencies
-
-```yaml
-dependencies:
-  better_networking: ^x.x.x        # HTTP request handling
-  curl_parser: ^x.x.x              # cURL command parsing
-  postman: ^x.x.x                  # Postman collection I/O
-  insomnia_collection: ^x.x.x      # Insomnia file I/O
-  har: ^x.x.x                      # HAR file I/O
-  apidash_core: ^x.x.x             # Core business logic
-  genai: ^x.x.x                    # AI integration
-  jinja: ^x.x.x                    # Code generation templates
-  args: ^2.4.0                     # CLI argument parser
-  console: ^4.1.0                  # Terminal output formatting
-  ansi_colors: ^0.2.0              # Color support
-  yaml: ^3.1.0                     # Config file parsing
-  path: ^1.8.0                     # Path operations
-  intl: ^0.19.0                    # Internationalization
-
-dev_dependencies:
-  test: ^1.24.0                    # Testing framework
-  mockito: ^5.4.0                  # Mocking
-  build_runner: ^2.4.0             # Code generation
-  lints: ^3.0.0                    # Linting rules
-```
-
 ### Core Commands
 
 The CLI follows a simple, predictable structure across all commands:
@@ -304,24 +275,22 @@ For scripting and automation, pass `--output json` to get
 machine-readable output that pipes cleanly into other tools.
 
 > I will discuss with the mentor to identify and prioritize the most
-> important commands first. The commands listed in this section are
-> planned examples — the final implementation scope will be agreed
-> upon with the mentor based on project needs and GSoC timeline.
+> important commands first. To keep the scope realistic for a 90-hour project,
+> I will deliver an MVP command set first, then implement stretch goals only
+> if time allows.
 
 ---
 
-#### Command Overview
+#### Command Overview (MVP vs Stretch)
 
 | Command | Description |
 |---------|-------------|
-| `apidash init` | Initialize a new project |
-| `apidash request` | Send HTTP requests |
-| `apidash collection` | Manage request collections |
-| `apidash import / export` | Import and export collections |
-| `apidash generate` | Generate client code |
-| `apidash env` | Manage environment variables |
-| `apidash ai` | AI-powered request generation |
-| `apidash history` | View and replay past requests |
+| **MVP** `apidash init` | Initialize a project/config skeleton |
+| **MVP** `apidash request` | Execute a single request (including `curl` parsing) |
+| **MVP** `apidash collection` | List/show/run a collection as a batch |
+| **MVP** `apidash import` / `apidash export` | Import/export collections (Postman/Insomnia/HAR/OpenAPI as supported) |
+| **Stretch** `apidash generate` | Generate client code for a saved request |
+| **Stretch** `apidash env` | Manage environment variables |
 
 ---
 
@@ -463,6 +432,8 @@ Reuses existing packages (`postman`, `insomnia_collection`, `har`,
 
 #### 5. Code Generation
 
+> **Stretch goal:** Implemented only if the MVP (request/collection runner + import/export + MCP MVP + tests) is complete and stable.
+
 ```bash
 apidash generate <request-name> --language <lang>
 ```
@@ -482,6 +453,8 @@ the existing Jinja templates — consistent with the GUI app output.
 
 #### 6. Environment Management
 
+> **Stretch goal:** Implemented only if time allows.
+
 ```bash
 apidash env [subcommand]
 ```
@@ -496,6 +469,8 @@ apidash env [subcommand]
 ---
 
 #### 7. AI Integration — DashBot
+
+> **Future scope (not required for MVP):** The CLI/MCP runner is the priority for this project. AI features can be explored later once the headless execution workflow is stable and well-tested.
 
 ```bash
 apidash ai <prompt>
@@ -523,6 +498,8 @@ apidash request get https://api.example.com/users | apidash ai "summarize this r
 ---
 
 #### 8. History
+
+> **Future scope (not required for MVP):** Nice-to-have for usability, but not needed to deliver the core runner functionality.
 
 ```bash
 apidash history [subcommand]
@@ -670,146 +647,412 @@ A `--full` flag prints the complete response, and `--output <file>` saves it to 
 
 
 ---
+
 # 2. MCP Support
 
 ## Introduction
 
-The Model Context Protocol (MCP) provides a standardized communication layer between AI models, tools, and data sources. It defines a uniform interface that allows AI agents to access and interact with resources, such as local files, databases, and web APIs, without requiring custom integrations for each tool. it will be a great to support mcp to apidash 
+Model Context Protocol (MCP) provides a standardized communication layer between AI models, tools, and data sources. instead of manually copying data to an AI assistant, MCP gives the AI **direct, structured access** to your tools — no copy-paste, no context limits.
 
-This is how the mcp server is connected to any server
+API Dash will be exposed as an MCP server, meaning AI assistants like Claude Desktop, Cursor, and VS Code can directly execute requests, import collections, generate code, and run tests all through single conversations.
 
-<p align="center"> <img src="images/mcp_arch.png" width="500" alt="MCP Architecture Diagram"> </p>
+<p align="center">
+<img src="images/mcp_arch.png" width="500" alt="MCP Architecture Diagram">
+</p>
+
+---
 
 ## Base Protocol & Transport
 
-MCP uses **JSON-RPC** to encode all messages. Messages **MUST** be **UTF-8** encoded. The protocol defines two standard transports:
+MCP uses JSON-RPC to encode all messages. Messages MUST be UTF-8 encoded. The protocol defines two standard transports:
 
 | Transport | Description |
 |-----------|-------------|
-| **stdio** | Client launches the MCP server as a subprocess; communication over standard input (stdin) and standard output (stdout). |
-| **Streamable HTTP** | Server runs as an independent process; client uses HTTP POST to send messages and GET for Server-Sent Events (SSE) to receive server messages. |
+| **stdio** | Client launches the MCP server as a subprocess; communication over stdin/stdout |
+| **Streamable HTTP** | Server runs independently; client uses HTTP POST to send messages and GET for SSE to receive server messages |
 
-Clients such as Cursor, Claude Desktop, and VS Code **SHOULD** support stdio whenever possible. Custom transports are allowed if they preserve the JSON-RPC message format and lifecycle.
+Clients such as Cursor, Claude Desktop, and VS Code SHOULD support stdio whenever possible. Custom transports are allowed if they preserve the JSON-RPC message format and lifecycle.
 
 ---
 
-## Which Transport Will We Use? Why? How?
+## Which Transport Will I Use? Why? How?
 
-### 1. Transport choice: **stdio**
+### Transport Choice: stdio
 
-The API Dash MCP server will use the **stdio** transport.
+The API Dash MCP server will use the **stdio** transport for the following reasons:
 
-**Why stdio?**
+**1. Fits how MCP clients work** — tools like Cursor and Claude Desktop launch the MCP server as a subprocess and communicate via stdin/stdout. no HTTP server, no port configuration, no CORS.
 
-- **Fits how MCP clients work:** Tools like Cursor and Claude launch the server as a **subprocess** and talk to it via stdin/stdout. No HTTP server or port configuration is required.
-- **Simplicity:** No need to bind to a port, handle CORS, or manage sessions. One process, one bidirectional channel.
-- **Security:** No network exposure; communication stays inside the host process.
-- **Spec alignment:** The spec recommends that clients support stdio whenever possible, so targeting stdio maximizes compatibility.
+**2. Simplicity** — one process, one bidirectional channel. no session management, no network binding.
 
-### 2. stdio behavior (per MCP spec)
+**3. Security** — no network exposure. communication stays entirely inside the host process.
 
-When using stdio, the implementation will adhere to the following:
+**4. Spec alignment** — the MCP spec explicitly states:
+> *"Clients SHOULD support stdio whenever possible"*
+
+targeting stdio maximizes compatibility with all major MCP clients.
+
+**5. Platform scope** — the MCP server runs on desktop platforms (macOS, Windows, Linux) where stdio is fully supported. on mobile platforms (iOS/Android), spawning subprocesses is restricted by the OS and App Store policies — so the MCP server is intentionally scoped to desktop only, where it makes the most sense for developer workflows.
+
+```
+┌─────────────────────────────────────────────┐
+│     MCP Client (Claude Desktop/Cursor/      │
+│              VS Code)                       │
+└──────────────────┬──────────────────────────┘
+                   │ stdin/stdout
+                   │ (newline-delimited JSON-RPC)
+┌──────────────────▼──────────────────────────┐
+│           apidash_mcp server                │
+│         (StdioServerTransport)              │
+└──────────────────┬──────────────────────────┘
+                   │
+┌──────────────────▼──────────────────────────┐
+│  apidash_core / better_networking /         │
+│  curl_parser / postman                      │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+## stdio Behavior (per MCP spec)
 
 | Requirement | Implementation |
 |-------------|----------------|
-| **Message framing** | Messages are **newline-delimited**. Each JSON-RPC message is one line; messages **MUST NOT** contain embedded newlines. |
-| **Input** | The server **reads** JSON-RPC messages (requests, notifications, or batches) from **stdin**. |
-| **Output** | The server **writes** only valid MCP messages to **stdout**. Nothing else (e.g. logs or debug text) goes to stdout. |
-| **Logging** | Optional logging and diagnostics go to **stderr**. Clients may capture, forward, or ignore stderr. |
-| **Client responsibility** | The client must not write anything to the server’s stdin that is not a valid MCP message. |
+| Message framing | Newline-delimited. Each JSON-RPC message is one line; MUST NOT contain embedded newlines |
+| Input | Server reads JSON-RPC messages (requests, notifications, batches) from stdin |
+| Output | Server writes ONLY valid MCP messages to stdout — nothing else |
+| Logging | Diagnostics go to stderr. Clients may capture, forward, or ignore |
+| Client responsibility | Client must not write anything to stdin that is not a valid MCP message |
 
-**Lifecycle:** The client launches the server subprocess → message exchange over stdin/stdout → client closes stdin and terminates the subprocess when done.
-
-### 3. How we implement it in Dart
-
-The `apidash_mcp` package uses the **[mcp_dart](https://pub.dev/packages/mcp_dart)** package, which already implements the JSON-RPC and stdio transport semantics. The server is wired to **`StdioServerTransport()`**, which:
-
-- Reads lines from `stdin` (newline-delimited JSON-RPC).
-- Writes JSON-RPC responses and notifications to `stdout`.
-- Leaves `stderr` available for application logs.
-
-Example (from `bin/apidash_mcp.dart`):
-
-```dart
-McpServer server = McpServer(
-  Implementation(name: "apidash_mcp", version: "1.0.0"),
-  options: ServerOptions(
-    capabilities: ServerCapabilities(
-      resources: ServerCapabilitiesResources(),
-      tools: ServerCapabilitiesTools(),
-    ),
-  ),
-);
-server.connect(StdioServerTransport());
+**Lifecycle:**
 ```
-
-No custom transport code is required for stdio; `mcp_dart` handles framing and JSON-RPC encoding/decoding.
-
-### 4. Streamable HTTP (future / optional)
-
-We do **not** plan to implement **Streamable HTTP** in the initial GSoC scope. If we add it later, the implementation would need to:
-
-- Expose a **single MCP endpoint** supporting both **POST** (send messages) and **GET** (SSE stream for server-to-client messages).
-- Send **Accept: application/json, text/event-stream** on requests.
-- **Security (per spec):** Validate the **Origin** header to prevent DNS rebinding, bind to **localhost (127.0.0.1)** when running locally, and consider authentication for connections.
-- Optionally support **session management** via the **Mcp-Session-Id** header (returned at initialization, then sent by the client on every subsequent request).
-
-This is documented here so the proposal stays aligned with the official MCP specification (e.g. 2025-11-25) and any future HTTP support can follow the same rules.
+Client                          apidash_mcp
+  │                                  │
+  │──── launch subprocess ──────────►│
+  │──── stdin: InitializeRequest ───►│
+  │◄─── stdout: InitializeResult ───│
+  │                                  │
+  │──── stdin: tool call ───────────►│
+  │◄─── stdout: tool result ────────│
+  │                                  │
+  │──── close stdin ────────────────►│
+  │──── terminate subprocess ───────►│
+```
 
 ---
 
-## Example CLI Commands Using MCP
+## Implementation
 
+using the `mcp_dart` package which implements the full MCP spec `2025-11-25` with stdio transport natively — no custom transport code needed.
 
-```shell
-apidash mcp list-tools              # List available MCP tools
-apidash mcp execute <tool> <args>   # Execute MCP tool via CLI
-apidash collection get --mcp        # Retrieve collections through the MCP layer
+**Server Entry Point:**
+```dart
+// packages/apidash_mcp/bin/apidash_mcp.dart
+import 'package:mcp_dart/mcp_dart.dart';
+
+void main() async {
+  final server = McpServer(
+    Implementation(name: 'apidash_mcp', version: '1.0.0'),
+    options: ServerOptions(
+      capabilities: ServerCapabilities(
+        tools: ServerCapabilitiesTools(),
+        resources: ServerCapabilitiesResources(),
+      ),
+    ),
+  );
+
+  _registerTools(server);
+  _registerResources(server);
+
+  // stdio: reads from stdin, writes to stdout, logs to stderr
+  await server.connect(StdioServerTransport());
+}
 ```
 
-##  Project Structure
+---
 
-The implementation will be organized into  `apidash_mcp` package 
+## Project Structure
 
-```shell
+```
 packages/
-├── apidash_cli/      # CLI commands and argument parsing
-├── apidash_mcp/      # MCP server implementation and tool definitions
-└── apidash_core/     # Shared core logic used by both CLI and MCP
+├── apidash_core/     # shared core logic
+├── apidash_cli/      # CLI commands
+└── apidash_mcp/      # MCP server
+    ├── bin/
+    │   └── apidash_mcp.dart   # entry point
+    ├── lib/
+    │   └── src/
+    │       ├── tools/         # tool definitions
+    │       ├── resources/     # resource definitions
+    └── pubspec.yaml
 ```
 
-This modular structure ensures that the CLI and MCP server share the same core functionality, avoiding **code duplication** while maintaining extensibility.
 
-###  MCP Tools
+---
 
-The following tools will be exposed through the MCP server:
+## MCP Tools
 
-1. **send_request**
-Allows the AI agent to execute a specific API request stored in API Dash.
+To keep the MCP scope aligned with a 90-hour project, the initial tool set focuses on **listing collections** and **executing requests/collections**. Additional tools (codegen, import/export) are stretch goals.
 
-2. **list_collections**
-Enables the AI agent to discover available API collections.
+**1. `send_request` — execute a saved API request**
+```dart
+server.tool(
+  'send_request',
+  description: 'Execute a saved API Dash request by ID',
+  inputSchemaProperties: {
+    'request_id': {
+      'type': 'string',
+      'description': 'The ID of the request to execute',
+    },
+  },
+  required: ['request_id'],
+  callback: (args, extra) async {
+    final result = await HttpService().sendRequest(args['request_id']);
+    return CallToolResult(
+      content: [TextContent(text: jsonEncode(result))],
+    );
+  },
+);
+```
 
-3. **generate_code**
-Allows the AI to generate code snippets for a saved API request in different programming languages.
+**2. `list_collections` — list all collections**
+```dart
+server.tool(
+  'list_collections',
+  description: 'List all available API Dash collections',
+  inputSchemaProperties: {},
+  callback: (args, extra) async {
+    final collections = await CollectionService().getAll();
+    return CallToolResult(
+      content: [TextContent(text: jsonEncode(collections))],
+    );
+  },
+);
+```
 
-###  MCP Resources
+**3. `run_collection` — execute a full collection (batch)**
+```dart
+server.tool(
+  'run_collection',
+  description: 'Execute all requests in a collection and return a summary report',
+  inputSchemaProperties: {
+    'collection_id': {
+      'type': 'string',
+      'description': 'The ID of the collection to execute',
+    },
+  },
+  required: ['collection_id'],
+  callback: (args, extra) async {
+    final report = await CollectionRunnerService().run(args['collection_id']);
+    return CallToolResult(
+      content: [TextContent(text: jsonEncode(report))],
+    );
+  },
+);
+```
 
-Resources provide structured data that AI agents can read as `context`.
+**Stretch: `generate_code` — generate client code**
+```dart
+server.tool(
+  'generate_code',
+  description: 'Generate client code for a saved request',
+  inputSchemaProperties: {
+    'request_id': {'type': 'string'},
+    'language': {
+      'type': 'string',
+      'enum': ['dart', 'python', 'javascript', 'curl', 'kotlin'],
+    },
+  },
+  required: ['request_id', 'language'],
+  callback: (args, extra) async {
+    final code = CodegenService().generate(
+      args['request_id'],
+      args['language'],
+    );
+    return CallToolResult(content: [TextContent(text: code)]);
+  },
+);
+```
 
-1. apidash://collections:
-  A dynamic resource that exposes the current state of all user API collections.
+---
 
-2. apidash://history
-   Provides recent request logs (e.g., the last 10–20 requests) which can help AI agents assist with debugging and analysis.
+## MCP Resources
 
-## Implementation Details :
+```dart
+// apidash://collections — all collections as AI context
+server.resource(
+  'apidash://collections',
+  description: 'All API Dash collections and requests',
+  callback: (uri, extra) async {
+    final data = await CollectionService().getAll();
+    return ReadResourceResult(
+      contents: [TextResourceContents(uri: uri, text: jsonEncode(data))],
+    );
+  },
+);
 
-1. I will create a dart console project in `packages/apidash_mcp`
- and I will install the packages i will use `mcp_dart` package
+// apidash://history — recent request logs
+server.resource(
+  'apidash://history',
+  description: 'Recent request/response history (last 20)',
+  callback: (uri, extra) async {
+    final history = await HistoryService().getLast(20);
+    return ReadResourceResult(
+      contents: [TextResourceContents(uri: uri, text: jsonEncode(history))],
+    );
+  },
+);
+```
 
-2. i will make a stdio server as the client like cursor or any client support mcp 
-will communicate with them through standard input and output
+---
+
+## Connect to Claude Desktop
+
+```json
+{
+  "mcpServers": {
+    "apidash": {
+      "command": "dart",
+      "args": ["run", "/path/to/apidash_mcp/bin/apidash_mcp.dart"]
+    }
+  }
+}
+```
+
+or using a compiled executable for faster startup:
+
+```bash
+dart compile exe bin/apidash_mcp.dart -o apidash_mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "apidash": {
+      "command": "/path/to/apidash_mcp"
+    }
+  }
+}
+```
+
+after connecting, AI assistants can do things like:
+> *"run my login request and check if the token is valid"*
+
+> *"generate Python code for all requests in my payments collection"*
+
+> *"find any requests in my history that returned 5xx errors"*
+
+---
+
+## Streamable HTTP (Future Scope)
+
+Streamable HTTP is not in the initial GSoC scope but is documented here for future reference. if added later, it would need to:
+
+- expose a single MCP endpoint supporting both POST and GET
+- send `Accept: application/json, text/event-stream` on all requests
+- validate `Origin` header to prevent DNS rebinding attacks
+- bind to `127.0.0.1` when running locally
+- support session management via `Mcp-Session-Id` header
+
+this would unlock remote MCP access and team-shared server scenarios without changing any tool or resource code.
+
+## How I Will Test the MCP Server
+
+I will test `apidash_mcp` using a mix of **automated tests** and the **MCP Inspector**:
+
+- **Automated**: unit tests for tool input validation + integration tests that start the server and execute a small set of tool calls against a controlled local HTTP stub (no external network), verifying JSON-RPC responses and error handling.
+- **Manual (Inspector)**: connect the Inspector to `apidash_mcp`, call each tool/resource, and validate response shape, edge cases, and JSON-RPC traces during development and before each milestone.
+
+```bash
+npx @modelcontextprotocol/inspector dart run packages/apidash_mcp/bin/apidash_mcp.dart
+```
+## How I Will Publish It
+The `apidash_mcp` package will be published to `pub.dev`, the official Dart/Flutter package registry, making it easily installable with a single command.
+
+### Activate and run globally
+```bash
+dart pub global activate apidash_mcp
+apidash_mcp
+```
+### Connect from any MCP client
+
+```json
+{
+  "mcpServers": {
+    "apidash": {
+      "command": "apidash_mcp"
+    }
+  }
+}
+```
+
+
+
+## 3. Time Line (90 hours)
+
+## Proposed Timeline (8 Weeks)
+
+### Availability Note (Final Exams: June 1–25)
+
+I will have final exams from **June 1 to June 25**, so my available hours during this period will be reduced. To mitigate scheduling risks, I will front-load **project setup and design** work before and during the early exam window, keep PRs small while exams are ongoing, and schedule the **heavier implementation milestones** (CLI runner + MCP MVP) for after June 25.
+
+During the exam period, I will focus on lower-risk tasks such as writing tests, fixing bugs, improving documentation, and making incremental improvements that do not require long uninterrupted blocks of time.
+
+
+
+### Community Bonding Period (May 1 – May 24)
+  * Discuss the project scope and technical details with mentors.
+  * Gain a deep understanding of the **API Dash** architecture and codebase.
+  * Study the technologies and tools used in the project stack.
+  * Refine the project timeline and implementation plan based on mentor feedback.
+
+
+### Week 1 (May 25 – May 31)
+- Set up the development environment and workspace tooling
+- Finalize MVP scope with mentor (CLI: `init`, `request`, `collection`, `import/export`; MCP: `list_collections`, `send_request`, `run_collection`)
+- Implement CLI skeleton (command routing, `--output json`, consistent error/exit-code conventions)
+- Create example fixtures (sample collection + local stub server plan) to support later tests
+
+### Week 2 (June 1 – June 7)
+> Reduced availability (final exams).
+
+- Implement `apidash init` and configuration loading/validation (small, reviewable PRs)
+- Start unit tests for config parsing + command argument validation
+- Documentation updates: usage examples + expected output format (human + JSON)
+
+### Week 3 (June 8 – June 14)
+> Reduced availability (final exams).
+
+- Implement minimal request execution path behind a stable interface (no feature creep)
+- Add basic output formatting + structured errors
+- Add unit tests for request model serialization and error cases
+
+### Week 4 (June 15 – June 21)
+> Reduced availability (final exams).
+
+- Implement collection loading + `collection list/show` (read-only features first)
+- Improve error handling/logging consistency (stdout vs stderr)
+- Add integration test scaffolding using a local HTTP stub (no external network)
+
+### Week 5 (June 22 – June 28)
+- (June 22–25) Reduced availability (final exams): stabilize existing work, fix bugs, and expand tests
+- (After June 25) Implement `collection run` (batch execution) + CLI exit codes suitable for CI
+- Prepare MCP package skeleton and tool schema definitions (inputs/outputs)
+
+### Week 6 (June 29 – July 5)
+- Implement MCP stdio server MVP (`mcp_dart`) and wire it to the same runner core
+- Tools MVP: `list_collections`, `send_request`, `run_collection`
+- Manual verification using MCP Inspector + add MCP integration tests
+
+### Week 7 (July 6 – July 12)
+- End-to-end testing (CLI + MCP) with deterministic fixtures
+- Documentation: install/run, MCP client configuration snippets, troubleshooting
+- Performance/stability polish (timeouts, cancellation, clear errors)
+
+### Week 8 (July 13 – July 19)
+- Final polishing and refactoring (only after tests are green)
+- Stretch goals if time allows (e.g., `generate_code`, `env`) **only if MVP is stable**
+- Prepare final submission, demo script, and release notes
 
 <!--  
 // use data in apidash? 
@@ -821,17 +1064,3 @@ will communicate with them through standard input and output
 
 
 
-
-## 3. Time Line 
-<!--8 weeks as it is easy-->
-<!--
-should contain screen of running cli with beatiful colors ,bars and like an bar
-contain sample of cli commands i will use 
-contain codes 
-contain challanges with solution 
-contain diagrams with images
-contain references used 
-by the end of this section make a doc file 
-submit form for reviewing
-refactor what is writing
--->
