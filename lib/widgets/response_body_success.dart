@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -5,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'a2ui_renderer.dart';
 import 'button_share.dart';
+import 'open_responses_viewer.dart';
 
 class ResponseBodySuccess extends StatefulWidget {
   const ResponseBodySuccess({
@@ -38,6 +41,29 @@ class ResponseBodySuccess extends StatefulWidget {
 
 class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   int segmentIdx = 0;
+
+  Widget _buildStructuredView() {
+    try {
+      final json = jsonDecode(widget.body) as Map<String, dynamic>;
+      final result = OpenResponsesResult.fromJson(json);
+      return OpenResponsesViewer(result: result);
+    } catch (_) {
+      return const ErrorMessage(message: 'Unable to parse Open Responses body');
+    }
+  }
+
+  Widget _buildGenUIView() {
+    final parsed = A2UIParser.parse(widget.body);
+    if (parsed == null) {
+      return const ErrorMessage(message: 'Unable to parse A2UI payload');
+    }
+    return SingleChildScrollView(
+      child: A2UIRenderer(
+        components: parsed.components,
+        dataModel: parsed.dataModel,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +205,21 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         sseOutput: widget.sseOutput,
                         aiRequestModel: widget.aiRequestModel,
                       ),
+                    ),
+                  ),
+                ResponseBodyView.structured => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      decoration: textContainerdecoration,
+                      child: _buildStructuredView(),
+                    ),
+                  ),
+                ResponseBodyView.genui => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: _buildGenUIView(),
                     ),
                   ),
               }
