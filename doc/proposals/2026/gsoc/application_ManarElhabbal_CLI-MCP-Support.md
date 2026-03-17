@@ -17,7 +17,7 @@
 
 ## University Info
 
-- **University:** Mansoura University — Faculty of Computer and Information Sciences  
+- **University:** Mansoura University  Faculty of Computer and Information Sciences  
 - **Program:** B.Sc. in Information Systems  
 - **Year:** Third Year  
 - **Expected Graduation:** 2027  
@@ -151,7 +151,7 @@ Both act as **separate entry points**:
 
 Despite these different interfaces, both rely on a shared core module: **`apidash_core`**.
 
-This architecture ensures that improvements, bug fixes, or new features added to the core automatically propagate to all interfaces — **GUI, CLI, and MCP** — without code duplication.
+This architecture ensures that improvements, bug fixes, or new features added to the core automatically propagate to all interfaces  **GUI, CLI, and MCP**  without code duplication.
 
 <p align="center">
   <img src="images/arch_diagram.png" width="500" alt="Architecture Diagram">
@@ -174,7 +174,7 @@ dart pub global activate apidash_cli
 
 | Principle | Description |
 |-----------|-------------|
-| **Package Reuse** | Leverages existing `better_networking`, `curl_parser`, `postman`, `apidash_core` — zero duplication |
+| **Package Reuse** | Leverages existing `better_networking`, `curl_parser`, `postman`, `apidash_core`  zero duplication |
 | **Modular Design** | Each command group is a separate module |
 | **Cross-platform** | Runs on Windows, macOS, and Linux |
 
@@ -219,40 +219,26 @@ All commands support `--output json` for CI/scripting pipelines.
  
 The CLI will use **ansicolor** and **cli_spinner** for colored, human-readable output, with `--output json` for CI pipelines.
 
-### Example
-
-<p align="center">
-  <img src="images/banner.png" width="500" alt="CLI Banner Screenshot">
-</p>
-
 
 ---
 
 ## Challenges & Solutions
 
-### 1. Cross-platform terminal color support
-**Challenge:** ANSI colors may render incorrectly on Windows CMD or older PowerShell.  
-**Solution:** Detect terminal capability with `stdout.supportsAnsiEscapes` and fall back to plain text when unsupported. Windows Terminal and modern PowerShell are detected via environment variables like `WT_SESSION`.
-
-### 2. Shared state between CLI and GUI
+### 1. Shared state between CLI and GUI
 **Challenge:** GUI and CLI must read/write the same collections and environments safely.  
 **Solution:** Use `apidash_core` as a shared data layer with separate implementations for CLI and GUI; no direct file sharing.
 
-### 3. Streaming responses (SSE) in the terminal
+### 2. Streaming responses (SSE) in the terminal
 **Challenge:** SSE streams continuously; interrupts may break the terminal.  
 **Solution:** Use Dart’s `Stream` API to print chunks in real-time and handle `Ctrl+C` via `ProcessSignal.sigint` to cancel streams cleanly.
 
-### 4. MCP protocol versioning
+### 3. MCP protocol versioning
 **Challenge:** Client/server version mismatches could break communication.  
 **Solution:** Implement version negotiation during MCP handshake. Unsupported versions return clear errors.
 
-### 5. Testing without a real network
+### 4. Testing without a real network
 **Challenge:** Real API tests are slow and fail in CI without internet.  
 **Solution:** Abstract HTTP layer behind an interface; inject `mockito` mocks to fully test commands offline.
-
-### 6. Large response readability
-**Challenge:** Responses with thousands of lines overwhelm the terminal.  
-**Solution:** Truncate output to 50 lines by default; show total line count. Use `--full` for complete output or `--output <file>` to save results.
 
 > Challenges and solutions will be discussed with mentors to select the best approaches.
 ---
@@ -261,9 +247,9 @@ The CLI will use **ansicolor** and **cli_spinner** for colored, human-readable o
 
 ## Introduction
 
-Model Context Protocol (MCP) provides a standardized communication layer between AI models, tools, and data sources. Instead of manually copying data to an AI assistant, MCP gives the AI **direct, structured access** to your tools — no copy-paste, no context limits.
+Model Context Protocol (MCP) provides a standardized communication layer between AI models, tools, and data sources. Instead of manually copying data to an AI assistant, MCP gives the AI **direct, structured access** to your tools  no copy-paste, no context limits.
 
-API Dash will be exposed as an MCP server, meaning AI assistants like Claude Desktop, Cursor, and VS Code can directly execute requests and run collections — all through natural language conversations.
+API Dash will be exposed as an MCP server, meaning AI assistants like Claude Desktop, Cursor, and VS Code can directly execute requests and run collections  all through natural language conversations.
 
 <p align="center">
 <img src="images/mcp_arch.png" width="500" alt="MCP Architecture Diagram">
@@ -290,15 +276,15 @@ Clients such as Cursor, Claude Desktop, and VS Code SHOULD support stdio wheneve
 
 The API Dash MCP server will use the **stdio** transport for the following reasons:
 
-**1. Fits how MCP clients work** — Tools like Cursor and Claude Desktop launch the MCP server as a subprocess and communicate via stdin/stdout. No HTTP server, port configuration, or CORS.
+**1. Fits how MCP clients work**  Tools like Cursor and Claude Desktop launch the MCP server as a subprocess and communicate via stdin/stdout. No HTTP server, port configuration, or CORS.
 
-**2. Simplicity** — One process, one bidirectional channel. No session management or network binding.
+**2. Simplicity**  One process, one bidirectional channel. No session management or network binding.
 
-**3. Security** — No network exposure; communication stays entirely on the host.
+**3. Security**  No network exposure; communication stays entirely on the host.
 
-**4. Spec alignment** — The MCP spec states: *"Clients SHOULD support stdio whenever possible"*. Targeting stdio maximizes compatibility with all major MCP clients.
+**4. Spec alignment**  The MCP spec states: *"Clients SHOULD support stdio whenever possible"*. Targeting stdio maximizes compatibility with all major MCP clients.
 
-**5. Platform scope** — The MCP server targets desktop (macOS, Windows, Linux) where stdio is fully supported. On mobile (iOS/Android), subprocess spawning is restricted by the OS; the MCP server is therefore scoped to desktop-only, which aligns with developer workflows.
+**5. Platform scope**  The MCP server targets desktop (macOS, Windows, Linux) where stdio is fully supported. On mobile (iOS/Android), subprocess spawning is restricted by the OS; the MCP server is therefore scoped to desktop-only, which aligns with developer workflows.
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -326,7 +312,7 @@ The API Dash MCP server will use the **stdio** transport for the following reaso
 |-------------|----------------|
 | Message framing | Newline-delimited. Each JSON-RPC message is one line; MUST NOT contain embedded newlines |
 | Input | Server reads JSON-RPC messages (requests, notifications, batches) from stdin |
-| Output | Server writes ONLY valid MCP messages to stdout — nothing else |
+| Output | Server writes ONLY valid MCP messages to stdout  nothing else |
 | Logging | Diagnostics go to stderr. Clients may capture, forward, or ignore |
 | Client responsibility | Client must not write anything to stdin that is not a valid MCP message |
 
@@ -349,7 +335,7 @@ Client                          apidash_mcp
 
 ## Implementation
 
-Using the `mcp_dart` package which implements the full MCP spec `2025-11-25` with stdio transport natively — no custom transport code needed.
+Using the `mcp_dart` package which implements the full MCP spec `2025-11-25` with stdio transport natively  no custom transport code needed.
 
 **Server Entry Point:**
 ```dart
@@ -390,7 +376,6 @@ packages/
     │   └── src/
     │       ├── tools/         # tool definitions
     │       ├── resources/     # resource definitions
-    │       └── prompts/      # prompt templates (optional)
     └── pubspec.yaml
 ```
 
@@ -563,26 +548,3 @@ During the exam period, I will focus on lower-risk tasks such as:
 
 ---
 
-### Definition of Done
-
-By the end of the project, the following will be true:
-
-- **CLI:** Can execute a single request and run a collection headlessly with deterministic exit codes and `--output json`; works on at least one of Linux/macOS/Windows.
-- **MCP:** Server supports `list_collections`, `send_request`, and `run_collection` with stable JSON-RPC schemas and clear error messages; verified via MCP Inspector and automated tests.
-- **Tests:** Core flows covered by unit and integration tests without depending on real external APIs.
-- **Docs:** Install/run instructions and MCP client configuration snippets are documented; known limitations are stated.
-
----
-
-### Communication
-
-I will provide **weekly progress updates** (e.g. in the project chat or issue tracker) and will sync with mentors at the start of each phase to confirm priorities. I will flag blockers or scope questions early so we can adjust the plan if needed.
-
----
-
-### References
-
-- [Model Context Protocol (MCP) Specification](https://spec.modelcontextprotocol.io/)
-- [MCP Inspector](https://github.com/modelcontextprotocol/inspector) — for testing MCP servers
-- [pub.dev](https://pub.dev) — Dart/Flutter package registry for publishing `apidash_cli` and `apidash_mcp`
-- API Dash monorepo packages: `better_networking`, `curl_parser`, `postman`, `apidash_core`
