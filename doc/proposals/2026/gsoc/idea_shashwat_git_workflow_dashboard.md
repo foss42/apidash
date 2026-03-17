@@ -59,7 +59,7 @@ A new collection dropdown sits above the sidebar's request list. Each collection
 
 A `GitHubApiAdapter` class handles all GitHub communication using the GitHub REST API.
 
-- **Authentication:** OAuth device flow — no backend needed. App shows a short code and opens github.com/login/device; user enters it and authorizes. App polls until done. Token stored in `flutter_secure_storage`. One-time; all later operations use the saved token.
+- **Authentication:** App shows a short code and opens github.com/login/device; user enters it and authorizes. App polls until done. Token stored in `flutter_secure_storage`. One-time; all later operations use the saved token.
 
 - **Push:** Serialize to JSON → create blobs → create tree → create commit → update branch ref. One atomic commit.
 
@@ -77,7 +77,7 @@ Bob pastes Alice's repo URL into **Import from GitHub**. API Dash fetches the tr
 
 Carol has the collection connected. She sees Bob's commit in History, clicks it to pull. Later she rolls back: clicks the previous commit — collection reverts to Alice's version.
 
-The key insight: the user never thinks about blobs, trees, or API calls. They think about their collection. GitHub is just a button that lets them share it, version it, and roll back with one click — and it works on every platform.
+The key insight: the user never thinks about blobs, trees, or API calls. They think about their collection. GitHub is just a button that lets them share it, version it, and roll back with one click and it works on every platform.
 
 ---
 
@@ -94,7 +94,18 @@ A workflow is a graph of connected nodes. Each node represents one step:
 - **Transform node** — takes data from a previous response and passes it to the next request (for example, extract a login token and set it as a header for the next call).
 - **Delay node** — pauses for a specified duration before continuing.
 
-The screen is a split-view: a sidebar lists saved workflows, and the main area is the visual canvas powered by vyuh_node_flow (a Flutter package with built-in JSON serialization, minimap, undo/redo, and a verified publisher). Users add nodes from a palette, drag them around the canvas, and draw connections between them.
+The screen is a split-view: Users add nodes from a palette, drag them around the canvas, and draw connections between them.
+
+**POC screenshots (current implementation):**
+
+![Workflow POC — initial workflow](images/workflow1.png)
+*Initial workflow: Start → Request → End. The selected Request node is linked to an existing collection request and shows a small “Last output” preview (status/time/body snippet).*
+
+![Workflow POC — add second request node](images/workflow2.png)
+*Editing the workflow: add a second Request node, connect it into the graph, and run the workflow to execute multiple requests in sequene.*
+
+![Workflow POC — output preview for debugging](images/workflow3.png)
+*Debuggability: the “Last output” preview on each Request node makes it obvious **which API step stopped/faulted** (status + short response body)*
 
 **How execution works:**
 
@@ -104,7 +115,7 @@ Data flows between nodes through a shared context. A login node's response can f
 
 **Example — A login-then-fetch flow:**
 
-A user has three requests: POST /auth, GET /users/me, and GET /orders. They create a workflow: first node is POST /auth. A condition node checks if the response is 200. If true, a transform node extracts the auth token from the response body. Then GET /users/me runs with that token as a Bearer header. Another transform extracts the user ID, and finally GET /orders/{userId} runs. The user clicks Run and watches each node light up green as it succeeds.
+A user has three requests: POST /auth, GET /users/me, and GET /orders. They create a workflow: first node is POST /auth. A condition node checks if the response is 200. If true, a transform node extracts the auth token from the response body. Then GET /users/me runs with that token as a Bearer header. Another transform extracts the user ID, and finally GET /orders/{userId} runs. The user clicks Run and watches each node light up as it succeeds.
 
 A user describes a workflow in natural language (for example, Login, then if successful fetch the user profile, then fetch their orders) and DashBot generates the workflow structure, placing the right nodes on the canvas with proper connections. Since DashBot already has action schemas for the app, this would be a new action type.
 
@@ -118,9 +129,14 @@ The Dashboard also gets its own nav rail item. It aggregates data from the exist
 - **Response time trend** — a line chart showing response times over time, helping users spot performance regressions
 - **Status code distribution** — a pie or bar chart breaking down 2xx, 3xx, 4xx, 5xx responses
 - **Method distribution** — a visual breakdown of GET, POST, PUT, DELETE requests in the collection
-- **Webhook reporting (stretch goal)** — configure a webhook URL to send dashboard metrics to Slack or a CI/CD pipeline for automated monitoring
+- **Webhook reporting** — configure a webhook URL to send dashboard metrics to Slack or a CI/CD pipeline for automated monitoring
 
 All data is derived from what API Dash already stores — no new data collection needed. Charts are rendered with fl_chart (7K+ likes, MIT license), the most popular Flutter charting library.
+
+**POC screenshot (current implementation):**
+
+![Dashboard POC — collection health](images/dashbord1.png)
+*Collection Dashboard POC: KPI strip, request-volume line chart, status-code pie chart, recent activity list, method distribution bars, and script coverage bar — all themed to match API Dash and ready to be wired to live metrics.*
 
 ### Timeline (175 hours over 12 weeks)
 
