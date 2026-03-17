@@ -270,11 +270,99 @@ For Now I have just roughly draw it on Excalidraw
 
 ---
 
-## 7. About the Contributor
+## 7. MCP Apps Integration: Bidirectional UI Layer for Agentic Workflows
+
+The agentic pipeline described in Section 3 produces two categories of output that are fundamentally ill-suited to plain text rendering inside a chat interface:
+
+1. **Structured Decision Points** — After `TestStrategyPlanner` generates a test suite of 20–50 test cases, the developer must selectively approve, reject, or reprioritize individual tests before execution. Presenting this as a numbered list in the Agent Chat Interface forces the user to type case-by-case exclusions in natural language—a fragile, error-prone interaction pattern that reintroduces manual effort the framework is designed to eliminate.
+
+2. **Structured Diff Review** — When `SelfHealingEngine` proposes a patch to a broken assertion, the developer must compare the old and new assertion to make an informed approve/reject decision. A text description of the diff is semantically lossy and cognitively demanding; it fails to surface the spatial relationship between what changed and why.
+
+Both cases share the same root problem: **the information the agent produces is inherently visual and interactive, but the only available output channel is linear text.** The Model Context Protocol (MCP) Apps extension directly addresses this gap.
+
+---
+
+### 7.1 What MCP Apps Provide
+
+MCP Apps extend the open-source Model Context Protocol with a standardized mechanism for MCP servers to deliver **rich, bidirectional UI components**—HTML rendered as sandboxed iframes natively inside AI hosts—without requiring external web apps, custom authentication, or broken conversational context.
+
+---
+
+### 7.2 Integration Points in the Agentic Pipeline
+
+#### 7.2.1 Node 1 — `TestStrategyPlanner`: Interactive Test Review & Approval
+
+**Problem without MCP Apps:**
+The `TestStrategyPlanner` outputs a list of `APITestCase` objects. Displaying these as raw text in the Agent Chat Interface gives the developer no ergonomic way to selectively approve tests without manually typing exclusions. Mistyped or ambiguous natural language exclusions risk silently including unwanted tests in execution.
+
+**Solution with MCP Apps:**
+When the `plan_tests` tool fires, the host renders the `test-review` MCP App—a sandboxed HTML table where each generated test case is a toggleable row. The developer interacts with the table and confirms their selection; the iframe then sends the filtered list back into the agent's context via `ui/update-model-context` as structured JSON. `AgentCore` receives this payload and transitions to `EXECUTING` only with the approved test cases.
+
+**MCP App: `test-review`**
+
+| UI Element | Data Source | Interaction |
+|---|---|---|
+| Test name column | `APITestCase.name` | Read-only label |
+| Type badge | `APITestCase.type` (happy path, security, boundary...) | Color-coded badge |
+| Priority indicator | Planner-assigned risk score | Star/dot indicator |
+| Toggle switch | Default: ON | User can disable individual tests |
+| Endpoint tag | `APITestCase.method` + `APITestCase.path` | Read-only `GET /users/{id}` |
+| Confirm button | Selected subset | Sends `ui/update-model-context` with approved list |
+| Select All / None | Bulk action | Shortcut toggles |
+
+---
+
+#### 7.2.2 Node 2 — `SelfHealingEngine`: Visual Diff Review & Patch Approval
+
+**Problem without MCP Apps:**
+When the `SelfHealingEngine` generates a patch for a drifted assertion, the state machine (Section 4.1) requires human review for `BREAKING` and `ARCHITECTURAL` severity drifts. Presenting the proposed patch as text forces the developer to mentally reconstruct the before/after relationship, a cognitively expensive task especially for nested JSON schema changes.
+
+**Solution with MCP Apps:**
+When `patchRequiresReview` is triggered, the `SelfHealingEngine` invokes the `review_patch` tool. The host renders the `healing-diff` MCP App—a side-by-side diff viewer with color-coded removals (red) and additions (green), structured by assertion path. The developer reviews and makes one of three decisions: **Approve** (patch applied, execution resumes), **Reject** (escalate to FAILED), or **Edit** (open in Test Wizard for manual correction). The decision is sent back to the agent via `ui/message`.
+
+**MCP App: `healing-diff`**
+
+| UI Element | Data Source | Interaction |
+|---|---|---|
+| Diff header | Endpoint path + HTTP method | Read-only |
+| Severity badge | `DriftSeverity` enum | Color: yellow (compatible) / red (breaking) |
+| Left panel (Before) | Original assertion JSON | Syntax-highlighted, read-only |
+| Right panel (After) | Proposed patched assertion | Syntax-highlighted, read-only |
+| Changed fields | Diff delta lines | Highlighted in red (removed) / green (added) |
+| Confidence score | `SelfHealingEngine.confidenceScore` | Shown as `87% confidence` indicator |
+| Approve button | — | Sends `ui/message` with `{ decision: "approve" }` |
+| Reject button | — | Sends `ui/message` with `{ decision: "reject" }` |
+| Edit button | — | Opens patched assertion in Test Wizard for manual correction |
+| Context note | LLM explanation of why the drift occurred | Collapsible text block |
+
+---
+
+### 7.3 MCP Apps Protocol Integration in Flutter (API Dash as MCP Host)
+
+API Dash is a Flutter application. The MCP Apps specification defines the **host-side responsibilities**: rendering the sandboxed iframe, mediating the JSON-RPC bridge, and injecting `hostContext` CSS variables. To implement this in Flutter:
+
+#### 7.3.1 Flutter WebView as MCP App Host
+
+API Dash will embed `webview_flutter` to render MCP App HTML resources. The WebView acts as the sandboxed iframe equivalent, with all external network access controlled via the `_meta.ui.csp` declaration on each registered resource.
+
+### 7.4 DashBot Integration
+
+API Dash's existing **DashBot** AI assistant is the natural host for the `AgentCore` natural language interface described in Section 3.4.2. The MCP Apps layer enhances DashBot's existing capabilities by adding structured visual output at key decision points, without replacing its conversational interface.
+
+| DashBot Existing Capability | Agentic Testing Extension | MCP App Enhancement |
+|---|---|---|
+| Natural language API queries | Natural language test generation requests | `test-review` MCP App for approval |
+| Response explanation | Test failure explanation | `healing-diff` MCP App for patch review |
+| Collection browsing | Spec ingestion from collections | `execution-monitor` MCP App for live progress |
+| Environment variable hints | Dynamic variable substitution in `WorkflowExecutor` | None (handled internally) |
+
+---
+
+## 8. About the Contributor
 
 Hi, This is Himanshu Ravindra Iwanati I am a Third Year Graduate student, I have interest in building multiple-system AI agents throuhg LangGraph and implementing RAG pipelines, I also have a knee interest in robotics, I have also contributed to Moveit2 which is a industry standard robotics framework widely followed
 
-### 7.2 Contact and Portfolio
+### 8.1 Contact and Portfolio
 
 | Channel | Value |
 |---|---|
