@@ -113,6 +113,22 @@ API Dash requires `mpv` as a runtime dependency for audio/video functionality.
 
 3. Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
 
+### Ubuntu 20.04 Compatibility Note
+
+API Dash may not work on Ubuntu 20.04 due to older glibc versions used by the OS.
+
+If you encounter an error like:
+
+GLIBC_2.34 not found
+
+This is because the application is built using a newer system library version than what is available in Ubuntu 20.04.
+
+#### Recommended Solution:
+- Use Ubuntu 22.04 or later
+- Alternatively, use other supported installation methods (if available)
+
+This limitation is due to system-level dependencies and not a configuration issue.
+
 **Troubleshooting:**
 
 If you encounter a dependency error mentioning `mpv is not installed`, run:
@@ -121,6 +137,8 @@ sudo apt install --fix-broken
 ```
 
 This will automatically install any missing dependencies.
+
+If you encounter errors related to GLIBC version (e.g., GLIBC_2.34 not found), refer to the compatibility note above.
 
 ### Red Hat-based Linux Distributions (Fedora, Rocky, AlmaLinux, CentOS, RHEL, etc.)
 
