@@ -240,6 +240,33 @@ void main() {
     expect(find.text(expected), findsOneWidget);
   });
 
+  testWidgets('Testing when type/subtype is application/json',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Previewer',
+        home: Scaffold(
+          body: SizedBox(
+            height: 400,
+            child: Previewer(
+              type: kTypeApplication,
+              subtype: kSubTypeJson,
+              bytes: Uint8List.fromList([]),
+              body: '{"data":{"name":"API Dash","count":2}}',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Scrollbar), findsOneWidget);
+    expect(find.text('data'), findsOneWidget);
+    expect(find.text('name'), findsOneWidget);
+    expect(find.text('API Dash'), findsOneWidget);
+  });
+
   testWidgets('Testing when type/subtype is text/csv', (tester) async {
     String csvDataString =
         'Id,Name,Age\n1,John Doe,40\n2,Dbestech,41\n3,Voldermort,71\n4,Joe Biden,80\n5,Ryo Hanamura,35';

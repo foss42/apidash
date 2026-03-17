@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json_explorer/json_explorer.dart';
 import 'package:provider/provider.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../consts.dart';
 import '../utils/ui_utils.dart';
@@ -143,22 +142,22 @@ class JsonPreviewer extends StatefulWidget {
 
 class _JsonPreviewerState extends State<JsonPreviewer> {
   final searchController = TextEditingController();
-  final itemScrollController = ItemScrollController();
+  final scrollController = ScrollController();
   final JsonExplorerStore store = JsonExplorerStore();
+  final Map<NodeViewModelState, GlobalKey> _itemKeys = {};
 
   @override
   void initState() {
     super.initState();
-    store.buildNodes(widget.code, areAllCollapsed: true);
-    store.expandAll();
+    store.buildNodes(widget.code);
   }
 
   @override
   void didUpdateWidget(JsonPreviewer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.code != widget.code) {
-      store.buildNodes(widget.code, areAllCollapsed: true);
-      store.expandAll();
+      _itemKeys.clear();
+      store.buildNodes(widget.code);
     }
   }
 
@@ -173,6 +172,10 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
             builder: (BuildContext context, BoxConstraints constraints) {
               var maxRootNodeWidth =
                   getJsonPreviewerMaxRootNodeWidth(constraints.maxWidth);
+              final jsonExplorerTheme =
+                  (Theme.of(context).brightness == Brightness.light)
+                      ? jsonExplorerThemeLight
+                      : jsonExplorerThemeDark;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -257,52 +260,36 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                   ),
                   kVSpacer6,
                   Expanded(
-                    child: JsonExplorer(
-                      nodes: state.displayNodes,
-                      itemScrollController: itemScrollController,
-                      itemSpacing: 4,
-                      rootInformationBuilder: (context, node) =>
-                          rootInfoBox(context, node),
-                      collapsableToggleBuilder: (context, node) =>
-                          AnimatedRotation(
-                        turns: node.isCollapsed ? -0.25 : 0,
-                        duration: const Duration(milliseconds: 300),
-                        child: const Icon(Icons.arrow_drop_down),
-                      ),
-                      trailingBuilder: (context, node) => node.isFocused
-                          ? Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints:
-                                    const BoxConstraints(maxHeight: 18),
-                                icon: const Icon(
-                                  Icons.copy,
-                                  size: 18,
+                    child: Scrollbar(
+                      controller: scrollController,
+                      thumbVisibility: true,
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            for (final node in state.displayNodes)
+                              RepaintBoundary(
+                                child: _JsonPreviewRow(
+                                  key: _keyForNode(node),
+                                  node: node,
+                                  store: store,
+                                  itemSpacing: 4,
+                                  theme: jsonExplorerTheme,
+                                  searchTerm: state.searchTerm,
+                                  focusedSearchResult:
+                                      state.searchResults.isEmpty
+                                          ? null
+                                          : state.focusedSearchResult,
+                                  maxRootNodeWidth: maxRootNodeWidth,
+                                  valueStyleBuilder: (value, style) =>
+                                      valueStyleOverride(context, value, style),
+                                  onCopyText: (text) => _copy(text, sm),
                                 ),
-                                onPressed: () async {
-                                  final val = toJson(node);
-                                  String toCopy = '';
-                                  if (node.isClass ||
-                                      node.isArray ||
-                                      node.isRoot) {
-                                    toCopy = kJsonEncoder.convert(val);
-                                  } else {
-                                    toCopy = (val.values as Iterable)
-                                        .first
-                                        .toString();
-                                  }
-                                  await _copy(toCopy, sm);
-                                },
                               ),
-                            )
-                          : const SizedBox(),
-                      valueStyleBuilder: (value, style) =>
-                          valueStyleOverride(context, value, style),
-                      theme: (Theme.of(context).brightness == Brightness.light)
-                          ? jsonExplorerThemeLight
-                          : jsonExplorerThemeDark,
-                      maxRootNodeWidth: maxRootNodeWidth,
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -365,39 +352,36 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
     );
   }
 
-  DecoratedBox rootInfoBox(BuildContext context, NodeViewModelState node) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: (Theme.of(context).brightness == Brightness.light)
-            ? JsonPreviewerColor.lightRootInfoBox
-            : JsonPreviewerColor.darkRootInfoBox,
-        borderRadius: const BorderRadius.all(Radius.circular(2)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 4,
-          vertical: 2,
-        ),
-        child: SelectableText(
-          node.isClass ? '{${node.childrenCount}}' : '[${node.childrenCount}]',
-          style: kCodeStyle,
-        ),
-      ),
-    );
-  }
-
   String _searchFocusText() =>
       '${store.focusedSearchResultIndex + 1}/${store.searchResults.length}';
 
-  void _scrollToSearchMatch() {
-    final index = store.displayNodes.indexOf(store.focusedSearchResult.node);
-    if (index != -1) {
-      itemScrollController.scrollTo(
-        index: index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOutCubic,
-      );
+  Future<void> _scrollToSearchMatch() async {
+    if (store.searchResults.isEmpty) {
+      return;
     }
+
+    await _scrollNodeIntoView(store.focusedSearchResult.node);
+  }
+
+  GlobalKey _keyForNode(NodeViewModelState node) {
+    return _itemKeys.putIfAbsent(node, () => GlobalObjectKey(node));
+  }
+
+  Future<void> _scrollNodeIntoView(NodeViewModelState node) async {
+    _keyForNode(node);
+
+    await WidgetsBinding.instance.endOfFrame;
+    final targetContext = _itemKeys[node]?.currentContext;
+    if (targetContext == null) {
+      return;
+    }
+
+    await Scrollable.ensureVisible(
+      targetContext,
+      alignment: 0.08,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   bool _valueIsUrl(dynamic value) {
@@ -414,7 +398,303 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
   @override
   void dispose() {
     searchController.dispose();
+    scrollController.dispose();
+    store.dispose();
     super.dispose();
+  }
+}
+
+class _JsonPreviewRow extends StatefulWidget {
+  const _JsonPreviewRow({
+    super.key,
+    required this.node,
+    required this.store,
+    required this.itemSpacing,
+    required this.theme,
+    required this.searchTerm,
+    required this.focusedSearchResult,
+    required this.maxRootNodeWidth,
+    required this.valueStyleBuilder,
+    required this.onCopyText,
+  });
+
+  final NodeViewModelState node;
+  final JsonExplorerStore store;
+  final double itemSpacing;
+  final JsonExplorerTheme theme;
+  final String searchTerm;
+  final SearchResult? focusedSearchResult;
+  final double? maxRootNodeWidth;
+  final PropertyOverrides Function(dynamic value, TextStyle style)
+      valueStyleBuilder;
+  final Future<void> Function(String text) onCopyText;
+
+  @override
+  State<_JsonPreviewRow> createState() => _JsonPreviewRowState();
+}
+
+class _JsonPreviewRowState extends State<_JsonPreviewRow> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = widget.itemSpacing / 2;
+    final valueStyle =
+        widget.valueStyleBuilder(widget.node.value, widget.theme.valueTextStyle);
+    final hasInteraction = widget.node.isRoot || valueStyle.onTap != null;
+
+    return MouseRegion(
+      cursor: hasInteraction ? SystemMouseCursors.click : MouseCursor.defer,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: hasInteraction
+            ? () {
+                if (valueStyle.onTap != null && !widget.node.isRoot) {
+                  valueStyle.onTap!.call();
+                  return;
+                }
+                if (widget.node.isRoot) {
+                  if (widget.node.isCollapsed) {
+                    widget.store.expandNode(widget.node);
+                  } else {
+                    widget.store.collapseNode(widget.node);
+                  }
+                }
+              }
+            : null,
+        child: Container(
+          color: _isHovered ? widget.theme.highlightColor : null,
+          padding: EdgeInsets.symmetric(vertical: spacing),
+          child: Row(
+            crossAxisAlignment: widget.node.isRoot
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
+            children: [
+              SizedBox(width: _indentationWidth(widget.node, widget.theme)),
+              if (widget.node.isRoot)
+                SizedBox(
+                  width: 24,
+                  child: AnimatedRotation(
+                    turns: widget.node.isCollapsed ? -0.25 : 0,
+                    duration: const Duration(milliseconds: 300),
+                    child: const Icon(Icons.arrow_drop_down),
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: spacing),
+                child: _PreviewText(
+                  text: widget.node.key,
+                  style: widget.node.isRoot
+                      ? widget.theme.rootKeyTextStyle
+                      : widget.theme.propertyKeyTextStyle,
+                  highlightedText: widget.searchTerm,
+                  primaryMatchStyle:
+                      widget.theme.focusedKeySearchNodeHighlightTextStyle,
+                  secondaryMatchStyle: widget.theme.keySearchHighlightTextStyle,
+                  focusedSearchMatchIndex:
+                      _focusedMatchIndex(SearchMatchLocation.key),
+                  maxWidth: widget.maxRootNodeWidth,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: spacing),
+                child: SizedBox(
+                  width: 8,
+                  child: Text(
+                    ':',
+                    style: widget.theme.rootKeyTextStyle,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              if (widget.node.isRoot)
+                _RootInfoBox(
+                  node: widget.node,
+                )
+              else
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: spacing),
+                    child: _PreviewText(
+                      text: widget.node.value.toString(),
+                      style: valueStyle.style,
+                      highlightedText: widget.searchTerm,
+                      primaryMatchStyle:
+                          widget.theme.focusedValueSearchHighlightTextStyle,
+                      secondaryMatchStyle:
+                          widget.theme.valueSearchHighlightTextStyle,
+                      focusedSearchMatchIndex:
+                          _focusedMatchIndex(SearchMatchLocation.value),
+                    ),
+                  ),
+                ),
+              SizedBox(
+                width: 36,
+                child: _isHovered
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(maxHeight: 18),
+                          icon: const Icon(
+                            Icons.copy,
+                            size: 18,
+                          ),
+                          onPressed: () async {
+                            final val = toJson(widget.node);
+                            String toCopy = '';
+                            if (widget.node.isClass ||
+                                widget.node.isArray ||
+                                widget.node.isRoot) {
+                              toCopy = kJsonEncoder.convert(val);
+                            } else {
+                              toCopy = (val.values as Iterable).first.toString();
+                            }
+                            await widget.onCopyText(toCopy);
+                          },
+                        ),
+                      )
+                    : null,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  int? _focusedMatchIndex(SearchMatchLocation matchLocation) {
+    final result = widget.focusedSearchResult;
+    if (result == null) {
+      return null;
+    }
+    if (result.node != widget.node || result.matchLocation != matchLocation) {
+      return null;
+    }
+    return result.matchIndex;
+  }
+}
+
+double _indentationWidth(NodeViewModelState node, JsonExplorerTheme theme) {
+  final treeIndent = node.treeDepth * (theme.indentationPadding + 1);
+  if (!node.isRoot) {
+    return treeIndent +
+        (node.treeDepth > 0
+            ? theme.indentationPadding * theme.propertyIndentationPaddingFactor
+            : theme.indentationPadding);
+  }
+  return treeIndent + (theme.indentationPadding / 2);
+}
+
+class _RootInfoBox extends StatelessWidget {
+  const _RootInfoBox({
+    required this.node,
+  });
+
+  final NodeViewModelState node;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: (Theme.of(context).brightness == Brightness.light)
+            ? JsonPreviewerColor.lightRootInfoBox
+            : JsonPreviewerColor.darkRootInfoBox,
+        borderRadius: const BorderRadius.all(Radius.circular(2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 4,
+          vertical: 2,
+        ),
+        child: Text(
+          node.isClass ? '{${node.childrenCount}}' : '[${node.childrenCount}]',
+          style: kCodeStyle,
+        ),
+      ),
+    );
+  }
+}
+
+class _PreviewText extends StatelessWidget {
+  const _PreviewText({
+    required this.text,
+    required this.style,
+    required this.highlightedText,
+    required this.primaryMatchStyle,
+    required this.secondaryMatchStyle,
+    required this.focusedSearchMatchIndex,
+    this.maxWidth,
+  });
+
+  final String text;
+  final TextStyle style;
+  final String highlightedText;
+  final TextStyle primaryMatchStyle;
+  final TextStyle secondaryMatchStyle;
+  final int? focusedSearchMatchIndex;
+  final double? maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget child;
+    final lowerCaseText = text.toLowerCase();
+    final lowerCaseQuery = highlightedText.toLowerCase();
+
+    if (highlightedText.isEmpty || !lowerCaseText.contains(lowerCaseQuery)) {
+      child = Text(
+        text,
+        style: style,
+        softWrap: true,
+      );
+    } else {
+      final spans = <TextSpan>[];
+      var start = 0;
+
+      while (true) {
+        var index = lowerCaseText.indexOf(lowerCaseQuery, start);
+        index = index >= 0 ? index : text.length;
+
+        if (start != index) {
+          spans.add(
+            TextSpan(
+              text: text.substring(start, index),
+              style: style,
+            ),
+          );
+        }
+
+        if (index >= text.length) {
+          break;
+        }
+
+        spans.add(
+          TextSpan(
+            text: text.substring(index, index + highlightedText.length),
+            style: index == focusedSearchMatchIndex
+                ? primaryMatchStyle
+                : secondaryMatchStyle,
+          ),
+        );
+        start = index + highlightedText.length;
+      }
+
+      child = Text.rich(
+        TextSpan(children: spans),
+        softWrap: true,
+      );
+    }
+
+    if (maxWidth == null) {
+      return child;
+    }
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxWidth!),
+      child: child,
+    );
   }
 }
 
