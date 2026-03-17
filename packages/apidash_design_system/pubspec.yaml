@@ -7,15 +7,17 @@ environment:
   sdk: ^3.5.3
   flutter: ">=1.17.0"
 
+resolution: workspace
+
 dependencies:
   flutter:
     sdk: flutter
-  google_fonts: ^8.0.0
+  google_fonts: ^8.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
