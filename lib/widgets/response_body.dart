@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'a2ui_renderer.dart';
 import 'error_message.dart';
 import 'response_body_success.dart';
 
@@ -40,16 +42,12 @@ class ResponseBody extends StatelessWidget {
 
     final mediaType =
         responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
-    // Fix #415: Treat null Content-type as plain text instead of Error message
-    // if (mediaType == null) {
-    //   return ErrorMessage(
-    //       message:
-    //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
-    // }
 
-    var responseBodyView = selectedRequestModel?.apiType == APIType.ai
-        ? (kAnswerRawBodyViewOptions, kSubTypePlain)
-        : getResponseBodyViewOptions(mediaType);
+    var responseBodyView = _resolveViewOptions(
+      body: body,
+      mediaType: mediaType,
+      apiType: selectedRequestModel?.apiType,
+    );
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
 
@@ -76,5 +74,33 @@ class ResponseBody extends StatelessWidget {
       aiRequestModel: selectedRequestModel?.aiRequestModel,
       isPartOfHistory: isPartOfHistory,
     );
+  }
+
+  static (List<ResponseBodyView>, String?) _resolveViewOptions({
+    required String body,
+    required MediaType mediaType,
+    APIType? apiType,
+  }) {
+    if (mediaType.type == kTypeApplication &&
+        mediaType.subtype == kSubTypeJson) {
+      try {
+        final json = jsonDecode(body);
+        if (json is Map<String, dynamic>) {
+          if (OpenResponsesResult.isOpenResponsesFormat(json)) {
+            return (kStructuredRawBodyViewOptions, null);
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (A2UIParser.isA2UIPayload(body)) {
+      return (kGenUIRawBodyViewOptions, null);
+    }
+
+    if (apiType == APIType.ai) {
+      return (kAnswerRawBodyViewOptions, kSubTypePlain);
+    }
+
+    return getResponseBodyViewOptions(mediaType);
   }
 }

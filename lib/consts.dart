@@ -159,6 +159,8 @@ enum ResponseBodyView {
   raw("Raw", Icons.text_snippet_rounded),
   answer("Answer", Icons.abc),
   sse("SSE", Icons.stream),
+  structured("Structured", Icons.auto_awesome_rounded),
+  genui("GenUI", Icons.widgets_rounded),
   none("Preview", Icons.warning);
 
   const ResponseBodyView(this.label, this.icon);
@@ -183,6 +185,14 @@ const kPreviewCodeRawBodyViewOptions = [
 const kSSERawBodyViewOptions = [ResponseBodyView.sse, ResponseBodyView.raw];
 const kAnswerRawBodyViewOptions = [
   ResponseBodyView.answer,
+  ResponseBodyView.raw,
+];
+const kStructuredRawBodyViewOptions = [
+  ResponseBodyView.structured,
+  ResponseBodyView.raw,
+];
+const kGenUIRawBodyViewOptions = [
+  ResponseBodyView.genui,
   ResponseBodyView.raw,
 ];
 
