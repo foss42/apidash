@@ -14,7 +14,7 @@
 
 #### Relevant Issues: 
 - Issue [#100](https://github.com/foss42/apidash/issues/100), 
-- Issue [#1158]()
+- Discussions [#1230](https://github.com/foss42/apidash/discussions/1230)
 
 
 
