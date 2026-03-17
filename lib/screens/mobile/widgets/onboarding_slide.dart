@@ -59,9 +59,7 @@ class OnboardingSlide extends StatelessWidget {
                 style: kTextStyleButton.copyWith(fontSize: 16),
               ),
             ),
-            const SizedBox(
-              height: 70,
-            )
+            const SizedBox(height: 70),
           ],
         ),
       ],

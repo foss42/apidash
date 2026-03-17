@@ -122,8 +122,9 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "🛠️ Generate Tool",
                 onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
+                  final notifier = ref.read(
+                    dashbotWindowNotifierProvider.notifier,
+                  );
                   notifier.hide();
                   await GenerateToolDialog.show(context, ref);
                   notifier.show();
@@ -132,11 +133,15 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               HomeScreenTaskButton(
                 label: "📱 Generate UI",
                 onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
+                  final notifier = ref.read(
+                    dashbotWindowNotifierProvider.notifier,
+                  );
                   notifier.hide();
-                  final model = ref.watch(selectedRequestModelProvider
-                      .select((value) => value?.httpResponseModel));
+                  final model = ref.watch(
+                    selectedRequestModelProvider.select(
+                      (value) => value?.httpResponseModel,
+                    ),
+                  );
                   if (model == null) return;
 
                   String data = "";

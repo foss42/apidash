@@ -26,25 +26,26 @@ void importToCollectionPane(
       sm.hideCurrentSnackBar();
       file.readAsString().then(
         (content) {
-          kImporter
-              .getHttpRequestModelList(importFormatType, content)
-              .then((importedRequestModels) {
+          kImporter.getHttpRequestModelList(importFormatType, content).then((
+            importedRequestModels,
+          ) {
             if (importedRequestModels != null) {
               if (importedRequestModels.isEmpty) {
                 sm.showSnackBar(
-                    getSnackBar("No requests imported", small: false));
+                  getSnackBar("No requests imported", small: false),
+                );
               } else {
                 for (var model in importedRequestModels.reversed) {
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .addRequestModel(
-                        model.$2,
-                        name: model.$1,
-                      );
+                      .addRequestModel(model.$2, name: model.$1);
                 }
-                sm.showSnackBar(getSnackBar(
+                sm.showSnackBar(
+                  getSnackBar(
                     "Successfully imported ${importedRequestModels.length} requests",
-                    small: false));
+                    small: false,
+                  ),
+                );
               }
               // Solves - Do not use BuildContexts across async gaps
               if (!context.mounted) return;

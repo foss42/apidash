@@ -65,16 +65,12 @@ puts "Response Code: #{response.code}"
 
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
-        result += templateHeader.render({
-          "headers": headers,
-        });
+        result += templateHeader.render({"headers": headers});
       }
 
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBody = jj.Template(kTemplateBody);
-        result += templateBody.render({
-          "body": requestModel.body,
-        });
+        result += templateBody.render({"body": requestModel.body});
       }
 
       if (requestModel.hasFormData) {
@@ -88,7 +84,7 @@ puts "Response Code: #{response.code}"
           result += templateMultiPartBody.render({
             "name": element["name"],
             "value": element["value"],
-            "type": element["type"]
+            "type": element["type"],
           });
           length -= 1;
           if (length == 0) {
@@ -102,8 +98,9 @@ puts "Response Code: #{response.code}"
             "request.set_form form_data, '${ContentType.formdata.header}'";
       }
 
-      result += jj.Template(kStringRequest)
-          .render({"method": requestModel.method.name});
+      result += jj.Template(
+        kStringRequest,
+      ).render({"method": requestModel.method.name});
       return result;
     } catch (e) {
       return null;

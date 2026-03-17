@@ -108,10 +108,7 @@ multipart/form-data; boundary={{boundary}}''';
 }
 """;
 
-  String? getCode(
-    HttpRequestModel requestModel, {
-    String? boundary,
-  }) {
+  String? getCode(HttpRequestModel requestModel, {String? boundary}) {
     try {
       String result = "";
       bool hasBody = false;
@@ -119,14 +116,12 @@ multipart/form-data; boundary={{boundary}}''';
       String uuid = getNewUuid();
 
       String url = requestModel.url;
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledParams,
-      );
+      var rec = getValidRequestUri(url, requestModel.enabledParams);
       Uri? uri = rec.$1;
       var method = requestModel.method;
       var requestBody = requestModel.body;
-      if (requestModel.bodyContentType == ContentType.json && requestBody?.isNotEmpty == true){
+      if (requestModel.bodyContentType == ContentType.json &&
+          requestBody?.isNotEmpty == true) {
         result += kJsonImport;
       }
       if (uri != null) {
@@ -134,10 +129,9 @@ multipart/form-data; boundary={{boundary}}''';
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
           'isFormDataRequest': requestModel.hasFormData,
-          "method": requestModel.method.name.toLowerCase()
+          "method": requestModel.method.name.toLowerCase(),
         });
-          
-        
+
         if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
@@ -155,17 +149,13 @@ multipart/form-data; boundary={{boundary}}''';
 
         if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "fields_list": requestModel.formDataMapList,
-              "boundary": boundary ?? uuid,
-            },
-          );
+          result += formDataBodyData.render({
+            "fields_list": requestModel.formDataMapList,
+            "boundary": boundary ?? uuid,
+          });
         }
         var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": method.name.toLowerCase(),
-        });
+        result += templateRequest.render({"method": method.name.toLowerCase()});
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;
@@ -179,8 +169,9 @@ multipart/form-data; boundary={{boundary}}''';
         if (headersList != null || hasBody || requestModel.hasFormData) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasFormData) {
-            var formHeaderTemplate =
-                jj.Template(kTemplateFormHeaderContentType);
+            var formHeaderTemplate = jj.Template(
+              kTemplateFormHeaderContentType,
+            );
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
               "boundary": boundary ?? uuid,
             });

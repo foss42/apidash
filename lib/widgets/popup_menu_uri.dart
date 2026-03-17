@@ -3,11 +3,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
 class DefaultUriSchemePopupMenu extends StatelessWidget {
-  const DefaultUriSchemePopupMenu({
-    super.key,
-    this.value,
-    this.onChanged,
-  });
+  const DefaultUriSchemePopupMenu({super.key, this.value, this.onChanged});
 
   final SupportedUriSchemes? value;
   final void Function(SupportedUriSchemes? value)? onChanged;

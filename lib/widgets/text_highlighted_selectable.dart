@@ -37,10 +37,12 @@ class HighlightedSelectableText extends StatelessWidget {
       if (idx > start) {
         spans.add(TextSpan(text: text.substring(start, idx), style: base));
       }
-      spans.add(TextSpan(
-        text: text.substring(idx, idx + lowerQ.length),
-        style: highlightStyle,
-      ));
+      spans.add(
+        TextSpan(
+          text: text.substring(idx, idx + lowerQ.length),
+          style: highlightStyle,
+        ),
+      );
       start = idx + lowerQ.length;
     }
     if (start < text.length) {
@@ -70,20 +72,21 @@ List<InlineSpan> buildHighlightedSpans(
   final highlightStyle = base.copyWith(
     fontWeight: FontWeight.w600,
     background: Paint()
-      ..color = Theme.of(context)
-          .colorScheme
-          .secondaryContainer
-          .withValues(alpha: 0.85)
+      ..color = Theme.of(
+        context,
+      ).colorScheme.secondaryContainer.withValues(alpha: 0.85)
       ..style = PaintingStyle.fill,
   );
   while ((idx = lower.indexOf(lowerQ, start)) != -1) {
     if (idx > start) {
       spans.add(TextSpan(text: text.substring(start, idx), style: base));
     }
-    spans.add(TextSpan(
-      text: text.substring(idx, idx + lowerQ.length),
-      style: highlightStyle,
-    ));
+    spans.add(
+      TextSpan(
+        text: text.substring(idx, idx + lowerQ.length),
+        style: highlightStyle,
+      ),
+    );
     start = idx + lowerQ.length;
   }
   if (start < text.length) {

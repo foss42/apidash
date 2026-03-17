@@ -7,10 +7,7 @@ import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 
 class VideoPreviewer extends StatefulWidget {
-  const VideoPreviewer({
-    super.key,
-    required this.videoBytes,
-  });
+  const VideoPreviewer({super.key, required this.videoBytes});
 
   final Uint8List videoBytes;
 
@@ -43,7 +40,8 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
   Future<void> _initializeVideoPlayer() async {
     final tempDir = await getTemporaryDirectory();
     _tempVideoFile = File(
-        '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}');
+      '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}',
+    );
     try {
       await _tempVideoFile.writeAsBytes(widget.videoBytes);
       _videoController = VideoPlayerController.file(_tempVideoFile);

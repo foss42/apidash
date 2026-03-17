@@ -12,7 +12,8 @@ part of 'history_request_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 HistoryRequestModel _$HistoryRequestModelFromJson(Map<String, dynamic> json) {
   return _HistoryRequestModel.fromJson(json);
@@ -42,18 +43,20 @@ mixin _$HistoryRequestModel {
 /// @nodoc
 abstract class $HistoryRequestModelCopyWith<$Res> {
   factory $HistoryRequestModelCopyWith(
-          HistoryRequestModel value, $Res Function(HistoryRequestModel) then) =
-      _$HistoryRequestModelCopyWithImpl<$Res, HistoryRequestModel>;
+    HistoryRequestModel value,
+    $Res Function(HistoryRequestModel) then,
+  ) = _$HistoryRequestModelCopyWithImpl<$Res, HistoryRequestModel>;
   @useResult
-  $Res call(
-      {String historyId,
-      HistoryMetaModel metaData,
-      HttpRequestModel? httpRequestModel,
-      AIRequestModel? aiRequestModel,
-      HttpResponseModel httpResponseModel,
-      String? preRequestScript,
-      String? postRequestScript,
-      AuthModel? authModel});
+  $Res call({
+    String historyId,
+    HistoryMetaModel metaData,
+    HttpRequestModel? httpRequestModel,
+    AIRequestModel? aiRequestModel,
+    HttpResponseModel httpResponseModel,
+    String? preRequestScript,
+    String? postRequestScript,
+    AuthModel? authModel,
+  });
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
@@ -86,40 +89,43 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     Object? postRequestScript = freezed,
     Object? authModel = freezed,
   }) {
-    return _then(_value.copyWith(
-      historyId: null == historyId
-          ? _value.historyId
-          : historyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      metaData: null == metaData
-          ? _value.metaData
-          : metaData // ignore: cast_nullable_to_non_nullable
-              as HistoryMetaModel,
-      httpRequestModel: freezed == httpRequestModel
-          ? _value.httpRequestModel
-          : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel?,
-      aiRequestModel: freezed == aiRequestModel
-          ? _value.aiRequestModel
-          : aiRequestModel // ignore: cast_nullable_to_non_nullable
-              as AIRequestModel?,
-      httpResponseModel: null == httpResponseModel
-          ? _value.httpResponseModel
-          : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel,
-      preRequestScript: freezed == preRequestScript
-          ? _value.preRequestScript
-          : preRequestScript // ignore: cast_nullable_to_non_nullable
-              as String?,
-      postRequestScript: freezed == postRequestScript
-          ? _value.postRequestScript
-          : postRequestScript // ignore: cast_nullable_to_non_nullable
-              as String?,
-      authModel: freezed == authModel
-          ? _value.authModel
-          : authModel // ignore: cast_nullable_to_non_nullable
-              as AuthModel?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            historyId: null == historyId
+                ? _value.historyId
+                : historyId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            metaData: null == metaData
+                ? _value.metaData
+                : metaData // ignore: cast_nullable_to_non_nullable
+                      as HistoryMetaModel,
+            httpRequestModel: freezed == httpRequestModel
+                ? _value.httpRequestModel
+                : httpRequestModel // ignore: cast_nullable_to_non_nullable
+                      as HttpRequestModel?,
+            aiRequestModel: freezed == aiRequestModel
+                ? _value.aiRequestModel
+                : aiRequestModel // ignore: cast_nullable_to_non_nullable
+                      as AIRequestModel?,
+            httpResponseModel: null == httpResponseModel
+                ? _value.httpResponseModel
+                : httpResponseModel // ignore: cast_nullable_to_non_nullable
+                      as HttpResponseModel,
+            preRequestScript: freezed == preRequestScript
+                ? _value.preRequestScript
+                : preRequestScript // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            postRequestScript: freezed == postRequestScript
+                ? _value.postRequestScript
+                : postRequestScript // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            authModel: freezed == authModel
+                ? _value.authModel
+                : authModel // ignore: cast_nullable_to_non_nullable
+                      as AuthModel?,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of HistoryRequestModel
@@ -188,20 +194,22 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
 /// @nodoc
 abstract class _$$HistoryRequestModelImplCopyWith<$Res>
     implements $HistoryRequestModelCopyWith<$Res> {
-  factory _$$HistoryRequestModelImplCopyWith(_$HistoryRequestModelImpl value,
-          $Res Function(_$HistoryRequestModelImpl) then) =
-      __$$HistoryRequestModelImplCopyWithImpl<$Res>;
+  factory _$$HistoryRequestModelImplCopyWith(
+    _$HistoryRequestModelImpl value,
+    $Res Function(_$HistoryRequestModelImpl) then,
+  ) = __$$HistoryRequestModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String historyId,
-      HistoryMetaModel metaData,
-      HttpRequestModel? httpRequestModel,
-      AIRequestModel? aiRequestModel,
-      HttpResponseModel httpResponseModel,
-      String? preRequestScript,
-      String? postRequestScript,
-      AuthModel? authModel});
+  $Res call({
+    String historyId,
+    HistoryMetaModel metaData,
+    HttpRequestModel? httpRequestModel,
+    AIRequestModel? aiRequestModel,
+    HttpResponseModel httpResponseModel,
+    String? preRequestScript,
+    String? postRequestScript,
+    AuthModel? authModel,
+  });
 
   @override
   $HistoryMetaModelCopyWith<$Res> get metaData;
@@ -219,9 +227,10 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
 class __$$HistoryRequestModelImplCopyWithImpl<$Res>
     extends _$HistoryRequestModelCopyWithImpl<$Res, _$HistoryRequestModelImpl>
     implements _$$HistoryRequestModelImplCopyWith<$Res> {
-  __$$HistoryRequestModelImplCopyWithImpl(_$HistoryRequestModelImpl _value,
-      $Res Function(_$HistoryRequestModelImpl) _then)
-      : super(_value, _then);
+  __$$HistoryRequestModelImplCopyWithImpl(
+    _$HistoryRequestModelImpl _value,
+    $Res Function(_$HistoryRequestModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -237,40 +246,42 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
     Object? postRequestScript = freezed,
     Object? authModel = freezed,
   }) {
-    return _then(_$HistoryRequestModelImpl(
-      historyId: null == historyId
-          ? _value.historyId
-          : historyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      metaData: null == metaData
-          ? _value.metaData
-          : metaData // ignore: cast_nullable_to_non_nullable
-              as HistoryMetaModel,
-      httpRequestModel: freezed == httpRequestModel
-          ? _value.httpRequestModel
-          : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel?,
-      aiRequestModel: freezed == aiRequestModel
-          ? _value.aiRequestModel
-          : aiRequestModel // ignore: cast_nullable_to_non_nullable
-              as AIRequestModel?,
-      httpResponseModel: null == httpResponseModel
-          ? _value.httpResponseModel
-          : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel,
-      preRequestScript: freezed == preRequestScript
-          ? _value.preRequestScript
-          : preRequestScript // ignore: cast_nullable_to_non_nullable
-              as String?,
-      postRequestScript: freezed == postRequestScript
-          ? _value.postRequestScript
-          : postRequestScript // ignore: cast_nullable_to_non_nullable
-              as String?,
-      authModel: freezed == authModel
-          ? _value.authModel
-          : authModel // ignore: cast_nullable_to_non_nullable
-              as AuthModel?,
-    ));
+    return _then(
+      _$HistoryRequestModelImpl(
+        historyId: null == historyId
+            ? _value.historyId
+            : historyId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        metaData: null == metaData
+            ? _value.metaData
+            : metaData // ignore: cast_nullable_to_non_nullable
+                  as HistoryMetaModel,
+        httpRequestModel: freezed == httpRequestModel
+            ? _value.httpRequestModel
+            : httpRequestModel // ignore: cast_nullable_to_non_nullable
+                  as HttpRequestModel?,
+        aiRequestModel: freezed == aiRequestModel
+            ? _value.aiRequestModel
+            : aiRequestModel // ignore: cast_nullable_to_non_nullable
+                  as AIRequestModel?,
+        httpResponseModel: null == httpResponseModel
+            ? _value.httpResponseModel
+            : httpResponseModel // ignore: cast_nullable_to_non_nullable
+                  as HttpResponseModel,
+        preRequestScript: freezed == preRequestScript
+            ? _value.preRequestScript
+            : preRequestScript // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        postRequestScript: freezed == postRequestScript
+            ? _value.postRequestScript
+            : postRequestScript // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        authModel: freezed == authModel
+            ? _value.authModel
+            : authModel // ignore: cast_nullable_to_non_nullable
+                  as AuthModel?,
+      ),
+    );
   }
 }
 
@@ -278,15 +289,16 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _$HistoryRequestModelImpl implements _HistoryRequestModel {
-  const _$HistoryRequestModelImpl(
-      {required this.historyId,
-      required this.metaData,
-      this.httpRequestModel,
-      this.aiRequestModel,
-      required this.httpResponseModel,
-      this.preRequestScript,
-      this.postRequestScript,
-      this.authModel});
+  const _$HistoryRequestModelImpl({
+    required this.historyId,
+    required this.metaData,
+    this.httpRequestModel,
+    this.aiRequestModel,
+    required this.httpResponseModel,
+    this.preRequestScript,
+    this.postRequestScript,
+    this.authModel,
+  });
 
   factory _$HistoryRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryRequestModelImplFromJson(json);
@@ -339,15 +351,16 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      historyId,
-      metaData,
-      httpRequestModel,
-      aiRequestModel,
-      httpResponseModel,
-      preRequestScript,
-      postRequestScript,
-      authModel);
+    runtimeType,
+    historyId,
+    metaData,
+    httpRequestModel,
+    aiRequestModel,
+    httpResponseModel,
+    preRequestScript,
+    postRequestScript,
+    authModel,
+  );
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -356,26 +369,27 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   @pragma('vm:prefer-inline')
   _$$HistoryRequestModelImplCopyWith<_$HistoryRequestModelImpl> get copyWith =>
       __$$HistoryRequestModelImplCopyWithImpl<_$HistoryRequestModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$HistoryRequestModelImplToJson(
-      this,
-    );
+    return _$$HistoryRequestModelImplToJson(this);
   }
 }
 
 abstract class _HistoryRequestModel implements HistoryRequestModel {
-  const factory _HistoryRequestModel(
-      {required final String historyId,
-      required final HistoryMetaModel metaData,
-      final HttpRequestModel? httpRequestModel,
-      final AIRequestModel? aiRequestModel,
-      required final HttpResponseModel httpResponseModel,
-      final String? preRequestScript,
-      final String? postRequestScript,
-      final AuthModel? authModel}) = _$HistoryRequestModelImpl;
+  const factory _HistoryRequestModel({
+    required final String historyId,
+    required final HistoryMetaModel metaData,
+    final HttpRequestModel? httpRequestModel,
+    final AIRequestModel? aiRequestModel,
+    required final HttpResponseModel httpResponseModel,
+    final String? preRequestScript,
+    final String? postRequestScript,
+    final AuthModel? authModel,
+  }) = _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
       _$HistoryRequestModelImpl.fromJson;

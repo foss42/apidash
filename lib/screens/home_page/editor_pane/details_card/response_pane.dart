@@ -10,20 +10,23 @@ class ResponsePane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isWorking = ref.watch(
-            selectedRequestModelProvider.select((value) => value?.isWorking)) ??
+    final isWorking =
+        ref.watch(
+          selectedRequestModelProvider.select((value) => value?.isWorking),
+        ) ??
         false;
     final startSendingTime = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.sendingTime));
+      selectedRequestModelProvider.select((value) => value?.sendingTime),
+    );
     final responseStatus = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.responseStatus));
-    final message = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.message));
+      selectedRequestModelProvider.select((value) => value?.responseStatus),
+    );
+    final message = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.message),
+    );
 
     if (isWorking) {
-      return SendingWidget(
-        startSendingTime: startSendingTime,
-      );
+      return SendingWidget(startSendingTime: startSendingTime);
     }
     if (responseStatus == null) {
       return const NotSentWidget();
@@ -35,9 +38,7 @@ class ResponsePane extends ConsumerWidget {
               icon: Icons.cancel,
               showIssueButton: false,
             )
-          : ErrorMessage(
-              message: '$message. $kUnexpectedRaiseIssue',
-            );
+          : ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
     }
     return const ResponseDetails();
   }
@@ -49,11 +50,14 @@ class ResponseDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final responseStatus = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.responseStatus));
-    final message = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.message));
-    final responseModel = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpResponseModel));
+      selectedRequestModelProvider.select((value) => value?.responseStatus),
+    );
+    final message = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.message),
+    );
+    final responseModel = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.httpResponseModel),
+    );
 
     return Column(
       children: [
@@ -65,9 +69,7 @@ class ResponseDetails extends ConsumerWidget {
             ref.read(collectionStateNotifierProvider.notifier).clearResponse();
           },
         ),
-        const Expanded(
-          child: ResponseTabs(),
-        ),
+        const Expanded(child: ResponseTabs()),
       ],
     );
   }
@@ -81,10 +83,7 @@ class ResponseTabs extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     return ResponseTabView(
       selectedId: selectedId,
-      children: const [
-        ResponseBodyTab(),
-        ResponseHeadersTab(),
-      ],
+      children: const [ResponseBodyTab(), ResponseHeadersTab()],
     );
   }
 }
@@ -95,9 +94,7 @@ class ResponseBodyTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedRequestModel = ref.watch(selectedRequestModelProvider);
-    return ResponseBody(
-      selectedRequestModel: selectedRequestModel,
-    );
+    return ResponseBody(selectedRequestModel: selectedRequestModel);
   }
 }
 
@@ -107,16 +104,20 @@ class ResponseHeadersTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final requestHeaders =
-        ref.watch(selectedRequestModelProvider.select((value) {
-              return value?.httpResponseModel!.requestHeaders;
-            })) ??
-            {};
+        ref.watch(
+          selectedRequestModelProvider.select((value) {
+            return value?.httpResponseModel!.requestHeaders;
+          }),
+        ) ??
+        {};
 
     final responseHeaders =
-        ref.watch(selectedRequestModelProvider.select((value) {
-              return value?.httpResponseModel!.headers;
-            })) ??
-            {};
+        ref.watch(
+          selectedRequestModelProvider.select((value) {
+            return value?.httpResponseModel!.headers;
+          }),
+        ) ??
+        {};
 
     return ResponseHeaders(
       responseHeaders: responseHeaders,

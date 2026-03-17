@@ -27,10 +27,7 @@ class SDUIWidget extends StatelessWidget {
         children: [
           Text(
             "Different Dog Breeds",
-            style: TextStyle(
-              color: const Color(0xFFFF00),
-              fontSize: 30.0,
-            ),
+            style: TextStyle(color: const Color(0xFFFF00), fontSize: 30.0),
           ),
           Expanded(
             child: GridView.count(

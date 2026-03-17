@@ -29,27 +29,20 @@ class CustomMarkdown extends StatelessWidget {
       data: data,
       selectable: true,
       extensionSet: md.ExtensionSet.gitHubFlavored,
-      onTapLink: onTapLink ??
+      onTapLink:
+          onTapLink ??
           (text, href, title) {
             launchUrl(Uri.parse(href ?? ""));
           },
-      builders: {
-        "inlineButton": InlineButton(),
-      },
-      inlineSyntaxes: [
-        InlineButtonSyntax(),
-      ],
-      blockSyntaxes: const [
-        SpacerSyntax(),
-      ],
+      builders: {"inlineButton": InlineButton()},
+      inlineSyntaxes: [InlineButtonSyntax()],
+      blockSyntaxes: const [SpacerSyntax()],
     );
   }
 }
 
 class InlineButtonSyntax extends md.InlineSyntax {
-  InlineButtonSyntax({
-    String pattern = r'~`(.*?)`~',
-  }) : super(pattern);
+  InlineButtonSyntax({String pattern = r'~`(.*?)`~'}) : super(pattern);
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
@@ -70,26 +63,15 @@ class InlineButton extends MarkdownElementBuilder {
       case "star on github":
         return SizedBox(
           height: 24,
-          child: RepoButton(
-            text: txt,
-            icon: Icons.star,
-          ),
+          child: RepoButton(text: txt, icon: Icons.star),
         );
       case "github repo":
         return SizedBox(
           height: 24,
-          child: RepoButton(
-            text: txt,
-            icon: Icons.code_rounded,
-          ),
+          child: RepoButton(text: txt, icon: Icons.code_rounded),
         );
       case "discord server":
-        return SizedBox(
-          height: 24,
-          child: DiscordButton(
-            text: txt,
-          ),
-        );
+        return SizedBox(height: 24, child: DiscordButton(text: txt));
       default:
         return const SizedBox();
     }

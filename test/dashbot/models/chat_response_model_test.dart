@@ -5,10 +5,14 @@ import 'package:test/test.dart';
 void main() {
   group('ChatResponse equality & copyWith', () {
     test('equality & hashCode', () {
-      const r1 =
-          ChatResponse(content: 'Hi', messageType: ChatMessageType.general);
-      const r2 =
-          ChatResponse(content: 'Hi', messageType: ChatMessageType.general);
+      const r1 = ChatResponse(
+        content: 'Hi',
+        messageType: ChatMessageType.general,
+      );
+      const r2 = ChatResponse(
+        content: 'Hi',
+        messageType: ChatMessageType.general,
+      );
       expect(r1, r2);
       expect(r1.hashCode, r2.hashCode);
       expect(r1.toString(), contains('ChatResponse'));

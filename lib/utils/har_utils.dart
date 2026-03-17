@@ -9,23 +9,24 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<Map<String, dynamic>> collectionToHAR(
-    List<RequestModel>? collection) async {
+  List<RequestModel>? collection,
+) async {
   Map<String, dynamic> harJson = {
     "log": {
       "creator": {
         "comment": "For support, check out API Dash repo - $kGitUrl",
         "version": (await PackageInfo.fromPlatform()).version,
-        "name": "API Dash"
+        "name": "API Dash",
       },
       "entries": <Map<String, dynamic>>[],
       "comment": "",
       "browser": {
         "version": (await PackageInfo.fromPlatform()).version,
         "comment": "",
-        "name": "API Dash"
+        "name": "API Dash",
       },
-      "version": "1.2"
-    }
+      "version": "1.2",
+    },
   };
 
   if (collection != null) {
@@ -51,7 +52,7 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
       "receive": 0,
       "send": 0,
       "wait": 0,
-      "ssl": -1
+      "ssl": -1,
     },
     "response": {
       "status": 200,
@@ -63,7 +64,7 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
       "redirectURL": "",
       "headersSize": 0,
       "bodySize": 0,
-      "comment": ""
+      "comment": "",
     },
     "request": requestModel.httpRequestModel != null
         ? requestModelToHARJsonRequest(
@@ -71,7 +72,7 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
             exportMode: true,
           )
         : {},
-    "cache": {}
+    "cache": {},
   };
   return entryJson;
 }
@@ -155,16 +156,18 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    var headersList =
-        useEnabled ? requestModel.enabledHeaders : requestModel.headers;
+    var headersList = useEnabled
+        ? requestModel.enabledHeaders
+        : requestModel.headers;
     if (headersList != null || hasBody) {
-      var headers =
-          useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;
+      var headers = useEnabled
+          ? requestModel.enabledHeadersMap
+          : requestModel.headersMap;
       if (headers.isNotEmpty || hasBody) {
         if (hasBody && !requestModel.hasContentTypeHeader) {
           var m = {
             "name": kHeaderContentType,
-            "value": json["postData"]["mimeType"]
+            "value": json["postData"]["mimeType"],
           };
           if (exportMode) {
             m["comment"] = "";
@@ -184,8 +187,9 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       json["comment"] = "";
       json["cookies"] = [];
       json["headersSize"] = -1;
-      json["bodySize"] =
-          hasBody ? utf8.encode(json["postData"]["text"] ?? "").length : 0;
+      json["bodySize"] = hasBody
+          ? utf8.encode(json["postData"]["text"] ?? "").length
+          : 0;
     }
   }
   return json;

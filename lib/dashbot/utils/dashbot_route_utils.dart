@@ -8,7 +8,8 @@ import '../routes/dashbot_routes.dart';
 ///   statusCode or responseStatus present).
 /// - Otherwise returns [DashbotRoutes.dashbotDefault].
 String computeDashbotBaseRoute(RequestModel? req) {
-  final hasResponse = (req?.httpResponseModel?.statusCode != null) ||
+  final hasResponse =
+      (req?.httpResponseModel?.statusCode != null) ||
       (req?.responseStatus != null);
   return hasResponse ? DashbotRoutes.dashbotHome : DashbotRoutes.dashbotDefault;
 }

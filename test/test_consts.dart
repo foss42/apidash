@@ -580,5 +580,5 @@ Uint8List kBodyBytesJpeg = Uint8List.fromList([
   235,
   191,
   255,
-  217
+  217,
 ]);

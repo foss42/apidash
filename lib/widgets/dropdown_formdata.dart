@@ -3,11 +3,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
 class DropdownButtonFormData extends StatelessWidget {
-  const DropdownButtonFormData({
-    super.key,
-    this.formDataType,
-    this.onChanged,
-  });
+  const DropdownButtonFormData({super.key, this.formDataType, this.onChanged});
 
   final FormDataType? formDataType;
   final void Function(FormDataType?)? onChanged;

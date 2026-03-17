@@ -32,8 +32,9 @@ class ApidashTestHelper {
     return _envHelper!;
   }
 
-  static Future<IntegrationTestWidgetsFlutterBinding> initialize(
-      {Size? size}) async {
+  static Future<IntegrationTestWidgetsFlutterBinding> initialize({
+    Size? size,
+  }) async {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
     binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
 
@@ -50,17 +51,20 @@ class ApidashTestHelper {
         overrides: [
           settingsProvider.overrideWith(
             (ref) => ThemeStateNotifier(
-                settingsModel: const SettingsModel()
-                    .copyWithPath(workspaceFolderPath: "test")),
-          )
+              settingsModel: const SettingsModel().copyWithPath(
+                workspaceFolderPath: "test",
+              ),
+            ),
+          ),
         ],
         child: const DashApp(),
       ),
     );
   }
 
-  Future<void> navigateToRequestEditor(
-      {GlobalKey<ScaffoldState>? scaffoldKey}) async {
+  Future<void> navigateToRequestEditor({
+    GlobalKey<ScaffoldState>? scaffoldKey,
+  }) async {
     if (scaffoldKey != null) {
       scaffoldKey.currentState!.openDrawer();
       await tester.pumpAndSettle();
@@ -69,8 +73,9 @@ class ApidashTestHelper {
     await tester.pumpAndSettle();
   }
 
-  Future<void> navigateToEnvironmentManager(
-      {GlobalKey<ScaffoldState>? scaffoldKey}) async {
+  Future<void> navigateToEnvironmentManager({
+    GlobalKey<ScaffoldState>? scaffoldKey,
+  }) async {
     if (scaffoldKey != null) {
       scaffoldKey.currentState!.openDrawer();
       await tester.pumpAndSettle();
@@ -79,8 +84,9 @@ class ApidashTestHelper {
     await tester.pumpAndSettle();
   }
 
-  Future<void> navigateToHistory(
-      {GlobalKey<ScaffoldState>? scaffoldKey}) async {
+  Future<void> navigateToHistory({
+    GlobalKey<ScaffoldState>? scaffoldKey,
+  }) async {
     if (scaffoldKey != null) {
       scaffoldKey.currentState!.openDrawer();
       await tester.pumpAndSettle();
@@ -89,8 +95,9 @@ class ApidashTestHelper {
     await tester.pumpAndSettle();
   }
 
-  Future<void> navigateToSettings(
-      {GlobalKey<ScaffoldState>? scaffoldKey}) async {
+  Future<void> navigateToSettings({
+    GlobalKey<ScaffoldState>? scaffoldKey,
+  }) async {
     if (scaffoldKey != null) {
       scaffoldKey.currentState!.openDrawer();
       await tester.pumpAndSettle();
@@ -100,9 +107,12 @@ class ApidashTestHelper {
   }
 
   Future<void> changeURIScheme(String scheme) async {
-    await tester.tap(find.descendant(
+    await tester.tap(
+      find.descendant(
         of: find.byType(DefaultUriSchemePopupMenu),
-        matching: find.byIcon(Icons.unfold_more)));
+        matching: find.byIcon(Icons.unfold_more),
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text(scheme).last);
@@ -110,9 +120,12 @@ class ApidashTestHelper {
   }
 
   Future<void> changeCodegenLanguage(CodegenLanguage language) async {
-    await tester.tap(find.descendant(
+    await tester.tap(
+      find.descendant(
         of: find.byType(CodegenPopupMenu),
-        matching: find.byIcon(Icons.unfold_more)));
+        matching: find.byIcon(Icons.unfold_more),
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text(language.label).last);
@@ -126,15 +139,12 @@ void apidashWidgetTest(
   double? width,
   Future<void> Function(WidgetTester, ApidashTestHelper) test,
 ) {
-  testWidgets(
-    description,
-    (widgetTester) async {
-      await ApidashTestHelper.initialize(
-          size: width != null ? Size(width, kMinWindowSize.height) : null);
-      await ApidashTestHelper.loadApp(widgetTester);
-      await test(widgetTester, ApidashTestHelper(widgetTester));
-      await clearSharedPrefs();
-    },
-    semanticsEnabled: false,
-  );
+  testWidgets(description, (widgetTester) async {
+    await ApidashTestHelper.initialize(
+      size: width != null ? Size(width, kMinWindowSize.height) : null,
+    );
+    await ApidashTestHelper.loadApp(widgetTester);
+    await test(widgetTester, ApidashTestHelper(widgetTester));
+    await clearSharedPrefs();
+  }, semanticsEnabled: false);
 }

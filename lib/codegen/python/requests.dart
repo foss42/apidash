@@ -74,13 +74,12 @@ print('Response Body:', response.text)
 
   String refactorHeaderString(String headerString) {
     return headerString.replaceAll(
-        '"$kStringFormDataContentType"', kStringFormDataContentType);
+      '"$kStringFormDataContentType"',
+      kStringFormDataContentType,
+    );
   }
 
-  String? getCode(
-    HttpRequestModel requestModel, {
-    String? boundary,
-  }) {
+  String? getCode(HttpRequestModel requestModel, {String? boundary}) {
     try {
       String result = "";
       bool hasQuery = false;
@@ -97,7 +96,7 @@ print('Response Body:', response.text)
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
-          'hasFormData': requestModel.hasFormData
+          'hasFormData': requestModel.hasFormData,
         });
 
         if (uri.hasQuery) {
@@ -115,26 +114,27 @@ print('Response Body:', response.text)
           List<String> formdataPayload = [];
           for (var item in requestModel.formDataList) {
             if (item.type == FormDataType.text) {
-              formdataPayload.add(jj.Template(kTemplateFormDataRowText).render({
-                "name": item.name,
-                "value": item.value,
-              }));
+              formdataPayload.add(
+                jj.Template(
+                  kTemplateFormDataRowText,
+                ).render({"name": item.name, "value": item.value}),
+              );
             }
             if (item.type == FormDataType.file) {
-              formdataPayload.add(jj.Template(kTemplateFormDataRowFile).render({
-                "name": item.name,
-                "filename": getFilenameFromPath(item.value),
-                "path": item.value,
-              }));
+              formdataPayload.add(
+                jj.Template(kTemplateFormDataRowFile).render({
+                  "name": item.name,
+                  "filename": getFilenameFromPath(item.value),
+                  "path": item.value,
+                }),
+              );
             }
           }
           var formDataBodyData = jj.Template(kTemplateFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "formdata_payload": formdataPayload.join("\n"),
-              "boundary": boundary ?? '',
-            },
-          );
+          result += formDataBodyData.render({
+            "formdata_payload": formdataPayload.join("\n"),
+            "boundary": boundary ?? '',
+          });
         } else if (requestModel.hasJsonData) {
           hasJsonBody = true;
           var templateBody = jj.Template(kTemplateJson);

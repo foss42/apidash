@@ -5,8 +5,9 @@ import 'package:apidash/widgets/markdown.dart';
 
 void main() {
   group('CustomMarkdown Widget Tests', () {
-    testWidgets('Testing CustomMarkdown buttons and tags renders',
-        (tester) async {
+    testWidgets('Testing CustomMarkdown buttons and tags renders', (
+      tester,
+    ) async {
       const markdown = CustomMarkdown(
         data: """Is a markdown ~`star on github`~ 
               
@@ -29,13 +30,16 @@ void main() {
       expect(find.text('#br'), findsNothing);
     });
 
-    testWidgets('CustomMarkdown renders correctly',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(
-        home: CustomMarkdown(
-          data: '# Hello World\nThis is some *markdown* text.',
+    testWidgets('CustomMarkdown renders correctly', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: CustomMarkdown(
+            data: '# Hello World\nThis is some *markdown* text.',
+          ),
         ),
-      ));
+      );
 
       final headlineTextFinder = find.text('Hello World');
       final markdownTextFinder = find.text('This is some markdown text.');
@@ -44,15 +48,18 @@ void main() {
       expect(markdownTextFinder, findsOneWidget);
     });
 
-    testWidgets('CustomMarkdown has proper text rendered',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: GestureDetector(
-          child: const CustomMarkdown(
-            data: '[Link Text](https://apidash.dev/)',
+    testWidgets('CustomMarkdown has proper text rendered', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: GestureDetector(
+            child: const CustomMarkdown(
+              data: '[Link Text](https://apidash.dev/)',
+            ),
           ),
         ),
-      ));
+      );
 
       await tester.tap(find.text('Link Text'));
       await tester.pump();
@@ -62,19 +69,22 @@ void main() {
       expect(find.text('https://apidash.dev/'), findsNothing);
     });
 
-    testWidgets('CustomMarkdown creates hyperlink',
-        (WidgetTester tester) async {
+    testWidgets('CustomMarkdown creates hyperlink', (
+      WidgetTester tester,
+    ) async {
       bool linkTapped = false;
-      await tester.pumpWidget(MaterialApp(
-        home: CustomMarkdown(
-          data: '[Link Text](https://apidash.dev/)',
-          onTapLink: (text, href, title) {
-            linkTapped = true;
-            expect(text, 'Link Text');
-            expect(href, 'https://apidash.dev/');
-          },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CustomMarkdown(
+            data: '[Link Text](https://apidash.dev/)',
+            onTapLink: (text, href, title) {
+              linkTapped = true;
+              expect(text, 'Link Text');
+              expect(href, 'https://apidash.dev/');
+            },
+          ),
         ),
-      ));
+      );
       expect(find.byType(Markdown), findsOneWidget);
       final markdownWidget = tester.widget<Markdown>(find.byType(Markdown));
       expect(markdownWidget.data, '[Link Text](https://apidash.dev/)');

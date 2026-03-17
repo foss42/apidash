@@ -9,7 +9,7 @@ class TestChatViewmodel extends ChatViewmodel {
 
   final List<ChatAction> applyAutoFixCalls = [];
   final List<({String text, ChatMessageType type, bool countAsUser})>
-      sendMessageCalls = [];
+  sendMessageCalls = [];
   final List<ChatAttachment> openApiAttachmentCalls = [];
 
   bool throwOnApplyAutoFix = false;

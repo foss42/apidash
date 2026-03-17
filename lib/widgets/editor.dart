@@ -30,8 +30,11 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
   void insertTab() {
     String sp = "  ";
     int offset = math.min(
-        controller.selection.baseOffset, controller.selection.extentOffset);
-    String text = controller.text.substring(0, offset) +
+      controller.selection.baseOffset,
+      controller.selection.extentOffset,
+    );
+    String text =
+        controller.text.substring(0, offset) +
         sp +
         controller.text.substring(offset);
     controller.value = TextEditingValue(

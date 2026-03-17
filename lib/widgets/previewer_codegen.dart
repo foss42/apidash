@@ -68,18 +68,13 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
               child: SingleChildScrollView(
                 controller: controllerV,
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     controller: controllerH,
                     child: SelectionArea(
                       child: Text.rich(
-                        TextSpan(
-                          children: spans,
-                          style: textStyle,
-                        ),
+                        TextSpan(children: spans, style: textStyle),
                         softWrap: false,
                       ),
                     ),
@@ -95,7 +90,10 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
 }
 
 List<TextSpan> generateSpans(
-    String code, String? language, Map<String, TextStyle> theme) {
+  String code,
+  String? language,
+  Map<String, TextStyle> theme,
+) {
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
   return spans;
@@ -121,15 +119,14 @@ class ViewCodePane extends StatelessWidget {
     final textContainerdecoration = BoxDecoration(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
       border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      ),
       borderRadius: kBorderRadius8,
     );
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        var showLabel = showButtonLabelsInViewCodePane(
-          constraints.maxWidth,
-        );
+        var showLabel = showButtonLabelsInViewCodePane(constraints.maxWidth);
         return Padding(
           padding: kP10,
           child: Column(
@@ -144,15 +141,9 @@ class ViewCodePane extends StatelessWidget {
                         onChanged: onChangedCodegenLanguage,
                       ),
                     ),
-                    CopyButton(
-                      toCopy: code,
-                      showLabel: showLabel,
-                    ),
+                    CopyButton(toCopy: code, showLabel: showLabel),
                     kIsMobile
-                        ? ShareButton(
-                            toShare: code,
-                            showLabel: showLabel,
-                          )
+                        ? ShareButton(toShare: code, showLabel: showLabel)
                         : SaveInDownloadsButton(
                             content: stringToBytes(code),
                             ext: codegenLanguage.ext,

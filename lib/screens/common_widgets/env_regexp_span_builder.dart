@@ -5,17 +5,19 @@ import 'envvar_span.dart';
 
 class EnvRegExpSpanBuilder extends RegExpSpecialTextSpanBuilder {
   @override
-  List<RegExpSpecialText> get regExps => <RegExpSpecialText>[
-        RegExpEnvText(),
-      ];
+  List<RegExpSpecialText> get regExps => <RegExpSpecialText>[RegExpEnvText()];
 }
 
 class RegExpEnvText extends RegExpSpecialText {
   @override
   RegExp get regExp => kEnvVarRegEx;
   @override
-  InlineSpan finishText(int start, Match match,
-      {TextStyle? textStyle, SpecialTextGestureTapCallback? onTap}) {
+  InlineSpan finishText(
+    int start,
+    Match match, {
+    TextStyle? textStyle,
+    SpecialTextGestureTapCallback? onTap,
+  }) {
     final String value = '${match[0]}';
     return ExtendedWidgetSpan(
       actualText: value,

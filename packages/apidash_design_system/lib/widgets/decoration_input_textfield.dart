@@ -22,7 +22,7 @@ InputDecoration getTextFieldInputDecoration(
           fontSize: hintTextFontSize,
           color: hintTextColor ?? clrScheme.outlineVariant,
         ),
-        suffixIcon: suffixIcon,
+    suffixIcon: suffixIcon,
     hintText: hintText,
     contentPadding: contentPadding ?? kP10,
     focusedBorder: OutlineInputBorder(

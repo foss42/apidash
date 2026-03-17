@@ -18,9 +18,7 @@ class cURLCodeGen {
   --data '{{body}}'
 """;
 
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
 
@@ -34,7 +32,7 @@ class cURLCodeGen {
         "method": switch (harJson["method"]) {
           "GET" => "",
           "HEAD" => " --head",
-          _ => " --request ${harJson["method"]} \\\n "
+          _ => " --request ${harJson["method"]} \\\n ",
         },
         "url": harJson["url"],
       });
@@ -46,8 +44,10 @@ class cURLCodeGen {
             continue;
           }
           var templateHeader = jj.Template(kTemplateHeader);
-          result += templateHeader
-              .render({"name": item["name"], "value": item["value"]});
+          result += templateHeader.render({
+            "name": item["name"],
+            "value": item["value"],
+          });
         }
       }
 

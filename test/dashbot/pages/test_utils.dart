@@ -7,7 +7,7 @@ class SpyChatViewmodel extends ChatViewmodel {
   SpyChatViewmodel(super.ref);
 
   final List<({String text, ChatMessageType type, bool countAsUser})>
-      sendMessageCalls = [];
+  sendMessageCalls = [];
 
   bool clearCalled = false;
   List<ChatMessage> _messages = const [];

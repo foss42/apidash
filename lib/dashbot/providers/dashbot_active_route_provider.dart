@@ -56,6 +56,6 @@ class DashbotActiveRouteNotifier extends Notifier<String> {
 
 final dashbotActiveRouteProvider =
     NotifierProvider<DashbotActiveRouteNotifier, String>(
-  () => DashbotActiveRouteNotifier(),
-  name: 'dashbotActiveRouteProvider',
-);
+      () => DashbotActiveRouteNotifier(),
+      name: 'dashbotActiveRouteProvider',
+    );

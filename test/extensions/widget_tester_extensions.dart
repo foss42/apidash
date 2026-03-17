@@ -31,7 +31,9 @@ extension PumpUntilFound on WidgetTester {
   }) async {
     bool found = false;
     final timer = Timer(
-        timeout, () => throw TimeoutException("Pump until has timed out"));
+      timeout,
+      () => throw TimeoutException("Pump until has timed out"),
+    );
     while (found != true) {
       await pump();
       found = any(finder);

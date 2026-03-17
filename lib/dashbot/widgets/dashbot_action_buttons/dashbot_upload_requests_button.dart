@@ -32,11 +32,15 @@ class DashbotUploadRequestButton extends ConsumerWidget
           }
         }
         final file = await openFile(
-            acceptedTypeGroups:
-                types.isEmpty ? [const XTypeGroup(label: 'Any')] : types);
+          acceptedTypeGroups: types.isEmpty
+              ? [const XTypeGroup(label: 'Any')]
+              : types,
+        );
         if (file == null) return;
         final bytes = await file.readAsBytes();
-        final att = ref.read(attachmentsProvider.notifier).add(
+        final att = ref
+            .read(attachmentsProvider.notifier)
+            .add(
               name: file.name,
               mimeType: file.mimeType ?? 'application/octet-stream',
               data: bytes,
@@ -46,7 +50,9 @@ class DashbotUploadRequestButton extends ConsumerWidget
               .read(chatViewmodelProvider.notifier)
               .handleOpenApiAttachment(att);
         } else {
-          ref.read(chatViewmodelProvider.notifier).sendMessage(
+          ref
+              .read(chatViewmodelProvider.notifier)
+              .sendMessage(
                 text:
                     'Attached file ${att.name} (id=${att.id}, mime=${att.mimeType}, size=${att.sizeBytes}). You can request its content if needed.',
                 type: ChatMessageType.general,

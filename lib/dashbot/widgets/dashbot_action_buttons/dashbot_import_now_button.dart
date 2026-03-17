@@ -22,8 +22,9 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
         try {
           OpenApi? spec;
           String? sourceName;
-          final overlayNotifier =
-              ref.read(dashbotWindowNotifierProvider.notifier);
+          final overlayNotifier = ref.read(
+            dashbotWindowNotifierProvider.notifier,
+          );
           final chatNotifier = ref.read(chatViewmodelProvider.notifier);
           if (action.value is Map<String, dynamic>) {
             final map = action.value as Map<String, dynamic>;
@@ -31,8 +32,9 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
             if (map['spec'] is OpenApi) {
               spec = map['spec'] as OpenApi;
             } else if (map['content'] is String) {
-              spec =
-                  OpenApiImportService.tryParseSpec(map['content'] as String);
+              spec = OpenApiImportService.tryParseSpec(
+                map['content'] as String,
+              );
             }
           }
           if (spec == null) return;
@@ -57,16 +59,18 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
             log("SorceName: $sourceName");
             payload['sourceName'] =
                 (sourceName != null && sourceName.trim().isNotEmpty)
-                    ? sourceName
-                    : spec.info.title;
-            await chatNotifier.applyAutoFix(ChatAction.fromJson({
-              'action': 'apply_openapi',
-              'actionType': 'apply_openapi',
-              'target': 'httpRequestModel',
-              'targetType': 'httpRequestModel',
-              'field': 'apply_to_new',
-              'value': payload,
-            }));
+                ? sourceName
+                : spec.info.title;
+            await chatNotifier.applyAutoFix(
+              ChatAction.fromJson({
+                'action': 'apply_openapi',
+                'actionType': 'apply_openapi',
+                'target': 'httpRequestModel',
+                'targetType': 'httpRequestModel',
+                'field': 'apply_to_new',
+                'value': payload,
+              }),
+            );
           }
         } catch (_) {}
       },

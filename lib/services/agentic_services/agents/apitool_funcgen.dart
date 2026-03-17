@@ -25,8 +25,6 @@ class APIToolFunctionGenerator extends AIAgent {
         .replaceAll('```javascript\n', '')
         .replaceAll('```', '');
 
-    return {
-      'FUNC': validatedResponse,
-    };
+    return {'FUNC': validatedResponse};
   }
 }

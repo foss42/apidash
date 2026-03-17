@@ -16,8 +16,9 @@ class ApidashTestEnvHelper {
       kEnvScaffoldKey.currentState!.openDrawer();
       await tester.pumpAndSettle();
     }
-    final newEnvButton =
-        spot<EnvironmentsPane>().spot<ElevatedButton>().spotText(kLabelPlusNew);
+    final newEnvButton = spot<EnvironmentsPane>()
+        .spot<ElevatedButton>()
+        .spotText(kLabelPlusNew);
     newEnvButton.existsOnce();
     await act.tap(newEnvButton);
     await tester.pumpAndSettle();
@@ -26,10 +27,14 @@ class ApidashTestEnvHelper {
   Future<void> renameNewEnvironment(String newEnvName) async {
     Finder envItems = find.byType(EnvironmentItem);
     Finder newEnvItem = envItems.at(1);
-    expect(find.descendant(of: newEnvItem, matching: find.text(kUntitled)),
-        findsOneWidget);
-    Finder itemCardMenu =
-        find.descendant(of: newEnvItem, matching: find.byType(ItemCardMenu));
+    expect(
+      find.descendant(of: newEnvItem, matching: find.text(kUntitled)),
+      findsOneWidget,
+    );
+    Finder itemCardMenu = find.descendant(
+      of: newEnvItem,
+      matching: find.byType(ItemCardMenu),
+    );
     await tester.tap(itemCardMenu);
     await tester.pumpAndSettle();
 
@@ -41,31 +46,38 @@ class ApidashTestEnvHelper {
   }
 
   Future<void> addEnvironmentVariables(
-      List<(String, String)> keyValuePairs) async {
+    List<(String, String)> keyValuePairs,
+  ) async {
     var envCells = find.descendant(
-        of: find.byType(EditEnvironmentVariables),
-        matching: find.byType(CellField));
+      of: find.byType(EditEnvironmentVariables),
+      matching: find.byType(CellField),
+    );
     for (var i = 0; i < keyValuePairs.length; i++) {
       await tester.enterText(envCells.at(i * 2), keyValuePairs[i].$1);
       await tester.enterText(envCells.at(i * 2 + 1), keyValuePairs[i].$2);
       envCells = find.descendant(
-          of: find.byType(EditEnvironmentVariables),
-          matching: find.byType(CellField));
+        of: find.byType(EditEnvironmentVariables),
+        matching: find.byType(CellField),
+      );
     }
   }
 
   Future<void> deleteFirstEnvironmentVariable() async {
     final delButtons = find.descendant(
-        of: find.byType(EditEnvironmentVariables),
-        matching: find.byIcon(Icons.remove_circle));
+      of: find.byType(EditEnvironmentVariables),
+      matching: find.byIcon(Icons.remove_circle),
+    );
     await tester.tap(delButtons.at(0));
     await tester.pump();
   }
 
   Future<void> setActiveEnvironment(String envName) async {
-    await tester.tap(find.descendant(
+    await tester.tap(
+      find.descendant(
         of: find.byType(EnvironmentPopupMenu),
-        matching: find.byIcon(Icons.unfold_more)));
+        matching: find.byIcon(Icons.unfold_more),
+      ),
+    );
     await tester.pumpAndSettle();
 
     await tester.tap(find.text(envName).last);

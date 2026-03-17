@@ -6,9 +6,7 @@ import 'markdown.dart';
 import 'error_message.dart';
 
 class IntroMessage extends StatelessWidget {
-  const IntroMessage({
-    super.key,
-  });
+  const IntroMessage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +33,7 @@ class IntroMessage extends StatelessWidget {
 
           text = text.replaceAll("{{version}}", version);
 
-          return CustomMarkdown(
-            data: text,
-            padding: EdgeInsets.zero,
-          );
+          return CustomMarkdown(data: text, padding: EdgeInsets.zero);
         }
         return const Center(child: CircularProgressIndicator());
       },

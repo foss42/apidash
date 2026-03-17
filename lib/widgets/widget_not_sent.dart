@@ -11,15 +11,12 @@ class NotSentWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.north_east_rounded,
-            size: 40,
-            color: color,
-          ),
+          Icon(Icons.north_east_rounded, size: 40, color: color),
           Text(
             kLabelNotSent,
-            style:
-                Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: color),
           ),
         ],
       ),

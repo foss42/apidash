@@ -102,8 +102,9 @@ class Program
         result += kStringInit;
 
         jj.Template templateInitClient = jj.Template(kInitClientTemplate);
-        String initClient = templateInitClient
-            .render({"baseUrl": "${uri.scheme}://${uri.authority}"});
+        String initClient = templateInitClient.render({
+          "baseUrl": "${uri.scheme}://${uri.authority}",
+        });
         result += initClient;
 
         jj.Template templateMethodType = jj.Template(kMethodTypeTemplate);
@@ -119,8 +120,10 @@ class Program
             jj.Template templateParams = jj.Template(kTemplateParams);
             String paramsResult = "";
             for (var item in params.entries) {
-              paramsResult += templateParams
-                  .render({"param": item.key, "value": item.value});
+              paramsResult += templateParams.render({
+                "param": item.key,
+                "value": item.value,
+              });
             }
             result += "$paramsResult\n";
           }
@@ -138,8 +141,10 @@ class Program
             jj.Template templateHeaders = jj.Template(kTemplateHeaders);
             String headersResult = "";
             for (var item in headers.entries) {
-              headersResult += templateHeaders
-                  .render({"header": item.key, "value": item.value});
+              headersResult += templateHeaders.render({
+                "header": item.key,
+                "value": item.value,
+              });
             }
             result += "$headersResult\n";
           }
@@ -152,7 +157,7 @@ class Program
             formDataResult += templateFormData.render({
               "name": data["name"],
               "value": data["value"],
-              "type": data["type"]
+              "type": data["type"],
             });
           }
           result += kStringFormDataOption;
@@ -177,8 +182,9 @@ class Program
 
         if (requestModel.hasTextData) {
           jj.Template templateTextData = jj.Template(kTemplateTextData);
-          result += templateTextData
-              .render({"textData": jsonEncode(requestModel.body)});
+          result += templateTextData.render({
+            "textData": jsonEncode(requestModel.body),
+          });
         }
 
         result += kStringEnd;

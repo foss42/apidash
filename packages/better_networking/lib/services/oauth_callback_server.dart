@@ -139,14 +139,11 @@ class OAuthCallbackServer {
     _timeoutTimer = null;
 
     // Close the server without waiting
-    _server
-        ?.close(force: true)
-        .then((_) {
-          log('OAuth callback server forcefully stopped due to error');
-        })
-        .catchError((error) {
-          log('Error while force-stopping server: $error');
-        });
+    _server?.close(force: true).then((_) {
+      log('OAuth callback server forcefully stopped due to error');
+    }).catchError((error) {
+      log('Error while force-stopping server: $error');
+    });
 
     _server = null;
   }
@@ -175,8 +172,7 @@ class OAuthCallbackServer {
 
       if (hasError) {
         final error = uri.queryParameters['error'] ?? 'unknown_error';
-        final errorDescription =
-            uri.queryParameters['error_description'] ??
+        final errorDescription = uri.queryParameters['error_description'] ??
             'No description provided';
         responseHtml = _generateErrorHtml(error, errorDescription);
 

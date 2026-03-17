@@ -57,15 +57,13 @@ class SidebarRequestCard extends StatelessWidget {
       triggerMode: TooltipTriggerMode.manual,
       waitDuration: const Duration(seconds: 1),
       child: Card(
-        shape: const RoundedRectangleBorder(
-          borderRadius: kBorderRadius8,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: kBorderRadius8),
         elevation: isSelected ? 1 : 0,
         surfaceTintColor: isSelected ? surfaceTint : null,
         color: isSelected
             ? Theme.of(context).colorScheme.brightness == Brightness.dark
-                ? colorVariant
-                : color
+                  ? colorVariant
+                  : color
             : color,
         margin: EdgeInsets.zero,
         child: InkWell(
@@ -89,10 +87,7 @@ class SidebarRequestCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  SidebarRequestCardTextBox(
-                    apiType: apiType,
-                    method: method,
-                  ),
+                  SidebarRequestCardTextBox(apiType: apiType, method: method),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode
@@ -127,9 +122,7 @@ class SidebarRequestCard extends StatelessWidget {
                     visible: isSelected && !inEditMode,
                     child: SizedBox(
                       width: 28,
-                      child: ItemCardMenu(
-                        onSelected: onMenuSelected,
-                      ),
+                      child: ItemCardMenu(onSelected: onMenuSelected),
                     ),
                   ),
                 ],

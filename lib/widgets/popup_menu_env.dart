@@ -24,14 +24,17 @@ class EnvironmentPopupMenu extends StatelessWidget {
       value: value == null
           ? "Select Env."
           : value?.id == kGlobalEnvironmentId
-              ? "Global"
-              : getEnvironmentTitle(value?.name),
-      values: options?.map((e) => (
-                e,
-                (e.id == kGlobalEnvironmentId)
-                    ? "Global"
-                    : getEnvironmentTitle(e.name).clip(30)
-              )) ??
+          ? "Global"
+          : getEnvironmentTitle(value?.name),
+      values:
+          options?.map(
+            (e) => (
+              e,
+              (e.id == kGlobalEnvironmentId)
+                  ? "Global"
+                  : getEnvironmentTitle(e.name).clip(30),
+            ),
+          ) ??
           [],
       width: width,
       tooltip: "Select Environment",

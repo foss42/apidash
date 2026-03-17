@@ -35,27 +35,25 @@ class ResponsePaneHeader extends StatelessWidget {
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontFamily: kCodeStyle.fontFamily,
-                      color: getResponseStatusCodeColor(
-                        responseStatus,
-                        brightness: Theme.of(context).brightness,
-                      ),
-                    ),
+                  fontFamily: kCodeStyle.fontFamily,
+                  color: getResponseStatusCodeColor(
+                    responseStatus,
+                    brightness: Theme.of(context).brightness,
+                  ),
+                ),
               ),
             ),
             kHSpacer10,
             Text(
               humanizeDuration(time),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontFamily: kCodeStyle.fontFamily,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+                fontFamily: kCodeStyle.fontFamily,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
             kHSpacer10,
             showClearButton
-                ? ClearResponseButton(
-                    onPressed: onClearResponse,
-                  )
+                ? ClearResponseButton(onPressed: onClearResponse)
                 : const SizedBox.shrink(),
           ],
         ),

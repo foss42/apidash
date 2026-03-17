@@ -34,9 +34,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotSelectOperationButton(action: action),
-            ),
+            home: Scaffold(body: DashbotSelectOperationButton(action: action)),
           ),
         ),
       );
@@ -49,8 +47,9 @@ void main() {
       expect(notifier.applyAutoFixCalls.single, same(action));
     });
 
-    testWidgets('falls back to Unknown label when path missing',
-        (tester) async {
+    testWidgets('falls back to Unknown label when path missing', (
+      tester,
+    ) async {
       const action = ChatAction(
         action: 'select_operation',
         target: 'httpRequestModel',
@@ -66,9 +65,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotSelectOperationButton(action: action),
-            ),
+            home: Scaffold(body: DashbotSelectOperationButton(action: action)),
           ),
         ),
       );

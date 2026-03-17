@@ -19,12 +19,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 2', () {
@@ -42,12 +43,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 3', () {
@@ -65,12 +67,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 4', () {
@@ -92,12 +95,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 5', () {
@@ -115,12 +119,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 6', () {
@@ -142,12 +147,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 7', () {
@@ -161,12 +167,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 8', () {
@@ -188,12 +195,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 9', () {
@@ -212,12 +220,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 10', () {
@@ -235,12 +244,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 11', () {
@@ -263,12 +273,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 12', () {
@@ -282,12 +293,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -303,12 +315,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('HEAD 2', () {
@@ -322,12 +335,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -351,12 +365,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 2', () {
@@ -379,12 +394,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 3', () {
@@ -406,12 +422,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 4', () {
@@ -436,12 +453,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 5', () {
@@ -467,12 +485,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 6', () {
@@ -496,12 +515,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 7', () {
@@ -525,12 +545,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 8', () {
@@ -560,12 +581,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 9', () {
@@ -596,12 +618,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPost9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -622,12 +645,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -648,12 +672,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -669,12 +694,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('DELETE 2', () {
@@ -693,12 +719,13 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonRequests,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

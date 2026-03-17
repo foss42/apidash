@@ -13,10 +13,7 @@ void main() {
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.light),
         home: Scaffold(
-          body: SidebarRequestCardTextBox(
-            apiType: apiType,
-            method: methodGet,
-          ),
+          body: SidebarRequestCardTextBox(apiType: apiType, method: methodGet),
         ),
       ),
     );
@@ -24,8 +21,9 @@ void main() {
     expect(find.byType(SizedBox), findsOneWidget);
     expect(find.text('GET'), findsOneWidget);
     expect(find.text('DEL'), findsNothing);
-    final getTextWithColor = find.byWidgetPredicate((widget) =>
-        widget is Text && widget.style!.color == kColorHttpMethodGet);
+    final getTextWithColor = find.byWidgetPredicate(
+      (widget) => widget is Text && widget.style!.color == kColorHttpMethodGet,
+    );
     expect(getTextWithColor, findsOneWidget);
   });
 
@@ -37,10 +35,7 @@ void main() {
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.dark),
         home: Scaffold(
-          body: SidebarRequestCardTextBox(
-            apiType: apiType,
-            method: methodDel,
-          ),
+          body: SidebarRequestCardTextBox(apiType: apiType, method: methodDel),
         ),
       ),
     );
@@ -50,7 +45,8 @@ void main() {
     expect(find.text('GET'), findsNothing);
     Color colDelDarkMode = kColorHttpMethodDelete.toDark;
     final delTextWithColor = find.byWidgetPredicate(
-        (widget) => widget is Text && widget.style!.color == colDelDarkMode);
+      (widget) => widget is Text && widget.style!.color == colDelDarkMode,
+    );
     expect(delTextWithColor, findsOneWidget);
   });
 
@@ -61,10 +57,7 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
-          body: StatusCode(
-            statusCode: testStatusCode,
-            style: testStyle,
-          ),
+          body: StatusCode(statusCode: testStatusCode, style: testStyle),
         ),
       ),
     );

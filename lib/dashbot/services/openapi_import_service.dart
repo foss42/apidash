@@ -41,8 +41,10 @@ class OpenApiImportService {
   /// Extract structured metadata from an OpenAPI spec for analytics/insights.
   /// Returns a JSON-serializable map capturing key details like title, version,
   /// servers, total endpoints, methods, tags and a concise list of routes.
-  static Map<String, dynamic> extractSpecMeta(OpenApi spec,
-      {int maxRoutes = 40}) {
+  static Map<String, dynamic> extractSpecMeta(
+    OpenApi spec, {
+    int maxRoutes = 40,
+  }) {
     final servers = (spec.servers ?? const [])
         .map((s) => s.url)
         .where((u) => (u ?? '').trim().isNotEmpty)
@@ -90,10 +92,7 @@ class OpenApiImportService {
         }
       });
       if (presentMethods.isNotEmpty) {
-        routes.add({
-          'path': path,
-          'methods': presentMethods,
-        });
+        routes.add({'path': path, 'methods': presentMethods});
       }
     });
 
@@ -112,8 +111,9 @@ class OpenApiImportService {
         .toList();
 
     // Trim routes list to keep payload light
-    final trimmedRoutes =
-        routes.length > maxRoutes ? routes.take(maxRoutes).toList() : routes;
+    final trimmedRoutes = routes.length > maxRoutes
+        ? routes.take(maxRoutes).toList()
+        : routes;
 
     return {
       'title': title,
@@ -263,16 +263,17 @@ class OpenApiImportService {
     required String path,
     required String method,
     required Operation op,
-  }) =>
-      _payloadForOperation(
-        baseUrl: baseUrl,
-        path: path,
-        method: method,
-        op: op,
-      );
+  }) => _payloadForOperation(
+    baseUrl: baseUrl,
+    path: path,
+    method: method,
+    op: op,
+  );
 
-  static Map<String, dynamic> buildOperationPicker(OpenApi spec,
-      {String? insights}) {
+  static Map<String, dynamic> buildOperationPicker(
+    OpenApi spec, {
+    String? insights,
+  }) {
     final servers = spec.servers ?? const [];
     int endpointsCount = 0;
     final methods = <String>{};
@@ -298,7 +299,7 @@ class OpenApiImportService {
       return {
         'explanation':
             'No operations found in the OpenAPI spec. Please check the file.',
-        'actions': []
+        'actions': [],
       };
     }
 
@@ -311,9 +312,9 @@ class OpenApiImportService {
       ..writeln('- Endpoints discovered: $endpointsCount')
       ..writeln('- Methods: ${methods.join(', ')}');
 
-    final explanation =
-        StringBuffer('OpenAPI parsed. Click Import Now to choose operations.')
-            .toString();
+    final explanation = StringBuffer(
+      'OpenAPI parsed. Click Import Now to choose operations.',
+    ).toString();
     return {
       'explanation': insights == null || insights.isEmpty
           ? '$explanation\n\n${summary.toString()}'
@@ -324,16 +325,13 @@ class OpenApiImportService {
           'target': 'httpRequestModel',
           'field': '',
           'path': null,
-          'value': {
-            'spec': spec,
-            'sourceName': title,
-          }
-        }
+          'value': {'spec': spec, 'sourceName': title},
+        },
       ],
       'meta': {
         'openapi_summary': summary.toString(),
         'openapi_meta': extractSpecMeta(spec),
-      }
+      },
     };
   }
 }

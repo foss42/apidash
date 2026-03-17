@@ -9,11 +9,12 @@ class ApiKeyAuthFields extends StatefulWidget {
   final bool readOnly;
   final Function(AuthModel?)? updateAuth;
 
-  const ApiKeyAuthFields(
-      {super.key,
-      required this.authData,
-      this.updateAuth,
-      this.readOnly = false});
+  const ApiKeyAuthFields({
+    super.key,
+    required this.authData,
+    this.updateAuth,
+    this.readOnly = false,
+  });
 
   @override
   State<ApiKeyAuthFields> createState() => _ApiKeyAuthFieldsState();
@@ -42,14 +43,9 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
       children: [
         Text(
           kLabelAddTo,
-          style: TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 14,
-          ),
+          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
         ),
-        SizedBox(
-          height: 4,
-        ),
+        SizedBox(height: 4),
         ADPopupMenu<String>(
           value: kAddToLocationsMap[_addKeyTo],
           values: kAddToLocations,
@@ -98,13 +94,9 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
       name: _name.trim(),
       location: _addKeyTo,
     );
-    widget.updateAuth?.call(widget.authData?.copyWith(
-          type: APIAuthType.apiKey,
-          apikey: apiKey,
-        ) ??
-        AuthModel(
-          type: APIAuthType.apiKey,
-          apikey: apiKey,
-        ));
+    widget.updateAuth?.call(
+      widget.authData?.copyWith(type: APIAuthType.apiKey, apikey: apiKey) ??
+          AuthModel(type: APIAuthType.apiKey, apikey: apiKey),
+    );
   }
 }

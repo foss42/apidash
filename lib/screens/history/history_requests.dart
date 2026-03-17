@@ -7,11 +7,7 @@ import 'package:apidash/utils/history_utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 
 class HistoryRequests extends ConsumerWidget {
-  const HistoryRequests({
-    super.key,
-    this.scrollController,
-    this.onSelect,
-  });
+  const HistoryRequests({super.key, this.scrollController, this.onSelect});
 
   final ScrollController? scrollController;
   final Function()? onSelect;
@@ -22,29 +18,33 @@ class HistoryRequests extends ConsumerWidget {
     final selectedRequest = ref.watch(selectedHistoryRequestModelProvider);
     final historyMetas = ref.watch(historyMetaStateNotifier);
     final requestGroup = getRequestGroup(
-        historyMetas?.values.toList(), selectedRequest?.metaData);
+      historyMetas?.values.toList(),
+      selectedRequest?.metaData,
+    );
     return ListView(
       shrinkWrap: true,
       controller: scrollController,
       padding: kPh4,
       children: [
         kVSpacer10,
-        ...requestGroup.map((request) => Padding(
-              padding: kPv2 + kPh4,
-              child: HistoryRequestCard(
-                id: request.historyId,
-                model: request,
-                isSelected: selectedRequestId == request.historyId,
-                onTap: () {
-                  ref.read(selectedHistoryIdStateProvider.notifier).state =
-                      request.historyId;
-                  ref
-                      .read(historyMetaStateNotifier.notifier)
-                      .loadHistoryRequest(request.historyId);
-                  onSelect?.call();
-                },
-              ),
-            )),
+        ...requestGroup.map(
+          (request) => Padding(
+            padding: kPv2 + kPh4,
+            child: HistoryRequestCard(
+              id: request.historyId,
+              model: request,
+              isSelected: selectedRequestId == request.historyId,
+              onTap: () {
+                ref.read(selectedHistoryIdStateProvider.notifier).state =
+                    request.historyId;
+                ref
+                    .read(historyMetaStateNotifier.notifier)
+                    .loadHistoryRequest(request.historyId);
+                onSelect?.call();
+              },
+            ),
+          ),
+        ),
         kVSpacer10,
       ],
     );
@@ -52,9 +52,7 @@ class HistoryRequests extends ConsumerWidget {
 }
 
 class HistorRequestsScrollableSheet extends StatefulWidget {
-  const HistorRequestsScrollableSheet({
-    super.key,
-  });
+  const HistorRequestsScrollableSheet({super.key});
 
   @override
   State<HistorRequestsScrollableSheet> createState() =>
@@ -68,36 +66,37 @@ class _HistorRequestsScrollableSheetState
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        initialChildSize: sheetPosition,
-        expand: false,
-        builder: (context, scrollController) {
-          return Column(
-            children: [
-              Grabber(
-                onVerticalDragUpdate: (DragUpdateDetails details) {
-                  setState(() {
-                    sheetPosition -= details.delta.dy / dragSensitivity;
-                    if (sheetPosition < 0.25) {
-                      sheetPosition = 0.25;
-                    }
-                    if (sheetPosition > 0.9) {
-                      sheetPosition = 0.9;
-                    }
-                  });
+      initialChildSize: sheetPosition,
+      expand: false,
+      builder: (context, scrollController) {
+        return Column(
+          children: [
+            Grabber(
+              onVerticalDragUpdate: (DragUpdateDetails details) {
+                setState(() {
+                  sheetPosition -= details.delta.dy / dragSensitivity;
+                  if (sheetPosition < 0.25) {
+                    sheetPosition = 0.25;
+                  }
+                  if (sheetPosition > 0.9) {
+                    sheetPosition = 0.9;
+                  }
+                });
+              },
+              isOnDesktopAndWeb: isOnDesktopAndWeb,
+            ),
+            Expanded(
+              child: HistoryRequests(
+                scrollController: scrollController,
+                onSelect: () {
+                  Navigator.of(context).pop();
                 },
-                isOnDesktopAndWeb: isOnDesktopAndWeb,
               ),
-              Expanded(
-                child: HistoryRequests(
-                  scrollController: scrollController,
-                  onSelect: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 
   bool get isOnDesktopAndWeb {
@@ -136,7 +135,9 @@ class Grabber extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
         borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
       ),
       child: Align(
         alignment: Alignment.topCenter,

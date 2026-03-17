@@ -84,26 +84,32 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       String formdataImport = requestModel.hasFormData
           ? "multipart" //(requestModel.hasFileInFormData ? "multipart" : "urlencoded")
           : "nodata";
-      result.writeln(jj.Template(kTemplateNamespaces)
-          .render({"formdata": formdataImport}));
+      result.writeln(
+        jj.Template(kTemplateNamespaces).render({"formdata": formdataImport}),
+      );
 
       // Set request URL
-      var (uri, _) =
-          getValidRequestUri(requestModel.url, requestModel.enabledParams);
+      var (uri, _) = getValidRequestUri(
+        requestModel.url,
+        requestModel.enabledParams,
+      );
       if (uri != null) {
         result.writeln(jj.Template(kTemplateUri).render({"uri": uri}));
       }
 
       // Initialize HttpClient and create HttpRequestMessage
-      result.writeln(jj.Template(kTemplateHttpClientAndRequest).render({
-        "method": requestModel.method.name,
-      }));
+      result.writeln(
+        jj.Template(
+          kTemplateHttpClientAndRequest,
+        ).render({"method": requestModel.method.name}),
+      );
 
       // Set request headers
       var headers = requestModel.enabledHeadersMap;
       if (headers.isNotEmpty) {
         result.writeln(
-            jj.Template(kTemplateHeaders).render({"headers": headers}));
+          jj.Template(kTemplateHeaders).render({"headers": headers}),
+        );
       }
 
       // Set request body if exists
@@ -115,19 +121,23 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
             requestBody != null &&
             requestBody.isNotEmpty) {
           // if the request body is not formdata then render raw text body
-          result.writeln(jj.Template(kTemplateRawBody).render({
-            "body": requestBody,
-            "mediaType": requestModel.bodyContentType.header,
-          }));
+          result.writeln(
+            jj.Template(kTemplateRawBody).render({
+              "body": requestBody,
+              "mediaType": requestModel.bodyContentType.header,
+            }),
+          );
         } else if (requestModel.hasFormData) {
           // final String renderingTemplate = requestModel.hasFileInFormData
           //     ? kTemplateMultipartFormDataContent
           //     : kTemplateFormUrlEncodedContent;
 
           final String renderingTemplate = kTemplateMultipartFormDataContent;
-          result.writeln(jj.Template(renderingTemplate).render({
-            "formdata": requestModel.formDataMapList,
-          }));
+          result.writeln(
+            jj.Template(
+              renderingTemplate,
+            ).render({"formdata": requestModel.formDataMapList}),
+          );
         }
 
         result.writeln(kStringContentSetup);

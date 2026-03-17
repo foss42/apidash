@@ -41,8 +41,9 @@ class SidebarEnvironmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final Color color =
-        isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
+    final Color color = isGlobal
+        ? colorScheme.secondaryContainer
+        : colorScheme.surface;
     final Color colorVariant = colorScheme.surfaceContainer;
     final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
@@ -53,15 +54,13 @@ class SidebarEnvironmentCard extends StatelessWidget {
       triggerMode: TooltipTriggerMode.manual,
       waitDuration: const Duration(seconds: 1),
       child: Card(
-        shape: const RoundedRectangleBorder(
-          borderRadius: kBorderRadius8,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: kBorderRadius8),
         elevation: isSelected ? 1 : 0,
         surfaceTintColor: isSelected ? surfaceTint : null,
         color: isSelected && !isGlobal
             ? colorScheme.brightness == Brightness.dark
-                ? colorVariant
-                : color
+                  ? colorVariant
+                  : color
             : color,
         margin: EdgeInsets.zero,
         child: InkWell(
@@ -119,9 +118,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
                     visible: isSelected && !inEditMode && !isGlobal,
                     child: SizedBox(
                       width: 28,
-                      child: ItemCardMenu(
-                        onSelected: onMenuSelected,
-                      ),
+                      child: ItemCardMenu(onSelected: onMenuSelected),
                     ),
                   ),
                 ],

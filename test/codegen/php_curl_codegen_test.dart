@@ -30,12 +30,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET 2', () {
       const expectedCode = r'''<?php
@@ -64,12 +65,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET 3', () {
       const expectedCode = r'''<?php
@@ -98,12 +100,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET 4', () {
       const expectedCode = r'''<?php
@@ -136,12 +139,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 5', () {
@@ -171,12 +175,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 6', () {
@@ -211,12 +216,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 7', () {
@@ -241,12 +247,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 8', () {
@@ -281,12 +288,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 9', () {
@@ -317,12 +325,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 10', () {
@@ -352,12 +361,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 11', () {
@@ -393,12 +403,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 12', () {
@@ -423,12 +434,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -455,12 +467,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('HEAD 2', () {
@@ -485,12 +498,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -527,12 +541,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 2', () {
@@ -572,12 +587,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 3', () {
       const expectedCode = r'''<?php
@@ -612,12 +628,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 4', () {
@@ -649,12 +666,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 5', () {
@@ -691,12 +709,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 6', () {
       const expectedCode = r'''<?php
@@ -726,12 +745,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 7', () {
       const expectedCode = r'''<?php
@@ -761,12 +781,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 8', () {
       const expectedCode = r'''<?php
@@ -803,12 +824,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 9', () {
       const expectedCode = r'''<?php
@@ -850,12 +872,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPost9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
   group('PUT Request', () {
@@ -892,12 +915,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
   group('PATCH Request', () {
@@ -934,12 +958,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
   group('DELETE Request', () {
@@ -965,12 +990,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('DELETE 2', () {
       const expectedCode = r'''<?php
@@ -1005,12 +1031,13 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.phpCurl,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

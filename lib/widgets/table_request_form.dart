@@ -23,37 +23,20 @@ class RequestFormDataTable extends StatelessWidget {
     final clrScheme = Theme.of(context).colorScheme;
 
     final List<DataColumn> columns = [
-      const DataColumn2(
-        label: Text(''),
-        fixedWidth: 8,
-      ),
-      DataColumn2(
-        label: Text(keyName ?? kNameField),
-      ),
-      const DataColumn2(
-        label: Text('='),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text(valueName ?? kNameValue),
-      ),
-      const DataColumn2(
-        label: Text(''),
-        fixedWidth: 8,
-      ),
+      const DataColumn2(label: Text(''), fixedWidth: 8),
+      DataColumn2(label: Text(keyName ?? kNameField)),
+      const DataColumn2(label: Text('='), fixedWidth: 30),
+      DataColumn2(label: Text(valueName ?? kNameValue)),
+      const DataColumn2(label: Text(''), fixedWidth: 8),
     ];
 
     final fieldDecoration = InputDecoration(
       contentPadding: const EdgeInsets.only(bottom: 12),
       focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: clrScheme.outlineVariant,
-        ),
+        borderSide: BorderSide(color: clrScheme.outlineVariant),
       ),
       enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(
-          color: clrScheme.surfaceContainerHighest,
-        ),
+        borderSide: BorderSide(color: clrScheme.surfaceContainerHighest),
       ),
     );
 
@@ -68,9 +51,7 @@ class RequestFormDataTable extends StatelessWidget {
                   decoration: fieldDecoration,
                 ),
               ),
-              const DataCell(
-                Text('='),
-              ),
+              const DataCell(Text('=')),
               DataCell(
                 entry.type == FormDataType.file
                     ? Tooltip(
@@ -97,8 +78,9 @@ class RequestFormDataTable extends StatelessWidget {
         children: [
           Expanded(
             child: Theme(
-              data: Theme.of(context)
-                  .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+              data: Theme.of(
+                context,
+              ).copyWith(scrollbarTheme: kDataTableScrollbarTheme),
               child: DataTable2(
                 columnSpacing: 12,
                 dividerThickness: 0,

@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 
 class DropdownButtonHttpMethod extends StatelessWidget {
-  const DropdownButtonHttpMethod({
-    super.key,
-    this.method,
-    this.onChanged,
-  });
+  const DropdownButtonHttpMethod({super.key, this.method, this.onChanged});
 
   final HTTPVerb? method;
   final void Function(HTTPVerb? value)? onChanged;
@@ -19,8 +15,9 @@ class DropdownButtonHttpMethod extends StatelessWidget {
       value: method,
       values: HTTPVerb.values.map((e) => (e, e.name.toUpperCase())),
       onChanged: onChanged,
-      dropdownMenuItemPadding:
-          EdgeInsets.only(left: context.isMediumWindow ? 8 : 16),
+      dropdownMenuItemPadding: EdgeInsets.only(
+        left: context.isMediumWindow ? 8 : 16,
+      ),
       dropdownMenuItemtextStyle: (HTTPVerb v) => kCodeStyle.copyWith(
         fontWeight: FontWeight.bold,
         color: getAPIColor(

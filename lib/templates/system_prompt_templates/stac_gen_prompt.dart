@@ -1,6 +1,7 @@
 import '../rulesets/stac_ruleset.dart';
 
-const String kPromptStacGen = """
+const String kPromptStacGen =
+    """
 You are an expert agent whose one and only task is to generate Server Driven UI Code (json-like) representation from the given inputs.
 
 You will be provided with the Rules of the SDUI language, schema, text description as follows:

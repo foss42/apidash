@@ -12,8 +12,9 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final apiType = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    final apiType = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.apiType),
+    );
     return Card(
       color: kColorTransparent,
       surfaceTintColor: kColorTransparent,
@@ -42,9 +43,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => kHSpacer5,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
+                  const Expanded(child: URLTextField()),
                 ],
               )
             : Row(
@@ -59,14 +58,9 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => kHSpacer20,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
+                  const Expanded(child: URLTextField()),
                   kHSpacer20,
-                  const SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
-                  )
+                  const SizedBox(height: 36, child: SendRequestButton()),
                 ],
               ),
       ),
@@ -75,14 +69,15 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
 }
 
 class DropdownButtonHTTPMethod extends ConsumerWidget {
-  const DropdownButtonHTTPMethod({
-    super.key,
-  });
+  const DropdownButtonHTTPMethod({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.method));
+    final method = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.method,
+      ),
+    );
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
@@ -95,17 +90,21 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
 }
 
 class URLTextField extends ConsumerWidget {
-  const URLTextField({
-    super.key,
-  });
+  const URLTextField({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.url));
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.url));
+    ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.aiRequestModel?.url,
+      ),
+    );
+    ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.url,
+      ),
+    );
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
@@ -117,9 +116,13 @@ class URLTextField extends ConsumerWidget {
       },
       onChanged: (value) {
         if (requestModel.apiType == APIType.ai) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
-              aiRequestModel:
-                  requestModel.aiRequestModel?.copyWith(url: value));
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .update(
+                aiRequestModel: requestModel.aiRequestModel?.copyWith(
+                  url: value,
+                ),
+              );
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }
@@ -133,18 +136,17 @@ class URLTextField extends ConsumerWidget {
 
 class SendRequestButton extends ConsumerWidget {
   final Function()? onTap;
-  const SendRequestButton({
-    super.key,
-    this.onTap,
-  });
+  const SendRequestButton({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.isWorking));
+      selectedRequestModelProvider.select((value) => value?.isWorking),
+    );
     final isStreaming = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.isStreaming));
+      selectedRequestModelProvider.select((value) => value?.isStreaming),
+    );
 
     return SendButton(
       isStreaming: isStreaming ?? false,

@@ -13,16 +13,18 @@ void main() {
         title: 'Editor',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: Column(children: [
-            Expanded(
-              child: TextFieldEditor(
-                fieldKey: '2',
-                onChanged: (value) {
-                  changedValue = value;
-                },
+          body: Column(
+            children: [
+              Expanded(
+                child: TextFieldEditor(
+                  fieldKey: '2',
+                  onChanged: (value) {
+                    changedValue = value;
+                  },
+                ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );
@@ -50,17 +52,19 @@ void main() {
         title: 'Editor Dark',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: Column(children: [
-            Expanded(
-              child: TextFieldEditor(
-                fieldKey: '2',
-                onChanged: (value) {
-                  changedValue = value;
-                },
-                initialValue: 'initial',
+          body: Column(
+            children: [
+              Expanded(
+                child: TextFieldEditor(
+                  fieldKey: '2',
+                  onChanged: (value) {
+                    changedValue = value;
+                  },
+                  initialValue: 'initial',
+                ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );

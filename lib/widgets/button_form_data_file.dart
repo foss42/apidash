@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class FormDataFileButton extends StatelessWidget {
-  const FormDataFileButton({
-    super.key,
-    this.onPressed,
-    this.initialValue,
-  });
+  const FormDataFileButton({super.key, this.onPressed, this.initialValue});
 
   final VoidCallback? onPressed;
   final String? initialValue;
@@ -23,9 +19,7 @@ class FormDataFileButton extends StatelessWidget {
       labelTextStyle: kFormDataButtonLabelTextStyle,
       buttonStyle: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(kDataTableRowHeight),
-        shape: const RoundedRectangleBorder(
-          borderRadius: kBorderRadius6,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: kBorderRadius6),
       ),
       isTonal: true,
       onPressed: onPressed,

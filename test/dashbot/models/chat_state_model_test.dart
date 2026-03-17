@@ -16,7 +16,7 @@ void main() {
       const base = ChatState();
       final next = base.copyWith(
         chatSessions: {
-          'r1': [msg]
+          'r1': [msg],
         },
         isGenerating: true,
         currentStreamingResponse: 'stream',

@@ -22,9 +22,9 @@ class DashbotTaskButtons extends ConsumerWidget {
         children: [
           Text(
             'Do you want assistance with any of these tasks?',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -84,8 +84,9 @@ class DashbotTaskButtons extends ConsumerWidget {
               HomeScreenTaskButton(
                 label: '🛠️ Generate Tool',
                 onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
+                  final notifier = ref.read(
+                    dashbotWindowNotifierProvider.notifier,
+                  );
                   notifier.hide();
                   await GenerateToolDialog.show(context, ref);
                   notifier.show();
@@ -95,11 +96,15 @@ class DashbotTaskButtons extends ConsumerWidget {
               HomeScreenTaskButton(
                 label: '📱 Generate UI',
                 onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
+                  final notifier = ref.read(
+                    dashbotWindowNotifierProvider.notifier,
+                  );
                   notifier.hide();
-                  final model = ref.watch(selectedRequestModelProvider
-                      .select((value) => value?.httpResponseModel));
+                  final model = ref.watch(
+                    selectedRequestModelProvider.select(
+                      (value) => value?.httpResponseModel,
+                    ),
+                  );
                   if (model != null) {
                     String data = '';
                     if (model.sseOutput != null) {

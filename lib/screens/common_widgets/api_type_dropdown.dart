@@ -9,8 +9,9 @@ class APITypeDropdown extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final apiType = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    final apiType = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.apiType),
+    );
     return APITypePopupMenu(
       apiType: apiType,
       onChanged: (type) {

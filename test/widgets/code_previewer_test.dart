@@ -28,60 +28,71 @@ void main() async {
         title: 'Code Previewer',
         theme: kThemeDataLight,
         home: Scaffold(
-            body: Column(
-          children: [
-            Expanded(
-              child: CodePreviewer(
-                code: code,
-                theme: kLightCodeTheme,
-                language: 'dart',
-                textStyle: kCodeStyle,
+          body: Column(
+            children: [
+              Expanded(
+                child: CodePreviewer(
+                  code: code,
+                  theme: kLightCodeTheme,
+                  language: 'dart',
+                  textStyle: kCodeStyle,
+                ),
               ),
-            ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Error Status Code', findRichText: true),
-        findsOneWidget);
+    expect(
+      find.textContaining('Error Status Code', findRichText: true),
+      findsOneWidget,
+    );
   });
-  testWidgets('Testing for code previewer when code is of 1000 lines',
-      (tester) async {
+  testWidgets('Testing for code previewer when code is of 1000 lines', (
+    tester,
+  ) async {
     String codeLines = RandomStringGenerator.getRandomStringLines(1000, 20);
     await tester.pumpWidget(
       MaterialApp(
         title: 'Code Previewer',
         theme: kThemeDataLight,
         home: Scaffold(
-            body: Column(
-          children: [
-            Expanded(
-              child: CodePreviewer(
-                code: codeLines,
-                theme: kLightCodeTheme,
-                language: 'dart',
-                textStyle: kCodeStyle,
+          body: Column(
+            children: [
+              Expanded(
+                child: CodePreviewer(
+                  code: codeLines,
+                  theme: kLightCodeTheme,
+                  language: 'dart',
+                  textStyle: kCodeStyle,
+                ),
               ),
-            ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Preview ends here', findRichText: true),
-        findsOneWidget);
     expect(
-        find.textContaining('You can check Raw for full result.',
-            findRichText: true),
-        findsOneWidget);
+      find.textContaining('Preview ends here', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining(
+        'You can check Raw for full result.',
+        findRichText: true,
+      ),
+      findsOneWidget,
+    );
   });
-  testWidgets('Testing for code previewer when tab is used in the code',
-      (tester) async {
+  testWidgets('Testing for code previewer when tab is used in the code', (
+    tester,
+  ) async {
     String codeTab = '''for x in ['apple','banana']:
 \tprint(x)
 \tfor a in [1,2]:
@@ -91,26 +102,31 @@ void main() async {
         title: 'Code Previewer Tab example',
         theme: kThemeDataLight,
         home: Scaffold(
-            body: Column(
-          children: [
-            Expanded(
-              child: CodePreviewer(
-                code: codeTab,
-                theme: kLightCodeTheme,
-                language: 'python',
-                textStyle: kCodeStyle,
+          body: Column(
+            children: [
+              Expanded(
+                child: CodePreviewer(
+                  code: codeTab,
+                  theme: kLightCodeTheme,
+                  language: 'python',
+                  textStyle: kCodeStyle,
+                ),
               ),
-            ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('    print(x)', findRichText: true),
-        findsOneWidget);
-    expect(find.textContaining('        print(a)', findRichText: true),
-        findsOneWidget);
+    expect(
+      find.textContaining('    print(x)', findRichText: true),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('        print(a)', findRichText: true),
+      findsOneWidget,
+    );
   });
 }

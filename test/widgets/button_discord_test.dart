@@ -10,9 +10,7 @@ void main() {
       MaterialApp(
         title: 'Discord button',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: DiscordButton(),
-        ),
+        home: const Scaffold(body: DiscordButton()),
       ),
     );
 

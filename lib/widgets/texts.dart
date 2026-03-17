@@ -45,15 +45,18 @@ class StatusCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final Color color =
-        getResponseStatusCodeColor(statusCode, brightness: brightness);
+    final Color color = getResponseStatusCodeColor(
+      statusCode,
+      brightness: brightness,
+    );
     return Text(
       statusCode.toString(),
-      style: style?.copyWith(color: color) ??
+      style:
+          style?.copyWith(color: color) ??
           Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontFamily: kCodeStyle.fontFamily,
-                color: color,
-              ),
+            fontFamily: kCodeStyle.fontFamily,
+            color: color,
+          ),
     );
   }
 }

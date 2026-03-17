@@ -86,8 +86,10 @@ class Codegen {
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
-        return PythonHttpClientCodeGen()
-            .getCode(rM, boundary: boundary ?? getNewUuid());
+        return PythonHttpClientCodeGen().getCode(
+          rM,
+          boundary: boundary ?? getNewUuid(),
+        );
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rubyFaraday:

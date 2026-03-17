@@ -21,12 +21,14 @@ class _VariablesTabsState extends ConsumerState<VariablesTabs>
   Widget build(BuildContext context) {
     final tabController = useTabController(initialLength: 2, vsync: this);
     final selectedEnvironment = ref.watch(selectedEnvironmentModelProvider);
-    final variablesLength =
-        getEnvironmentVariables(selectedEnvironment, removeEmptyModels: true)
-            .length;
-    final secretsLength =
-        getEnvironmentSecrets(selectedEnvironment, removeEmptyModels: true)
-            .length;
+    final variablesLength = getEnvironmentVariables(
+      selectedEnvironment,
+      removeEmptyModels: true,
+    ).length;
+    final secretsLength = getEnvironmentSecrets(
+      selectedEnvironment,
+      removeEmptyModels: true,
+    ).length;
     return Column(
       children: [
         !context.isMediumWindow ? kVSpacer10 : const SizedBox.shrink(),
@@ -35,14 +37,8 @@ class _VariablesTabsState extends ConsumerState<VariablesTabs>
           overlayColor: kColorTransparentState,
           labelPadding: kPh2,
           tabs: [
-            TabLabel(
-              text: 'Variables',
-              showIndicator: variablesLength > 0,
-            ),
-            TabLabel(
-              text: 'Secrets',
-              showIndicator: secretsLength > 0,
-            ),
+            TabLabel(text: 'Variables', showIndicator: variablesLength > 0),
+            TabLabel(text: 'Secrets', showIndicator: secretsLength > 0),
           ],
         ),
         kVSpacer5,

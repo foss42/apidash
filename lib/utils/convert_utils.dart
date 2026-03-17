@@ -52,8 +52,11 @@ String formatHeaderCase(String text) {
   return sp.join("-");
 }
 
-String padMultilineString(String text, int padding,
-    {bool firstLinePadded = false}) {
+String padMultilineString(
+  String text,
+  int padding, {
+  bool firstLinePadded = false,
+}) {
   var lines = kSplitter.convert(text);
   int start = firstLinePadded ? 0 : 1;
   for (start; start < lines.length; start++) {

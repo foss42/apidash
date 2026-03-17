@@ -4,11 +4,7 @@ import 'package:apidash/consts.dart';
 import 'tab_label.dart';
 
 class ResponseTabView extends StatefulWidget {
-  const ResponseTabView({
-    super.key,
-    this.selectedId,
-    required this.children,
-  });
+  const ResponseTabView({super.key, this.selectedId, required this.children});
 
   final String? selectedId;
   final List<Widget> children;
@@ -41,12 +37,8 @@ class _ResponseTabViewState extends State<ResponseTabView>
           overlayColor: kColorTransparentState,
           onTap: (index) {},
           tabs: const [
-            TabLabel(
-              text: kLabelResponseBody,
-            ),
-            TabLabel(
-              text: kLabelHeaders,
-            ),
+            TabLabel(text: kLabelResponseBody),
+            TabLabel(text: kLabelHeaders),
           ],
         ),
         Expanded(

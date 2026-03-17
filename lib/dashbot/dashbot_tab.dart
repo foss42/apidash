@@ -7,10 +7,7 @@ import 'routes/routes.dart';
 import 'utils/utils.dart';
 
 class DashbotTab extends ConsumerStatefulWidget {
-  const DashbotTab({
-    super.key,
-    this.showTopBar = true,
-  });
+  const DashbotTab({super.key, this.showTopBar = true});
   final bool showTopBar;
 
   @override
@@ -68,7 +65,8 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerLow,
             border: Border.all(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
             borderRadius: kBorderRadius8,
           ),
           child: Column(
@@ -89,8 +87,9 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                                   .read(dashbotWindowNotifierProvider.notifier)
                                   .togglePopped();
 
-                              final newState =
-                                  ref.read(dashbotWindowNotifierProvider);
+                              final newState = ref.read(
+                                dashbotWindowNotifierProvider,
+                              );
                               if (newState.isPopped) {
                                 showDashbotWindow(context, ref);
                               }
@@ -108,7 +107,8 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
                               if (isActive) {
                                 ref
                                     .read(
-                                        dashbotWindowNotifierProvider.notifier)
+                                      dashbotWindowNotifierProvider.notifier,
+                                    )
                                     .toggleActive();
                               }
                             },

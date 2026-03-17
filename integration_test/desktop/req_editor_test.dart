@@ -23,38 +23,43 @@ Future<void> runDesktopReqIntegrationTest() async {
   "data": "870K"
 }''';
 
-  apidashWidgetTest("Testing Request Editor in desktop end-to-end",
-      WindowWidth.expanded.value, (WidgetTester tester, helper) async {
-    await tester.pumpUntilFound(find.byType(DashApp));
-    await Future.delayed(const Duration(seconds: 1));
+  apidashWidgetTest(
+    "Testing Request Editor in desktop end-to-end",
+    WindowWidth.expanded.value,
+    (WidgetTester tester, helper) async {
+      await tester.pumpUntilFound(find.byType(DashApp));
+      await Future.delayed(const Duration(seconds: 1));
 
-    /// Create New Request
-    await helper.reqHelper.addRequest(testEndpoint,
+      /// Create New Request
+      await helper.reqHelper.addRequest(
+        testEndpoint,
         name: reqName,
         params: [(paramKey, paramValue)],
-        headers: [(headerKey, headerValue)]);
-    await Future.delayed(const Duration(milliseconds: 200));
-    await helper.reqHelper.sendRequest();
+        headers: [(headerKey, headerValue)],
+      );
+      await Future.delayed(const Duration(milliseconds: 200));
+      await helper.reqHelper.sendRequest();
 
-    /// Check if response is received
-    await act.tap(spotText(ResponseBodyView.raw.label));
-    await tester.pumpAndSettle();
-    spotText(expectedRawCode).existsOnce();
+      /// Check if response is received
+      await act.tap(spotText(ResponseBodyView.raw.label));
+      await tester.pumpAndSettle();
+      spotText(expectedRawCode).existsOnce();
 
-    /// Check Response Headers
-    await act.tap(spot<ResponseTabView>().spotText(kLabelHeaders));
-    await tester.pumpAndSettle();
-    spotText("$kLabelRequestHeaders (1 $kLabelItems)").existsOnce();
+      /// Check Response Headers
+      await act.tap(spot<ResponseTabView>().spotText(kLabelHeaders));
+      await tester.pumpAndSettle();
+      spotText("$kLabelRequestHeaders (1 $kLabelItems)").existsOnce();
 
-    /// Change codegen language to curl
-    await helper.navigateToSettings();
-    await helper.changeCodegenLanguage(CodegenLanguage.curl);
-    await helper.navigateToRequestEditor();
+      /// Change codegen language to curl
+      await helper.navigateToSettings();
+      await helper.changeCodegenLanguage(CodegenLanguage.curl);
+      await helper.navigateToRequestEditor();
 
-    /// Check generated code
-    await helper.reqHelper.unCheckFirstHeader();
-    await act.tap(spot<RequestPane>().spotText(kLabelViewCode));
-    await tester.pumpAndSettle();
-    spot<CodeGenPreviewer>().spotText(expectedCurlCode).existsOnce();
-  });
+      /// Check generated code
+      await helper.reqHelper.unCheckFirstHeader();
+      await act.tap(spot<RequestPane>().spotText(kLabelViewCode));
+      await tester.pumpAndSettle();
+      spot<CodeGenPreviewer>().spotText(expectedCurlCode).existsOnce();
+    },
+  );
 }

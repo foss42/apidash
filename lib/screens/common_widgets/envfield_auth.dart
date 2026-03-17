@@ -13,15 +13,16 @@ class EnvAuthField extends StatefulWidget {
   final String? infoText;
   final String? initialValue;
 
-  const EnvAuthField(
-      {super.key,
-      this.title,
-      required this.hintText,
-      required this.onChanged,
-      this.readOnly = false,
-      this.isObscureText = false,
-      this.infoText,
-      this.initialValue = ""});
+  const EnvAuthField({
+    super.key,
+    this.title,
+    required this.hintText,
+    required this.onChanged,
+    this.readOnly = false,
+    this.isObscureText = false,
+    this.infoText,
+    this.initialValue = "",
+  });
 
   @override
   State<EnvAuthField> createState() => _AuthFieldState();
@@ -103,8 +104,8 @@ class _AuthFieldState extends State<EnvAuthField> {
               isDense: true,
               contentPadding: kIsMobile ? kPh6b12 : null,
               // null when initial text contains env vars
-              suffixIcon: (widget.isObscureText &&
-                      !_currentValue.contains("{{"))
+              suffixIcon:
+                  (widget.isObscureText && !_currentValue.contains("{{"))
                   ? IconButton(
                       icon: Icon(
                         _obscureText ? Icons.visibility_off : Icons.visibility,

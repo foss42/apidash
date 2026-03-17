@@ -219,7 +219,7 @@ Map<String, dynamic> requestModelJson = {
   'httpResponseModel': responseModelJson,
   'preRequestScript': null,
   'postRequestScript': null,
-  'aiRequestModel': null
+  'aiRequestModel': null,
 };
 
 /// Basic GET request model for apidash.dev

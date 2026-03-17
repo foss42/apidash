@@ -13,20 +13,19 @@ import 'request_pane_graphql.dart';
 import 'request_pane_rest.dart';
 
 class EditRequestPane extends ConsumerWidget {
-  const EditRequestPane({
-    super.key,
-    this.showViewCodeButton = true,
-  });
+  const EditRequestPane({super.key, this.showViewCodeButton = true});
 
   final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final apiType = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
-    final isPopped =
-        ref.watch(dashbotWindowNotifierProvider.select((s) => s.isPopped));
+    final apiType = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.apiType),
+    );
+    final isPopped = ref.watch(
+      dashbotWindowNotifierProvider.select((s) => s.isPopped),
+    );
 
     // When Dashbot window is not popped, show compact segmented layout like History page
     if (!isPopped && !context.isMediumWindow) {
@@ -53,14 +52,14 @@ class EditRequestPane extends ConsumerWidget {
                     children: [
                       switch (apiType) {
                         APIType.rest => EditRestRequestPane(
-                            showViewCodeButton: false,
-                          ),
+                          showViewCodeButton: false,
+                        ),
                         APIType.graphql => EditGraphQLRequestPane(
-                            showViewCodeButton: false,
-                          ),
+                          showViewCodeButton: false,
+                        ),
                         APIType.ai => EditAIRequestPane(
-                            showViewCodeButton: false,
-                          ),
+                          showViewCodeButton: false,
+                        ),
                         _ => kSizedBoxEmpty,
                       },
                       ResponsePane(),
@@ -78,14 +77,12 @@ class EditRequestPane extends ConsumerWidget {
 
     return switch (apiType) {
       APIType.rest => EditRestRequestPane(
-          showViewCodeButton: showViewCodeButton,
-        ),
+        showViewCodeButton: showViewCodeButton,
+      ),
       APIType.graphql => EditGraphQLRequestPane(
-          showViewCodeButton: showViewCodeButton,
-        ),
-      APIType.ai => EditAIRequestPane(
-          showViewCodeButton: showViewCodeButton,
-        ),
+        showViewCodeButton: showViewCodeButton,
+      ),
+      APIType.ai => EditAIRequestPane(showViewCodeButton: showViewCodeButton),
       _ => kSizedBoxEmpty,
     };
   }

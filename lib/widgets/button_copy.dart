@@ -4,11 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:apidash/consts.dart';
 
 class CopyButton extends StatelessWidget {
-  const CopyButton({
-    super.key,
-    required this.toCopy,
-    this.showLabel = true,
-  });
+  const CopyButton({super.key, required this.toCopy, this.showLabel = true});
 
   final String toCopy;
   final bool showLabel;

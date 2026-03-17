@@ -8,14 +8,15 @@ showRenameDialog(
   Function(String) onRename,
 ) {
   showDialog(
-      context: context,
-      builder: (context) {
-        return RenameDialogContent(
-          dialogTitle: dialogTitle,
-          onRename: onRename,
-          name: name,
-        );
-      });
+    context: context,
+    builder: (context) {
+      return RenameDialogContent(
+        dialogTitle: dialogTitle,
+        onRename: onRename,
+        name: name,
+      );
+    },
+  );
 }
 
 class RenameDialogContent extends StatefulWidget {
@@ -41,8 +42,10 @@ class _RenameDialogContentState extends State<RenameDialogContent> {
   void initState() {
     super.initState();
     controller = TextEditingController(text: widget.name ?? "");
-    controller.selection =
-        TextSelection(baseOffset: 0, extentOffset: controller.text.length);
+    controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: controller.text.length,
+    );
   }
 
   @override
@@ -65,25 +68,26 @@ class _RenameDialogContentState extends State<RenameDialogContent> {
           autofocus: true,
           controller: controller,
           decoration: const InputDecoration(
-              hintText: "Enter new name",
-              border: OutlineInputBorder(
-                borderRadius: kBorderRadius12,
-              )),
+            hintText: "Enter new name",
+            border: OutlineInputBorder(borderRadius: kBorderRadius12),
+          ),
         ),
       ),
       actions: <Widget>[
         TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Cancel')),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel'),
+        ),
         TextButton(
-            onPressed: () {
-              final val = controller.text.trim();
-              widget.onRename(val);
-              Navigator.pop(context);
-            },
-            child: const Text('Ok')),
+          onPressed: () {
+            final val = controller.text.trim();
+            widget.onRename(val);
+            Navigator.pop(context);
+          },
+          child: const Text('Ok'),
+        ),
       ],
     );
   }

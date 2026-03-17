@@ -119,41 +119,44 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         });
 
         if (requestModel.hasFormData && headers.isEmpty) {
-          result += jj.Template(kTemplateMethodNoHeadersButForm).render({
-            "method": requestModel.method.name.toUpperCase(),
-          });
+          result += jj.Template(
+            kTemplateMethodNoHeadersButForm,
+          ).render({"method": requestModel.method.name.toUpperCase()});
         } else {
-          result += jj.Template(kTemplateMethod).render({
-            "method": requestModel.method.name.toUpperCase(),
-          });
+          result += jj.Template(
+            kTemplateMethod,
+          ).render({"method": requestModel.method.name.toUpperCase()});
         }
 
         // Add headers if available
 
         if (headers.isNotEmpty) {
           if (requestModel.hasFormData) {
-            result += jj.Template(kTemplateHeadersFormData)
-                .render({"headers": headers});
+            result += jj.Template(
+              kTemplateHeadersFormData,
+            ).render({"headers": headers});
           } else {
-            result +=
-                jj.Template(kTemplateHeaders).render({"headers": headers});
+            result += jj.Template(
+              kTemplateHeaders,
+            ).render({"headers": headers});
           }
         }
 
         // Handle body (JSON or raw)
         var requestBody = requestModel.body;
         if (requestModel.hasFormData) {
-          result += jj.Template(kTemplateFormData).render({
-            "fields_list": requestModel.formDataMapList,
-          });
+          result += jj.Template(
+            kTemplateFormData,
+          ).render({"fields_list": requestModel.formDataMapList});
         } else if (requestBody == "" ||
             requestBody == null ||
             requestModel.method == HTTPVerb.get ||
             requestModel.method == HTTPVerb.head) {
           result += kTemplateEmptyBody;
         } else if (requestModel.hasJsonData) {
-          result +=
-              jj.Template(kTemplateJsonBody).render({"body": requestBody});
+          result += jj.Template(
+            kTemplateJsonBody,
+          ).render({"body": requestBody});
         } else if (requestModel.hasTextData) {
           result += jj.Template(kTemplateBody).render({"body": requestBody});
         }

@@ -25,11 +25,7 @@ void main() {
         MaterialApp(
           title: 'CodeEditor Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -44,10 +40,7 @@ void main() {
           title: 'CodeEditor ReadOnly Test',
           theme: kThemeDataLight,
           home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-              readOnly: true,
-            ),
+            body: CodeEditor(controller: testController, readOnly: true),
           ),
         ),
       );
@@ -59,17 +52,14 @@ void main() {
       expect(codeField.readOnly, isTrue);
     });
 
-    testWidgets('renders CodeEditor in editable mode by default',
-        (tester) async {
+    testWidgets('renders CodeEditor in editable mode by default', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           title: 'CodeEditor Editable Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -85,11 +75,7 @@ void main() {
         MaterialApp(
           title: 'CodeEditor Decoration Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -104,17 +90,14 @@ void main() {
       expect(decoration.color, isNotNull);
     });
 
-    testWidgets('CodeEditor has correct gutter style properties',
-        (tester) async {
+    testWidgets('CodeEditor has correct gutter style properties', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           title: 'CodeEditor Gutter Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -133,11 +116,7 @@ void main() {
         MaterialApp(
           title: 'CodeEditor Smart Typing Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -152,11 +131,7 @@ void main() {
         MaterialApp(
           title: 'CodeEditor Expand Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -164,17 +139,14 @@ void main() {
       expect(codeField.expands, isTrue);
     });
 
-    testWidgets('CodeEditor uses correct text style with theme font size',
-        (tester) async {
+    testWidgets('CodeEditor uses correct text style with theme font size', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           title: 'CodeEditor Text Style Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -186,22 +158,20 @@ void main() {
 
       // Verify that font size is taken from theme
       final themeContext = tester.element(find.byType(CodeEditor));
-      final expectedFontSize =
-          Theme.of(themeContext).textTheme.bodyMedium?.fontSize;
+      final expectedFontSize = Theme.of(
+        themeContext,
+      ).textTheme.bodyMedium?.fontSize;
       expect(textStyle?.fontSize, equals(expectedFontSize));
     });
 
-    testWidgets('CodeEditor uses theme colors for background and cursor',
-        (tester) async {
+    testWidgets('CodeEditor uses theme colors for background and cursor', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           title: 'CodeEditor Colors Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: testController)),
         ),
       );
 
@@ -230,11 +200,7 @@ void main() {
         MaterialApp(
           title: 'CodeEditor Custom Content Test',
           theme: kThemeDataLight,
-          home: Scaffold(
-            body: CodeEditor(
-              controller: customController,
-            ),
-          ),
+          home: Scaffold(body: CodeEditor(controller: customController)),
         ),
       );
 
@@ -280,10 +246,7 @@ void main() {
           title: 'CodeEditor Key Test',
           theme: kThemeDataLight,
           home: Scaffold(
-            body: CodeEditor(
-              key: testKey,
-              controller: testController,
-            ),
+            body: CodeEditor(key: testKey, controller: testController),
           ),
         ),
       );
@@ -292,17 +255,15 @@ void main() {
       expect(find.byType(CodeEditor), findsOneWidget);
     });
 
-    testWidgets('renders CodeEditor with light theme (isDark: false)',
-        (tester) async {
+    testWidgets('renders CodeEditor with light theme (isDark: false)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           title: 'CodeEditor Light Theme Test',
           theme: kThemeDataLight,
           home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-              isDark: false,
-            ),
+            body: CodeEditor(controller: testController, isDark: false),
           ),
         ),
       );
@@ -315,17 +276,15 @@ void main() {
       expect(codeTheme.data?.styles, equals(xcodeTheme));
     });
 
-    testWidgets('renders CodeEditor with dark theme (isDark: true)',
-        (tester) async {
+    testWidgets('renders CodeEditor with dark theme (isDark: true)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           title: 'CodeEditor Dark Theme Test',
           theme: kThemeDataDark,
           home: Scaffold(
-            body: CodeEditor(
-              controller: testController,
-              isDark: true,
-            ),
+            body: CodeEditor(controller: testController, isDark: true),
           ),
         ),
       );

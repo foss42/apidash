@@ -31,10 +31,11 @@ void main() {
     expect(find.byIcon(Icons.unfold_more_rounded), findsOneWidget);
     expect(find.byType(DropdownButton<ContentType>), findsOneWidget);
     expect(
-        (tester.widget(find.byType(DropdownButton<ContentType>))
-                as DropdownButton)
-            .value,
-        equals(ContentType.json));
+      (tester.widget(find.byType(DropdownButton<ContentType>))
+              as DropdownButton)
+          .value,
+      equals(ContentType.json),
+    );
 
     await tester.tap(find.text('json'));
     await tester.pump();

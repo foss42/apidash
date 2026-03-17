@@ -19,9 +19,7 @@ class CodeEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CodeTheme(
-      data: CodeThemeData(
-        styles: isDark ? monokaiTheme : xcodeTheme,
-      ),
+      data: CodeThemeData(styles: isDark ? monokaiTheme : xcodeTheme),
       child: CodeField(
         expands: true,
         decoration: BoxDecoration(

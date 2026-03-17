@@ -18,10 +18,7 @@ void main() async {
 
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
-  final initStatus = await initApp(
-    kIsDesktop,
-    settingsModel: settingsModel,
-  );
+  final initStatus = await initApp(kIsDesktop, settingsModel: settingsModel);
   if (kIsDesktop) {
     await initWindow(settingsModel: settingsModel);
   }
@@ -65,26 +62,15 @@ Future<bool> initApp(
   }
 }
 
-Future<void> initWindow({
-  Size? sz,
-  SettingsModel? settingsModel,
-}) async {
+Future<void> initWindow({Size? sz, SettingsModel? settingsModel}) async {
   if (kIsLinux) {
-    await setupInitialWindow(
-      sz: sz ?? settingsModel?.size,
-    );
+    await setupInitialWindow(sz: sz ?? settingsModel?.size);
   }
   if (kIsMacOS || kIsWindows) {
     if (sz != null) {
-      await setupWindow(
-        sz: sz,
-        off: const Offset(100, 100),
-      );
+      await setupWindow(sz: sz, off: const Offset(100, 100));
     } else {
-      await setupWindow(
-        sz: settingsModel?.size,
-        off: settingsModel?.offset,
-      );
+      await setupWindow(sz: settingsModel?.size, off: settingsModel?.offset);
     }
   }
 }

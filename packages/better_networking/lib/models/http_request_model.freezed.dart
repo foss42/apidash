@@ -96,52 +96,51 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
   }) {
     return _then(
       _value.copyWith(
-            method: null == method
-                ? _value.method
-                : method // ignore: cast_nullable_to_non_nullable
-                      as HTTPVerb,
-            url: null == url
-                ? _value.url
-                : url // ignore: cast_nullable_to_non_nullable
-                      as String,
-            headers: freezed == headers
-                ? _value.headers
-                : headers // ignore: cast_nullable_to_non_nullable
-                      as List<NameValueModel>?,
-            params: freezed == params
-                ? _value.params
-                : params // ignore: cast_nullable_to_non_nullable
-                      as List<NameValueModel>?,
-            authModel: freezed == authModel
-                ? _value.authModel
-                : authModel // ignore: cast_nullable_to_non_nullable
-                      as AuthModel?,
-            isHeaderEnabledList: freezed == isHeaderEnabledList
-                ? _value.isHeaderEnabledList
-                : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
-                      as List<bool>?,
-            isParamEnabledList: freezed == isParamEnabledList
-                ? _value.isParamEnabledList
-                : isParamEnabledList // ignore: cast_nullable_to_non_nullable
-                      as List<bool>?,
-            bodyContentType: null == bodyContentType
-                ? _value.bodyContentType
-                : bodyContentType // ignore: cast_nullable_to_non_nullable
-                      as ContentType,
-            body: freezed == body
-                ? _value.body
-                : body // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            query: freezed == query
-                ? _value.query
-                : query // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            formData: freezed == formData
-                ? _value.formData
-                : formData // ignore: cast_nullable_to_non_nullable
-                      as List<FormDataModel>?,
-          )
-          as $Val,
+        method: null == method
+            ? _value.method
+            : method // ignore: cast_nullable_to_non_nullable
+                as HTTPVerb,
+        url: null == url
+            ? _value.url
+            : url // ignore: cast_nullable_to_non_nullable
+                as String,
+        headers: freezed == headers
+            ? _value.headers
+            : headers // ignore: cast_nullable_to_non_nullable
+                as List<NameValueModel>?,
+        params: freezed == params
+            ? _value.params
+            : params // ignore: cast_nullable_to_non_nullable
+                as List<NameValueModel>?,
+        authModel: freezed == authModel
+            ? _value.authModel
+            : authModel // ignore: cast_nullable_to_non_nullable
+                as AuthModel?,
+        isHeaderEnabledList: freezed == isHeaderEnabledList
+            ? _value.isHeaderEnabledList
+            : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
+                as List<bool>?,
+        isParamEnabledList: freezed == isParamEnabledList
+            ? _value.isParamEnabledList
+            : isParamEnabledList // ignore: cast_nullable_to_non_nullable
+                as List<bool>?,
+        bodyContentType: null == bodyContentType
+            ? _value.bodyContentType
+            : bodyContentType // ignore: cast_nullable_to_non_nullable
+                as ContentType,
+        body: freezed == body
+            ? _value.body
+            : body // ignore: cast_nullable_to_non_nullable
+                as String?,
+        query: freezed == query
+            ? _value.query
+            : query // ignore: cast_nullable_to_non_nullable
+                as String?,
+        formData: freezed == formData
+            ? _value.formData
+            : formData // ignore: cast_nullable_to_non_nullable
+                as List<FormDataModel>?,
+      ) as $Val,
     );
   }
 
@@ -218,47 +217,47 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
         method: null == method
             ? _value.method
             : method // ignore: cast_nullable_to_non_nullable
-                  as HTTPVerb,
+                as HTTPVerb,
         url: null == url
             ? _value.url
             : url // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         headers: freezed == headers
             ? _value._headers
             : headers // ignore: cast_nullable_to_non_nullable
-                  as List<NameValueModel>?,
+                as List<NameValueModel>?,
         params: freezed == params
             ? _value._params
             : params // ignore: cast_nullable_to_non_nullable
-                  as List<NameValueModel>?,
+                as List<NameValueModel>?,
         authModel: freezed == authModel
             ? _value.authModel
             : authModel // ignore: cast_nullable_to_non_nullable
-                  as AuthModel?,
+                as AuthModel?,
         isHeaderEnabledList: freezed == isHeaderEnabledList
             ? _value._isHeaderEnabledList
             : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
-                  as List<bool>?,
+                as List<bool>?,
         isParamEnabledList: freezed == isParamEnabledList
             ? _value._isParamEnabledList
             : isParamEnabledList // ignore: cast_nullable_to_non_nullable
-                  as List<bool>?,
+                as List<bool>?,
         bodyContentType: null == bodyContentType
             ? _value.bodyContentType
             : bodyContentType // ignore: cast_nullable_to_non_nullable
-                  as ContentType,
+                as ContentType,
         body: freezed == body
             ? _value.body
             : body // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         query: freezed == query
             ? _value.query
             : query // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         formData: freezed == formData
             ? _value._formData
             : formData // ignore: cast_nullable_to_non_nullable
-                  as List<FormDataModel>?,
+                as List<FormDataModel>?,
       ),
     );
   }
@@ -280,12 +279,12 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
     this.body,
     this.query,
     final List<FormDataModel>? formData,
-  }) : _headers = headers,
-       _params = params,
-       _isHeaderEnabledList = isHeaderEnabledList,
-       _isParamEnabledList = isParamEnabledList,
-       _formData = formData,
-       super._();
+  })  : _headers = headers,
+        _params = params,
+        _isHeaderEnabledList = isHeaderEnabledList,
+        _isParamEnabledList = isParamEnabledList,
+        _formData = formData,
+        super._();
 
   factory _$HttpRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HttpRequestModelImplFromJson(json);
@@ -392,19 +391,19 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    method,
-    url,
-    const DeepCollectionEquality().hash(_headers),
-    const DeepCollectionEquality().hash(_params),
-    authModel,
-    const DeepCollectionEquality().hash(_isHeaderEnabledList),
-    const DeepCollectionEquality().hash(_isParamEnabledList),
-    bodyContentType,
-    body,
-    query,
-    const DeepCollectionEquality().hash(_formData),
-  );
+        runtimeType,
+        method,
+        url,
+        const DeepCollectionEquality().hash(_headers),
+        const DeepCollectionEquality().hash(_params),
+        authModel,
+        const DeepCollectionEquality().hash(_isHeaderEnabledList),
+        const DeepCollectionEquality().hash(_isParamEnabledList),
+        bodyContentType,
+        body,
+        query,
+        const DeepCollectionEquality().hash(_formData),
+      );
 
   /// Create a copy of HttpRequestModel
   /// with the given fields replaced by the non-null parameter values.

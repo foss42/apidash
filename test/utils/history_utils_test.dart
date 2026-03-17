@@ -31,7 +31,9 @@ void main() {
 
       final result = getHistoryRequestKey(model);
       expect(
-          result, 'https://api.apidash.dev/humanize/socialgetJanuary 1, 2024');
+        result,
+        'https://api.apidash.dev/humanize/socialgetJanuary 1, 2024',
+      );
     });
   });
 
@@ -76,22 +78,30 @@ void main() {
       final models = [
         historyMetaModel1,
         historyMetaModel1.copyWith(
-            historyId: 'historyId1-1',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 1))),
+          historyId: 'historyId1-1',
+          timeStamp: historyMetaModel1.timeStamp.add(
+            const Duration(seconds: 1),
+          ),
+        ),
         historyMetaModel1.copyWith(
-            historyId: 'historyId1-2',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 2))),
+          historyId: 'historyId1-2',
+          timeStamp: historyMetaModel1.timeStamp.add(
+            const Duration(seconds: 2),
+          ),
+        ),
         historyMetaModel2,
         historyMetaModel2.copyWith(
-            historyId: 'historyId2-1',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 1))),
+          historyId: 'historyId2-1',
+          timeStamp: historyMetaModel2.timeStamp.add(
+            const Duration(seconds: 1),
+          ),
+        ),
         historyMetaModel2.copyWith(
-            historyId: 'historyId2-2',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 2))),
+          historyId: 'historyId2-2',
+          timeStamp: historyMetaModel2.timeStamp.add(
+            const Duration(seconds: 2),
+          ),
+        ),
       ];
 
       final result = getRequestGroups(models);
@@ -130,36 +140,45 @@ void main() {
     });
 
     test(
-        'returns list of models with same request key as selectedModel and sorted',
-        () {
-      final models = [
-        historyMetaModel1,
-        historyMetaModel1.copyWith(
+      'returns list of models with same request key as selectedModel and sorted',
+      () {
+        final models = [
+          historyMetaModel1,
+          historyMetaModel1.copyWith(
             historyId: 'historyId1-1',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 1))),
-        historyMetaModel1.copyWith(
+            timeStamp: historyMetaModel1.timeStamp.add(
+              const Duration(seconds: 1),
+            ),
+          ),
+          historyMetaModel1.copyWith(
             historyId: 'historyId1-2',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 2))),
-        historyMetaModel2,
-        historyMetaModel2.copyWith(
+            timeStamp: historyMetaModel1.timeStamp.add(
+              const Duration(seconds: 2),
+            ),
+          ),
+          historyMetaModel2,
+          historyMetaModel2.copyWith(
             historyId: 'historyId2-1',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 1))),
-        historyMetaModel2.copyWith(
+            timeStamp: historyMetaModel2.timeStamp.add(
+              const Duration(seconds: 1),
+            ),
+          ),
+          historyMetaModel2.copyWith(
             historyId: 'historyId2-2',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 2))),
-      ];
+            timeStamp: historyMetaModel2.timeStamp.add(
+              const Duration(seconds: 2),
+            ),
+          ),
+        ];
 
-      final result = getRequestGroup(models, models[1]);
-      expect(result.length, 3);
+        final result = getRequestGroup(models, models[1]);
+        expect(result.length, 3);
 
-      for (int i = 0; i < result.length - 1; i++) {
-        expect(result[i].timeStamp.isAfter(result[i + 1].timeStamp), isTrue);
-      }
-    });
+        for (int i = 0; i < result.length - 1; i++) {
+          expect(result[i].timeStamp.isAfter(result[i + 1].timeStamp), isTrue);
+        }
+      },
+    );
   });
 
   group('Testing getRetentionDate functon', () {

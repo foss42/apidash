@@ -102,12 +102,10 @@ class AutoFixService {
         break;
       case 'params':
         if (action.value is Map<String, dynamic>) {
-          final params = (action.value as Map<String, dynamic>)
-              .entries
-              .map((e) => NameValueModel(
-                    name: e.key,
-                    value: e.value.toString(),
-                  ))
+          final params = (action.value as Map<String, dynamic>).entries
+              .map(
+                (e) => NameValueModel(name: e.key, value: e.value.toString()),
+              )
               .toList();
           final enabled = List<bool>.filled(params.length, true);
           updateSelected(
@@ -120,8 +118,11 @@ class AutoFixService {
     }
   }
 
-  Future<void> _applyHeaderUpdate(ChatAction action,
-      {required bool isAdd, String? requestId}) async {
+  Future<void> _applyHeaderUpdate(
+    ChatAction action, {
+    required bool isAdd,
+    String? requestId,
+  }) async {
     if (requestId == null || action.path == null) return;
     final current = readCurrentRequest();
     final http = current?.httpRequestModel;
@@ -130,14 +131,16 @@ class AutoFixService {
     final headers = List<NameValueModel>.from(http.headers ?? const []);
     if (isAdd) {
       headers.add(
-          NameValueModel(name: action.path!, value: action.value as String));
+        NameValueModel(name: action.path!, value: action.value as String),
+      );
     } else {
       final index = headers.indexWhere((h) => h.name == action.path);
       if (index != -1) {
         headers[index] = headers[index].copyWith(value: action.value as String);
       } else {
         headers.add(
-            NameValueModel(name: action.path!, value: action.value as String));
+          NameValueModel(name: action.path!, value: action.value as String),
+        );
       }
     }
 

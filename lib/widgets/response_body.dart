@@ -21,14 +21,16 @@ class ResponseBody extends StatelessWidget {
     final responseModel = selectedRequestModel?.httpResponseModel;
     if (responseModel == null) {
       return const ErrorMessage(
-          message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
+        message: '$kNullResponseModelError $kUnexpectedRaiseIssue',
+      );
     }
 
     var body = responseModel.body;
 
     if (body == null) {
       return const ErrorMessage(
-          message: '$kMsgNullBody $kUnexpectedRaiseIssue');
+        message: '$kMsgNullBody $kUnexpectedRaiseIssue',
+      );
     }
     if (body.isEmpty) {
       return const ErrorMessage(

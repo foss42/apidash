@@ -17,11 +17,7 @@ class RequestEditor extends StatelessWidget {
             child: Column(
               children: [
                 kVSpacer20,
-                Expanded(
-                  child: EditRequestPane(
-                    showViewCodeButton: false,
-                  ),
-                ),
+                Expanded(child: EditRequestPane(showViewCodeButton: false)),
               ],
             ),
           )
@@ -32,9 +28,7 @@ class RequestEditor extends StatelessWidget {
                 RequestEditorTopBar(),
                 EditorPaneRequestURLCard(),
                 kVSpacer10,
-                Expanded(
-                  child: EditorPaneRequestDetailsCard(),
-                ),
+                Expanded(child: EditorPaneRequestDetailsCard()),
               ],
             ),
           );

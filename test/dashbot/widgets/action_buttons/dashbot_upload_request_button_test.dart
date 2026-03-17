@@ -41,15 +41,13 @@ class FakeFileSelectorPlatform extends FileSelectorPlatform {
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,
-  }) async =>
-      null;
+  }) async => null;
 
   @override
   Future<List<String>> getDirectoryPaths({
     String? initialDirectory,
     String? confirmButtonText,
-  }) async =>
-      <String>[];
+  }) async => <String>[];
 
   @override
   Future<String?> getSavePath({
@@ -57,15 +55,13 @@ class FakeFileSelectorPlatform extends FileSelectorPlatform {
     String? initialDirectory,
     String? suggestedName,
     String? confirmButtonText,
-  }) async =>
-      null;
+  }) async => null;
 
   @override
   Future<FileSaveLocation?> getSaveLocation({
     List<XTypeGroup>? acceptedTypeGroups,
     SaveDialogOptions options = const SaveDialogOptions(),
-  }) async =>
-      null;
+  }) async => null;
 }
 
 void main() {
@@ -79,11 +75,15 @@ void main() {
   });
 
   group('DashbotUploadRequestButton', () {
-    testWidgets('uploads OpenAPI attachment and forwards to chat viewmodel',
-        (tester) async {
+    testWidgets('uploads OpenAPI attachment and forwards to chat viewmodel', (
+      tester,
+    ) async {
       final bytes = Uint8List.fromList('openapi spec'.codeUnits);
-      fakePlatform.fileToReturn = XFile.fromData(bytes,
-          name: 'spec.yaml', mimeType: 'application/yaml');
+      fakePlatform.fileToReturn = XFile.fromData(
+        bytes,
+        name: 'spec.yaml',
+        mimeType: 'application/yaml',
+      );
 
       const action = ChatAction(
         action: 'upload_asset',
@@ -91,7 +91,7 @@ void main() {
         field: 'openapi_spec',
         value: {
           'purpose': 'OpenAPI specification',
-          'accepted_types': ['application/yaml']
+          'accepted_types': ['application/yaml'],
         },
         actionType: ChatActionType.uploadAsset,
         targetType: ChatActionTarget.attachment,
@@ -108,9 +108,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotUploadRequestButton(action: action),
-            ),
+            home: Scaffold(body: DashbotUploadRequestButton(action: action)),
           ),
         ),
       );
@@ -129,8 +127,10 @@ void main() {
     });
 
     testWidgets('sends message for non-openapi uploads', (tester) async {
-      fakePlatform.fileToReturn =
-          XFile.fromData(Uint8List.fromList([1, 2, 3]), name: 'data.bin');
+      fakePlatform.fileToReturn = XFile.fromData(
+        Uint8List.fromList([1, 2, 3]),
+        name: 'data.bin',
+      );
 
       const action = ChatAction(
         action: 'upload_asset',
@@ -151,9 +151,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotUploadRequestButton(action: action),
-            ),
+            home: Scaffold(body: DashbotUploadRequestButton(action: action)),
           ),
         ),
       );
@@ -185,9 +183,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotUploadRequestButton(action: action),
-            ),
+            home: Scaffold(body: DashbotUploadRequestButton(action: action)),
           ),
         ),
       );

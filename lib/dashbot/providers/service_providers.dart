@@ -20,33 +20,34 @@ final autoFixServiceProvider = Provider<AutoFixService>((ref) {
   final urlEnv = ref.read(urlEnvServiceProvider);
   return AutoFixService(
     requestApply: ref.read(requestApplyServiceProvider),
-    updateSelected: ({
-      required String id,
-      HTTPVerb? method,
-      String? url,
-      List<NameValueModel>? headers,
-      List<bool>? isHeaderEnabledList,
-      String? body,
-      ContentType? bodyContentType,
-      List<FormDataModel>? formData,
-      List<NameValueModel>? params,
-      List<bool>? isParamEnabledList,
-      String? postRequestScript,
-    }) {
-      collection.update(
-        id: id,
-        method: method,
-        url: url,
-        headers: headers,
-        isHeaderEnabledList: isHeaderEnabledList,
-        body: body,
-        bodyContentType: bodyContentType,
-        formData: formData,
-        params: params,
-        isParamEnabledList: isParamEnabledList,
-        postRequestScript: postRequestScript,
-      );
-    },
+    updateSelected:
+        ({
+          required String id,
+          HTTPVerb? method,
+          String? url,
+          List<NameValueModel>? headers,
+          List<bool>? isHeaderEnabledList,
+          String? body,
+          ContentType? bodyContentType,
+          List<FormDataModel>? formData,
+          List<NameValueModel>? params,
+          List<bool>? isParamEnabledList,
+          String? postRequestScript,
+        }) {
+          collection.update(
+            id: id,
+            method: method,
+            url: url,
+            headers: headers,
+            isHeaderEnabledList: isHeaderEnabledList,
+            body: body,
+            bodyContentType: bodyContentType,
+            formData: formData,
+            params: params,
+            isParamEnabledList: isParamEnabledList,
+            postRequestScript: postRequestScript,
+          );
+        },
     addNewRequest: (model, {name}) =>
         collection.addRequestModel(model, name: name ?? 'New Request'),
     readCurrentRequestId: () => ref.read(selectedRequestModelProvider)?.id,

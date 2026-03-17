@@ -13,10 +13,10 @@ class CurlIO {
   /// or null if no valid curl commands are found.
   List<HttpRequestModel>? getHttpRequestModelList(String content) {
     content = content.trim();
-    
+
     // Split content into potential curl commands
     final curlCommands = splitCurlCommands(content);
-    
+
     // Parse each curl command, skipping those that fail
     final httpRequestModels = <HttpRequestModel>[];
     for (final curlCommand in curlCommands) {
@@ -29,7 +29,7 @@ class CurlIO {
         continue;
       }
     }
-    
+
     return httpRequestModels.isEmpty ? null : httpRequestModels;
   }
 }

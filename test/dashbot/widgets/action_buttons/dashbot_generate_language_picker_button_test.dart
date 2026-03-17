@@ -13,8 +13,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('DashbotGenerateLanguagePicker', () {
-    testWidgets('renders provided language options and sends message on tap',
-        (tester) async {
+    testWidgets('renders provided language options and sends message on tap', (
+      tester,
+    ) async {
       const action = ChatAction(
         action: 'show_languages',
         target: 'codegen',
@@ -34,9 +35,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotGenerateLanguagePicker(action: action),
-            ),
+            home: Scaffold(body: DashbotGenerateLanguagePicker(action: action)),
           ),
         ),
       );
@@ -70,9 +69,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotGenerateLanguagePicker(action: action),
-            ),
+            home: Scaffold(body: DashbotGenerateLanguagePicker(action: action)),
           ),
         ),
       );

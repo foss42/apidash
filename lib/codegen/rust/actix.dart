@@ -109,10 +109,7 @@ multipart/form-data; boundary={{boundary}}''';
 }
 """;
 
-  String? getCode(
-    HttpRequestModel requestModel, {
-    String? boundary,
-  }) {
+  String? getCode(HttpRequestModel requestModel, {String? boundary}) {
     try {
       String uuid = getNewUuid();
       String result = "";
@@ -121,17 +118,14 @@ multipart/form-data; boundary={{boundary}}''';
 
       String url = requestModel.url;
 
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledParams,
-      );
+      var rec = getValidRequestUri(url, requestModel.enabledParams);
       Uri? uri = rec.$1;
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
           'isFormDataRequest': requestModel.hasFormData,
-          "method": requestModel.method.name.toLowerCase()
+          "method": requestModel.method.name.toLowerCase(),
         });
 
         var method = requestModel.method;
@@ -153,17 +147,13 @@ multipart/form-data; boundary={{boundary}}''';
 
         if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "fields_list": requestModel.formDataMapList,
-              "boundary": boundary ?? uuid,
-            },
-          );
+          result += formDataBodyData.render({
+            "fields_list": requestModel.formDataMapList,
+            "boundary": boundary ?? uuid,
+          });
         }
         var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": method.name.toLowerCase(),
-        });
+        result += templateRequest.render({"method": method.name.toLowerCase()});
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;
@@ -181,8 +171,9 @@ multipart/form-data; boundary={{boundary}}''';
         if (headersList != null || hasBody || requestModel.hasFormData) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasFormData) {
-            var formHeaderTemplate =
-                jj.Template(kTemplateFormHeaderContentType);
+            var formHeaderTemplate = jj.Template(
+              kTemplateFormHeaderContentType,
+            );
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
               "boundary": boundary ?? uuid,
             });

@@ -29,33 +29,37 @@ showHistoryRetentionDialog(
                 child: Text(
                   "Select the duration for which you want to retain your request history",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
               ),
               kVSpacer10,
-              ...HistoryRetentionPeriod.values
-                  .map((e) => RadioListTile<HistoryRetentionPeriod>(
-                        title: Text(
-                          e.label,
-                          style: TextStyle(
-                              color: selectedRetentionPeriod == e
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null),
-                        ),
-                        secondary: Icon(e.icon,
-                            color: selectedRetentionPeriod == e
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.outline),
-                        value: e,
-                        groupValue: selectedRetentionPeriod,
-                        onChanged: (value) {
-                          if (value != null) {
-                            selectedRetentionPeriod = value;
-                            (context as Element).markNeedsBuild();
-                          }
-                        },
-                      ))
+              ...HistoryRetentionPeriod.values.map(
+                (e) => RadioListTile<HistoryRetentionPeriod>(
+                  title: Text(
+                    e.label,
+                    style: TextStyle(
+                      color: selectedRetentionPeriod == e
+                          ? Theme.of(context).colorScheme.primary
+                          : null,
+                    ),
+                  ),
+                  secondary: Icon(
+                    e.icon,
+                    color: selectedRetentionPeriod == e
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.outline,
+                  ),
+                  value: e,
+                  groupValue: selectedRetentionPeriod,
+                  onChanged: (value) {
+                    if (value != null) {
+                      selectedRetentionPeriod = value;
+                      (context as Element).markNeedsBuild();
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),

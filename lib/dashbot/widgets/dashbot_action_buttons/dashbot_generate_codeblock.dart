@@ -35,20 +35,20 @@ class _DashbotGeneratedCodeBlockState extends State<DashbotGeneratedCodeBlock> {
 
   @override
   Widget build(BuildContext context) {
-    final code =
-        (widget.action.value is String) ? widget.action.value as String : '';
+    final code = (widget.action.value is String)
+        ? widget.action.value as String
+        : '';
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final codeTheme = isDark ? kDarkCodeTheme : kLightCodeTheme;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: codeTheme['root']?.backgroundColor ??
+        color:
+            codeTheme['root']?.backgroundColor ??
             Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Stack(
         children: [
@@ -61,7 +61,8 @@ class _DashbotGeneratedCodeBlockState extends State<DashbotGeneratedCodeBlock> {
                 code.isEmpty ? '// No code returned' : code,
                 style: kCodeStyle.copyWith(
                   fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-                  color: codeTheme['root']?.color ??
+                  color:
+                      codeTheme['root']?.color ??
                       Theme.of(context).colorScheme.onSurface,
                 ),
               ),
@@ -81,8 +82,8 @@ class _DashbotGeneratedCodeBlockState extends State<DashbotGeneratedCodeBlock> {
                   color: _isCopied
                       ? Theme.of(context).colorScheme.primary
                       : (codeTheme['root']?.color ??
-                              Theme.of(context).colorScheme.onSurface)
-                          .withValues(alpha: 0.6),
+                                Theme.of(context).colorScheme.onSurface)
+                            .withValues(alpha: 0.6),
                   visualDensity: VisualDensity.compact,
                   onPressed: () => _copyCode(code),
                 ),

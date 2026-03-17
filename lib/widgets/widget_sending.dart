@@ -28,8 +28,8 @@ class _SendingWidgetState extends State<SendingWidget> {
     if (widget.startSendingTime != null) {
       _millisecondsElapsed =
           (DateTime.now().difference(widget.startSendingTime!).inMilliseconds ~/
-                  100) *
-              100;
+              100) *
+          100;
       _timer = Timer.periodic(const Duration(milliseconds: 100), _updateTimer);
     }
   }
@@ -50,9 +50,7 @@ class _SendingWidgetState extends State<SendingWidget> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Center(
-          child: Lottie.asset(kAssetSendingLottie),
-        ),
+        Center(child: Lottie.asset(kAssetSendingLottie)),
         if (widget.showTimeElapsed)
           Padding(
             padding: kPh20t40,
@@ -65,9 +63,7 @@ class _SendingWidgetState extends State<SendingWidget> {
                     Icons.alarm,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
                   Text(
                     'Time elapsed: ${humanizeDuration(Duration(milliseconds: _millisecondsElapsed))}',
                     textAlign: TextAlign.center,

@@ -24,14 +24,14 @@ class DashbotWindow extends ConsumerWidget {
     final activeRoute = ref.watch(dashbotActiveRouteProvider);
 
     // Close the overlay when the window is not popped anymore
-    ref.listen(
-      dashbotWindowNotifierProvider.select((s) => s.isPopped),
-      (prev, next) {
-        if (prev == true && next == false) {
-          onClose();
-        }
-      },
-    );
+    ref.listen(dashbotWindowNotifierProvider.select((s) => s.isPopped), (
+      prev,
+      next,
+    ) {
+      if (prev == true && next == false) {
+        onClose();
+      }
+    });
 
     void navigateTo(String route) {
       final nav = _dashbotNavigatorKey.currentState;
@@ -86,9 +86,9 @@ class DashbotWindow extends ConsumerWidget {
                           child: Container(
                             height: 50,
                             decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primaryContainer,
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(10),
                               ),
@@ -106,33 +106,42 @@ class DashbotWindow extends ConsumerWidget {
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
                                       ),
                                     ),
                                     kHSpacer4,
                                     AIModelSelectorButton(
                                       aiRequestModel: AIRequestModel.fromJson(
-                                          settings.defaultAIModel ?? {}),
+                                        settings.defaultAIModel ?? {},
+                                      ),
                                       useRootNavigator: true,
                                       onDialogOpen: () => ref
-                                          .read(dashbotWindowNotifierProvider
-                                              .notifier)
+                                          .read(
+                                            dashbotWindowNotifierProvider
+                                                .notifier,
+                                          )
                                           .hide(),
                                       onDialogClose: () => ref
-                                          .read(dashbotWindowNotifierProvider
-                                              .notifier)
+                                          .read(
+                                            dashbotWindowNotifierProvider
+                                                .notifier,
+                                          )
                                           .show(),
                                       onModelUpdated: (d) {
                                         ref
                                             .read(settingsProvider.notifier)
                                             .update(
-                                                defaultAIModel: d.copyWith(
+                                              defaultAIModel: d
+                                                  .copyWith(
                                                     modelConfigs: [],
                                                     stream: null,
                                                     systemPrompt: '',
-                                                    userPrompt: '').toJson());
+                                                    userPrompt: '',
+                                                  )
+                                                  .toJson(),
+                                            );
                                       },
                                     ),
                                   ],
@@ -141,21 +150,25 @@ class DashbotWindow extends ConsumerWidget {
                                 IconButton(
                                   icon: Icon(
                                     Icons.open_in_new,
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                   ),
                                   onPressed: () {
                                     ref
-                                        .read(dashbotWindowNotifierProvider
-                                            .notifier)
+                                        .read(
+                                          dashbotWindowNotifierProvider
+                                              .notifier,
+                                        )
                                         .togglePopped();
                                   },
                                 ),
                                 IconButton(
                                   icon: Icon(
                                     Icons.close,
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                   ),
                                   onPressed: onClose,
                                 ),
@@ -202,8 +215,9 @@ class DashbotWindow extends ConsumerWidget {
                             child: Icon(
                               Icons.drag_indicator_rounded,
                               size: 16,
-                              color:
-                                  Theme.of(context).colorScheme.surfaceBright,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceBright,
                             ),
                           ),
                         ),

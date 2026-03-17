@@ -18,8 +18,9 @@ void main() {
       };
     });
 
-    testWidgets('renders with default values when authData is null',
-        (WidgetTester tester) async {
+    testWidgets('renders with default values when authData is null', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = null;
 
       await tester.pumpWidget(
@@ -40,14 +41,12 @@ void main() {
       expect(find.text('Password'), findsNWidgets(2));
     });
 
-    testWidgets('renders with existing basic auth data',
-        (WidgetTester tester) async {
+    testWidgets('renders with existing basic auth data', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.basic,
-        basic: AuthBasicAuthModel(
-          username: 'testuser',
-          password: 'testpass',
-        ),
+        basic: AuthBasicAuthModel(username: 'testuser', password: 'testpass'),
       );
 
       await tester.pumpWidget(
@@ -68,14 +67,12 @@ void main() {
       expect(find.text('Password'), findsExactly(2));
     });
 
-    testWidgets('updates auth data when username changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when username changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.basic,
-        basic: AuthBasicAuthModel(
-          username: 'olduser',
-          password: 'password',
-        ),
+        basic: AuthBasicAuthModel(username: 'olduser', password: 'password'),
       );
 
       await tester.pumpWidget(
@@ -119,14 +116,12 @@ void main() {
       expect(lastUpdate?.type, APIAuthType.basic);
     });
 
-    testWidgets('updates auth data when password changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when password changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.basic,
-        basic: AuthBasicAuthModel(
-          username: 'user',
-          password: 'oldpass',
-        ),
+        basic: AuthBasicAuthModel(username: 'user', password: 'oldpass'),
       );
 
       await tester.pumpWidget(
@@ -173,10 +168,7 @@ void main() {
     testWidgets('respects readOnly property', (WidgetTester tester) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.basic,
-        basic: AuthBasicAuthModel(
-          username: 'user',
-          password: 'pass',
-        ),
+        basic: AuthBasicAuthModel(username: 'user', password: 'pass'),
       );
 
       await tester.pumpWidget(
@@ -219,14 +211,12 @@ void main() {
       expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
 
-    testWidgets('handles empty auth data gracefully',
-        (WidgetTester tester) async {
+    testWidgets('handles empty auth data gracefully', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.basic,
-        basic: AuthBasicAuthModel(
-          username: '',
-          password: '',
-        ),
+        basic: AuthBasicAuthModel(username: '', password: ''),
       );
 
       await tester.pumpWidget(
@@ -245,8 +235,9 @@ void main() {
       expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
 
-    testWidgets('creates proper AuthModel on field changes',
-        (WidgetTester tester) async {
+    testWidgets('creates proper AuthModel on field changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = null;
 
       await tester.pumpWidget(

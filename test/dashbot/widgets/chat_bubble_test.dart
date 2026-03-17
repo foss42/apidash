@@ -13,8 +13,9 @@ void main() {
     await Clipboard.setData(const ClipboardData(text: ''));
   });
 
-  testWidgets('ChatBubble skips duplicate prompt override for user messages',
-      (tester) async {
+  testWidgets('ChatBubble skips duplicate prompt override for user messages', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -32,16 +33,14 @@ void main() {
     expect(find.text('duplicate'), findsNothing);
   });
 
-  testWidgets('ChatBubble shows loading indicator when message empty',
-      (tester) async {
+  testWidgets('ChatBubble shows loading indicator when message empty', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
           home: Scaffold(
-            body: ChatBubble(
-              message: '',
-              role: MessageRole.system,
-            ),
+            body: ChatBubble(message: '', role: MessageRole.system),
           ),
         ),
       ),
@@ -50,8 +49,9 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 
-  testWidgets('ChatBubble renders explanation parsed from system JSON',
-      (tester) async {
+  testWidgets('ChatBubble renders explanation parsed from system JSON', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(
@@ -65,13 +65,15 @@ void main() {
       ),
     );
 
-    final markdown =
-        tester.widget<MarkdownBody>(find.byType(MarkdownBody).first);
+    final markdown = tester.widget<MarkdownBody>(
+      find.byType(MarkdownBody).first,
+    );
     expect(markdown.data, 'Parsed output');
   });
 
-  testWidgets('ChatBubble renders action widgets when provided',
-      (tester) async {
+  testWidgets('ChatBubble renders action widgets when provided', (
+    tester,
+  ) async {
     const action = ChatAction(
       action: 'download_doc',
       target: 'documentation',

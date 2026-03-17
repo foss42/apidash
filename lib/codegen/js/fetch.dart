@@ -61,8 +61,8 @@ fetch(url, options)
       String result = isNodeJs
           ? importsData
           : requestModel.hasFileInFormData
-              ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration\n\n"
-              : "";
+          ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration\n\n"
+          : "";
       if (requestModel.hasFormData) {
         result += "const payload = new FormData();\n";
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
@@ -73,16 +73,18 @@ fetch(url, options)
             "value": element["type"] == "text"
                 ? "\"${element["value"]}\""
                 : isNodeJs
-                    ? "fileFromSync(\"${element["value"]}\")"
-                    : "fileInput$formFileCounter.files[0]"
+                ? "fileFromSync(\"${element["value"]}\")"
+                : "fileInput$formFileCounter.files[0]",
           });
           if (element["type"] != "text") formFileCounter++;
         }
         result += "\n";
       }
 
-      var harJson =
-          requestModelToHARJsonRequest(requestModel, useEnabled: true);
+      var harJson = requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
+      );
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
@@ -116,9 +118,7 @@ fetch(url, options)
         });
       } else if (requestModel.hasFormData) {
         var templateBody = jj.Template(kTemplateBody);
-        result += templateBody.render({
-          "body": 'payload',
-        });
+        result += templateBody.render({"body": 'payload'});
       }
 
       result += kStringRequest;

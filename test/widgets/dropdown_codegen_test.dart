@@ -31,10 +31,11 @@ void main() {
     expect(find.byIcon(Icons.unfold_more_rounded), findsOneWidget);
     expect(find.byType(DropdownButton<CodegenLanguage>), findsOneWidget);
     expect(
-        (tester.widget(find.byType(DropdownButton<CodegenLanguage>))
-                as DropdownButton)
-            .value,
-        equals(CodegenLanguage.curl));
+      (tester.widget(find.byType(DropdownButton<CodegenLanguage>))
+              as DropdownButton)
+          .value,
+      equals(CodegenLanguage.curl),
+    );
 
     await tester.tap(find.text('cURL'));
     await tester.pump();
