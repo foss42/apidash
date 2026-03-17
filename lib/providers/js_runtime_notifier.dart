@@ -3,6 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_js/flutter_js.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
 import '../providers/terminal_providers.dart';
@@ -22,20 +23,19 @@ class JsRuntimeState {
     bool? initialized,
     String? lastError,
     int? executedScriptCount,
-  }) =>
-      JsRuntimeState(
-        initialized: initialized ?? this.initialized,
-        lastError: lastError ?? this.lastError,
-        executedScriptCount: executedScriptCount ?? this.executedScriptCount,
-      );
+  }) => JsRuntimeState(
+    initialized: initialized ?? this.initialized,
+    lastError: lastError ?? this.lastError,
+    executedScriptCount: executedScriptCount ?? this.executedScriptCount,
+  );
 }
 
 final jsRuntimeNotifierProvider =
     StateNotifierProvider<JsRuntimeNotifier, JsRuntimeState>((ref) {
-  final notifier = JsRuntimeNotifier(ref);
-  notifier._initialize();
-  return notifier;
-});
+      final notifier = JsRuntimeNotifier(ref);
+      notifier._initialize();
+      return notifier;
+    });
 
 class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   JsRuntimeNotifier(this.ref) : super(const JsRuntimeState());
@@ -84,10 +84,9 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   }
 
   Future<
-      ({
-        HttpRequestModel updatedRequest,
-        Map<String, dynamic> updatedEnvironment
-      })> executePreRequestScript({
+    ({HttpRequestModel updatedRequest, Map<String, dynamic> updatedEnvironment})
+  >
+  executePreRequestScript({
     required RequestModel currentRequestModel,
     required Map<String, dynamic> activeEnvironment,
     required String requestId,
@@ -103,12 +102,14 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     final userScript = currentRequestModel.preRequestScript;
     final requestJson = jsonEncode(httpRequest?.toJson());
     final environmentJson = jsonEncode(activeEnvironment);
-    final dataInjection = '''
+    final dataInjection =
+        '''
   var injectedRequestJson = ${jsEscapeString(requestJson)};
   var injectedEnvironmentJson = ${jsEscapeString(environmentJson)};
   var injectedResponseJson = null; // Not needed for pre-request
   ''';
-    final fullScript = '''
+    final fullScript =
+        '''
   (function() {
     $dataInjection
     $kJSSetupScript
@@ -129,10 +130,11 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       );
       if (res.isError) {
         term.logJs(
-            level: 'error',
-            args: ['Pre-request script error', res.stringResult],
-            context: 'preRequest',
-            contextRequestId: requestId);
+          level: 'error',
+          args: ['Pre-request script error', res.stringResult],
+          context: 'preRequest',
+          contextRequestId: requestId,
+        );
       } else if (res.stringResult.isNotEmpty) {
         final decoded = jsonDecode(res.stringResult);
         if (decoded is Map<String, dynamic>) {
@@ -143,26 +145,31 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
               );
             } catch (e) {
               term.logJs(
-                  level: 'error',
-                  args: ['Deserialize modified request failed', e.toString()],
-                  context: 'preRequest',
-                  contextRequestId: requestId);
+                level: 'error',
+                args: ['Deserialize modified request failed', e.toString()],
+                context: 'preRequest',
+                contextRequestId: requestId,
+              );
             }
           }
           if (decoded['environment'] is Map) {
-            resultingEnvironment =
-                Map<String, dynamic>.from(decoded['environment'] as Map);
+            resultingEnvironment = Map<String, dynamic>.from(
+              decoded['environment'] as Map,
+            );
           }
         }
       }
     } catch (e) {
       final msg = 'Dart-level error during pre-request script execution: $e';
       state = state.copyWith(lastError: msg);
-      ref.read(terminalStateProvider.notifier).logJs(
-          level: 'error',
-          args: [msg],
-          context: 'preRequest',
-          contextRequestId: requestId);
+      ref
+          .read(terminalStateProvider.notifier)
+          .logJs(
+            level: 'error',
+            args: [msg],
+            context: 'preRequest',
+            contextRequestId: requestId,
+          );
     } finally {
       _currentRequestId = null;
     }
@@ -173,10 +180,12 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
   }
 
   Future<
-      ({
-        HttpResponseModel updatedResponse,
-        Map<String, dynamic> updatedEnvironment
-      })> executePostResponseScript({
+    ({
+      HttpResponseModel updatedResponse,
+      Map<String, dynamic> updatedEnvironment,
+    })
+  >
+  executePostResponseScript({
     required RequestModel currentRequestModel,
     required Map<String, dynamic> activeEnvironment,
     required String requestId,
@@ -194,12 +203,14 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     final requestJson = jsonEncode(httpRequest?.toJson());
     final responseJson = jsonEncode(httpResponse?.toJson());
     final environmentJson = jsonEncode(activeEnvironment);
-    final dataInjection = '''
+    final dataInjection =
+        '''
   var injectedRequestJson = ${jsEscapeString(requestJson)};
   var injectedEnvironmentJson = ${jsEscapeString(environmentJson)};
   var injectedResponseJson = ${jsEscapeString(responseJson)};
   ''';
-    final fullScript = '''
+    final fullScript =
+        '''
   (function() {
     $dataInjection
     $kJSSetupScript
@@ -220,10 +231,11 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       );
       if (res.isError) {
         term.logJs(
-            level: 'error',
-            args: ['Post-response script error', res.stringResult],
-            context: 'postResponse',
-            contextRequestId: requestId);
+          level: 'error',
+          args: ['Post-response script error', res.stringResult],
+          context: 'postResponse',
+          contextRequestId: requestId,
+        );
       } else if (res.stringResult.isNotEmpty) {
         final decoded = jsonDecode(res.stringResult);
         if (decoded is Map<String, dynamic>) {
@@ -234,26 +246,31 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
               resultingResponse = HttpResponseModel.fromJson(sanitized);
             } catch (e) {
               term.logJs(
-                  level: 'error',
-                  args: ['Deserialize modified response failed', e.toString()],
-                  context: 'postResponse',
-                  contextRequestId: requestId);
+                level: 'error',
+                args: ['Deserialize modified response failed', e.toString()],
+                context: 'postResponse',
+                contextRequestId: requestId,
+              );
             }
           }
           if (decoded['environment'] is Map) {
-            resultingEnvironment =
-                Map<String, dynamic>.from(decoded['environment'] as Map);
+            resultingEnvironment = Map<String, dynamic>.from(
+              decoded['environment'] as Map,
+            );
           }
         }
       }
     } catch (e) {
       final msg = 'Dart-level error during post-response script execution: $e';
       state = state.copyWith(lastError: msg);
-      ref.read(terminalStateProvider.notifier).logJs(
-          level: 'error',
-          args: [msg],
-          context: 'postResponse',
-          contextRequestId: requestId);
+      ref
+          .read(terminalStateProvider.notifier)
+          .logJs(
+            level: 'error',
+            args: [msg],
+            context: 'postResponse',
+            contextRequestId: requestId,
+          );
     } finally {
       _currentRequestId = null;
     }
@@ -273,13 +290,15 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       activeEnvironment: originalEnvironmentModel?.toJson() ?? {},
       requestId: requestModel.id,
     );
-    final newRequestModel =
-        requestModel.copyWith(httpRequestModel: scriptResult.updatedRequest);
+    final newRequestModel = requestModel.copyWith(
+      httpRequestModel: scriptResult.updatedRequest,
+    );
     if (originalEnvironmentModel != null) {
       final updatedEnvironmentMap = scriptResult.updatedEnvironment;
       final List<EnvironmentVariableModel> newValues = [];
-      final Map<String, dynamic> mutableUpdatedEnv =
-          Map.from(updatedEnvironmentMap);
+      final Map<String, dynamic> mutableUpdatedEnv = Map.from(
+        updatedEnvironmentMap,
+      );
       for (final originalVariable in originalEnvironmentModel.values) {
         if (mutableUpdatedEnv.containsKey(originalVariable.key)) {
           final dynamic newValue = mutableUpdatedEnv[originalVariable.key];
@@ -333,13 +352,15 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       activeEnvironment: originalEnvironmentModel?.toJson() ?? {'values': []},
       requestId: requestModel.id,
     );
-    final newRequestModel =
-        requestModel.copyWith(httpResponseModel: scriptResult.updatedResponse);
+    final newRequestModel = requestModel.copyWith(
+      httpResponseModel: scriptResult.updatedResponse,
+    );
     if (originalEnvironmentModel != null) {
       final updatedEnvironmentMap = scriptResult.updatedEnvironment;
       final List<EnvironmentVariableModel> newValues = [];
-      final Map<String, dynamic> mutableUpdatedEnv =
-          Map.from(updatedEnvironmentMap);
+      final Map<String, dynamic> mutableUpdatedEnv = Map.from(
+        updatedEnvironmentMap,
+      );
       for (final originalVariable in originalEnvironmentModel.values) {
         if (mutableUpdatedEnv.containsKey(originalVariable.key)) {
           final dynamic newValue = mutableUpdatedEnv[originalVariable.key];
@@ -411,12 +432,15 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
         argList = [args.toString()];
       }
       term.logJs(
-          level: level, args: argList, contextRequestId: _currentRequestId);
+        level: level,
+        args: argList,
+        contextRequestId: _currentRequestId,
+      );
     } catch (e) {
       term.logSystem(
-          category: 'provider',
-          message:
-              '[JS ${level.toUpperCase()} HANDLER ERROR]: $args, Error: $e');
+        category: 'provider',
+        message: '[JS ${level.toUpperCase()} HANDLER ERROR]: $args, Error: $e',
+      );
     }
   }
 
@@ -436,15 +460,17 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
         );
       } else {
         term.logJs(
-            level: 'fatal',
-            args: ['Malformed fatal payload', '$args'],
-            context: 'global',
-            contextRequestId: _currentRequestId);
+          level: 'fatal',
+          args: ['Malformed fatal payload', '$args'],
+          context: 'global',
+          contextRequestId: _currentRequestId,
+        );
       }
     } catch (e) {
       term.logSystem(
-          category: 'provider',
-          message: '[JS FATAL ERROR decoding error]: $args, Error: $e');
+        category: 'provider',
+        message: '[JS FATAL ERROR decoding error]: $args, Error: $e',
+      );
     }
   }
 }
@@ -457,17 +483,17 @@ Map<String, Object?> _sanitizeResponseJson(Map<String, Object?> input) {
   // Ensure headers maps are <String,String>
   if (out['headers'] is Map) {
     final m = Map<String, String>.fromEntries(
-      (out['headers'] as Map)
-          .entries
-          .map((e) => MapEntry(e.key.toString(), e.value?.toString() ?? '')),
+      (out['headers'] as Map).entries.map(
+        (e) => MapEntry(e.key.toString(), e.value?.toString() ?? ''),
+      ),
     );
     out['headers'] = m;
   }
   if (out['requestHeaders'] is Map) {
     final m = Map<String, String>.fromEntries(
-      (out['requestHeaders'] as Map)
-          .entries
-          .map((e) => MapEntry(e.key.toString(), e.value?.toString() ?? '')),
+      (out['requestHeaders'] as Map).entries.map(
+        (e) => MapEntry(e.key.toString(), e.value?.toString() ?? ''),
+      ),
     );
     out['requestHeaders'] = m;
   }
