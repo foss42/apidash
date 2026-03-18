@@ -91,6 +91,152 @@ Claude: "I've generated 8 test cases for /api/auth/*"
 
 I follow the hybrid architecture specified in the project requirements:
 
+#### High-Level Architecture
+
+```mermaid
+flowchart TB
+    subgraph External["External AI Hosts"]
+        Claude["Claude Desktop"]
+        VSCode["VS Code Copilot"]
+        Cursor["Cursor IDE"]
+    end
+
+    subgraph MCP["API Dash MCP Server"]
+        Tools["MCP Tools<br/>execute_request | generate_tests | run_tests"]
+        Apps["MCP Apps (Rich UIs)<br/>Config Panel | Dashboard | Approval UI"]
+    end
+
+    subgraph Agents["Agent Orchestration Layer"]
+        Gen["Test Generator"]
+        Exec["Test Executor"]
+        Valid["Validator"]
+        Heal["Self-Healer"]
+    end
+
+    subgraph AI["AI Providers"]
+        LLM["Claude | GPT-4 | Mistral | Ollama"]
+    end
+
+    External -->|"MCP Protocol"| MCP
+    MCP --> Agents
+    Agents -->|"Prompts"| AI
+    AI -->|"Responses"| Agents
+
+    Gen --> Exec --> Valid --> Heal
+    Heal -.->|"If needs fix"| Gen
+```
+
+#### Agent Workflow State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+
+    Idle --> AnalyzingSpec: Upload OpenAPI Spec
+    AnalyzingSpec --> GeneratingTests: Spec Parsed
+
+    GeneratingTests --> AwaitingTestApproval: Tests Generated
+    AwaitingTestApproval --> GeneratingTests: User Requests Changes
+    AwaitingTestApproval --> ExecutingTests: User Approves
+
+    ExecutingTests --> AwaitingResultsReview: Execution Complete
+    AwaitingResultsReview --> ExecutingTests: User Re-runs
+    AwaitingResultsReview --> ValidatingResults: User Proceeds
+
+    ValidatingResults --> HealingTests: Failures Detected
+    ValidatingResults --> Completed: All Passed
+
+    HealingTests --> AwaitingHealingApproval: Fixes Proposed
+    AwaitingHealingApproval --> HealingTests: User Requests Different Fix
+    AwaitingHealingApproval --> ExecutingTests: User Approves Fix
+
+    Completed --> [*]
+
+    note right of AwaitingTestApproval: HITL Checkpoint 1
+    note right of AwaitingResultsReview: HITL Checkpoint 2
+    note right of AwaitingHealingApproval: HITL Checkpoint 3
+```
+
+#### Human-in-the-Loop Flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant AI as AI Host (Claude/Copilot)
+    participant MCP as API Dash MCP Server
+    participant Agent as Agent Orchestrator
+
+    User->>AI: "Test my /users API"
+    AI->>MCP: tools/call: analyze_spec
+    MCP->>Agent: Parse OpenAPI spec
+    Agent-->>MCP: 5 endpoints found
+    MCP-->>AI: Spec analysis complete
+
+    AI->>MCP: tools/call: generate_tests
+    Agent->>Agent: Generate test cases
+    MCP-->>AI: 12 tests generated
+
+    rect rgb(255, 235, 205)
+        Note over User,AI: CHECKPOINT 1: Test Approval
+        AI->>User: Shows MCP App: Test Config Panel
+        User->>AI: Approves 10 tests, skips 2
+    end
+
+    AI->>MCP: tools/call: run_tests
+    Agent->>Agent: Execute tests
+    MCP-->>AI: 8 passed, 2 failed
+
+    rect rgb(255, 235, 205)
+        Note over User,AI: CHECKPOINT 2: Results Review
+        AI->>User: Shows MCP App: Results Dashboard
+        User->>AI: "Why did auth test fail?"
+    end
+
+    AI->>MCP: tools/call: heal_tests
+    Agent->>Agent: Analyze failures, propose fixes
+    MCP-->>AI: Fix: Update expected status 401→403
+
+    rect rgb(255, 235, 205)
+        Note over User,AI: CHECKPOINT 3: Healing Approval
+        AI->>User: Shows MCP App: Diff Viewer
+        User->>AI: Approves fix
+    end
+
+    AI->>MCP: tools/call: run_tests (retry)
+    Agent->>Agent: Re-execute
+    MCP-->>AI: 10/10 passed ✓
+    AI->>User: "All tests passing!"
+```
+
+#### MCP Apps Integration
+
+```mermaid
+flowchart LR
+    subgraph Host["AI Host (VS Code / Claude Desktop)"]
+        Chat["Chat Interface"]
+        Frame["Sandboxed iframe"]
+    end
+
+    subgraph Server["API Dash MCP Server"]
+        Handler["Request Handler"]
+        Resources["MCP Resources"]
+    end
+
+    subgraph Apps["MCP Apps (HTML/JS)"]
+        Config["Test Config Panel"]
+        Runner["Execution Dashboard"]
+        Healer["Healing Approval"]
+    end
+
+    Chat -->|"1. User: 'Test my API'"| Handler
+    Handler -->|"2. tools/call"| Resources
+    Resources -->|"3. Return UI resource"| Frame
+    Frame -->|"4. Render interactive UI"| Apps
+    Apps -->|"5. User clicks [Run Tests]"| Handler
+    Handler -->|"6. Execute & stream results"| Frame
+    Frame -->|"7. Real-time updates"| Chat
+```
+
 **1. LangGraph-Style Agent Orchestration**
 - State machine managing workflow transitions
 - Conditional routing (skip healing if all tests pass)
@@ -109,6 +255,64 @@ I follow the hybrid architecture specified in the project requirements:
 - Before healing → User confirms proposed fixes
 
 ### Implementation Strategy
+
+#### Timeline (12 Weeks)
+
+```mermaid
+gantt
+    title GSoC 2026 - Agentic API Testing Implementation
+    dateFormat  YYYY-MM-DD
+    section Phase 1: Foundation
+    Assertion Engine           :done, p1a, 2026-05-27, 7d
+    Agent Interfaces           :p1b, after p1a, 7d
+    MCP Server Skeleton        :p1c, after p1b, 7d
+    section Phase 2: Test Generator
+    OpenAPI Parser             :p2a, after p1c, 7d
+    Prompt Templates           :p2b, after p2a, 7d
+    MCP App: Config Panel      :p2c, after p2a, 7d
+    section Phase 3: Executor
+    HTTP Integration           :p3a, after p2b, 7d
+    Execution Modes            :p3b, after p3a, 7d
+    MCP App: Dashboard         :p3c, after p3a, 7d
+    section Phase 4: Validator & Healer
+    Validation Logic           :p4a, after p3b, 7d
+    Healing Strategies         :p4b, after p4a, 7d
+    MCP App: Approval Panel    :p4c, after p4b, 7d
+    section Phase 5: Polish
+    E2E Testing                :p5a, after p4c, 7d
+    Documentation              :p5b, after p5a, 7d
+```
+
+#### Test Generation Strategy
+
+```mermaid
+flowchart TD
+    Spec["OpenAPI Spec"] --> Parse["Parse Endpoints"]
+    Parse --> Analyze["Analyze Each Endpoint"]
+
+    Analyze --> Functional["Functional Tests"]
+    Analyze --> Edge["Edge Cases"]
+    Analyze --> Security["Security Tests"]
+    Analyze --> Perf["Performance Tests"]
+
+    Functional --> F1["✓ Valid inputs → 200"]
+    Functional --> F2["✓ CRUD operations"]
+    Functional --> F3["✓ Auth flows"]
+
+    Edge --> E1["✓ Boundary values"]
+    Edge --> E2["✓ Null/empty inputs"]
+    Edge --> E3["✓ Array edge cases"]
+
+    Security --> S1["✓ SQL injection"]
+    Security --> S2["✓ XSS attempts"]
+    Security --> S3["✓ Auth bypass"]
+
+    Perf --> P1["✓ Response time < 500ms"]
+    Perf --> P2["✓ Concurrent requests"]
+
+    F1 & F2 & F3 & E1 & E2 & E3 & S1 & S2 & S3 & P1 & P2 --> Suite["Test Suite"]
+    Suite --> Execute["Execute via API Dash"]
+```
 
 #### Phase 1: Foundation (Weeks 1-3)
 - Implement assertion engine (I've already prototyped this with 15 passing tests)
@@ -132,6 +336,40 @@ I follow the hybrid architecture specified in the project requirements:
 - Healing strategies (adjust expectations, fix requests, report bugs)
 - Third MCP App: Healing Approval Panel
 - Confidence scoring for proposed fixes
+
+#### Self-Healing Logic
+
+```mermaid
+flowchart TD
+    Fail["Test Failed"] --> Analyze["Analyze Failure"]
+
+    Analyze --> Q1{"API Schema<br/>Changed?"}
+    Q1 -->|Yes| SchemaChange["Schema Change Detected"]
+    Q1 -->|No| Q2{"Response<br/>Different?"}
+
+    Q2 -->|Yes| ResponseChange["Response Pattern Changed"]
+    Q2 -->|No| TestBug["Likely Test Bug"]
+
+    SchemaChange --> S1["Strategy: Update Assertions"]
+    ResponseChange --> S2["Strategy: Adjust Expectations"]
+    TestBug --> S3["Strategy: Fix Test Logic"]
+
+    S1 --> Confidence["Calculate Confidence Score"]
+    S2 --> Confidence
+    S3 --> Confidence
+
+    Confidence --> Q3{"Score > 0.8?"}
+    Q3 -->|Yes| AutoFix["Propose Auto-Fix"]
+    Q3 -->|No| Manual["Request Human Review"]
+
+    AutoFix --> HITL["HITL Checkpoint"]
+    Manual --> HITL
+
+    HITL --> Q4{"User Approves?"}
+    Q4 -->|Yes| Apply["Apply Fix & Re-run"]
+    Q4 -->|No| Revise["Revise Strategy"]
+    Revise --> Analyze
+```
 
 #### Phase 5: MCP Apps & Polish (Weeks 11-12)
 - Complete MCP Apps with sandboxed iframes
