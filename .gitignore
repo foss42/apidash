@@ -67,3 +67,4 @@ test-hive-storage
 /logs
 
 .kiro/
+context.md
