@@ -3,7 +3,7 @@
 **Full Name:** Aditya Suhane
 **University name:** Gyan Ganga Institute of Technology and Sciences
 **Program you are enrolled in (Degree & Major/Minor):** Bachelor of Technology in Computer Science Engineering (Data Science)
-**Year:** 3rd
+**Year:** 4th
 **Expected graduation date:** June 2026
 
 **Project Title:** Agentic API Testing with MCP Apps Integration
