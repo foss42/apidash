@@ -11,6 +11,50 @@ import '../test_consts.dart';
 
 void main() {
   Uint8List bytes1 = Uint8List.fromList([20, 8]);
+
+  test('register fvp backend only on Linux and Windows', () {
+    expect(
+      shouldRegisterFvpVideoBackend(
+        isWeb: false,
+        isLinux: true,
+        isWindows: false,
+      ),
+      isTrue,
+    );
+    expect(
+      shouldRegisterFvpVideoBackend(
+        isWeb: false,
+        isLinux: false,
+        isWindows: true,
+      ),
+      isTrue,
+    );
+    expect(
+      shouldRegisterFvpVideoBackend(
+        isWeb: false,
+        isLinux: false,
+        isWindows: false,
+      ),
+      isFalse,
+    );
+    expect(
+      shouldRegisterFvpVideoBackend(
+        isWeb: true,
+        isLinux: true,
+        isWindows: true,
+      ),
+      isFalse,
+    );
+  });
+
+  test('normalize temp video suffix from file extension', () {
+    expect(getVideoTempFileSuffix('webm'), '.webm');
+    expect(getVideoTempFileSuffix('.mov'), '.mov');
+    expect(getVideoTempFileSuffix('mkv'), '.mkv');
+    expect(getVideoTempFileSuffix(''), '');
+    expect(getVideoTempFileSuffix(null), '');
+  });
+
   testWidgets('Testing when type/subtype is application/pdf', (tester) async {
     String expected =
         "We encountered an error rendering this pdf.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
@@ -110,8 +154,9 @@ void main() {
     expect(find.byType(Image), findsOneWidget);
   });
 
-  testWidgets('Testing when type/subtype is image/jpeg corrupted',
-      (tester) async {
+  testWidgets('Testing when type/subtype is image/jpeg corrupted', (
+    tester,
+  ) async {
     String expected =
         "We encountered an error rendering this image.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
     Uint8List bytesJpegCorrupt = Uint8List.fromList([
@@ -133,7 +178,7 @@ void main() {
       235,
       191,
       255,
-      217
+      217,
     ]);
     await tester.pumpWidget(
       MaterialApp(
@@ -152,12 +197,14 @@ void main() {
     expect(find.text(expected), findsOneWidget);
   });
 
-  testWidgets('Testing when type/subtype is audio/mpeg corrupted',
-      (tester) async {
+  testWidgets('Testing when type/subtype is audio/mpeg corrupted', (
+    tester,
+  ) async {
     String expected =
         "We encountered an error rendering this audio.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
-    Uint8List bytesAudioCorrupt =
-        Uint8List.fromList(List.generate(100, (index) => index));
+    Uint8List bytesAudioCorrupt = Uint8List.fromList(
+      List.generate(100, (index) => index),
+    );
     await tester.pumpWidget(
       MaterialApp(
         title: 'Previewer',
@@ -218,8 +265,9 @@ void main() {
     expect(find.byType(SvgPicture), findsOneWidget);
   });
 
-  testWidgets('Testing when type/subtype is image/svg+xml corrupted',
-      (tester) async {
+  testWidgets('Testing when type/subtype is image/svg+xml corrupted', (
+    tester,
+  ) async {
     String expected =
         "Please click on 'Raw' to view the unformatted raw results as we encountered an error rendering this svg.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
     String rawSvg = "rwsjhdws";
