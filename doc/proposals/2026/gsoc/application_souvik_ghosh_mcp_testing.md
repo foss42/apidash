@@ -3,7 +3,7 @@
 ### About
 
 1. **Full Name:** Souvik Ghosh
-2. **Contact Info:** [your public email here]
+2. **Contact Info:** gshbholanath19@gmail.com
 3. **Discord Handle:** souvik
 4. **Home Page:** N/A
 5. **Blog:** N/A
