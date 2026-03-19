@@ -14,7 +14,7 @@ class Importer {
       ImportFormat.postman => PostmanIO().getHttpRequestModelList(content),
       ImportFormat.insomnia => InsomniaIO().getHttpRequestModelList(content),
       ImportFormat.har => HarParserIO().getHttpRequestModelList(content),
-      ImportFormat.openapi => OpenApiIO().getHttpRequestModelList(content),
+      ImportFormat.openapi => OpenApiIO().getHttpRequestModelList(content),// openapi support added
     };
   }
 }
