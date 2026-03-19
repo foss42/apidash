@@ -52,6 +52,15 @@ class HistoryRequestCard extends StatelessWidget {
                   ),
                 ),
                 kHSpacer4,
+                if (model.latency != null) ...[
+                  Text(
+                    humanizeDuration(model.latency),
+                    style: kCodeStyle.copyWith(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                  kHSpacer4,
+                ],
                 StatusCode(statusCode: model.responseStatus),
               ],
             ),
