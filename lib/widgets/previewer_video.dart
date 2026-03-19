@@ -16,10 +16,22 @@ bool shouldRegisterFvpVideoBackend({
   return !isWeb && (isLinux || isWindows);
 }
 
+String getVideoTempFileSuffix(String? extension) {
+  if (extension == null || extension.isEmpty) {
+    return '';
+  }
+  return extension.startsWith('.') ? extension : '.$extension';
+}
+
 class VideoPreviewer extends StatefulWidget {
-  const VideoPreviewer({super.key, required this.videoBytes});
+  const VideoPreviewer({
+    super.key,
+    required this.videoBytes,
+    this.videoFileExtension,
+  });
 
   final Uint8List videoBytes;
+  final String? videoFileExtension;
 
   @override
   State<VideoPreviewer> createState() => _VideoPreviewerState();
@@ -56,8 +68,9 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
 
   Future<void> _initializeVideoPlayer() async {
     final tempDir = await getTemporaryDirectory();
+    final fileSuffix = getVideoTempFileSuffix(widget.videoFileExtension);
     final tempVideoFile = File(
-      '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}.mp4',
+      '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}$fileSuffix',
     );
     VideoPlayerController? videoController;
     try {
