@@ -47,6 +47,14 @@ void main() {
     );
   });
 
+  test('normalize temp video suffix from file extension', () {
+    expect(getVideoTempFileSuffix('webm'), '.webm');
+    expect(getVideoTempFileSuffix('.mov'), '.mov');
+    expect(getVideoTempFileSuffix('mkv'), '.mkv');
+    expect(getVideoTempFileSuffix(''), '');
+    expect(getVideoTempFileSuffix(null), '');
+  });
+
   testWidgets('Testing when type/subtype is application/pdf', (tester) async {
     String expected =
         "We encountered an error rendering this pdf.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
