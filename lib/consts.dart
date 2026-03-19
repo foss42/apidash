@@ -145,7 +145,8 @@ enum ImportFormat {
   curl("cURL"),
   postman("Postman Collection v2.1"),
   insomnia("Insomnia v4"),
-  har("Har v1.2");
+  har("Har v1.2"),
+  openapi("OpenAPI");
 
   const ImportFormat(this.label);
   final String label;
