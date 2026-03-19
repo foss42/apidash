@@ -70,6 +70,9 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  RequestModel? _lastDeletedModel;
+  String? _lastDeletedId;
+  int? _lastDeletedIndex;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -118,7 +121,7 @@ class CollectionStateNotifier
   }
 
   void reorder(int oldIdx, int newIdx) {
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
@@ -129,6 +132,9 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId!);
+    _lastDeletedModel = state![rId];
+    _lastDeletedId = rId;
+    _lastDeletedIndex = idx;
     cancelHttpRequest(rId);
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
@@ -150,6 +156,31 @@ class CollectionStateNotifier
     unsave();
   }
 
+  void undoDelete() {
+  if (_lastDeletedModel == null ||
+      _lastDeletedId == null ||
+      _lastDeletedIndex == null) {
+    return;
+  }
+
+  var itemIds = [...ref.read(requestSequenceProvider)];
+  final insertIdx = _lastDeletedIndex!.clamp(0, itemIds.length);
+  itemIds.insert(insertIdx, _lastDeletedId!);
+
+  var map = {...state!};
+  map[_lastDeletedId!] = _lastDeletedModel!;
+  state = map;
+
+  ref.read(requestSequenceProvider.notifier).state = itemIds;
+  ref.read(selectedIdStateProvider.notifier).state = _lastDeletedId;
+
+  _lastDeletedModel = null;
+  _lastDeletedId = null;
+  _lastDeletedIndex = null;
+
+  unsave();
+}
+
   void clearResponse({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null || state?[rId] == null) return;
@@ -170,8 +201,7 @@ class CollectionStateNotifier
   void duplicate({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     final newId = getNewUuid();
-
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     int idx = itemIds.indexOf(rId!);
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(

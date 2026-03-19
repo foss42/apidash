@@ -238,7 +238,22 @@ class RequestItem extends ConsumerWidget {
           );
         }
         if (item == ItemMenuOption.delete) {
-          ref.read(collectionStateNotifierProvider.notifier).remove(id: id);
+          final deletedName =
+              requestModel.name.isEmpty ? kUntitled : requestModel.name;
+          final notifier = ref.read(collectionStateNotifierProvider.notifier);
+          notifier.remove(id: id);
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            getSnackBar(
+              '"$deletedName" deleted',
+              small: false,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Undo',
+                onPressed: () => notifier.undoDelete(),
+              ),
+            ),
+          );
         }
         if (item == ItemMenuOption.duplicate) {
           ref.read(collectionStateNotifierProvider.notifier).duplicate(id: id);

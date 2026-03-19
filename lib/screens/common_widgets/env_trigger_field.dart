@@ -147,3 +147,4 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
     );
   }
 }
+

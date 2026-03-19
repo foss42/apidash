@@ -117,7 +117,7 @@ void main() async {
       await Future.delayed(const Duration(seconds: 2));
     });
   });
-  
+
   group('CollectionStateNotifier Auth Tests', () {
     late ProviderContainer container;
     late CollectionStateNotifier notifier;
@@ -1224,6 +1224,84 @@ void main() async {
 
       // Verify the script is preserved in the original
       expect(currentRequest?.preRequestScript, equals(preRequestScript));
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+  });
+
+  group('CollectionStateNotifier Delete & Undo Tests', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+    });
+
+    test('should remove request from state on delete', () {
+      final id = notifier.state!.entries.first.key;
+      notifier.remove(id: id);
+      expect(notifier.state!.containsKey(id), isFalse);
+    });
+
+    test('should restore deleted request after undoDelete', () {
+      notifier.add();
+      final id = container.read(requestSequenceProvider).first;
+      notifier.remove(id: id);
+      notifier.undoDelete();
+      expect(notifier.state!.containsKey(id), isTrue);
+    });
+
+    test('should restore deleted request at original index after undo', () {
+      notifier.add();
+      notifier.add();
+      notifier.add();
+      final sequenceBefore = [...container.read(requestSequenceProvider)];
+      final idToDelete = sequenceBefore[1];
+      notifier.remove(id: idToDelete);
+      notifier.undoDelete();
+      final sequenceAfter = container.read(requestSequenceProvider);
+      expect(sequenceAfter[1], equals(idToDelete));
+    });
+
+    test('should select restored request after undo', () {
+      notifier.add();
+      final id = container.read(requestSequenceProvider).first;
+      notifier.remove(id: id);
+      notifier.undoDelete();
+      final selectedId = container.read(selectedIdStateProvider);
+      expect(selectedId, equals(id));
+    });
+
+    test('should do nothing if undoDelete called without prior delete', () {
+      final keysBefore = notifier.state!.keys.toList();
+      notifier.undoDelete();
+      expect(notifier.state!.keys.toList(), equals(keysBefore));
+    });
+
+    test('should only undo last delete not multiple', () {
+      notifier.add();
+      notifier.add();
+      final sequence = container.read(requestSequenceProvider);
+      final firstId = sequence[0];
+      final secondId = sequence[1];
+      notifier.remove(id: firstId);
+      notifier.remove(id: secondId);
+      notifier.undoDelete();
+      expect(notifier.state!.containsKey(secondId), isTrue);
+      expect(notifier.state!.containsKey(firstId), isFalse);
+    });
+
+    test('should clear undo state after undoDelete is called', () {
+      notifier.add();
+      final id = container.read(requestSequenceProvider).first;
+      notifier.remove(id: id);
+      notifier.undoDelete();
+      notifier.undoDelete(); 
+      final count = notifier.state!.keys.where((k) => k == id).length;
+      expect(count, equals(1));
     });
 
     tearDown(() {

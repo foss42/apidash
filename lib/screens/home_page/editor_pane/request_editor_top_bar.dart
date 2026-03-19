@@ -40,8 +40,24 @@ class RequestEditorTopBar extends ConsumerWidget {
             },
             onDuplicatePressed: () =>
                 ref.read(collectionStateNotifierProvider.notifier).duplicate(),
-            onDeletePressed: () =>
-                ref.read(collectionStateNotifierProvider.notifier).remove(),
+            onDeletePressed: () {
+              final deletedName = name.isNullOrEmpty() ? kUntitled : name!;
+              final notifier =
+                  ref.read(collectionStateNotifierProvider.notifier);
+              notifier.remove();
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                getSnackBar(
+                  '"$deletedName" deleted',
+                  small: false,
+                  duration: const Duration(seconds: 5),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () => notifier.undoDelete(),
+                  ),
+                ),
+              );
+            },
           ),
           kHSpacer10,
           const EnvironmentDropdown(),
