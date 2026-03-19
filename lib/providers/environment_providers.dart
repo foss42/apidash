@@ -3,13 +3,16 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 
-final selectedEnvironmentIdStateProvider =
-    StateProvider<String?>((ref) => null);
+final selectedEnvironmentIdStateProvider = StateProvider<String?>(
+  (ref) => null,
+);
 
-final selectedEnvironmentModelProvider =
-    StateProvider<EnvironmentModel?>((ref) {
+final selectedEnvironmentModelProvider = StateProvider<EnvironmentModel?>((
+  ref,
+) {
   final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
   final environments = ref.watch(environmentsStateNotifierProvider);
   return selectedId != null ? environments![selectedId] : null;
@@ -26,32 +29,36 @@ final activeEnvironmentModelProvider = StateProvider<EnvironmentModel?>((ref) {
 
 final availableEnvironmentVariablesStateProvider =
     StateProvider<Map<String, List<EnvironmentVariableModel>>>((ref) {
-  Map<String, List<EnvironmentVariableModel>> result = {};
-  final environments = ref.watch(environmentsStateNotifierProvider);
-  final activeEnviormentId = ref.watch(activeEnvironmentIdStateProvider);
-  if (activeEnviormentId != null) {
-    result[activeEnviormentId] = environments?[activeEnviormentId]
-            ?.values
-            .where((element) => element.enabled)
-            .toList() ??
-        [];
-  }
-  result[kGlobalEnvironmentId] = environments?[kGlobalEnvironmentId]
-          ?.values
-          .where((element) => element.enabled)
-          .toList() ??
-      [];
-  return result;
-});
+      Map<String, List<EnvironmentVariableModel>> result = {};
+      final environments = ref.watch(environmentsStateNotifierProvider);
+      final activeEnviormentId = ref.watch(activeEnvironmentIdStateProvider);
+      if (activeEnviormentId != null) {
+        result[activeEnviormentId] =
+            environments?[activeEnviormentId]?.values
+                .where((element) => element.enabled)
+                .toList() ??
+            [];
+      }
+      result[kGlobalEnvironmentId] =
+          environments?[kGlobalEnvironmentId]?.values
+              .where((element) => element.enabled)
+              .toList() ??
+          [];
+      return result;
+    });
 
 final environmentSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getEnvironmentIds();
   return ids ?? [kGlobalEnvironmentId];
 });
 
-final StateNotifierProvider<EnvironmentsStateNotifier,
-        Map<String, EnvironmentModel>?> environmentsStateNotifierProvider =
-    StateNotifierProvider((ref) => EnvironmentsStateNotifier(ref, hiveHandler));
+final StateNotifierProvider<
+  EnvironmentsStateNotifier,
+  Map<String, EnvironmentModel>?
+>
+environmentsStateNotifierProvider = StateNotifierProvider(
+  (ref) => EnvironmentsStateNotifier(ref, hiveHandler),
+);
 
 class EnvironmentsStateNotifier
     extends StateNotifier<Map<String, EnvironmentModel>?> {
@@ -59,9 +66,7 @@ class EnvironmentsStateNotifier
     var status = loadEnvironments();
     Future.microtask(() {
       if (status) {
-        ref.read(environmentSequenceProvider.notifier).state = [
-          ...state!.keys,
-        ];
+        ref.read(environmentSequenceProvider.notifier).state = [...state!.keys];
       }
       ref.read(selectedEnvironmentIdStateProvider.notifier).state =
           kGlobalEnvironmentId;
@@ -79,9 +84,7 @@ class EnvironmentsStateNotifier
         name: "Global",
         values: [],
       );
-      state = {
-        kGlobalEnvironmentId: globalEnvironment,
-      };
+      state = {kGlobalEnvironmentId: globalEnvironment};
       return false;
     } else {
       Map<String, EnvironmentModel> environmentsMap = {};
@@ -106,14 +109,8 @@ class EnvironmentsStateNotifier
 
   void addEnvironment() {
     final id = getNewUuid();
-    final newEnvironmentModel = EnvironmentModel(
-      id: id,
-      values: [],
-    );
-    state = {
-      ...state!,
-      id: newEnvironmentModel,
-    };
+    final newEnvironmentModel = EnvironmentModel(id: id, values: []);
+    state = {...state!, id: newEnvironmentModel};
     ref
         .read(environmentSequenceProvider.notifier)
         .update((state) => [...state, id]);
@@ -132,10 +129,7 @@ class EnvironmentsStateNotifier
       name: name ?? environment.name,
       values: values ?? environment.values,
     );
-    state = {
-      ...state!,
-      id: updatedEnvironment,
-    };
+    state = {...state!, id: updatedEnvironment};
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
@@ -152,10 +146,7 @@ class EnvironmentsStateNotifier
     final idx = environmentIds.indexOf(id);
     environmentIds.insert(idx + 1, newId);
 
-    state = {
-      ...state!,
-      newId: newEnvironment,
-    };
+    state = {...state!, newId: newEnvironment};
 
     ref
         .read(environmentSequenceProvider.notifier)
@@ -181,9 +172,7 @@ class EnvironmentsStateNotifier
 
     ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
 
-    state = {
-      ...state!,
-    }..remove(id);
+    state = {...state!}..remove(id);
 
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }

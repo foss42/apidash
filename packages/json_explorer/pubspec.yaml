@@ -1,6 +1,6 @@
 name: json_explorer
 description: A Flutter widget to render, view and interact with JSON. It also includes interactive search/find capabilities.
-version: 0.1.2
+version: 0.1.3
 repository: https://github.com/foss42/apidash/tree/main/packages/json_explorer
 homepage: https://github.com/foss42/apidash/tree/main/packages/json_explorer
 issue_tracker: https://github.com/foss42/apidash/issues
@@ -12,14 +12,16 @@ topics:
   - viewer
 
 environment:
-  sdk: ">=3.2.3 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
   flutter: ">=3.7.2"
+
+resolution: workspace
 
 dependencies:
   flutter:
     sdk: flutter
   scrollable_positioned_list: ^0.3.8
-  provider: ^6.0.2
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:
