@@ -13,7 +13,7 @@ class SendButton extends StatelessWidget {
 
   final bool isStreaming;
   final bool isWorking;
-  final void Function() onTap;
+  final void Function()? onTap;
   final void Function()? onCancel;
 
   @override
