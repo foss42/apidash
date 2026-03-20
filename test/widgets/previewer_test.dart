@@ -154,6 +154,28 @@ void main() {
     expect(find.byType(Image), findsOneWidget);
   });
 
+  testWidgets(
+      'Testing when type/subtype is application/octet-stream with jpeg bytes',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Previewer',
+        home: Scaffold(
+          body: Previewer(
+            type: kTypeApplication,
+            subtype: kSubTypeOctetStream,
+            bytes: kBodyBytesJpeg,
+            body: '',
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Image), findsOneWidget);
+  });
+
   testWidgets('Testing when type/subtype is image/jpeg corrupted', (
     tester,
   ) async {

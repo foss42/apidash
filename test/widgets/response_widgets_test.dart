@@ -269,6 +269,37 @@ void main() {
     expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
+  testWidgets(
+      'Testing Response Body for octet-stream with recognizable bytes',
+      (tester) async {
+    var responseModelOctetRecognized = responseModel.copyWith(
+      headers: const {"content-type": "application/octet-stream"},
+      bodyBytes: kBodyBytesJpeg,
+      formattedBody: null,
+    );
+    var requestModelWithRecognizedOctet =
+        testRequestModel.copyWith(httpResponseModel: responseModelOctetRecognized);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Response Body',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body:
+              ResponseBody(selectedRequestModel: requestModelWithRecognizedOctet),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Image), findsOneWidget);
+    expect(
+      find.textContaining('application/octet-stream', findRichText: true),
+      findsNothing,
+    );
+  });
+
   testWidgets('Testing Response Body for no formatted body', (tester) async {
     var responseModelNoFormattedBody = responseModel.copyWith(
       formattedBody: null,

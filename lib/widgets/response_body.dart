@@ -3,6 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import '../utils/magic_bytes_utils.dart';
 import 'error_message.dart';
 import 'response_body_success.dart';
 
@@ -38,8 +39,19 @@ class ResponseBody extends StatelessWidget {
       );
     }
 
-    final mediaType =
-        responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+    final bodyBytes = responseModel.bodyBytes!;
+
+    var mediaType = responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+    if (mediaType.type == kTypeApplication &&
+        mediaType.subtype == kSubTypeOctetStream &&
+        bodyBytes.isNotEmpty) {
+      final (detectedType, detectedSubtype) = detectMimeTypeFromBytes(bodyBytes);
+      if (detectedType != kTypeApplication ||
+          detectedSubtype != kSubTypeOctetStream) {
+        mediaType = MediaType(detectedType, detectedSubtype);
+      }
+    }
+
     // Fix #415: Treat null Content-type as plain text instead of Error message
     // if (mediaType == null) {
     //   return ErrorMessage(
@@ -67,7 +79,7 @@ class ResponseBody extends StatelessWidget {
       key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
-      bytes: responseModel.bodyBytes!,
+      bytes: bodyBytes,
       body: body,
       formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
