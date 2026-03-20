@@ -32,7 +32,7 @@ so, instead of getting output like “regex mismatch at index 4” or “invalid
 **2.Improving the User Experience-** One should be able to test multiple server rapidly and effectively. I found currently testing multiple number of server at once is difficult as it create confusion if there are same tool names, it breaks the workflow. Also, adding new server is time consuming by getting to the server section and adding the new server with **arg** and **command** but to handle this better I've designed a command palette where developer can just paste the address of their server and it's fetches automatically it's arguments and type of the server and connect it immediately without loosing the previous connection and work smoothly and also handle the scenarios that affects the workflows. 
 Also, since I'm trying to load multiple server simultaneously I make sure developer can able to switch b/w server in less than a seconds and it is expected to work like a browser tabs.
 
-[snapshot of command palette]
+![Command palatte ](images/command.png)
 
 **3.Extended Traffic Controller-** The purpose is to capture the logs with progress token and handle way better than existing history or traffic handler by parsing the MCP communication between client and server. 
 It can be able to fetch the history of requests and responses between client and server in better and structured form. It helps developer to find more info while testing the server capabilities and understanding better what exactly went wrong, which field failed and why. 
