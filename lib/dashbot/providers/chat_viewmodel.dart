@@ -124,16 +124,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final promptBuilder = _ref.read(promptBuilderProvider);
     // Prepare a substituted copy of current request for prompt context
     final currentReq = _currentRequest;
-<<<<<<< HEAD
-    final substitutedReq = (currentReq != null && currentReq.httpRequestModel != null)
-        ? currentReq.copyWith(
-            httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith())
-=======
     final substitutedReq = (currentReq?.httpRequestModel != null)
         ? currentReq!.copyWith(
             httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith(),
           )
->>>>>>> 2b5fff1158db7fd85320c4a2e05aa5de10ccbf15
         : currentReq;
     String systemPrompt;
     if (type == ChatMessageType.generateCode) {
