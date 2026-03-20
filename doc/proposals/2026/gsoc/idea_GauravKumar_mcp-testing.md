@@ -15,7 +15,7 @@ Idea description:
 
 The Model Context Protocol (MCP) is a standard for connecting AI applications to external systems. It can be your local file on your computer or may be a tool or a prompt you specifically designed for your work.
 To connect and communicate with client and server MCP uses transports such as STDIO, or Streamable-HTTP and JSON-RPC respectively.
-![Command palatte ](images/communication-diagram.png)
+![Communications](images/basics.png)
  
 ### My aim to strengthen the MCP developer experience by providing:
 
@@ -32,7 +32,7 @@ so, instead of getting output like “regex mismatch at index 4” or “invalid
 
 This same principle applies to roots: instead of a generic file error, show a vlaid error message. Also make sure tool can show warning if the server is not canonicalizing paths before checking roots (a common security error that SDK of MCP does not catch automatically.
 
-![better observability](images/better observability.png)
+![better observability](images/better-observability.png)
 
 
 **2.Improving the User Experience-** One should be able to test multiple server rapidly and effectively. I found currently testing multiple number of server at once is difficult as it create confusion if there are same tool names, it breaks the workflow. Also, adding new server is time consuming by getting to the server section and adding the new server with **arg** and **command** but to handle this better I've designed a command palette where developer can just paste the address of their server and it's fetches automatically it's arguments and type of the server and connect it immediately without loosing the previous connection and work smoothly and also handle the scenarios that affects the workflows. 
