@@ -78,10 +78,17 @@ class ModelManager {
       if (resp != null) {
         final output = jsonDecode(resp.body);
         final models = output['models'];
-        if (models != null) {
+        if (models is List) {
           for (final m in models) {
-            ollamaModels.add(Model(
-                id: m['model'] ?? m['name'], name: m['name'] ?? m['model']));
+            if (m is Map) {
+              final mModel = m['model']?.toString() ?? "";
+              final mName = m['name']?.toString() ?? "";
+              final modelId = mModel.isNotEmpty ? mModel : mName;
+              final modelName = mName.isNotEmpty ? mName : mModel;
+              if (modelId.isNotEmpty || modelName.isNotEmpty) {
+                ollamaModels.add(Model(id: modelId, name: modelName));
+              }
+            }
           }
         }
       }
