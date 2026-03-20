@@ -30,6 +30,11 @@ for tool create_task: [{"origin":"string","code":"too_small",
 If you look at the output it's ask for *expected string to have >=1 character* to execute the tool but a better version can be something like this- *"title" cannot be empty*.
 so, instead of getting output like “regex mismatch at index 4” or “invalid enum value,” ....etc the tool can provide a more readable version such as *“email format is invalid”* or *“priority must be one of: low, med, high,”* **making issues faster to understand and fix.**
 
+This same principle applies to roots: instead of a generic file error, show a vlaid error message. Also make sure tool can show warning if the server is not canonicalizing paths before checking roots (a common security error that SDK of MCP does not catch automatically.
+
+![better observability](images/better observability.png)
+
+
 **2.Improving the User Experience-** One should be able to test multiple server rapidly and effectively. I found currently testing multiple number of server at once is difficult as it create confusion if there are same tool names, it breaks the workflow. Also, adding new server is time consuming by getting to the server section and adding the new server with **arg** and **command** but to handle this better I've designed a command palette where developer can just paste the address of their server and it's fetches automatically it's arguments and type of the server and connect it immediately without loosing the previous connection and work smoothly and also handle the scenarios that affects the workflows. 
 Also, since I'm trying to load multiple server simultaneously I make sure developer can able to switch b/w server in less than a seconds and it is expected to work like a browser tabs.
 
@@ -104,6 +109,10 @@ e.g- **Scenario:** A developer selects the `get-sum` tool and triggers the workf
 -   Tests can be run sequentially or batched too, and results can be exported for CI/CD to catch schema drift and regressions early.
    
 - Also, the system can be integrated with LLMs to suggest additional edge‑cases or to handle more complex scenarios.
+
+-    The tool can warn developers if their server is not canonicalizing paths before checking roots, which is a common security mistake that the MCP SDK does not catch automatically.
+
+
 
 **5.Forward‑compatible protocol testing –** Making the tool future ready by supporting testing of upcoming MCP versions & MCP based protocols like Machine Payments Protocol, so developers can validate compatibility and catch breaking changes as soon as possible.
 `
