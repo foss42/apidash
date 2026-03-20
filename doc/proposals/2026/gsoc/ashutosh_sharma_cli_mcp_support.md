@@ -132,9 +132,15 @@ apidash env active              # Show active environment
 apidash serve --mcp             # Start MCP server headlessly
 ```
 
-**Key design decision:** CLI reads directly from the same Hive storage 
-as the GUI. This means requests saved in the GUI are immediately available 
-in the CLI and vice versa.
+**Storage access without Flutter:**
+A key insight from studying `lib/services/hive_services.dart` is that 
+`initHiveBoxes` already supports a non-Flutter path via 
+`Hive.init(workspaceFolderPath)` when `initializeUsingPath: true`. 
+This means the CLI can safely read and write saved requests and 
+environments from the same Hive storage as the GUI without starting 
+the Flutter UI. The `HiveHandler` class already exposes all the methods 
+needed: `getIds()`, `getRequestModel(id)`, `getEnvironmentIds()`, 
+`getEnvironment(id)`.
 
 **Packages used:**
 - `package:args` - Command and flag parsing
