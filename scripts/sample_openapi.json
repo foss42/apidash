@@ -1,0 +1,14 @@
+{
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Get all users"
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "User login"
+      }
+    }
+  }
+}
