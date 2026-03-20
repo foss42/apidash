@@ -2,11 +2,11 @@
 
   
 
-Full Name: Gaurav Kumar,
-University name: R.N.S Institute Of Technology, Bangalore,
-Program you are enrolled in: B.E in Computer Science and Engineering,
-Year: 2nd,
-Expected graduation date: 2028,
+Full Name: Gaurav Kumar
+University name: R.N.S Institute Of Technology, Bangalore
+Program you are enrolled in: B.E in Computer Science and Engineering
+Year: 2nd
+Expected graduation date: 2028
 
 Project Title: MCP Testing
 Relevant issues: #1225
@@ -15,6 +15,7 @@ Idea description:
 
 The Model Context Protocol (MCP) is a standard for connecting AI applications to external systems. It can be your local file on your computer or may be a tool or a prompt you specifically designed for your work.
 To connect and communicate with client and server MCP uses transports such as STDIO, or Streamable-HTTP and JSON-RPC respectively.
+![Command palatte ](images/communication-diagram.png)
  
 ### My aim to strengthen the MCP developer experience by providing:
 
