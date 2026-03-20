@@ -9,14 +9,18 @@ part of 'history_meta_model.dart';
 _$HistoryMetaModelImpl _$$HistoryMetaModelImplFromJson(
         Map<String, dynamic> json) =>
     _$HistoryMetaModelImpl(
-      historyId: json['historyId'] as String,
-      requestId: json['requestId'] as String,
-      apiType: $enumDecode(_$APITypeEnumMap, json['apiType']),
+      historyId: json['historyId'] as String? ?? "",
+      requestId: json['requestId'] as String? ?? "",
+      apiType: $enumDecodeNullable(_$APITypeEnumMap, json['apiType']) ??
+          APIType.rest,
       name: json['name'] as String? ?? "",
-      url: json['url'] as String,
-      method: $enumDecode(_$HTTPVerbEnumMap, json['method']),
-      responseStatus: (json['responseStatus'] as num).toInt(),
-      timeStamp: DateTime.parse(json['timeStamp'] as String),
+      url: json['url'] as String? ?? "",
+      method: $enumDecodeNullable(_$HTTPVerbEnumMap, json['method']) ??
+          HTTPVerb.get,
+      responseStatus: (json['responseStatus'] as num?)?.toInt() ?? 200,
+      timeStamp: json['timeStamp'] == null
+          ? null
+          : DateTime.parse(json['timeStamp'] as String),
     );
 
 Map<String, dynamic> _$$HistoryMetaModelImplToJson(
@@ -29,7 +33,7 @@ Map<String, dynamic> _$$HistoryMetaModelImplToJson(
       'url': instance.url,
       'method': _$HTTPVerbEnumMap[instance.method]!,
       'responseStatus': instance.responseStatus,
-      'timeStamp': instance.timeStamp.toIso8601String(),
+      'timeStamp': instance.timeStamp?.toIso8601String(),
     };
 
 const _$APITypeEnumMap = {

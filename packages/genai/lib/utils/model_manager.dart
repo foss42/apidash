@@ -65,33 +65,29 @@ class ModelManager {
   static Future<List<Model>?> fetchInstalledOllamaModels({
     String? ollamaUrl,
   }) async {
-    // All available models
-    // final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
-    // All loaded models
-    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/ps";
+    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
+    List<Model> ollamaModels = [const Model(id: '', name: 'Custom')];
 
     try {
-      final (resp, _, msg) = await sendHttpRequest(
+      final (resp, _, _) = await sendHttpRequest(
         'OLLAMA_FETCH',
         APIType.rest,
         HttpRequestModel(url: url, method: HTTPVerb.get),
         noSSL: true,
       );
-      // debugPrint("fetchInstalledOllamaModels -> $url -> ${resp?.body} -> $msg");
-      if (resp == null) {
-        return null;
+      if (resp != null) {
+        final output = jsonDecode(resp.body);
+        final models = output['models'];
+        if (models != null) {
+          for (final m in models) {
+            ollamaModels.add(Model(
+                id: m['model'] ?? m['name'], name: m['name'] ?? m['model']));
+          }
+        }
       }
-      final output = jsonDecode(resp.body);
-      final models = output['models'];
-      if (models == null) return [];
-      List<Model> ollamaModels = [];
-      for (final m in models) {
-        ollamaModels.add(Model(id: m['model'], name: m['name']));
-      }
-      return ollamaModels;
     } catch (e) {
       debugPrint('fetchInstalledOllamaModels -> ${e.toString()}');
-      return null;
     }
+    return ollamaModels;
   }
 }
