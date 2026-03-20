@@ -24,8 +24,8 @@ class LearnButton extends StatelessWidget {
         iconSize: kButtonIconSizeSmall,
         label: textLabel,
         isTonal: true,
-        buttonStyle: ButtonStyle(
-          padding: WidgetStatePropertyAll(kP10),
+        buttonStyle: const ButtonStyle(
+          padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 10)),
         ),
         onPressed: () {
           if (url != null) {
