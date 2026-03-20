@@ -6,72 +6,128 @@ Program you are enrolled in (Degree & Major/Minor): B.Tech & Electrical Engineer
 Year: 3rd (Junior year)
 Expected graduation date: May 2027
 
-Project Title: Agentic API Testing: Directed Cyclic Workflow Graph with Active Intelligence
+Project Title: Agentic API Testing: DCG Workflow Engine + MCP Apps Integration
 Relevant issues: https://github.com/foss42/apidash/discussions/1230
 
 Idea description:
 
-Testing APIs can be a massive headache. You have to juggle complex states, handle responses that change depending on previous requests, and figure out tricky edge cases. This proposal aims to equip API Dash with an intelligent, autonomous testing agent.
+#### The Problem
 
-#### Addressing GSoC Objectives: An End-to-End Autonomous Layer
+API testing today is deeply manual and fragile. Developers write static test scripts, copy-paste auth tokens between requests, and manually chain together multi-step workflows. When an API changes, even slightly, every dependent test breaks silently. The feedback loop is slow, context gets lost, and debugging multi-step flows is painful.
 
-This idea directly tackles the tasks outlined by the mentors:
+On the AI side, current tools generate raw `curl` commands or static code snippets. Developers have to copy these into a separate client, run the request, and paste the response back into the AI chat. This constant context-switching destroys the developer experience.
 
-- **Understand API Specs and Workflows**: The system will automatically read OpenAPI or GraphQL schemas. Instead of making the AI guess what the API does, we build a structured map (a Directed Cyclic Graph) so the agent actually _understands_ the endpoints and how they connect.
+This proposal tackles both problems with a single architecture: a Dart-native Directed Cyclic Graph (DCG) workflow engine for intelligent, autonomous API testing, combined with MCP Apps that embed API Dash's visual testing capabilities directly inside AI agents.
 
-- **Generate and Execute End-to-End Tests**: Instead of writing brittle test scripts that break constantly, we're going to use a Dart-native finite state machine to navigate the requests. This handles complex flows—like pagination loops or authenticated retries—smoothly and natively.
+#### Core Architecture: State-Based Directed Cyclic Graph (DCG)
 
-- **Validate Outcomes**: We'll hook this right into API Dash's core networking. It will automatically translate API specs into API Dash Assertions and run fast Javascript validations behind the scenes to verify everything works as expected.
+Instead of asking an LLM to generate and execute raw test scripts (which leads to hallucination and brittle code), we build a structured, executable graph from API specifications.
 
-- **Self-Healing (Continuously Improve Resilience)**: This is the coolest part. If a test fails, the agent drops into _Diagnostic Mode_. It looks at the failure, figures out the Root Cause (RCA), and suggests a fix. Did the API suddenly start requiring a new header? The agent notices, proposes a quick change, and fixes the test without you needing to dig into it.
+**Nodes** represent individual API requests (GET, POST, PUT, DELETE across HTTP, GraphQL, or any protocol API Dash supports).
 
-#### Core Concept: State-Based Directed Cyclic Graph (DCG)
+**Edges** carry temporal logic conditions and data dependencies, defining the rules to move from one request to the next (for example, "proceed only if status is 200" or "extract the token first").
 
-Asking an LLM to generate and run raw testing scripts is risky, as it tends to hallucinate or write code that breaks easily. Instead, we use the API specs to generate a **State-Based Directed Cyclic Graph**.
+We use a DCG specifically, not a standard DAG, because real-world APIs loop. Polling endpoints, retry logic, paginated fetches, and authentication refresh flows all require cycles. A DAG simply cannot model these naturally.
 
-- **Nodes**: Think of these as the actual requests (like a GET or POST).
-- **Edges**: The rules or conditions to move from one request to the next (like "proceed only if the status is 200").
-
-We're proposing a DCG instead of a standard DAG because real-world APIs loop. You often have to poll servers or retry requests. By running this graph entirely natively in Dart using packages like [`directed_graph`](https://pub.dev/packages/directed_graph) and [`statemachine`](https://pub.dev/packages/statemachine), test execution becomes blazing fast and highly predictable.
+The graph runs entirely natively in Dart using the [`directed_graph`](https://pub.dev/packages/directed_graph) and [`statemachine`](https://pub.dev/packages/statemachine) packages. This keeps test execution blazing fast, fully predictable, and completely independent of any LLM during normal runs.
 
 **Why a State Machine?**
-Because the state machine runs independently from Flutter UI management, tests can execute completely **headless**. That means we can run these complex automated tests purely in the terminal, integrating perfectly with CI/CD pipelines and the overarching API Dash CLI goals (Idea #6).
+The state machine drives execution independently from Flutter UI management. This means tests can run completely headless, making them perfect for CI/CD pipelines, terminal execution, and the broader API Dash CLI goals (Idea #6). The states are simple and powerful:
 
-#### Active Intelligence & Self-Healing (Diagnostic Mode)
+```
+Initializing -> Executing -> Success
+                    |
+                    v
+             DiagnosticMode -> Failure (or Self-Healed -> Re-Execute)
+```
 
-We want to use LLMs _strategically_. If a request fails, we don't just dump a red "FAILED" log and quit. Instead, the agent enters **Diagnostic Mode**:
+#### GSoC Objectives I will focus on
 
-- It performs a Root Cause Analysis (RCA).
-- It checks the real-world context against the API document to see what changed.
-- It then proposes a fix and, with a quick approval, heals the graph automatically.
+This architecture directly maps to what the mentors have outlined:
 
-#### Elevating the Developer Experience (DevX)
+1. **Understand API Specs and Workflows**: The system parses OpenAPI 3.0/3.1 schemas and GraphQL introspection results to automatically construct the workflow graph. Instead of making the AI guess what an API does, we build a structured map so the agent actually understands the endpoints, their relationships, and how they connect.
 
-To make developers actually _want_ to use this, we are packing it with DevX focused features:
+2. **Generate and Execute End-to-End Tests**: The DCG engine navigates the graph through its state machine, handling complex multi-step flows like Login -> Extract Token -> Fetch Profile -> Update Settings -> Delete Account. The Context Store automatically extracts variables (auth tokens, user IDs, pagination cursors) and injects them into subsequent requests using `{{variable}}` template syntax.
 
-1. **Context Store**: A central hub that automatically holds onto things like dynamic IDs or Auth Tokens, so you never have to manually copy-paste them between requests again.
-2. **Normalized Response Models**: A standard way to process API responses so the AI always gets reliable, predictable inputs to work with.
-3. **Conversational Test Generation**: Just type, "Test the e-commerce checkout flow with fake credit cards," and the assistant builds out the graph of requests for you.
-4. **Time-Travel Debugging**: A visual map where you can pause an execution, inspect the Context Store, manually tweak variables, and then step forward into the next API calls.
-5. **Multi-Step Context Verification**: Automatically ripping out Auth tokens from a login response and injecting them into the bearer headers of everything that follows.
+3. **Validate Outcomes**: We hook directly into API Dash's existing assertion framework and post-response JavaScript sandbox. The system automatically translates API spec constraints into API Dash Assertions and runs fast validations. The focus, as the maintainer emphasized, is on correctly creating the workflow rather than just structural schema matching.
 
-#### Using Existing API Dash Infra
+4. **Self-Healing / Continuously Improve Resilience**: This is where Active Intelligence comes in. When a test fails, the engine does not simply log "FAILED" and quit. Instead, it transitions to Diagnostic Mode.
 
-We aren't reinventing the wheel. We're building squarely on top of API Dash:
+#### Active Intelligence and Self-Healing (Diagnostic Mode)
 
-- **Assertion Framework**: Automatically tying API specs to existing Assertion components.
-- **Post-Response Scripting**: Utilizing the sandboxed JS environment for deep, native validation.
-- **API Dash Core Networking**: Reusing the existing HTTP request/response dispatchers.
-- **AI Orchestration (`genai` & `APIDashAgentCaller`)**: Seamlessly integrating with existing Model Context Protocols and Dashbot infra.
-- **Specs & Protocols**: Native support for OpenAPI 3.0/3.1 and GraphQL schema introspection.
-- **Graph & Execution Frameworks**: Fast, offline-capable Dart state-machines using (`directed_graph`, `statemachine`) so tests fly when LLMs aren't strictly needed.
+We use LLMs strategically and sparingly. During normal execution, zero AI calls are made. The state machine handles everything natively. But when something breaks, the agent enters Diagnostic Mode:
 
-Ultimately, this gives us fast, predictable execution powered purely by code, while saving the "Active Intelligence" for building the workflows and swooping in to fix things when they break.
+- It performs Root Cause Analysis (RCA) by comparing the actual response against the API specification.
+- It checks what changed: Did the API add a required header? Did a field name change? Is the auth token expired?
+- It proposes a targeted fix to the graph (add a node, update parameters, modify an edge condition).
+- With a single user approval (Human-in-the-Loop checkpoint), it self-heals the graph and re-executes.
+
+This approach is fundamentally different from throwing the entire problem at an LLM. We invoke AI only for graph generation (from specs) and self-healing (on failure). Everything else runs as pure, optimized Dart code. This keeps costs low, latency near-zero, and execution deterministic.
+
+#### MCP Apps Integration: API Dash Inside AI Agents
+
+By leveraging the MCP Apps specification (as detailed in the [practical guide by Ashita Prasad mam](https://dev.to/ashita/a-practical-guide-to-building-mcp-apps-1bfm)), we can transform API Dash from a standalone client into a universal API testing plugin that lives natively inside any AI agent.
+
+**API Dash as an MCP Server** exposes structured tools that external AI agents can call:
+
+- `run_api_request(config)` - Execute a request through API Dash's networking layer
+- `execute_workflow(graph_id)` - Run a full DCG workflow and return results
+- `get_workflow_graph(spec_url)` - Generate a DCG from an API specification
+- `list_workspaces()` / `search_collections()` - Query the developer's existing API collections
+- `get_request_history(filters)` - Access past request/response pairs for context
+
+**API Dash as MCP Apps** (Interactive UI surfaces in agent chat):
+
+1. **In-Chat Workflow Graph Viewer** (`ui/workflow-graph`): When an agent generates a test workflow, instead of outputting a wall of JSON, it renders an interactive DCG visualization right in the chat. Developers can see the nodes, edges, and execution path visually.
+
+2. **In-Chat Request Builder** (`ui/request-builder`): A functional mini-API Dash panel rendered in a sandboxed iframe. Developers can tweak headers, edit parameters, and hit "Send" without leaving their IDE.
+
+3. **One-Click Context Bridging** (`ui/update-model-context`): After executing a request via the in-chat App, a single click pushes the live response (or just the relevant parts) back into the agent's context window. No manual copy-pasting.
+
+4. **Visual Execution Timeline** (`tools/call` orchestration): For multi-step workflow executions, the MCP App renders a visual timeline. Developers can click into any step to inspect the exact payload sent and received. Total transparency into how the agent traversed the API graph.
+
+5. **Host-Aware Native Styling** (`ui/initialize`): Using the MCP Apps handshake, the API Dash app dynamically inherits the host agent's theme (colors, typography, light/dark mode) so it blends perfectly into whatever environment the developer uses.
+
+This positions API Dash as an agent-native testing platform. A developer working in Cursor or Claude Desktop can say "Test my checkout API flow" and get a live, interactive DCG visualization rendered right in their chat, with the ability to execute, inspect, and push results back into the conversation.
+
+#### Developer Experience Features
+
+To make this genuinely useful day-to-day, we are building these concrete DevX features:
+
+1. **Context Store**: A central hub that automatically holds dynamic variables (auth tokens, user IDs, session cookies). No manual copy-paste between requests. The store is inspectable and editable at any point during execution.
+
+2. **Normalized Response Models**: A standardized way to process responses across protocols (REST, GraphQL, gRPC). This gives the AI structured, predictable inputs with full context of nodes, endpoints, and metadata, preventing hallucination from raw response dumps.
+
+3. **Conversational Test Generation**: Type "Test the e-commerce checkout flow with expired credit cards" and the assistant builds the DCG for you. The graph is always editable before execution.
+
+4. **Time-Travel Debugging**: A visual map where you can pause execution at any node, inspect the Context Store, manually tweak variables, and then step forward. This makes debugging multi-step flows intuitive rather than painful.
+
+5. **Human-in-the-Loop Checkpoints**: Strategic approval points at three stages: after test generation (review the graph), after execution (review failures), and before self-healing (approve graph modifications). This builds trust without slowing down the workflow.
+
+#### Building on Existing API Dash Infrastructure
+
+We are not reinventing the wheel. Every component is built on top of what API Dash already provides:
+
+- **Assertion Framework**: Automatically tying API spec constraints to API Dash's existing assertion components.
+- **Post-Response Scripting**: Using the sandboxed JavaScript environment for deep, native validation.
+- **API Dash Core Networking** (`apidash_core`): Reusing the existing HTTP request/response dispatchers and models.
+- **AI Orchestration** (`genai` and `APIDashAgentCaller`): Integrating with API Dash's existing model-agnostic AI infrastructure and Dashbot.
+- **Specs and Protocols**: Native support for OpenAPI 3.0/3.1 and GraphQL schema introspection.
+- **Graph and State Machine Execution**: Fast, offline-capable Dart state machines using `directed_graph` and `statemachine` so tests fly when LLMs are not needed.
+- **Design System** (`apidash_design_system`): Using existing design tokens and components for consistent UI.
+
+This gives us fast, predictable execution powered purely by code, while reserving the Active Intelligence for building workflows and swooping in to fix things when they break.
 
 #### Concrete Proof of Concept (POC)
 
-To ensure the feasibility of the headless state machine execution, a native Dart POC was developed demonstrating the execution engine cleanly orchestrating a Direct Cyclic Graph of requests. The POC effectively simulates `Normal Execution` transitioning variables seamlessly across a Context Store, and `Diagnostic Mode` effectively triggering upon an unexpected simulated network failure.
+To validate this architecture, a native Dart POC was developed demonstrating the execution engine orchestrating a Directed Cyclic Graph of requests. The POC runs inside the API Dash app itself, reusing its core infrastructure, and includes:
 
-![Agentic API Testing Execution Engine Logs](images/agentic_api_testing.png)
+1. An interactive DCG workflow graph visualization where nodes represent API requests and edges show the execution flow with conditions.
+2. A live state machine execution engine that highlights the currently executing node and animates transitions.
+3. A Context Store panel showing variables being extracted and injected across requests in real-time.
+4. Diagnostic Mode triggering on simulated failures, with RCA analysis and self-healing proposals.
+5. An MCP Apps concept panel demonstrating how the workflow graph would appear embedded inside an AI agent's chat interface.
 
-![Agentic API Testing Diagnostic Mode Output](images/agentic_api_testing_1.png)
+![Agentic API Testing Execution Success](images/Agentic_api_testing_success.png)
+
+![Agentic API Testing Diagnostic Mode Output](images/Agentic_api_testing_failure.png)
