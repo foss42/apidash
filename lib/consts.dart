@@ -514,8 +514,23 @@ const kLabelRequests = "Requests";
 const kLabelVariables = "Variables";
 const kLabelHistory = "History";
 const kLabelLogs = "Logs";
+const kLabelEvaluation = "Evaluation";
 const kLabelAbout = "About";
 const kLabelSettings = "Settings";
+
+// Evaluation Page
+const kLabelBenchmarks = "Benchmarks";
+const kLabelDatasets = "Datasets";
+const kLabelMultimodal = "Multimodal AI";
+const kLabelAgents = "AI Agents";
+const kLabelRunBenchmark = "Run Benchmark";
+const kLabelSelectBenchmark = "Select Benchmark";
+const kLabelBenchmarkResults = "Benchmark Results";
+const kLabelUploadDataset = "Upload Dataset";
+const kLabelConfigParameters = "Configure Parameters";
+const kLabelVoice = "Voice";
+const kLabelImage = "Image";
+const kLabelText = "Text";
 
 // Settings Page
 const kLabelSwitchThemeMode = "Switch Theme Mode";

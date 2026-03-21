@@ -9,6 +9,7 @@ import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
 import 'history/history_page.dart';
+import 'eval/eval_page.dart';
 import 'settings_page.dart';
 import 'terminal/terminal_page.dart';
 
@@ -100,6 +101,20 @@ class Dashboard extends ConsumerWidget {
                       kLabelLogs,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      tooltip: kLabelEvaluation,
+                      isSelected: railIdx == 4,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 4;
+                      },
+                      icon: const Icon(Icons.analytics_outlined),
+                      selectedIcon: const Icon(Icons.analytics),
+                    ),
+                    Text(
+                      kLabelEvaluation,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
@@ -124,7 +139,7 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 4,
+                          buttonIdx: 5,
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
                           label: kLabelSettings,
@@ -151,6 +166,7 @@ class Dashboard extends ConsumerWidget {
                   EnvironmentPage(),
                   HistoryPage(),
                   TerminalPage(),
+                  EvalPage(),
                   SettingsPage(),
                 ],
               ),
