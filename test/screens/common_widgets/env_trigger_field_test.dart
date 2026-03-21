@@ -1,10 +1,40 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'package:apidash/screens/common_widgets/env_trigger_field.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  String? clipboardText;
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform,
+            (MethodCall methodCall) async {
+      switch (methodCall.method) {
+        case 'Clipboard.getData':
+          return <String, dynamic>{'text': clipboardText};
+        case 'Clipboard.setData':
+          clipboardText =
+              (methodCall.arguments as Map<Object?, Object?>?)?['text']
+                  as String?;
+          return null;
+        default:
+          return null;
+      }
+    });
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, null);
+    clipboardText = null;
+  });
+
   testWidgets('Testing EnvironmentTriggerField updates the controller text',
       (WidgetTester tester) async {
     final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
@@ -223,5 +253,168 @@ void main() {
     expect(fieldKey.currentState!.controller.selection.baseOffset,
         newValue.length);
     expect(fieldKey.currentState!.controller.text, newValue);
+  });
+
+  testWidgets(
+      'Testing EnvironmentTriggerField clears text when keyId changes with null initialValue',
+      (WidgetTester tester) async {
+    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'testKey1',
+              initialValue: 'hello world',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'testKey2',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(fieldKey.currentState!.controller.text, isEmpty);
+    expect(fieldKey.currentState!.controller.selection.baseOffset, 0);
+  });
+
+  testWidgets(
+      'Testing EnvironmentTriggerField detects pasted curl text and restores previous value',
+      (WidgetTester tester) async {
+    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
+    String? interceptedText;
+    final changes = <String>[];
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'testKey',
+              initialValue: 'https://api.apidash.dev',
+              onChanged: changes.add,
+              onPastedText: (text) async {
+                interceptedText = text;
+                return true;
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    const curlCommand = 'curl -X GET https://api.apidash.dev/users';
+    await Clipboard.setData(const ClipboardData(text: curlCommand));
+    final field = tester.widget<ExtendedTextField>(find.byType(ExtendedTextField));
+    fieldKey.currentState!.controller.value = const TextEditingValue(
+      text: curlCommand,
+      selection: TextSelection.collapsed(offset: curlCommand.length),
+    );
+    field.onChanged!(curlCommand);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(interceptedText, curlCommand);
+    expect(changes, ['https://api.apidash.dev']);
+    expect(fieldKey.currentState!.controller.text, 'https://api.apidash.dev');
+  });
+
+  testWidgets(
+      'Testing EnvironmentTriggerField does not treat normal typing as pasted curl text',
+      (WidgetTester tester) async {
+    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
+    String? interceptedText;
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'testKey',
+              onPastedText: (text) async {
+                interceptedText = text;
+                return true;
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    const typedValue = 'https://api.apidash.dev/users';
+    await Clipboard.setData(const ClipboardData(text: 'different clipboard'));
+    final field = tester.widget<ExtendedTextField>(find.byType(ExtendedTextField));
+    fieldKey.currentState!.controller.value = const TextEditingValue(
+      text: typedValue,
+      selection: TextSelection.collapsed(offset: typedValue.length),
+    );
+    field.onChanged!(typedValue);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(interceptedText, isNull);
+    expect(fieldKey.currentState!.controller.text, typedValue);
+  });
+
+  testWidgets(
+      'Testing EnvironmentTriggerField ignores stale async paste results after a newer edit',
+      (WidgetTester tester) async {
+    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
+    final completer = Completer<bool>();
+    final changes = <String>[];
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'testKey',
+              initialValue: 'https://api.apidash.dev',
+              onChanged: changes.add,
+              onPastedText: (_) => completer.future,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    const curlCommand = 'curl -X GET https://api.apidash.dev/users';
+    await Clipboard.setData(const ClipboardData(text: curlCommand));
+    final field = tester.widget<ExtendedTextField>(find.byType(ExtendedTextField));
+    fieldKey.currentState!.controller.value = const TextEditingValue(
+      text: curlCommand,
+      selection: TextSelection.collapsed(offset: curlCommand.length),
+    );
+    field.onChanged!(curlCommand);
+
+    const newerValue = 'https://api.apidash.dev/profile';
+    fieldKey.currentState!.controller.value = const TextEditingValue(
+      text: newerValue,
+      selection: TextSelection.collapsed(offset: newerValue.length),
+    );
+    field.onChanged!(newerValue);
+
+    completer.complete(true);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(changes, [newerValue]);
+    expect(fieldKey.currentState!.controller.text, newerValue);
   });
 }

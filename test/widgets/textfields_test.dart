@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
 void main() {
+  String? clipboardText;
+
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform,
+            (MethodCall methodCall) async {
+      switch (methodCall.method) {
+        case 'Clipboard.getData':
+          return <String, dynamic>{'text': clipboardText};
+        case 'Clipboard.setData':
+          clipboardText =
+              (methodCall.arguments as Map<Object?, Object?>?)?['text']
+                  as String?;
+          return null;
+        default:
+          return null;
+      }
+    });
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.platform, null);
+    clipboardText = null;
+  });
+
   testWidgets('Testing URL Field', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -141,5 +168,52 @@ void main() {
 
     // check if value was updated
     expect(wasSubmitCalled, true);
+  });
+
+  testWidgets('URL Field handles pasted curl text without emitting raw value',
+      (tester) async {
+    final changes = <String>[];
+    String? interceptedText;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'URL Field',
+        theme: kThemeDataDark,
+        home: Scaffold(
+          body: Column(
+            children: [
+              URLField(
+                selectedId: '2',
+                initialValue: 'https://api.apidash.dev',
+                onChanged: changes.add,
+                onPastedText: (text) async {
+                  interceptedText = text;
+                  return true;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    const curlCommand = 'curl -X GET https://api.apidash.dev/users';
+    await Clipboard.setData(const ClipboardData(text: curlCommand));
+    final formField = tester.widget<TextFormField>(find.byType(TextFormField));
+    final editableText = tester.widget<EditableText>(find.byType(EditableText));
+    editableText.controller.value = const TextEditingValue(
+      text: curlCommand,
+      selection: TextSelection.collapsed(offset: curlCommand.length),
+    );
+    formField.onChanged!(curlCommand);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(interceptedText, curlCommand);
+    expect(changes, ['https://api.apidash.dev']);
+    expect(
+      tester.widget<EditableText>(find.byType(EditableText)).controller.text,
+      'https://api.apidash.dev',
+    );
   });
 }

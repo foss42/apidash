@@ -10,6 +10,7 @@ class EnvURLField extends StatelessWidget {
     this.initialValue,
     this.onChanged,
     this.onFieldSubmitted,
+    this.onPastedText,
     this.focusNode,
   });
 
@@ -17,6 +18,7 @@ class EnvURLField extends StatelessWidget {
   final String? initialValue;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
+  final Future<bool> Function(String)? onPastedText;
   final FocusNode? focusNode;
 
   @override
@@ -35,6 +37,7 @@ class EnvURLField extends StatelessWidget {
       ),
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
+      onPastedText: onPastedText,
       optionsWidthFactor: 1,
     );
   }

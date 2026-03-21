@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'env_regexp_span_builder.dart';
@@ -13,6 +15,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.focusNode,
     this.onChanged,
     this.onFieldSubmitted,
+    this.onPastedText,
     this.style,
     this.decoration,
     this.optionsWidthFactor,
@@ -30,6 +33,7 @@ class EnvironmentTriggerField extends StatefulWidget {
   final FocusNode? focusNode;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
+  final Future<bool> Function(String)? onPastedText;
   final TextStyle? style;
   final InputDecoration? decoration;
   final double? optionsWidthFactor;
@@ -45,43 +49,48 @@ class EnvironmentTriggerField extends StatefulWidget {
 class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   late TextEditingController controller;
   late FocusNode _focusNode;
+  late String _lastText;
+  late bool _ownsController;
+  late bool _ownsFocusNode;
+  int _pendingChangeId = 0;
 
   @override
   void initState() {
     super.initState();
     final initialText = widget.initialValue ?? '';
-    controller =
-        widget.controller ??
-        TextEditingController.fromValue(
-          TextEditingValue(
-            text: initialText,
-            selection: TextSelection.collapsed(offset: initialText.length),
-          ),
-        );
+    _ownsController = widget.controller == null;
+    controller = widget.controller ?? _buildController(initialText);
+    _ownsFocusNode = widget.focusNode == null;
     _focusNode = widget.focusNode ?? FocusNode();
+    _lastText = controller.text;
   }
 
   @override
   void dispose() {
-    if (widget.controller == null) controller.dispose();
-    if (widget.focusNode == null) _focusNode.dispose();
+    if (_ownsController) controller.dispose();
+    if (_ownsFocusNode) _focusNode.dispose();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.focusNode != widget.focusNode) {
+      if (_ownsFocusNode) {
+        _focusNode.dispose();
+      }
+      _ownsFocusNode = widget.focusNode == null;
+      _focusNode = widget.focusNode ?? FocusNode();
+    }
+
     if (oldWidget.keyId != widget.keyId) {
-      controller =
-          widget.controller ??
-          TextEditingController.fromValue(
-            TextEditingValue(
-              text: widget.initialValue!,
-              selection: TextSelection.collapsed(
-                offset: widget.initialValue!.length,
-              ),
-            ),
-          );
+      final initialText = widget.initialValue ?? '';
+      if (_ownsController) {
+        controller.dispose();
+      }
+      _ownsController = widget.controller == null;
+      controller = widget.controller ?? _buildController(initialText);
+      _lastText = controller.text;
     } else if (widget.controller == null &&
         oldWidget.initialValue != widget.initialValue &&
         widget.initialValue != null &&
@@ -93,6 +102,88 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       // Restore the selection if it's still valid
       if (currentSelection.baseOffset <= controller.text.length) {
         controller.selection = currentSelection;
+      }
+      _lastText = controller.text;
+    }
+  }
+
+  TextEditingController _buildController(String text) =>
+      TextEditingController.fromValue(
+        TextEditingValue(
+          text: text,
+          selection: TextSelection.collapsed(offset: text.length),
+        ),
+      );
+
+  bool _shouldCheckForPaste(String previousText, String nextText) {
+    final trimmedNextText = nextText.trim();
+    return widget.onPastedText != null &&
+        trimmedNextText != previousText.trim() &&
+        trimmedNextText.startsWith('curl ') &&
+        nextText.length > previousText.length + 1;
+  }
+
+  bool _isCurrentPendingChange(int changeId, String expectedText) =>
+      mounted &&
+      _pendingChangeId == changeId &&
+      controller.text == expectedText;
+
+  void _commitTextChange(String value) {
+    _lastText = value;
+    widget.onChanged?.call(value);
+  }
+
+  void _restorePreviousText(String previousText) {
+    controller.value = TextEditingValue(
+      text: previousText,
+      selection: TextSelection.collapsed(offset: previousText.length),
+    );
+    _lastText = previousText;
+    widget.onChanged?.call(previousText);
+  }
+
+  void _handleChanged(String value) {
+    final previousText = _lastText;
+    final changeId = ++_pendingChangeId;
+    if (!_shouldCheckForPaste(previousText, value)) {
+      _commitTextChange(value);
+      return;
+    }
+    unawaited(
+      _handlePotentialPaste(
+        changeId: changeId,
+        previousText: previousText,
+        nextText: value,
+      ),
+    );
+  }
+
+  Future<void> _handlePotentialPaste({
+    required int changeId,
+    required String previousText,
+    required String nextText,
+  }) async {
+    try {
+      final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+      if (!_isCurrentPendingChange(changeId, nextText)) return;
+
+      final clipboardText = clipboardData?.text;
+      if (clipboardText == null || clipboardText.trim() != nextText.trim()) {
+        _commitTextChange(nextText);
+        return;
+      }
+
+      final handled = await widget.onPastedText!.call(clipboardText);
+      if (!_isCurrentPendingChange(changeId, nextText)) return;
+      if (!handled) {
+        _commitTextChange(nextText);
+        return;
+      }
+
+      _restorePreviousText(previousText);
+    } catch (_) {
+      if (_isCurrentPendingChange(changeId, nextText)) {
+        _commitTextChange(nextText);
       }
     }
   }
@@ -145,7 +236,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
           focusNode: focusnode,
           decoration: widget.decoration,
           style: widget.style,
-          onChanged: widget.onChanged,
+          onChanged: _handleChanged,
           onSubmitted: widget.onFieldSubmitted,
           specialTextSpanBuilder: EnvRegExpSpanBuilder(),
           onTapOutside: (event) {

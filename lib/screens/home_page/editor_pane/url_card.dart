@@ -1,5 +1,8 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash/dashbot/constants.dart';
+import 'package:apidash/dashbot/providers/providers.dart';
+import 'package:apidash/dashbot/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -127,6 +130,20 @@ class URLTextField extends ConsumerWidget {
       onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
+      onPastedText: requestModel.apiType == APIType.rest
+          ? (pastedText) async {
+              showDashbotWindow(context, ref);
+              ref.read(dashbotActiveRouteProvider.notifier).goToChat();
+              final chatViewmodel =
+                  ref.read(chatViewmodelProvider.notifier);
+              await chatViewmodel.sendTaskMessage(ChatMessageType.importCurl);
+              await chatViewmodel.sendMessage(
+                text: pastedText,
+                type: ChatMessageType.importCurl,
+              );
+              return true;
+            }
+          : null,
     );
   }
 }

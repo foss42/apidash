@@ -583,6 +583,27 @@ info:
       expect(viewmodel.currentMessages.length, greaterThan(1));
     });
 
+    test('sendMessage should keep non-curl text in the curl import flow',
+        () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      await viewmodel.sendMessage(
+        text: 'not a curl command',
+        type: ChatMessageType.importCurl,
+      );
+
+      expect(viewmodel.currentMessages, hasLength(2));
+      expect(viewmodel.currentMessages.first.role, equals(MessageRole.user));
+      expect(
+        viewmodel.currentMessages.first.content,
+        equals('not a curl command'),
+      );
+      expect(
+        viewmodel.currentMessages.last.messageType,
+        equals(ChatMessageType.importCurl),
+      );
+    });
+
     test('sendMessage should detect OpenAPI paste in import flow', () async {
       final viewmodel = container.read(chatViewmodelProvider.notifier);
 
