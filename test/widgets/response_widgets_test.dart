@@ -1,6 +1,7 @@
 import 'package:apidash/widgets/response_body.dart';
 import 'package:apidash/widgets/response_body_success.dart';
 import 'package:apidash/widgets/response_headers.dart';
+import 'package:apidash/widgets/markdown.dart';
 import 'package:apidash/widgets/response_pane_header.dart';
 import 'package:apidash/widgets/response_tab_view.dart';
 import 'package:apidash/widgets/widget_not_sent.dart';
@@ -465,5 +466,40 @@ void main() async {
     await tester.tap(find.text('Raw'));
     await tester.pumpAndSettle();
     expect(find.text('Raw Hello from API Dash'), findsOneWidget);
+  });
+
+  testWidgets('Testing AI answer markdown toggle', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Body Success',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ResponseBodySuccess(
+            body: '# Hello World\nThis is some *markdown* text.',
+            mediaType: MediaType('text', 'plain'),
+            options: const [
+              ResponseBodyView.answer,
+              ResponseBodyView.raw,
+            ],
+            bytes: Uint8List.fromList([20, 8]),
+            isAIResponse: true,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Markdown'), findsOneWidget);
+    expect(find.byType(CustomMarkdown), findsNothing);
+    expect(find.text('# Hello World\nThis is some *markdown* text.'),
+        findsOneWidget);
+
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CustomMarkdown), findsOneWidget);
+    expect(find.text('Hello World'), findsOneWidget);
+    expect(find.text('This is some markdown text.'), findsOneWidget);
   });
 }

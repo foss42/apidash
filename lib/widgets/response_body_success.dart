@@ -38,6 +38,7 @@ class ResponseBodySuccess extends StatefulWidget {
 
 class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   int segmentIdx = 0;
+  bool renderAnswerAsMarkdown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
         : kDarkCodeTheme;
+    final showMarkdownToggle =
+        widget.isAIResponse && currentSeg == ResponseBodyView.answer;
     final textContainerdecoration = BoxDecoration(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
       border: Border.all(
@@ -93,6 +96,21 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                             });
                           },
                         ),
+                  if (showMarkdownToggle) ...[
+                    kHSpacer10,
+                    Text(
+                      'Markdown',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    Switch.adaptive(
+                      value: renderAnswerAsMarkdown,
+                      onChanged: (value) {
+                        setState(() {
+                          renderAnswerAsMarkdown = value;
+                        });
+                      },
+                    ),
+                  ],
                   const Spacer(),
                   ((widget.options == kPreviewRawBodyViewOptions) ||
                           kCodeRawBodyViewOptions.contains(currentSeg))
@@ -147,12 +165,17 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       width: double.maxFinite,
                       padding: kP8,
                       decoration: textContainerdecoration,
-                      child: SingleChildScrollView(
-                        child: SelectableText(
-                          widget.formattedBody ?? widget.body,
-                          style: kCodeStyle,
-                        ),
-                      ),
+                      child: renderAnswerAsMarkdown
+                          ? CustomMarkdown(
+                              data: widget.formattedBody ?? widget.body,
+                              padding: EdgeInsets.zero,
+                            )
+                          : SingleChildScrollView(
+                              child: SelectableText(
+                                widget.formattedBody ?? widget.body,
+                                style: kCodeStyle,
+                              ),
+                            ),
                     ),
                   ),
                 ResponseBodyView.raw => Expanded(
