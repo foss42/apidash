@@ -688,10 +688,9 @@ the form, directly fixing the data loss bug present in existing tools. Collectio
 ![image.png](images/complete_architecture_mcp_tester.png)
 
 ### **POC Link:**
-
-[poc_recording.mov](videos/poc_recording.mov)
-
-Repo Link:[https://github.com/PrajwalBenedictNorman/mcp-testing](https://github.com/PrajwalBenedictNorman/mcp-testing)
+  The proof of concept demonstrates the core testing loop connecting to an MCP server via stdio, discovering tools from their input schemas, executing tool calls with schema-rendered input fields, saving requests to named collections without clearing the form, and simulating concurrent load with auto-generated schema-based test data visualised as a real-time latency graph.
+  
+  Repo Link:[https://github.com/PrajwalBenedictNorman/mcp-testing](https://github.com/PrajwalBenedictNorman/mcp-testing)
 
 ### Phase-Wise Timeline
 
