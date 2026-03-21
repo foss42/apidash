@@ -150,66 +150,208 @@ needed: `getIds()`, `getRequestModel(id)`, `getEnvironmentIds()`,
 
 ### Part 3: MCP Server (`packages/apidash_mcp`)
 
-Exposes API Dash as an MCP Server so external AI agents can interact 
-with it via the Model Context Protocol.
+The MCP Server will be implemented as a standalone pure Dart package inside the monorepo using the `mcp_dart` package (v2.0.0) which provides full MCP spec coverage including JSON-RPC 2.0 handling.
 
-**MCP Tools exposed:**
-| Tool | Description |
-|---|---|
-| `execute_request` | Execute a saved API request and return response |
-| `list_requests` | List all saved requests with metadata |
-| `create_request` | Create a new API request |
-| `list_environments` | List all saved environments |
-| `get_active_environment` | Get currently active environment variables |
+**Package structure:**
+```dart
+packages/apidash_mcp/
+├── bin/
+│   └── server.dart              # Entry point (dart compile exe target)
+├── lib/
+│   ├── apidash_mcp.dart         # Library barrel file
+│   ├── server.dart              # MCP server setup
+│   ├── tools/
+│   │   ├── execute_request.dart # Execute saved API request
+│   │   ├── list_requests.dart   # List all saved requests
+│   │   ├── create_request.dart  # Create new request
+│   │   ├── list_environments.dart
+│   │   └── get_active_env.dart
+│   ├── resources/
+│   │   ├── collections.dart     # Exposes saved collections
+│   │   └── environments.dart    # Exposes environments
+│   └── transport/
+│       └── stdio_transport.dart # stdin/stdout for Claude Desktop, VS Code
+├── pubspec.yaml
+└── test/
+```
 
-**Transport:** stdio (for Claude Desktop, VS Code, Cursor)
+**MCP Tools with schemas:**
 
-### Part 4: MCP Apps (The Differentiator)
-
-When an AI agent calls `execute_request`, instead of returning raw JSON, 
-API Dash returns an MCP App - a rich interactive HTML UI rendered as a 
-sandboxed iframe inside the host.
-
-**How it works (based on Ashita's MCP Apps article):**
-```typescript
-// MCP Server registers execute_request tool with UI resource
+```dart
+// execute_request tool
 server.registerTool(
   "execute_request",
   {
-    description: "Execute a saved API request",
+    description: "Execute a saved API request and return the response",
+    inputSchema: {
+      requestId: z.string().describe("The ID of the saved request to execute"),
+    },
     _meta: { ui: { resourceUri: "ui://apidash/response-viewer" } },
   },
-  async (args) => {
-    // Execute the request using better_networking
+  async (args) {
     final response = await executeRequest(args.requestId);
     return { content: [{ type: "text", text: response }] };
   }
 );
 
-// UI resource returns rich HTML response card
-server.registerResource(
-  "response-viewer",
-  "ui://apidash/response-viewer",
-  { mimeType: "text/html;profile=mcp-app" },
-  async (uri) => ({
-    contents: [{ uri: uri.href, mimeType: "text/html;profile=mcp-app", 
-    text: RESPONSE_VIEWER_HTML() }],
-  })
+// list_requests tool  
+server.registerTool(
+  "list_requests",
+  {
+    description: "List all saved API requests in API Dash",
+    inputSchema: {},
+  },
+  async (_) {
+    final ids = hiveHandler.getIds();
+    final requests = ids.map((id) => hiveHandler.getRequestModel(id)).toList();
+    return { content: [{ type: "text", text: jsonEncode(requests) }] };
+  }
 );
 ```
 
-**The response card shows:**
-- Status code with color (green 200, red 4xx/5xx)
-- Response time
-- Headers in collapsible section
-- Body with syntax highlighting
-- Token usage if AI API call
+**Transport: stdio**
 
-**Host-aware theming:** Using `applyHostContext()` from Ashita's article 
-so the UI blends natively with VS Code or Claude Desktop theme.
+The server will use stdio transport so it can be connected to Claude Desktop, VS Code, and Cursor via their `mcp.json` config:
 
-**CSP declared properly:** Only approved domains can be accessed from 
-the sandboxed iframe.
+```json
+{
+  "mcpServers": {
+    "apidash": {
+      "command": "path/to/apidash_mcp_server",
+      "args": []
+    }
+  }
+}
+```
+
+**Headless Hive access:**
+
+The MCP server needs to read API Dash data without starting the Flutter UI. This is possible using `Hive.init(workspaceFolderPath)` which is the non-Flutter path already supported in `hive_services.dart`. The server will:
+
+1. Detect the API Dash workspace folder path from environment or config file
+2. Call `Hive.init(workspaceFolderPath)` to initialize Hive without Flutter
+3. Open the required boxes: `apidash-data`, `apidash-environments`
+4. Use `HiveHandler` methods to read requests and environments
+5. Use a file lock to prevent conflicts with the running GUI app
+
+**MCP Resources exposed:**
+
+| Resource URI | Description | Source |
+|---|---|---|
+| `apidash://requests` | All saved API requests | `apidash-data` Hive box |
+| `apidash://environments` | All saved environments | `apidash-environments` Hive box |
+| `apidash://environment/active` | Currently active environment | `apidash-environments` Hive box |
+
+---
+
+### Part 4: MCP Apps (The Differentiator)
+
+Based on Ashita's article on MCP Apps, when an AI agent calls `execute_request`, instead of returning plain JSON text, API Dash will return a rich interactive HTML UI rendered as a sandboxed iframe natively inside the host (VS Code, Claude Desktop).
+
+**How MCP Apps work in this context:**
+
+The MCP server registers a UI resource with mime type `text/html;profile=mcp-app`. When the tool is called, the host loads this HTML in a sandboxed iframe instead of showing raw text.
+
+**Step 1: Register the UI resource and tool together:**
+
+```dart
+const MIME = "text/html;profile=mcp-app";
+const URI = "ui://apidash";
+
+// Register the response viewer UI resource
+server.registerResource(
+  "response-viewer",
+  "$URI/response-viewer",
+  { mimeType: MIME, description: "Rich API response viewer" },
+  async (uri) => ({
+    contents: [{ 
+      uri: uri.href, 
+      mimeType: MIME, 
+      text: RESPONSE_VIEWER_HTML() 
+    }],
+  })
+);
+
+// Link the tool to the UI resource via _meta.ui.resourceUri
+server.registerTool(
+  "execute_request",
+  {
+    description: "Execute a saved API request",
+    inputSchema: { requestId: z.string() },
+    _meta: { ui: { resourceUri: "$URI/response-viewer" } },
+  },
+  async (args) {
+    final response = await executeRequest(args.requestId);
+    return { content: [{ type: "text", text: jsonEncode(response) }] };
+  }
+);
+```
+
+**Step 2: The Response Viewer HTML:**
+
+The `RESPONSE_VIEWER_HTML()` function returns a self-contained HTML page that:
+
+1. Performs the MCP Apps handshake: sends `ui/initialize` request to host
+2. Applies host theme using `applyHostContext(res?.hostContext)` so UI blends with VS Code or Claude Desktop theme
+3. Sends `ui/notifications/initialized` to complete handshake
+4. Renders the API response in a structured card showing:
+   - Status code with color coding (green 2xx, orange 3xx, red 4xx/5xx)
+   - Response time in milliseconds
+   - Headers in collapsible section
+   - Response body with syntax highlighting
+   - Copy to clipboard button (using `sandbox.permissions.clipboardWrite` host capability)
+
+**Step 3: Host-aware theming:**
+
+```javascript
+request('ui/initialize', { protocolVersion: '2025-11-21' }).then((res) => {
+  applyHostContext(res?.hostContext); // Apply VS Code or Claude Desktop theme
+  notify('ui/notifications/initialized');
+});
+```
+
+This makes the response card look native inside whatever host the agent is running in.
+
+**Step 4: CSP declaration:**
+
+```dart
+server.registerResource(
+  "response-viewer",
+  "$URI/response-viewer",
+  { 
+    mimeType: MIME,
+    _meta: {
+      ui: {
+        csp: {
+          connectDomains: [], // No external domains needed
+        }
+      }
+    }
+  },
+  ...
+);
+```
+
+**What the response viewer looks like in VS Code:**
+
+```
+┌─────────────────────────────────────────┐
+│  ✅ 200 OK          124ms               │
+├─────────────────────────────────────────┤
+│  Headers ▼                              │
+│  content-type: application/json         │
+│  x-request-id: abc123                   │
+├─────────────────────────────────────────┤
+│  Body                                   │
+│  {                                      │
+│    "id": 1,                             │
+│    "name": "Ashutosh"                   │
+│  }                                      │
+│                          [Copy] [Share] │
+└─────────────────────────────────────────┘
+```
+
+This transforms API Dash from a passive tool provider into an active visual interface within AI agent workflows.
 
 ---
 
