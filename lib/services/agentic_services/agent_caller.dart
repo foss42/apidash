@@ -9,6 +9,8 @@ class APIDashAgentCaller {
     AIAgent agent, {
     required WidgetRef ref,
     required AgentInputs input,
+    Duration? perCallTimeout,
+    Duration? totalTimeout,
   }) async {
     final defaultAIModel =
         ref.read(settingsProvider.select((e) => e.defaultAIModel));
@@ -21,6 +23,8 @@ class APIDashAgentCaller {
       baseAIRequestObject,
       query: input.query,
       variables: input.variables,
+      perCallTimeout: perCallTimeout ?? kDefaultAgentCallTimeout,
+      totalTimeout: totalTimeout ?? kDefaultAgentTotalTimeout,
     );
     return ans;
   }

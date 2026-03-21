@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:apidash/consts.dart';
 import 'package:apidash/services/agentic_services/apidash_agent_calls.dart';
 import 'package:apidash/widgets/widget_sending.dart';
@@ -64,6 +65,18 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         return null;
       }
       return res;
+    } on TimeoutException {
+      setState(() {
+        index = 0;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(kMsgAgentCallTimedOut,
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return null;
     } catch (e) {
       String errMsg = kMsgUnexpectedError;
       if (e.toString().contains('NO_DEFAULT_LLM')) {

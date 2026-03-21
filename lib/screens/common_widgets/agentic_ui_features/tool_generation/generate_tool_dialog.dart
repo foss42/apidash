@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:apidash/consts.dart';
 import 'package:apidash/apitoolgen/request_consolidator.dart';
 import 'package:apidash/providers/collection_providers.dart';
@@ -99,6 +100,17 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
         generatedToolCode = res;
         index = 1;
       });
+    } on TimeoutException {
+      setState(() {
+        index = 0;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(kMsgAgentCallTimedOut,
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
     } catch (e) {
       setState(() {
         index = 0;

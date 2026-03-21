@@ -607,6 +607,7 @@ const kMsgModificationRequestFailed = "Modification Request Failed!";
 const kMsgUnexpectedError = "Unexpected Error Occured";
 const kMsgSelectDefaultAIModel = "Please Select Default AI Model in Settings";
 const kMsgAPIToolGenerationFailed = "API Tool generation failed!";
+const kMsgAgentCallTimedOut = "Request timed out. Please try again.";
 
 // Tool Generation
 const kLabelGenerateAPITool = "Generate API Tool";
