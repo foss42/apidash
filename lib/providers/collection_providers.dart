@@ -80,7 +80,9 @@ class CollectionStateNotifier
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
-      httpRequestModel: const HttpRequestModel(),
+      httpRequestModel: HttpRequestModel(
+        headers: buildDefaultNewRequestHeaders(),
+      ),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -600,7 +602,9 @@ class CollectionStateNotifier
       state = {
         newId: RequestModel(
           id: newId,
-          httpRequestModel: const HttpRequestModel(),
+          httpRequestModel: HttpRequestModel(
+            headers: buildDefaultNewRequestHeaders(),
+          ),
         ),
       };
       return true;

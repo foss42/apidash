@@ -185,6 +185,17 @@ const kAnswerRawBodyViewOptions = [
   ResponseBodyView.answer,
   ResponseBodyView.raw,
 ];
+const kDefaultNewRequestHeaders = <NameValueModel>[
+  NameValueModel(
+    name: 'User-Agent',
+    value: 'APIDash (https://apidash.dev)',
+  ),
+  NameValueModel(name: 'Accept', value: '*/*'),
+  NameValueModel(name: 'Accept-Language', value: 'en-US,en;q=0.9'),
+];
+
+List<NameValueModel> buildDefaultNewRequestHeaders() =>
+    List<NameValueModel>.from(kDefaultNewRequestHeaders);
 
 const Map<String, Map<String, List<ResponseBodyView>>>
 kResponseBodyViewOptions = {

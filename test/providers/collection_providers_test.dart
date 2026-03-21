@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_body.dart';
 import 'package:apidash/widgets/editor.dart';
 import 'package:apidash/widgets/response_body.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,6 +14,73 @@ void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
     await testSetUpTempDirForHive();
+  });
+
+  group('CollectionStateNotifier Default Header Tests', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+    });
+
+    test('should seed default headers for the initial blank request', () {
+      final request = notifier.state!.values.first.httpRequestModel;
+
+      expect(request?.headers, orderedEquals(kDefaultNewRequestHeaders));
+    });
+
+    test('should seed default headers when adding a blank request', () {
+      notifier.add();
+
+      final newId = container.read(selectedIdStateProvider);
+      final request = notifier.getRequestModel(newId!)?.httpRequestModel;
+
+      expect(request?.headers, orderedEquals(kDefaultNewRequestHeaders));
+    });
+
+    test('should not seed default headers for imported requests', () {
+      const importedModel = HttpRequestModel(
+        url: 'https://api.apidash.dev/country/data',
+        headers: [
+          NameValueModel(name: 'X-Test', value: '1'),
+        ],
+      );
+
+      notifier.addRequestModel(importedModel, name: 'imported');
+
+      final importedId = container.read(selectedIdStateProvider);
+      final request = notifier.getRequestModel(importedId!)?.httpRequestModel;
+
+      expect(
+        request?.headers,
+        orderedEquals([
+          const NameValueModel(name: 'X-Test', value: '1'),
+        ]),
+      );
+    });
+
+    test('should allow overriding seeded default headers', () {
+      notifier.add();
+
+      final newId = container.read(selectedIdStateProvider)!;
+      notifier.update(
+        id: newId,
+        headers: const [
+          NameValueModel(name: 'User-Agent', value: 'Custom Agent'),
+        ],
+      );
+
+      final request = notifier.getRequestModel(newId)?.httpRequestModel;
+
+      expect(
+        request?.headers,
+        orderedEquals([
+          const NameValueModel(name: 'User-Agent', value: 'Custom Agent'),
+        ]),
+      );
+    });
   });
 
   testWidgets(
