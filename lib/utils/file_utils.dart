@@ -19,6 +19,29 @@ String? getFileExtension(String? mimeType) {
   return Mime.getExtensionsFromType(mimeType)?[0];
 }
 
+String getSuggestedFileName(String? name, String? ext) {
+  final resolvedName = name ?? getTempFileName();
+  if (ext == null || ext.isEmpty) {
+    return resolvedName;
+  }
+  return '$resolvedName.$ext';
+}
+
+List<XTypeGroup> getSaveLocationTypeGroups(String? ext, String? mimeType) {
+  final hasExtension = ext != null && ext.isNotEmpty;
+  final hasMimeType = mimeType != null && mimeType.isNotEmpty;
+  if (!hasExtension && !hasMimeType) {
+    return const <XTypeGroup>[];
+  }
+  return <XTypeGroup>[
+    XTypeGroup(
+      label: ext ?? mimeType ?? 'file',
+      extensions: hasExtension ? <String>[ext] : null,
+      mimeTypes: hasMimeType ? <String>[mimeType] : null,
+    ),
+  ];
+}
+
 Future<String?> getFileDownloadpath(String? name, String? ext) async {
   final Directory? downloadsDir = await getDownloadsDirectory();
   if (downloadsDir != null) {
@@ -34,8 +57,23 @@ Future<String?> getFileDownloadpath(String? name, String? ext) async {
   return null;
 }
 
+Future<String?> getFileSavePath(
+  String? name,
+  String? ext, {
+  String? mimeType,
+}) async {
+  final location = await getSaveLocation(
+    acceptedTypeGroups: getSaveLocationTypeGroups(ext, mimeType),
+    suggestedName: getSuggestedFileName(name, ext),
+    confirmButtonText: 'Save',
+  );
+  return location?.path;
+}
+
 Future<String?> getApplicationSupportDirectoryFilePath(
-    String name, String? ext) async {
+  String name,
+  String? ext,
+) async {
   final Directory tempDir = await getApplicationSupportDirectory();
   name = name;
   ext = (ext != null) ? ".$ext" : "";

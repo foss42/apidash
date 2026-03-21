@@ -29,12 +29,16 @@ Future<void> saveToDownloads(
   String? mimeType,
   String? ext,
   String? name,
+  bool chooseSaveLocation = false,
 }) async {
   var message = "";
-  var path = await getFileDownloadpath(
-    name,
-    ext ?? getFileExtension(mimeType),
-  );
+  final resolvedExt = ext ?? getFileExtension(mimeType);
+  final path = chooseSaveLocation
+      ? await getFileSavePath(name, resolvedExt, mimeType: mimeType)
+      : await getFileDownloadpath(name, resolvedExt);
+  if (chooseSaveLocation && path == null) {
+    return;
+  }
   if (path != null) {
     try {
       await saveFile(path, content!);

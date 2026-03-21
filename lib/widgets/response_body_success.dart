@@ -78,7 +78,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
                                   label: Text(e.label),
-                                  icon: constraints.maxWidth >
+                                  icon:
+                                      constraints.maxWidth >
                                           kMinWindowSize.width
                                       ? Icon(e.icon)
                                       : null,
@@ -88,8 +89,9 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           selected: {currentSeg},
                           onSelectionChanged: (newSelection) {
                             setState(() {
-                              segmentIdx =
-                                  widget.options.indexOf(newSelection.first);
+                              segmentIdx = widget.options.indexOf(
+                                newSelection.first,
+                              );
                             });
                           },
                         ),
@@ -109,6 +111,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       : SaveInDownloadsButton(
                           content: widget.bytes,
                           mimeType: widget.mediaType.mimeType,
+                          chooseSaveLocation: true,
                           showLabel: showLabel,
                         ),
                 ],
@@ -116,72 +119,72 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
               kVSpacer10,
               switch (currentSeg) {
                 ResponseBodyView.preview || ResponseBodyView.none => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: Previewer(
-                        bytes: widget.bytes,
-                        body: widget.body,
-                        type: widget.mediaType.type,
-                        subtype: widget.mediaType.subtype,
-                        hasRaw: widget.options.contains(ResponseBodyView.raw),
-                      ),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: Previewer(
+                      bytes: widget.bytes,
+                      body: widget.body,
+                      type: widget.mediaType.type,
+                      subtype: widget.mediaType.subtype,
+                      hasRaw: widget.options.contains(ResponseBodyView.raw),
                     ),
                   ),
+                ),
                 ResponseBodyView.code => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: CodePreviewer(
-                        code: widget.formattedBody ?? widget.body,
-                        theme: codeTheme,
-                        language: widget.highlightLanguage,
-                        textStyle: kCodeStyle,
-                      ),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: CodePreviewer(
+                      code: widget.formattedBody ?? widget.body,
+                      theme: codeTheme,
+                      language: widget.highlightLanguage,
+                      textStyle: kCodeStyle,
                     ),
                   ),
+                ),
                 ResponseBodyView.answer => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: SingleChildScrollView(
-                        child: SelectableText(
-                          widget.formattedBody ?? widget.body,
-                          style: kCodeStyle,
-                        ),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: SingleChildScrollView(
+                      child: SelectableText(
+                        widget.formattedBody ?? widget.body,
+                        style: kCodeStyle,
                       ),
                     ),
                   ),
+                ),
                 ResponseBodyView.raw => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: SingleChildScrollView(
-                        child: SelectableText(
-                          widget.isAIResponse
-                              ? widget.body
-                              : (widget.formattedBody ?? widget.body),
-                          style: kCodeStyle,
-                        ),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: SingleChildScrollView(
+                      child: SelectableText(
+                        widget.isAIResponse
+                            ? widget.body
+                            : (widget.formattedBody ?? widget.body),
+                        style: kCodeStyle,
                       ),
                     ),
                   ),
+                ),
                 ResponseBodyView.sse => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: SSEDisplay(
-                        sseOutput: widget.sseOutput,
-                        aiRequestModel: widget.aiRequestModel,
-                      ),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: SSEDisplay(
+                      sseOutput: widget.sseOutput,
+                      aiRequestModel: widget.aiRequestModel,
                     ),
                   ),
-              }
+                ),
+              },
             ],
           ),
         );

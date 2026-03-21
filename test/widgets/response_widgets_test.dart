@@ -3,6 +3,7 @@ import 'package:apidash/widgets/response_body_success.dart';
 import 'package:apidash/widgets/response_headers.dart';
 import 'package:apidash/widgets/response_pane_header.dart';
 import 'package:apidash/widgets/response_tab_view.dart';
+import 'package:apidash/widgets/button_save_download.dart';
 import 'package:apidash/widgets/widget_not_sent.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -23,11 +24,7 @@ void main() {
       MaterialApp(
         title: 'Send',
         theme: kThemeDataDark,
-        home: const Scaffold(
-          body: SendingWidget(
-            startSendingTime: null,
-          ),
-        ),
+        home: const Scaffold(body: SendingWidget(startSendingTime: null)),
       ),
     );
 
@@ -39,11 +36,7 @@ void main() {
       MaterialApp(
         title: 'Send',
         theme: kThemeDataDark,
-        home: Scaffold(
-          body: SendingWidget(
-            startSendingTime: DateTime.now(),
-          ),
-        ),
+        home: Scaffold(body: SendingWidget(startSendingTime: DateTime.now())),
       ),
     );
     expect(find.text('Time elapsed: 0 ms'), findsOneWidget);
@@ -58,9 +51,7 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         title: 'Not Sent',
-        home: Scaffold(
-          body: NotSentWidget(),
-        ),
+        home: Scaffold(body: NotSentWidget()),
       ),
     );
 
@@ -75,17 +66,20 @@ void main() {
         theme: kThemeDataLight,
         home: const Scaffold(
           body: ResponsePaneHeader(
-              responseStatus: 200,
-              message: 'Hi',
-              time: Duration(microseconds: 23)),
+            responseStatus: 200,
+            message: 'Hi',
+            time: Duration(microseconds: 23),
+          ),
         ),
       ),
     );
 
     expect(find.textContaining("200", findRichText: true), findsOneWidget);
     expect(find.textContaining("Hi", findRichText: true), findsOneWidget);
-    expect(find.text(humanizeDuration(const Duration(microseconds: 23))),
-        findsOneWidget);
+    expect(
+      find.text(humanizeDuration(const Duration(microseconds: 23))),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Testing Response Tab View', (tester) async {
@@ -95,7 +89,9 @@ void main() {
         theme: kThemeDataLight,
         home: const Scaffold(
           body: ResponseTabView(
-              selectedId: '1', children: [Text('first'), Text('second')]),
+            selectedId: '1',
+            children: [Text('first'), Text('second')],
+          ),
         ),
       ),
     );
@@ -122,7 +118,9 @@ void main() {
         theme: kThemeDataLight,
         home: const Scaffold(
           body: ResponseHeadersHeader(
-              map: {'text': 'a', 'value': '1'}, name: 'xyz'),
+            map: {'text': 'a', 'value': '1'},
+            name: 'xyz',
+          ),
         ),
       ),
     );
@@ -133,15 +131,20 @@ void main() {
     expect(icon, findsOneWidget);
 
     Finder button;
-    if (tester.any(find.ancestor(
+    if (tester.any(
+      find.ancestor(
         of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is TextButton)))) {
+        matching: find.byWidgetPredicate((widget) => widget is TextButton),
+      ),
+    )) {
       expect(find.text(kLabelCopy), findsOneWidget);
       button = find.ancestor(
-          of: icon,
-          matching: find.byWidgetPredicate((widget) => widget is TextButton));
-    } else if (tester
-        .any(find.ancestor(of: icon, matching: find.byType(IconButton)))) {
+        of: icon,
+        matching: find.byWidgetPredicate((widget) => widget is TextButton),
+      );
+    } else if (tester.any(
+      find.ancestor(of: icon, matching: find.byType(IconButton)),
+    )) {
       button = find.byType(IconButton);
     } else {
       fail('No TextButton or IconButton found');
@@ -198,15 +201,16 @@ void main() {
     );
 
     expect(
-        find.text(
-            'Error: Response data does not exist. $kUnexpectedRaiseIssue'),
-        findsOneWidget);
+      find.text('Error: Response data does not exist. $kUnexpectedRaiseIssue'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Testing Response Body, no body', (tester) async {
     var responseModelNoBody = responseModel.copyWith(body: null);
-    var requestModelNoResponseBody =
-        testRequestModel.copyWith(httpResponseModel: responseModelNoBody);
+    var requestModelNoResponseBody = testRequestModel.copyWith(
+      httpResponseModel: responseModelNoBody,
+    );
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',
@@ -217,34 +221,39 @@ void main() {
       ),
     );
 
-    expect(find.text('Response body is missing (null). $kUnexpectedRaiseIssue'),
-        findsOneWidget);
+    expect(
+      find.text('Response body is missing (null). $kUnexpectedRaiseIssue'),
+      findsOneWidget,
+    );
   });
 
   testWidgets(
-      'Testing Response Body, no mediaType; should be default plaintext preview',
-      (tester) async {
-    var responseModelNoHeaders = responseModel.copyWith(
-      headers: null,
-      formattedBody: null,
-    );
-    var requestModelNoResponseHeaders =
-        testRequestModel.copyWith(httpResponseModel: responseModelNoHeaders);
+    'Testing Response Body, no mediaType; should be default plaintext preview',
+    (tester) async {
+      var responseModelNoHeaders = responseModel.copyWith(
+        headers: null,
+        formattedBody: null,
+      );
+      var requestModelNoResponseHeaders = testRequestModel.copyWith(
+        httpResponseModel: responseModelNoHeaders,
+      );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        title: 'Response Body',
-        theme: kThemeDataLight,
-        home: Scaffold(
-          body:
-              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
+      await tester.pumpWidget(
+        MaterialApp(
+          title: 'Response Body',
+          theme: kThemeDataLight,
+          home: Scaffold(
+            body: ResponseBody(
+              selectedRequestModel: requestModelNoResponseHeaders,
+            ),
+          ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text("Raw"), findsOneWidget);
-    expect(find.text('{"data":"world"}'), findsOneWidget);
-  });
+      expect(find.text("Raw"), findsOneWidget);
+      expect(find.text('{"data":"world"}'), findsOneWidget);
+    },
+  );
 
   testWidgets('Testing Response Body for No body view', (tester) async {
     String expected =
@@ -252,15 +261,17 @@ void main() {
     var responseModelOctet = responseModel.copyWith(
       headers: const {"content-type": "application/octet-stream"},
     );
-    var requestModelNoResponseHeaders =
-        testRequestModel.copyWith(httpResponseModel: responseModelOctet);
+    var requestModelNoResponseHeaders = testRequestModel.copyWith(
+      httpResponseModel: responseModelOctet,
+    );
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',
         theme: kThemeDataLight,
         home: Scaffold(
-          body:
-              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
+          body: ResponseBody(
+            selectedRequestModel: requestModelNoResponseHeaders,
+          ),
         ),
       ),
     );
@@ -274,14 +285,16 @@ void main() {
       formattedBody: null,
     );
     var requestModelNoResponseHeaders = testRequestModel.copyWith(
-        httpResponseModel: responseModelNoFormattedBody);
+      httpResponseModel: responseModelNoFormattedBody,
+    );
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',
         theme: kThemeDataLight,
         home: Scaffold(
-          body:
-              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
+          body: ResponseBody(
+            selectedRequestModel: requestModelNoResponseHeaders,
+          ),
         ),
       ),
     );
@@ -299,14 +312,15 @@ void main() {
         theme: kThemeDataDark,
         home: Scaffold(
           body: ResponseBodySuccess(
-              body: 'Hello from API Dash',
-              mediaType: MediaType("application", "json"),
-              options: const [
-                ResponseBodyView.none,
-                ResponseBodyView.code,
-                ResponseBodyView.raw,
-              ],
-              bytes: Uint8List.fromList([20, 8])),
+            body: 'Hello from API Dash',
+            mediaType: MediaType("application", "json"),
+            options: const [
+              ResponseBodyView.none,
+              ResponseBodyView.code,
+              ResponseBodyView.raw,
+            ],
+            bytes: Uint8List.fromList([20, 8]),
+          ),
         ),
       ),
     );
@@ -323,12 +337,11 @@ void main() {
         theme: kThemeDataDark,
         home: Scaffold(
           body: ResponseBodySuccess(
-              body: 'Hello from API Dash',
-              mediaType: MediaType("application", "json"),
-              options: const [
-                ResponseBodyView.raw,
-              ],
-              bytes: Uint8List.fromList([20, 8])),
+            body: 'Hello from API Dash',
+            mediaType: MediaType("application", "json"),
+            options: const [ResponseBodyView.raw],
+            bytes: Uint8List.fromList([20, 8]),
+          ),
         ),
       ),
     );
@@ -336,6 +349,31 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Hello from API Dash'), findsOneWidget);
     expect(find.byIcon(Icons.download), findsOneWidget);
+  });
+
+  testWidgets('Testing Body Success download uses save dialog flow', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Body Success',
+        theme: kThemeDataDark,
+        home: Scaffold(
+          body: ResponseBodySuccess(
+            body: 'Hello from API Dash',
+            mediaType: MediaType("application", "json"),
+            options: const [ResponseBodyView.raw],
+            bytes: Uint8List.fromList([20, 8]),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    final button = tester.widget<SaveInDownloadsButton>(
+      find.byType(SaveInDownloadsButton),
+    );
+    expect(button.chooseSaveLocation, isTrue);
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.code', (tester) async {
@@ -364,9 +402,7 @@ void main() async {
             body: 'Hello',
             formattedBody: code,
             mediaType: MediaType("application", "json"),
-            options: const [
-              ResponseBodyView.code,
-            ],
+            options: const [ResponseBodyView.code],
             bytes: Uint8List.fromList([20, 8]),
             highlightLanguage: 'dart',
           ),
@@ -377,12 +413,15 @@ void main() async {
     await tester.pumpAndSettle();
 
     expect(find.text('Copy'), findsOneWidget);
-    expect(find.textContaining('Error Status Code', findRichText: true),
-        findsOneWidget);
+    expect(
+      find.textContaining('Error Status Code', findRichText: true),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Testing Body Success for ResponseBodyView.preview',
-      (tester) async {
+  testWidgets('Testing Body Success for ResponseBodyView.preview', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Body Success',
@@ -391,9 +430,7 @@ void main() async {
           body: ResponseBodySuccess(
             body: 'Hello from API Dash',
             mediaType: MediaType("image", "jpeg"),
-            options: const [
-              ResponseBodyView.preview,
-            ],
+            options: const [ResponseBodyView.preview],
             bytes: kBodyBytesJpeg,
           ),
         ),
@@ -405,40 +442,39 @@ void main() async {
   });
 
   testWidgets(
-      'Testing Body Success tap segment. formattedBody is always shown in Raw',
-      (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        title: 'Body Success',
-        theme: kThemeDataLight,
-        home: Scaffold(
-          body: ResponseBodySuccess(
-            body: 'Raw Hello from API Dash',
-            formattedBody: 'Formatted Hello from API Dash',
-            mediaType: MediaType("application", "json"),
-            options: const [
-              ResponseBodyView.code,
-              ResponseBodyView.raw,
-            ],
-            bytes: kBodyBytesJpeg,
-            highlightLanguage: 'json',
+    'Testing Body Success tap segment. formattedBody is always shown in Raw',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          title: 'Body Success',
+          theme: kThemeDataLight,
+          home: Scaffold(
+            body: ResponseBodySuccess(
+              body: 'Raw Hello from API Dash',
+              formattedBody: 'Formatted Hello from API Dash',
+              mediaType: MediaType("application", "json"),
+              options: const [ResponseBodyView.code, ResponseBodyView.raw],
+              bytes: kBodyBytesJpeg,
+              highlightLanguage: 'json',
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.pumpAndSettle();
-    expect(find.text('Formatted Hello from API Dash'), findsOneWidget);
-    expect(find.text('Raw Hello from API Dash'), findsNothing);
+      await tester.pumpAndSettle();
+      expect(find.text('Formatted Hello from API Dash'), findsOneWidget);
+      expect(find.text('Raw Hello from API Dash'), findsNothing);
 
-    await tester.tap(find.text('Raw'));
-    await tester.pumpAndSettle();
-    expect(find.text('Formatted Hello from API Dash'), findsOneWidget);
-    expect(find.text('Raw Hello from API Dash'), findsNothing);
-  });
+      await tester.tap(find.text('Raw'));
+      await tester.pumpAndSettle();
+      expect(find.text('Formatted Hello from API Dash'), findsOneWidget);
+      expect(find.text('Raw Hello from API Dash'), findsNothing);
+    },
+  );
 
-  testWidgets('Testing Body Success tap segment for formattedBody null',
-      (tester) async {
+  testWidgets('Testing Body Success tap segment for formattedBody null', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Body Success',
@@ -448,10 +484,7 @@ void main() async {
             body: 'Raw Hello from API Dash',
             formattedBody: null,
             mediaType: MediaType("text", "csv"),
-            options: const [
-              ResponseBodyView.code,
-              ResponseBodyView.raw,
-            ],
+            options: const [ResponseBodyView.code, ResponseBodyView.raw],
             bytes: kBodyBytesJpeg,
             highlightLanguage: 'txt',
           ),

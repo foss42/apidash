@@ -11,6 +11,7 @@ class SaveInDownloadsButton extends StatelessWidget {
     this.mimeType,
     this.ext,
     this.name,
+    this.chooseSaveLocation = false,
     this.showLabel = true,
   });
 
@@ -18,6 +19,7 @@ class SaveInDownloadsButton extends StatelessWidget {
   final String? mimeType;
   final String? ext;
   final String? name;
+  final bool chooseSaveLocation;
   final bool showLabel;
 
   @override
@@ -25,12 +27,13 @@ class SaveInDownloadsButton extends StatelessWidget {
     var sm = ScaffoldMessenger.of(context);
     final onPressed = (content != null)
         ? () => saveToDownloads(
-              sm,
-              content: content,
-              mimeType: mimeType,
-              ext: ext,
-              name: name,
-            )
+            sm,
+            content: content,
+            mimeType: mimeType,
+            ext: ext,
+            name: name,
+            chooseSaveLocation: chooseSaveLocation,
+          )
         : null;
 
     return showLabel
