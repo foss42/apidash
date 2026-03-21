@@ -32,7 +32,7 @@ This fragmentation leaves several critical gaps before production deployment:
 
 This project proposes a lightweight MCP session testing platform that enables developers to record, replay, and validate interaction workflows while developing Model Context Protocol servers. The system introduces reusable testing scenarios, behavioural validation, performance simulation, and tool conflict analysis within a single local-first environment aligned with the API Dash. By making MCP interactions reproducible and observable during development, the platform improves reliability and developer confidence before production deployment.
 
-![image.png](Gsoc%20Idea%20Doc/image.png)
+![image.png](images/image.png)
 
 ## Product Workflow
 
@@ -131,7 +131,7 @@ The goal is simple know how your MCP server works before it reaches production.
     
     The Core Connectivity Layer manages communication between the testing interface and one or more connected MCP servers. It ensures session isolation, consistent message routing, and transport abstraction across stdio, SSE, and Streamable HTTP connections.
     
-    ![Screenshot 2026-03-14 at 11.00.58 PM.png](Gsoc%20Idea%20Doc/Screenshot_2026-03-14_at_11.00.58_PM.png)
+    ![Screenshot 2026-03-14 at 11.00.58 PM.png](images/Screenshot_2026-03-14_at_11.00.58_PM.png)
     
     Parts of Connectivity Layer:-
     
@@ -456,9 +456,9 @@ the form, directly fixing the data loss bug present in existing tools. Collectio
     
 8. Load Testing Layer
     
-    ![image.png](Gsoc%20Idea%20Doc/image%201.png)
+    ![image.png](images/image%201.png)
     
-    ![image.png](Gsoc%20Idea%20Doc/image%202.png)
+    ![image.png](images/image%202.png)
     
     The Load Testing Layer operates in two modes.In Collection-based mode, saved user-define requests are fired concurrently at configurable scale from 1 to 50 simultaneous calls using
     Promise.allSettled() which captures both successes and failures without cancelling on first error. In Schema-based mode, test data is auto-generated directly from the tool input schema covering four categories: success path with valid inputs, negative with missing required fields and wrong types, boundary with empty strings, 10,000 character payloads and SQL injection strings, and edge cases with null values and unexpected field combinations requiring zero manual input from the developer. Both modes feed the same session recorder and render a real-time latency degradation graph showing exactly where the server starts struggling under load.
@@ -549,7 +549,7 @@ the form, directly fixing the data loss bug present in existing tools. Collectio
 9. LLM Validation Engine
 
     
-    ![Screenshot 2026-03-15 at 5.01.56 PM.png](Gsoc%20Idea%20Doc/Screenshot_2026-03-15_at_5.01.56_PM.png)
+    ![Screenshot 2026-03-15 at 5.01.56 PM.png](images/Screenshot_2026-03-15_at_5.01.56_PM.png)
     
     The LLM Validation Engine uses the LLM Integration Layer to test MCP tools the way they are actually used in production through a real LLM making real decisions. The developer defines test scenarios with a natural language prompt, the expected tool to be called, and the expected output shape. The engine sends the prompt to the connected LLM with all available tools, records which tool the LLM chose to call and whether it executed successfully, and calculates two metrics
     separately per tool hit rate measures whether the LLM picked the correct tool, success rate measures whether that tool executed without error. Tracking these separately is what makes the diagnosis precise: high hit rate with low success rate means the description is clear but execution logic is broken, low hit rate with high success rate means execution is fine but
@@ -685,11 +685,11 @@ the form, directly fixing the data loss bug present in existing tools. Collectio
 
 ### **Complete Architecture Design**
 
-![image.png](Gsoc%20Idea%20Doc/284d1599-f430-4abe-8d6d-3d2abfa2f537.png)
+![image.png](images/284d1599-f430-4abe-8d6d-3d2abfa2f537.png)
 
 ### **POC Link:**
 
-[poc_recording.mov](Gsoc%20Idea%20Doc/poc_recording.mov)
+[poc_recording.mov](videos/poc_recording.mov)
 
 Repo Link:[https://github.com/PrajwalBenedictNorman/mcp-testing](https://github.com/PrajwalBenedictNorman/mcp-testing)
 
