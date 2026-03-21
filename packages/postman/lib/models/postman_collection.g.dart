@@ -137,6 +137,10 @@ _$BodyImpl _$$BodyImplFromJson(Map json) => _$BodyImpl(
       formdata: (json['formdata'] as List<dynamic>?)
           ?.map((e) => Formdatum.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList(),
+      urlencoded: (json['urlencoded'] as List<dynamic>?)
+          ?.map(
+              (e) => UrlencodedParam.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
     );
 
 Map<String, dynamic> _$$BodyImplToJson(_$BodyImpl instance) =>
@@ -146,6 +150,9 @@ Map<String, dynamic> _$$BodyImplToJson(_$BodyImpl instance) =>
       if (instance.options?.toJson() case final value?) 'options': value,
       if (instance.formdata?.map((e) => e.toJson()).toList() case final value?)
         'formdata': value,
+      if (instance.urlencoded?.map((e) => e.toJson()).toList()
+          case final value?)
+        'urlencoded': value,
     };
 
 _$OptionsImpl _$$OptionsImplFromJson(Map json) => _$OptionsImpl(
@@ -180,4 +187,21 @@ Map<String, dynamic> _$$FormdatumImplToJson(_$FormdatumImpl instance) =>
       if (instance.value case final value?) 'value': value,
       if (instance.type case final value?) 'type': value,
       if (instance.src case final value?) 'src': value,
+    };
+
+_$UrlencodedParamImpl _$$UrlencodedParamImplFromJson(Map json) =>
+    _$UrlencodedParamImpl(
+      key: json['key'] as String?,
+      value: json['value'] as String?,
+      type: json['type'] as String?,
+      disabled: json['disabled'] as bool?,
+    );
+
+Map<String, dynamic> _$$UrlencodedParamImplToJson(
+        _$UrlencodedParamImpl instance) =>
+    <String, dynamic>{
+      if (instance.key case final value?) 'key': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.type case final value?) 'type': value,
+      if (instance.disabled case final value?) 'disabled': value,
     };

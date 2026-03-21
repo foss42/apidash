@@ -1573,6 +1573,7 @@ mixin _$Body {
   String? get raw => throw _privateConstructorUsedError;
   Options? get options => throw _privateConstructorUsedError;
   List<Formdatum>? get formdata => throw _privateConstructorUsedError;
+  List<UrlencodedParam>? get urlencoded => throw _privateConstructorUsedError;
 
   /// Serializes this Body to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1589,7 +1590,11 @@ abstract class $BodyCopyWith<$Res> {
       _$BodyCopyWithImpl<$Res, Body>;
   @useResult
   $Res call(
-      {String? mode, String? raw, Options? options, List<Formdatum>? formdata});
+      {String? mode,
+      String? raw,
+      Options? options,
+      List<Formdatum>? formdata,
+      List<UrlencodedParam>? urlencoded});
 
   $OptionsCopyWith<$Res>? get options;
 }
@@ -1613,6 +1618,7 @@ class _$BodyCopyWithImpl<$Res, $Val extends Body>
     Object? raw = freezed,
     Object? options = freezed,
     Object? formdata = freezed,
+    Object? urlencoded = freezed,
   }) {
     return _then(_value.copyWith(
       mode: freezed == mode
@@ -1631,6 +1637,10 @@ class _$BodyCopyWithImpl<$Res, $Val extends Body>
           ? _value.formdata
           : formdata // ignore: cast_nullable_to_non_nullable
               as List<Formdatum>?,
+      urlencoded: freezed == urlencoded
+          ? _value.urlencoded
+          : urlencoded // ignore: cast_nullable_to_non_nullable
+              as List<UrlencodedParam>?,
     ) as $Val);
   }
 
@@ -1657,7 +1667,11 @@ abstract class _$$BodyImplCopyWith<$Res> implements $BodyCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String? mode, String? raw, Options? options, List<Formdatum>? formdata});
+      {String? mode,
+      String? raw,
+      Options? options,
+      List<Formdatum>? formdata,
+      List<UrlencodedParam>? urlencoded});
 
   @override
   $OptionsCopyWith<$Res>? get options;
@@ -1679,6 +1693,7 @@ class __$$BodyImplCopyWithImpl<$Res>
     Object? raw = freezed,
     Object? options = freezed,
     Object? formdata = freezed,
+    Object? urlencoded = freezed,
   }) {
     return _then(_$BodyImpl(
       mode: freezed == mode
@@ -1697,6 +1712,10 @@ class __$$BodyImplCopyWithImpl<$Res>
           ? _value._formdata
           : formdata // ignore: cast_nullable_to_non_nullable
               as List<Formdatum>?,
+      urlencoded: freezed == urlencoded
+          ? _value._urlencoded
+          : urlencoded // ignore: cast_nullable_to_non_nullable
+              as List<UrlencodedParam>?,
     ));
   }
 }
@@ -1706,8 +1725,13 @@ class __$$BodyImplCopyWithImpl<$Res>
 @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$BodyImpl implements _Body {
   const _$BodyImpl(
-      {this.mode, this.raw, this.options, final List<Formdatum>? formdata})
-      : _formdata = formdata;
+      {this.mode,
+      this.raw,
+      this.options,
+      final List<Formdatum>? formdata,
+      final List<UrlencodedParam>? urlencoded})
+      : _formdata = formdata,
+        _urlencoded = urlencoded;
 
   factory _$BodyImpl.fromJson(Map<String, dynamic> json) =>
       _$$BodyImplFromJson(json);
@@ -1727,10 +1751,19 @@ class _$BodyImpl implements _Body {
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
+  final List<UrlencodedParam>? _urlencoded;
+  @override
+  List<UrlencodedParam>? get urlencoded {
+    final value = _urlencoded;
+    if (value == null) return null;
+    if (_urlencoded is EqualUnmodifiableListView) return _urlencoded;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Body(mode: $mode, raw: $raw, options: $options, formdata: $formdata)';
+    return 'Body(mode: $mode, raw: $raw, options: $options, formdata: $formdata, urlencoded: $urlencoded)';
   }
 
   @override
@@ -1741,13 +1774,16 @@ class _$BodyImpl implements _Body {
             (identical(other.mode, mode) || other.mode == mode) &&
             (identical(other.raw, raw) || other.raw == raw) &&
             (identical(other.options, options) || other.options == options) &&
-            const DeepCollectionEquality().equals(other._formdata, _formdata));
+            const DeepCollectionEquality().equals(other._formdata, _formdata) &&
+            const DeepCollectionEquality()
+                .equals(other._urlencoded, _urlencoded));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, mode, raw, options,
-      const DeepCollectionEquality().hash(_formdata));
+      const DeepCollectionEquality().hash(_formdata),
+      const DeepCollectionEquality().hash(_urlencoded));
 
   /// Create a copy of Body
   /// with the given fields replaced by the non-null parameter values.
@@ -1770,7 +1806,8 @@ abstract class _Body implements Body {
       {final String? mode,
       final String? raw,
       final Options? options,
-      final List<Formdatum>? formdata}) = _$BodyImpl;
+      final List<Formdatum>? formdata,
+      final List<UrlencodedParam>? urlencoded}) = _$BodyImpl;
 
   factory _Body.fromJson(Map<String, dynamic> json) = _$BodyImpl.fromJson;
 
@@ -1782,6 +1819,8 @@ abstract class _Body implements Body {
   Options? get options;
   @override
   List<Formdatum>? get formdata;
+  @override
+  List<UrlencodedParam>? get urlencoded;
 
   /// Create a copy of Body
   /// with the given fields replaced by the non-null parameter values.
@@ -2297,5 +2336,210 @@ abstract class _Formdatum implements Formdatum {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FormdatumImplCopyWith<_$FormdatumImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+UrlencodedParam _$UrlencodedParamFromJson(Map<String, dynamic> json) {
+  return _UrlencodedParam.fromJson(json);
+}
+
+/// @nodoc
+mixin _$UrlencodedParam {
+  String? get key => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  bool? get disabled => throw _privateConstructorUsedError;
+
+  /// Serializes this UrlencodedParam to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of UrlencodedParam
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $UrlencodedParamCopyWith<UrlencodedParam> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $UrlencodedParamCopyWith<$Res> {
+  factory $UrlencodedParamCopyWith(
+          UrlencodedParam value, $Res Function(UrlencodedParam) then) =
+      _$UrlencodedParamCopyWithImpl<$Res, UrlencodedParam>;
+  @useResult
+  $Res call({String? key, String? value, String? type, bool? disabled});
+}
+
+/// @nodoc
+class _$UrlencodedParamCopyWithImpl<$Res, $Val extends UrlencodedParam>
+    implements $UrlencodedParamCopyWith<$Res> {
+  _$UrlencodedParamCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of UrlencodedParam
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? key = freezed,
+    Object? value = freezed,
+    Object? type = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_value.copyWith(
+      key: freezed == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$UrlencodedParamImplCopyWith<$Res>
+    implements $UrlencodedParamCopyWith<$Res> {
+  factory _$$UrlencodedParamImplCopyWith(_$UrlencodedParamImpl value,
+          $Res Function(_$UrlencodedParamImpl) then) =
+      __$$UrlencodedParamImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? key, String? value, String? type, bool? disabled});
+}
+
+/// @nodoc
+class __$$UrlencodedParamImplCopyWithImpl<$Res>
+    extends _$UrlencodedParamCopyWithImpl<$Res, _$UrlencodedParamImpl>
+    implements _$$UrlencodedParamImplCopyWith<$Res> {
+  __$$UrlencodedParamImplCopyWithImpl(_$UrlencodedParamImpl _value,
+      $Res Function(_$UrlencodedParamImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UrlencodedParam
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? key = freezed,
+    Object? value = freezed,
+    Object? type = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_$UrlencodedParamImpl(
+      key: freezed == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$UrlencodedParamImpl implements _UrlencodedParam {
+  const _$UrlencodedParamImpl(
+      {this.key, this.value, this.type, this.disabled});
+
+  factory _$UrlencodedParamImpl.fromJson(Map<String, dynamic> json) =>
+      _$$UrlencodedParamImplFromJson(json);
+
+  @override
+  final String? key;
+  @override
+  final String? value;
+  @override
+  final String? type;
+  @override
+  final bool? disabled;
+
+  @override
+  String toString() {
+    return 'UrlencodedParam(key: $key, value: $value, type: $type, disabled: $disabled)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UrlencodedParamImpl &&
+            (identical(other.key, key) || other.key == key) &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.disabled, disabled) ||
+                other.disabled == disabled));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, key, value, type, disabled);
+
+  /// Create a copy of UrlencodedParam
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UrlencodedParamImplCopyWith<_$UrlencodedParamImpl> get copyWith =>
+      __$$UrlencodedParamImplCopyWithImpl<_$UrlencodedParamImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$UrlencodedParamImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _UrlencodedParam implements UrlencodedParam {
+  const factory _UrlencodedParam(
+      {final String? key,
+      final String? value,
+      final String? type,
+      final bool? disabled}) = _$UrlencodedParamImpl;
+
+  factory _UrlencodedParam.fromJson(Map<String, dynamic> json) =
+      _$UrlencodedParamImpl.fromJson;
+
+  @override
+  String? get key;
+  @override
+  String? get value;
+  @override
+  String? get type;
+  @override
+  bool? get disabled;
+
+  /// Create a copy of UrlencodedParam
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UrlencodedParamImplCopyWith<_$UrlencodedParamImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -24,5 +24,31 @@ void main() {
     test('API Dash Postman collection to Json', () {
       expect(collectionApiDashModel.toJson(), collectionApiDashJson);
     });
+
+    test('Postman Body parses urlencoded params', () {
+      final collection = PostmanCollection.fromJson({
+        'item': [
+          {
+            'request': {
+              'body': {
+                'mode': 'urlencoded',
+                'urlencoded': [
+                  {'key': 'username', 'value': 'admin', 'type': 'text'},
+                  {'key': 'password', 'value': 'secret123', 'type': 'text'},
+                ],
+              },
+            },
+          },
+        ],
+      });
+
+      final body = collection.item!.single.request!.body!;
+      expect(body.mode, 'urlencoded');
+      expect(body.urlencoded, hasLength(2));
+      expect(body.urlencoded!.first.key, 'username');
+      expect(body.urlencoded!.first.value, 'admin');
+      expect(body.urlencoded!.last.key, 'password');
+      expect(body.urlencoded!.last.value, 'secret123');
+    });
   });
 }

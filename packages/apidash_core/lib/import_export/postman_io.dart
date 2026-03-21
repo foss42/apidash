@@ -81,6 +81,17 @@ class PostmanIO {
           ));
         }
       }
+      if (request.body?.mode == 'urlencoded') {
+        bodyContentType = ContentType.formdata;
+        formData = [];
+        for (var fd in request.body?.urlencoded ?? <pm.UrlencodedParam>[]) {
+          formData.add(FormDataModel(
+            name: fd.key ?? "",
+            value: fd.value ?? "",
+            type: FormDataType.text,
+          ));
+        }
+      }
     }
 
     return HttpRequestModel(

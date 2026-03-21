@@ -144,6 +144,7 @@ class Body with _$Body {
     String? raw,
     Options? options,
     List<Formdatum>? formdata,
+    List<UrlencodedParam>? urlencoded,
   }) = _Body;
 
   factory Body.fromJson(Map<String, dynamic> json) => _$BodyFromJson(json);
@@ -194,4 +195,22 @@ class Formdatum with _$Formdatum {
 
   factory Formdatum.fromJson(Map<String, dynamic> json) =>
       _$FormdatumFromJson(json);
+}
+
+@freezed
+class UrlencodedParam with _$UrlencodedParam {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory UrlencodedParam({
+    String? key,
+    String? value,
+    String? type,
+    bool? disabled,
+  }) = _UrlencodedParam;
+
+  factory UrlencodedParam.fromJson(Map<String, dynamic> json) =>
+      _$UrlencodedParamFromJson(json);
 }
