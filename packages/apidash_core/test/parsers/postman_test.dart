@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('PostmanIO parser', () {
-    test('imports x-www-form-urlencoded bodies as form data', () {
+    test('imports x-www-form-urlencoded bodies as encoded text bodies', () {
       const content = '''
 {
   "info": {
@@ -19,6 +19,7 @@ void main() {
           "mode": "urlencoded",
           "urlencoded": [
             {"key": "username", "value": "admin", "type": "text"},
+            {"key": "skip", "value": "me", "type": "text", "disabled": true},
             {"key": "password", "value": "secret123", "type": "text"}
           ]
         },
@@ -38,22 +39,18 @@ void main() {
       final request = requests!.single.$2;
       expect(request.method, HTTPVerb.post);
       expect(request.url, 'https://api.example.com/login');
-      expect(request.bodyContentType, ContentType.formdata);
+      expect(request.bodyContentType, ContentType.text);
+      expect(request.body, 'username=admin&password=secret123');
       expect(
-        request.formData,
+        request.headers,
         const [
-          FormDataModel(
-            name: 'username',
-            value: 'admin',
-            type: FormDataType.text,
-          ),
-          FormDataModel(
-            name: 'password',
-            value: 'secret123',
-            type: FormDataType.text,
+          NameValueModel(
+            name: 'Content-Type',
+            value: 'application/x-www-form-urlencoded',
           ),
         ],
       );
+      expect(request.formData, isNull);
     });
   });
 }

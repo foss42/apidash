@@ -82,14 +82,29 @@ class PostmanIO {
         }
       }
       if (request.body?.mode == 'urlencoded') {
-        bodyContentType = ContentType.formdata;
-        formData = [];
+        bodyContentType = ContentType.text;
+        final urlencodedPairs = <String>[];
         for (var fd in request.body?.urlencoded ?? <pm.UrlencodedParam>[]) {
-          formData.add(FormDataModel(
-            name: fd.key ?? "",
-            value: fd.value ?? "",
-            type: FormDataType.text,
+          if (fd.disabled ?? false) {
+            continue;
+          }
+          urlencodedPairs.add(
+            '${Uri.encodeQueryComponent(fd.key ?? "")}='
+            '${Uri.encodeQueryComponent(fd.value ?? "")}',
+          );
+        }
+        body = urlencodedPairs.join('&');
+        formData = null;
+
+        final hasContentTypeHeader = headers.any(
+          (header) => header.name.toLowerCase() == 'content-type',
+        );
+        if (!hasContentTypeHeader) {
+          headers.add(const NameValueModel(
+            name: 'Content-Type',
+            value: 'application/x-www-form-urlencoded',
           ));
+          isHeaderEnabledList.add(true);
         }
       }
     }
