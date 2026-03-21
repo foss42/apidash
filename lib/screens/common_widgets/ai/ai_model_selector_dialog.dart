@@ -65,6 +65,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       kHSpacer20,
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
+                          isExpanded: true,
                           onChanged: (x) {
                             setState(() {
                               selectedProvider = x;
