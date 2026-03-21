@@ -56,6 +56,21 @@ class FakeFileSelectorPlatform extends FileSelectorPlatform {
   }
 }
 
+Future<bool> waitForFileToExist(
+  String path, {
+  Duration timeout = const Duration(seconds: 1),
+  Duration pollInterval = const Duration(milliseconds: 10),
+}) async {
+  final deadline = DateTime.now().add(timeout);
+  while (DateTime.now().isBefore(deadline)) {
+    if (await File(path).exists()) {
+      return true;
+    }
+    await Future<void>.delayed(pollInterval);
+  }
+  return File(path).existsSync();
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -143,8 +158,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.runAsync(() async {
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(await File(path).exists(), isTrue);
+      expect(await waitForFileToExist(path), isTrue);
     });
     expect(fakePlatform.lastSuggestedName, 'response.txt');
   });

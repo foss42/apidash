@@ -37,6 +37,7 @@ Future<void> saveToDownloads(
       ? await getFileSavePath(name, resolvedExt, mimeType: mimeType)
       : await getFileDownloadpath(name, resolvedExt);
   if (chooseSaveLocation && path == null) {
+    sm.hideCurrentSnackBar();
     return;
   }
   if (path != null) {
