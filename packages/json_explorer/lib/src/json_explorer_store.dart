@@ -186,9 +186,17 @@ class NodeViewModelState extends ChangeNotifier {
 
   /// Sets the highlight property of this node.
   ///
+  /// When [recursive] is true, the same highlight state is also propagated to
+  /// all descendants of this node.
+  ///
   /// [notifyListeners] is called to notify all registered listeners.
-  void highlight({bool isHighlighted = true}) {
+  void highlight({bool isHighlighted = true, bool recursive = true}) {
     _isHighlighted = isHighlighted;
+    if (recursive) {
+      for (final child in children) {
+        child.highlight(isHighlighted: isHighlighted, recursive: true);
+      }
+    }
     notifyListeners();
   }
 

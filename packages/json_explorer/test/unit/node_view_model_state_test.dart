@@ -152,7 +152,7 @@ void main() {
         expect(viewModel.children.elementAt(1).key, 'propertyB');
       });
 
-      test('highlight only updates the current class node', () {
+      test('highlight sets highlight in all children', () {
         final viewModel = NodeViewModelState.fromClass(
           treeDepth: 0,
           key: 'classKey',
@@ -188,15 +188,59 @@ void main() {
         viewModel.highlight();
 
         expect(viewModel.isHighlighted, isTrue);
+        expect(classMap['property']!.isHighlighted, isTrue);
+        expect(classMap['innerClass']!.isHighlighted, isTrue);
+        expect(
+          classMap['innerClass']!.value['innerClassProperty']!.isHighlighted,
+          isTrue,
+        );
+
+        viewModel.highlight(isHighlighted: false);
+        expect(viewModel.isHighlighted, isFalse);
         expect(classMap['property']!.isHighlighted, isFalse);
         expect(classMap['innerClass']!.isHighlighted, isFalse);
         expect(
           classMap['innerClass']!.value['innerClassProperty']!.isHighlighted,
           isFalse,
         );
+      });
 
-        viewModel.highlight(isHighlighted: false);
-        expect(viewModel.isHighlighted, isFalse);
+      test('highlight can update only the current class node', () {
+        final viewModel = NodeViewModelState.fromClass(
+          treeDepth: 0,
+          key: 'classKey',
+          parent: null,
+        );
+
+        final subClass = NodeViewModelState.fromClass(
+          treeDepth: 1,
+          key: 'innerClass',
+          parent: viewModel,
+        );
+
+        final classMap = {
+          'property': NodeViewModelState.fromProperty(
+            treeDepth: 1,
+            key: 'property',
+            value: 123,
+            parent: viewModel,
+          ),
+          'innerClass': subClass,
+        };
+
+        subClass.value = {
+          'innerClassProperty': NodeViewModelState.fromProperty(
+            treeDepth: 2,
+            key: 'innerClassProperty',
+            value: 123,
+            parent: classMap['innerClass'],
+          ),
+        };
+
+        viewModel.value = classMap;
+        viewModel.highlight(recursive: false);
+
+        expect(viewModel.isHighlighted, isTrue);
         expect(classMap['property']!.isHighlighted, isFalse);
         expect(classMap['innerClass']!.isHighlighted, isFalse);
         expect(
@@ -271,7 +315,7 @@ void main() {
         expect(viewModel.children.elementAt(1).key, '1');
       });
 
-      test('highlight only updates the current array node', () {
+      test('highlight sets highlight in all children', () {
         final viewModel = NodeViewModelState.fromArray(
           treeDepth: 0,
           key: 'arrayKey',
@@ -299,11 +343,43 @@ void main() {
         viewModel.highlight();
 
         expect(viewModel.isHighlighted, isTrue);
-        expect(arrayValues[0].isHighlighted, isFalse);
-        expect(arrayValues[0].value['classProperty']!.isHighlighted, isFalse);
+        expect(arrayValues[0].isHighlighted, isTrue);
+        expect(arrayValues[0].value['classProperty']!.isHighlighted, isTrue);
 
         viewModel.highlight(isHighlighted: false);
         expect(viewModel.isHighlighted, isFalse);
+        expect(arrayValues[0].isHighlighted, isFalse);
+        expect(arrayValues[0].value['classProperty']!.isHighlighted, isFalse);
+      });
+
+      test('highlight can update only the current array node', () {
+        final viewModel = NodeViewModelState.fromArray(
+          treeDepth: 0,
+          key: 'arrayKey',
+          parent: null,
+        );
+
+        final subClass = NodeViewModelState.fromClass(
+          treeDepth: 1,
+          key: 'class',
+          parent: viewModel,
+        );
+
+        subClass.value = {
+          'classProperty': NodeViewModelState.fromProperty(
+            treeDepth: 2,
+            key: 'classProperty',
+            value: 123,
+            parent: subClass,
+          ),
+        };
+
+        final arrayValues = [subClass];
+
+        viewModel.value = arrayValues;
+        viewModel.highlight(recursive: false);
+
+        expect(viewModel.isHighlighted, isTrue);
         expect(arrayValues[0].isHighlighted, isFalse);
         expect(arrayValues[0].value['classProperty']!.isHighlighted, isFalse);
       });
