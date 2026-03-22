@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../../common_widgets/common_widgets.dart';
+import 'ai_history_page.dart';
 import 'his_scripts_tab.dart';
 
 class HistoryRequestPane extends ConsumerWidget {
@@ -22,22 +23,34 @@ class HistoryRequestPane extends ConsumerWidget {
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
     final apiType = ref.watch(selectedHistoryRequestModelProvider
         .select((value) => value?.metaData.apiType));
-    final headers = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel?.headers)) ??
-        [];
+
+    final headers =
+    ref.watch(
+      selectedHistoryRequestModelProvider.select((value) {
+        if (apiType == APIType.ai) return <NameValueModel>[];
+        return value?.httpRequestModel?.headers;
+      }),
+    ) ??
+    <NameValueModel>[];
     final headerLength = headers.length;
 
-    final params = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel?.params)) ??
-        [];
+    final params = ref.watch(selectedHistoryRequestModelProvider.select((value) {
+          if (apiType == APIType.ai) return <NameValueModel>[];
+          return value?.httpRequestModel?.params;
+        })) ??
+        <NameValueModel>[];
     final paramLength = params.length;
 
-    final hasBody = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasBody)) ??
+    final hasBody = ref.watch(selectedHistoryRequestModelProvider.select((value) {
+          if (apiType == APIType.ai) return false;
+          return value?.httpRequestModel?.hasBody;
+        })) ??
         false;
 
-    final hasQuery = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasQuery)) ??
+    final hasQuery = ref.watch(selectedHistoryRequestModelProvider.select((value) {
+          if (apiType == APIType.ai) return false;
+          return value?.httpRequestModel?.hasQuery;
+        })) ??
         false;
 
     final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
@@ -78,7 +91,7 @@ class HistoryRequestPane extends ConsumerWidget {
           ],
           children: [
             RequestDataTable(
-              rows: params, 
+              rows: params,
               keyName: kNameURLParam,
             ),
             AuthPage(
@@ -86,7 +99,7 @@ class HistoryRequestPane extends ConsumerWidget {
               readOnly: true,
             ),
             RequestDataTable(
-              rows: headers, 
+              rows: headers,
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
@@ -106,7 +119,7 @@ class HistoryRequestPane extends ConsumerWidget {
             headerLength > 0,
             hasAuth,
             hasQuery,
-            scriptsLength > 0
+            scriptsLength > 0,
           ],
           tabLabels: const [
             kLabelHeaders,
@@ -116,7 +129,7 @@ class HistoryRequestPane extends ConsumerWidget {
           ],
           children: [
             RequestDataTable(
-              rows: headers, 
+              rows: headers,
               keyName: kNameHeader,
             ),
             AuthPage(
@@ -125,6 +138,27 @@ class HistoryRequestPane extends ConsumerWidget {
             ),
             const HisRequestBody(),
             const HistoryScriptsTab(),
+          ],
+        ),
+      APIType.ai => RequestPane(
+          key: const Key("history-request-pane-ai"),
+          selectedId: selectedId,
+          codePaneVisible: codePaneVisible,
+          onPressedCodeButton: () {
+            ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+                !codePaneVisible;
+          },
+          showViewCodeButton: !isCompact,
+          showIndicators: [false, false, false],
+          tabLabels: const [
+            kLabelPrompts,
+            kLabelAuthorization,
+            kLabelConfiguration,
+          ],
+          children: [
+            const HisAIRequestPromptSection(),
+            const HisAIRequestAuthorizationSection(),
+            const HisAIRequestConfigSection(),
           ],
         ),
       _ => kSizedBoxEmpty,
@@ -151,10 +185,10 @@ class HisRequestBody extends ConsumerWidget {
                 style: Theme.of(context).textTheme.labelLarge,
                 children: [
                   const TextSpan(
-                    text: "Content Type: ",
+                    text: kLabelContentType,
                   ),
                   TextSpan(
-                      text: contentType?.name ?? "text",
+                      text: contentType?.name ?? kLabelDefaultContentType,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
