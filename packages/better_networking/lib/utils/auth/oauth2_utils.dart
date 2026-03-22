@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 
 import '../../models/auth/auth_oauth2_model.dart';
@@ -107,14 +106,9 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
         }
       }
     } else {
-      // For mobile: Use the standard flutter_web_auth_2 approach
-      callbackUri = await FlutterWebAuth2.authenticate(
-        url: authorizationUrl.toString(),
-        callbackUrlScheme: actualRedirectUrl.scheme,
-        options: const FlutterWebAuth2Options(
-          useWebview: true,
-          windowName: 'OAuth Authorization - API Dash',
-        ),
+      throw UnsupportedError(
+        'OAuth authorization code grant is not supported in pure Dart CLI context. '
+        'Mobile platforms require flutter_web_auth_2 which is a Flutter dependency.',
       );
     }
 
