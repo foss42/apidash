@@ -1,4 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:seed/seed.dart';
 
 part 'auth_jwt_model.freezed.dart';
 part 'auth_jwt_model.g.dart';

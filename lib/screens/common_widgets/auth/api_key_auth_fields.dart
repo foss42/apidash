@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:apidash/widgets/widgets.dart';
+import '../common_widgets.dart';
 import 'consts.dart';
 
 class ApiKeyAuthFields extends StatefulWidget {
@@ -20,24 +20,25 @@ class ApiKeyAuthFields extends StatefulWidget {
 }
 
 class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
-  late TextEditingController _keyController;
-  late TextEditingController _nameController;
+  late String _key;
+  late String _name;
   late String _addKeyTo;
 
   @override
   void initState() {
     super.initState();
     final apiAuth = widget.authData?.apikey;
-    _keyController = TextEditingController(text: apiAuth?.key ?? '');
-    _nameController =
-        TextEditingController(text: apiAuth?.name ?? kApiKeyHeaderName);
+    _key = apiAuth?.key ?? '';
+    _name = (apiAuth?.name != null && apiAuth!.name.isNotEmpty)
+        ? apiAuth.name
+        : kApiKeyHeaderName;
     _addKeyTo = apiAuth?.location ?? kAddToDefaultLocation;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         Text(
           kLabelAddTo,
@@ -66,20 +67,26 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
                 },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _nameController,
           hintText: kHintTextFieldName,
-          onChanged: (value) => _updateApiKeyAuth(),
+          initialValue: _name,
+          onChanged: (value) {
+            _name = value;
+            _updateApiKeyAuth();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
+        EnvAuthField(
           readOnly: widget.readOnly,
-          controller: _keyController,
           title: kLabelApiKey,
           hintText: kHintTextKey,
           isObscureText: true,
-          onChanged: (value) => _updateApiKeyAuth(),
+          initialValue: _key,
+          onChanged: (value) {
+            _key = value;
+            _updateApiKeyAuth();
+          },
         ),
       ],
     );
@@ -87,8 +94,8 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
 
   void _updateApiKeyAuth() {
     final apiKey = AuthApiKeyModel(
-      key: _keyController.text.trim(),
-      name: _nameController.text.trim(),
+      key: _key.trim(),
+      name: _name.trim(),
       location: _addKeyTo,
     );
     widget.updateAuth?.call(widget.authData?.copyWith(

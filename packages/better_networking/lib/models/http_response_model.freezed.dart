@@ -30,6 +30,7 @@ mixin _$HttpResponseModel {
   Uint8List? get bodyBytes => throw _privateConstructorUsedError;
   @DurationConverter()
   Duration? get time => throw _privateConstructorUsedError;
+  List<String>? get sseOutput => throw _privateConstructorUsedError;
 
   /// Serializes this HttpResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -56,6 +57,7 @@ abstract class $HttpResponseModelCopyWith<$Res> {
     String? formattedBody,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
+    List<String>? sseOutput,
   });
 }
 
@@ -81,6 +83,7 @@ class _$HttpResponseModelCopyWithImpl<$Res, $Val extends HttpResponseModel>
     Object? formattedBody = freezed,
     Object? bodyBytes = freezed,
     Object? time = freezed,
+    Object? sseOutput = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -112,6 +115,10 @@ class _$HttpResponseModelCopyWithImpl<$Res, $Val extends HttpResponseModel>
                 ? _value.time
                 : time // ignore: cast_nullable_to_non_nullable
                       as Duration?,
+            sseOutput: freezed == sseOutput
+                ? _value.sseOutput
+                : sseOutput // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
           )
           as $Val,
     );
@@ -135,6 +142,7 @@ abstract class _$$HttpResponseModelImplCopyWith<$Res>
     String? formattedBody,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
+    List<String>? sseOutput,
   });
 }
 
@@ -159,6 +167,7 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
     Object? formattedBody = freezed,
     Object? bodyBytes = freezed,
     Object? time = freezed,
+    Object? sseOutput = freezed,
   }) {
     return _then(
       _$HttpResponseModelImpl(
@@ -190,6 +199,10 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
             ? _value.time
             : time // ignore: cast_nullable_to_non_nullable
                   as Duration?,
+        sseOutput: freezed == sseOutput
+            ? _value._sseOutput
+            : sseOutput // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
       ),
     );
   }
@@ -207,8 +220,10 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
     this.formattedBody,
     @Uint8ListConverter() this.bodyBytes,
     @DurationConverter() this.time,
+    final List<String>? sseOutput,
   }) : _headers = headers,
        _requestHeaders = requestHeaders,
+       _sseOutput = sseOutput,
        super._();
 
   factory _$HttpResponseModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -246,10 +261,19 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
   @override
   @DurationConverter()
   final Duration? time;
+  final List<String>? _sseOutput;
+  @override
+  List<String>? get sseOutput {
+    final value = _sseOutput;
+    if (value == null) return null;
+    if (_sseOutput is EqualUnmodifiableListView) return _sseOutput;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'HttpResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, body: $body, formattedBody: $formattedBody, bodyBytes: $bodyBytes, time: $time)';
+    return 'HttpResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, body: $body, formattedBody: $formattedBody, bodyBytes: $bodyBytes, time: $time, sseOutput: $sseOutput)';
   }
 
   @override
@@ -268,7 +292,11 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
             (identical(other.formattedBody, formattedBody) ||
                 other.formattedBody == formattedBody) &&
             const DeepCollectionEquality().equals(other.bodyBytes, bodyBytes) &&
-            (identical(other.time, time) || other.time == time));
+            (identical(other.time, time) || other.time == time) &&
+            const DeepCollectionEquality().equals(
+              other._sseOutput,
+              _sseOutput,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -282,6 +310,7 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
     formattedBody,
     const DeepCollectionEquality().hash(bodyBytes),
     time,
+    const DeepCollectionEquality().hash(_sseOutput),
   );
 
   /// Create a copy of HttpResponseModel
@@ -310,6 +339,7 @@ abstract class _HttpResponseModel extends HttpResponseModel {
     final String? formattedBody,
     @Uint8ListConverter() final Uint8List? bodyBytes,
     @DurationConverter() final Duration? time,
+    final List<String>? sseOutput,
   }) = _$HttpResponseModelImpl;
   const _HttpResponseModel._() : super._();
 
@@ -332,6 +362,8 @@ abstract class _HttpResponseModel extends HttpResponseModel {
   @override
   @DurationConverter()
   Duration? get time;
+  @override
+  List<String>? get sseOutput;
 
   /// Create a copy of HttpResponseModel
   /// with the given fields replaced by the non-null parameter values.

@@ -1,0 +1,12 @@
+pubspec.lock
+melos_genai.iml
+build/
+coverage/
+dart_test.yaml
+doc/
+test/
+pubspec_overrides.yaml
+genai_example/melos_genai_example.iml
+genai_example/pubspec_overrides.yaml
+tool/
+models.json

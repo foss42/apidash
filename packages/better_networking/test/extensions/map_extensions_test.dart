@@ -66,7 +66,7 @@ void main() {
         expect(mapEx.getKeyContentType(), "content-type");
       });
 
-      test('Multiple occurence should return first', () {
+      test('Multiple occurrence should return first', () {
         Map mapEx = {1: "Test", "content-Type": "y", "content-type": "x"};
         expect(mapEx.getKeyContentType(), "content-Type");
       });
@@ -104,7 +104,7 @@ void main() {
       expect(mapEx.getValueContentType(), "x");
     });
 
-    test('Multiple occurence should return first', () {
+    test('Multiple occurrence should return first', () {
       Map mapEx = {1: "Test", "content-Type": "y", "content-type": "x"};
       expect(mapEx.getValueContentType(), "y");
     });
@@ -123,5 +123,23 @@ void main() {
         expect(header2.getValueContentType(), "application/json");
       },
     );
+  });
+
+  group("Testing removeKeyContentType() function", () {
+    test('Removes lowercase content-type key', () {
+      Map<String, String> header1 = {
+        "content-type": "application/json",
+        "authorization": "Bearer token",
+      };
+      header1.removeKeyContentType();
+      expect(header1.containsKey("content-type"), false);
+      expect(header1.containsKey("authorization"), true);
+    });
+
+    test('Preserves original map after mutation', () {
+      final header4 = {"Content-Type": "application/json", "X-Custom": "value"};
+      final result = header4.removeKeyContentType();
+      expect(identical(result, header4), true);
+    });
   });
 }

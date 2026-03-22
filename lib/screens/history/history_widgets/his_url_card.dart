@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
@@ -57,6 +58,12 @@ class HistoryURLCard extends StatelessWidget {
                   ),
                 ),
                 isCompact ? kHSpacer10 : kHSpacer20,
+              ],
+              if (apiType == APIType.ai) ...[
+                AIModelSelector(
+                  readOnlyModel: historyRequestModel?.aiRequestModel,
+                ),
+                SizedBox(width: 20),
               ],
               Expanded(
                 child: ReadOnlyTextField(

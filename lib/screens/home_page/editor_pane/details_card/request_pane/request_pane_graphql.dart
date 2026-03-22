@@ -10,12 +10,17 @@ import 'request_body.dart';
 import 'request_scripts.dart';
 
 class EditGraphQLRequestPane extends ConsumerWidget {
-  const EditGraphQLRequestPane({super.key});
+  const EditGraphQLRequestPane({
+    super.key,
+    this.showViewCodeButton = true,
+  });
+
+  final bool showViewCodeButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    var tabIndex = ref.watch(
+    final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final headerLength = ref.watch(selectedRequestModelProvider
@@ -34,11 +39,9 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
         value?.httpRequestModel?.authModel?.type != APIAuthType.none));
 
-    if (tabIndex >= 3) {
-      tabIndex = 0;
-    }
     return RequestPane(
       selectedId: selectedId,
+      showViewCodeButton: showViewCodeButton,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {

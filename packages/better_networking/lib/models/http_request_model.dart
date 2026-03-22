@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:seed/seed.dart';
 import '../extensions/extensions.dart';
 import '../utils/utils.dart'
@@ -62,6 +61,10 @@ Map<String, List<String>> get enabledParamsMap {
   bool get hasTextContentType => bodyContentType == ContentType.text;
   int get contentLength => utf8.encode(body ?? "").length;
   bool get hasBody => hasJsonData || hasTextData || hasFormData;
+  bool get hasAnyBody =>
+      (hasJsonContentType && contentLength > 0) ||
+      (hasTextContentType && contentLength > 0) ||
+      (hasFormDataContentType && formDataMapList.isNotEmpty);
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&

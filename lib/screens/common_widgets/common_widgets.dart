@@ -1,3 +1,4 @@
+export 'ai/ai.dart';
 export 'auth/auth.dart';
 export 'api_type_dropdown.dart';
 export 'button_navbar.dart';
@@ -7,6 +8,7 @@ export 'editor_title.dart';
 export 'env_regexp_span_builder.dart';
 export 'env_trigger_field.dart';
 export 'env_trigger_options.dart';
+export 'envfield_auth.dart';
 export 'envfield_cell.dart';
 export 'envfield_header.dart';
 export 'envfield_url.dart';

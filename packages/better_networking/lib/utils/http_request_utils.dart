@@ -95,6 +95,7 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
           ? httpRequestModel.body
           : null,
     APIType.graphql => getGraphQLBody(httpRequestModel),
+    APIType.ai => null, //TODO: TAKE A LOOK
   };
 }
 Map<String, List<String>>? rowsToRequestMap(List<NameValueModel>? rows) {

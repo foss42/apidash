@@ -2,7 +2,6 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/utils/utils.dart' show getDarkModeColor;
 import 'package:apidash/widgets/texts.dart';
 
 void main() {
@@ -49,7 +48,7 @@ void main() {
     expect(find.byType(SizedBox), findsOneWidget);
     expect(find.text('DEL'), findsOneWidget);
     expect(find.text('GET'), findsNothing);
-    Color colDelDarkMode = getDarkModeColor(kColorHttpMethodDelete);
+    Color colDelDarkMode = kColorHttpMethodDelete.toDark;
     final delTextWithColor = find.byWidgetPredicate(
         (widget) => widget is Text && widget.style!.color == colDelDarkMode);
     expect(delTextWithColor, findsOneWidget);

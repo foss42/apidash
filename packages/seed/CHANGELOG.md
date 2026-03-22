@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Bump freezed_annotation version.
+
 ## 0.0.3
 
 - Fix: Add `json_serializable` under dev_dependencies.

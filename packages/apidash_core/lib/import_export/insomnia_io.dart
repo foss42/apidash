@@ -1,5 +1,5 @@
-import 'package:better_networking/better_networking.dart';
 import 'package:flutter/material.dart';
+import 'package:genai/genai.dart';
 import 'package:insomnia_collection/insomnia_collection.dart';
 import '../consts.dart';
 import '../models/models.dart';

@@ -23,21 +23,21 @@ class HistoryRequestPane extends ConsumerWidget {
     final apiType = ref.watch(selectedHistoryRequestModelProvider
         .select((value) => value?.metaData.apiType));
     final headers = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.headers)) ??
+            .select((value) => value?.httpRequestModel?.headers)) ??
         [];
     final headerLength = headers.length;
 
     final params = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.params)) ??
+            .select((value) => value?.httpRequestModel?.params)) ??
         [];
     final paramLength = params.length;
 
     final hasBody = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasBody)) ??
+            .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
 
     final hasQuery = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasQuery)) ??
+            .select((value) => value?.httpRequestModel?.hasQuery)) ??
         false;
 
     final scriptsLength = ref.watch(selectedHistoryRequestModelProvider

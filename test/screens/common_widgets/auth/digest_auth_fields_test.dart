@@ -1,8 +1,9 @@
-import 'package:apidash/screens/common_widgets/auth/digest_auth_fields.dart';
-import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/widgets/widgets.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -23,19 +24,21 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(6));
+      expect(find.byType(EnvAuthField), findsNWidgets(6));
       expect(find.byType(ADPopupMenu<String>), findsOneWidget);
-      // Check for field labels (each AuthTextField creates a Text widget for label)
+      // Check for field labels (each EnvAuthField creates a Text widget for label)
       expect(find.text('Username'), findsNWidgets(2));
       expect(find.text('Password'), findsNWidgets(2));
       expect(find.text('Realm'), findsNWidgets(2));
@@ -61,17 +64,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(6));
+      expect(find.byType(EnvAuthField), findsNWidgets(6));
       expect(find.byType(ADPopupMenu<String>), findsOneWidget);
       expect(find.text('MD5'), findsOneWidget);
     });
@@ -92,20 +97,37 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      // Find the username field (first AuthTextField)
-      final usernameField = find.byType(AuthTextField).first;
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
+
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
-      await tester.enterText(usernameField, 'newuser');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('newuser');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -131,20 +153,37 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      // Find the password field (second AuthTextField)
-      final passwordField = find.byType(AuthTextField).at(1);
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
+
+      // Find the second EnvAuthField (password field)
+      final secondAuthField = authFields.at(1);
+
+      // Find ExtendedTextField within the second EnvAuthField using find.descendant
+      final passwordField = find.descendant(
+        of: secondAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(passwordField, findsOneWidget);
+
       await tester.tap(passwordField);
-      await tester.enterText(passwordField, 'newpass');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('newpass');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -170,11 +209,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -210,20 +251,37 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      // Find the realm field (third AuthTextField)
-      final realmField = find.byType(AuthTextField).at(2);
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
+
+      // Find the third EnvAuthField (realm field)
+      final thirdAuthField = authFields.at(2);
+
+      // Find ExtendedTextField within the third EnvAuthField using find.descendant
+      final realmField = find.descendant(
+        of: thirdAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(realmField, findsOneWidget);
+
       await tester.tap(realmField);
-      await tester.enterText(realmField, 'newrealm');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('newrealm');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -247,46 +305,51 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
-              readOnly: true,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+                readOnly: true,
+              ),
             ),
           ),
         ),
       );
 
-      final usernameFieldFinder = find.byType(AuthTextField).first;
+      final usernameFieldFinder = find.byType(ExtendedTextField).first;
 
-      // Try to enter text
-      await tester.enterText(usernameFieldFinder, 'testuser');
-      await tester.pumpAndSettle();
+      // Verify the field is readOnly
+      final usernameField =
+          tester.widget<ExtendedTextField>(usernameFieldFinder);
+      expect(usernameField.readOnly, isTrue);
 
       // Ensure updateAuth was not called
       expect(capturedAuthUpdates, isEmpty);
 
       // Check the field still shows original value
-      final textField = tester.widget<AuthTextField>(usernameFieldFinder);
-      expect(textField.controller.text, equals('user'));
+      final textField = tester.widget<ExtendedTextField>(usernameFieldFinder);
+      expect(textField.controller?.text, equals('user'));
     });
 
     testWidgets('displays correct hint texts', (WidgetTester tester) async {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(6));
+      expect(find.byType(EnvAuthField), findsNWidgets(6));
       expect(find.byType(ADPopupMenu<String>), findsOneWidget);
       expect(find.text('Algorithm'), findsOneWidget);
     });
@@ -296,11 +359,13 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -311,7 +376,7 @@ void main() {
 
       // Default QOP should be 'auth' - but this is in the TextFormField value, not visible text
       // We need to check the controller value instead
-      expect(find.byType(AuthTextField), findsNWidgets(6));
+      expect(find.byType(EnvAuthField), findsNWidgets(6));
     });
 
     testWidgets('creates proper AuthModel on field changes',
@@ -319,20 +384,34 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // Enter username
-      final usernameField = find.byType(AuthTextField).first;
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
+
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
-      await tester.enterText(usernameField, 'testuser');
+      tester.testTextInput.enterText('testuser');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called with correct structure
@@ -348,11 +427,13 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -380,20 +461,37 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: DigestAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: DigestAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // Enter username with whitespace
-      final usernameField = find.byType(AuthTextField).first;
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(6));
+
+      // Find the first EnvAuthField (username field)
+      final firstAuthField = authFields.first;
+
+      // Find ExtendedTextField within the first EnvAuthField using find.descendant
+      final usernameField = find.descendant(
+        of: firstAuthField,
+        matching: find.byType(ExtendedTextField),
+      );
+      expect(usernameField, findsOneWidget);
+
       await tester.tap(usernameField);
-      await tester.enterText(usernameField, '  testuser  ');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('  testuser  ');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called with trimmed values

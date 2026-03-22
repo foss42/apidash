@@ -1,4 +1,4 @@
-import 'package:better_networking/better_networking.dart';
+import 'package:genai/genai.dart';
 import 'package:postman/postman.dart' as pm;
 
 class PostmanIO {

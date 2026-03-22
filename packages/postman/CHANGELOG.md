@@ -1,3 +1,7 @@
+## 0.1.3-dev
+
+- Bump dependencies
+
 ## 0.1.2
 
 - Update postmanCollectionToJsonStr() encoder indentation from `\t` to `  `.

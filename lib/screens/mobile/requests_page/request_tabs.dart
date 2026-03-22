@@ -6,13 +6,16 @@ import '../../common_widgets/common_widgets.dart';
 import '../../home_page/editor_pane/details_card/response_pane.dart';
 import '../../home_page/editor_pane/editor_request.dart';
 import '../../home_page/editor_pane/url_card.dart';
+import '../../../dashbot/dashbot_tab.dart';
 
 class RequestTabs extends StatelessWidget {
   const RequestTabs({
     super.key,
     required this.controller,
+    this.showDashbot = false,
   });
   final TabController controller;
+  final bool showDashbot;
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +27,21 @@ class RequestTabs extends StatelessWidget {
           child: EditorPaneRequestURLCard(),
         ),
         kVSpacer10,
-        SegmentedTabbar(
-          controller: controller,
-          tabs: const [
-            Tab(text: kLabelRequest),
-            Tab(text: kLabelResponse),
-            Tab(text: kLabelCode),
-          ],
-        ),
-        Expanded(child: RequestTabviews(controller: controller))
+        if (!showDashbot)
+          SegmentedTabbar(
+            controller: controller,
+            tabs: const [
+              Tab(text: kLabelRequest),
+              Tab(text: kLabelResponse),
+              Tab(text: kLabelCode),
+            ],
+          ),
+        Expanded(
+            child: showDashbot
+                ? DashbotTab(
+                    showTopBar: false,
+                  )
+                : RequestTabviews(controller: controller)),
       ],
     );
   }

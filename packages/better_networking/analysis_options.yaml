@@ -3,6 +3,7 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     invalid_annotation_target: ignore
+    no_leading_underscores_for_local_identifiers: ignore
   exclude:
     - "**/*.freezed.dart"
     - "**/*.g.dart"

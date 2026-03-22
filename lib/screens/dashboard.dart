@@ -10,6 +10,7 @@ import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
 import 'history/history_page.dart';
 import 'settings_page.dart';
+import 'terminal/terminal_page.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -17,22 +18,27 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    final isDashBotEnabled =
-        ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
+    final isDashBotEnabled = ref.watch(
+      settingsProvider.select((value) => value.isDashBotEnabled),
+    );
+    final isDashBotActive = ref.watch(
+      dashbotWindowNotifierProvider.select((value) => value.isActive),
+    );
+    final isDashBotPopped = ref.watch(
+      dashbotWindowNotifierProvider.select((value) => value.isPopped),
+    );
     return Scaffold(
       body: SafeArea(
         child: Row(
           children: <Widget>[
             Column(
               children: [
-                SizedBox(
-                  height: kIsMacOS ? 32.0 : 16.0,
-                  width: 64,
-                ),
+                SizedBox(height: kIsMacOS ? 32.0 : 16.0, width: 64),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
+                      tooltip: kLabelRequests,
                       isSelected: railIdx == 0,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 0;
@@ -41,11 +47,12 @@ class Dashboard extends ConsumerWidget {
                       selectedIcon: const Icon(Icons.auto_awesome_mosaic),
                     ),
                     Text(
-                      'Requests',
+                      kLabelRequests,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
                     IconButton(
+                      tooltip: kLabelVariables,
                       isSelected: railIdx == 1,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 1;
@@ -54,11 +61,12 @@ class Dashboard extends ConsumerWidget {
                       selectedIcon: const Icon(Icons.laptop_windows),
                     ),
                     Text(
-                      'Variables',
+                      kLabelVariables,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
                     IconButton(
+                      tooltip: kLabelHistory,
                       isSelected: railIdx == 2,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 2;
@@ -67,7 +75,29 @@ class Dashboard extends ConsumerWidget {
                       selectedIcon: const Icon(Icons.history_rounded),
                     ),
                     Text(
-                      'History',
+                      kLabelHistory,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
+                    Badge(
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      isLabelVisible:
+                          ref.watch(showTerminalBadgeProvider) && railIdx != 3,
+                      child: IconButton(
+                        tooltip: kLabelLogs,
+                        isSelected: railIdx == 3,
+                        onPressed: () {
+                          ref.read(navRailIndexStateProvider.notifier).state =
+                              3;
+                          ref.read(showTerminalBadgeProvider.notifier).state =
+                              false;
+                        },
+                        icon: const Icon(Icons.terminal_outlined),
+                        selectedIcon: const Icon(Icons.terminal),
+                      ),
+                    ),
+                    Text(
+                      kLabelLogs,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ],
@@ -82,7 +112,7 @@ class Dashboard extends ConsumerWidget {
                           railIdx: railIdx,
                           selectedIcon: Icons.help,
                           icon: Icons.help_outline,
-                          label: 'About',
+                          label: kLabelAbout,
                           showLabel: false,
                           isCompact: true,
                           onTap: () {
@@ -94,10 +124,10 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 3,
+                          buttonIdx: 4,
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
-                          label: 'Settings',
+                          label: kLabelSettings,
                           showLabel: false,
                           isCompact: true,
                         ),
@@ -120,24 +150,26 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
+                  TerminalPage(),
                   SettingsPage(),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
-      floatingActionButton: isDashBotEnabled
+      floatingActionButton:
+          isDashBotEnabled && !isDashBotActive && isDashBotPopped
           ? FloatingActionButton(
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) => const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: DashBotWidget(),
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              onPressed: () => showDashbotWindow(context, ref),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6.0,
+                  horizontal: 10,
                 ),
+                child: DashbotIcons.getDashbotIcon1(),
               ),
-              child: const Icon(Icons.help_outline),
             )
           : null,
     );

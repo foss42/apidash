@@ -5,11 +5,13 @@ import 'package:apidash/consts.dart';
 class SendButton extends StatelessWidget {
   const SendButton({
     super.key,
+    required this.isStreaming,
     required this.isWorking,
     required this.onTap,
     this.onCancel,
   });
 
+  final bool isStreaming;
   final bool isWorking;
   final void Function() onTap;
   final void Function()? onCancel;
@@ -17,13 +19,13 @@ class SendButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ADFilledButton(
-      onPressed: isWorking ? onCancel : onTap,
-      isTonal: isWorking ? true : false,
-      items: isWorking
-          ? const [
+      onPressed: (isWorking || isStreaming) ? onCancel : onTap,
+      isTonal: (isWorking || isStreaming),
+      items: (isWorking || isStreaming)
+          ? [
               kHSpacer8,
               Text(
-                kLabelCancel,
+                isStreaming ? kLabelStop : kLabelCancel,
                 style: kTextStyleButton,
               ),
               kHSpacer6,

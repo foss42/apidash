@@ -41,4 +41,5 @@ Map<String, dynamic> responseModelJson = {
   "formattedBody": formattedBody,
   "bodyBytes": bodyBytes,
   "time": 516000,
+  'sseOutput': null,
 };

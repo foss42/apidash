@@ -35,6 +35,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.ai => const AIModelSelector(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -51,6 +52,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.ai => const AIModelSelector(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -100,15 +102,27 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.aiRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.url));
+    final requestModel = ref
+        .read(collectionStateNotifierProvider.notifier)
+        .getRequestModel(selectedId!)!;
     return EnvURLField(
-      selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.httpRequestModel
-          ?.url,
+      selectedId: selectedId,
+      initialValue: switch (requestModel.apiType) {
+        APIType.ai => requestModel.aiRequestModel?.url,
+        _ => requestModel.httpRequestModel?.url,
+      },
       onChanged: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+        if (requestModel.apiType == APIType.ai) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+              aiRequestModel:
+                  requestModel.aiRequestModel?.copyWith(url: value));
+        } else {
+          ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+        }
       },
       onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
@@ -129,8 +143,11 @@ class SendRequestButton extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
+    final isStreaming = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.isStreaming));
 
     return SendButton(
+      isStreaming: isStreaming ?? false,
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();

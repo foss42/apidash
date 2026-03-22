@@ -156,7 +156,7 @@ if (params.isNotEmpty) {
         // renders the initial request init function call
         result += kStringRequestInit;
 
-        //renders the request temlate
+        //renders the request template
         var templateRequestOptsInit = jj.Template(kTemplateRequestOptsInit);
         result += templateRequestOptsInit
             .render({'method': requestModel.method.name});

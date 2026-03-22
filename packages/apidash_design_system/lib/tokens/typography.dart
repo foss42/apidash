@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final kFontFamily = GoogleFonts.openSans().fontFamily;
-final kFontFamilyFallback = !kIsWeb && (Platform.isIOS || Platform.isMacOS)
-    ? null
-    : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
+final kFontFamilyFallback =
+    !kIsWeb && (Platform.isIOS || Platform.isMacOS || Platform.isWindows)
+        ? null
+        : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
 
 final kCodeStyle = TextStyle(
   fontFamily: GoogleFonts.sourceCodePro().fontFamily,
@@ -22,3 +23,10 @@ const kFormDataButtonLabelTextStyle = TextStyle(
   overflow: TextOverflow.ellipsis,
 );
 const kTextStylePopupMenuItem = TextStyle(fontSize: 14);
+
+const kTextStyleSmall = TextStyle(fontSize: 12);
+const kTextStyleMedium = TextStyle(fontSize: 14);
+const kTextStyleLarge = TextStyle(fontSize: 16);
+const kTextStyleXLarge = TextStyle(fontSize: 18);
+const kTextStyleXXLarge = TextStyle(fontSize: 20);
+const kTextStyleXXXLarge = TextStyle(fontSize: 22);

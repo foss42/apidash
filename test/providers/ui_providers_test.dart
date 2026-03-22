@@ -1,14 +1,13 @@
 //import 'package:spot/spot.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
-import 'package:apidash/screens/dashboard.dart';
 import 'package:apidash/screens/envvar/environment_page.dart';
-import 'package:apidash/screens/home_page/collection_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_default.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/screens/home_page/home_page.dart';
+import 'package:apidash/screens/screens.dart';
 import 'package:apidash/screens/settings_page.dart';
 import 'package:apidash/screens/history/history_page.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -49,6 +48,7 @@ void main() {
       expect(find.byType(HomePage), findsOneWidget);
       expect(find.byType(EnvironmentPage), findsNothing);
       expect(find.byType(HistoryPage), findsNothing);
+      expect(find.byType(TerminalPage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
 
@@ -70,6 +70,7 @@ void main() {
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(EnvironmentPage), findsOneWidget);
       expect(find.byType(HistoryPage), findsNothing);
+      expect(find.byType(TerminalPage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
 
@@ -93,10 +94,11 @@ void main() {
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(EnvironmentPage), findsNothing);
       expect(find.byType(HistoryPage), findsOneWidget);
+      expect(find.byType(TerminalPage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
     testWidgets(
-        "Dashboard should display SettingsPage when navRailIndexStateProvider is 3",
+        "Dashboard should display TerminalPage when navRailIndexStateProvider is 3",
         (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -115,6 +117,31 @@ void main() {
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(EnvironmentPage), findsNothing);
       expect(find.byType(HistoryPage), findsNothing);
+      expect(find.byType(TerminalPage), findsOneWidget);
+      expect(find.byType(SettingsPage), findsNothing);
+    });
+
+    testWidgets(
+        "Dashboard should display SettingsPage when navRailIndexStateProvider is 4",
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            navRailIndexStateProvider.overrideWith((ref) => 4),
+          ],
+          child: const Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
+          ),
+        ),
+      );
+
+      // Verify that the SettingsPage is displayed
+      expect(find.byType(HomePage), findsNothing);
+      expect(find.byType(EnvironmentPage), findsNothing);
+      expect(find.byType(HistoryPage), findsNothing);
+      expect(find.byType(TerminalPage), findsNothing);
       expect(find.byType(SettingsPage), findsOneWidget);
     });
 
@@ -138,7 +165,7 @@ void main() {
       // Verify that the navRailIndexStateProvider is updated
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 3);
+      expect(container.read(navRailIndexStateProvider), 4);
     });
 
     testWidgets(
@@ -155,7 +182,7 @@ void main() {
         ),
       );
 
-      // Tap on the Settings icon to change the index to 3
+      // Tap on the Settings icon to change the index to 4
       await tester.tap(find.byIcon(Icons.settings_outlined));
       await tester.pump();
 
@@ -173,12 +200,13 @@ void main() {
       // Verify that the navRailIndexStateProvider still has the updated value
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 3);
+      expect(container.read(navRailIndexStateProvider), 4);
 
       // Verify that the SettingsPage is still displayed after the rebuild
       expect(find.byType(SettingsPage), findsOneWidget);
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(EnvironmentPage), findsNothing);
+      expect(find.byType(TerminalPage), findsNothing);
     });
 
     testWidgets(
@@ -216,8 +244,17 @@ void main() {
       // Verify that the selected icon is the filled version (selectedIcon)
       expect(find.byIcon(Icons.history_rounded), findsOneWidget);
 
-      // Go to SettingsPage
+      // Go to TerminalPage
       container.read(navRailIndexStateProvider.notifier).state = 3;
+      await tester.pump();
+
+      // Verify that the TerminalPage is displayed
+      expect(find.byType(TerminalPage), findsOneWidget);
+      // Verify that the selected icon is the filled version (selectedIcon)
+      expect(find.byIcon(Icons.terminal), findsOneWidget);
+
+      // Go to SettingsPage
+      container.read(navRailIndexStateProvider.notifier).state = 4;
       await tester.pump();
 
       // Verify that the SettingsPage is displayed

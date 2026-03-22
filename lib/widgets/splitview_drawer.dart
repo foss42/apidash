@@ -31,7 +31,7 @@ class DrawerSplitView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: (kIsWindows || kIsMacOS) ? kPt28 : EdgeInsets.zero,
+      padding: kIsMacOS ? kPt28 : EdgeInsets.zero,
       color: Theme.of(context).colorScheme.surface,
       child: SafeArea(
         child: Scaffold(

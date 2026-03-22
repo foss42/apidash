@@ -7,10 +7,10 @@ class SidebarRequestCardTextBox extends StatelessWidget {
   const SidebarRequestCardTextBox({
     super.key,
     required this.apiType,
-    required this.method,
+    this.method,
   });
   final APIType apiType;
-  final HTTPVerb method;
+  final HTTPVerb? method;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +18,9 @@ class SidebarRequestCardTextBox extends StatelessWidget {
       width: 24,
       child: Text(
         switch (apiType) {
-          APIType.rest => method.abbr,
+          APIType.rest => method!.abbr,
           APIType.graphql => apiType.abbr,
+          APIType.ai => apiType.abbr,
         },
         textAlign: TextAlign.center,
         style: TextStyle(

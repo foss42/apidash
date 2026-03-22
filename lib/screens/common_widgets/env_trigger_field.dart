@@ -17,10 +17,12 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.decoration,
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
+    this.readOnly = false,
+    this.obscureText = false,
   }) : assert(
-          !(controller != null && initialValue != null),
-          'controller and initialValue cannot be simultaneously defined.',
-        );
+         !(controller != null && initialValue != null),
+         'controller and initialValue cannot be simultaneously defined.',
+       );
 
   final String keyId;
   final String? initialValue;
@@ -32,6 +34,8 @@ class EnvironmentTriggerField extends StatefulWidget {
   final InputDecoration? decoration;
   final double? optionsWidthFactor;
   final AutocompleteNoTrigger? autocompleteNoTrigger;
+  final bool readOnly;
+  final bool obscureText;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -45,31 +49,51 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void initState() {
     super.initState();
-    controller = widget.controller ??
-        TextEditingController.fromValue(TextEditingValue(
-            text: widget.initialValue!,
-            selection:
-                TextSelection.collapsed(offset: widget.initialValue!.length)));
+    final initialText = widget.initialValue ?? '';
+    controller =
+        widget.controller ??
+        TextEditingController.fromValue(
+          TextEditingValue(
+            text: initialText,
+            selection: TextSelection.collapsed(offset: initialText.length),
+          ),
+        );
     _focusNode = widget.focusNode ?? FocusNode();
   }
 
   @override
   void dispose() {
-    controller.dispose();
-    _focusNode.dispose();
+    if (widget.controller == null) controller.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if ((oldWidget.keyId != widget.keyId) ||
-        (oldWidget.initialValue != widget.initialValue)) {
-      controller = widget.controller ??
-          TextEditingController.fromValue(TextEditingValue(
+    if (oldWidget.keyId != widget.keyId) {
+      controller =
+          widget.controller ??
+          TextEditingController.fromValue(
+            TextEditingValue(
               text: widget.initialValue!,
               selection: TextSelection.collapsed(
-                  offset: widget.initialValue!.length)));
+                offset: widget.initialValue!.length,
+              ),
+            ),
+          );
+    } else if (widget.controller == null &&
+        oldWidget.initialValue != widget.initialValue &&
+        widget.initialValue != null &&
+        controller.text != widget.initialValue) {
+      // Update controller text only if it differs from current text
+      // This preserves cursor position when typing
+      final currentSelection = controller.selection;
+      controller.text = widget.initialValue!;
+      // Restore the selection if it's still valid
+      if (currentSelection.baseOffset <= controller.text.length) {
+        controller.selection = currentSelection;
+      }
     }
   }
 
@@ -83,35 +107,37 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       autocompleteTriggers: [
         if (widget.autocompleteNoTrigger != null) widget.autocompleteNoTrigger!,
         AutocompleteTrigger(
-            trigger: '{',
-            triggerEnd: "}}",
-            triggerOnlyAfterSpace: false,
-            optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentTriggerOptions(
-                  query: autocompleteQuery.query,
-                  onSuggestionTap: (suggestion) {
-                    final autocomplete = MultiTriggerAutocomplete.of(context);
-                    autocomplete.acceptAutocompleteOption(
-                      '{${suggestion.variable.key}',
-                    );
-                    widget.onChanged?.call(controller.text);
-                  });
-            }),
+          trigger: '{',
+          triggerEnd: "}}",
+          triggerOnlyAfterSpace: false,
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+            return EnvironmentTriggerOptions(
+              query: autocompleteQuery.query,
+              onSuggestionTap: (suggestion) {
+                final autocomplete = MultiTriggerAutocomplete.of(context);
+                autocomplete.acceptAutocompleteOption(
+                  '{${suggestion.variable.key}',
+                );
+                widget.onChanged?.call(controller.text);
+              },
+            );
+          },
+        ),
         AutocompleteTrigger(
-            trigger: '{{',
-            triggerEnd: "}}",
-            triggerOnlyAfterSpace: false,
-            optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentTriggerOptions(
-                  query: autocompleteQuery.query,
-                  onSuggestionTap: (suggestion) {
-                    final autocomplete = MultiTriggerAutocomplete.of(context);
-                    autocomplete.acceptAutocompleteOption(
-                      suggestion.variable.key,
-                    );
-                    widget.onChanged?.call(controller.text);
-                  });
-            }),
+          trigger: '{{',
+          triggerEnd: "}}",
+          triggerOnlyAfterSpace: false,
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+            return EnvironmentTriggerOptions(
+              query: autocompleteQuery.query,
+              onSuggestionTap: (suggestion) {
+                final autocomplete = MultiTriggerAutocomplete.of(context);
+                autocomplete.acceptAutocompleteOption(suggestion.variable.key);
+                widget.onChanged?.call(controller.text);
+              },
+            );
+          },
+        ),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
         return ExtendedTextField(
@@ -125,6 +151,8 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
           onTapOutside: (event) {
             _focusNode.unfocus();
           },
+          readOnly: widget.readOnly,
+          obscureText: widget.obscureText,
         );
       },
     );

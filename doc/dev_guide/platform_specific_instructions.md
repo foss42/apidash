@@ -2,6 +2,16 @@
 
 ## macOS
 
+> To run Flutter apps on macOS refer to the [official macOS setup guide](https://docs.flutter.dev/platform-integration/macos/setup).
+
+Install CocoaPods (First-Time Setup)
+
+If this is your first time running API Dash on macOS, install CocoaPods to manage native plugin dependencies:
+
+```bash
+brew install cocoapods
+pod setup (should return Setup completed)
+```
 Add below keys to `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`.
 
 ```
@@ -85,7 +95,7 @@ For more information on:
 - Gradle and Java version compatibility, you can refer to [Compatibility Matrix](https://docs.gradle.org/current/userguide/compatibility.html).
 - Gradle and Android Gradle Plugin compatibility, you can refer to [Update Gradle](https://developer.android.com/build/releases/gradle-plugin).
 
-Note : It is highly recommended that always ensure gradle and agp versions are compatible with your JDK version not the vice-versa and having atleast JDK 17 is recommmended.
+Note : It is highly recommended that always ensure gradle and agp versions are compatible with your JDK version not the vice-versa and having at least JDK 17 is recommended.
 
 ## Web  
 
@@ -101,6 +111,9 @@ Failed to compile application.
 ```
 
 This happens because `.toJS` is no longer required for converting Dart strings to JavaScript strings in recent Dart versions.  
+
+> [!WARNING]  
+> The following fix involves modifying a file in your local pub cache (`.pub-cache`). This is a temporary workaround. Your changes will be lost if you clear your cache or set up the project on a new machine. Use with caution.
 
 **Fix:**  
 Update the `printing_web.dart` file in the cached `printing` package by removing `.toJS` as done in the PR [here](https://github.com/DavBfr/dart_pdf/pull/1739/files)

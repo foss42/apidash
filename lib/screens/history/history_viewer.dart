@@ -14,7 +14,7 @@ class HistoryViewer extends StatelessWidget {
       return const HistoryDetails();
     }
     return Padding(
-      padding: kIsMacOS || kIsWindows ? kPt28o8 : kP8,
+      padding: kIsMacOS ? kPt28o8 : kP8,
       child: Card(
         color: kColorTransparent,
         surfaceTintColor: kColorTransparent,

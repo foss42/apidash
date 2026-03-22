@@ -16,6 +16,7 @@ void main() {
           theme: kThemeDataLight,
           home: Scaffold(
             body: SendButton(
+              isStreaming: false,
               isWorking: false,
               onTap: () => sendPressed = true,
               onCancel: () => cancelPressed = true,
@@ -45,6 +46,7 @@ void main() {
           theme: kThemeDataLight,
           home: Scaffold(
             body: SendButton(
+              isStreaming: false,
               isWorking: true,
               onTap: () => sendPressed = true,
               onCancel: () => cancelPressed = true,
@@ -74,6 +76,7 @@ void main() {
             builder: (context, setState) {
               return Scaffold(
                 body: SendButton(
+                  isStreaming: false,
                   isWorking: isWorking,
                   onTap: () => setState(() => isWorking = true),
                   onCancel: () => setState(() => isWorking = false),

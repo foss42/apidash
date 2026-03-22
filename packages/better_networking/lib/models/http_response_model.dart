@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:seed/seed.dart';
 import '../extensions/extensions.dart';
 import '../utils/utils.dart';
 import '../consts.dart';
-import 'package:collection/collection.dart' show mergeMaps;
 
 part 'http_response_model.freezed.dart';
 part 'http_response_model.g.dart';
@@ -53,6 +53,7 @@ class HttpResponseModel with _$HttpResponseModel {
     String? formattedBody,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
+    List<String>? sseOutput,
   }) = _HttpResponseModel;
 
   factory HttpResponseModel.fromJson(Map<String, Object?> json) =>
@@ -61,14 +62,20 @@ class HttpResponseModel with _$HttpResponseModel {
   String? get contentType => headers?.getValueContentType();
   MediaType? get mediaType => getMediaTypeFromHeaders(headers);
 
-  HttpResponseModel fromResponse({required Response response, Duration? time}) {
+  HttpResponseModel fromResponse({
+    required Response response,
+    Duration? time,
+    bool isStreamingResponse = false,
+  }) {
     final responseHeaders = mergeMaps({
       HttpHeaders.contentLengthHeader: response.contentLength.toString(),
     }, response.headers);
     MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
+
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
         : response.body;
+
     return HttpResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
@@ -77,6 +84,7 @@ class HttpResponseModel with _$HttpResponseModel {
       formattedBody: formatBody(body, mediaType),
       bodyBytes: response.bodyBytes,
       time: time,
+      sseOutput: isStreamingResponse ? [body] : null,
     );
   }
 }

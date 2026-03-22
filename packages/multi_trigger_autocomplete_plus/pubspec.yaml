@@ -1,13 +1,15 @@
 name: multi_trigger_autocomplete_plus
 homepage: https://github.com/foss42/apidash/tree/main/packages/multi_trigger_autocomplete_plus
 description: A flutter widget to add trigger based autocomplete functionality to your app.
-version: 1.0.2
+version: 1.0.3
 repository: https://github.com/foss42/apidash/tree/main/packages/multi_trigger_autocomplete_plus
 issue_tracker: https://github.com/foss42/apidash/issues
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
   flutter: ">=3.3.0"
+
+resolution: workspace
 
 dependencies:
   flutter:
@@ -17,7 +19,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
 
 topics:
   - mentions
