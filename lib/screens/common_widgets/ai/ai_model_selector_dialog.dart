@@ -24,7 +24,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   void initState() {
     super.initState();
     selectedProvider = widget.aiRequestModel?.modelApiProvider;
-    if (selectedProvider != null && widget.aiRequestModel?.model != null) {
+    if (selectedProvider != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
     }
     aM = ModelManager.fetchAvailableModels();
@@ -66,10 +66,17 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       Expanded(
                         child: ADDropdownButton<ModelAPIProvider>(
                           onChanged: (x) {
+                            if (selectedProvider == x) return;
                             setState(() {
                               selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
+                              final provData = mappedData[selectedProvider];
+                              newAIRequestModel = provData?.toAiRequestModel();
+                              // Preserve existing model if provider matches initial
+                              if (selectedProvider ==
+                                  widget.aiRequestModel?.modelApiProvider) {
+                                newAIRequestModel =
+                                    widget.aiRequestModel?.copyWith();
+                              }
                             });
                           },
                           value: selectedProvider,
@@ -119,10 +126,18 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                     backgroundColor: Colors.green,
                                   ),
                             onTap: () {
+                              if (selectedProvider == x.providerId) return;
                               setState(() {
                                 selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
+                                final provData = mappedData[selectedProvider];
+                                newAIRequestModel =
+                                    provData?.toAiRequestModel();
+                                // Preserve existing model if provider matches initial
+                                if (selectedProvider ==
+                                    widget.aiRequestModel?.modelApiProvider) {
+                                  newAIRequestModel =
+                                      widget.aiRequestModel?.copyWith();
+                                }
                               });
                             },
                           ),
@@ -189,6 +204,19 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           },
           value: newAIRequestModel?.url ?? "",
         ),
+        if (newAIRequestModel?.model == "") ...[
+          Text(kLabelModelName),
+          kVSpacer8,
+          BoundedTextField(
+            onChanged: (x) {
+              setState(() {
+                newAIRequestModel = newAIRequestModel?.copyWith(model: x);
+              });
+            },
+            value: newAIRequestModel?.model ?? "",
+          ),
+          kVSpacer10,
+        ],
         kVSpacer20,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,9 +254,14 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       ),
                       onTap: () {
                         setState(() {
-                          newAIRequestModel = newAIRequestModel?.copyWith(
-                            model: x.id,
-                          );
+                          if (newAIRequestModel == null) {
+                            newAIRequestModel =
+                                aiModelProvider?.toAiRequestModel(model: x);
+                          } else {
+                            newAIRequestModel = newAIRequestModel?.copyWith(
+                              model: x.id,
+                            );
+                          }
                         });
                       },
                     ),
