@@ -28,8 +28,8 @@
 8. **Time zone**  
    IST (UTC +5:30)  
 
-9. **Link to a resume (PDF, publicly accessible via link and not behind any login-wall)**  
-   (I will provide a publicly accessible Google Drive PDF link here)
+9. **Link to a resume   
+  https://drive.google.com/file/d/1KB5WxqzXfPVRQ13-9r8ddDATX3cntzo0/view?usp=drive_link
 
 ---
 
@@ -53,9 +53,11 @@
 
 ### 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
 
-I have not yet made an official contribution to a FOSS project. However, I have strong experience working with Git, collaborative workflows, and structured development through my internship and full-stack projects.
+I have not yet made an official long-term contribution to a FOSS project. However, I have relevant open-source experience through my participation in GirlScript Summer of Code (GSSoC) 2025, where I actively contributed by submitting 20+ pull requests, with 15+ successfully merged, and raised 10+ issues.
 
-During my internship, I worked in a team environment using Git for version control, code reviews, and feature-based branching. I am comfortable with pull requests, resolving merge conflicts, and maintaining clean commit history.
+During this program, I worked on improving backend performance by adding indexes to database models, enhanced frontend UI by fixing layout issues and creating reusable components, and followed structured contribution workflows. This experience helped me understand how to navigate real-world codebases, follow contribution guidelines, and collaborate effectively in an open-source environment.
+
+In addition, I have strong experience working with Git, collaborative workflows, and structured development through my internship and full-stack projects. During my internship, I worked in a team environment using Git for version control, code reviews, and feature-based branching. I am comfortable with pull requests, resolving merge conflicts, and maintaining a clean commit history.
 
 I am currently exploring the API Dash repository and Issue #619 to understand the architecture, coding patterns, and contribution guidelines. I am actively preparing to begin contributing and aim to submit my first pull request soon.
 
