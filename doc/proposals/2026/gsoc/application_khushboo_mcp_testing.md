@@ -57,7 +57,7 @@
   - **AssertionEngine** — A composable, declarative assertion library: `has_key`, `key_equals`, `key_type`, `key_in_range`, `matches_schema`, `response_time_under`, and `custom()` for any user-defined logic. Each assertion is a **pure function** — testable, reusable, and composable. Handles LLM non-determinism gracefully.
   - **React/TypeScript UI** — A new **MCP Testing** section inside API Dash with four screens: MCP Explorer (browse server capabilities), Request Builder (compose tool calls visually), Test Runner (batch execution with live pass/fail per assertion), and Report Viewer (charts + HTML/JSON export).
   - **mcp-test-utils Python Package** — A standalone pip-installable package exposing the same engine as the GUI. CI-friendly, GitHub Actions compatible. Developers run MCP tests headlessly with `assert results.all_passed` — **fails the CI pipeline** if any assertion fails.
-  - **Test Reports** — Every test run generates a **shareable HTML report** (human-readable) and a **JSON report** (machine-readable) that teams can attach to PRs as proof their MCP server contract is intact.
+  - **MCP Apps Testing** — Extend the testing system to validate MCP App registrations: `ui://` resource URIs, correct MIME type (`text/html;profile=mcp-app`), tool-to-app linking via `_meta.ui.resourceUri`, `ui/initialize` handshake, host context support, and CSP declarations. This ensures developers can validate their MCP Apps are correctly built before testing them in hosts like VS Code. *(Incorporated after studying the [MCP Apps guide](https://dev.to/ashita/a-practical-guide-to-building-mcp-apps-1bfm) shared by mentors.)*
 
 ---
 
@@ -71,7 +71,8 @@
 4. **MockMCPServer** — Simulates an MCP server with configurable tool stubs, error simulation, traffic recording, and ReplayEngine for regression testing.
 5. **React/TypeScript UI** — New MCP Testing section in API Dash: MCP Explorer, Request Builder, Test Runner, Report Viewer.
 6. **mcp-test-utils** — Standalone pip-installable Python package. Same engine as GUI. CI-friendly with GitHub Actions example.
-7. **Test Reports** — JSON and HTML export from every test run, shareable as CI artifacts or PR attachments.
+7. **MCP Apps Testing** — Validate `ui://` resource registration, MIME type, tool-to-app linking, `ui/initialize` handshake, host context support, and CSP declarations.
+8. **Test Reports** — JSON and HTML export from every test run, shareable as CI artifacts or PR attachments.
 
 ---
 
@@ -392,6 +393,109 @@ The UI adds a new **MCP Testing** section to API Dash with four screens:
 #### Report Viewer — Charts, export HTML/JSON, re-run failed tests
 
 [![](images/ui_report.png)](images/ui_report.png)
+
+---
+
+### MCP Apps Testing
+
+After reading the article [A Practical Guide to Building MCP Apps](https://dev.to/ashita/a-practical-guide-to-building-mcp-apps-1bfm) shared by the mentor, I understand that MCP Apps are a powerful extension of MCP where servers deliver **rich HTML UI components** (dashboards, forms, visualizations) rendered as sandboxed iframes inside AI hosts like VS Code. This opens up a completely new dimension for testing that my proposal will incorporate.
+
+**What are MCP Apps?**
+- MCP servers register `ui://` URI resources that serve HTML content with MIME type `text/html;profile=mcp-app`
+- The HTML app communicates with the host via JSON-RPC messages — `ui/initialize`, `ui/notifications/initialized`, `ui/open-link`, `ui/update-model-context`, `ui/message` etc.
+- The host sends `hostContext` (CSS theme variables) and `hostCapabilities` back to the app during the handshake
+- Apps run in a sandboxed iframe with CSP (Content Security Policy) for security
+
+**What MCP Apps Testing means for this project:**
+
+The `MCPServerTester` will be extended to also validate MCP App registrations:
+
+```python
+# MCP Apps testing — validate ui:// resource registration
+class MCPAppsTester:
+    async def test_app_registration(self, session, resource_uri: str):
+        """Validates that a ui:// resource is correctly registered"""
+        resources = await session.list_resources()
+
+        # Check resource is registered with correct URI
+        app_resource = next(
+            (r for r in resources.resources
+             if r.uri == resource_uri), None
+        )
+        assert app_resource is not None, \
+            f"MCP App resource {resource_uri} not found"
+
+        # Check correct MIME type
+        assert app_resource.mimeType == "text/html;profile=mcp-app", \
+            f"Expected MCP App MIME type, got {app_resource.mimeType}"
+
+        return app_resource
+
+    async def test_app_handshake(self, html_content: str):
+        """Validates that the MCP App HTML contains ui/initialize handshake"""
+        assert "ui/initialize" in html_content, \
+            "MCP App must call ui/initialize for host handshake"
+        assert "ui/notifications/initialized" in html_content, \
+            "MCP App must send ui/notifications/initialized after handshake"
+
+    async def test_host_context_support(self, html_content: str):
+        """Validates that MCP App applies host context for theme adaptation"""
+        assert "applyHostContext" in html_content or \
+               "hostContext" in html_content, \
+            "MCP App should apply hostContext for native host theme"
+
+    async def test_csp_declaration(self, session, resource_uri: str):
+        """Validates CSP domains are declared for apps making external requests"""
+        # Checks _meta.ui.csp.connectDomains and resourceDomains
+        tool = await self._get_linked_tool(session, resource_uri)
+        if tool and tool.meta and tool.meta.get("ui", {}).get("csp"):
+            csp = tool.meta["ui"]["csp"]
+            assert "connectDomains" in csp or "resourceDomains" in csp, \
+                "MCP App with external requests must declare CSP domains"
+```
+
+**MCP Apps assertions added to AssertionEngine:**
+
+```python
+# New MCP Apps specific assertions
+def has_ui_resource(uri: str) -> Assertion:
+    """Checks that server exposes a ui:// resource"""
+    return Assertion(
+        name=f"has_ui_resource:{uri}",
+        check=lambda r: uri in [res.uri for res in r.get("resources", [])],
+        description=f"Server exposes MCP App at {uri}"
+    )
+
+def has_mcp_app_mimetype() -> Assertion:
+    """Checks resource has correct MCP App MIME type"""
+    return Assertion(
+        name="has_mcp_app_mimetype",
+        check=lambda r: r.get("mimeType") == "text/html;profile=mcp-app",
+        description="Resource uses MCP App MIME type"
+    )
+
+def tool_links_to_app(resource_uri: str) -> Assertion:
+    """Checks tool is linked to MCP App via _meta.ui.resourceUri"""
+    return Assertion(
+        name=f"tool_links_to:{resource_uri}",
+        check=lambda r: r.get("_meta", {}).get("ui", {})
+                         .get("resourceUri") == resource_uri,
+        description=f"Tool linked to MCP App {resource_uri}"
+    )
+
+def app_has_handshake() -> Assertion:
+    """Checks MCP App HTML contains ui/initialize handshake"""
+    return Assertion(
+        name="app_has_handshake",
+        check=lambda r: "ui/initialize" in r.get("html_content", ""),
+        description="MCP App implements ui/initialize handshake"
+    )
+```
+
+**What this means for the UI:**
+The MCP Explorer screen will show not just `tools` and `resources` but also detect and display **MCP App registrations** — showing the linked `ui://` URI, the tool that triggers the app, and CSP declarations. Users can validate their MCP App is correctly registered before testing it in a host like VS Code.
+
+This directly incorporates the architectural patterns from the article — resource registration, tool-to-app linking via `_meta.ui.resourceUri`, handshake validation, host context support, and CSP compliance — making the MCP Testing module future-ready for the full MCP Apps ecosystem.
 
 ---
 
