@@ -9,16 +9,20 @@ void main() {
 
   group('GET Request', () {
     test('GET1', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev").unwrap();
+   let base_url = "https://api.apidash.dev"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.get(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -28,7 +32,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -41,16 +44,24 @@ fn main() {
           expectedCode);
     });
     test('GET2', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/country/data?code=US").unwrap();
+   let base_url = "https://api.apidash.dev/country/data"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("code", vec!["US", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.get(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -60,7 +71,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -73,16 +83,24 @@ fn main() {
           expectedCode);
     });
     test('GET3', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/country/data?code=IND").unwrap();
+   let base_url = "https://api.apidash.dev/country/data"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("code", vec!["IND", "US", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.get(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -92,7 +110,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -105,16 +122,28 @@ fn main() {
           expectedCode);
     });
     test('GET4', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true").unwrap();
+   let base_url = "https://api.apidash.dev/humanize/social"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("num", vec!["8700000", ]),
+    ("digits", vec!["3", ]),
+    ("system", vec!["SS", ]),
+    ("add_space", vec!["true", ]),
+    ("trailing_zeros", vec!["true", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.get(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -124,7 +153,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -137,14 +165,17 @@ fn main() {
           expectedCode);
     });
     test('GET5', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.github.com/repos/foss42/apidash").unwrap();
+   let base_url = "https://api.github.com/repos/foss42/apidash"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.get(true).unwrap();
 
   let mut list = List::new();
@@ -152,6 +183,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -161,7 +193,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -174,14 +205,21 @@ fn main() {
           expectedCode);
     });
     test('GET6', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.github.com/repos/foss42/apidash?raw=true").unwrap();
+   let base_url = "https://api.github.com/repos/foss42/apidash"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("raw", vec!["true", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.get(true).unwrap();
 
   let mut list = List::new();
@@ -189,6 +227,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -198,7 +237,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -211,16 +249,20 @@ fn main() {
           expectedCode);
     });
     test('GET7', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev").unwrap();
+   let base_url = "https://api.apidash.dev"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.get(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -230,7 +272,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -243,14 +284,21 @@ fn main() {
           expectedCode);
     });
     test('GET8', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.github.com/repos/foss42/apidash?raw=true").unwrap();
+   let base_url = "https://api.github.com/repos/foss42/apidash"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("raw", vec!["true", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.get(true).unwrap();
 
   let mut list = List::new();
@@ -258,6 +306,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -267,7 +316,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -280,16 +328,25 @@ fn main() {
           expectedCode);
     });
     test('GET9', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/humanize/social?num=8700000&add_space=true").unwrap();
+   let base_url = "https://api.apidash.dev/humanize/social"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("num", vec!["8700000", ]),
+    ("add_space", vec!["true", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.get(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -299,7 +356,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -312,14 +368,17 @@ fn main() {
           expectedCode);
     });
     test('GET10', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/humanize/social").unwrap();
+   let base_url = "https://api.apidash.dev/humanize/social"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.get(true).unwrap();
 
   let mut list = List::new();
@@ -327,6 +386,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -336,7 +396,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -349,14 +408,22 @@ fn main() {
           expectedCode);
     });
     test('GET11', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/humanize/social?num=8700000&digits=3").unwrap();
+   let base_url = "https://api.apidash.dev/humanize/social"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("num", vec!["8700000", ]),
+    ("digits", vec!["3", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.get(true).unwrap();
 
   let mut list = List::new();
@@ -364,6 +431,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -373,7 +441,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -386,16 +453,20 @@ fn main() {
           expectedCode);
     });
     test('GET12', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/humanize/social").unwrap();
+   let base_url = "https://api.apidash.dev/humanize/social"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.get(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -405,7 +476,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -421,16 +491,20 @@ fn main() {
 
   group('HEAD Request', () {
     test('HEAD1', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev").unwrap();
+   let base_url = "https://api.apidash.dev"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.nobody(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -440,7 +514,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -453,16 +526,20 @@ fn main() {
           expectedCode);
     });
     test('HEAD2', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev").unwrap();
+   let base_url = "https://api.apidash.dev"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.nobody(true).unwrap();
 
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -472,7 +549,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -488,14 +564,17 @@ fn main() {
 
   group('POST Request', () {
     test('POST1', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/case/lower").unwrap();
+   let base_url = "https://api.apidash.dev/case/lower"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.post(true).unwrap();
 
   easy.post_fields_copy(r#"{
@@ -507,6 +586,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -516,7 +596,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -529,15 +608,18 @@ fn main() {
           expectedCode);
     });
     test('POST2', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use serde_json::json;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/case/lower").unwrap();
+   let base_url = "https://api.apidash.dev/case/lower"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.post(true).unwrap();
 
   easy.post_fields_copy(json!({
@@ -554,6 +636,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -563,7 +646,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -576,15 +658,18 @@ fn main() {
           expectedCode);
     });
     test('POST3', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use serde_json::json;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/case/lower").unwrap();
+   let base_url = "https://api.apidash.dev/case/lower"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.post(true).unwrap();
 
   easy.post_fields_copy(json!({
@@ -597,6 +682,7 @@ fn main() {
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -606,7 +692,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -619,13 +704,16 @@ fn main() {
           expectedCode);
     });
     test('POST4', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/io/form").unwrap();
+   let base_url = "https://api.apidash.dev/io/form"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.post(true).unwrap();
 
   let mut form = curl::easy::Form::new();
@@ -642,8 +730,8 @@ fn main() {
     .contents(b"3")
     .add().unwrap();
   
-  easy.httppost(form).unwrap();
-    {
+  easy.httppost(form).unwrap();  {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -653,7 +741,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -666,14 +753,17 @@ fn main() {
           expectedCode);
     });
     test('POST5', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/io/form").unwrap();
+   let base_url = "https://api.apidash.dev/io/form"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.post(true).unwrap();
 
   let mut form = curl::easy::Form::new();
@@ -690,12 +780,12 @@ fn main() {
     .contents(b"3")
     .add().unwrap();
   
-  easy.httppost(form).unwrap();
-    let mut list = List::new();
+  easy.httppost(form).unwrap();  let mut list = List::new();
   list.append("User-Agent: Test Agent").unwrap();
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -705,7 +795,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -718,13 +807,16 @@ fn main() {
           expectedCode);
     });
     test('POST6', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/io/img").unwrap();
+   let base_url = "https://api.apidash.dev/io/img"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.post(true).unwrap();
 
   let mut form = curl::easy::Form::new();
@@ -737,8 +829,8 @@ fn main() {
     .file("/Documents/up/1.png")
     .add().unwrap();
   
-  easy.httppost(form).unwrap();
-    {
+  easy.httppost(form).unwrap();  {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -748,7 +840,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -761,13 +852,16 @@ fn main() {
           expectedCode);
     });
     test('POST7', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/io/img").unwrap();
+   let base_url = "https://api.apidash.dev/io/img"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.post(true).unwrap();
 
   let mut form = curl::easy::Form::new();
@@ -780,8 +874,8 @@ fn main() {
     .file("/Documents/up/1.png")
     .add().unwrap();
   
-  easy.httppost(form).unwrap();
-    {
+  easy.httppost(form).unwrap();  {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -791,7 +885,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -804,13 +897,21 @@ fn main() {
           expectedCode);
     });
     test('POST8', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/io/form?size=2&len=3").unwrap();
+   let base_url = "https://api.apidash.dev/io/form"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("size", vec!["2", ]),
+    ("len", vec!["3", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.post(true).unwrap();
 
   let mut form = curl::easy::Form::new();
@@ -827,8 +928,8 @@ fn main() {
     .contents(b"3")
     .add().unwrap();
   
-  easy.httppost(form).unwrap();
-    {
+  easy.httppost(form).unwrap();  {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -838,7 +939,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -851,14 +951,22 @@ fn main() {
           expectedCode);
     });
     test('POST9', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/io/img?size=2&len=3").unwrap();
+   let base_url = "https://api.apidash.dev/io/img"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("size", vec!["2", ]),
+    ("len", vec!["3", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
   easy.post(true).unwrap();
 
   let mut form = curl::easy::Form::new();
@@ -871,13 +979,13 @@ fn main() {
     .file("/Documents/up/1.png")
     .add().unwrap();
   
-  easy.httppost(form).unwrap();
-    let mut list = List::new();
+  easy.httppost(form).unwrap();  let mut list = List::new();
   list.append("User-Agent: Test Agent").unwrap();
   list.append("Keep-Alive: true").unwrap();
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -887,7 +995,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -903,15 +1010,18 @@ fn main() {
 
   group('PUT Request', () {
     test('PUT1', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use serde_json::json;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://reqres.in/api/users/2").unwrap();
+   let base_url = "https://reqres.in/api/users/2"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.put(true).unwrap();
 
   easy.post_fields_copy(json!({
@@ -920,10 +1030,12 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
+  list.append("x-api-key: reqres-free-v1").unwrap();
   list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -933,7 +1045,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -949,15 +1060,18 @@ fn main() {
 
   group('PATCH Request', () {
     test('PATCH1', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
 use serde_json::json;
 use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://reqres.in/api/users/2").unwrap();
+   let base_url = "https://reqres.in/api/users/2"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.custom_request("PATCH").unwrap();
 
   easy.post_fields_copy(json!({
@@ -966,10 +1080,12 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
+  list.append("x-api-key: reqres-free-v1").unwrap();
   list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -979,7 +1095,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -995,16 +1110,25 @@ fn main() {
 
   group('DELETE Request', () {
     test('DELETE1', () {
-      const expectedCode = r"""
-use curl::easy::Easy;
+      const expectedCode = r"""use curl::easy::Easy;
+use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://reqres.in/api/users/2").unwrap();
+   let base_url = "https://reqres.in/api/users/2"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.custom_request("DELETE").unwrap();
 
+  let mut list = List::new();
+  list.append("x-api-key: reqres-free-v1").unwrap();
+  easy.http_headers(list).unwrap();
+  
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -1014,7 +1138,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -1035,7 +1158,11 @@ use curl::easy::List;
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-  easy.url("https://reqres.in/api/users/2").unwrap();
+   let base_url = "https://reqres.in/api/users/2"; 
+  
+  let url = base_url.to_string();
+  
+ 
   easy.custom_request("DELETE").unwrap();
 
   easy.post_fields_copy(json!({
@@ -1044,10 +1171,12 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
+  list.append("x-api-key: reqres-free-v1").unwrap();
   list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -1057,7 +1186,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";

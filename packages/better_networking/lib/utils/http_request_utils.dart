@@ -1,5 +1,7 @@
 import 'package:better_networking/better_networking.dart';
 import 'package:json5/json5.dart' as json5;
+import 'package:seed/models/form_data_model.dart';
+import 'package:seed/models/name_value_model.dart';
 
 Map<String, String>? rowsToMap(
   List<NameValueModel>? kvRows, {
@@ -96,7 +98,36 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
     APIType.ai => null, //TODO: TAKE A LOOK
   };
 }
+Map<String, List<String>>? rowsToRequestMap(List<NameValueModel>? rows) {
+  if (rows == null) {
+    return null;
+  }
+  final Map<String, List<String>> finalMap = {};
+  for (var row in rows) {
+    final key = row.name.trim();
+    if (key.isEmpty) continue;
+    final value = row.value.toString();
+    if (finalMap.containsKey(key)) {
+      finalMap[key]!.add(value);
+    } else {
+      finalMap[key] = [value];
+    }
+  }
+  return finalMap;
+}
 
+List<NameValueModel>? requestMapToRows(Map<String, List<String>>? requestMap) {
+  if (requestMap == null) {
+    return null;
+  }
+  final List<NameValueModel> finalRows = [];
+  requestMap.forEach((key, values) {
+    for (var value in values) {
+      finalRows.add(NameValueModel(name: key, value: value));
+    }
+  });
+  return finalRows;
+}
 // TODO: Expose this function to remove JSON comments
 String? removeJsonComments(String? json) {
   try {

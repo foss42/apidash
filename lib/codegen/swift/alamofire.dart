@@ -8,6 +8,15 @@ import Foundation
 import Alamofire
 """;
 
+  final String kTemplateQueryItems = '''
+var urlComponents = URLComponents(string: "{{baseUrl}}")!
+var queryItems = [URLQueryItem]()
+{% for param in queryParams %}queryItems.append(URLQueryItem(name: "{{param.name}}", value: "{{param.value}}"))
+{% endfor %}
+urlComponents.queryItems = queryItems
+let url = urlComponents.url!
+''';
+
   final String kTemplateFormData = '''
 let multipartFormData = MultipartFormData()
 {% for param in formData %}    {% if param.type == 'text' %}multipartFormData.append(Data("{{param.value}}".utf8), withName: "{{param.name}}")    {% elif param.type == 'file' %}
@@ -32,8 +41,6 @@ let textData = textString.data(using: .utf8)\n
 ''';
 
   final String kTemplateRequest = """
-let url = "{{url}}"
-
 {% if hasFormData %}
 AF.upload(multipartFormData: multipartFormData, to: url, method: .{{method}}{% if hasHeaders %}, headers: {{headers}}{% endif %})
 {% elif hasBody %}
@@ -60,9 +67,37 @@ dispatchMain()
     try {
       String result = kTemplateStart;
 
-      var rec =
-          getValidRequestUri(requestModel.url, requestModel.enabledParams);
+      // Extract base URL and query parameters
+      var rec = getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
+      if (uri == null) return null;
+
+      // Get base URL without query parameters
+      String baseUrl = uri.replace(query: '').toString();
+      if (baseUrl.endsWith('?')) {
+        baseUrl = baseUrl.substring(0, baseUrl.length - 1);
+      }
+
+      // Handle query parameters using URLComponents
+      var queryParamsList = <Map<String, String>>[];
+      requestModel.enabledParamsMap.forEach((key, values) {
+        for (var value in values) {
+          queryParamsList.add({
+            'name': key,
+            'value': value,
+          });
+        }
+      });
+
+      if (queryParamsList.isNotEmpty) {
+        var templateQueryItems = jj.Template(kTemplateQueryItems);
+        result += templateQueryItems.render({
+          "baseUrl": baseUrl,
+          "queryParams": queryParamsList,
+        });
+      } else {
+        result += 'let url = "$baseUrl"\n';
+      }
 
       var headers = requestModel.enabledHeadersMap;
 
@@ -105,7 +140,7 @@ dispatchMain()
         hasBody = true;
         hasJsonData = true;
       }
-      // Handle text data
+      // Handle text data 
       else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
         result += templateTextData.render({
@@ -131,7 +166,6 @@ dispatchMain()
 
       var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
-        "url": uri.toString(),
         "method": requestModel.method.name.toLowerCase(),
         "headers": headersString,
         "hasHeaders": hasHeaders,

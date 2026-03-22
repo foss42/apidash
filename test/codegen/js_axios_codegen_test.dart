@@ -37,7 +37,12 @@ axios(config)
   url: 'https://api.apidash.dev/country/data',
   method: 'get',
   params: {
-    "code": "US"
+    "code": [
+      "US"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -64,7 +69,13 @@ axios(config)
   url: 'https://api.apidash.dev/country/data',
   method: 'get',
   params: {
-    "code": "IND"
+    "code": [
+      "IND",
+      "US"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -91,11 +102,24 @@ axios(config)
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   params: {
-    "num": "8700000",
-    "digits": "3",
-    "system": "SS",
-    "add_space": "true",
-    "trailing_zeros": "true"
+    "num": [
+      "8700000"
+    ],
+    "digits": [
+      "3"
+    ],
+    "system": [
+      "SS"
+    ],
+    "add_space": [
+      "true"
+    ],
+    "trailing_zeros": [
+      "true"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -149,7 +173,12 @@ axios(config)
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
   params: {
-    "raw": "true"
+    "raw": [
+      "true"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   },
   headers: {
     "User-Agent": "Test Agent"
@@ -203,7 +232,12 @@ axios(config)
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
   params: {
-    "raw": "true"
+    "raw": [
+      "true"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   },
   headers: {
     "User-Agent": "Test Agent"
@@ -233,8 +267,15 @@ axios(config)
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   params: {
-    "num": "8700000",
-    "add_space": "true"
+    "num": [
+      "8700000"
+    ],
+    "add_space": [
+      "true"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -288,8 +329,15 @@ axios(config)
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   params: {
-    "num": "8700000",
-    "digits": "3"
+    "num": [
+      "8700000"
+    ],
+    "digits": [
+      "3"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   },
   headers: {
     "User-Agent": "Test Agent"
@@ -609,8 +657,15 @@ axios(config)
   url: 'https://api.apidash.dev/io/form',
   method: 'post',
   params: {
-    "size": "2",
-    "len": "3"
+    "size": [
+      "2"
+    ],
+    "len": [
+      "3"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   },
   headers: {
     "Content-Type": "multipart/form-data"
@@ -647,8 +702,15 @@ const config = {
   url: 'https://api.apidash.dev/io/img',
   method: 'post',
   params: {
-    "size": "2",
-    "len": "3"
+    "size": [
+      "2"
+    ],
+    "len": [
+      "3"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   },
   headers: {
     "Content-Type": "multipart/form-data",
@@ -682,11 +744,13 @@ axios(config)
 
   group('PUT Request', () {
     test('PUT 1', () {
-      const expectedCode = r"""const config = {
+      const expectedCode = r"""
+const config = {
   url: 'https://reqres.in/api/users/2',
   method: 'put',
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "x-api-key": "reqres-free-v1"
   },
   data: "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
 };
@@ -712,11 +776,13 @@ axios(config)
 
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = r"""const config = {
+      const expectedCode = r"""
+const config = {
   url: 'https://reqres.in/api/users/2',
   method: 'patch',
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "x-api-key": "reqres-free-v1"
   },
   data: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };
@@ -742,9 +808,13 @@ axios(config)
 
   group('DELETE Request', () {
     test('DELETE 1', () {
-      const expectedCode = r"""const config = {
+      const expectedCode = r"""
+const config = {
   url: 'https://reqres.in/api/users/2',
-  method: 'delete'
+  method: 'delete',
+  headers: {
+    "x-api-key": "reqres-free-v1"
+  }
 };
 
 axios(config)
@@ -766,11 +836,13 @@ axios(config)
     });
 
     test('DELETE 2', () {
-      const expectedCode = r"""const config = {
+      const expectedCode = r"""
+const config = {
   url: 'https://reqres.in/api/users/2',
   method: 'delete',
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "x-api-key": "reqres-free-v1"
   },
   data: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };

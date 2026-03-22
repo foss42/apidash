@@ -8,10 +8,10 @@ class AxiosCodeGen {
   final bool isNodeJs;
 
   String kStringImportNode = """import axios from 'axios';
+import qs from 'qs';
 {%if hasFileInFormData -%}
 import fs from 'fs'
 {% endif %}
-
 """;
 
   String kTemplateStart = """const config = {
@@ -20,7 +20,10 @@ import fs from 'fs'
 """;
 
   String kTemplateParams = """,
-  params: {{params}}
+  params: {{params}},
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  }
 """;
 
   String kTemplateHeader = """,
@@ -69,16 +72,15 @@ axios(config)
         "method": harJson["method"].toLowerCase(),
       });
 
-      var params = harJson["queryString"];
-      if (params.isNotEmpty) {
-        var templateParams = jj.Template(kTemplateParams);
-        var m = {};
-        for (var i in params) {
-          m[i["name"]] = i["value"];
+      var enabledParams = requestModel.enabledParamsMap; 
+
+        if (enabledParams.isNotEmpty) {
+          var templateParams = jj.Template(kTemplateParams);
+          result += templateParams.render({
+            "params": padMultilineString(kJsonEncoder.convert(enabledParams), 2)
+          });
         }
-        result += templateParams
-            .render({"params": padMultilineString(kJsonEncoder.convert(m), 2)});
-      }
+
 
       var headers = harJson["headers"];
       if (headers.isNotEmpty || requestModel.hasFormData) {
