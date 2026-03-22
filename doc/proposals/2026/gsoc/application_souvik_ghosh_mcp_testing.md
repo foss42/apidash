@@ -1,4 +1,4 @@
-# GSoC 2026 Application: MCP Testing Suite for API Dash
+# GSoC 2026 Application: MCP Testing Suite — Standalone Desktop App
 
 ### About
 
@@ -27,95 +27,96 @@
 
 **1. Have you worked on or contributed to a FOSS project before?**
 
-Yes — I have two active PRs against foss42/apidash:
+Yes — I have contributed to foss42/apidash with real code:
 
 **PR #1349 — feat: add custom AI model support in selector**
-Real Flutter/Dart code contribution to the API Dash codebase.
-Addresses issue #1315 (part of meta-issue #1269 — revamping the
-Model Selector dialog). I cloned the repo, understood the existing
-widget architecture, and extended the AI model selector to support
-custom model names alongside built-in presets.
+Flutter/Dart contribution to the API Dash codebase. Addresses
+issue #1315 (part of meta-issue #1269 — revamping the Model
+Selector dialog). I cloned the repo, studied the existing
+widget architecture, and extended the AI model selector to
+support custom model names alongside the built-in presets.
+This involved understanding provider patterns, widget
+composition, and the existing test structure.
 → https://github.com/foss42/apidash/pull/1349
 
-**PR #1284 — MCP Testing Suite: interactive mockup v10 + working PoC**
-Includes a 5-page interactive HTML mockup and a self-contained
-Node.js PoC (`poc.js`) — real stdio JSON-RPC 2.0, 8 automated
-tests, 4-layer breakdown, zero external dependencies, ~7ms.
-The MCP Apps Preview page performs a real `ui/initialize`
-handshake in a sandboxed iframe via `postMessage`, built
-directly from @ashitaprasad's MCP Apps spec.
-→ https://github.com/foss42/apidash/pull/1284
-
-Maintainers added the `gsoc-2026` label to #1284 and
-@ashitaprasad tagged me directly in `#gsoc-foss-apidash`
-to include MCP Apps testing — which was already done.
+I've also been actively participating in the project through
+Discussion #1225 (MCP Testing), Discussion #1048 (Application
+Guide), every weekly connect session, and the `#gsoc-foss-apidash`
+Discord channel daily since early March.
 
 **2. What is your one project/achievement you are most proud of?**
 
-The `poc.js` proof of concept I built for this proposal.
+A pair of PoCs I built for this proposal — one in Python3
+(`poc.py`) and one in Node.js (`poc.js`), each running 12
+automated tests with zero external dependencies.
 
-In a single Node.js file with zero external dependencies, it:
-- Spawns a real MCP server as a child process
-- Connects via `child_process.spawn` + `stdin`/`stdout` pipe
-  (that is literally what stdio transport is)
-- Exchanges real JSON-RPC 2.0 messages over that pipe
-- Classifies results across all 4 layers: transport, protocol,
-  tool execution, and MCP Apps `_meta.ui.resourceUri` detection
+Each PoC spawns a real MCP server as a child process, connects
+via stdin/stdout pipes, exchanges real JSON-RPC 2.0 messages,
+and classifies every error to the correct layer using a
+decision tree I designed:
+
+- `-32700` on the wire → transport layer (malformed JSON)
+- `-32601` or `-32602` → protocol layer (bad method or params)
+- `isError: true` in response → tool execution layer
+- `ui/*` method failure → UI handshake layer
+
+They also detect `_meta.ui.resourceUri` in tool responses and
+run a snapshot diff engine for baseline regression detection.
+Both support `--json` for structured output matching the format
+the app's backend will emit.
+
 ```bash
-node poc.js  # → 8/8 pass, ~7ms, zero dependencies
+python3 poc.py  # → 12/12 pass, ~90ms
+node poc.js     # → 12/12 pass, ~230ms
 ```
-
-Most proposals describe what they plan to build.
-This one already shows the core works at the protocol level.
 
 **3. What kind of problems motivate you most?**
 
-Developer tooling gaps where the ecosystem has outpaced the
-tooling. MCP is now the standard way AI agents discover and
-invoke tools — adopted by VS Code, Claude, and dozens of AI
-hosts. But testing an MCP server today means hand-crafting
-JSON-RPC payloads in curl and guessing which layer broke from
-a generic error code.
+Developer tooling gaps. MCP is now the standard way AI agents
+discover and invoke tools — VS Code, Claude, and dozens of
+hosts use it. But testing an MCP server today means opening a
+terminal, hand-writing a JSON-RPC payload in curl, getting
+back an error code, and then guessing: was that a transport
+problem? A schema mismatch? A bug in the tool itself?
 
-The same gap existed for REST APIs before Postman.
-I want to build the Postman moment for MCP, inside API Dash.
+I looked at the existing tools. Anthropic's MCP Inspector is
+a browser-based REPL — useful for manual poking, but you
+can't save a scenario, replay it after a server change, or
+figure out which layer broke. MCPJam's Inspector adds an LLM
+playground and some OAuth debugging, which is nice, but it
+still doesn't do automated replay, baseline diffing, or
+layer classification. Neither of them can test the MCP Apps
+`hostContext` injection at all — you'd have to build a custom
+iframe setup yourself.
+
+That gap is what this project fills. Not another REPL, but
+an automated, replayable, layer-classified testing tool with
+MCP Apps sandbox support built in.
 
 **4. Will you be working on GSoC full-time?**
 
-Yes. I have no internship or coursework conflicts during the
-GSoC period and will dedicate 35–40 hours per week to this
-project.
+Yes. No internship or coursework conflicts. 35–40 hours/week.
 
 **5. Do you mind regularly syncing up with mentors?**
 
-Not at all. I've been attending every weekly connect session
-and am active in `#gsoc-foss-apidash` on Discord daily.
-Regular sync is something I actively want, not just tolerate.
+Not at all. I've been at every weekly connect and on Discord
+daily. I actively want regular sync, not just tolerate it.
 
 **6. What interests you most about API Dash?**
 
-Two things. First, API Dash treats the developer as the user —
-it's fast, local-first, and doesn't require an account to get
-value. That philosophy is rare. Second, the timing: API Dash
-is at the exact inflection point where AI tooling (MCP, agents,
-model selectors) is being added on top of a solid REST/GraphQL
-foundation. Contributing now means shaping the architecture
-of a feature that will matter for years, not just fixing
-something that already works.
+It's developer-first — fast, local, no account needed. And
+the timing is perfect: the org is building standalone tooling
+around MCP, the fastest-growing protocol in the AI ecosystem.
+Contributing now means shaping something from the ground up.
 
 **7. Areas where the project can be improved?**
 
-- **MCP testing tooling** — the biggest gap right now. No
-  dedicated way to test MCP servers, debug transport/protocol
-  failures, or validate MCP Apps `ui/initialize` handshakes.
-  This proposal addresses it directly.
-- **MCP Apps integration** — as Ashita's guide outlines, MCP
-  servers can now deliver rich HTML UI components to AI hosts.
-  API Dash is uniquely positioned to be the tool that tests
-  this entire visual layer, not just the JSON-RPC wire protocol.
-- **Regression testing for AI requests** — snapshot and replay
-  for AI/LLM API calls, similar to what this proposal builds
-  for MCP, would be a natural next step.
+MCP testing is the biggest gap. There's no dedicated tool
+to test MCP servers, classify transport vs protocol vs tool
+failures, or validate the MCP Apps `ui/initialize` handshake.
+This proposal builds that as a standalone desktop app with a
+Python3 backend. Beyond this project, snapshot-and-replay for
+AI/LLM API calls would be a natural extension.
 
 ---
 
@@ -123,151 +124,443 @@ something that already works.
 
 **1. Proposal Title**
 
-MCP Testing Suite — Full-Stack MCP & MCP Apps Testing Workflow
-for API Dash
+MCP Testing Suite — Standalone Desktop App for Full-Stack
+MCP & MCP Apps Testing
 
 **2. Abstract**
 
-MCP (Model Context Protocol) is becoming the standard API layer
-of the AI world. But developers building and debugging MCP servers
-have no dedicated testing tooling. They craft JSON-RPC payloads
-manually, receive opaque error codes, and cannot tell whether a
-failure is in the transport, the protocol schema, or the tool
-execution layer.
+MCP is the standard API layer of the AI world. But developers
+building MCP servers have no dedicated testing tool. They
+craft JSON-RPC payloads by hand, get opaque error codes, and
+can't tell whether a failure is in the transport, the protocol,
+or the tool itself.
 
-With the new MCP Apps specification, the problem deepens: servers
-now deliver rich HTML UI components (`text/html;profile=mcp-app`)
-to AI hosts via sandboxed iframes, requiring a `ui/initialize`
-handshake and `hostContext` CSS injection. No existing tool
-handles this visual layer at all.
+The new MCP Apps spec makes it worse — servers now serve rich
+HTML UI components via sandboxed iframes, requiring a
+`ui/initialize` handshake and `hostContext` CSS injection.
+No existing tool handles any of this.
 
-This project builds the MCP Testing Suite inside API Dash — a
-full-stack, collection-oriented testing workflow covering every
-layer of MCP communication: transport, protocol, tool execution,
-and the MCP Apps visual layer. The same way API Dash already
-covers REST and GraphQL.
+This project builds the **MCP Testing Suite** as a
+**standalone Electron desktop application** with a **Python3
+backend** and a **React/TypeScript frontend**. It is a
+self-contained app in the API Dash ecosystem — not a tab or
+plugin inside the existing API Dash Flutter app.
+
+- **Python3 backend** (runs in Electron main process via
+  child process): handles MCP server lifecycle, stdio/HTTP
+  transport, JSON-RPC communication, trace classification,
+  snapshot storage, and diff computation
+- **React/TypeScript frontend** (Electron renderer): all UI
+  pages — Session Setup, Scenario Runner, Trace Inspection,
+  Replay & Compare, MCP Apps Preview
+- **Electron shell**: provides desktop app experience, native
+  filesystem access, `<webview>` tag for secure MCP Apps
+  sandboxing, and bridges frontend ↔ backend via IPC
 
 **3. Detailed Description**
 
-**The Problem**
+### Why Standalone? Why Electron? Why Python3 Backend?
 
-| Pain today | After this project |
-|---|---|
-| Hand-craft JSON-RPC payloads in curl | Configure MCP targets like API Dash collections |
-| Generic error — which layer broke? | 4-layer trace: transport / protocol / tool-exec / ui-handshake |
-| No replay after a server change | Baseline snapshots + one-click replay + payload diff |
-| `ui/initialize` handshake — test how? | Sandboxed iframe + live `postMessage` message log |
-| `hostContext` CSS injection — validate how? | Host context sandbox with theme presets |
-| `_meta.ui.resourceUri` — auto-detect? | Detection banner in Scenario Runner |
+Stdio transport requires spawning MCP servers as child
+processes and reading their stdin/stdout — this can't run
+in a browser. Electron provides the desktop shell.
 
-**Architecture**
+Python3 is the backend language because:
+- The MCP Python SDK (`mcp` package) is mature and
+  well-maintained — first-class `stdio` and `sse` client support
+- `subprocess.Popen` + `threading` handles stdio transport
+  cleanly (proven in `poc.py`)
+- `asyncio` enables concurrent scenario execution
+- The evaluation harness is naturally Python3
+- Aligns with the project's Python skill requirement
+
+The architecture: Electron's main process spawns a Python3
+backend process on app startup. The React renderer
+communicates with it via local WebSocket or HTTP. The Python
+backend owns all MCP logic — transport, client, testing
+engine, trace classification, snapshots. The React frontend
+is purely the UI layer.
+
+### The Problem
+
+Today, testing an MCP server means opening curl and typing
+something like `echo '{"jsonrpc":"2.0","id":1,"method":
+"initialize",...}' | npx server-weather`. You get back either
+a JSON blob or an error code. If it's `-32602`, is that
+because your params were wrong, or because the server
+crashed during validation? There's no way to know without
+reading the server source code.
+
+After a server update, you re-type the same curl command and
+eyeball whether the response changed. There's no saved
+baseline, no diff, no regression detection.
+
+If the server delivers an MCP App (a rich HTML component),
+you have no way to test the `ui/initialize` handshake or
+verify that the app renders correctly under different host
+themes without building a custom iframe setup from scratch.
+
+This tool solves each of these:
+
+- **Session Setup** replaces curl with a persistent config —
+  transport type, server command, env vars, working directory.
+  One click validates the connection end-to-end.
+- **Scenario Runner** replaces manual typing with saved,
+  ordered test steps. Each step has assertions. Run them all
+  at once, see live pass/fail per step.
+- **Trace Inspection** replaces guessing with a 4-layer
+  classifier that reads the error code and tells you exactly
+  which layer broke: transport, protocol, tool execution, or
+  UI handshake.
+- **Replay & Compare** replaces eyeballing with a snapshot
+  diff engine. Pin a baseline, replay after a server change,
+  see exactly what fields changed.
+- **MCP Apps Preview** replaces building a custom iframe with
+  a secure `<webview>` sandbox that runs the full
+  `ui/initialize → hostContext → initialized` handshake and
+  logs every `postMessage` in real time.
+
+### Architecture
+
 ```
-src/
-  mcp/
-    client/
-      StdioTransport.ts      # child_process spawn + stdin/stdout
-      HttpTransport.ts       # fetch-based HTTP transport
-      MCPClient.ts           # JSON-RPC 2.0 layer, pending map
-    testing/
-      ScenarioRunner.ts      # step-by-step execution engine
-      TraceInspector.ts      # 4-layer event classifier
-      SnapshotStore.ts       # baseline capture + diff engine
-    apps/
-      AppPreview.tsx         # sandboxed iframe + postMessage host
-      HostContextSandbox.ts  # CSS variable injection + presets
-  ui/
-    SessionSetup/
-    ScenarioRunner/
-    TraceInspection/
-    ReplayCompare/
-    MCPAppsPreview/
+mcp-testing-suite/                    # standalone Electron app
+├── package.json
+├── electron/
+│   ├── main.ts                       # spawns Python backend on startup
+│   ├── preload.ts                    # contextBridge for renderer
+│   └── backend-bridge.ts            # manages Python child process
+├── backend/                          # Python3 — all MCP logic
+│   ├── requirements.txt              # mcp, websockets, uvicorn
+│   ├── main.py                       # entry point, starts WS server
+│   ├── transport/
+│   │   ├── stdio_transport.py        # subprocess.Popen + readline
+│   │   └── http_transport.py         # httpx-based HTTP/SSE client
+│   ├── client/
+│   │   └── mcp_client.py            # JSON-RPC 2.0 pending map
+│   ├── testing/
+│   │   ├── scenario_runner.py        # step-by-step execution
+│   │   ├── trace_inspector.py        # 4-layer classifier
+│   │   └── snapshot_store.py         # baseline capture + diff
+│   ├── apps/
+│   │   └── host_context.py           # CSS variable presets
+│   └── api/
+│       └── ws_handler.py            # WebSocket API for frontend
+├── src/                              # React/TypeScript frontend
+│   ├── pages/
+│   │   ├── SessionSetup.tsx
+│   │   ├── ScenarioRunner.tsx
+│   │   ├── TraceInspection.tsx
+│   │   ├── ReplayCompare.tsx
+│   │   └── MCPAppsPreview.tsx
+│   ├── components/
+│   ├── hooks/
+│   │   └── useBackend.ts            # WebSocket hook to Python API
+│   ├── store/                        # Zustand state management
+│   ├── App.tsx
+│   └── main.tsx
+├── poc/
+│   ├── poc.py                        # Python3 PoC (12 tests)
+│   └── poc.js                        # Node.js PoC (12 tests)
+└── tests/
+    ├── test_transport.py
+    ├── test_classifier.py
+    ├── test_snapshot.py
+    └── test_scenario.py
 ```
 
-**Proof of Work**
+### How Each Module Works
 
-Both artifacts are in PR #1284 and runnable today:
+**stdio_transport.py** (Python3 backend)
 
-*Mockup* — open `gsoc/mcp-testing/mockup/index.html` in any
-browser. MCP Apps Preview page performs a real `ui/initialize`
-handshake and re-themes when you inject a different `hostContext`.
+This is the exact pattern proven by `poc.py`:
+```python
+class StdioTransport:
+    def connect(self, command, args, env):
+        self.proc = subprocess.Popen(
+            [command] + args,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True, bufsize=1,
+            env={**os.environ, **env}
+        )
+        self._reader = threading.Thread(
+            target=self._read_loop, daemon=True
+        )
+        self._reader.start()
 
-*PoC* — `node gsoc/mcp-testing/poc/poc.js`
+    def send(self, method, params) -> dict:
+        id = self._next_id()
+        request = {
+            "jsonrpc": "2.0", "id": id,
+            "method": method, "params": params
+        }
+        self.proc.stdin.write(json.dumps(request) + "\n")
+        self.proc.stdin.flush()
+        return self._wait_for(id, timeout=5.0)
 ```
-✓ All 8 tests passed  (~7ms total)
+
+The React frontend never touches subprocess directly. Instead:
+```
+React UI
+  → useBackend() hook sends WebSocket message
+  → Python ws_handler.py receives it
+  → calls stdio_transport.send(method, params)
+  → returns result back over WebSocket
+  → React updates UI
+```
+
+**trace_inspector.py** — 4-Layer Classifier
+
+```python
+def classify_error(error, context=None):
+    code = error.get("code")
+
+    # Layer 1 — Transport
+    if context.get("spawn_failed") or context.get("pipe_broken"):
+        return "transport"
+    if code == -32700:       # parse error = bad JSON on wire
+        return "transport"
+
+    # Layer 2 — Protocol
+    if code == -32600:       # invalid request structure
+        return "protocol"
+    if code == -32601:       # method not found
+        return "protocol"
+    if code == -32602:       # missing/invalid params
+        return "protocol"
+
+    # Layer 4 — UI Handshake
+    if context.get("method", "").startswith("ui/"):
+        return "ui-handshake"
+
+    # Layer 3 — Tool Execution (default)
+    return "tool-exec"
+```
+
+This isn't pseudocode — it's the actual function from `poc.py`,
+tested against real JSON-RPC error codes across 12 tests.
+
+**snapshot_store.py** — Diff Engine
+
+```python
+def diff_snapshots(baseline, current, path="$"):
+    diffs = []
+    if type(baseline) != type(current):
+        diffs.append({"path": path, "type": "type-change"})
+        return diffs
+    if isinstance(baseline, dict):
+        all_keys = set(baseline) | set(current)
+        for k in all_keys:
+            if k not in baseline:
+                diffs.append({"path": f"{path}.{k}", "type": "added"})
+            elif k not in current:
+                diffs.append({"path": f"{path}.{k}", "type": "removed"})
+            else:
+                diffs.extend(diff_snapshots(baseline[k], current[k], f"{path}.{k}"))
+    elif baseline != current:
+        diffs.append({"path": path, "type": "value-change",
+                       "from": baseline, "to": current})
+    return diffs
+```
+
+Snapshots are saved as JSON files on the local filesystem.
+The Python backend handles all file I/O; the React frontend
+just displays the diff.
+
+**MCP Apps Preview** — Electron `<webview>` Sandbox
+
+MCP Apps run inside Electron's `<webview>` tag, which is more
+secure than a browser iframe — it runs in an isolated Chromium
+process with its own security context:
+
+```html
+<webview
+  src="ui://mcp-server/dashboard"
+  partition="mcp-app-sandbox"
+  nodeintegration="false"
+/>
+```
+
+The handshake flow:
+```
+App → Host:   ui/initialize { clientInfo }
+Host → App:   result { hostContext: { css: { --host-bg, ... } } }
+App → Host:   ui/notifications/initialized
+```
+
+The Python backend generates the hostContext CSS variable sets.
+The React frontend renders the webview and logs every
+postMessage bidirectionally. The theme preset switcher (VS Code
+Dark, VS Code Light, Custom) lets developers verify their MCP
+App renders correctly across different host environments.
+
+### What Exists Today vs What This Builds
+
+The two main tools available right now are Anthropic's MCP
+Inspector and MCPJam's Inspector. MCP Inspector is the
+official one — you run `npx @modelcontextprotocol/inspector`
+and get a browser REPL where you can manually send requests
+and see responses. It's good for quick checks, but everything
+is manual and ephemeral. You can't save a test, replay it
+tomorrow, or figure out which layer of the protocol broke.
+
+MCPJam's version adds some useful features — an LLM playground
+where you can chat with a model that uses your MCP tools, and
+an OAuth configuration debugger. But the core testing workflow
+is still manual. There's no concept of "run these 5 steps in
+order and tell me if step 3 regressed since last Tuesday."
+
+Neither tool touches the MCP Apps layer. If your server exposes
+a `text/html;profile=mcp-app` resource and you want to verify
+the `ui/initialize` handshake works or that your dashboard
+re-themes correctly when a host sends different CSS variables,
+you're on your own.
+
+This project fills those gaps: saved scenarios that run
+automatically, a classifier that maps every error to its
+protocol layer, a baseline-and-diff engine for catching
+regressions, and a secure webview sandbox for MCP Apps with
+live theme switching and postMessage logging.
+
+### Proof of Work
+
+**1. Interactive Mockup v11** (`mockup/index.html`)
+Standalone Electron-framed UI with custom title bar, IPC
+architecture diagrams, `<webview>` references for MCP Apps,
+and explicit "this is NOT inside API Dash" callout. Open in
+any browser, no build step.
+
+**2. Python3 PoC** (`poc/poc.py`) — 12 tests, zero deps
+```bash
+python3 poc/poc.py
+```
+```
+✓ All 12 tests passed  (~90ms total)
 
 Layer Breakdown:
-■ Transport   ── OK       stdio spawn + stdin/stdout
-■ Protocol    ── OK       JSON-RPC initialize · serverInfo
-■ Tool Exec   ── OK       tools/call · contentType assert
-■ MCP Apps    ── DETECTED _meta.ui.resourceUri
+■ Transport      ── OK       subprocess spawn + stdin/stdout
+■ Protocol       ── OK       JSON-RPC initialize · error codes
+■ Tool Exec      ── OK       tools/call · schema · _meta.ui
+■ UI Handshake   ── OK       ui/initialize · hostContext CSS
 ```
 
-Demo video: https://youtu.be/GAZrTelq_M0
+**3. Node.js PoC** (`poc/poc.js`) — 12 tests, zero deps
+```bash
+node poc/poc.js
+```
+Same 12 tests, same 4-layer classifier, same snapshot diff.
+Supports `--json` for structured output.
+
+**Demo video:** https://youtu.be/GAZrTelq_M0
 
 **4. Weekly Timeline**
 
 **Community Bonding (May)**
-- Deep-dive into API Dash codebase: collection model, state
-  management (Riverpod), request lifecycle
-- Finalise module structure and file organisation with mentors
-- Confirm testing strategy
+- Confirm Electron + Python3 architecture with mentors
+- Set up project scaffold: Electron shell, Python backend
+  process, React frontend with Vite, WebSocket bridge
+- Agree on WebSocket API contract between frontend and backend
+- Set up CI pipeline, linting (ruff for Python, eslint for TS)
 
-**Week 1–2 · Transport Layer**
-- `StdioTransport.ts`: spawn, readline, timeout guard
-- `MCPClient.ts`: JSON-RPC 2.0 pending map, error types
-- Unit tests for transport layer
-- ✅ Milestone: `client.initialize()` works against a real
-  MCP server over stdio
+**Week 1–2 · Python Backend + Transport Layer**
+- Scaffold Electron app: main process spawns Python backend
+  on startup, preload bridge exposes WebSocket connection
+- `stdio_transport.py`: `subprocess.Popen`, readline thread,
+  timeout guard, event trace buffer
+- `mcp_client.py`: JSON-RPC 2.0 pending map, `send()`,
+  `notify()`, `disconnect()`, error type wrappers
+- `ws_handler.py`: WebSocket server exposing `connect`,
+  `send`, `disconnect` commands to the frontend
+- Unit tests: `test_transport.py`, `test_client.py`
+- ✅ Milestone: React UI calls `ws.send({cmd: "mcp:send", method: "initialize"})` and gets a real response from a live MCP server
 
 **Week 3–4 · Session Setup UI**
-- Session Setup page wired to real `MCPClient`
-- Save/load MCP targets as API Dash collection entries
-- Validation panel: transport reachable, capabilities
-  discovered, env vars resolved
-- ✅ Milestone: user can configure, validate and save
-  an MCP target
+- `SessionSetup.tsx`: form for transport type, server command,
+  working directory, environment variables
+- On "Validate & Save": frontend sends `connect` command over
+  WebSocket → Python backend spawns server → runs initialize
+  → returns validation result
+- Validation panel: 4 pills (process spawned, pipe open,
+  handshake OK, serverInfo received)
+- Sessions saved to local JSON file by Python backend
+- ✅ Milestone: user configures, validates, and saves an MCP target
 
 **Week 5–6 · Scenario Runner**
-- `ScenarioRunner.ts`: step execution engine
-- Scenario Runner UI: live step status, JSON-RPC output panel
-- `_meta.ui.resourceUri` auto-detection banner
-- Artifact save after each run
-- ✅ Milestone: user can run a multi-step scenario and
-  see live JSON-RPC output
+- `scenario_runner.py`: ordered step execution — each step
+  is `{ method, params, assertions }`, run sequentially,
+  stream results to frontend via WebSocket
+- `ScenarioRunner.tsx`: live step badges (PENDING → PASS/FAIL),
+  JSON-RPC output panel, `_meta.ui.resourceUri` auto-detection
+  banner
+- After each run: serialize full results + trace to a
+  timestamped JSON file on disk
+- ✅ Milestone: user runs a multi-step scenario with live output
 
 **Week 7 · Midterm Buffer**
-- Fix issues from midterm evaluation
-- Developer documentation for M1–M3
-- Integration tests
+- Address midterm feedback
+- Developer docs for backend API + transport module
+- Integration tests: spawn real MCP server, run scenario,
+  verify trace programmatically
 
 **Week 8–9 · Trace Inspection**
-- `TraceInspector.ts`: event stream parser, 4-layer
-  classifier (transport / protocol / tool-exec / ui-handshake)
-- Trace Inspection UI: event timeline, layer breakdown grid,
-  raw request/response viewer, reclassify action
-- ✅ Milestone: any MCP failure classified to the correct
-  layer with clear error context
+- `trace_inspector.py`: consumes event array from transport,
+  applies `classify_error()` to every error, produces
+  per-layer summary
+- `TraceInspection.tsx`: event timeline with connected line
+  and colored dots, layer breakdown grid (4 cards),
+  classifier decision tree display, reclassify override action
+- ✅ Milestone: any MCP failure classified to the correct layer
 
 **Week 10 · Replay & Compare**
-- `SnapshotStore.ts`: capture baseline, field-level diff
-- Replay & Compare UI: run history, diff view
-  (summary + payload diff tabs)
-- ✅ Milestone: regression detected and shown as a
-  clear readable diff
+- `snapshot_store.py`: save/load baselines to filesystem,
+  `diff_snapshots()` recursive field comparison
+- `ReplayCompare.tsx`: run history list, "Pin as Baseline"
+  action, diff view (summary + payload tabs with +/- syntax
+  highlighting), "Replay Baseline" button
+- ✅ Milestone: regression detected and displayed as readable diff
 
-**Week 11 · MCP Apps Layer**
-- `AppPreview.tsx`: sandboxed iframe, `postMessage` host
-- `HostContextSandbox.ts`: theme presets, CSS injection
-- MCP Apps Preview UI: handshake state panel, live
-  message log, 3-theme preset switcher
-- HTTP transport support
-- ✅ Milestone: full MCP Apps testing workflow
-  functional end-to-end
+**Week 11 · MCP Apps Layer + HTTP Transport**
+- `host_context.py`: theme presets (VS Code Dark, Light, Custom),
+  CSS variable generation
+- `MCPAppsPreview.tsx`: Electron `<webview>` loading MCP App,
+  handshake state panel (READY → SENT → INJECTED → COMPLETE),
+  live postMessage log, theme switcher
+- `http_transport.py`: `httpx`-based HTTP/SSE transport for
+  servers that don't use stdio
+- ✅ Milestone: full MCP Apps testing + HTTP transport working
 
 **Week 12 · Polish + Final Submission**
-- Full test coverage (unit + integration)
-- User guide + developer guide for the new feature
+- Test coverage: pytest for backend, Vitest for frontend
+- User guide + developer guide
 - Final PR, updated demo video, GSoC final report
+
+### Deliverables Summary
+
+| # | Deliverable | Week |
+|---|------------|------|
+| M1 | Electron shell + Python backend + `stdio_transport` + WebSocket bridge | 1–2 |
+| M2 | Session Setup UI wired to real transport | 3–4 |
+| M3 | Scenario Runner with live output + `_meta` detection | 5–6 |
+| M4 | Trace Inspection — 4-layer classifier + timeline UI | 8–9 |
+| M5 | Replay & Compare — snapshots + diff engine + UI | 10 |
+| M6 | MCP Apps (`<webview>` + hostContext) + HTTP transport | 11 |
+| M7 | Tests + documentation + final report | 12 |
+
+### Why I Will Complete This
+
+- **"Will the core engine work?"** — `poc.py` already does it.
+  12 tests, real subprocess, real JSON-RPC, real classifier.
+  The backend code is a structured version of what already runs.
+
+- **"Can this person actually write code for this project?"** —
+  PR #1349 proves I can read and extend production code.
+  The Python PoC proves I can build the backend. The mockup
+  proves I've thought through the UX.
+
+- **"Will they stay engaged?"** — Every weekly connect attended,
+  Discord active daily, 3 PRs shipped before the deadline,
+  zero competing commitments during GSoC.
 
 ---
 
@@ -278,6 +571,7 @@ Demo video: https://youtu.be/GAZrTelq_M0
 | MCP Testing discussion | https://github.com/foss42/apidash/discussions/1225 |
 | Application guide | https://github.com/foss42/apidash/discussions/1048 |
 | Flutter contribution PR | https://github.com/foss42/apidash/pull/1349 |
-| Mockup + PoC PR | https://github.com/foss42/apidash/pull/1284 |
+| Refined idea + PoC PR | https://github.com/foss42/apidash/pull/1336 |
+| Initial idea PR | https://github.com/foss42/apidash/pull/1284 |
 | MCP Apps spec (mentor) | https://dev.to/ashita/a-practical-guide-to-building-mcp-apps-1bfm |
 | Demo video | https://youtu.be/GAZrTelq_M0 |
