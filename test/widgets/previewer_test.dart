@@ -309,4 +309,83 @@ void main() {
     expect(find.text('John Doe'), findsOneWidget);
     expect(find.text('41'), findsOneWidget);
   });
+    testWidgets(
+    'renders JPEG for application/octet-stream when magic bytes match image',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Previewer(
+              type: kTypeApplication,
+              subtype: kSubTypeOctetStream,
+              bytes: kBodyBytesJpeg,
+              body: "",
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('encountered an error'), findsNothing);
+      expect(find.byType(Image), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'renders PdfPreview for application/octet-stream when magic bytes match PDF',
+    (tester) async {
+      final pdfBytes = Uint8List.fromList(<int>[
+        0x25, 0x50, 0x44, 0x46, 0x2D,
+        0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00,
+      ]);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Previewer(
+              type: kTypeApplication,
+              subtype: kSubTypeOctetStream,
+              bytes: pdfBytes,
+              body: "",
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.byType(PdfPreview), findsOneWidget);
+      expect(find.textContaining('encountered an error'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'shows error for application/octet-stream when magic bytes are unknown',
+    (tester) async {
+      final unknownBytes = Uint8List.fromList(<int>[
+        0x00, 0x01, 0x02, 0x03,
+        0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0A, 0x0B,
+      ]);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Previewer(
+              type: kTypeApplication,
+              subtype: kSubTypeOctetStream,
+              bytes: unknownBytes,
+              body: "",
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('encountered an error'), findsOneWidget);
+    },
+  );
 }
