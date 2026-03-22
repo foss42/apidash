@@ -22,6 +22,7 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   }
 });
 
+
 final selectedSubstitutedHttpRequestModelProvider =
     StateProvider<HttpRequestModel?>((ref) {
       final selectedRequestModel = ref.watch(selectedRequestModelProvider);
@@ -489,7 +490,7 @@ class CollectionStateNotifier
     if (response == null) {
       newRequestModel = newRequestModel.copyWith(
         responseStatus: -1,
-        message: errorMessage,
+        message: getReadableError(errorMessage),
         isWorking: false,
         isStreaming: false,
       );
@@ -514,7 +515,7 @@ class CollectionStateNotifier
 
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
-        message: kResponseCodeReasons[statusCode],
+        message: kResponseCodeReasons[statusCode] ?? "Request completed",
         httpResponseModel: httpResponseModel,
         isWorking: false,
       );
@@ -659,4 +660,22 @@ class CollectionStateNotifier
 
     return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
   }
+}
+
+String getReadableError(String? error) {
+  if (error == null) return "Something went wrong";
+
+  final msg = error.toString().toLowerCase();
+
+  if (msg.contains("socketexception") || msg.contains("failed host lookup")) {
+    return "Unable to connect to server. Please check your internet or API URL.";
+  } else if (msg.contains("timeout")) {
+    return "Request timed out. Please try again.";
+  } else if (msg.contains("handshakeexception")) {
+    return "Secure connection failed (SSL issue).";
+  } else if (msg.contains("clientexception")) {
+    return "Request failed. Please check the API endpoint.";
+  }
+
+  return "Something went wrong. Please try again.";
 }
