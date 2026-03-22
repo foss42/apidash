@@ -16,47 +16,45 @@ void main() async {
   });
 
   testWidgets(
-    'Request method changes from GET to POST when body is added and Snackbar is shown',
-    (WidgetTester tester) async {
-      // Set up the test environment
-      final container = createContainer();
-      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      'Request method changes from GET to POST when body is added and Snackbar is shown',
+      (WidgetTester tester) async {
+    // Set up the test environment
+    final container = createContainer();
+    final notifier = container.read(collectionStateNotifierProvider.notifier);
 
-      // Ensure the initial request is a GET request with no body
-      final id = notifier.state!.entries.first.key;
-      expect(
-        notifier.getRequestModel(id)!.httpRequestModel!.method,
-        HTTPVerb.get,
-      );
-      expect(notifier.getRequestModel(id)!.httpRequestModel!.body, isNull);
+    // Ensure the initial request is a GET request with no body
+    final id = notifier.state!.entries.first.key;
+    expect(
+        notifier.getRequestModel(id)!.httpRequestModel!.method, HTTPVerb.get);
+    expect(notifier.getRequestModel(id)!.httpRequestModel!.body, isNull);
 
-      // Build the EditRequestBody widget
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: const MaterialApp(home: Scaffold(body: EditRequestBody())),
+    // Build the EditRequestBody widget
+    await tester.pumpWidget(
+      ProviderScope(
+        // ignore: deprecated_member_use
+        parent: container,
+        child: const MaterialApp(
+          home: Scaffold(
+            body: EditRequestBody(),
+          ),
         ),
-      );
+      ),
+    );
 
-      // Add a body to the request, which should trigger the method change
-      await tester.enterText(find.byType(TextFieldEditor), 'new body added');
-      await tester.pump(); // Process the state change
+    // Add a body to the request, which should trigger the method change
+    await tester.enterText(find.byType(TextFieldEditor), 'new body added');
+    await tester.pump(); // Process the state change
 
-      // Verify that the request method changed to POST
-      expect(
-        notifier.getRequestModel(id)!.httpRequestModel!.method,
-        HTTPVerb.post,
-      );
+    // Verify that the request method changed to POST
+    expect(
+        notifier.getRequestModel(id)!.httpRequestModel!.method, HTTPVerb.post);
 
-      // Verify that the Snackbar is shown
-      expect(find.text('Switched to POST method'), findsOneWidget);
-    },
-    skip: true,
-  );
+    // Verify that the Snackbar is shown
+    expect(find.text('Switched to POST method'), findsOneWidget);
+  }, skip: true);
 
-  testWidgets('SSE Output is rendered correctly in UI', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('SSE Output is rendered correctly in UI',
+      (WidgetTester tester) async {
     HttpOverrides.global = null; //enable networking in flutter_test
 
     final container = createContainer();
@@ -88,10 +86,13 @@ void main() async {
 
     // Render the widget
     await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
+      ProviderScope(
+        // ignore: deprecated_member_use
+        parent: container,
         child: MaterialApp(
-          home: Scaffold(body: ResponseBody(selectedRequestModel: rm)),
+          home: Scaffold(
+            body: ResponseBody(selectedRequestModel: rm),
+          ),
         ),
       ),
     );
@@ -99,12 +100,10 @@ void main() async {
 
     final textWidgets = tester.widgetList<Text>(find.byType(Text));
     final matchingTextCount = textWidgets
-        .where(
-          (text) =>
-              text.data != null &&
-              text.data!.startsWith('data') &&
-              sseOutput.contains(text.data!.trim()),
-        )
+        .where((text) =>
+            text.data != null &&
+            text.data!.startsWith('data') &&
+            sseOutput.contains(text.data!.trim()))
         .length;
 
     expect(
@@ -134,41 +133,37 @@ void main() async {
         username: 'testuser',
         password: 'testpass',
       );
-      const authModel = AuthModel(type: APIAuthType.basic, basic: basicAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: basicAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.basic,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.username,
-        'testuser',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.password,
-        'testpass',
-      );
+          updatedRequest?.httpRequestModel?.authModel?.type, APIAuthType.basic);
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.username,
+          'testuser');
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.password,
+          'testpass');
     });
 
     test('should update request with bearer authentication', () {
       final id = notifier.state!.entries.first.key;
       const bearerAuth = AuthBearerModel(token: 'bearer-token-123');
-      const authModel = AuthModel(type: APIAuthType.bearer, bearer: bearerAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.bearer,
+        bearer: bearerAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.bearer,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.bearer?.token,
-        'bearer-token-123',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.type,
+          APIAuthType.bearer);
+      expect(updatedRequest?.httpRequestModel?.authModel?.bearer?.token,
+          'bearer-token-123');
     });
 
     test('should update request with API key authentication', () {
@@ -178,27 +173,22 @@ void main() async {
         location: 'header',
         name: 'X-API-Key',
       );
-      const authModel = AuthModel(type: APIAuthType.apiKey, apikey: apiKeyAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.apiKey,
+        apikey: apiKeyAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.apiKey,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.key,
-        'api-key-123',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
-        'header',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.name,
-        'X-API-Key',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.type,
+          APIAuthType.apiKey);
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.key,
+          'api-key-123');
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
+          'header');
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.name,
+          'X-API-Key');
     });
 
     test('should update request with JWT authentication', () {
@@ -213,27 +203,24 @@ void main() async {
         queryParamKey: 'token',
         header: 'Authorization',
       );
-      const authModel = AuthModel(type: APIAuthType.jwt, jwt: jwtAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.jwt,
+        jwt: jwtAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.jwt,
-      );
+          updatedRequest?.httpRequestModel?.authModel?.type, APIAuthType.jwt);
+      expect(updatedRequest?.httpRequestModel?.authModel?.jwt?.secret,
+          'jwt-secret');
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.secret,
-        'jwt-secret',
-      );
+          updatedRequest?.httpRequestModel?.authModel?.jwt?.algorithm, 'HS256');
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.algorithm,
-        'HS256',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.isSecretBase64Encoded,
-        false,
-      );
+          updatedRequest
+              ?.httpRequestModel?.authModel?.jwt?.isSecretBase64Encoded,
+          false);
     });
 
     test('should update request with digest authentication', () {
@@ -247,27 +234,22 @@ void main() async {
         qop: 'auth',
         opaque: 'test-opaque',
       );
-      const authModel = AuthModel(type: APIAuthType.digest, digest: digestAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.digest,
+        digest: digestAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.digest,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.digest?.username,
-        'digestuser',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.digest?.realm,
-        'test-realm',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.digest?.algorithm,
-        'MD5',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.type,
+          APIAuthType.digest);
+      expect(updatedRequest?.httpRequestModel?.authModel?.digest?.username,
+          'digestuser');
+      expect(updatedRequest?.httpRequestModel?.authModel?.digest?.realm,
+          'test-realm');
+      expect(updatedRequest?.httpRequestModel?.authModel?.digest?.algorithm,
+          'MD5');
     });
 
     test('should remove authentication when set to none', () {
@@ -278,7 +260,10 @@ void main() async {
         username: 'testuser',
         password: 'testpass',
       );
-      const authModel = AuthModel(type: APIAuthType.basic, basic: basicAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: basicAuth,
+      );
       notifier.update(id: id, authModel: authModel);
 
       // Then remove auth
@@ -287,9 +272,7 @@ void main() async {
 
       final updatedRequest = notifier.getRequestModel(id);
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.none,
-      );
+          updatedRequest?.httpRequestModel?.authModel?.type, APIAuthType.none);
       expect(updatedRequest?.httpRequestModel?.authModel?.basic, isNull);
     });
 
@@ -299,7 +282,10 @@ void main() async {
         username: 'testuser',
         password: 'testpass',
       );
-      const authModel = AuthModel(type: APIAuthType.basic, basic: basicAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: basicAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
       notifier.duplicate(id: id);
@@ -308,38 +294,31 @@ void main() async {
       final duplicatedId = sequence.firstWhere((element) => element != id);
       final duplicatedRequest = notifier.getRequestModel(duplicatedId);
 
-      expect(
-        duplicatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.basic,
-      );
-      expect(
-        duplicatedRequest?.httpRequestModel?.authModel?.basic?.username,
-        'testuser',
-      );
-      expect(
-        duplicatedRequest?.httpRequestModel?.authModel?.basic?.password,
-        'testpass',
-      );
+      expect(duplicatedRequest?.httpRequestModel?.authModel?.type,
+          APIAuthType.basic);
+      expect(duplicatedRequest?.httpRequestModel?.authModel?.basic?.username,
+          'testuser');
+      expect(duplicatedRequest?.httpRequestModel?.authModel?.basic?.password,
+          'testpass');
     });
 
     test('should not clear auth when clearing response', () {
       final id = notifier.state!.entries.first.key;
       const bearerAuth = AuthBearerModel(token: 'bearer-token-123');
-      const authModel = AuthModel(type: APIAuthType.bearer, bearer: bearerAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.bearer,
+        bearer: bearerAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
       notifier.clearResponse(id: id);
 
       final updatedRequest = notifier.getRequestModel(id);
       // Auth should be preserved when clearing response
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.bearer,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.bearer?.token,
-        'bearer-token-123',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.type,
+          APIAuthType.bearer);
+      expect(updatedRequest?.httpRequestModel?.authModel?.bearer?.token,
+          'bearer-token-123');
     });
 
     test('should handle auth with special characters', () {
@@ -348,19 +327,18 @@ void main() async {
         username: 'user@domain.com',
         password: r'P@ssw0rd!@#$%^&*()',
       );
-      const authModel = AuthModel(type: APIAuthType.basic, basic: basicAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: basicAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.username,
-        'user@domain.com',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.password,
-        r'P@ssw0rd!@#$%^&*()',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.username,
+          'user@domain.com');
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.password,
+          r'P@ssw0rd!@#$%^&*()');
     });
 
     test('should handle multiple auth type changes', () {
@@ -398,36 +376,32 @@ void main() async {
       notifier.update(id: id, authModel: apiKeyAuthModel);
 
       final updatedRequest = notifier.getRequestModel(id);
+      expect(updatedRequest?.httpRequestModel?.authModel?.type,
+          APIAuthType.apiKey);
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.key,
+          'api-key-123');
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
+          'query');
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.apiKey,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.key,
-        'api-key-123',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
-        'query',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.name,
-        'apikey',
-      );
+          updatedRequest?.httpRequestModel?.authModel?.apikey?.name, 'apikey');
     });
 
     test('should handle empty auth values', () {
       final id = notifier.state!.entries.first.key;
-      const basicAuth = AuthBasicAuthModel(username: '', password: '');
-      const authModel = AuthModel(type: APIAuthType.basic, basic: basicAuth);
+      const basicAuth = AuthBasicAuthModel(
+        username: '',
+        password: '',
+      );
+      const authModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: basicAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.basic,
-      );
+          updatedRequest?.httpRequestModel?.authModel?.type, APIAuthType.basic);
       expect(updatedRequest?.httpRequestModel?.authModel?.basic?.username, '');
       expect(updatedRequest?.httpRequestModel?.authModel?.basic?.password, '');
     });
@@ -446,7 +420,10 @@ void main() async {
         queryParamKey: 'token',
         header: 'Authorization',
       );
-      const authModel = AuthModel(type: APIAuthType.jwt, jwt: jwtAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.jwt,
+        jwt: jwtAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
       await notifier.saveData();
@@ -457,9 +434,8 @@ void main() async {
         newContainer = ProviderContainer();
 
         // Wait for the container to initialize by accessing the provider
-        final newNotifier = newContainer.read(
-          collectionStateNotifierProvider.notifier,
-        );
+        final newNotifier =
+            newContainer.read(collectionStateNotifierProvider.notifier);
 
         // Give some time for the microtask in the constructor to complete
         await Future.delayed(const Duration(milliseconds: 10));
@@ -467,17 +443,11 @@ void main() async {
         final loadedRequest = newNotifier.getRequestModel(id);
 
         expect(
-          loadedRequest?.httpRequestModel?.authModel?.type,
-          APIAuthType.jwt,
-        );
-        expect(
-          loadedRequest?.httpRequestModel?.authModel?.jwt?.secret,
-          'jwt-secret',
-        );
-        expect(
-          loadedRequest?.httpRequestModel?.authModel?.jwt?.algorithm,
-          'HS256',
-        );
+            loadedRequest?.httpRequestModel?.authModel?.type, APIAuthType.jwt);
+        expect(loadedRequest?.httpRequestModel?.authModel?.jwt?.secret,
+            'jwt-secret');
+        expect(loadedRequest?.httpRequestModel?.authModel?.jwt?.algorithm,
+            'HS256');
       } finally {
         newContainer.dispose();
       }
@@ -488,7 +458,10 @@ void main() async {
         username: 'testuser',
         password: 'testpass',
       );
-      const authModel = AuthModel(type: APIAuthType.basic, basic: basicAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: basicAuth,
+      );
 
       final httpRequestModel = HttpRequestModel(
         method: HTTPVerb.get,
@@ -502,17 +475,11 @@ void main() async {
       final addedRequest = notifier.getRequestModel(sequence.first);
 
       expect(
-        addedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.basic,
-      );
-      expect(
-        addedRequest?.httpRequestModel?.authModel?.basic?.username,
-        'testuser',
-      );
-      expect(
-        addedRequest?.httpRequestModel?.authModel?.basic?.password,
-        'testpass',
-      );
+          addedRequest?.httpRequestModel?.authModel?.type, APIAuthType.basic);
+      expect(addedRequest?.httpRequestModel?.authModel?.basic?.username,
+          'testuser');
+      expect(addedRequest?.httpRequestModel?.authModel?.basic?.password,
+          'testpass');
     });
 
     test('should handle complex JWT configuration', () {
@@ -542,35 +509,28 @@ void main() async {
         queryParamKey: 'jwt_token',
         header: 'X-JWT-Token',
       );
-      const authModel = AuthModel(type: APIAuthType.jwt, jwt: jwtAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.jwt,
+        jwt: jwtAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.type,
-        APIAuthType.jwt,
-      );
+          updatedRequest?.httpRequestModel?.authModel?.type, APIAuthType.jwt);
+      expect(updatedRequest?.httpRequestModel?.authModel?.jwt?.payload,
+          complexPayload);
+      expect(updatedRequest?.httpRequestModel?.authModel?.jwt?.privateKey,
+          'private-key-content');
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.payload,
-        complexPayload,
-      );
+          updatedRequest?.httpRequestModel?.authModel?.jwt?.algorithm, 'RS256');
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.privateKey,
-        'private-key-content',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.algorithm,
-        'RS256',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.isSecretBase64Encoded,
-        true,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.jwt?.addTokenTo,
-        'query',
-      );
+          updatedRequest
+              ?.httpRequestModel?.authModel?.jwt?.isSecretBase64Encoded,
+          true);
+      expect(updatedRequest?.httpRequestModel?.authModel?.jwt?.addTokenTo,
+          'query');
     });
 
     test('should handle API key in different locations', () {
@@ -589,14 +549,10 @@ void main() async {
       notifier.update(id: id, authModel: headerAuthModel);
 
       var updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
-        'header',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.name,
-        'X-API-Key',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
+          'header');
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.name,
+          'X-API-Key');
 
       // Test query location
       const queryApiKey = AuthApiKeyModel(
@@ -611,14 +567,10 @@ void main() async {
       notifier.update(id: id, authModel: queryAuthModel);
 
       updatedRequest = notifier.getRequestModel(id);
+      expect(updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
+          'query');
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.location,
-        'query',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.apikey?.name,
-        'apikey',
-      );
+          updatedRequest?.httpRequestModel?.authModel?.apikey?.name, 'apikey');
     });
 
     test('should handle digest auth with different algorithms', () {
@@ -641,10 +593,8 @@ void main() async {
       notifier.update(id: id, authModel: md5AuthModel);
 
       var updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.digest?.algorithm,
-        'MD5',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.digest?.algorithm,
+          'MD5');
 
       // Test SHA-256 algorithm
       const sha256DigestAuth = AuthDigestModel(
@@ -663,14 +613,10 @@ void main() async {
       notifier.update(id: id, authModel: sha256AuthModel);
 
       updatedRequest = notifier.getRequestModel(id);
+      expect(updatedRequest?.httpRequestModel?.authModel?.digest?.algorithm,
+          'SHA-256');
       expect(
-        updatedRequest?.httpRequestModel?.authModel?.digest?.algorithm,
-        'SHA-256',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.digest?.qop,
-        'auth-int',
-      );
+          updatedRequest?.httpRequestModel?.authModel?.digest?.qop, 'auth-int');
     });
 
     test('should handle auth model copyWith functionality', () {
@@ -691,19 +637,17 @@ void main() async {
         username: 'updated',
         password: 'updated',
       );
-      final updatedAuthModel = originalAuthModel.copyWith(basic: updatedAuth);
+      final updatedAuthModel = originalAuthModel.copyWith(
+        basic: updatedAuth,
+      );
 
       notifier.update(id: id, authModel: updatedAuthModel);
 
       final updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.username,
-        'updated',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.password,
-        'updated',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.username,
+          'updated');
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.password,
+          'updated');
     });
 
     test('should handle auth with very long tokens', () {
@@ -711,19 +655,18 @@ void main() async {
       final longToken = 'a' * 5000; // Very long token
 
       final bearerAuth = AuthBearerModel(token: longToken);
-      final authModel = AuthModel(type: APIAuthType.bearer, bearer: bearerAuth);
+      final authModel = AuthModel(
+        type: APIAuthType.bearer,
+        bearer: bearerAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.bearer?.token,
-        longToken,
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.bearer?.token.length,
-        5000,
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.bearer?.token,
+          longToken);
+      expect(updatedRequest?.httpRequestModel?.authModel?.bearer?.token.length,
+          5000);
     });
 
     test('should handle auth with Unicode characters', () {
@@ -732,19 +675,18 @@ void main() async {
         username: 'user_测试_тест_テスト',
         password: 'password_🔑_🚀_💻',
       );
-      const authModel = AuthModel(type: APIAuthType.basic, basic: basicAuth);
+      const authModel = AuthModel(
+        type: APIAuthType.basic,
+        basic: basicAuth,
+      );
 
       notifier.update(id: id, authModel: authModel);
 
       final updatedRequest = notifier.getRequestModel(id);
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.username,
-        'user_测试_тест_テスト',
-      );
-      expect(
-        updatedRequest?.httpRequestModel?.authModel?.basic?.password,
-        'password_🔑_🚀_💻',
-      );
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.username,
+          'user_测试_тест_テスト');
+      expect(updatedRequest?.httpRequestModel?.authModel?.basic?.password,
+          'password_🔑_🚀_💻');
     });
 
     tearDown(() {
@@ -824,7 +766,11 @@ void main() async {
       );
 
       // Then clear scripts
-      notifier.update(id: id, preRequestScript: '', postRequestScript: '');
+      notifier.update(
+        id: id,
+        preRequestScript: '',
+        postRequestScript: '',
+      );
 
       final updatedRequest = notifier.getRequestModel(id);
       expect(updatedRequest?.preRequestScript, equals(''));
@@ -902,7 +848,11 @@ void main() async {
       final id = notifier.state!.entries.first.key;
 
       // Test with empty strings
-      notifier.update(id: id, preRequestScript: '', postRequestScript: '');
+      notifier.update(
+        id: id,
+        preRequestScript: '',
+        postRequestScript: '',
+      );
 
       var updatedRequest = notifier.getRequestModel(id);
       expect(updatedRequest?.preRequestScript, equals(''));
@@ -917,13 +867,9 @@ void main() async {
 
       updatedRequest = notifier.getRequestModel(id);
       expect(
-        updatedRequest?.preRequestScript,
-        equals('ad.console.log("test");'),
-      );
+          updatedRequest?.preRequestScript, equals('ad.console.log("test");'));
       expect(
-        updatedRequest?.postRequestScript,
-        equals('ad.console.log("test");'),
-      );
+          updatedRequest?.postRequestScript, equals('ad.console.log("test");'));
     });
 
     test('should save and load scripts correctly', () async {
@@ -950,9 +896,8 @@ void main() async {
       late ProviderContainer newContainer;
       try {
         newContainer = ProviderContainer();
-        final newNotifier = newContainer.read(
-          collectionStateNotifierProvider.notifier,
-        );
+        final newNotifier =
+            newContainer.read(collectionStateNotifierProvider.notifier);
 
         // Give some time for the microtask in the constructor to complete
         await Future.delayed(const Duration(milliseconds: 10));
@@ -1105,70 +1050,61 @@ void main() async {
     });
 
     test(
-      'should handle script updates without affecting other request properties',
-      () {
-        final id = notifier.state!.entries.first.key;
+        'should handle script updates without affecting other request properties',
+        () {
+      final id = notifier.state!.entries.first.key;
 
-        // First set up a complete request
-        notifier.update(
-          id: id,
-          method: HTTPVerb.post,
-          url: 'https://api.apidash.dev/test',
-          headers: const [
-            NameValueModel(name: 'Content-Type', value: 'application/json'),
-            NameValueModel(name: 'Accept', value: 'application/json'),
-          ],
-          body: '{"test": "data"}',
-          name: 'Test Request',
-          description: 'A test request with scripts',
-        );
+      // First set up a complete request
+      notifier.update(
+        id: id,
+        method: HTTPVerb.post,
+        url: 'https://api.apidash.dev/test',
+        headers: const [
+          NameValueModel(name: 'Content-Type', value: 'application/json'),
+          NameValueModel(name: 'Accept', value: 'application/json'),
+        ],
+        body: '{"test": "data"}',
+        name: 'Test Request',
+        description: 'A test request with scripts',
+      );
 
-        final beforeRequest = notifier.getRequestModel(id);
+      final beforeRequest = notifier.getRequestModel(id);
 
-        // Now update only scripts
-        const newPreScript = 'ad.console.log("Updated pre-script");';
-        const newPostScript = 'ad.console.log("Updated post-script");';
+      // Now update only scripts
+      const newPreScript = 'ad.console.log("Updated pre-script");';
+      const newPostScript = 'ad.console.log("Updated post-script");';
 
-        notifier.update(
-          id: id,
-          preRequestScript: newPreScript,
-          postRequestScript: newPostScript,
-        );
+      notifier.update(
+        id: id,
+        preRequestScript: newPreScript,
+        postRequestScript: newPostScript,
+      );
 
-        final afterRequest = notifier.getRequestModel(id);
+      final afterRequest = notifier.getRequestModel(id);
 
-        // Verify scripts were updated
-        expect(afterRequest?.preRequestScript, equals(newPreScript));
-        expect(afterRequest?.postRequestScript, equals(newPostScript));
+      // Verify scripts were updated
+      expect(afterRequest?.preRequestScript, equals(newPreScript));
+      expect(afterRequest?.postRequestScript, equals(newPostScript));
 
-        // Verify other properties were preserved
-        expect(
-          afterRequest?.httpRequestModel?.method,
-          equals(beforeRequest?.httpRequestModel?.method),
-        );
-        expect(
-          afterRequest?.httpRequestModel?.url,
-          equals(beforeRequest?.httpRequestModel?.url),
-        );
-        expect(
-          afterRequest?.httpRequestModel?.headers,
-          equals(beforeRequest?.httpRequestModel?.headers),
-        );
-        expect(
-          afterRequest?.httpRequestModel?.body,
-          equals(beforeRequest?.httpRequestModel?.body),
-        );
-        expect(afterRequest?.name, equals(beforeRequest?.name));
-        expect(afterRequest?.description, equals(beforeRequest?.description));
-      },
-    );
+      // Verify other properties were preserved
+      expect(afterRequest?.httpRequestModel?.method,
+          equals(beforeRequest?.httpRequestModel?.method));
+      expect(afterRequest?.httpRequestModel?.url,
+          equals(beforeRequest?.httpRequestModel?.url));
+      expect(afterRequest?.httpRequestModel?.headers,
+          equals(beforeRequest?.httpRequestModel?.headers));
+      expect(afterRequest?.httpRequestModel?.body,
+          equals(beforeRequest?.httpRequestModel?.body));
+      expect(afterRequest?.name, equals(beforeRequest?.name));
+      expect(afterRequest?.description, equals(beforeRequest?.description));
+    });
 
     test(
-      'should not modify original state during script execution - only execution copy',
-      () {
-        final id = notifier.state!.entries.first.key;
+        'should not modify original state during script execution - only execution copy',
+        () {
+      final id = notifier.state!.entries.first.key;
 
-        const preRequestScript = r'''
+      const preRequestScript = r'''
         // Script that modifies request properties
         ad.request.headers.set('X-Script-Modified', 'true');
         ad.request.headers.set('Authorization', 'Bearer script-token');
@@ -1178,154 +1114,195 @@ void main() async {
         ad.console.log('Pre-request script executed and modified request');
       ''';
 
-        // Set up initial request properties
-        notifier.update(
-          id: id,
-          method: HTTPVerb.get,
-          url: 'https://api.apidash.dev/api',
-          headers: const [
-            NameValueModel(name: 'Content-Type', value: 'application/json'),
-            NameValueModel(name: 'Accept', value: 'application/json'),
+      // Set up initial request properties
+      notifier.update(
+        id: id,
+        method: HTTPVerb.get,
+        url: 'https://api.apidash.dev/api',
+        headers: const [
+          NameValueModel(name: 'Content-Type', value: 'application/json'),
+          NameValueModel(name: 'Accept', value: 'application/json'),
+        ],
+        params: const [
+          NameValueModel(name: 'originalParam', value: 'originalValue'),
+        ],
+        preRequestScript: preRequestScript,
+      );
+
+      // Capture the original state before script execution simulation
+      final originalRequest = notifier.getRequestModel(id);
+      final originalHttpRequestModel = originalRequest!.httpRequestModel!;
+
+      // Test the script execution isolation by simulating the copyWith pattern used in sendRequest
+      final executionRequestModel = originalRequest.copyWith();
+
+      // Verify that the execution copy is separate from original
+      expect(executionRequestModel.id, equals(originalRequest.id));
+      expect(executionRequestModel.httpRequestModel?.url,
+          equals(originalRequest.httpRequestModel?.url));
+      expect(executionRequestModel.httpRequestModel?.headers,
+          equals(originalRequest.httpRequestModel?.headers));
+      expect(executionRequestModel.httpRequestModel?.params,
+          equals(originalRequest.httpRequestModel?.params));
+
+      // Simulate script modifications on the execution copy
+      final modifiedExecutionModel = executionRequestModel.copyWith(
+        httpRequestModel: executionRequestModel.httpRequestModel?.copyWith(
+          url: 'https://api.apidash.dev/',
+          headers: [
+            ...originalHttpRequestModel.headers ?? [],
+            const NameValueModel(name: 'X-Script-Modified', value: 'true'),
+            const NameValueModel(
+                name: 'Authorization', value: 'Bearer script-token'),
           ],
-          params: const [
-            NameValueModel(name: 'originalParam', value: 'originalValue'),
+          params: [
+            ...originalHttpRequestModel.params ?? [],
+            const NameValueModel(name: 'scriptParam', value: 'scriptValue'),
           ],
-          preRequestScript: preRequestScript,
-        );
+        ),
+      );
 
-        // Capture the original state before script execution simulation
-        final originalRequest = notifier.getRequestModel(id);
-        final originalHttpRequestModel = originalRequest!.httpRequestModel!;
+      // Verify the execution copy has been modified
+      expect(modifiedExecutionModel.httpRequestModel?.url,
+          equals('https://api.apidash.dev/'));
+      expect(
+          modifiedExecutionModel.httpRequestModel?.headers?.length, equals(4));
 
-        // Test the script execution isolation by simulating the copyWith pattern used in sendRequest
-        final executionRequestModel = originalRequest.copyWith();
+      final hasScriptModifiedHeader = modifiedExecutionModel
+              .httpRequestModel?.headers
+              ?.any((header) => header.name == 'X-Script-Modified') ??
+          false;
+      expect(hasScriptModifiedHeader, isTrue);
 
-        // Verify that the execution copy is separate from original
-        expect(executionRequestModel.id, equals(originalRequest.id));
-        expect(
-          executionRequestModel.httpRequestModel?.url,
-          equals(originalRequest.httpRequestModel?.url),
-        );
-        expect(
-          executionRequestModel.httpRequestModel?.headers,
-          equals(originalRequest.httpRequestModel?.headers),
-        );
-        expect(
-          executionRequestModel.httpRequestModel?.params,
-          equals(originalRequest.httpRequestModel?.params),
-        );
+      final hasAuthHeader = modifiedExecutionModel.httpRequestModel?.headers
+              ?.any((header) => header.name == 'Authorization') ??
+          false;
+      expect(hasAuthHeader, isTrue);
 
-        // Simulate script modifications on the execution copy
-        final modifiedExecutionModel = executionRequestModel.copyWith(
-          httpRequestModel: executionRequestModel.httpRequestModel?.copyWith(
-            url: 'https://api.apidash.dev/',
-            headers: [
-              ...originalHttpRequestModel.headers ?? [],
-              const NameValueModel(name: 'X-Script-Modified', value: 'true'),
-              const NameValueModel(
-                name: 'Authorization',
-                value: 'Bearer script-token',
-              ),
-            ],
-            params: [
-              ...originalHttpRequestModel.params ?? [],
-              const NameValueModel(name: 'scriptParam', value: 'scriptValue'),
-            ],
-          ),
-        );
+      final hasScriptParam = modifiedExecutionModel.httpRequestModel?.params
+              ?.any((param) => param.name == 'scriptParam') ??
+          false;
+      expect(hasScriptParam, isTrue);
 
-        // Verify the execution copy has been modified
-        expect(
-          modifiedExecutionModel.httpRequestModel?.url,
-          equals('https://api.apidash.dev/'),
-        );
-        expect(
-          modifiedExecutionModel.httpRequestModel?.headers?.length,
-          equals(4),
-        );
+      // Verify that the original request in the state remains completely unchanged
+      final currentRequest = notifier.getRequestModel(id);
 
-        final hasScriptModifiedHeader =
-            modifiedExecutionModel.httpRequestModel?.headers?.any(
-              (header) => header.name == 'X-Script-Modified',
-            ) ??
-            false;
-        expect(hasScriptModifiedHeader, isTrue);
+      expect(currentRequest?.httpRequestModel?.url,
+          equals('https://api.apidash.dev/api'));
+      expect(currentRequest?.httpRequestModel?.headers?.length, equals(2));
+      expect(currentRequest?.httpRequestModel?.headers?[0].name,
+          equals('Content-Type'));
+      expect(currentRequest?.httpRequestModel?.headers?[0].value,
+          equals('application/json'));
+      expect(
+          currentRequest?.httpRequestModel?.headers?[1].name, equals('Accept'));
+      expect(currentRequest?.httpRequestModel?.headers?[1].value,
+          equals('application/json'));
+      expect(currentRequest?.httpRequestModel?.params?.length, equals(1));
+      expect(currentRequest?.httpRequestModel?.params?[0].name,
+          equals('originalParam'));
+      expect(currentRequest?.httpRequestModel?.params?[0].value,
+          equals('originalValue'));
 
-        final hasAuthHeader =
-            modifiedExecutionModel.httpRequestModel?.headers?.any(
-              (header) => header.name == 'Authorization',
-            ) ??
-            false;
-        expect(hasAuthHeader, isTrue);
+      // Verify no script-modified headers are present in the original state
+      final hasScriptModifiedHeaderInOriginal = currentRequest
+              ?.httpRequestModel?.headers
+              ?.any((header) => header.name == 'X-Script-Modified') ??
+          false;
+      expect(hasScriptModifiedHeaderInOriginal, isFalse);
 
-        final hasScriptParam =
-            modifiedExecutionModel.httpRequestModel?.params?.any(
-              (param) => param.name == 'scriptParam',
-            ) ??
-            false;
-        expect(hasScriptParam, isTrue);
+      final hasAuthHeaderInOriginal = currentRequest?.httpRequestModel?.headers
+              ?.any((header) => header.name == 'Authorization') ??
+          false;
+      expect(hasAuthHeaderInOriginal, isFalse);
 
-        // Verify that the original request in the state remains completely unchanged
-        final currentRequest = notifier.getRequestModel(id);
+      // Verify no script-modified params are present in the original state
+      final hasScriptParamInOriginal = currentRequest?.httpRequestModel?.params
+              ?.any((param) => param.name == 'scriptParam') ??
+          false;
+      expect(hasScriptParamInOriginal, isFalse);
 
-        expect(
-          currentRequest?.httpRequestModel?.url,
-          equals('https://api.apidash.dev/api'),
-        );
-        expect(currentRequest?.httpRequestModel?.headers?.length, equals(2));
-        expect(
-          currentRequest?.httpRequestModel?.headers?[0].name,
-          equals('Content-Type'),
-        );
-        expect(
-          currentRequest?.httpRequestModel?.headers?[0].value,
-          equals('application/json'),
-        );
-        expect(
-          currentRequest?.httpRequestModel?.headers?[1].name,
-          equals('Accept'),
-        );
-        expect(
-          currentRequest?.httpRequestModel?.headers?[1].value,
-          equals('application/json'),
-        );
-        expect(currentRequest?.httpRequestModel?.params?.length, equals(1));
-        expect(
-          currentRequest?.httpRequestModel?.params?[0].name,
-          equals('originalParam'),
-        );
-        expect(
-          currentRequest?.httpRequestModel?.params?[0].value,
-          equals('originalValue'),
-        );
+      // Verify the script is preserved in the original
+      expect(currentRequest?.preRequestScript, equals(preRequestScript));
+    });
 
-        // Verify no script-modified headers are present in the original state
-        final hasScriptModifiedHeaderInOriginal =
-            currentRequest?.httpRequestModel?.headers?.any(
-              (header) => header.name == 'X-Script-Modified',
-            ) ??
-            false;
-        expect(hasScriptModifiedHeaderInOriginal, isFalse);
+    tearDown(() {
+      container.dispose();
+    });
+  });
 
-        final hasAuthHeaderInOriginal =
-            currentRequest?.httpRequestModel?.headers?.any(
-              (header) => header.name == 'Authorization',
-            ) ??
-            false;
-        expect(hasAuthHeaderInOriginal, isFalse);
+  group('CollectionStateNotifier Delete & Undo Tests', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
 
-        // Verify no script-modified params are present in the original state
-        final hasScriptParamInOriginal =
-            currentRequest?.httpRequestModel?.params?.any(
-              (param) => param.name == 'scriptParam',
-            ) ??
-            false;
-        expect(hasScriptParamInOriginal, isFalse);
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+    });
 
-        // Verify the script is preserved in the original
-        expect(currentRequest?.preRequestScript, equals(preRequestScript));
-      },
-    );
+    test('should remove request from state on delete', () {
+      final id = notifier.state!.entries.first.key;
+      notifier.remove(id: id);
+      expect(notifier.state!.containsKey(id), isFalse);
+    });
+
+    test('should restore deleted request after undoDelete', () {
+      notifier.add();
+      final id = container.read(requestSequenceProvider).first;
+      notifier.remove(id: id);
+      notifier.undoDelete();
+      expect(notifier.state!.containsKey(id), isTrue);
+    });
+
+    test('should restore deleted request at original index after undo', () {
+      notifier.add();
+      notifier.add();
+      notifier.add();
+      final sequenceBefore = [...container.read(requestSequenceProvider)];
+      final idToDelete = sequenceBefore[1];
+      notifier.remove(id: idToDelete);
+      notifier.undoDelete();
+      final sequenceAfter = container.read(requestSequenceProvider);
+      expect(sequenceAfter[1], equals(idToDelete));
+    });
+
+    test('should select restored request after undo', () {
+      notifier.add();
+      final id = container.read(requestSequenceProvider).first;
+      notifier.remove(id: id);
+      notifier.undoDelete();
+      final selectedId = container.read(selectedIdStateProvider);
+      expect(selectedId, equals(id));
+    });
+
+    test('should do nothing if undoDelete called without prior delete', () {
+      final keysBefore = notifier.state!.keys.toList();
+      notifier.undoDelete();
+      expect(notifier.state!.keys.toList(), equals(keysBefore));
+    });
+
+    test('should only undo last delete not multiple', () {
+      notifier.add();
+      notifier.add();
+      final sequence = container.read(requestSequenceProvider);
+      final firstId = sequence[0];
+      final secondId = sequence[1];
+      notifier.remove(id: firstId);
+      notifier.remove(id: secondId);
+      notifier.undoDelete();
+      expect(notifier.state!.containsKey(secondId), isTrue);
+      expect(notifier.state!.containsKey(firstId), isFalse);
+    });
+
+    test('should clear undo state after undoDelete is called', () {
+      notifier.add();
+      final id = container.read(requestSequenceProvider).first;
+      notifier.remove(id: id);
+      notifier.undoDelete();
+      notifier.undoDelete(); 
+      final count = notifier.state!.keys.where((k) => k == id).length;
+      expect(count, equals(1));
+    });
 
     tearDown(() {
       container.dispose();
