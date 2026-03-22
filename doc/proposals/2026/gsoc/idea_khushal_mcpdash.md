@@ -386,8 +386,3 @@ This design also aligns with the client–server architecture described in the M
 - https://medium.com/%40yash.p_60148/top-tools-for-real-time-mcp-server-monitoring-and-analytics-dbae42da5aab
 - https://github.com/IBM/mcp-context-forge/issues/301
 - https://tally.so/r/gDAN6J - Developer Feedback Survey. Collected responses from developers working with MCP tools.
-
-## 10. POC
-
-[POC_MCP_Testing_Tool_Khushal.mp4](images/POC_MCP_Testing_Tool_Khushal.mp4)
-
