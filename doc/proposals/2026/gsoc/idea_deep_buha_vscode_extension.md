@@ -9,6 +9,10 @@
 **Project Title:** VS Code Extension for API Dash  
 **Relevant issues:** No existing GitHub issue, this is a new idea proposal.
 
+- Built a working PoC: [apidash-vscode](https://github.com/DeepBuha06/APIDASH-Extension)
+- Demo video: [Watch here](https://youtu.be/zzto-fWGIdE)
+
+
 ---
 
 ## Idea Description

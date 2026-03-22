@@ -12,6 +12,7 @@ import 'previewer_json.dart';
 import 'previewer_video.dart';
 import 'uint8_audio_player.dart';
 import '../consts.dart';
+import '../utils/file_utils.dart';
 
 class Previewer extends StatefulWidget {
   const Previewer({
@@ -39,9 +40,7 @@ class _PreviewerState extends State<Previewer> {
     var errorTemplate = jj.Template(kMimeTypeRaiseIssue);
     if (widget.type == kTypeApplication && widget.subtype == kSubTypeJson) {
       try {
-        var preview = JsonPreviewer(
-          code: jsonDecode(widget.body),
-        );
+        var preview = JsonPreviewer(code: jsonDecode(widget.body));
         return preview;
       } catch (e) {
         // pass
@@ -51,9 +50,7 @@ class _PreviewerState extends State<Previewer> {
       final String rawSvg = widget.body;
       try {
         parseWithoutOptimizers(rawSvg);
-        var svgImg = SvgPicture.string(
-          rawSvg,
-        );
+        var svgImg = SvgPicture.string(rawSvg);
         return svgImg;
       } catch (e) {
         return ErrorMessage(
@@ -124,7 +121,12 @@ class _PreviewerState extends State<Previewer> {
     }
     if (widget.type == kTypeVideo) {
       try {
-        var preview = VideoPreviewer(videoBytes: widget.bytes);
+        var preview = VideoPreviewer(
+          videoBytes: widget.bytes,
+          videoFileExtension: getFileExtension(
+            '${widget.type}/${widget.subtype}',
+          ),
+        );
         return preview;
       } catch (e) {
         return ErrorMessage(
@@ -141,8 +143,6 @@ class _PreviewerState extends State<Previewer> {
       "showContentType": true,
       "type": "${widget.type}/${widget.subtype}",
     });
-    return ErrorMessage(
-      message: errorText,
-    );
+    return ErrorMessage(message: errorText);
   }
 }

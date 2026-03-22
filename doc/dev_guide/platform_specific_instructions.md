@@ -2,6 +2,8 @@
 
 ## macOS
 
+> To run Flutter apps on macOS refer to the [official macOS setup guide](https://docs.flutter.dev/platform-integration/macos/setup).
+
 Install CocoaPods (First-Time Setup)
 
 If this is your first time running API Dash on macOS, install CocoaPods to manage native plugin dependencies:
