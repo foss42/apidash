@@ -14,7 +14,7 @@ String postmanCollectionToJsonStr(PostmanCollection data) =>
     JsonEncoder.withIndent('  ').convert(data);
 
 @freezed
-class PostmanCollection with _$PostmanCollection {
+abstract class PostmanCollection with _$PostmanCollection {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -23,6 +23,8 @@ class PostmanCollection with _$PostmanCollection {
   const factory PostmanCollection({
     Info? info,
     List<Item>? item,
+    Auth? auth,
+    List<Variable>? variable,
   }) = _PostmanCollection;
 
   factory PostmanCollection.fromJson(Map<String, dynamic> json) =>
@@ -30,7 +32,7 @@ class PostmanCollection with _$PostmanCollection {
 }
 
 @freezed
-class Info with _$Info {
+abstract class Info with _$Info {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -47,7 +49,7 @@ class Info with _$Info {
 }
 
 @freezed
-class Item with _$Item {
+abstract class Item with _$Item {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -64,7 +66,7 @@ class Item with _$Item {
 }
 
 @freezed
-class Request with _$Request {
+abstract class Request with _$Request {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -75,6 +77,7 @@ class Request with _$Request {
     List<Header>? header,
     Body? body,
     Url? url,
+    Auth? auth,
   }) = _Request;
 
   factory Request.fromJson(Map<String, dynamic> json) =>
@@ -82,7 +85,7 @@ class Request with _$Request {
 }
 
 @freezed
-class Header with _$Header {
+abstract class Header with _$Header {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -99,7 +102,7 @@ class Header with _$Header {
 }
 
 @freezed
-class Url with _$Url {
+abstract class Url with _$Url {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -117,7 +120,7 @@ class Url with _$Url {
 }
 
 @freezed
-class Query with _$Query {
+abstract class Query with _$Query {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -133,7 +136,7 @@ class Query with _$Query {
 }
 
 @freezed
-class Body with _$Body {
+abstract class Body with _$Body {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -144,13 +147,14 @@ class Body with _$Body {
     String? raw,
     Options? options,
     List<Formdatum>? formdata,
+    List<Urlencoded>? urlencoded,
   }) = _Body;
 
   factory Body.fromJson(Map<String, dynamic> json) => _$BodyFromJson(json);
 }
 
 @freezed
-class Options with _$Options {
+abstract class Options with _$Options {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -165,7 +169,7 @@ class Options with _$Options {
 }
 
 @freezed
-class Raw with _$Raw {
+abstract class Raw with _$Raw {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -179,7 +183,7 @@ class Raw with _$Raw {
 }
 
 @freezed
-class Formdatum with _$Formdatum {
+abstract class Formdatum with _$Formdatum {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -190,8 +194,67 @@ class Formdatum with _$Formdatum {
     String? value,
     String? type,
     String? src,
+    bool? disabled,
   }) = _Formdatum;
 
   factory Formdatum.fromJson(Map<String, dynamic> json) =>
       _$FormdatumFromJson(json);
+}
+
+@freezed
+abstract class Auth with _$Auth {
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory Auth({
+    String? type,
+    List<AuthKeyValue>? bearer,
+    List<AuthKeyValue>? basic,
+    List<AuthKeyValue>? apikey,
+    List<AuthKeyValue>? digest,
+    List<AuthKeyValue>? oauth1,
+    List<AuthKeyValue>? oauth2,
+  }) = _Auth;
+
+  factory Auth.fromJson(Map<String, dynamic> json) => _$AuthFromJson(json);
+}
+
+@freezed
+abstract class AuthKeyValue with _$AuthKeyValue {
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory AuthKeyValue({
+    String? key,
+    String? value,
+    String? type,
+    bool? disabled,
+  }) = _AuthKeyValue;
+
+  factory AuthKeyValue.fromJson(Map<String, dynamic> json) =>
+      _$AuthKeyValueFromJson(json);
+}
+
+@freezed
+abstract class Urlencoded with _$Urlencoded {
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory Urlencoded({
+    String? key,
+    String? value,
+    String? type,
+    bool? disabled,
+  }) = _Urlencoded;
+
+  factory Urlencoded.fromJson(Map<String, dynamic> json) =>
+      _$UrlencodedFromJson(json);
+}
+
+@freezed
+abstract class Variable with _$Variable {
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory Variable({
+    String? key,
+    dynamic value,
+    String? type,
+    bool? disabled,
+  }) = _Variable;
+
+  factory Variable.fromJson(Map<String, dynamic> json) =>
+      _$VariableFromJson(json);
 }
