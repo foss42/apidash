@@ -199,45 +199,65 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           ],
         ),
         kVSpacer8,
-        Container(
-          height: 300,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color.fromARGB(27, 0, 0, 0),
+        if (aiModelProvider.providerId == ModelAPIProvider.customOpenai) ...[
+          Text(
+            'Enter the model identifier used by your provider (e.g. llama-3.1-8b, mistral-large-latest)',
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: SingleChildScrollView(
-              clipBehavior: Clip.hardEdge,
-              child: Column(
-                children: [
-                  ...(aiModelProvider.models ?? []).map(
-                    (x) => ListTile(
-                      title: Text(x.name ?? ""),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (newAIRequestModel?.model == x.id)
-                            CircleAvatar(
-                              radius: 5,
-                              backgroundColor: Colors.green,
-                            ),
-                        ],
+          kVSpacer8,
+          BoundedTextField(
+            key: ValueKey('custom-model-id'),
+            onChanged: (x) {
+              setState(() {
+                newAIRequestModel =
+                    newAIRequestModel?.copyWith(model: x);
+              });
+            },
+            value: newAIRequestModel?.model ?? "",
+          ),
+        ] else
+          Container(
+            height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: const Color.fromARGB(27, 0, 0, 0),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: SingleChildScrollView(
+                clipBehavior: Clip.hardEdge,
+                child: Column(
+                  children: [
+                    ...(aiModelProvider.models ?? []).map(
+                      (x) => ListTile(
+                        title: Text(x.name ?? ""),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (newAIRequestModel?.model == x.id)
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: Colors.green,
+                              ),
+                          ],
+                        ),
+                        onTap: () {
+                          setState(() {
+                            newAIRequestModel = newAIRequestModel?.copyWith(
+                              model: x.id,
+                            );
+                          });
+                        },
                       ),
-                      onTap: () {
-                        setState(() {
-                          newAIRequestModel = newAIRequestModel?.copyWith(
-                            model: x.id,
-                          );
-                        });
-                      },
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
         kVSpacer10,
         Align(
           alignment: Alignment.centerRight,
