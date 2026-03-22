@@ -6,14 +6,14 @@
 **Year:** Graduated  
 **Expected graduation date:** 2019  
 
-**Project Title:** Native MCP Apps Sandbox & Testing Suite  
+**Project Title:** MCPApps Tester — A Dedicated Testing & Debugging Environment for MCP Apps  
 **Relevant issues:** https://github.com/foss42/apidash/discussions/1225  
 
 ## Idea description
 
-This proposal introduces a **Native MCP Apps Sandbox** built directly into API Dash. Unlike traditional MCP testing tools that focus solely on backend primitives (Tools, Resources, Prompts), this project specifically targets **testing MCP Apps** — the new sandboxed, interactive UI extensions of MCP.
+This proposal introduces **MCPApps Tester**, a dedicated web-based testing and debugging environment for **MCP Apps**. While other proposals focus on testing standard MCP backend primitives (Tools, Resources, Prompts), this project specifically addresses a major gap in the ecosystem: the lack of tooling to validate the rich, interactive UI extensions of MCP servers.
 
-By building a deeply integrated module within API Dash using **Flutter's native WebView capabilities**, developers will get a zero-setup, cohesive testing environment to interact with both MCP servers and their UI layers without needing a separate web application.
+By building this suite using **React, Node, and TypeScript**, the project aligns with the core MCP developer ecosystem and the specific tech stack preferences mentioned in the official GSoC discussion.
 
 ---
 
@@ -28,71 +28,63 @@ MCP Apps allow MCP servers to deliver **interactive, sandboxed iframe-based UIs*
 
 ---
 
-## Proposed Solution: Native Flutter MCP Apps Sandbox
+## Proposed Solution: MCPApps Tester (React/Node Suite)
 
-A new, dedicated **MCP Sandbox Module** built directly into the API Dash Flutter application. It will act as a simulated AI host capable of loading, rendering, and comprehensively testing MCP Apps without leaving the API Dash window.
+A standalone web application that acts as a **simulated MCP host environment** capable of loading, rendering, and comprehensively testing MCP Apps.
 
 ### Core Architecture
 
 ![Architecture Diagram](images/native_mcp_app_sandbox_architecture.png)
 
 **Architecture Description:**
-The system integrates directly into the existing **API Dash** application natively. It consists of three primary layers:
-1. **API Dash UI Layer:** A Flutter-based "Sandbox Manager" provides the controls for connection and tool selection, while the "Message Inspector UI" streams the live JSON-RPC activity.
-2. **Flutter WebView Bridge:** This layer uses platform native webviews to render the embedded MCP App UI (`text/html;profile=mcp-app`) securely inside API Dash. It injects JavascriptChannels to actively intercept and map all `postMessage` protocol communication between the sandboxed UI and the host.
-3. **Native Dart MCP Client Layer:** A Dart client module that handles the underlying transport protocol (`stdio` or `Http/SSE`) straight through to the "MCP Server Under Test". When an action occurs in the WebView, this native layer intercepts it and transparently acts as the host bridge to the server.
+The system is built as a **React + Express** application that bridges the developer and any MCP server:
+1. **React Frontend:** Provides a "Sandbox Loader" for the MCP App iframe and a real-time "Message Inspector" to visualize JSON-RPC traffic.
+2. **Host Simulation Layer:** Intercepts `postMessage` calls from the sandboxed iframe, simulating the handshake and host capabilities (`open_link`, etc.).
+3. **Node/TypeScript Backend:** Uses the official `@modelcontextprotocol/sdk` to connect to the MCP server (via stdio or SSE), fetches UI resources, and forwards tool calls initiated from the UI.
 
 ---
 
 ## Key Features
 
-### Feature 1 — Native MCP Client & App Discovery
-Built purely in Dart, the client connects to local or remote MCP servers via `stdio` or HTTP/SSE. It auto-discovers capabilities and identifies specific UI resources bound to tools (the `_meta.ui.resourceUri` pattern). 
+### Feature 1 — MCP App Discovery & Loader
+Connect to any MCP server and auto-discover tools with UI bindings (`_meta.ui.resourceUri`). It fetches the HTML resource and renders it in a spec-compliant sandboxed iframe.
 
-### Feature 2 — Secure WebView Sandbox
-Instead of using an HTML iframe in a React app, this uses Flutter's native webview capabilities (`webview_flutter` or desktop equivalents) to securely render the MCP App's HTML resource inline within API Dash. It acts as the "host" surface.
+### Feature 2 — Simulated Host & Handshake
+The suite implements the full MCP Apps host protocol, handling the `ui/initialize` handshake and responding with configurable `hostContext` and capabilities.
 
-### Feature 3 — Dart-JS Interop Message Inspector
-Through Flutter's JavascriptChannels, the application intercepts every `postMessage` sent from the MCP App to the host window. These messages are serialized and streamed to a beautiful, native Flutter timeline UI, showing:
-- Direction (Host → App, App → Host)
-- Method names and parameters
-- Round-trip latency
+### Feature 3 — Bidirectional Message Inspector
+A live, filterable stream of every `postMessage` exchanged between the host and the MCP App iframe. This makes the opaque communication layer completely transparent for debugging.
 
-### Feature 4 — Flutter-Mocked Host Capabilities
-When the loaded MCP App requests something from the host (e.g., `open_link`), the Flutter app catches it. The developer can configure the API Dash Sandbox to:
-- **Auto-Allow:** e.g., natively open the link using `url_launcher`.
-- **Auto-Deny:** Simulate a restricted host, ensuring the MCP app handles the rejection gracefully without crashing.
-- **Mock:** Simulate `add_message_to_chat` by showing a mock chat bubble in the test dashboard.
+### Feature 4 — Host Capability Mocking
+A UI panel to pre-configure how the simulated host responds to capability calls. Developers can test "Auto-Allow" or "Auto-Deny" scenarios to ensure their UI handles host restrictions gracefully.
 
-### Feature 5 — Bridging tools/call from the UI
-If a developer clicks a "Submit" button inside the rendered MCP App, the app requests the host to execute `tools/call`. The Dart client intercepts this, performs the actual RPC call to the underlying MCP Server, and routes the response back into the WebView. This allows end-to-end testing of UI-driven tool execution.
+### Feature 5 — UI-to-Backend Tool Tracing
+When a user interacts with the rendered MCP App (e.g., clicking "Submit"), the suite traces the resulting `tools/call` all the way to the backend MCP server and back, providing end-to-end visibility.
 
-### Feature 6 — Automated Protocol Compliance Runner
-A single-click Dart test runner that asserts:
-- Was `ui/initialize` dispatched under 3 seconds?
-- Is the MIME type exactly `text/html;profile=mcp-app`?
-- Does the App handle capability rejection without generating an unhandled promise rejection?
+### Feature 6 — Automated Protocol Compliance Checker
+A suite of automated checks to verify the MCP App follows the specification (handshake timing, MIME types, CSP safety, and JSON-RPC 2.0 validity).
 
 ---
 
 ## Implementation Plan & Milestones
 
-### Milestone 1 — Dart MCP Client & Core Connectivity
-- Implement JSON-RPC 2.0 communication over `stdio` and HTTP/SSE natively in Dart.
-- Add support for discovering resources and tool schemas.
-- Implement the fetch logic for `ui://` protocols.
+### Milestone 1 — MCP App Loader & Handshake Foundation
+- Setup Node/TS backend with the official MCP SDK.
+- Implement UI resource fetching and sandboxed iframe rendering.
+- Complete the host handshake protocol (`ui/initialize`).
 
-### Milestone 2 — WebView Integration & JavascriptChannel Bridge
-- Integrate a cross-platform WebView into API Dash's UI.
-- Implement the JavaScript interception layer to strictly capture `postMessage` events emitted by the MCP App.
-- Implement the `ui/initialize` → `ui/notifications/initialized` handshake.
+### Milestone 2 — Message Inspector & Mock Layer
+- Build the React Message Inspector to visualize `postMessage` traffic.
+- Implement the Host Capability Mocking panel.
+- Support forwarding UI-initiated `tools/call` to the server.
 
-### Milestone 3 — Inspector Dashboard & Capability Mocking
-- Build the Flutter UI panel for the real-time Message Inspector.
-- Build the settings panel to configure Host Capability behavior (Allow/Deny/Mock).
-- Wire up the UI-to-Backend `tools/call` forwarding logic.
+### Milestone 3 — Compliance Engine & Saved Scenarios
+- Build the automated compliance checker with 8+ protocol checks.
+- Implement a format for saving and replaying test scenarios.
+- Add support for exporting test traces as JSONL.
 
-### Milestone 4 — Compliance Engine & Polish
-- Implement the automated compliance test runner for verifying spec adherence.
-- Ensure cross-platform stability (macOS, Windows, Web/Linux where WebView permits).
-- Finalize documentation and create demo testing projects.
+### Milestone 4 — UI Polish & Documentation
+- Refine the React interface for a professional developer experience.
+- Finalize documentation, compliance scorecards, and demo examples.
+
+
