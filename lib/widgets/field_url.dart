@@ -22,7 +22,7 @@ class URLField extends StatelessWidget {
   key: Key("url-$selectedId"),
   initialValue: initialValue,
   style: kCodeStyle,
-  autofocus: initialValue == null || initialValue.isEmpty, // 🔥 ADD THIS
+  autofocus: initialValue?.isEmpty ?? true, // 🔥 ADD THIS
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
