@@ -60,7 +60,19 @@ void main() {
     test('deserialize throws format exception for short list', () {
       expect(
         () => ConfigSliderValue.deserialize(jsonEncode([0.0, 0.5])),
-        throwsFormatException,
+        throwsA(
+          isA<FormatException>()
+              .having(
+                (e) => e.message,
+                'message contains requirement',
+                contains('requires 3 numeric values'),
+              )
+              .having(
+                (e) => e.message,
+                'message contains actual length',
+                contains('got 2'),
+              ),
+        ),
       );
     });
   });
