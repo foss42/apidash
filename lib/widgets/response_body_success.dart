@@ -21,6 +21,7 @@ class ResponseBodySuccess extends StatefulWidget {
     this.aiRequestModel,
     this.isPartOfHistory = false,
   });
+
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
@@ -42,9 +43,11 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   @override
   Widget build(BuildContext context) {
     var currentSeg = widget.options[segmentIdx];
+
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
         : kDarkCodeTheme;
+
     final textContainerdecoration = BoxDecoration(
       color: Theme.of(context).colorScheme.surfaceContainerLow,
       border: Border.all(
@@ -59,6 +62,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
           widget.options.length,
           constraints.maxWidth,
         );
+
         return Padding(
           padding: kP10,
           child: Column(
@@ -70,7 +74,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
                           style: SegmentedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           selectedIcon: Icon(currentSeg.icon),
                           segments: widget.options
@@ -114,6 +119,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                 ],
               ),
               kVSpacer10,
+
+              // 🔥 MAIN FIX AREA
               switch (currentSeg) {
                 ResponseBodyView.preview || ResponseBodyView.none => Expanded(
                     child: Container(
@@ -125,10 +132,12 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         body: widget.body,
                         type: widget.mediaType.type,
                         subtype: widget.mediaType.subtype,
-                        hasRaw: widget.options.contains(ResponseBodyView.raw),
+                        hasRaw:
+                            widget.options.contains(ResponseBodyView.raw),
                       ),
                     ),
                   ),
+
                 ResponseBodyView.code => Expanded(
                     child: Container(
                       width: double.maxFinite,
@@ -142,6 +151,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       ),
                     ),
                   ),
+
+                // ✅ FIXED (answer)
                 ResponseBodyView.answer => Expanded(
                     child: Container(
                       width: double.maxFinite,
@@ -151,10 +162,13 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         child: SelectableText(
                           widget.formattedBody ?? widget.body,
                           style: kCodeStyle,
+                          maxLines: null, // 🔥 FIX
                         ),
                       ),
                     ),
                   ),
+
+                // ✅ FIXED (raw + AI safe)
                 ResponseBodyView.raw => Expanded(
                     child: Container(
                       width: double.maxFinite,
@@ -166,10 +180,12 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                               ? widget.body
                               : (widget.formattedBody ?? widget.body),
                           style: kCodeStyle,
+                          maxLines: null, // 🔥 FIX
                         ),
                       ),
                     ),
                   ),
+
                 ResponseBodyView.sse => Expanded(
                     child: Container(
                       width: double.maxFinite,
