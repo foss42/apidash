@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>API Dash · MCP Testing Suite v10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --bg0:#03080F;
+  --bg1:#070E1A;
+  --bg2:#0C1525;
+  --bg3:#111E30;
+  --surface:#162138;
+  --surface2:#1D2D47;
+
+  --border:rgba(255,255,255,0.055);
+  --border2:rgba(255,255,255,0.10);
+
+  --cyan:#00D4FF;
+  --cyan2:#0EA5E9;
+  --cyan-dim:rgba(0,212,255,0.10);
+  --cyan-glow:rgba(0,212,255,0.20);
+
+  --violet:#7C6FFF;
+  --violet-dim:rgba(124,111,255,0.12);
+
+  --amber:#FFB547;
+  --amber-dim:rgba(255,181,71,0.12);
+
+  --green:#00E5A0;
+  --green-dim:rgba(0,229,160,0.10);
+
+  --red:#FF5A5A;
+  --red-dim:rgba(255,90,90,0.10);
+
+  --pink:#FF4FBE;
+  --pink-dim:rgba(255,79,190,0.10);
+
+  --text:#D6E8FF;
+  --text2:#6B87AD;
+  --text3:#2E4A6A;
+
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'Outfit',sans-serif;
+
+  --r:8px;
+  --r2:14px;
+  --r3:20px;
+  --shadow:0 4px 20px rgba(0,0,0,0.6);
+  --shadow2:0 8px 40px rgba(0,0,0,0.8);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+
+body{
+  background:var(--bg0);
+  color:var(--text);
+  font-family:var(--sans);
+  overflow:hidden;
+}
+
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 40% at 15% 0%,rgba(0,212,255,0.035) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 100%,rgba(124,111,255,0.03) 0%,transparent 60%);
+}
+
+
+.shell{display:flex;height:100vh;position:relative;z-index:1}
+
+
+.sidebar{
+  width:248px;flex-shrink:0;
+  background:var(--bg1);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{width:0}
+
+.logo-row{
+  padding:18px 16px 14px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:11px;
+  flex-shrink:0;
+}
+.logo-icon{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:grid;place-items:center;
+  font-family:var(--mono);font-weight:600;font-size:14px;color:#000;
+  box-shadow:0 0 14px rgba(0,212,255,0.3);
+}
+.logo-name{font-size:16px;font-weight:700;letter-spacing:-0.02em}
+.logo-chip{
+  margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:600;
+  padding:3px 7px;border-radius:999px;
+  background:var(--cyan-dim);color:var(--cyan);
+  border:1px solid rgba(0,212,255,0.2);letter-spacing:0.04em;
+  white-space:nowrap;
+}
+
+.nav-group{padding:14px 10px 6px}
+.nav-group-label{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  letter-spacing:0.16em;color:var(--text3);text-transform:uppercase;
+  padding:0 8px;margin-bottom:6px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:var(--r);
+  cursor:pointer;transition:all 0.13s;
+  border:1px solid transparent;color:var(--text2);
+  font-size:13.5px;font-weight:500;position:relative;
+}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{
+  background:var(--cyan-dim);
+  border-color:rgba(0,212,255,0.18);color:var(--cyan);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:-1px;top:20%;bottom:20%;
+  width:2px;background:var(--cyan);border-radius:2px;
+}
+.nav-dot{
+  width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0;
+}
+.nav-item.active .nav-dot{background:var(--cyan);box-shadow:0 0 5px var(--cyan)}
+
+/* NEW badge */
+.nav-new{
+  margin-left:auto;font-family:var(--mono);font-size:8px;font-weight:700;
+  padding:2px 6px;border-radius:4px;letter-spacing:0.06em;
+  background:var(--pink-dim);color:var(--pink);border:1px solid rgba(255,79,190,0.2);
+}
+
+.sidebar-sep{height:1px;background:var(--border);margin:10px 14px}
+
+.mini-card{
+  margin:0 10px 6px;padding:10px 12px;
+  border-radius:var(--r);border:1px solid var(--border);
+  background:rgba(255,255,255,0.018);cursor:pointer;
+  transition:all 0.13s;
+}
+.mini-card:hover{background:var(--bg3);border-color:var(--border2)}
+.mini-card .mc-name{font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:6px}
+.mini-card .mc-meta{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:3px}
+.sdot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sdot-ok{background:var(--green)}.sdot-warn{background:var(--amber)}.sdot-bad{background:var(--red)}
+
+/* ─── MAIN AREA ──────────────────────────────────── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
+/* topbar */
+.topbar{
+  height:52px;flex-shrink:0;
+  background:var(--bg1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;padding:0 24px;
+  position:relative;z-index:10;
+}
+.crumb{
+  font-family:var(--mono);font-size:11px;color:var(--text3);
+  display:flex;align-items:center;gap:6px;
+}
+.crumb .cur{color:var(--text2)}
+.crumb .sep{color:var(--text3)}
+
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+
+.status-pill{
+  display:flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:10px;color:var(--text2);
+  background:var(--bg2);border:1px solid var(--border);
+  padding:5px 10px;border-radius:999px;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  animation:livepulse 2.2s ease infinite;
+}
+@keyframes livepulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,0.5)}
+  50%{box-shadow:0 0 0 5px rgba(0,229,160,0)}
+}
+
+/* buttons */
+.btn{
+  font-family:var(--sans);font-weight:600;font-size:12.5px;
+  padding:7px 14px;border-radius:7px;cursor:pointer;
+  transition:all 0.13s;
+}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  border:none;color:#020C18;font-weight:800;
+  box-shadow:0 0 18px rgba(0,212,255,0.22);
+}
+.btn-primary:hover{box-shadow:0 0 26px rgba(0,212,255,0.38);transform:translateY(-1px)}
+.btn-danger{background:var(--red-dim);border:1px solid rgba(255,90,90,0.25);color:var(--red)}
+
+/* scrollable content */
+.content{flex:1;overflow-y:auto;padding:24px 24px 36px}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:5px}
+
+/* page animation */
+.page{display:none}
+.page.active{display:block;animation:fadeIn 0.2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ─── PAGE HEADER ────────────────────────────────── */
+.ph{margin-bottom:22px}
+.ph-eye{
+  font-family:var(--mono);font-size:9px;font-weight:600;
+  letter-spacing:0.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:7px;
+}
+.ph h1{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1.1}
+.ph .sub{color:var(--text2);font-size:14px;line-height:1.65;margin-top:7px;max-width:600px}
+
+/* ─── CARDS ──────────────────────────────────────── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;
+}
+.card-head{
+  padding:12px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:0.1em;color:var(--text2);text-transform:uppercase;
+}
+.card-body{padding:18px}
+
+/* ─── GRIDS ──────────────────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g-split{display:grid;grid-template-columns:0.9fr 1.1fr;gap:14px}
+.g-main3{display:grid;grid-template-columns:1fr 1.1fr 0.85fr;gap:14px}
+.g-apps{display:grid;grid-template-columns:260px 1fr 280px;gap:14px}
+
+/* ─── PILLS / BADGES ─────────────────────────────── */
+.pill{
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  padding:3px 8px;border-radius:5px;letter-spacing:0.05em;display:inline-block;
+}
+.p-ok{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,229,160,0.2)}
+.p-warn{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,181,71,0.2)}
+.p-bad{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,90,90,0.2)}
+.p-idle{background:rgba(255,255,255,0.04);color:var(--text3);border:1px solid var(--border)}
+.p-active{background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.p-violet{background:var(--violet-dim);color:var(--violet);border:1px solid rgba(124,111,255,0.2)}
+.p-pink{background:var(--pink-dim);color:var(--pink);border:1px solid rgba(255,79,190,0.2)}
+
+/* ─── CODE/PRE ───────────────────────────────────── */
+pre.code{
+  background:var(--bg0);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;
+  font-family:var(--mono);font-size:11.5px;line-height:1.75;
+  color:#8BAFD4;overflow-x:auto;white-space:pre;
+}
+pre.code .k{color:var(--cyan)}
+pre.code .s{color:var(--green)}
+pre.code .n{color:var(--violet)}
+pre.code .err{color:var(--red);background:var(--red-dim);border-radius:3px;padding:1px 3px}
+pre.code .m{color:var(--pink)}
+
+/* ─── TABS ───────────────────────────────────────── */
+.tabs{
+  display:flex;gap:3px;background:var(--bg0);
+  padding:3px;border-radius:8px;width:fit-content;
+}
+.tab{
+  font-family:var(--mono);font-size:10px;font-weight:600;
+  padding:6px 12px;border-radius:6px;cursor:pointer;
+  color:var(--text3);transition:all 0.13s;border:none;background:transparent;
+  letter-spacing:0.04em;
+}
+.tab.active{background:var(--surface2);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+
+/* ─── FORM ELEMENTS ──────────────────────────────── */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase}
+.field input,.field select,.field textarea{
+  background:var(--bg1);border:1px solid var(--border);
+  color:var(--text);border-radius:7px;padding:9px 11px;
+  font-size:12.5px;font-family:var(--mono);outline:none;transition:all 0.13s;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:rgba(0,212,255,0.3);box-shadow:0 0 0 3px rgba(0,212,255,0.07);
+}
+.field textarea{min-height:72px;resize:vertical;font-family:var(--sans);font-size:12.5px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ─── DIFF VIEW ──────────────────────────────────── */
+.diff-wrap{background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);padding:4px}
+.diff-hunk{font-family:var(--mono);font-size:9px;color:var(--violet);background:var(--violet-dim);border-radius:4px;padding:3px 10px;margin:3px 0}
+.diff-line{font-family:var(--mono);font-size:11px;line-height:1.65;padding:1px 10px;border-radius:3px;white-space:pre}
+.dl-add{background:rgba(0,229,160,0.07);color:var(--green)}
+.dl-add::before{content:'+ ';opacity:0.5}
+.dl-rem{background:rgba(255,90,90,0.07);color:var(--red)}
+.dl-rem::before{content:'- ';opacity:0.5}
+.dl-ctx{color:var(--text3)}
+.dl-ctx::before{content:'  '}
+
+/* ─── TIMELINE ───────────────────────────────────── */
+.tl{display:flex;flex-direction:column;gap:7px}
+.tl-step{
+  display:flex;align-items:flex-start;gap:11px;
+  padding:12px 14px;border-radius:var(--r);
+  background:rgba(255,255,255,0.018);border:1px solid var(--border);
+  transition:all 0.18s;
+}
+.tl-step.pass{border-color:rgba(0,229,160,0.15);background:rgba(0,229,160,0.025)}
+.tl-step.running{border-color:rgba(255,181,71,0.25);background:rgba(255,181,71,0.04)}
+.tl-step.fail{border-color:rgba(255,90,90,0.2);background:rgba(255,90,90,0.03)}
+.tl-num{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:10px;font-weight:700;
+  background:var(--bg1);border:1px solid var(--border2);color:var(--text2);
+}
+.tl-step.pass .tl-num{background:var(--green-dim);border-color:rgba(0,229,160,0.25);color:var(--green)}
+.tl-step.running .tl-num{background:var(--amber-dim);border-color:rgba(255,181,71,0.3);color:var(--amber);animation:ring 1.8s ease infinite}
+.tl-step.fail .tl-num{background:var(--red-dim);border-color:rgba(255,90,90,0.25);color:var(--red)}
+@keyframes ring{0%,100%{box-shadow:0 0 0 0 rgba(255,181,71,0.45)}50%{box-shadow:0 0 0 5px rgba(255,181,71,0)}}
+.tl-body{flex:1}
+.tl-title{font-size:13px;font-weight:600}
+.tl-meta{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+.tl-right{margin-left:auto;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.dur{font-family:var(--mono);font-size:9px;color:var(--text3)}
+
+/* ─── EVENT TIMELINE (trace) ─────────────────────── */
+.ev-tl{display:flex;flex-direction:column;position:relative}
+.ev-tl::before{content:'';position:absolute;left:17px;top:8px;bottom:8px;width:1px;background:var(--border2)}
+.ev{display:flex;gap:14px;padding:8px 0;position:relative;z-index:1}
+.ev-dot2{
+  width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;
+  margin-left:14px;border:2px solid;
+}
+.ev-ok2{border-color:var(--green);background:var(--green)}
+.ev-bad2{border-color:var(--red);background:var(--red)}
+.ev-warn2{border-color:var(--amber);background:var(--amber)}
+.ev-pink2{border-color:var(--pink);background:var(--pink)}
+.ev-body2{flex:1}
+.ev-name2{font-size:12.5px;font-weight:600}
+.ev-meta2{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+.ev-time2{font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto;margin-top:4px;flex-shrink:0}
+
+/* ─── STAT CARDS ─────────────────────────────────── */
+.stat{
+  padding:18px;border-radius:var(--r2);
+  background:var(--bg2);border:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.stat .sl{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.stat .sv{font-size:24px;font-weight:800;letter-spacing:-0.04em;line-height:1}
+.stat .sd{font-size:11.5px;color:var(--text2);margin-top:5px}
+.stat-glow::after{
+  content:'';position:absolute;top:0;right:0;
+  width:50px;height:50px;border-radius:0 14px 0 50px;opacity:0.08;
+}
+.sg-cyan::after{background:var(--cyan)}
+.sg-green::after{background:var(--green)}
+.sg-amber::after{background:var(--amber)}
+.sg-violet::after{background:var(--violet)}
+.sg-pink::after{background:var(--pink)}
+
+
+.run-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px;border-radius:var(--r);
+  background:rgba(255,255,255,0.018);border:1px solid var(--border);
+  margin-bottom:7px;cursor:pointer;transition:all 0.13s;
+}
+.run-row:hover{background:var(--bg3);border-color:var(--border2)}
+.run-row.sel{border-color:rgba(0,212,255,0.22);background:var(--cyan-dim)}
+.rn{font-size:12.5px;font-weight:600}
+.rm{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+
+
+.ba{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin-bottom:20px}
+.ba-side{border-radius:var(--r2);padding:18px 20px}
+.ba-before{background:rgba(255,90,90,0.03);border:1px solid rgba(255,90,90,0.12)}
+.ba-after{background:rgba(0,212,255,0.03);border:1px solid rgba(0,212,255,0.10)}
+.ba-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px}
+.ba-before .ba-label{color:var(--red)}
+.ba-after .ba-label{color:var(--cyan)}
+.ba-item{
+  font-size:12px;color:var(--text2);padding:6px 9px;
+  border-radius:6px;margin-bottom:5px;
+  background:rgba(0,0,0,0.2);display:flex;align-items:flex-start;gap:7px;line-height:1.4;
+}
+.ba-arr{padding:0 18px;font-size:22px;color:var(--text3);display:flex;align-items:center}
+
+
+
+
+
+
+.hc-panel{display:flex;flex-direction:column;gap:0;overflow:hidden}
+.hc-theme-btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px}
+.theme-btn{
+  padding:8px 6px;border-radius:7px;cursor:pointer;
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.04em;text-align:center;
+  transition:all 0.13s;border:1px solid var(--border2);background:var(--bg1);color:var(--text2);
+}
+.theme-btn:hover{border-color:var(--border2);color:var(--text)}
+.theme-btn.active-theme{border-color:rgba(0,212,255,0.3);color:var(--cyan);background:var(--cyan-dim)}
+
+.hc-vars{
+  background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px;font-family:var(--mono);font-size:10px;line-height:1.9;
+  max-height:200px;overflow-y:auto;
+}
+.hc-vars::-webkit-scrollbar{width:3px}
+.hc-vars::-webkit-scrollbar-thumb{background:var(--surface2)}
+.hc-var-k{color:var(--text3)}
+.hc-var-v{color:var(--cyan)}
+
+/* iframe container */
+.iframe-container{
+  background:var(--bg0);border-radius:var(--r2);
+  border:1px solid var(--border);
+  overflow:hidden;position:relative;
+  display:flex;flex-direction:column;
+}
+.iframe-bar{
+  background:var(--bg1);border-bottom:1px solid var(--border);
+  padding:8px 14px;display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10px;color:var(--text2);flex-shrink:0;
+}
+.iframe-dots{display:flex;gap:5px}
+.iframe-dots span{width:9px;height:9px;border-radius:50%;display:block}
+.iframe-wrap{flex:1;position:relative;min-height:360px}
+.iframe-wrap iframe{
+  width:100%;height:100%;border:none;
+  display:block;
+}
+.iframe-scanning{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent 40%,rgba(0,212,255,0.04) 50%,transparent 60%);
+  animation:scan 2.5s linear infinite;
+  opacity:0;
+}
+.iframe-wrap.active .iframe-scanning{opacity:1}
+@keyframes scan{0%{background-position:0 -100%}100%{background-position:0 200%}}
+
+/* message log */
+.msg-log{
+  background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);
+  padding:0;overflow:hidden;
+  display:flex;flex-direction:column;
+  max-height:320px;
+}
+.msg-log-head{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  font-family:var(--mono);font-size:9px;font-weight:600;color:var(--text3);
+  text-transform:uppercase;letter-spacing:0.1em;display:flex;align-items:center;gap:7px;
+}
+.msg-log-body{
+  overflow-y:auto;padding:8px;
+  display:flex;flex-direction:column;gap:4px;
+  flex:1;
+}
+.msg-log-body::-webkit-scrollbar{width:3px}
+.msg-log-body::-webkit-scrollbar-thumb{background:var(--surface2)}
+.msg-entry{
+  padding:6px 10px;border-radius:5px;
+  font-family:var(--mono);font-size:10px;line-height:1.5;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.msg-entry.out{background:rgba(0,212,255,0.06);border-left:2px solid var(--cyan)}
+.msg-entry.in{background:rgba(0,229,160,0.06);border-left:2px solid var(--green)}
+.msg-entry.sys{background:rgba(255,181,71,0.06);border-left:2px solid var(--amber)}
+.msg-entry.err{background:var(--red-dim);border-left:2px solid var(--red)}
+.msg-dir{font-size:9px;font-weight:700;flex-shrink:0;margin-top:1px}
+.out .msg-dir{color:var(--cyan)}
+.in .msg-dir{color:var(--green)}
+.sys .msg-dir{color:var(--amber)}
+.err .msg-dir{color:var(--red)}
+.msg-txt{color:var(--text2);word-break:break-all}
+
+
+.hs-flow{
+  display:flex;align-items:center;gap:0;
+  background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;margin-bottom:12px;overflow-x:auto;
+}
+.hs-node{
+  flex-shrink:0;padding:8px 12px;border-radius:7px;
+  font-family:var(--mono);font-size:10px;font-weight:600;text-align:center;
+  background:var(--bg2);border:1px solid var(--border2);color:var(--text2);
+  white-space:nowrap;
+}
+.hs-node.hn-active{background:var(--cyan-dim);border-color:rgba(0,212,255,0.25);color:var(--cyan)}
+.hs-node.hn-green{background:var(--green-dim);border-color:rgba(0,229,160,0.25);color:var(--green)}
+.hs-node.hn-violet{background:var(--violet-dim);border-color:rgba(124,111,255,0.25);color:var(--violet)}
+.hs-line{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:40px}
+.hs-arrow{height:1px;background:var(--border2);width:100%;position:relative}
+.hs-arrow::after{
+  content:'▶';position:absolute;right:-4px;top:-7px;
+  font-size:9px;color:var(--text3);
+}
+.hs-arrow.ha-active{background:var(--cyan)}
+.hs-arrow.ha-active::after{color:var(--cyan)}
+.hs-arrow.ha-green{background:var(--green)}
+.hs-arrow.ha-green::after{color:var(--green)}
+.hs-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:4px;white-space:nowrap}
+.hs-lbl.hl-cyan{color:var(--cyan)}
+.hs-lbl.hl-green{color:var(--green)}
+
+/* layer breakdown */
+.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.layer-box{
+  padding:10px 12px;border-radius:var(--r);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.layer-name{font-size:12px;font-weight:600}
+.layer-sub{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px}
+
+/* toast */
+.toast{
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  background:var(--bg2);border:1px solid rgba(0,212,255,0.2);
+  color:var(--text);padding:10px 16px;border-radius:9px;
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  box-shadow:0 8px 28px rgba(0,0,0,0.6);
+  transform:translateY(16px);opacity:0;transition:all 0.22s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.toast.show{transform:none;opacity:1}
+
+/* responsive fallback */
+@media(max-width:1100px){
+  .g-apps,.g-main3,.g2,.g3,.g-split,.ba{grid-template-columns:1fr}
+  .ba-arr{display:none}
+  .sidebar{display:none}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ SIDEBAR ══════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="logo-row">
+    <div class="logo-icon">A</div>
+    <span class="logo-name">API Dash</span>
+    <span class="logo-chip">MCP v10</span>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Workflow</div>
+    <div class="nav-item active" onclick="go('overview')"><span class="nav-dot"></span>Overview</div>
+    <div class="nav-item" onclick="go('setup')"><span class="nav-dot"></span>Session Setup</div>
+    <div class="nav-item" onclick="go('runner')"><span class="nav-dot"></span>Scenario Runner</div>
+    <div class="nav-item" onclick="go('trace')"><span class="nav-dot"></span>Trace Inspection</div>
+    <div class="nav-item" onclick="go('compare')"><span class="nav-dot"></span>Replay &amp; Compare</div>
+    <div class="nav-item" onclick="go('apps')">
+      <span class="nav-dot" style="background:var(--pink);box-shadow:0 0 5px var(--pink)"></span>
+      MCP Apps Preview
+      <span class="nav-new">NEW</span>
+    </div>
+  </div>
+
+  <div class="sidebar-sep"></div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Saved Scenarios</div>
+    <div class="mini-card" onclick="go('runner')">
+      <div class="mc-name"><span class="sdot sdot-bad"></span>Protocol Handshake</div>
+      <div class="mc-meta">Failed · 2m ago · filesystem-local</div>
+    </div>
+    <div class="mini-card" onclick="go('trace')">
+      <div class="mc-name"><span class="sdot sdot-warn"></span>Filesystem Tool Call</div>
+      <div class="mc-meta">Schema mismatch · investigating</div>
+    </div>
+    <div class="mini-card" onclick="go('apps')">
+      <div class="mc-name"><span class="sdot sdot-ok"></span>Sales Dashboard App</div>
+      <div class="mc-meta">mcp-app · handshake complete</div>
+    </div>
+  </div>
+
+  <div class="sidebar-sep"></div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Test Explorer</div>
+    <div class="mini-card">
+      <div class="mc-name"><span class="sdot sdot-ok"></span>filesystem-local</div>
+      <div class="mc-meta">stdio · builder preview</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-name"><span class="sdot sdot-ok"></span>sales-dashboard</div>
+      <div class="mc-meta">mcp-app · text/html;profile=mcp-app</div>
+    </div>
+    <div class="mini-card">
+      <div class="mc-name"><span class="sdot sdot-warn"></span>github-repo-agent</div>
+      <div class="mc-meta">http · timeout warning</div>
+    </div>
+  </div>
+</aside>
+
+
+<div class="main">
+
+  
+  <div class="topbar">
+    <div class="crumb">
+      <span>API Dash</span><span class="sep">›</span>
+      <span>Collections</span><span class="sep">›</span>
+      <span class="cur" id="crumb-cur">Overview</span>
+    </div>
+    <div class="topbar-right">
+      <div class="status-pill"><div class="live-dot"></div>filesystem-local</div>
+      <button class="btn btn-ghost" onclick="toast('📋 Link copied — paste in your PR!')">Share</button>
+      <button class="btn btn-primary" id="top-btn" onclick="handlePrimary()">Open Workflow</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+  
+  
+  
+  <div class="page active" id="page-overview">
+    <div class="ph">
+      <div class="ph-eye">MCP Testing Suite · GSoC 2025 Proposal · @souvikDevloper</div>
+      <h1>Build, run &amp; debug MCP interactions — including visual MCP Apps</h1>
+      <div class="sub">MCP isn't just JSON-RPC anymore. Servers now deliver rich HTML UI components to AI hosts. This project tests the full stack: transport, protocol, tool execution, <em>and</em> the new MCP Apps visual layer.</div>
+    </div>
+
+    
+    <div class="ba">
+      <div class="ba-side ba-before">
+        <div class="ba-label">😖 Today's developer pain</div>
+        <div class="ba-item"><span>🔴</span>Craft JSON-RPC payloads by hand in curl — no tooling</div>
+        <div class="ba-item"><span>🔴</span>Transport errors vs protocol errors look identical</div>
+        <div class="ba-item"><span>🔴</span>No replay — re-run everything from scratch after each fix</div>
+        <div class="ba-item"><span>🔴</span>MCP Apps: <code style="font-family:var(--mono);color:var(--red);font-size:11px">ui/initialize</code> handshake? Test it how?</div>
+        <div class="ba-item"><span>🔴</span>Host context CSS injection — no sandbox to validate themes</div>
+      </div>
+      <div class="ba-arr">→</div>
+      <div class="ba-side ba-after">
+        <div class="ba-label">✅ After this feature</div>
+        <div class="ba-item"><span>🟢</span>Configure MCP targets like API Dash request collections</div>
+        <div class="ba-item"><span>🟢</span>Trace viewer classifies: transport / protocol / tool / ui-handshake</div>
+        <div class="ba-item"><span>🟢</span>One-click scenario replay + diff against known-good baseline</div>
+        <div class="ba-item"><span>🟢</span>MCP Apps: test <code style="font-family:var(--mono);color:var(--cyan);font-size:11px">ui/initialize</code> handshake with live message log</div>
+        <div class="ba-item"><span>🟢</span>Host context sandbox — inject light/dark themes, validate render</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="g3" style="margin-bottom:14px">
+      <div class="stat stat-glow sg-cyan">
+        <div class="sl">Workflow steps</div>
+        <div class="sv" style="color:var(--cyan)">5 steps</div>
+        <div class="sd">Setup → Run → Inspect → Compare → App Preview</div>
+      </div>
+      <div class="stat stat-glow sg-pink">
+        <div class="sl">New in v10</div>
+        <div class="sv" style="color:var(--pink)">MCP Apps</div>
+        <div class="sd">Real <code style="font-family:var(--mono);font-size:10px">text/html;profile=mcp-app</code> PoC</div>
+      </div>
+      <div class="stat stat-glow sg-green">
+        <div class="sl">GSoC scope</div>
+        <div class="sv" style="color:var(--green)">Shippable</div>
+        <div class="sd">One transport + MCP Apps layer end-to-end</div>
+      </div>
+    </div>
+
+    <!-- Flow cards -->
+    <div class="g3">
+      <div class="card" style="cursor:pointer" onclick="go('setup')">
+        <div class="card-body">
+          <div style="font-size:20px;margin-bottom:8px">🔌</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Session Setup</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Configure MCP targets, validate transport, save as reusable collection entries.</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="go('runner')">
+        <div class="card-body">
+          <div style="font-size:20px;margin-bottom:8px">▶️</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Scenario Runner</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Step-by-step execution with live JSON-RPC output. Detects <code style="font-family:var(--mono);font-size:10px;color:var(--violet)">_meta.ui.resourceUri</code> for MCP Apps.</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="go('trace')">
+        <div class="card-body">
+          <div style="font-size:20px;margin-bottom:8px">🔍</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Trace Inspection</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">4-layer failure classification: transport · protocol · tool-exec · <strong style="color:var(--pink)">ui-handshake</strong>.</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="go('compare')">
+        <div class="card-body">
+          <div style="font-size:20px;margin-bottom:8px">📊</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">Replay &amp; Compare</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Snapshot baselines, replay current target, diff changed payloads.</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:pointer;border-color:rgba(255,79,190,0.18);background:rgba(255,79,190,0.025)" onclick="go('apps')">
+        <div class="card-body">
+          <div style="font-size:20px;margin-bottom:8px">🪟</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">MCP Apps Preview <span class="pill p-pink">NEW</span></div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Sandboxed iframe rendering · <code style="font-family:var(--mono);font-size:10px;color:var(--pink)">ui/initialize</code> handshake · host context injection · live message log.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div style="font-size:20px;margin-bottom:8px">🗺️</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px">GSoC Milestones</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:2">
+            <span style="color:var(--cyan)">M1</span> stdio transport + session setup<br>
+            <span style="color:var(--cyan)">M2</span> Scenario Runner + Trace Inspection<br>
+            <span style="color:var(--cyan)">M3</span> Replay &amp; Compare + HTTP transport<br>
+            <span style="color:var(--pink)">M4</span> MCP Apps layer + host context sandbox
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  
+  <div class="page" id="page-setup">
+    <div class="ph">
+      <div class="ph-eye">Step 1 · Session Setup</div>
+      <h1>Configure your MCP target</h1>
+      <div class="sub">Save MCP targets the same way API Dash saves request collections — validate transport health before any scenario runs.</div>
+    </div>
+    <div class="g-main3">
+      <div class="card">
+        <div class="card-head">Saved Targets <span class="pill p-ok">3 saved</span></div>
+        <div class="card-body">
+          <div class="run-row sel">
+            <div><div class="rn">filesystem-local</div><div class="rm">stdio · builder preview</div></div>
+            <span class="pill p-ok">ACTIVE</span>
+          </div>
+          <div class="run-row">
+            <div><div class="rn">slack-knowledge-base</div><div class="rm">stdio · external</div></div>
+            <span class="pill p-idle">SAVED</span>
+          </div>
+          <div class="run-row">
+            <div><div class="rn">sales-dashboard</div><div class="rm">mcp-app · http</div></div>
+            <span class="pill p-pink">MCP APP</span>
+          </div>
+          <div style="margin-top:12px;padding:12px;background:var(--bg1);border-radius:var(--r);border:1px solid var(--border)">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px">Session Constraints</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.9">
+              Timeout: <span style="color:var(--cyan)">15s</span><br>
+              Capture payloads: <span style="color:var(--green)">ON</span><br>
+              Save artifacts: <span style="color:var(--green)">Always</span><br>
+              MCP Apps sandbox: <span style="color:var(--pink)">Enabled</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">Session Configuration</div>
+        <div class="card-body">
+          <div style="background:var(--bg0);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:14px">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:12px">Transport Layer</div>
+            <div style="display:flex;align-items:center;gap:0">
+              <div style="padding:7px 12px;border-radius:6px;background:var(--cyan-dim);border:1px solid rgba(0,212,255,0.2);font-family:var(--mono);font-size:10px;font-weight:600;color:var(--cyan);white-space:nowrap">API Dash Client</div>
+              <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--cyan),var(--violet));position:relative;margin:0 4px">
+                <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;color:var(--cyan);white-space:nowrap">stdio / JSON-RPC 2.0</div>
+              </div>
+              <div style="padding:7px 12px;border-radius:6px;background:var(--violet-dim);border:1px solid rgba(124,111,255,0.2);font-family:var(--mono);font-size:10px;font-weight:600;color:var(--violet);white-space:nowrap">MCP Server</div>
+              <div style="flex:1;height:1px;background:var(--border2);margin:0 4px;position:relative">
+                <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;color:var(--text3);white-space:nowrap">tool execution</div>
+              </div>
+              <div style="padding:7px 12px;border-radius:6px;background:var(--bg2);border:1px solid var(--border2);font-family:var(--mono);font-size:10px;font-weight:600;color:var(--text2);white-space:nowrap">Tools</div>
+            </div>
+          </div>
+          <div class="fg">
+            <div class="field"><label>Target Name</label><input value="filesystem-local"/></div>
+            <div class="field"><label>Transport</label><select><option>stdio</option><option>http</option><option>websocket</option></select></div>
+            <div class="field"><label>Server Command</label><input value="node ./server/index.js" /></div>
+            <div class="field"><label>Working Dir</label><input value="/example/mcp"/></div>
+            <div class="field"><label>Env Preset</label><select><option>MCP Builder Preview</option><option>Local Shell</option></select></div>
+            <div class="field"><label>Resource Type</label><select><option>Standard MCP</option><option>MCP App (text/html;profile=mcp-app)</option></select></div>
+          </div>
+          <div class="field" style="margin-top:10px"><label>Notes</label><textarea>Validate first, then save as reusable target.</textarea></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">Validation</div>
+        <div class="card-body">
+          <div class="run-row" style="cursor:default;margin-bottom:7px">
+            <div><div class="rn">Transport reachable</div><div class="rm">stdio channel open</div></div>
+            <span class="pill p-ok" id="v-transport">PASS</span>
+          </div>
+          <div class="run-row" style="cursor:default;margin-bottom:7px">
+            <div><div class="rn">Capabilities discovered</div><div class="rm">5 tools found</div></div>
+            <span class="pill p-ok" id="v-cap">PASS</span>
+          </div>
+          <div class="run-row" style="cursor:default;margin-bottom:7px">
+            <div><div class="rn">Env vars resolved</div><div class="rm">2 pending</div></div>
+            <span class="pill p-warn" id="v-env">PENDING</span>
+          </div>
+          <div class="run-row" style="cursor:default;margin-bottom:14px">
+            <div><div class="rn">Target saved</div><div class="rm">ready to save</div></div>
+            <span class="pill p-idle" id="v-save">—</span>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="validateSetup()">Validate &amp; Save</button>
+          <button class="btn btn-ghost" style="width:100%;margin-top:7px" onclick="go('runner')">Skip → Runner</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  
+  <div class="page" id="page-runner">
+    <div class="ph">
+      <div class="ph-eye">Step 2 · Scenario Runner</div>
+      <h1>Execute MCP scenarios step by step</h1>
+      <div class="sub">Every run is saved as an artifact. When a tool response contains <code style="font-family:var(--mono);color:var(--violet)">_meta.ui.resourceUri</code>, the runner flags it — open in App Preview with one click.</div>
+    </div>
+    <div class="g-split">
+      <div class="card">
+        <div class="card-head">Scenario Steps <span class="pill p-warn" id="runner-badge">Step 3 active</span></div>
+        <div class="card-body">
+          <div class="tl">
+            <div class="tl-step pass">
+              <div class="tl-num">✓</div>
+              <div class="tl-body"><div class="tl-title">Initialize Session</div><div class="tl-meta">MCP 1.0 · client state ready</div></div>
+              <div class="tl-right"><span class="dur">22ms</span><span class="pill p-ok">PASS</span></div>
+            </div>
+            <div class="tl-step pass">
+              <div class="tl-num">✓</div>
+              <div class="tl-body"><div class="tl-title">Discover Tools</div><div class="tl-meta">5 tools · tools/list</div></div>
+              <div class="tl-right"><span class="dur">31ms</span><span class="pill p-ok">PASS</span></div>
+            </div>
+            <div class="tl-step running" id="s3">
+              <div class="tl-num" id="s3n">3</div>
+              <div class="tl-body"><div class="tl-title">Call Tool: read_file</div><div class="tl-meta">Validate request + response schema</div></div>
+              <div class="tl-right"><span class="dur" id="s3d">—</span><span class="pill p-active" id="s3p">ACTIVE</span></div>
+            </div>
+            <div class="tl-step" id="s4">
+              <div class="tl-num" id="s4n">4</div>
+              <div class="tl-body"><div class="tl-title">Assert Result</div><div class="tl-meta">Check contentType + schema</div></div>
+              <div class="tl-right"><span class="pill p-idle" id="s4p">QUEUED</span></div>
+            </div>
+          </div>
+
+          <!-- MCP App detection banner -->
+          <div id="app-detect-banner" style="display:none;margin-top:12px;padding:12px;background:var(--pink-dim);border:1px solid rgba(255,79,190,0.2);border-radius:var(--r)">
+            <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--pink);letter-spacing:0.1em;margin-bottom:6px">🪟 MCP APP DETECTED</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.6">
+              <span style="color:var(--violet)">_meta.ui.resourceUri</span><br>
+              "ui://sales-dashboard/view"<br>
+              <span style="color:var(--text3)">mime: text/html;profile=mcp-app</span>
+            </div>
+            <button class="btn" style="margin-top:9px;width:100%;font-size:11px;background:var(--pink-dim);border:1px solid rgba(255,79,190,0.25);color:var(--pink)" onclick="go('apps')">Open in App Preview →</button>
+          </div>
+
+          <div style="display:flex;gap:7px;margin-top:12px">
+            <button class="btn btn-ghost" style="flex:1" onclick="resetRunner()">Reset</button>
+            <button class="btn btn-primary" style="flex:1" onclick="runScenario()">▶ Run</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-head">Step 3 · Tool Inputs</div>
+          <div class="card-body">
+            <div class="fg">
+              <div class="field"><label>Tool</label><input value="read_file"/></div>
+              <div class="field"><label>Mode</label><select><option>Builder Preview</option></select></div>
+              <div class="field"><label>Path</label><input value="/README.md"/></div>
+              <div class="field"><label>Expected ContentType</label><input value="text/plain"/></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">Live Output</div>
+          <pre class="code" id="runner-out" style="border:none;border-radius:0 0 14px 14px;margin:0"
+>{
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,
+  <span class="k">"id"</span>: <span class="n">7</span>,
+  <span class="k">"method"</span>: <span class="s">"tools/call"</span>,
+  <span class="k">"params"</span>: {
+    <span class="k">"name"</span>: <span class="s">"read_file"</span>,
+    <span class="k">"arguments"</span>: { <span class="k">"path"</span>: <span class="s">"/README.md"</span> }
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  
+  <div class="page" id="page-trace">
+    <div class="ph">
+      <div class="ph-eye">Step 3 · Trace Inspection</div>
+      <h1>4-layer failure classification</h1>
+      <div class="sub">Now includes <strong style="color:var(--pink)">ui-handshake</strong> as a 4th layer — so you know if <code style="font-family:var(--mono);color:var(--pink)">ui/initialize</code> failed, not just your tool call.</div>
+    </div>
+    <div class="g-main3">
+      <div class="card">
+        <div class="card-head">Event Timeline <span class="pill p-bad">2 failures</span></div>
+        <div class="card-body">
+          <div class="ev-tl">
+            <div class="ev"><div class="ev-dot2 ev-ok2"></div><div class="ev-body2"><div class="ev-name2">Connect</div><div class="ev-meta2">stdio channel open</div></div><div class="ev-time2">+14ms</div></div>
+            <div class="ev"><div class="ev-dot2 ev-ok2"></div><div class="ev-body2"><div class="ev-name2">Initialize</div><div class="ev-meta2">MCP handshake</div></div><div class="ev-time2">+22ms</div></div>
+            <div class="ev"><div class="ev-dot2 ev-ok2"></div><div class="ev-body2"><div class="ev-name2">List Tools</div><div class="ev-meta2">5 tools discovered</div></div><div class="ev-time2">+31ms</div></div>
+            <div class="ev"><div class="ev-dot2 ev-bad2"></div><div class="ev-body2"><div class="ev-name2" style="color:var(--red)">Call Tool → read_file</div><div class="ev-meta2">Error -32602 · Invalid Request</div></div><div class="ev-time2">+102ms</div></div>
+            <div class="ev"><div class="ev-dot2 ev-bad2"></div><div class="ev-body2"><div class="ev-name2" style="color:var(--red)">Validate Response</div><div class="ev-meta2">Schema assertion failed</div></div><div class="ev-time2">+109ms</div></div>
+          </div>
+
+          
+          <div style="margin-top:14px">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Layer Breakdown</div>
+            <div class="layer-grid">
+              <div class="layer-box">
+                <div><div class="layer-name">Transport</div><div class="layer-sub">stdio channel</div></div>
+                <span class="pill p-ok">OK</span>
+              </div>
+              <div class="layer-box" style="border-color:rgba(255,90,90,0.2)">
+                <div><div class="layer-name">Protocol</div><div class="layer-sub">JSON-RPC schema</div></div>
+                <span class="pill p-bad" id="proto-pill">FAIL</span>
+              </div>
+              <div class="layer-box" style="border-color:rgba(255,90,90,0.15)">
+                <div><div class="layer-name">Tool Exec</div><div class="layer-sub">tool invocation</div></div>
+                <span class="pill p-bad">BLOCKED</span>
+              </div>
+              <div class="layer-box" style="border-color:rgba(255,79,190,0.15)">
+                <div><div class="layer-name" style="color:var(--pink)">UI Handshake</div><div class="layer-sub">ui/initialize</div></div>
+                <span class="pill p-idle" id="ui-pill">N/A</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;padding:12px;background:var(--red-dim);border:1px solid rgba(255,90,90,0.2);border-radius:var(--r)">
+            <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--red);margin-bottom:5px">Schema mismatch</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.7" id="fail-note">serverInfo missing in initialize response.<br>Error -32602 on tools/call.</div>
+            <button class="btn btn-ghost" style="margin-top:9px;font-size:11px" onclick="reclassify()">Reclassify layer</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          Raw Payloads
+          <div class="tabs" style="margin:0"><button class="tab active" onclick="switchRaw(this,'req')">Request</button><button class="tab" onclick="switchRaw(this,'res')">Response</button></div>
+        </div>
+        <pre class="code" id="raw-view" style="border:none;border-radius:0;margin:0;min-height:220px">{
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,
+  <span class="k">"id"</span>: <span class="n">7</span>,
+  <span class="k">"method"</span>: <span class="s">"tools/call"</span>,
+  <span class="k">"params"</span>: {
+    <span class="k">"name"</span>: <span class="s">"read_file"</span>,
+    <span class="k">"arguments"</span>: { <span class="k">"path"</span>: <span class="s">"/README.md"</span> }
+  }
+}</pre>
+      </div>
+
+      <div class="card">
+        <div class="card-head">Assertions</div>
+        <div class="card-body">
+          <div class="run-row" style="cursor:default;margin-bottom:7px">
+            <div><div class="rn">Transport</div><div class="rm">connection health</div></div><span class="pill p-ok">PASS</span>
+          </div>
+          <div class="run-row" style="cursor:default;margin-bottom:7px">
+            <div><div class="rn">serverInfo field</div><div class="rm">required by MCP 1.0</div></div><span class="pill p-bad">MISSING</span>
+          </div>
+          <div class="run-row" style="cursor:default;margin-bottom:7px">
+            <div><div class="rn">tools/call response</div><div class="rm">schema validation</div></div><span class="pill p-bad">FAIL</span>
+          </div>
+          <div class="run-row" style="cursor:default;margin-bottom:14px">
+            <div><div class="rn" style="color:var(--pink)">ui/initialize</div><div class="rm">MCP Apps handshake</div></div><span class="pill p-idle">NOT TESTED</span>
+          </div>
+          <div style="padding:10px 12px;background:var(--pink-dim);border:1px solid rgba(255,79,190,0.15);border-radius:var(--r);font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.7;margin-bottom:12px">
+            <span style="color:var(--pink);font-weight:700">Tip:</span> This server also exposes an MCP App.<br>Test the <code style="color:var(--pink)">ui/initialize</code> handshake separately in App Preview →
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="go('compare')">→ Compare with baseline</button>
+          <button class="btn btn-ghost" style="width:100%;margin-top:7px" onclick="go('apps')">🪟 Open App Preview</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  PAGE: COMPARE                                -->
+  
+  <div class="page" id="page-compare">
+    <div class="ph">
+      <div class="ph-eye">Step 4 · Replay &amp; Compare</div>
+      <h1>Snapshot, replay, diff</h1>
+      <div class="sub">Save known-good baselines, replay the current target, and instantly diff what changed — down to individual JSON fields.</div>
+    </div>
+    <div class="g-split">
+      <div class="card">
+        <div class="card-head">Run History</div>
+        <div class="card-body">
+          <div class="run-row sel">
+            <div><div class="rn">⭐ Baseline · 10:24 AM</div><div class="rm">run_20260312_1024 · filesystem-local</div></div>
+            <span class="pill p-ok">PASS</span>
+          </div>
+          <div class="run-row">
+            <div><div class="rn">Current · 10:31 AM</div><div class="rm">run_20260312_1031 · after node update</div></div>
+            <span class="pill p-bad">FAIL</span>
+          </div>
+          <div class="run-row">
+            <div><div class="rn">Previous · 9:52 AM</div><div class="rm">run_20260312_0952 · before transport change</div></div>
+            <span class="pill p-ok">PASS</span>
+          </div>
+          <div style="margin-top:12px;padding:11px 13px;background:var(--bg1);border:1px solid var(--border);border-radius:var(--r)">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:7px">Regression Summary</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.9">
+              Root cause: <span style="color:var(--red)">serverInfo removed</span><br>
+              Introduced by: <span style="color:var(--amber)">node update</span><br>
+              Affected: <span style="color:var(--amber)">steps 3, 4</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:7px;margin-top:12px">
+            <button class="btn btn-ghost" style="flex:1" onclick="replayCompare()">Replay</button>
+            <button class="btn btn-primary" style="flex:1" onclick="go('trace')">View Trace</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          Diff
+          <div class="tabs" style="margin:0"><button class="tab active" onclick="switchDiff(this,'s')">Summary</button><button class="tab" onclick="switchDiff(this,'p')">Payload</button></div>
+        </div>
+        <div class="card-body" id="diff-body">
+          <div class="diff-wrap">
+            <div class="diff-hunk">@@ Transport Layer @@</div>
+            <div class="diff-line dl-rem">"transport": "websocket"</div>
+            <div class="diff-line dl-add">"transport": "stdio"</div>
+            <div class="diff-line dl-ctx">"timeout": 15000</div>
+          </div>
+          <div class="diff-wrap" style="margin-top:8px">
+            <div class="diff-hunk">@@ Initialize Response @@</div>
+            <div class="diff-line dl-ctx">"protocolVersion": "1.0"</div>
+            <div class="diff-line dl-rem">"serverInfo": { "name": "fs-server", "version": "1.2.0" }</div>
+            <div class="diff-line dl-ctx">"capabilities": { ... }</div>
+          </div>
+          <div class="diff-wrap" style="margin-top:8px">
+            <div class="diff-hunk">@@ Validation @@</div>
+            <div class="diff-line dl-rem">"validation.status": "pass"</div>
+            <div class="diff-line dl-add">"validation.status": "fail"</div>
+            <div class="diff-line dl-add">"validation.error": "Missing serverInfo"</div>
+          </div>
+          <div style="margin-top:10px;padding:10px 12px;background:var(--amber-dim);border:1px solid rgba(255,181,71,0.2);border-radius:var(--r)">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--amber);font-weight:700;margin-bottom:4px">⚠ Regression Note</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.6">stdio connects, but serverInfo removed from initialize → -32602 on all tool calls.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  
+  <div class="page" id="page-apps">
+    <div class="ph">
+      <div class="ph-eye">Step 5 · MCP Apps Preview — Proof of Concept</div>
+      <h1>Sandbox, handshake &amp; host context injection</h1>
+      <div class="sub">Real working PoC: a <code style="font-family:var(--mono);color:var(--pink)">text/html;profile=mcp-app</code> resource loaded in a sandboxed iframe. Perform the <code style="font-family:var(--mono);color:var(--cyan)">ui/initialize</code> handshake, inject host CSS variables, watch the app theme update live.</div>
+    </div>
+
+    
+    <div class="hs-flow" style="margin-bottom:14px">
+      <div class="hs-node hn-active">API Dash Host</div>
+      <div class="hs-line">
+        <div class="hs-arrow ha-active"></div>
+        <div class="hs-lbl hl-cyan">ui/initialize →</div>
+      </div>
+      <div class="hs-node hn-violet" id="hs-sandbox">Sandboxed iframe<br><span style="font-size:8px;opacity:0.7">(MCP App)</span></div>
+      <div class="hs-line">
+        <div class="hs-arrow ha-green" style="transform:scaleX(-1)"></div>
+        <div class="hs-lbl hl-green">← hostContext + capabilities</div>
+      </div>
+      <div class="hs-node" id="hs-ctx" style="background:var(--bg2)">hostContext<br><span style="font-size:8px;opacity:0.7">CSS variables</span></div>
+      <div class="hs-line">
+        <div class="hs-arrow ha-active"></div>
+        <div class="hs-lbl hl-cyan">ui/notifications/initialized →</div>
+      </div>
+      <div class="hs-node hn-green" id="hs-ready">Handshake<br>Complete ✓</div>
+    </div>
+
+    <div class="g-apps">
+
+      
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card">
+          <div class="card-head">Host Context <span class="pill p-pink">Inject</span></div>
+          <div class="card-body">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Theme Preset</div>
+            <div class="hc-theme-btns">
+              <div class="theme-btn active-theme" onclick="setTheme(this,'dark')">VS Code Dark</div>
+              <div class="theme-btn" onclick="setTheme(this,'light')">VS Code Light</div>
+              <div class="theme-btn" onclick="setTheme(this,'custom')">Custom</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;margin-top:12px">CSS Variables sent to iframe</div>
+            <div class="hc-vars" id="hc-vars-display">
+<span class="hc-var-k">--color-background-primary: </span><span class="hc-var-v">#1e1e1e</span>
+<span class="hc-var-k">--color-background-secondary: </span><span class="hc-var-v">#252526</span>
+<span class="hc-var-k">--color-text-primary: </span><span class="hc-var-v">#d4d4d4</span>
+<span class="hc-var-k">--color-text-secondary: </span><span class="hc-var-v">#9d9d9d</span>
+<span class="hc-var-k">--color-border: </span><span class="hc-var-v">#3c3c3c</span>
+<span class="hc-var-k">--color-accent: </span><span class="hc-var-v">#007acc</span>
+<span class="hc-var-k">--font-family: </span><span class="hc-var-v">Segoe UI, sans-serif</span>
+<span class="hc-var-k">--border-radius: </span><span class="hc-var-v">4px</span></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:12px" onclick="injectHostContext()">Inject Host Context</button>
+            <button class="btn btn-ghost" style="width:100%;margin-top:7px" onclick="doHandshake()">Perform ui/initialize</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">Resource Info</div>
+          <div class="card-body" style="padding:14px">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:2">
+              <span style="color:var(--text3)">URI:</span><br>
+              <span style="color:var(--pink)">ui://sales-dashboard/view</span><br><br>
+              <span style="color:var(--text3)">MIME:</span><br>
+              <span style="color:var(--cyan)">text/html;profile=mcp-app</span><br><br>
+              <span style="color:var(--text3)">Linked tool:</span><br>
+              <span style="color:var(--violet)">show_dashboard</span><br><br>
+              <span style="color:var(--text3)">_meta.ui.resourceUri:</span><br>
+              <span style="color:var(--amber)">ui://sales-dashboard/view</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: iframe -->
+      <div class="iframe-container">
+        <div class="iframe-bar">
+          <div class="iframe-dots">
+            <span style="background:#FF5F57"></span>
+            <span style="background:#FFBC2E"></span>
+            <span style="background:#28C840"></span>
+          </div>
+          <span style="flex:1;text-align:center">sandbox · text/html;profile=mcp-app · allow-scripts</span>
+          <span class="pill p-idle" id="iframe-status">LOADING</span>
+        </div>
+        <div class="iframe-wrap" id="iframe-wrap">
+          <div class="iframe-scanning"></div>
+          <iframe id="mcp-app-frame" sandbox="allow-scripts" title="MCP App Sandbox"></iframe>
+        </div>
+      </div>
+
+      <!-- Right: message log -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="card" style="flex:1">
+          <div class="card-head">
+            postMessage Log
+            <div class="live-dot" style="margin-left:auto"></div>
+          </div>
+          <div class="msg-log" style="max-height:none;flex:1">
+            <div class="msg-log-head">
+              <div class="live-dot"></div> JSON-RPC over postMessage
+            </div>
+            <div class="msg-log-body" id="msg-log">
+              <div class="msg-entry sys"><span class="msg-dir">SYS</span><span class="msg-txt">Sandbox loaded. Waiting for handshake...</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head">Handshake State</div>
+          <div class="card-body" style="padding:12px">
+            <div class="run-row" style="cursor:default;margin-bottom:6px">
+              <div><div class="rn">iframe loaded</div></div>
+              <span class="pill p-ok" id="hs1">READY</span>
+            </div>
+            <div class="run-row" style="cursor:default;margin-bottom:6px">
+              <div><div class="rn">ui/initialize sent</div></div>
+              <span class="pill p-idle" id="hs2">—</span>
+            </div>
+            <div class="run-row" style="cursor:default;margin-bottom:6px">
+              <div><div class="rn">hostContext injected</div></div>
+              <span class="pill p-idle" id="hs3">—</span>
+            </div>
+            <div class="run-row" style="cursor:default;margin-bottom:0">
+              <div><div class="rn">ui/initialized notif</div></div>
+              <span class="pill p-idle" id="hs4">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+
+
+
+const MCP_APP_HTML = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg-p:#1e1e1e;--bg-s:#252526;
+    --tx-p:#d4d4d4;--tx-s:#9d9d9d;
+    --border:#3c3c3c;--accent:#007acc;
+    --ff:Segoe UI,sans-serif;--br:4px;
+  }
+  body{
+    background:var(--bg-p);color:var(--tx-p);
+    font-family:var(--ff);padding:16px;
+    transition:background 0.4s,color 0.4s;
+    min-height:100vh;
+  }
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .title{font-size:15px;font-weight:700}
+  .status{font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,0.08);color:var(--tx-s)}
+  .status.live{background:rgba(0,180,80,0.15);color:#4ec9b0}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+  .stat-box{background:var(--bg-s);border:1px solid var(--border);border-radius:var(--br);padding:10px 12px}
+  .stat-label{font-size:9px;color:var(--tx-s);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:5px}
+  .stat-val{font-size:18px;font-weight:700}
+  .stat-box.a .stat-val{color:var(--accent)}
+  .chart-wrap{background:var(--bg-s);border:1px solid var(--border);border-radius:var(--br);padding:12px;margin-bottom:10px}
+  .chart-title{font-size:11px;color:var(--tx-s);margin-bottom:10px}
+  .bars{display:flex;align-items:flex-end;gap:5px;height:60px}
+  .bar{flex:1;border-radius:2px 2px 0 0;transition:height 0.4s,background 0.4s;min-height:4px}
+  .bar-lbl{font-size:8px;color:var(--tx-s);text-align:center;margin-top:4px}
+  .bar-row{display:flex;flex-direction:column;flex:1;align-items:center}
+  .table{width:100%;border-collapse:collapse;font-size:11px}
+  .table th{text-align:left;font-size:9px;color:var(--tx-s);text-transform:uppercase;letter-spacing:0.08em;padding:5px 8px;border-bottom:1px solid var(--border)}
+  .table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,0.04)}
+  .tag{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:600}
+  .tag-g{background:rgba(0,180,80,0.15);color:#4ec9b0}
+  .tag-r{background:rgba(220,80,80,0.15);color:#f48771}
+  .tag-y{background:rgba(255,180,0,0.15);color:#cca700}
+  .hs-bar{
+    position:fixed;bottom:0;left:0;right:0;
+    background:var(--bg-s);border-top:1px solid var(--border);
+    padding:7px 12px;font-size:10px;color:var(--tx-s);
+    display:flex;align-items:center;gap:8px;
+  }
+  .hs-dot{width:6px;height:6px;border-radius:50%;background:#4ec9b0;display:inline-block}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="title">📊 Q4 Sales Dashboard</div>
+  <div class="status" id="hs-status">Connecting...</div>
+</div>
+
+<div class="grid">
+  <div class="stat-box a"><div class="stat-label">Revenue</div><div class="stat-val">$348K</div></div>
+  <div class="stat-box"><div class="stat-label">Deals</div><div class="stat-val">142</div></div>
+  <div class="stat-box"><div class="stat-label">Growth</div><div class="stat-val" style="color:#4ec9b0">+23%</div></div>
+</div>
+
+<div class="chart-wrap">
+  <div class="chart-title">Monthly Revenue</div>
+  <div class="bars">
+    <div class="bar-row"><div class="bar" style="height:35%;background:var(--accent)"></div><div class="bar-lbl">Oct</div></div>
+    <div class="bar-row"><div class="bar" style="height:55%;background:var(--accent)"></div><div class="bar-lbl">Nov</div></div>
+    <div class="bar-row"><div class="bar" style="height:80%;background:var(--accent)"></div><div class="bar-lbl">Dec</div></div>
+    <div class="bar-row"><div class="bar" style="height:100%;background:var(--accent);opacity:0.5"></div><div class="bar-lbl">Jan</div></div>
+  </div>
+</div>
+
+<table class="table">
+  <tr><th>Deal</th><th>Value</th><th>Status</th></tr>
+  <tr><td>Acme Corp</td><td>$48K</td><td><span class="tag tag-g">Won</span></td></tr>
+  <tr><td>TechStart</td><td>$22K</td><td><span class="tag tag-y">Pending</span></td></tr>
+  <tr><td>Global Inc</td><td>$91K</td><td><span class="tag tag-r">Lost</span></td></tr>
+</table>
+
+<div class="hs-bar">
+  <div class="hs-dot" id="hs-dot" style="background:#666"></div>
+  <span id="hs-txt">Awaiting ui/initialize...</span>
+</div>
+
+<script>
+  let rpcId = 1;
+  const pending = {};
+
+  // Minimal rpc-client (mirrors utils/rpc-client.ts from Ashita's guide)
+  function request(method, params){
+    return new Promise((res,rej)=>{
+      const id = rpcId++;
+      pending[id] = {res,rej};
+      parent.postMessage({jsonrpc:'2.0',id,method,params},'*');
+    });
+  }
+  function notify(method, params){
+    parent.postMessage({jsonrpc:'2.0',method,params},'*');
+  }
+
+  // Handle inbound messages from host
+  window.addEventListener('message', e => {
+    const d = e.data;
+    if(!d || d.jsonrpc !== '2.0') return;
+
+    // RPC response
+    if(d.id && pending[d.id]){
+      const cb = pending[d.id];
+      delete pending[d.id];
+      if(d.error) cb.rej(d.error);
+      else cb.res(d.result);
+      return;
+    }
+
+    // Host context update (notification)
+    if(d.method === 'ui/hostContext/updated'){
+      applyHostContext(d.params?.hostContext || {});
+    }
+  });
+
+  function applyHostContext(hc){
+    const root = document.documentElement;
+    if(hc['--color-background-primary']) root.style.setProperty('--bg-p', hc['--color-background-primary']);
+    if(hc['--color-background-secondary']) root.style.setProperty('--bg-s', hc['--color-background-secondary']);
+    if(hc['--color-text-primary']) root.style.setProperty('--tx-p', hc['--color-text-primary']);
+    if(hc['--color-text-secondary']) root.style.setProperty('--tx-s', hc['--color-text-secondary']);
+    if(hc['--color-border']) root.style.setProperty('--border', hc['--color-border']);
+    if(hc['--color-accent']) root.style.setProperty('--accent', hc['--color-accent']);
+    if(hc['--border-radius']) root.style.setProperty('--br', hc['--border-radius']);
+  }
+
+  // Perform MCP Apps handshake
+  async function init(){
+    document.getElementById('hs-dot').style.background = '#cca700';
+    document.getElementById('hs-txt').textContent = 'Sending ui/initialize...';
+
+    try{
+      const res = await request('ui/initialize', {protocolVersion:'2025-11-21'});
+      const hc = res?.hostContext || {};
+      applyHostContext(hc);
+      document.getElementById('hs-status').textContent = '✅ Handshake complete';
+      document.getElementById('hs-status').className = 'status live';
+      document.getElementById('hs-dot').style.background = '#4ec9b0';
+      document.getElementById('hs-txt').textContent = 'Handshake complete · hostContext applied';
+      notify('ui/notifications/initialized');
+    } catch(err){
+      document.getElementById('hs-dot').style.background = '#f48771';
+      document.getElementById('hs-txt').textContent = 'Handshake failed: ' + JSON.stringify(err);
+    }
+  }
+
+  // Start after load
+  window.addEventListener('load', ()=> setTimeout(init, 300));
+<\/script>
+</body>
+</html>`;
+
+
+const THEMES = {
+  dark:{
+    '--color-background-primary':'#1e1e1e',
+    '--color-background-secondary':'#252526',
+    '--color-text-primary':'#d4d4d4',
+    '--color-text-secondary':'#9d9d9d',
+    '--color-border':'#3c3c3c',
+    '--color-accent':'#007acc',
+    '--font-family':'Segoe UI, sans-serif',
+    '--border-radius':'4px',
+  },
+  light:{
+    '--color-background-primary':'#ffffff',
+    '--color-background-secondary':'#f3f3f3',
+    '--color-text-primary':'#1a1a1a',
+    '--color-text-secondary':'#6e6e6e',
+    '--color-border':'#e0e0e0',
+    '--color-accent':'#0078d7',
+    '--font-family':'Segoe UI, sans-serif',
+    '--border-radius':'4px',
+  },
+  custom:{
+    '--color-background-primary':'#0f172a',
+    '--color-background-secondary':'#1e293b',
+    '--color-text-primary':'#e2e8f0',
+    '--color-text-secondary':'#64748b',
+    '--color-border':'#334155',
+    '--color-accent':'#00D4FF',
+    '--font-family':'IBM Plex Mono, monospace',
+    '--border-radius':'8px',
+  }
+};
+
+let currentTheme = 'dark';
+let handshakeDone = false;
+let pendingRequests = {};
+let rpcId = 100;
+
+// ─── IFRAME SETUP ─────────────────────────────────────────────────
+function initIframe(){
+  const frame = document.getElementById('mcp-app-frame');
+  frame.srcdoc = MCP_APP_HTML;
+  document.getElementById('iframe-wrap').classList.add('active');
+
+  // Listen for messages FROM the iframe (MCP App → Host)
+  window.addEventListener('message', e => {
+    if(e.source !== frame.contentWindow) return;
+    const d = e.data;
+    if(!d || d.jsonrpc !== '2.0') return;
+
+    if(d.method === 'ui/initialize'){
+      logMsg('in', 'ui/initialize', JSON.stringify(d.params||{},null,2));
+      // Respond with hostContext
+      const ctx = THEMES[currentTheme];
+      const response = {
+        jsonrpc:'2.0', id:d.id,
+        result:{
+          protocolVersion:'2025-11-21',
+          hostContext: ctx,
+          capabilities:{ resources:{}, tools:{} }
+        }
+      };
+      setTimeout(()=>{
+        frame.contentWindow.postMessage(response,'*');
+        logMsg('out','ui/initialize response','hostContext: '+Object.keys(ctx).length+' CSS vars injected');
+        document.getElementById('hs2').textContent='SENT';
+        document.getElementById('hs2').className='pill p-ok';
+        document.getElementById('hs3').textContent='INJECTED';
+        document.getElementById('hs3').className='pill p-ok';
+        document.getElementById('iframe-status').textContent='ACTIVE';
+        document.getElementById('iframe-status').className='pill p-ok';
+        document.getElementById('iframe-wrap').classList.remove('active');
+      }, 320);
+    }
+
+    if(d.method === 'ui/notifications/initialized'){
+      logMsg('in','ui/notifications/initialized','Handshake complete ✓');
+      document.getElementById('hs4').textContent='RECEIVED';
+      document.getElementById('hs4').className='pill p-ok';
+      handshakeDone = true;
+      toast('🪟 MCP App handshake complete — hostContext applied!');
+    }
+  });
+
+  setTimeout(()=>{
+    document.getElementById('iframe-status').textContent='READY';
+    document.getElementById('iframe-status').className='pill p-active';
+    logMsg('sys','Sandbox ready','iframe loaded · sandbox=allow-scripts');
+  }, 600);
+}
+
+function doHandshake(){
+  const frame = document.getElementById('mcp-app-frame');
+  logMsg('sys','Manual handshake triggered','Reloading MCP App frame...');
+  handshakeDone = false;
+  ['hs2','hs3','hs4'].forEach(id=>{
+    document.getElementById(id).textContent='—';
+    document.getElementById(id).className='pill p-idle';
+  });
+  document.getElementById('iframe-status').textContent='LOADING';
+  document.getElementById('iframe-status').className='pill p-idle';
+  frame.srcdoc = MCP_APP_HTML;
+  document.getElementById('iframe-wrap').classList.add('active');
+}
+
+function injectHostContext(){
+  const frame = document.getElementById('mcp-app-frame');
+  const ctx = THEMES[currentTheme];
+  frame.contentWindow.postMessage({
+    jsonrpc:'2.0',
+    method:'ui/hostContext/updated',
+    params:{hostContext:ctx}
+  },'*');
+  logMsg('out','ui/hostContext/updated',Object.entries(ctx).map(([k,v])=>k+': '+v).join('\n'));
+  toast('🎨 Host context injected — watch the app re-theme live!');
+}
+
+function setTheme(btn, key){
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active-theme'));
+  btn.classList.add('active-theme');
+  currentTheme = key;
+  const ctx = THEMES[key];
+  document.getElementById('hc-vars-display').innerHTML = Object.entries(ctx)
+    .map(([k,v])=>`<span class="hc-var-k">${k}: </span><span class="hc-var-v">${v}</span>`)
+    .join('\n');
+}
+
+function logMsg(dir, method, detail){
+  const log = document.getElementById('msg-log');
+  const entry = document.createElement('div');
+  entry.className = 'msg-entry ' + (dir==='out'?'out':dir==='in'?'in':dir==='err'?'err':'sys');
+  const dirLabel = {out:'→ HOST',in:'← APP',sys:'SYS',err:'ERR'}[dir]||dir;
+  entry.innerHTML = `<span class="msg-dir">${dirLabel}</span><span class="msg-txt"><strong>${method}</strong>${detail?' · '+detail.split('\n')[0]:''}</span>`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ─── PAGE NAV ─────────────────────────────────────────────────────
+const META = {
+  overview:{ label:'Overview', btn:'Start Workflow', fn:()=>go('setup') },
+  setup:   { label:'Session Setup', btn:'Validate & Save', fn:()=>validateSetup() },
+  runner:  { label:'Scenario Runner', btn:'▶ Run Scenario', fn:()=>runScenario() },
+  trace:   { label:'Trace Inspection', btn:'Reclassify Layer', fn:()=>reclassify() },
+  compare: { label:'Replay & Compare', btn:'Replay Target', fn:()=>replayCompare() },
+  apps:    { label:'MCP Apps Preview', btn:'Perform Handshake', fn:()=>doHandshake() },
+};
+let appsInited = false;
+
+function go(key){
+  Object.keys(META).forEach(k=>{
+    document.getElementById('page-'+k).classList.toggle('active', k===key);
+  });
+  document.querySelectorAll('.nav-item').forEach((n,i)=>{
+    n.classList.toggle('active', Object.keys(META)[i]===key);
+  });
+  document.getElementById('crumb-cur').textContent = META[key].label;
+  const btn = document.getElementById('top-btn');
+  btn.textContent = META[key].btn;
+  btn.onclick = META[key].fn;
+  location.hash = key;
+
+  if(key==='apps' && !appsInited){ appsInited=true; setTimeout(initIframe,200); }
+}
+function handlePrimary(){ go('setup') }
+
+// ─── SETUP ────────────────────────────────────────────────────────
+function validateSetup(){
+  const e = document.getElementById('v-env');
+  const s = document.getElementById('v-save');
+  e.textContent='RESOLVED'; e.className='pill p-ok';
+  s.textContent='SAVED'; s.className='pill p-ok';
+  toast('Session validated and saved.');
+  setTimeout(()=>go('runner'),700);
+}
+
+// ─── RUNNER ───────────────────────────────────────────────────────
+function runScenario(){
+  const s3 = document.getElementById('s3');
+  const s4 = document.getElementById('s4');
+  s3.className='tl-step pass';
+  document.getElementById('s3n').textContent='✓';
+  document.getElementById('s3d').textContent='102ms';
+  document.getElementById('s3p').textContent='PASS'; document.getElementById('s3p').className='pill p-ok';
+  document.getElementById('runner-badge').textContent='Step 4 running'; document.getElementById('runner-badge').className='pill p-warn';
+  document.getElementById('runner-out').innerHTML=`{
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,
+  <span class="k">"id"</span>: <span class="n">7</span>,
+  <span class="k">"result"</span>: {
+    <span class="k">"content"</span>: [{ <span class="k">"type"</span>: <span class="s">"text"</span>, <span class="k">"text"</span>: <span class="s">"# README..."</span> }],
+    <span class="k">"contentType"</span>: <span class="s">"text/plain"</span>
+  },
+  <span class="m">"_meta"</span>: {
+    <span class="m">"ui"</span>: { <span class="m">"resourceUri"</span>: <span class="s">"ui://sales-dashboard/view"</span> }
+  }
+}`;
+  setTimeout(()=>{
+    s4.className='tl-step pass';
+    document.getElementById('s4n').textContent='✓';
+    document.getElementById('s4p').textContent='PASS'; document.getElementById('s4p').className='pill p-ok';
+    document.getElementById('runner-badge').textContent='All passed'; document.getElementById('runner-badge').className='pill p-ok';
+    document.getElementById('app-detect-banner').style.display='block';
+    toast('✓ All steps passed · _meta.ui.resourceUri detected!');
+  },600);
+}
+function resetRunner(){
+  document.getElementById('s3').className='tl-step running';
+  document.getElementById('s3n').textContent='3';
+  document.getElementById('s3d').textContent='—';
+  document.getElementById('s3p').textContent='ACTIVE'; document.getElementById('s3p').className='pill p-active';
+  document.getElementById('s4').className='tl-step';
+  document.getElementById('s4n').textContent='4';
+  document.getElementById('s4p').textContent='QUEUED'; document.getElementById('s4p').className='pill p-idle';
+  document.getElementById('runner-badge').textContent='Step 3 active'; document.getElementById('runner-badge').className='pill p-warn';
+  document.getElementById('app-detect-banner').style.display='none';
+  document.getElementById('runner-out').innerHTML=`{
+  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,
+  <span class="k">"id"</span>: <span class="n">7</span>,
+  <span class="k">"method"</span>: <span class="s">"tools/call"</span>,
+  <span class="k">"params"</span>: { <span class="k">"name"</span>: <span class="s">"read_file"</span>, <span class="k">"arguments"</span>: { <span class="k">"path"</span>: <span class="s">"/README.md"</span> } }
+}`;
+  toast('Reset to initial state.');
+}
+
+// ─── TRACE ────────────────────────────────────────────────────────
+let traceState='protocol';
+function reclassify(){
+  const pp=document.getElementById('proto-pill');
+  const fn=document.getElementById('fail-note');
+  if(traceState==='protocol'){
+    traceState='transport'; pp.textContent='RECLASSIFIED'; pp.className='pill p-warn';
+    fn.innerHTML='Transport mismatch: websocket (baseline) vs stdio (current).<br>serverInfo contract broken at protocol layer.';
+  } else {
+    traceState='protocol'; pp.textContent='FAIL'; pp.className='pill p-bad';
+    fn.innerHTML='serverInfo missing in initialize response.<br>Error -32602 on tools/call.';
+  }
+  toast('Layer reclassified.');
+}
+function switchRaw(btn,key){
+  btn.closest('.card').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('raw-view').innerHTML = key==='req'
+    ? `{\n  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,\n  <span class="k">"id"</span>: <span class="n">7</span>,\n  <span class="k">"method"</span>: <span class="s">"tools/call"</span>,\n  <span class="k">"params"</span>: { <span class="k">"name"</span>: <span class="s">"read_file"</span>, <span class="k">"arguments"</span>: { <span class="k">"path"</span>: <span class="s">"/README.md"</span> } }\n}`
+    : `{\n  <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>,\n  <span class="k">"id"</span>: <span class="n">7</span>,\n  <span class="k">"error"</span>: {\n    <span class="k">"code"</span>: <span class="err">-32602</span>,\n    <span class="k">"message"</span>: <span class="s">"Invalid Request: missing serverInfo"</span>\n  }\n}`;
+}
+
+// ─── COMPARE ──────────────────────────────────────────────────────
+function replayCompare(){
+  const b = document.getElementById('diff-body');
+  if(!document.getElementById('replay-result')){
+    b.insertAdjacentHTML('beforeend',`
+    <div id="replay-result" style="margin-top:10px;padding:10px 12px;background:var(--red-dim);border:1px solid rgba(255,90,90,0.2);border-radius:var(--r)">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--red);font-weight:700;margin-bottom:4px">🔁 Replay: still failing</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text2);line-height:1.6">Regression confirmed. serverInfo still absent in initialize.</div>
+    </div>`);
+  }
+  toast('Replay done — regression confirmed reproducible.');
+}
+function switchDiff(btn,key){
+  btn.closest('.card').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const b = document.getElementById('diff-body');
+  if(key==='p'){
+    b.innerHTML=`<div class="diff-wrap"><div class="diff-hunk">@@ tools/call response @@</div><div class="diff-line dl-ctx">"jsonrpc": "2.0", "id": 7,</div><div class="diff-line dl-rem">"result": { "content": [...], "contentType": "text/plain" }</div><div class="diff-line dl-add">"error": { "code": -32602, "message": "Invalid Request: missing serverInfo" }</div></div>`;
+  } else {
+    b.innerHTML=`<div class="diff-wrap"><div class="diff-hunk">@@ Transport @@</div><div class="diff-line dl-rem">"transport": "websocket"</div><div class="diff-line dl-add">"transport": "stdio"</div></div><div class="diff-wrap" style="margin-top:8px"><div class="diff-hunk">@@ Initialize Response @@</div><div class="diff-line dl-ctx">"protocolVersion": "1.0"</div><div class="diff-line dl-rem">"serverInfo": { "name": "fs-server", "version": "1.2.0" }</div></div><div class="diff-wrap" style="margin-top:8px"><div class="diff-hunk">@@ Validation @@</div><div class="diff-line dl-rem">"validation.status": "pass"</div><div class="diff-line dl-add">"validation.status": "fail"</div><div class="diff-line dl-add">"validation.error": "Missing serverInfo"</div></div>`;
+  }
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────
+function toast(msg){
+  const t = document.getElementById('toast-el');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────
+const h = (location.hash||'#overview').replace('#','');
+go(Object.keys(META).includes(h) ? h : 'overview');
+</script>
+</body>
+</html>
