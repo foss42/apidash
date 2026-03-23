@@ -56,6 +56,13 @@ void main() {
       final slider = ConfigSliderValue(value: (0.0, 0.5, 1.0));
       expect(slider.getPayloadValue(), 0.5);
     });
+
+    test('deserialize throws format exception for short list', () {
+      expect(
+        () => ConfigSliderValue.deserialize(jsonEncode([0.0, 0.5])),
+        throwsFormatException,
+      );
+    });
   });
 
   group('ConfigTextValue', () {

@@ -86,6 +86,11 @@ class ConfigSliderValue extends ConfigValue {
 
   static ConfigSliderValue deserialize(String x) {
     final z = jsonDecode(x) as List;
+    if (z.length < 3) {
+      throw const FormatException(
+        'ConfigSliderValue requires 3 numeric values',
+      );
+    }
     final val = (
       double.parse(z[0].toString()),
       double.parse(z[1].toString()),
