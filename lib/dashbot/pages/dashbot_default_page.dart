@@ -1,3 +1,4 @@
+import 'package:apidash/agentic_testing/widgets/test_generation_panel.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -20,7 +21,9 @@ class DashbotDefaultPage extends StatelessWidget {
         Text(
           'Hello there!',
           style: kTextStyleXXLarge.copyWith(
-              fontSize: 22, fontWeight: FontWeight.w600),
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         kVSpacer10,
         Text(
@@ -37,15 +40,13 @@ class DashbotDefaultPage extends StatelessWidget {
           runSpacing: 8,
           children: [
             HomeScreenTaskButton(
-              label: "🤖 Open Chat",
+              label: 'Open Chat',
               onPressed: () {
-                Navigator.of(context).pushNamed(
-                  DashbotRoutes.dashbotChat,
-                );
+                Navigator.of(context).pushNamed(DashbotRoutes.dashbotChat);
               },
             ),
             HomeScreenTaskButton(
-              label: "📥 Import cURL",
+              label: 'Import cURL',
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   DashbotRoutes.dashbotChat,
@@ -54,11 +55,31 @@ class DashbotDefaultPage extends StatelessWidget {
               },
             ),
             HomeScreenTaskButton(
-              label: "📄 Import OpenAPI",
+              label: 'Import OpenAPI',
               onPressed: () {
                 Navigator.of(context).pushNamed(
                   DashbotRoutes.dashbotChat,
                   arguments: ChatMessageType.importOpenApi,
+                );
+              },
+            ),
+            HomeScreenTaskButton(
+              label: 'Agentic Test Prototype',
+              onPressed: () async {
+                await showDialog<void>(
+                  context: context,
+                  builder: (_) {
+                    return const Dialog(
+                      child: SizedBox(
+                        width: 780,
+                        height: 640,
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: TestGenerationPanel(),
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),

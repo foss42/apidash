@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/agentic_testing/widgets/test_generation_panel.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
@@ -86,6 +87,26 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                   Navigator.of(context).pushNamed(
                     DashbotRoutes.dashbotChat,
                     arguments: ChatMessageType.generateTest,
+                  );
+                },
+              ),
+              HomeScreenTaskButton(
+                label: "Agentic Test Prototype",
+                onPressed: () async {
+                  await showDialog<void>(
+                    context: context,
+                    builder: (_) {
+                      return const Dialog(
+                        child: SizedBox(
+                          width: 780,
+                          height: 640,
+                          child: Padding(
+                            padding: EdgeInsets.all(16),
+                            child: TestGenerationPanel(),
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
