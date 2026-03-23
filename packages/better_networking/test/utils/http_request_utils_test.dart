@@ -197,6 +197,18 @@ void main() {
         [kvRow1, kvRow3],
       );
     });
+    test('Testing duplicate rows use their own enabled index', () {
+      const duplicateA = NameValueModel(name: 'dup', value: 'same');
+      const duplicateB = NameValueModel(name: 'dup', value: 'same');
+
+      expect(
+        getEnabledRows(
+          [duplicateA, duplicateB],
+          [true, false],
+        ),
+        [duplicateA],
+      );
+    });
   });
 
   group('Testing getRequestBody', () {
