@@ -95,7 +95,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       }
                       final message = msgs[index];
                       return ChatBubble(
-                        message: message.content,
+                        message: message.explanation,
                         role: message.role,
                         actions: message.actions,
                       );

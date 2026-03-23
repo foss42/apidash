@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 abstract class ChatRemoteRepository {
   /// Execute a non-streaming chat completion.
   Future<String?> sendChat({required AIRequestModel request});
+  /// Execute a streaming chat completion.
+  Future<Stream<String?>> streamChat({required AIRequestModel request});
 }
 
 class ChatRemoteRepositoryImpl implements ChatRemoteRepository {
@@ -18,6 +20,12 @@ class ChatRemoteRepositoryImpl implements ChatRemoteRepository {
     if (result == null || result.isEmpty) return null;
     return result;
   }
+
+  @override
+  Future<Stream<String?>> streamChat({required AIRequestModel request}) {
+    return streamGenAIRequest(request);
+  }
+
 }
 
 /// Provider for the repository
