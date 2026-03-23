@@ -25,26 +25,27 @@ class ADListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final subtitleWidget = subtitle == null ? null : Text(subtitle!);
     return switch (type) {
       ListTileType.switchOnOff => SwitchListTile(
           hoverColor: hoverColor,
           title: Text(title),
-          subtitle: subtitle == null ? null : Text(subtitle ?? ''),
+          subtitle: subtitleWidget,
           value: value ?? false,
           onChanged: onChanged,
         ),
       ListTileType.checkbox => CheckboxListTile(
           hoverColor: hoverColor,
           title: Text(title),
-          subtitle: subtitle == null ? null : Text(subtitle ?? ''),
+          subtitle: subtitleWidget,
           value: value ?? false,
           onChanged: onChanged,
         ),
       ListTileType.button => ListTile(
           hoverColor: hoverColor,
           title: Text(title),
-          subtitle: subtitle == null ? null : Text(subtitle ?? ''),
-          onTap: () => onChanged?.call(value),
+          subtitle: subtitleWidget,
+          onTap: onChanged == null ? null : () => onChanged?.call(value),
         ),
     };
   }

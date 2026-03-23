@@ -71,4 +71,23 @@ void main() {
 
     expect(changedValue, true);
   });
+
+  testWidgets('button tile is disabled when onChanged is null', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: ADListTile(
+            type: ListTileType.button,
+            title: 'Disabled action',
+            subtitle: 'Should not be tappable',
+            value: true,
+            onChanged: null,
+          ),
+        ),
+      ),
+    );
+
+    final tile = tester.widget<ListTile>(find.byType(ListTile));
+    expect(tile.onTap, isNull);
+  });
 }
