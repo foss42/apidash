@@ -1,97 +1,150 @@
-### Initial Idea Submission
+# GSoC Initial Idea Submission
 
-**Full Name**: Aanish Bangre  
-**University name**: Sardar Patel Institute Of Technology  
-**Program you are enrolled in (Degree & Major/Minor)**: Btech in Computer Science
-**Year**: 3rd 
-**Expected graduation date**: August 2027
+**Full Name:** Aanish Bangre
+**University:** Sardar Patel Institute of Technology
+**Program:** B.Tech in Computer Science
+**Year:** 3rd Year
+**Expected Graduation:** August 2027
 
-**Project Title**: Agentic API Test Suite Engine with Deterministic Execution Foundation
+---
 
-**Relevant issues**:
-- https://github.com/foss42/apidash/issues/1158
+## Project Title
 
-**Idea description**:
+**Agentic API Test Suite Engine with Deterministic Execution Foundation**
 
-API Dash currently enables sending and inspecting API requests, and DashBot supports AI-assisted test generation. However, there is no structured execution engine that:
+**Relevant Issue:** [#1158](https://github.com/foss42/apidash/issues/1158)
 
-- Generates deterministic test variations from a RequestModel
-- Executes test cases as a cohesive suite
-- Validates responses against structured expectations
-- Aggregates results into a measurable test report
-- Provides a reliable foundation for agentic/self-healing workflows
+---
 
-This project proposes building an Agentic API Test Suite Engine with a layered architecture.
+## Problem Statement
 
-### Architecture Overview
+API Dash is a powerful tool for designing and sending API requests, but it currently lacks a structured way to **run tests as cohesive suites**. While Dashbot can generate test ideas, there is no dedicated engine that automatically generates test variations, executes them, and provides structured results.
 
-**Layer 1** – Deterministic Execution Foundation
+Developers are left writing tests manually and have no way to validate API robustness directly within API Dash.
 
-This layer introduces a rule-based, non-AI execution engine that:
+---
 
-1. Generates test cases from an existing RequestModel using mutation rules:
-   - Baseline valid request
-   - Missing authentication
-   - Malformed JSON body
-   - Empty body
-   - Missing query parameters
-   - GraphQL-specific error scenarios
+## Proposed Solution
 
-2. Uses structured models:
-   - TestCase
-   - TestExpectation
-   - TestResult
+Introduce an **Agentic API Test Suite Engine** that transforms API Dash into a structured testing platform — without breaking existing architecture.
 
-3. Executes each test case using the existing `sendHttpRequest()` infrastructure.
+The core idea: a developer simply asks Dashbot *"Test this API"*, and the system handles everything — from understanding the API to generating scenarios, executing them, and reporting results.
 
-4. Validates responses via a TestEvaluator:
-   - Expected status codes
-   - Body assertions (e.g., GraphQL "errors" presence/absence)
-   - Optional performance thresholds
+The system is built around a clear principle:
 
-This provides:
-- Deterministic, measurable API robustness testing
-- Clean separation of execution and reasoning
-- A baseline that does not depend on LLM outputs
+> **AI reasons. Deterministic engine executes.**
 
-**Layer 2** – Agentic / Self-Healing Augmentation
+---
 
-Once deterministic execution is stable, an AI layer can augment it by:
+## High-Level Architecture
 
-- Generating additional edge-case scenarios
-- Dynamically mutating failed test cases
-- Refining payloads after validation errors
-- Creating stateful execution chains (e.g., login → use token → invalidate token)
-- Suggesting security and boundary tests
+![Agentic API Testing Architecture](images/aanish_agentic_api_architecture.png)
 
-The AI layer will consume structured TestResult outputs from Layer 1 rather than raw HTTP responses.
+```
+User Prompt (Dashbot Chat)
+        ↓
+  Agent Reasoning Layer
+  (Context → Scenarios → Strategy)
+        ↓
+  Human Review
+  (Approve before execution)
+        ↓
+  Deterministic Execution Engine
+  (Orchestrate → Mutate → Execute → Validate)
+        ↓
+  Learning & Adaptation Layer
+  (Failure Analysis → Self-Healing → Improved Coverage)
+        ↓
+  Results displayed in Dashbot
+```
 
-### Why This Approach?
+---
 
-1. Prevents over-reliance on LLM-generated logic.
-2. Ensures reproducible and testable execution.
-3. Maintains separation of concerns:
-   - HTTP execution
-   - Validation logic
-   - AI reasoning
-4. Scales cleanly for future UI integration and reporting.
-5. Aligns directly with GSoC Idea 4.
+## Key Components
 
+### Layer 1 — Deterministic Execution Engine
+The foundation. A rule-based engine that generates and runs test cases **without AI involvement**, ensuring reliability and reproducibility.
 
-### Implementation Plan (High-Level)
+- `RuleEngine` — mutates requests (missing auth, malformed body, empty params, etc.)
+- `TestOrchestratorService` — runs test suites sequentially
+- `TestEvaluator` — validates responses against expectations
+- Reuses existing `sendHttpRequest()` infrastructure
 
-Phase 1:
-- Implement deterministic RuleEngine
-- Add TestOrchestratorService
-- Add TestEvaluator
-- Add structured models
-- Write unit tests
+### Layer 2 — AI Reasoning (Dashbot Integration)
+The intelligence layer. Dashbot analyzes API context and generates a structured test strategy.
 
-Phase 2:
-- Integrate AI-based scenario generation
-- Add self-healing logic for failed cases
-- Implement structured reporting
-- Add optional UI integration
+- Reads URL, method, headers, body, and history
+- Generates named scenarios with expected outcomes
+- Detects multi-step workflows (e.g. Login → Cart → Checkout → Payment)
+- Returns scenarios as `ChatActions` for developer review
 
+### Layer 3 — Learning & Adaptation
+Makes the system truly agentic over time.
 
-This project aims to transform API Dash from a request inspector into a structured API testing platform with intelligent augmentation.
+- Explains why tests fail
+- Suggests new scenarios to improve coverage
+- Detects API schema drift and proposes test updates (self-healing)
+
+---
+
+## Integration with Dashbot
+
+The system integrates naturally into the existing Dashbot architecture — no major rewrites needed.
+
+New additions:
+- `ChatMessageType.generateApiTests`
+- `generateApiTestScenariosPrompt` in `PromptBuilder`
+- `lib/services/testing/` module (new, isolated)
+
+Everything else — `ChatViewmodel`, `sendHttpRequest()`, `Repository` — is **reused as-is**.
+
+---
+
+## Example Interaction
+
+```
+Developer:  "Test this API endpoint"
+
+Dashbot:    Generated scenarios:
+            • Valid request
+            • Missing authentication
+            • Malformed JSON body
+            • Missing query parameters
+
+            [Run Tests]
+
+Results:    Baseline request         ✅ PASS
+            Missing authentication   ✅ PASS
+            Malformed JSON body      ❌ FAIL
+            Missing query parameters ✅ PASS
+
+            Total: 4 | Passed: 3 | Failed: 1
+```
+
+---
+
+## Implementation Phases
+
+**Phase 1 — Deterministic Engine**
+`RuleEngine`, `TestOrchestratorService`, `TestEvaluator`, structured models (`TestCase`, `TestResult`), unit tests.
+
+**Phase 2 — Dashbot Integration**
+New prompt types, AI scenario generation, results displayed in chat.
+
+**Phase 3 — Agentic Enhancements**
+Workflow testing, failure analysis, self-healing suggestions.
+
+---
+
+## Why This Approach
+
+- **Reliable** — execution never depends on AI output
+- **Non-disruptive** — reuses existing API Dash infrastructure
+- **Extensible** — security, performance, and contract testing can be added later
+- **Human-in-the-loop** — developers review before anything runs
+
+---
+
+## Expected Outcome
+
+API Dash evolves from a request exploration tool into a **comprehensive AI-assisted API testing platform** where developers can validate, analyze, and continuously improve their APIs — all from a single chat message.
