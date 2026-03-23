@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 import '../models/models.dart';
 import '../utils/utils.dart';
 import 'blueprint.dart';
@@ -13,7 +14,9 @@ class AIAgentService {
       systemPrompt: systemPrompt,
       userPrompt: input,
     );
-    return await executeGenAIRequest(aiRequest);
+    return await executeGenAIRequest(
+      aiRequest,
+    ).timeout(const Duration(seconds: 30));
   }
 
   static Future<String?> _orchestrator(
@@ -44,7 +47,7 @@ class AIAgentService {
     String? query,
     Map? variables,
   }) async {
-    int RETRY_COUNT = 0;
+    int retryCount = 0;
     List<int> backoffDelays = [200, 400, 800, 1600, 3200];
     do {
       try {
@@ -60,19 +63,18 @@ class AIAgentService {
           }
         }
       } catch (e) {
-        "AIAgentService::Governor: Exception Occurred: $e";
+        //"AIAgentService::Governor: Exception Occurred: $e";
+        debugPrint("AIAgentService::Governor: Exception Occurred: $e");
       }
       // Exponential Backoff
-      if (RETRY_COUNT < backoffDelays.length) {
-        await Future.delayed(
-          Duration(milliseconds: backoffDelays[RETRY_COUNT]),
-        );
+      if (retryCount < backoffDelays.length) {
+        await Future.delayed(Duration(milliseconds: backoffDelays[retryCount]));
       }
-      RETRY_COUNT += 1;
+      retryCount += 1;
       debugPrint(
-        "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $RETRY_COUNT",
+        "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $retryCount",
       );
-    } while (RETRY_COUNT < 5);
+    } while (retryCount < 5);
     return null;
   }
 
@@ -82,11 +84,22 @@ class AIAgentService {
     String? query,
     Map? variables,
   }) async {
-    return await _governor(
-      agent,
-      baseAIRequestObject,
-      query: query,
-      variables: variables,
-    );
+    try {
+      // Add the 120-second timeout to the entire governor process
+      return await _governor(
+        agent,
+        baseAIRequestObject,
+        query: query,
+        variables: variables,
+      ).timeout(const Duration(seconds: 120));
+    } on TimeoutException catch (e) {
+      // If it takes longer than 120s overall, catch it and return null
+      debugPrint("Agent execution timed out: $e");
+      return null;
+    } catch (e) {
+      // Catch any other unexpected errors just in case
+      debugPrint("Unexpected error in callAgent: $e");
+      return null;
+    }
   }
 }

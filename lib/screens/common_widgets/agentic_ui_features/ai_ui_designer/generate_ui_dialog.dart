@@ -48,21 +48,24 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         ref: ref,
         apiResponse: apiResponse,
       );
+
       if (res == null) {
         setState(() {
           index = 0;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
-              kMsgPreviewGenerationFailed,
+              kMsgTimeoutError,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.redAccent,
+            duration: Duration(seconds: 5),
           ),
         );
         return null;
       }
+
       return res;
     } catch (e) {
       String errMsg = kMsgUnexpectedError;
@@ -89,14 +92,15 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       ref: ref,
       modificationRequest: modificationRequest,
     );
+
     if (res == null) {
       setState(() {
         index = 2;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
-            kMsgModificationRequestFailed,
+            kMsgTimeoutError,
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.redAccent,
@@ -104,6 +108,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       );
       return;
     }
+
     setState(() {
       generatedSDUI = res;
       index = 2;
