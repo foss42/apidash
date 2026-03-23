@@ -19,7 +19,7 @@ String stripUriParams(Uri uri) {
 
 String stripUrlParams(String url) {
   var idx = url.indexOf("?");
-  return idx > 0 ? url.substring(0, idx) : url;
+  return idx >= 0 ? url.substring(0, idx) : url;
 }
 
 (Uri?, String?) getValidRequestUri(
