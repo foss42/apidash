@@ -49,6 +49,7 @@ The capability for automated, multi-step API integration testing driven by an AI
 **8. Have you interacted with and helped API Dash community? (GitHub/Discord links)**
 Yes, I have been actively participating as a contributor.
 [Discord](https://discord.com/channels/920089648842293248/1033783279289110648/1482070122553409556)
+[discussion Thread](https://github.com/foss42/apidash/discussions/1230#discussioncomment-15983018)
 
 ### Project Proposal Information
 
