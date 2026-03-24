@@ -35,6 +35,7 @@ Short answers to the following questions (Add relevant links wherever you can):
 5. Do you mind regularly syncing up with the project mentors?
 6. What interests you the most about API Dash?
 7. Can you mention some areas where the project can be improved?
+8. Have you interacted with and helped API Dash community? (GitHub/Discord links)
 
 ### Project Proposal Information
 

@@ -1,10 +1,10 @@
 ### Initial Idea Submission
 
-**Full Name:** Lokesh Parasa  
-**University name:** Manipal Institute of Technology  
+**Full Name:** Samay Parashar  
+**University name:** GLA UNIVERSITY  
 **Program you are enrolled in (Degree & Major/Minor):** B.Tech in Computer and Communication Engineering  
-**Year:** 2nd Year  
-**Expected graduation date:** 2028  
+**Year:** 1st Year  
+**Expected graduation date:** 2029  
 
 **Project Title:** Native Local-First AI & Agent Evaluation Framework for API Dash
 
