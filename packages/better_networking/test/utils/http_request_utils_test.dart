@@ -197,6 +197,16 @@ void main() {
         [kvRow1, kvRow3],
       );
     });
+    test('Filters duplicate rows by position, not by value', () {
+      const duplicateRow = NameValueModel(name: "dup", value: "same");
+      expect(
+        getEnabledRows(
+          [duplicateRow, duplicateRow],
+          [false, true],
+        ),
+        [duplicateRow],
+      );
+    });
   });
 
   group('Testing getRequestBody', () {
