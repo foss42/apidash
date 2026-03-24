@@ -65,12 +65,31 @@ void main() {
               .having(
                 (e) => e.message,
                 'message contains requirement',
-                contains('requires 3 numeric values'),
+                contains('requires exactly 3 numeric values'),
               )
               .having(
                 (e) => e.message,
                 'message contains actual length',
                 contains('got 2'),
+              ),
+        ),
+      );
+    });
+
+    test('deserialize throws format exception for oversized list', () {
+      expect(
+        () => ConfigSliderValue.deserialize(jsonEncode([0.0, 0.5, 1.0, 1.5])),
+        throwsA(
+          isA<FormatException>()
+              .having(
+                (e) => e.message,
+                'message contains requirement',
+                contains('requires exactly 3 numeric values'),
+              )
+              .having(
+                (e) => e.message,
+                'message contains actual length',
+                contains('got 4'),
               ),
         ),
       );
