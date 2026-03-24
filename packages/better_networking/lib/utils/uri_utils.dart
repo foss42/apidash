@@ -17,6 +17,11 @@ String stripUriParams(Uri uri) {
   return "${uri.scheme}://${uri.authority}${uri.path}";
 }
 
+/// Removes everything from the first `?` onwards using string splitting.
+///
+/// This helper is intentionally string-based and does not enforce strict URI
+/// semantics. For example, a `?` that appears after `#` is still treated as a
+/// split point.
 String stripUrlParams(String url) {
   var idx = url.indexOf("?");
   return idx >= 0 ? url.substring(0, idx) : url;
