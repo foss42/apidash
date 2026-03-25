@@ -9,6 +9,7 @@ import 'request_params.dart';
 import 'request_body.dart';
 import 'request_auth.dart';
 import 'request_scripts.dart';
+import 'request_agentic_testing.dart';
 
 class EditRestRequestPane extends ConsumerWidget {
   const EditRestRequestPane({
@@ -24,6 +25,8 @@ class EditRestRequestPane extends ConsumerWidget {
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
+    final safeTabIndex =
+      tabIndex != null ? tabIndex.clamp(0, 5) as int : null;
 
     final headerLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.headersMap.length)) ??
@@ -48,7 +51,7 @@ class EditRestRequestPane extends ConsumerWidget {
       selectedId: selectedId,
       showViewCodeButton: showViewCodeButton,
       codePaneVisible: codePaneVisible,
-      tabIndex: tabIndex,
+      tabIndex: safeTabIndex,
       onPressedCodeButton: () {
         ref.read(codePaneVisibleStateProvider.notifier).state =
             !codePaneVisible;
@@ -64,6 +67,7 @@ class EditRestRequestPane extends ConsumerWidget {
         headerLength > 0,
         hasBody,
         scriptsLength > 0,
+        false,
       ],
       tabLabels: const [
         kLabelURLParams,
@@ -71,6 +75,7 @@ class EditRestRequestPane extends ConsumerWidget {
         kLabelHeaders,
         kLabelBody,
         kLabelScripts,
+        kLabelTesting,
       ],
       children: const [
         EditRequestURLParams(),
@@ -78,6 +83,7 @@ class EditRestRequestPane extends ConsumerWidget {
         EditRequestHeaders(),
         EditRequestBody(),
         EditRequestScripts(),
+        EditRequestAgenticTesting(),
       ],
     );
   }

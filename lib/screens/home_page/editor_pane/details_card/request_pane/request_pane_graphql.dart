@@ -8,6 +8,7 @@ import 'request_auth.dart';
 import 'request_headers.dart';
 import 'request_body.dart';
 import 'request_scripts.dart';
+import 'request_agentic_testing.dart';
 
 class EditGraphQLRequestPane extends ConsumerWidget {
   const EditGraphQLRequestPane({
@@ -22,6 +23,8 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
+    final safeTabIndex =
+      tabIndex != null ? tabIndex.clamp(0, 4) as int : null;
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final headerLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.headersMap.length)) ??
@@ -43,7 +46,7 @@ class EditGraphQLRequestPane extends ConsumerWidget {
       selectedId: selectedId,
       showViewCodeButton: showViewCodeButton,
       codePaneVisible: codePaneVisible,
-      tabIndex: tabIndex,
+      tabIndex: safeTabIndex,
       onPressedCodeButton: () {
         ref.read(codePaneVisibleStateProvider.notifier).state =
             !codePaneVisible;
@@ -58,18 +61,21 @@ class EditGraphQLRequestPane extends ConsumerWidget {
         hasAuth,
         hasQuery,
         scriptsLength > 0,
+        false,
       ],
       tabLabels: const [
         kLabelHeaders,
         kLabelAuth,
         kLabelQuery,
         kLabelScripts,
+        kLabelTesting,
       ],
       children: const [
         EditRequestHeaders(),
         EditAuthType(),
         EditRequestBody(),
         EditRequestScripts(),
+        EditRequestAgenticTesting(),
       ],
     );
   }
