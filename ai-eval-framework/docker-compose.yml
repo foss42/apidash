@@ -1,0 +1,37 @@
+services:
+  dataset-service:
+    build: ./services/dataset-service
+    ports:
+      - "8004:8004"
+    env_file:
+      - .env
+    volumes:
+      - dataset-data:/app/data
+    restart: unless-stopped
+
+  eval-engine:
+    build: ./services/eval-engine
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      - DATASET_SERVICE_URL=http://dataset-service:8004
+    depends_on:
+      - dataset-service
+    restart: unless-stopped
+
+  ui:
+    build: ./ui-streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      - DATASET_SERVICE_URL=http://dataset-service:8004
+      - EVAL_ENGINE_URL=http://eval-engine:8001
+    depends_on:
+      - eval-engine
+      - dataset-service
+    restart: unless-stopped
+
+volumes:
+  dataset-data:

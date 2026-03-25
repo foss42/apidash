@@ -1,0 +1,7 @@
+__pycache__
+*.pyc
+.env
+.git
+sample_data
+run_poc.sh
+*.md

