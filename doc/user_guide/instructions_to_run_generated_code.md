@@ -23,6 +23,7 @@ Choose your programming language/library from the list provided below to learn m
 - [PHP (HTTPlug)](#php-httplug)
 - [Python (requests)](#python-requests)
 - [Python (http.client)](#python-httpclient)
+- [Python (httpx)](#python-httpx)
 - [Ruby (faraday)](#ruby-faraday)
 - [Ruby (net/http)](#ruby-nethttp)
 - [Rust (hyper)](#rust-hyper)
@@ -1337,6 +1338,90 @@ Unlike other Python libraries (like `requests`), `http.client` is part of Python
 
 ### 3. Execute the generated code:
 Check out the instructions [here](#3-execute-the-generated-code) for detailed steps on how to run the code.
+
+## Python (httpx)
+
+Here are the detailed instructions for running the generated API Dash code in **Python (using `httpx`)** for macOS, Windows, and Linux.
+
+`httpx` is a modern, fully featured HTTP client for Python 3 that supports both synchronous and asynchronous requests, HTTP/1.1 and HTTP/2.
+
+### 1. Install Python
+
+Visit the official [Python Downloads page](https://www.python.org/downloads/) and install the latest stable version of Python for your operating system.
+
+#### Verify Python Installation
+
+**macOS and Linux:**
+```
+python3 --version
+```
+
+**Windows:**
+```
+py --version
+```
+
+> **Note for Windows users:** If `py` is not recognized, ensure you checked **"Add Python to PATH"** during installation. If Python is still not found, re-run the installer and enable that option.
+
+### 2. Install the `httpx` Library
+
+Open your terminal (macOS/Linux) or Command Prompt/PowerShell (Windows) and run:
+```
+pip install httpx
+```
+
+Verify the installation was successful:
+```
+pip show httpx
+```
+
+You should see output showing the installed version, e.g., `Version: 0.28.x`.
+
+> **Note:** If you have multiple Python versions installed and `pip` does not point to the right one, use `pip3 install httpx` on macOS/Linux or `py -m pip install httpx` on Windows.
+
+### 3. Run the Generated Code
+
+Once Python and `httpx` are installed, follow these steps:
+
+1. **Copy the generated code** from API Dash.
+2. **Create a new file**, e.g., `api_request.py`, and paste the code into it.
+3. **Save the file**.
+
+#### Using the Command Line
+
+**macOS and Linux:**
+```
+python3 api_request.py
+```
+
+**Windows:**
+```
+py api_request.py
+```
+
+The API response will be printed in the terminal output.
+
+#### Using VS Code
+
+1. Open the file in VS Code.
+2. Click the **Run Python File** button (▶) in the top right corner.
+3. The response will appear in the integrated terminal at the bottom.
+
+### 4. Running Async Code (if applicable)
+
+If the generated code uses `async`/`await` syntax, it requires an async entry point. The generated code from API Dash wraps the async logic in `asyncio.run()` automatically, so you can run it the same way as synchronous code:
+
+**macOS and Linux:**
+```
+python3 api_request.py
+```
+
+**Windows:**
+```
+py api_request.py
+```
+
+No additional setup is required for async execution.
 
 ## Ruby (faraday)
 
