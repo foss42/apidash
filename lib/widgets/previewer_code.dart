@@ -76,6 +76,19 @@ class _CodePreviewerState extends State<CodePreviewer> {
     );
   }
 
+  String getReadableError(String error) {
+  if (error.contains('Failed host lookup')) {
+    return 'Unable to connect. Please check your internet connection.';
+  } else if (error.contains('SocketException')) {
+    return 'Network error. Please check your connection.';
+  } else if (error.contains('timeout')) {
+    return 'Request timed out. Please try again.';
+  } else if (error.contains('404')) {
+    return 'Requested resource not found.';
+  }
+  return 'Something went wrong. Please try again.';
+}
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -128,7 +141,7 @@ class _CodePreviewerState extends State<CodePreviewer> {
             );
           }
           if (snapshot.hasError) {
-            return ErrorMessage(message: snapshot.error.toString());
+            return ErrorMessage(message: getReadableError(snapshot.error.toString()));
           }
           return const CircularProgressIndicator();
         },
