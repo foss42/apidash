@@ -23,34 +23,39 @@ class AIModelSelectorButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: readonly
-          ? null
-          : () async {
-              onDialogOpen?.call();
-              final newAIRequestModel = await showDialog<AIRequestModel>(
-                context: context,
-                useRootNavigator: useRootNavigator,
-                builder: (context) {
-                  return AlertDialog(
-                    scrollable: true,
-                    content: AIModelSelectorDialog(
-                      aiRequestModel: aiRequestModel,
-                    ),
-                    contentPadding: kP10,
-                  );
-                },
-              );
-              onDialogClose?.call();
-              if (newAIRequestModel == null) return;
-              onModelUpdated?.call(newAIRequestModel);
-            },
-      child: Text(
-        aiRequestModel?.model ?? kLabelSelectModel,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
+Widget build(BuildContext context) {
+  final modelName = aiRequestModel?.model; // ✅ MOVE HERE
+
+  return ElevatedButton(
+    onPressed: readonly
+        ? null
+        : () async {
+            onDialogOpen?.call();
+            final newAIRequestModel = await showDialog<AIRequestModel>(
+              context: context,
+              useRootNavigator: useRootNavigator,
+              builder: (context) {
+                return AlertDialog(
+                  scrollable: true,
+                  content: AIModelSelectorDialog(
+                    aiRequestModel: aiRequestModel,
+                  ),
+                  contentPadding: kP10,
+                );
+              },
+            );
+            onDialogClose?.call();
+            if (newAIRequestModel == null) return;
+            onModelUpdated?.call(newAIRequestModel);
+          },
+
+    child: Text(
+      (modelName != null && modelName.isNotEmpty)
+          ? modelName
+          : kLabelSelectModel,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
+}
 }
