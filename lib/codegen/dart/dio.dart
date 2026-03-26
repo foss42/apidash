@@ -82,6 +82,10 @@ class DartDioCodeGen {
               .assign(refer('convert.json.decode').call([strContent]));
         case ContentType.text:
           dataExp = declareFinal('data').assign(strContent);
+        case ContentType.formUrlEncoded:
+          dataExp = declareFinal('data').assign(
+            literalMap({for (var e in formData) e['name']: e['value']}),
+          );
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
