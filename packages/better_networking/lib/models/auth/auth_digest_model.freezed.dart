@@ -82,36 +82,35 @@ class _$AuthDigestModelCopyWithImpl<$Res, $Val extends AuthDigestModel>
   }) {
     return _then(
       _value.copyWith(
-            username: null == username
-                ? _value.username
-                : username // ignore: cast_nullable_to_non_nullable
-                      as String,
-            password: null == password
-                ? _value.password
-                : password // ignore: cast_nullable_to_non_nullable
-                      as String,
-            realm: null == realm
-                ? _value.realm
-                : realm // ignore: cast_nullable_to_non_nullable
-                      as String,
-            nonce: null == nonce
-                ? _value.nonce
-                : nonce // ignore: cast_nullable_to_non_nullable
-                      as String,
-            algorithm: null == algorithm
-                ? _value.algorithm
-                : algorithm // ignore: cast_nullable_to_non_nullable
-                      as String,
-            qop: null == qop
-                ? _value.qop
-                : qop // ignore: cast_nullable_to_non_nullable
-                      as String,
-            opaque: null == opaque
-                ? _value.opaque
-                : opaque // ignore: cast_nullable_to_non_nullable
-                      as String,
-          )
-          as $Val,
+        username: null == username
+            ? _value.username
+            : username // ignore: cast_nullable_to_non_nullable
+                as String,
+        password: null == password
+            ? _value.password
+            : password // ignore: cast_nullable_to_non_nullable
+                as String,
+        realm: null == realm
+            ? _value.realm
+            : realm // ignore: cast_nullable_to_non_nullable
+                as String,
+        nonce: null == nonce
+            ? _value.nonce
+            : nonce // ignore: cast_nullable_to_non_nullable
+                as String,
+        algorithm: null == algorithm
+            ? _value.algorithm
+            : algorithm // ignore: cast_nullable_to_non_nullable
+                as String,
+        qop: null == qop
+            ? _value.qop
+            : qop // ignore: cast_nullable_to_non_nullable
+                as String,
+        opaque: null == opaque
+            ? _value.opaque
+            : opaque // ignore: cast_nullable_to_non_nullable
+                as String,
+      ) as $Val,
     );
   }
 }
@@ -163,31 +162,31 @@ class __$$AuthDigestModelImplCopyWithImpl<$Res>
         username: null == username
             ? _value.username
             : username // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         password: null == password
             ? _value.password
             : password // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         realm: null == realm
             ? _value.realm
             : realm // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         nonce: null == nonce
             ? _value.nonce
             : nonce // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         algorithm: null == algorithm
             ? _value.algorithm
             : algorithm // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         qop: null == qop
             ? _value.qop
             : qop // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
         opaque: null == opaque
             ? _value.opaque
             : opaque // ignore: cast_nullable_to_non_nullable
-                  as String,
+                as String,
       ),
     );
   }
@@ -249,15 +248,15 @@ class _$AuthDigestModelImpl implements _AuthDigestModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    username,
-    password,
-    realm,
-    nonce,
-    algorithm,
-    qop,
-    opaque,
-  );
+        runtimeType,
+        username,
+        password,
+        realm,
+        nonce,
+        algorithm,
+        qop,
+        opaque,
+      );
 
   /// Create a copy of AuthDigestModel
   /// with the given fields replaced by the non-null parameter values.

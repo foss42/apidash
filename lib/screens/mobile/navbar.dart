@@ -15,8 +15,9 @@ class BottomNavBar extends ConsumerWidget {
           alignment: Alignment.topCenter,
           height: 70 + MediaQuery.paddingOf(context).bottom,
           width: MediaQuery.sizeOf(context).width,
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.paddingOf(context).bottom,
+          ),
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(

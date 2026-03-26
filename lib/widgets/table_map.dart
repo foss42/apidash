@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 
 class MapTable extends StatelessWidget {
-  const MapTable(
-      {super.key,
-      required this.map,
-      required this.colNames,
-      this.firstColumnHeaderCase = false});
+  const MapTable({
+    super.key,
+    required this.map,
+    required this.colNames,
+    this.firstColumnHeaderCase = false,
+  });
 
   final Map map;
   final List<String> colNames;
@@ -67,10 +68,7 @@ class MapTable extends StatelessWidget {
                 verticalAlignment: TableCellVerticalAlignment.top,
                 child: Padding(
                   padding: kP1,
-                  child: SelectableText(
-                    entry.value,
-                    style: kCodeStyle,
-                  ),
+                  child: SelectableText(entry.value, style: kCodeStyle),
                 ),
               ),
             ],

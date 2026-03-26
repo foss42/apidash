@@ -18,16 +18,16 @@ class EnvVarIndicator extends StatelessWidget {
         color: isUnknown
             ? Theme.of(context).colorScheme.errorContainer
             : isGlobal
-                ? Theme.of(context).colorScheme.secondaryContainer
-                : Theme.of(context).colorScheme.primaryContainer,
+            ? Theme.of(context).colorScheme.secondaryContainer
+            : Theme.of(context).colorScheme.primaryContainer,
         borderRadius: kBorderRadius4,
       ),
       child: Icon(
         isUnknown
             ? Icons.block
             : isGlobal
-                ? Icons.public
-                : Icons.computer,
+            ? Icons.public
+            : Icons.computer,
         size: 16,
       ),
     );

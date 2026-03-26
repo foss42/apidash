@@ -27,20 +27,13 @@ class ErrorMessage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              showIcon
-                  ? Icon(
-                      icon,
-                      size: 40,
-                      color: color,
-                    )
-                  : const SizedBox(),
+              showIcon ? Icon(icon, size: 40, color: color) : const SizedBox(),
               SelectableText(
                 message ?? 'An error occurred. $kUnexpectedRaiseIssue',
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(color: color),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(color: color),
               ),
               kVSpacer20,
               showIssueButton

@@ -40,12 +40,12 @@ List<Map<String, String>>? rowsToFormDataMapList(List<FormDataModel>? kvRows) {
       .map(
         (FormDataModel formData) =>
             (formData.name.trim().isEmpty && formData.value.trim().isEmpty)
-            ? null
-            : {
-                "name": formData.name,
-                "value": formData.value,
-                "type": formData.type.name,
-              },
+                ? null
+                : {
+                    "name": formData.name,
+                    "value": formData.value,
+                    "type": formData.type.name,
+                  },
       )
       .nonNulls
       .toList();
@@ -80,9 +80,8 @@ List<NameValueModel>? getEnabledRows(
   if (rows == null || isRowEnabledList == null) {
     return rows;
   }
-  List<NameValueModel> finalRows = rows
-      .where((element) => isRowEnabledList[rows.indexOf(element)])
-      .toList();
+  List<NameValueModel> finalRows =
+      rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
   return finalRows == [] ? null : finalRows;
 }
 

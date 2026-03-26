@@ -3,12 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LearnButton extends StatelessWidget {
-  const LearnButton({
-    super.key,
-    this.label,
-    this.icon,
-    this.url,
-  });
+  const LearnButton({super.key, this.label, this.icon, this.url});
 
   final String? label;
   final IconData? icon;
@@ -24,9 +19,7 @@ class LearnButton extends StatelessWidget {
         iconSize: kButtonIconSizeSmall,
         label: textLabel,
         isTonal: true,
-        buttonStyle: ButtonStyle(
-          padding: WidgetStatePropertyAll(kP10),
-        ),
+        buttonStyle: ButtonStyle(padding: WidgetStatePropertyAll(kP10)),
         onPressed: () {
           if (url != null) {
             launchUrl(Uri.parse(url!));

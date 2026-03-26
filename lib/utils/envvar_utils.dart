@@ -9,37 +9,42 @@ String getEnvironmentTitle(String? name) {
 }
 
 List<EnvironmentVariableModel> getEnvironmentVariables(
-    EnvironmentModel? environment,
-    {bool removeEmptyModels = false}) {
+  EnvironmentModel? environment, {
+  bool removeEmptyModels = false,
+}) {
   if (environment == null) {
     return [];
   }
   return environment.values
-      .where((element) =>
-          element.type == EnvironmentVariableType.variable &&
-          (removeEmptyModels
-              ? element != kEnvironmentVariableEmptyModel
-              : true))
+      .where(
+        (element) =>
+            element.type == EnvironmentVariableType.variable &&
+            (removeEmptyModels
+                ? element != kEnvironmentVariableEmptyModel
+                : true),
+      )
       .toList();
 }
 
 List<EnvironmentVariableModel> getEnvironmentSecrets(
-    EnvironmentModel? environment,
-    {bool removeEmptyModels = false}) {
+  EnvironmentModel? environment, {
+  bool removeEmptyModels = false,
+}) {
   if (environment == null) {
     return [];
   }
   return environment.values
-      .where((element) =>
-          element.type == EnvironmentVariableType.secret &&
-          (removeEmptyModels ? element != kEnvironmentSecretEmptyModel : true))
+      .where(
+        (element) =>
+            element.type == EnvironmentVariableType.secret &&
+            (removeEmptyModels
+                ? element != kEnvironmentSecretEmptyModel
+                : true),
+      )
       .toList();
 }
 
-String? substituteVariables(
-  String? input,
-  Map<String, String> envVarMap,
-) {
+String? substituteVariables(String? input, Map<String, String> envVarMap) {
   if (input == null) return null;
   if (envVarMap.keys.isEmpty) {
     return input;
@@ -91,14 +96,18 @@ HttpRequestModel substituteHttpRequestModel(
       );
     }).toList(),
     body: substituteVariables(httpRequestModel.body, combinedEnvVarMap),
-    authModel:
-        substituteAuthModel(httpRequestModel.authModel, combinedEnvVarMap),
+    authModel: substituteAuthModel(
+      httpRequestModel.authModel,
+      combinedEnvVarMap,
+    ),
   );
   return newRequestModel;
 }
 
 AuthModel? substituteAuthModel(
-    AuthModel? authModel, Map<String, String> envVarMap) {
+  AuthModel? authModel,
+  Map<String, String> envVarMap,
+) {
   if (authModel == null) return null;
 
   switch (authModel.type) {
@@ -107,9 +116,11 @@ AuthModel? substituteAuthModel(
         final basic = authModel.basic!;
         return authModel.copyWith(
           basic: basic.copyWith(
-            username: substituteVariables(basic.username, envVarMap) ??
+            username:
+                substituteVariables(basic.username, envVarMap) ??
                 basic.username,
-            password: substituteVariables(basic.password, envVarMap) ??
+            password:
+                substituteVariables(basic.password, envVarMap) ??
                 basic.password,
           ),
         );
@@ -142,7 +153,8 @@ AuthModel? substituteAuthModel(
         return authModel.copyWith(
           jwt: jwt.copyWith(
             secret: substituteVariables(jwt.secret, envVarMap) ?? jwt.secret,
-            privateKey: substituteVariables(jwt.privateKey, envVarMap) ??
+            privateKey:
+                substituteVariables(jwt.privateKey, envVarMap) ??
                 jwt.privateKey,
             payload: substituteVariables(jwt.payload, envVarMap) ?? jwt.payload,
           ),
@@ -154,9 +166,11 @@ AuthModel? substituteAuthModel(
         final digest = authModel.digest!;
         return authModel.copyWith(
           digest: digest.copyWith(
-            username: substituteVariables(digest.username, envVarMap) ??
+            username:
+                substituteVariables(digest.username, envVarMap) ??
                 digest.username,
-            password: substituteVariables(digest.password, envVarMap) ??
+            password:
+                substituteVariables(digest.password, envVarMap) ??
                 digest.password,
             realm: substituteVariables(digest.realm, envVarMap) ?? digest.realm,
             nonce: substituteVariables(digest.nonce, envVarMap) ?? digest.nonce,
@@ -172,30 +186,37 @@ AuthModel? substituteAuthModel(
         final oauth1 = authModel.oauth1!;
         return authModel.copyWith(
           oauth1: oauth1.copyWith(
-            consumerKey: substituteVariables(oauth1.consumerKey, envVarMap) ??
+            consumerKey:
+                substituteVariables(oauth1.consumerKey, envVarMap) ??
                 oauth1.consumerKey,
             consumerSecret:
                 substituteVariables(oauth1.consumerSecret, envVarMap) ??
-                    oauth1.consumerSecret,
+                oauth1.consumerSecret,
             credentialsFilePath:
                 substituteVariables(oauth1.credentialsFilePath, envVarMap) ??
-                    oauth1.credentialsFilePath,
-            accessToken: substituteVariables(oauth1.accessToken, envVarMap) ??
+                oauth1.credentialsFilePath,
+            accessToken:
+                substituteVariables(oauth1.accessToken, envVarMap) ??
                 oauth1.accessToken,
-            tokenSecret: substituteVariables(oauth1.tokenSecret, envVarMap) ??
+            tokenSecret:
+                substituteVariables(oauth1.tokenSecret, envVarMap) ??
                 oauth1.tokenSecret,
             parameterLocation:
                 substituteVariables(oauth1.parameterLocation, envVarMap) ??
-                    oauth1.parameterLocation,
-            version: substituteVariables(oauth1.version, envVarMap) ??
+                oauth1.parameterLocation,
+            version:
+                substituteVariables(oauth1.version, envVarMap) ??
                 oauth1.version,
             realm: substituteVariables(oauth1.realm, envVarMap) ?? oauth1.realm,
-            callbackUrl: substituteVariables(oauth1.callbackUrl, envVarMap) ??
+            callbackUrl:
+                substituteVariables(oauth1.callbackUrl, envVarMap) ??
                 oauth1.callbackUrl,
-            verifier: substituteVariables(oauth1.verifier, envVarMap) ??
+            verifier:
+                substituteVariables(oauth1.verifier, envVarMap) ??
                 oauth1.verifier,
             nonce: substituteVariables(oauth1.nonce, envVarMap) ?? oauth1.nonce,
-            timestamp: substituteVariables(oauth1.timestamp, envVarMap) ??
+            timestamp:
+                substituteVariables(oauth1.timestamp, envVarMap) ??
                 oauth1.timestamp,
           ),
         );
@@ -208,39 +229,47 @@ AuthModel? substituteAuthModel(
           oauth2: oauth2.copyWith(
             authorizationUrl:
                 substituteVariables(oauth2.authorizationUrl, envVarMap) ??
-                    oauth2.authorizationUrl,
+                oauth2.authorizationUrl,
             accessTokenUrl:
                 substituteVariables(oauth2.accessTokenUrl, envVarMap) ??
-                    oauth2.accessTokenUrl,
-            clientId: substituteVariables(oauth2.clientId, envVarMap) ??
+                oauth2.accessTokenUrl,
+            clientId:
+                substituteVariables(oauth2.clientId, envVarMap) ??
                 oauth2.clientId,
-            clientSecret: substituteVariables(oauth2.clientSecret, envVarMap) ??
+            clientSecret:
+                substituteVariables(oauth2.clientSecret, envVarMap) ??
                 oauth2.clientSecret,
             credentialsFilePath:
                 substituteVariables(oauth2.credentialsFilePath, envVarMap) ??
-                    oauth2.credentialsFilePath,
-            redirectUrl: substituteVariables(oauth2.redirectUrl, envVarMap) ??
+                oauth2.credentialsFilePath,
+            redirectUrl:
+                substituteVariables(oauth2.redirectUrl, envVarMap) ??
                 oauth2.redirectUrl,
             scope: substituteVariables(oauth2.scope, envVarMap) ?? oauth2.scope,
             state: substituteVariables(oauth2.state, envVarMap) ?? oauth2.state,
             codeChallengeMethod:
                 substituteVariables(oauth2.codeChallengeMethod, envVarMap) ??
-                    oauth2.codeChallengeMethod,
-            codeVerifier: substituteVariables(oauth2.codeVerifier, envVarMap) ??
+                oauth2.codeChallengeMethod,
+            codeVerifier:
+                substituteVariables(oauth2.codeVerifier, envVarMap) ??
                 oauth2.codeVerifier,
             codeChallenge:
                 substituteVariables(oauth2.codeChallenge, envVarMap) ??
-                    oauth2.codeChallenge,
-            username: substituteVariables(oauth2.username, envVarMap) ??
+                oauth2.codeChallenge,
+            username:
+                substituteVariables(oauth2.username, envVarMap) ??
                 oauth2.username,
-            password: substituteVariables(oauth2.password, envVarMap) ??
+            password:
+                substituteVariables(oauth2.password, envVarMap) ??
                 oauth2.password,
-            refreshToken: substituteVariables(oauth2.refreshToken, envVarMap) ??
+            refreshToken:
+                substituteVariables(oauth2.refreshToken, envVarMap) ??
                 oauth2.refreshToken,
             identityToken:
                 substituteVariables(oauth2.identityToken, envVarMap) ??
-                    oauth2.identityToken,
-            accessToken: substituteVariables(oauth2.accessToken, envVarMap) ??
+                oauth2.identityToken,
+            accessToken:
+                substituteVariables(oauth2.accessToken, envVarMap) ??
                 oauth2.accessToken,
           ),
         );
@@ -254,9 +283,10 @@ AuthModel? substituteAuthModel(
 }
 
 List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
-    String query,
-    Map<String, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
+  String query,
+  Map<String, List<EnvironmentVariableModel>> envMap,
+  String? activeEnvironmentId,
+) {
   final suggestions = <EnvironmentVariableSuggestion>[];
   final Set<String> addedVariableKeys = {};
 
@@ -264,8 +294,12 @@ List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
     for (final variable in envMap[activeEnvironmentId]!) {
       if ((query.isEmpty || variable.key.contains(query)) &&
           !addedVariableKeys.contains(variable.key)) {
-        suggestions.add(EnvironmentVariableSuggestion(
-            environmentId: activeEnvironmentId, variable: variable));
+        suggestions.add(
+          EnvironmentVariableSuggestion(
+            environmentId: activeEnvironmentId,
+            variable: variable,
+          ),
+        );
         addedVariableKeys.add(variable.key);
       }
     }
@@ -274,8 +308,12 @@ List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
   envMap[kGlobalEnvironmentId]?.forEach((variable) {
     if ((query.isEmpty || variable.key.contains(query)) &&
         !addedVariableKeys.contains(variable.key)) {
-      suggestions.add(EnvironmentVariableSuggestion(
-          environmentId: kGlobalEnvironmentId, variable: variable));
+      suggestions.add(
+        EnvironmentVariableSuggestion(
+          environmentId: kGlobalEnvironmentId,
+          variable: variable,
+        ),
+      );
       addedVariableKeys.add(variable.key);
     }
   });
@@ -284,12 +322,14 @@ List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
 }
 
 EnvironmentVariableSuggestion getVariableStatus(
-    String key,
-    Map<String, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
+  String key,
+  Map<String, List<EnvironmentVariableModel>> envMap,
+  String? activeEnvironmentId,
+) {
   if (activeEnvironmentId != null) {
-    final variable =
-        envMap[activeEnvironmentId]!.firstWhereOrNull((v) => v.key == key);
+    final variable = envMap[activeEnvironmentId]!.firstWhereOrNull(
+      (v) => v.key == key,
+    );
     if (variable != null) {
       return EnvironmentVariableSuggestion(
         environmentId: activeEnvironmentId,
@@ -299,8 +339,9 @@ EnvironmentVariableSuggestion getVariableStatus(
     }
   }
 
-  final globalVariable =
-      envMap[kGlobalEnvironmentId]?.firstWhereOrNull((v) => v.key == key);
+  final globalVariable = envMap[kGlobalEnvironmentId]?.firstWhereOrNull(
+    (v) => v.key == key,
+  );
   if (globalVariable != null) {
     return EnvironmentVariableSuggestion(
       environmentId: kGlobalEnvironmentId,
@@ -310,8 +351,12 @@ EnvironmentVariableSuggestion getVariableStatus(
   }
 
   return EnvironmentVariableSuggestion(
-      isUnknown: true,
-      environmentId: "unknown",
-      variable: EnvironmentVariableModel(
-          key: key, type: EnvironmentVariableType.variable, value: "unknown"));
+    isUnknown: true,
+    environmentId: "unknown",
+    variable: EnvironmentVariableModel(
+      key: key,
+      type: EnvironmentVariableType.variable,
+      value: "unknown",
+    ),
+  );
 }

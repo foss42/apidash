@@ -46,7 +46,8 @@ class CurlImportService {
     buf
       ..writeln()
       ..writeln(
-          'Where do you want to apply the changes? Choose one of the options below.');
+        'Where do you want to apply the changes? Choose one of the options below.',
+      );
     final explanation = buf.toString();
     final map = {
       'explanation': explanation,
@@ -64,22 +65,22 @@ class CurlImportService {
           'field': 'apply_to_selected',
           'path': null,
           'value': actionPayload,
-        }
-      ]
+        },
+      ],
     };
     if (note != null && note.isNotEmpty) {
       map['note'] = note;
     }
-    map['meta'] = {
-      'diff': diffWithCurrent(actionPayload, current),
-    };
+    map['meta'] = {'diff': diffWithCurrent(actionPayload, current)};
     return map;
   }
 
   /// Convenience: from parsed [Curl] to (json, actions list).
   static ({String jsonMessage, List<Map<String, dynamic>> actions})
-      buildResponseFromParsed(Map<String, dynamic> payload,
-          {Map<String, dynamic>? currentJson}) {
+  buildResponseFromParsed(
+    Map<String, dynamic> payload, {
+    Map<String, dynamic>? currentJson,
+  }) {
     // Build a small note for flags that are not represented in the request model
     final notes = <String>[];
     // if (curl.insecure) notes.add('insecure (-k) is not applied automatically');
@@ -91,8 +92,9 @@ class CurlImportService {
       note: notes.isEmpty ? null : notes.join('; '),
       current: currentJson,
     );
-    final actions =
-        (msg['actions'] as List).whereType<Map<String, dynamic>>().toList();
+    final actions = (msg['actions'] as List)
+        .whereType<Map<String, dynamic>>()
+        .toList();
     return (jsonMessage: jsonEncode(msg), actions: actions);
   }
 
@@ -101,8 +103,9 @@ class CurlImportService {
   static ({
     String? error,
     String? jsonMessage,
-    List<Map<String, dynamic>>? actions
-  }) processPastedCurl(String input, {Map<String, dynamic>? current}) {
+    List<Map<String, dynamic>>? actions,
+  })
+  processPastedCurl(String input, {Map<String, dynamic>? current}) {
     try {
       final curl = Curl.tryParse(input);
       if (curl == null) {
@@ -110,7 +113,7 @@ class CurlImportService {
           error:
               'Sorry, I could not parse that cURL. Ensure it starts with `curl ` and is complete.',
           jsonMessage: null,
-          actions: null
+          actions: null,
         );
       }
       final payload = convertCurlToHttpRequestModel(curl).toJson();
@@ -118,7 +121,7 @@ class CurlImportService {
       return (
         error: null,
         jsonMessage: built.jsonMessage,
-        actions: built.actions
+        actions: built.actions,
       );
     } catch (e) {
       final safe = e.toString().replaceAll('"', "'");
@@ -127,7 +130,9 @@ class CurlImportService {
   }
 
   static String diffWithCurrent(
-      Map<String, dynamic> p, Map<String, dynamic>? current) {
+    Map<String, dynamic> p,
+    Map<String, dynamic>? current,
+  ) {
     if (current == null) return '';
 
     final changes = <String>[];
@@ -142,8 +147,9 @@ class CurlImportService {
       } else if (!p.containsKey(key)) {
         changes.add('- $key: ${_formatValue(oldVal)}');
       } else if (jsonEncode(newVal) != jsonEncode(oldVal)) {
-        changes
-            .add('~ $key: ${_formatValue(oldVal)} → ${_formatValue(newVal)}');
+        changes.add(
+          '~ $key: ${_formatValue(oldVal)} → ${_formatValue(newVal)}',
+        );
       }
     }
 

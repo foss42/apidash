@@ -34,13 +34,9 @@ class AuthPage extends StatelessWidget {
           children: [
             Text(
               kLabelSelectAuthType,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(
-              height: 8,
-            ),
+            SizedBox(height: 8),
             ADPopupMenu<APIAuthType>(
               value: authModel?.type.displayType,
               values: APIAuthType.values
@@ -53,46 +49,49 @@ class AuthPage extends StatelessWidget {
             const SizedBox(height: 48),
             switch (authModel?.type) {
               APIAuthType.basic => BasicAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.bearer => BearerAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.apiKey => ApiKeyAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.jwt => JwtAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.digest => DigestAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
-                APIAuthType.oauth1 => OAuth1Fields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
+              APIAuthType.oauth1 => OAuth1Fields(
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.oauth2 => OAuth2Fields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
-              APIAuthType.none =>
-                Text(readOnly ? kMsgNoAuth : kMsgNoAuthSelected),
-              _ => Text(readOnly
-                  ? "${authModel?.type.name} $kMsgAuthNotSupported"
-                  : kMsgNotImplemented),
-            }
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
+              APIAuthType.none => Text(
+                readOnly ? kMsgNoAuth : kMsgNoAuthSelected,
+              ),
+              _ => Text(
+                readOnly
+                    ? "${authModel?.type.name} $kMsgAuthNotSupported"
+                    : kMsgNotImplemented,
+              ),
+            },
           ],
         ),
       ),

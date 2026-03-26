@@ -16,23 +16,20 @@ class SaveButton extends ConsumerWidget {
       onPressed: (savingData || !hasUnsavedChanges)
           ? null
           : () async {
-              await saveAndShowDialog(context, onSave: () async {
-                await ref
-                    .read(collectionStateNotifierProvider.notifier)
-                    .saveData();
-                await ref
-                    .read(environmentsStateNotifierProvider.notifier)
-                    .saveEnvironments();
-              });
+              await saveAndShowDialog(
+                context,
+                onSave: () async {
+                  await ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .saveData();
+                  await ref
+                      .read(environmentsStateNotifierProvider.notifier)
+                      .saveEnvironments();
+                },
+              );
             },
-      icon: const Icon(
-        Icons.save,
-        size: 20,
-      ),
-      label: const Text(
-        kLabelSave,
-        style: kTextStyleButton,
-      ),
+      icon: const Icon(Icons.save, size: 20),
+      label: const Text(kLabelSave, style: kTextStyleButton),
     );
   }
 }

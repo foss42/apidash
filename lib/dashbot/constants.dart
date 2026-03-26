@@ -9,7 +9,7 @@ enum ChatMessageType {
   generateCode,
   importCurl,
   importOpenApi,
-  general
+  general,
 }
 
 enum ChatActionType {

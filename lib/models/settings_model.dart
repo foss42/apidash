@@ -55,7 +55,8 @@ class SettingsModel {
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
-      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
+      alwaysShowCollectionPaneScrollbar:
+          alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
@@ -73,9 +74,7 @@ class SettingsModel {
     );
   }
 
-  SettingsModel copyWithPath({
-    String? workspaceFolderPath,
-  }) {
+  SettingsModel copyWithPath({String? workspaceFolderPath}) {
     return SettingsModel(
       isDark: isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
@@ -114,8 +113,9 @@ class SettingsModel {
     SupportedUriSchemes? defaultUriScheme;
     if (defaultUriSchemeStr != null) {
       try {
-        defaultUriScheme =
-            SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+        defaultUriScheme = SupportedUriSchemes.values.byName(
+          defaultUriSchemeStr,
+        );
       } catch (e) {
         // pass
       }
@@ -124,8 +124,9 @@ class SettingsModel {
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
       try {
-        defaultCodeGenLang =
-            CodegenLanguage.values.byName(defaultCodeGenLangStr);
+        defaultCodeGenLang = CodegenLanguage.values.byName(
+          defaultCodeGenLangStr,
+        );
       } catch (e) {
         // pass
       }
@@ -137,8 +138,9 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod;
     if (historyRetentionPeriodStr != null) {
       try {
-        historyRetentionPeriod =
-            HistoryRetentionPeriod.values.byName(historyRetentionPeriodStr);
+        historyRetentionPeriod = HistoryRetentionPeriod.values.byName(
+          historyRetentionPeriodStr,
+        );
       } catch (e) {
         // pass
       }

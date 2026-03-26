@@ -5,9 +5,7 @@ import 'editor_default.dart';
 import 'editor_request.dart';
 
 class RequestEditorPane extends ConsumerWidget {
-  const RequestEditorPane({
-    super.key,
-  });
+  const RequestEditorPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -23,8 +23,6 @@ class StacToFlutterBot extends AIAgent {
         .replaceAll('```dart\n', '')
         .replaceAll('```', '');
 
-    return {
-      'CODE': validatedResponse,
-    };
+    return {'CODE': validatedResponse};
   }
 }

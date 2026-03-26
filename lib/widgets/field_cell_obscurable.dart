@@ -25,14 +25,10 @@ class ObscurableCellField extends HookWidget {
     return TextFormField(
       key: Key(keyId),
       initialValue: initialValue,
-      style: kCodeStyle.copyWith(
-        color: clrScheme.onSurface,
-      ),
+      style: kCodeStyle.copyWith(color: clrScheme.onSurface),
       obscureText: obscureText.value,
       decoration: InputDecoration(
-        hintStyle: kCodeStyle.copyWith(
-          color: clrScheme.outlineVariant,
-        ),
+        hintStyle: kCodeStyle.copyWith(color: clrScheme.outlineVariant),
         hintText: hintText,
         suffixIcon: IconButton(
           padding: kP4,
@@ -47,14 +43,10 @@ class ObscurableCellField extends HookWidget {
         ),
         contentPadding: const EdgeInsets.only(bottom: 12),
         focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.outline,
-          ),
+          borderSide: BorderSide(color: clrScheme.outline),
         ),
         enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.surfaceContainerHighest,
-          ),
+          borderSide: BorderSide(color: clrScheme.surfaceContainerHighest),
         ),
       ),
       onChanged: onChanged,

@@ -68,14 +68,17 @@ echo $res->getBody();
       if (requestModel.hasFormData) {
         var templateMultiPartBody = jj.Template(kTemplateMultiPartBody);
         var renderedMultiPartBody = templateMultiPartBody.render({
-          "fields_list": requestModel.formDataList.map((field) {
-            var row = '''
+          "fields_list": requestModel.formDataList
+              .map((field) {
+                var row =
+                    '''
     [
         'name'     => '${field.name}',
         'contents' => ${field.type == FormDataType.file ? "fopen('${field.value}', 'r')" : "'${field.value}'"}
     ]''';
-            return row;
-          }).join(",\n"),
+                return row;
+              })
+              .join(",\n"),
         });
         result += renderedMultiPartBody;
       }
@@ -87,9 +90,7 @@ echo $res->getBody();
         params.forEach((key, value) {
           paramList.add("'$key' => '$value'");
         });
-        result += templateParams.render({
-          "params": paramList.join(",\n"),
-        });
+        result += templateParams.render({"params": paramList.join(",\n")});
       }
 
       var headers = requestModel.enabledHeadersMap;
@@ -103,16 +104,16 @@ echo $res->getBody();
         if (!requestModel.hasContentTypeHeader && requestModel.hasBody) {
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headerList.add(
-                "'$kHeaderContentType' => '${requestModel.bodyContentType.header}'");
+              "'$kHeaderContentType' => '${requestModel.bodyContentType.header}'",
+            );
           }
           if (requestModel.hasFormData) {
             headerList.add(
-                "'$kHeaderContentType' => '${requestModel.bodyContentType.header}; boundary=' . \$body->getBoundary()");
+              "'$kHeaderContentType' => '${requestModel.bodyContentType.header}; boundary=' . \$body->getBoundary()",
+            );
           }
         }
-        result += templateHeader.render({
-          "headers": headerList.join(",\n"),
-        });
+        result += templateHeader.render({"headers": headerList.join(",\n")});
       }
 
       var templateBody = jj.Template(kTemplateBody);

@@ -28,13 +28,14 @@ _$HttpResponseModelImpl _$$HttpResponseModelImplFromJson(Map json) =>
 
 Map<String, dynamic> _$$HttpResponseModelImplToJson(
   _$HttpResponseModelImpl instance,
-) => <String, dynamic>{
-  'statusCode': instance.statusCode,
-  'headers': instance.headers,
-  'requestHeaders': instance.requestHeaders,
-  'body': instance.body,
-  'formattedBody': instance.formattedBody,
-  'bodyBytes': const Uint8ListConverter().toJson(instance.bodyBytes),
-  'time': const DurationConverter().toJson(instance.time),
-  'sseOutput': instance.sseOutput,
-};
+) =>
+    <String, dynamic>{
+      'statusCode': instance.statusCode,
+      'headers': instance.headers,
+      'requestHeaders': instance.requestHeaders,
+      'body': instance.body,
+      'formattedBody': instance.formattedBody,
+      'bodyBytes': const Uint8ListConverter().toJson(instance.bodyBytes),
+      'time': const DurationConverter().toJson(instance.time),
+      'sseOutput': instance.sseOutput,
+    };

@@ -10,14 +10,13 @@ import 'package:apidash/consts.dart';
 import 'history_widgets/history_widgets.dart';
 
 class HistoryPane extends ConsumerWidget {
-  const HistoryPane({
-    super.key,
-  });
+  const HistoryPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: (!context.isMediumWindow && kIsMacOS ? kPt24 : kPt8) +
+      padding:
+          (!context.isMediumWindow && kIsMacOS ? kPt24 : kPt8) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -32,15 +31,16 @@ class HistoryPane extends ConsumerWidget {
 }
 
 class HistoryList extends HookConsumerWidget {
-  const HistoryList({
-    super.key,
-  });
+  const HistoryList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historySequence = ref.watch(historySequenceProvider);
-    final alwaysShowHistoryPaneScrollbar = ref.watch(settingsProvider
-        .select((value) => value.alwaysShowCollectionPaneScrollbar));
+    final alwaysShowHistoryPaneScrollbar = ref.watch(
+      settingsProvider.select(
+        (value) => value.alwaysShowCollectionPaneScrollbar,
+      ),
+    );
     final List<DateTime>? sortedHistoryKeys = historySequence?.keys.toList();
     sortedHistoryKeys?.sort((a, b) => b.compareTo(a));
     ScrollController scrollController = useScrollController();
@@ -108,19 +108,20 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
       title: Row(
         children: [
           RotationTransition(
-              turns: animation,
-              child: Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: colorScheme.outline,
-              )),
+            turns: animation,
+            child: Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: colorScheme.outline,
+            ),
+          ),
           kHSpacer5,
           Text(
             humanizeDate(widget.date),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.outline,
-                ),
+              fontWeight: FontWeight.bold,
+              color: colorScheme.outline,
+            ),
           ),
         ],
       ),

@@ -2,7 +2,7 @@ String jsonToPyDict(String jsonString) {
   Map<String, String> replaceWithMap = {
     "null": "None",
     "true": "True",
-    "false": "False"
+    "false": "False",
   };
   String pyDict = jsonString;
   for (var k in replaceWithMap.keys) {

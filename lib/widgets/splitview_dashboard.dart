@@ -35,8 +35,9 @@ class DashboardSplitViewState extends State<DashboardSplitView> {
         dividerThickness: 3,
         dividerPainter: DividerPainters.background(
           color: Theme.of(context).colorScheme.surfaceContainer,
-          highlightedColor:
-              Theme.of(context).colorScheme.surfaceContainerHighest,
+          highlightedColor: Theme.of(
+            context,
+          ).colorScheme.surfaceContainerHighest,
           animationEnabled: false,
         ),
       ),

@@ -487,6 +487,12 @@ const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
 const kLabelResponseBody = "Response Body";
 const kTooltipClearResponse = "Clear Response";
+// DashAssert – Assertion Panel labels
+const kLabelAssertions = "Assertions";
+const kLabelRunAssertions = "Run";
+const kLabelAiSuggest = "AI Suggest";
+const kLabelAddRule = "Add Rule";
+const kLabelExportReport = "Export Report";
 const kHeaderRow = ["Header Name", "Header Value"];
 const kLabelRequestHeaders = "Request Headers";
 const kLabelResponseHeaders = "Response Headers";

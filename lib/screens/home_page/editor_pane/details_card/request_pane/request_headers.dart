@@ -29,10 +29,14 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   }
 
   void _onFieldChange() {
-    ref.read(collectionStateNotifierProvider.notifier).update(
+    ref
+        .read(collectionStateNotifierProvider.notifier)
+        .update(
           headers: headerRows.sublist(0, headerRows.length - 1),
-          isHeaderEnabledList:
-              isRowEnabledList.sublist(0, headerRows.length - 1),
+          isHeaderEnabledList: isRowEnabledList.sublist(
+            0,
+            headerRows.length - 1,
+          ),
         );
   }
 
@@ -40,140 +44,116 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.headers?.length));
+    ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.headers?.length,
+      ),
+    );
     var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
     bool isHeadersEmpty = rH == null || rH.isEmpty;
     headerRows = isHeadersEmpty
-        ? [
-            kNameValueEmptyModel,
-          ]
+        ? [kNameValueEmptyModel]
         : rH + [kNameValueEmptyModel];
     isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
               ?.httpRequestModel
               ?.isHeaderEnabledList ??
-          List.filled(rH?.length ?? 0, true, growable: true))
+          List.filled(rH?.length ?? 0, true, growable: true)),
     ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 
     List<DataColumn> columns = const [
-      DataColumn2(
-        label: Text(kNameCheckbox),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text(kNameHeader),
-      ),
-      DataColumn2(
-        label: Text('='),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text(kNameValue),
-      ),
-      DataColumn2(
-        label: Text(''),
-        fixedWidth: 32,
-      ),
+      DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
+      DataColumn2(label: Text(kNameHeader)),
+      DataColumn2(label: Text('='), fixedWidth: 30),
+      DataColumn2(label: Text(kNameValue)),
+      DataColumn2(label: Text(''), fixedWidth: 32),
     ];
 
-    List<DataRow> dataRows = List<DataRow>.generate(
-      headerRows.length,
-      (index) {
-        bool isLast = index + 1 == headerRows.length;
-        return DataRow(
-          key: ValueKey("$selectedId-$index-headers-row-$seed"),
-          cells: <DataCell>[
-            DataCell(
-              ADCheckBox(
-                keyId: "$selectedId-$index-headers-c-$seed",
-                value: isRowEnabledList[index],
-                onChanged: isLast
-                    ? null
-                    : (value) {
+    List<DataRow> dataRows = List<DataRow>.generate(headerRows.length, (index) {
+      bool isLast = index + 1 == headerRows.length;
+      return DataRow(
+        key: ValueKey("$selectedId-$index-headers-row-$seed"),
+        cells: <DataCell>[
+          DataCell(
+            ADCheckBox(
+              keyId: "$selectedId-$index-headers-c-$seed",
+              value: isRowEnabledList[index],
+              onChanged: isLast
+                  ? null
+                  : (value) {
+                      setState(() {
+                        isRowEnabledList[index] = value!;
+                      });
+                      _onFieldChange();
+                    },
+              colorScheme: Theme.of(context).colorScheme,
+            ),
+          ),
+          DataCell(
+            EnvHeaderField(
+              keyId: "$selectedId-$index-headers-k-$seed",
+              initialValue: headerRows[index].name,
+              hintText: kHintAddName,
+              onChanged: (value) {
+                headerRows[index] = headerRows[index].copyWith(name: value);
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  isRowEnabledList[index] = true;
+                  headerRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
+                _onFieldChange();
+              },
+              colorScheme: Theme.of(context).colorScheme,
+            ),
+          ),
+          DataCell(Center(child: Text("=", style: kCodeStyle))),
+          DataCell(
+            EnvCellField(
+              keyId: "$selectedId-$index-headers-v-$seed",
+              initialValue: headerRows[index].value,
+              hintText: kHintAddValue,
+              onChanged: (value) {
+                headerRows[index] = headerRows[index].copyWith(value: value);
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  isRowEnabledList[index] = true;
+                  headerRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
+                _onFieldChange();
+              },
+              colorScheme: Theme.of(context).colorScheme,
+            ),
+          ),
+          DataCell(
+            InkWell(
+              onTap: isLast
+                  ? null
+                  : () {
+                      seed = random.nextInt(kRandMax);
+                      if (headerRows.length == 2) {
                         setState(() {
-                          isRowEnabledList[index] = value!;
+                          headerRows = [kNameValueEmptyModel];
+                          isRowEnabledList = [false];
                         });
-                        _onFieldChange();
-                      },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+                      } else {
+                        headerRows.removeAt(index);
+                        isRowEnabledList.removeAt(index);
+                      }
+                      _onFieldChange();
+                    },
+              child: Theme.of(context).brightness == Brightness.dark
+                  ? kIconRemoveDark
+                  : kIconRemoveLight,
             ),
-            DataCell(
-              EnvHeaderField(
-                keyId: "$selectedId-$index-headers-k-$seed",
-                initialValue: headerRows[index].name,
-                hintText: kHintAddName,
-                onChanged: (value) {
-                  headerRows[index] = headerRows[index].copyWith(name: value);
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    isRowEnabledList[index] = true;
-                    headerRows.add(kNameValueEmptyModel);
-                    isRowEnabledList.add(false);
-                  }
-                  _onFieldChange();
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
-            ),
-            DataCell(
-              Center(
-                child: Text(
-                  "=",
-                  style: kCodeStyle,
-                ),
-              ),
-            ),
-            DataCell(
-              EnvCellField(
-                keyId: "$selectedId-$index-headers-v-$seed",
-                initialValue: headerRows[index].value,
-                hintText: kHintAddValue,
-                onChanged: (value) {
-                  headerRows[index] = headerRows[index].copyWith(value: value);
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    isRowEnabledList[index] = true;
-                    headerRows.add(kNameValueEmptyModel);
-                    isRowEnabledList.add(false);
-                  }
-                  _onFieldChange();
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
-            ),
-            DataCell(
-              InkWell(
-                onTap: isLast
-                    ? null
-                    : () {
-                        seed = random.nextInt(kRandMax);
-                        if (headerRows.length == 2) {
-                          setState(() {
-                            headerRows = [
-                              kNameValueEmptyModel,
-                            ];
-                            isRowEnabledList = [false];
-                          });
-                        } else {
-                          headerRows.removeAt(index);
-                          isRowEnabledList.removeAt(index);
-                        }
-                        _onFieldChange();
-                      },
-                child: Theme.of(context).brightness == Brightness.dark
-                    ? kIconRemoveDark
-                    : kIconRemoveLight,
-              ),
-            ),
-          ],
-        );
-      },
-    );
+          ),
+        ],
+      );
+    });
 
     return Stack(
       children: [
@@ -183,8 +163,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             children: [
               Expanded(
                 child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(scrollbarTheme: kDataTableScrollbarTheme),
                   child: DataTable2(
                     columnSpacing: 12,
                     dividerThickness: 0,
@@ -214,10 +195,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   _onFieldChange();
                 },
                 icon: const Icon(Icons.add),
-                label: const Text(
-                  kLabelAddHeader,
-                  style: kTextStyleButton,
-                ),
+                label: const Text(kLabelAddHeader, style: kTextStyleButton),
               ),
             ),
           ),

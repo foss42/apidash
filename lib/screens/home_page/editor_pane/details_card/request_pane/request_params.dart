@@ -30,7 +30,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   void _onFieldChange() {
-    ref.read(collectionStateNotifierProvider.notifier).update(
+    ref
+        .read(collectionStateNotifierProvider.notifier)
+        .update(
           params: paramRows.sublist(0, paramRows.length - 1),
           isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
         );
@@ -40,140 +42,116 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.params?.length));
+    ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.params?.length,
+      ),
+    );
     var rP = ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
     bool isParamsEmpty = rP == null || rP.isEmpty;
     paramRows = isParamsEmpty
-        ? [
-            kNameValueEmptyModel,
-          ]
+        ? [kNameValueEmptyModel]
         : rP + [kNameValueEmptyModel];
     isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
               ?.httpRequestModel
               ?.isParamEnabledList ??
-          List.filled(rP?.length ?? 0, true, growable: true))
+          List.filled(rP?.length ?? 0, true, growable: true)),
     ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 
     List<DataColumn> columns = const [
-      DataColumn2(
-        label: Text(kNameCheckbox),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text(kNameURLParam),
-      ),
-      DataColumn2(
-        label: Text('='),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text(kNameValue),
-      ),
-      DataColumn2(
-        label: Text(''),
-        fixedWidth: 32,
-      ),
+      DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
+      DataColumn2(label: Text(kNameURLParam)),
+      DataColumn2(label: Text('='), fixedWidth: 30),
+      DataColumn2(label: Text(kNameValue)),
+      DataColumn2(label: Text(''), fixedWidth: 32),
     ];
 
-    List<DataRow> dataRows = List<DataRow>.generate(
-      paramRows.length,
-      (index) {
-        bool isLast = index + 1 == paramRows.length;
-        return DataRow(
-          key: ValueKey("$selectedId-$index-params-row-$seed"),
-          cells: <DataCell>[
-            DataCell(
-              ADCheckBox(
-                keyId: "$selectedId-$index-params-c-$seed",
-                value: isRowEnabledList[index],
-                onChanged: isLast
-                    ? null
-                    : (value) {
+    List<DataRow> dataRows = List<DataRow>.generate(paramRows.length, (index) {
+      bool isLast = index + 1 == paramRows.length;
+      return DataRow(
+        key: ValueKey("$selectedId-$index-params-row-$seed"),
+        cells: <DataCell>[
+          DataCell(
+            ADCheckBox(
+              keyId: "$selectedId-$index-params-c-$seed",
+              value: isRowEnabledList[index],
+              onChanged: isLast
+                  ? null
+                  : (value) {
+                      setState(() {
+                        isRowEnabledList[index] = value!;
+                      });
+                      _onFieldChange();
+                    },
+              colorScheme: Theme.of(context).colorScheme,
+            ),
+          ),
+          DataCell(
+            EnvCellField(
+              keyId: "$selectedId-$index-params-k-$seed",
+              initialValue: paramRows[index].name,
+              hintText: kHintAddURLParam,
+              onChanged: (value) {
+                paramRows[index] = paramRows[index].copyWith(name: value);
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  isRowEnabledList[index] = true;
+                  paramRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
+                _onFieldChange();
+              },
+              colorScheme: Theme.of(context).colorScheme,
+            ),
+          ),
+          DataCell(Center(child: Text("=", style: kCodeStyle))),
+          DataCell(
+            EnvCellField(
+              keyId: "$selectedId-$index-params-v-$seed",
+              initialValue: paramRows[index].value,
+              hintText: kHintAddValue,
+              onChanged: (value) {
+                paramRows[index] = paramRows[index].copyWith(value: value);
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  isRowEnabledList[index] = true;
+                  paramRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
+                _onFieldChange();
+              },
+              colorScheme: Theme.of(context).colorScheme,
+            ),
+          ),
+          DataCell(
+            InkWell(
+              onTap: isLast
+                  ? null
+                  : () {
+                      seed = random.nextInt(kRandMax);
+                      if (paramRows.length == 2) {
                         setState(() {
-                          isRowEnabledList[index] = value!;
+                          paramRows = [kNameValueEmptyModel];
+                          isRowEnabledList = [false];
                         });
-                        _onFieldChange();
-                      },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+                      } else {
+                        paramRows.removeAt(index);
+                        isRowEnabledList.removeAt(index);
+                      }
+                      _onFieldChange();
+                    },
+              child: Theme.of(context).brightness == Brightness.dark
+                  ? kIconRemoveDark
+                  : kIconRemoveLight,
             ),
-            DataCell(
-              EnvCellField(
-                keyId: "$selectedId-$index-params-k-$seed",
-                initialValue: paramRows[index].name,
-                hintText: kHintAddURLParam,
-                onChanged: (value) {
-                  paramRows[index] = paramRows[index].copyWith(name: value);
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    isRowEnabledList[index] = true;
-                    paramRows.add(kNameValueEmptyModel);
-                    isRowEnabledList.add(false);
-                  }
-                  _onFieldChange();
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
-            ),
-            DataCell(
-              Center(
-                child: Text(
-                  "=",
-                  style: kCodeStyle,
-                ),
-              ),
-            ),
-            DataCell(
-              EnvCellField(
-                keyId: "$selectedId-$index-params-v-$seed",
-                initialValue: paramRows[index].value,
-                hintText: kHintAddValue,
-                onChanged: (value) {
-                  paramRows[index] = paramRows[index].copyWith(value: value);
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    isRowEnabledList[index] = true;
-                    paramRows.add(kNameValueEmptyModel);
-                    isRowEnabledList.add(false);
-                  }
-                  _onFieldChange();
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
-            ),
-            DataCell(
-              InkWell(
-                onTap: isLast
-                    ? null
-                    : () {
-                        seed = random.nextInt(kRandMax);
-                        if (paramRows.length == 2) {
-                          setState(() {
-                            paramRows = [
-                              kNameValueEmptyModel,
-                            ];
-                            isRowEnabledList = [false];
-                          });
-                        } else {
-                          paramRows.removeAt(index);
-                          isRowEnabledList.removeAt(index);
-                        }
-                        _onFieldChange();
-                      },
-                child: Theme.of(context).brightness == Brightness.dark
-                    ? kIconRemoveDark
-                    : kIconRemoveLight,
-              ),
-            ),
-          ],
-        );
-      },
-    );
+          ),
+        ],
+      );
+    });
 
     return Stack(
       children: [
@@ -184,8 +162,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             children: [
               Expanded(
                 child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(scrollbarTheme: kDataTableScrollbarTheme),
                   child: DataTable2(
                     columnSpacing: 12,
                     dividerThickness: 0,
@@ -215,10 +194,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   _onFieldChange();
                 },
                 icon: const Icon(Icons.add),
-                label: const Text(
-                  kLabelAddParam,
-                  style: kTextStyleButton,
-                ),
+                label: const Text(kLabelAddParam, style: kTextStyleButton),
               ),
             ),
           ),

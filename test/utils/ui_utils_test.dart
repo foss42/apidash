@@ -15,8 +15,10 @@ void main() {
 
     Color colStatusCode1DarkModeExpected = kColorStatusCode200.toDark;
     test('Testing getResponseStatusCodeColor for statusCode 200 dark mode', () {
-      expect(getResponseStatusCodeColor(statusCode1, brightness: dark),
-          colStatusCode1DarkModeExpected);
+      expect(
+        getResponseStatusCodeColor(statusCode1, brightness: dark),
+        colStatusCode1DarkModeExpected,
+      );
     });
 
     int statusCode2 = 300;
@@ -26,8 +28,10 @@ void main() {
 
     Color colStatusCode2DarkModeExpected = kColorStatusCode300.toDark;
     test('Testing getResponseStatusCodeColor for statusCode 300 dark mode', () {
-      expect(getResponseStatusCodeColor(statusCode2, brightness: dark),
-          colStatusCode2DarkModeExpected);
+      expect(
+        getResponseStatusCodeColor(statusCode2, brightness: dark),
+        colStatusCode2DarkModeExpected,
+      );
     });
 
     int statusCode3 = 404;
@@ -37,8 +41,10 @@ void main() {
 
     Color colStatusCode3DarkModeExpected = kColorStatusCode400.toDark;
     test('Testing getResponseStatusCodeColor for statusCode 404 dark mode', () {
-      expect(getResponseStatusCodeColor(statusCode3, brightness: dark),
-          colStatusCode3DarkModeExpected);
+      expect(
+        getResponseStatusCodeColor(statusCode3, brightness: dark),
+        colStatusCode3DarkModeExpected,
+      );
     });
 
     int statusCode4 = 503;
@@ -49,8 +55,10 @@ void main() {
 
     Color colStatusCode4DarkModeExpected = kColorStatusCode500.toDark;
     test('Testing getResponseStatusCodeColor for statusCode 503 dark mode', () {
-      expect(getResponseStatusCodeColor(statusCode4, brightness: dark),
-          colStatusCode4DarkModeExpected);
+      expect(
+        getResponseStatusCodeColor(statusCode4, brightness: dark),
+        colStatusCode4DarkModeExpected,
+      );
     });
 
     int statusCode5 = 101;
@@ -61,8 +69,10 @@ void main() {
 
     Color colStatusCode5DarkModeExpected = kColorStatusCodeDefault.toDark;
     test('Testing getResponseStatusCodeColor for statusCode 101 dark mode', () {
-      expect(getResponseStatusCodeColor(statusCode5, brightness: dark),
-          colStatusCode5DarkModeExpected);
+      expect(
+        getResponseStatusCodeColor(statusCode5, brightness: dark),
+        colStatusCode5DarkModeExpected,
+      );
     });
   });
 
@@ -71,72 +81,54 @@ void main() {
     Color colMethodGetDarkModeExpected = kColorHttpMethodGet.toDark;
     test('Test getAPIColor for GET method dark mode', () {
       expect(
-          getAPIColor(
-            APIType.rest,
-            method: methodGet,
-            brightness: dark,
-          ),
-          colMethodGetDarkModeExpected);
+        getAPIColor(APIType.rest, method: methodGet, brightness: dark),
+        colMethodGetDarkModeExpected,
+      );
     });
 
     HTTPVerb methodHead = HTTPVerb.head;
     Color colMethodHeadDarkModeExpected = kColorHttpMethodHead.toDark;
     test('Test getHTTPMethodColor for HEAD Method dark mode', () {
       expect(
-          getAPIColor(
-            APIType.rest,
-            method: methodHead,
-            brightness: dark,
-          ),
-          colMethodHeadDarkModeExpected);
+        getAPIColor(APIType.rest, method: methodHead, brightness: dark),
+        colMethodHeadDarkModeExpected,
+      );
     });
 
     HTTPVerb methodPatch = HTTPVerb.patch;
     Color colMethodPatchDarkModeExpected = kColorHttpMethodPatch.toDark;
     test('Test getHTTPMethodColor for PATCH Method dark mode', () {
       expect(
-          getAPIColor(
-            APIType.rest,
-            method: methodPatch,
-            brightness: dark,
-          ),
-          colMethodPatchDarkModeExpected);
+        getAPIColor(APIType.rest, method: methodPatch, brightness: dark),
+        colMethodPatchDarkModeExpected,
+      );
     });
 
     HTTPVerb methodPut = HTTPVerb.put;
     Color colMethodPutDarkModeExpected = kColorHttpMethodPut.toDark;
     test('Test getHTTPMethodColor for PUT Method dark mode', () {
       expect(
-          getAPIColor(
-            APIType.rest,
-            method: methodPut,
-            brightness: dark,
-          ),
-          colMethodPutDarkModeExpected);
+        getAPIColor(APIType.rest, method: methodPut, brightness: dark),
+        colMethodPutDarkModeExpected,
+      );
     });
 
     HTTPVerb methodPost = HTTPVerb.post;
     Color colMethodPostDarkModeExpected = kColorHttpMethodPost.toDark;
     test('Test getHTTPMethodColor for POST Method dark mode', () {
       expect(
-          getAPIColor(
-            APIType.rest,
-            method: methodPost,
-            brightness: dark,
-          ),
-          colMethodPostDarkModeExpected);
+        getAPIColor(APIType.rest, method: methodPost, brightness: dark),
+        colMethodPostDarkModeExpected,
+      );
     });
 
     HTTPVerb methodDelete = HTTPVerb.delete;
     Color colMethodDeleteDarkModeExpected = kColorHttpMethodDelete.toDark;
     test('Test getHTTPMethodColor for DELETE Method dark mode', () {
       expect(
-          getAPIColor(
-            APIType.rest,
-            method: methodDelete,
-            brightness: dark,
-          ),
-          colMethodDeleteDarkModeExpected);
+        getAPIColor(APIType.rest, method: methodDelete, brightness: dark),
+        colMethodDeleteDarkModeExpected,
+      );
     });
   });
 

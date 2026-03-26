@@ -111,9 +111,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             thickness: 6,
           ),
           if (_showTaskSuggestions)
-            DashbotTaskButtons(
-              onTaskSelected: _scrollToBottom,
-            ),
+            DashbotTaskButtons(onTaskSelected: _scrollToBottom),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -124,7 +122,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   onPressed: ref.watch(chatViewmodelProvider).isGenerating
                       ? null
                       : () => setState(
-                          () => _showTaskSuggestions = !_showTaskSuggestions),
+                          () => _showTaskSuggestions = !_showTaskSuggestions,
+                        ),
                 ),
                 ADIconButton(
                   icon: Icons.clear_all_rounded,

@@ -87,40 +87,39 @@ class _$HttpResponseModelCopyWithImpl<$Res, $Val extends HttpResponseModel>
   }) {
     return _then(
       _value.copyWith(
-            statusCode: freezed == statusCode
-                ? _value.statusCode
-                : statusCode // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            headers: freezed == headers
-                ? _value.headers
-                : headers // ignore: cast_nullable_to_non_nullable
-                      as Map<String, String>?,
-            requestHeaders: freezed == requestHeaders
-                ? _value.requestHeaders
-                : requestHeaders // ignore: cast_nullable_to_non_nullable
-                      as Map<String, String>?,
-            body: freezed == body
-                ? _value.body
-                : body // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            formattedBody: freezed == formattedBody
-                ? _value.formattedBody
-                : formattedBody // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            bodyBytes: freezed == bodyBytes
-                ? _value.bodyBytes
-                : bodyBytes // ignore: cast_nullable_to_non_nullable
-                      as Uint8List?,
-            time: freezed == time
-                ? _value.time
-                : time // ignore: cast_nullable_to_non_nullable
-                      as Duration?,
-            sseOutput: freezed == sseOutput
-                ? _value.sseOutput
-                : sseOutput // ignore: cast_nullable_to_non_nullable
-                      as List<String>?,
-          )
-          as $Val,
+        statusCode: freezed == statusCode
+            ? _value.statusCode
+            : statusCode // ignore: cast_nullable_to_non_nullable
+                as int?,
+        headers: freezed == headers
+            ? _value.headers
+            : headers // ignore: cast_nullable_to_non_nullable
+                as Map<String, String>?,
+        requestHeaders: freezed == requestHeaders
+            ? _value.requestHeaders
+            : requestHeaders // ignore: cast_nullable_to_non_nullable
+                as Map<String, String>?,
+        body: freezed == body
+            ? _value.body
+            : body // ignore: cast_nullable_to_non_nullable
+                as String?,
+        formattedBody: freezed == formattedBody
+            ? _value.formattedBody
+            : formattedBody // ignore: cast_nullable_to_non_nullable
+                as String?,
+        bodyBytes: freezed == bodyBytes
+            ? _value.bodyBytes
+            : bodyBytes // ignore: cast_nullable_to_non_nullable
+                as Uint8List?,
+        time: freezed == time
+            ? _value.time
+            : time // ignore: cast_nullable_to_non_nullable
+                as Duration?,
+        sseOutput: freezed == sseOutput
+            ? _value.sseOutput
+            : sseOutput // ignore: cast_nullable_to_non_nullable
+                as List<String>?,
+      ) as $Val,
     );
   }
 }
@@ -174,35 +173,35 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
         statusCode: freezed == statusCode
             ? _value.statusCode
             : statusCode // ignore: cast_nullable_to_non_nullable
-                  as int?,
+                as int?,
         headers: freezed == headers
             ? _value._headers
             : headers // ignore: cast_nullable_to_non_nullable
-                  as Map<String, String>?,
+                as Map<String, String>?,
         requestHeaders: freezed == requestHeaders
             ? _value._requestHeaders
             : requestHeaders // ignore: cast_nullable_to_non_nullable
-                  as Map<String, String>?,
+                as Map<String, String>?,
         body: freezed == body
             ? _value.body
             : body // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         formattedBody: freezed == formattedBody
             ? _value.formattedBody
             : formattedBody // ignore: cast_nullable_to_non_nullable
-                  as String?,
+                as String?,
         bodyBytes: freezed == bodyBytes
             ? _value.bodyBytes
             : bodyBytes // ignore: cast_nullable_to_non_nullable
-                  as Uint8List?,
+                as Uint8List?,
         time: freezed == time
             ? _value.time
             : time // ignore: cast_nullable_to_non_nullable
-                  as Duration?,
+                as Duration?,
         sseOutput: freezed == sseOutput
             ? _value._sseOutput
             : sseOutput // ignore: cast_nullable_to_non_nullable
-                  as List<String>?,
+                as List<String>?,
       ),
     );
   }
@@ -221,10 +220,10 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
     @Uint8ListConverter() this.bodyBytes,
     @DurationConverter() this.time,
     final List<String>? sseOutput,
-  }) : _headers = headers,
-       _requestHeaders = requestHeaders,
-       _sseOutput = sseOutput,
-       super._();
+  })  : _headers = headers,
+        _requestHeaders = requestHeaders,
+        _sseOutput = sseOutput,
+        super._();
 
   factory _$HttpResponseModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HttpResponseModelImplFromJson(json);
@@ -302,16 +301,16 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    statusCode,
-    const DeepCollectionEquality().hash(_headers),
-    const DeepCollectionEquality().hash(_requestHeaders),
-    body,
-    formattedBody,
-    const DeepCollectionEquality().hash(bodyBytes),
-    time,
-    const DeepCollectionEquality().hash(_sseOutput),
-  );
+        runtimeType,
+        statusCode,
+        const DeepCollectionEquality().hash(_headers),
+        const DeepCollectionEquality().hash(_requestHeaders),
+        body,
+        formattedBody,
+        const DeepCollectionEquality().hash(bodyBytes),
+        time,
+        const DeepCollectionEquality().hash(_sseOutput),
+      );
 
   /// Create a copy of HttpResponseModel
   /// with the given fields replaced by the non-null parameter values.

@@ -21,9 +21,7 @@ class MobileDashboard extends ConsumerStatefulWidget {
 
 class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     final railIdx = ref.watch(navRailIndexStateProvider);
     final isLeftDrawerOpen = ref.watch(leftDrawerStateProvider);
 
@@ -36,16 +34,14 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
       child: Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
-          PageBranch(
-            pageIndex: railIdx,
-          ),
+          PageBranch(pageIndex: railIdx),
           if (context.isMediumWindow)
             AnimatedPositioned(
               bottom: railIdx > 2
                   ? 0
                   : isLeftDrawerOpen
-                      ? 0
-                      : -(72 + MediaQuery.paddingOf(context).bottom),
+                  ? 0
+                  : -(72 + MediaQuery.paddingOf(context).bottom),
               left: 0,
               right: 0,
               height: 70 + MediaQuery.paddingOf(context).bottom,
@@ -60,10 +56,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
 }
 
 class PageBranch extends ConsumerWidget {
-  const PageBranch({
-    super.key,
-    required this.pageIndex,
-  });
+  const PageBranch({super.key, required this.pageIndex});
 
   final int pageIndex;
   @override
@@ -74,15 +67,9 @@ class PageBranch extends ConsumerWidget {
       case 2:
         return const HistoryPage();
       case 3:
-        return const PageBase(
-          title: 'Logs',
-          scaffoldBody: TerminalPage(),
-        );
+        return const PageBase(title: 'Logs', scaffoldBody: TerminalPage());
       case 4:
-        return const PageBase(
-          title: 'Settings',
-          scaffoldBody: SettingsPage(),
-        );
+        return const PageBase(title: 'Settings', scaffoldBody: SettingsPage());
       default:
         return const RequestResponsePage();
     }

@@ -34,8 +34,11 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
   void insertTab() {
     String sp = "  ";
     int offset = math.min(
-        controller.selection.baseOffset, controller.selection.extentOffset);
-    String text = controller.text.substring(0, offset) +
+      controller.selection.baseOffset,
+      controller.selection.extentOffset,
+    );
+    String text =
+        controller.text.substring(0, offset) +
         sp +
         controller.text.substring(offset);
     controller.value = TextEditingValue(
@@ -74,8 +77,9 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialValue != widget.initialValue) {
       controller.text = widget.initialValue ?? "";
-      controller.selection =
-          TextSelection.collapsed(offset: controller.text.length);
+      controller.selection = TextSelection.collapsed(
+        offset: controller.text.length,
+      );
     }
     if ((oldWidget.fieldKey != widget.fieldKey) ||
         (oldWidget.isDark != widget.isDark)) {

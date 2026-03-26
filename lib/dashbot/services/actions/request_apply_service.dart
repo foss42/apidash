@@ -9,19 +9,20 @@ class ApplyResult {
   const ApplyResult({this.systemMessage, this.messageType});
 }
 
-typedef UpdateSelectedFn = void Function({
-  required String id,
-  HTTPVerb? method,
-  String? url,
-  List<NameValueModel>? headers,
-  List<bool>? isHeaderEnabledList,
-  String? body,
-  ContentType? bodyContentType,
-  List<FormDataModel>? formData,
-  List<NameValueModel>? params,
-  List<bool>? isParamEnabledList,
-  String? postRequestScript,
-});
+typedef UpdateSelectedFn =
+    void Function({
+      required String id,
+      HTTPVerb? method,
+      String? url,
+      List<NameValueModel>? headers,
+      List<bool>? isHeaderEnabledList,
+      String? body,
+      ContentType? bodyContentType,
+      List<FormDataModel>? formData,
+      List<NameValueModel>? params,
+      List<bool>? isParamEnabledList,
+      String? postRequestScript,
+    });
 
 typedef AddNewRequestFn = void Function(HttpRequestModel model, {String? name});
 
@@ -58,21 +59,24 @@ class RequestApplyService {
     final formData = formDataListRaw == null
         ? <FormDataModel>[]
         : formDataListRaw
-            .whereType<Map>()
-            .map((e) => FormDataModel(
+              .whereType<Map>()
+              .map(
+                (e) => FormDataModel(
                   name: (e['name'] as String?) ?? '',
                   value: (e['value'] as String?) ?? '',
                   type: (() {
                     final t = (e['type'] as String?) ?? 'text';
                     try {
-                      return FormDataType.values
-                          .firstWhere((ft) => ft.name == t);
+                      return FormDataType.values.firstWhere(
+                        (ft) => ft.name == t,
+                      );
                     } catch (_) {
                       return FormDataType.text;
                     }
                   })(),
-                ))
-            .toList();
+                ),
+              )
+              .toList();
 
     ContentType bodyContentType;
     if (formFlag || formData.isNotEmpty) {
@@ -134,7 +138,7 @@ class RequestApplyService {
   Future<ApplyResult?> applyOpenApi({
     required Map<String, dynamic> payload,
     required String?
-        field, // 'apply_to_selected'|'apply_to_new'|'select_operation'
+    field, // 'apply_to_selected'|'apply_to_new'|'select_operation'
     required String? path,
     required String? requestId,
     required UpdateSelectedFn updateSelected,
@@ -174,21 +178,24 @@ class RequestApplyService {
     final formData = formDataListRaw == null
         ? <FormDataModel>[]
         : formDataListRaw
-            .whereType<Map>()
-            .map((e) => FormDataModel(
+              .whereType<Map>()
+              .map(
+                (e) => FormDataModel(
                   name: (e['name'] as String?) ?? '',
                   value: (e['value'] as String?) ?? '',
                   type: (() {
                     final t = (e['type'] as String?) ?? 'text';
                     try {
-                      return FormDataType.values
-                          .firstWhere((ft) => ft.name == t);
+                      return FormDataType.values.firstWhere(
+                        (ft) => ft.name == t,
+                      );
                     } catch (_) {
                       return FormDataType.text;
                     }
                   })(),
-                ))
-            .toList();
+                ),
+              )
+              .toList();
 
     ContentType bodyContentType;
     if (formFlag || formData.isNotEmpty) {

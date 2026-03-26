@@ -83,9 +83,8 @@ enum HTTPVerb {
 
 enum SupportedUriSchemes { https, http }
 
-final kSupportedUriSchemes = SupportedUriSchemes.values
-    .map((i) => i.name)
-    .toList();
+final kSupportedUriSchemes =
+    SupportedUriSchemes.values.map((i) => i.name).toList();
 const kDefaultUriScheme = SupportedUriSchemes.https;
 final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
 final kIPHostRegex = RegExp(

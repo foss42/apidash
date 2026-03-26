@@ -10,10 +10,7 @@ import 'request_body.dart';
 import 'request_scripts.dart';
 
 class EditGraphQLRequestPane extends ConsumerWidget {
-  const EditGraphQLRequestPane({
-    super.key,
-    this.showViewCodeButton = true,
-  });
+  const EditGraphQLRequestPane({super.key, this.showViewCodeButton = true});
 
   final bool showViewCodeButton;
 
@@ -21,23 +18,42 @@ class EditGraphQLRequestPane extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final tabIndex = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.requestTabIndex));
+      selectedRequestModelProvider.select((value) => value?.requestTabIndex),
+    );
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
-    final headerLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.headersMap.length)) ??
+    final headerLength =
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.httpRequestModel?.headersMap.length,
+          ),
+        ) ??
         0;
-    final hasQuery = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasQuery)) ??
+    final hasQuery =
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.httpRequestModel?.hasQuery,
+          ),
+        ) ??
         false;
 
-    final scriptsLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.preRequestScript?.length)) ??
-        ref.watch(selectedRequestModelProvider
-            .select((value) => value?.postRequestScript?.length)) ??
+    final scriptsLength =
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.preRequestScript?.length,
+          ),
+        ) ??
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.postRequestScript?.length,
+          ),
+        ) ??
         0;
 
-    final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
-        value?.httpRequestModel?.authModel?.type != APIAuthType.none));
+    final hasAuth = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.authModel?.type != APIAuthType.none,
+      ),
+    );
 
     return RequestPane(
       selectedId: selectedId,
@@ -53,18 +69,8 @@ class EditGraphQLRequestPane extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(requestTabIndex: index);
       },
-      showIndicators: [
-        headerLength > 0,
-        hasAuth,
-        hasQuery,
-        scriptsLength > 0,
-      ],
-      tabLabels: const [
-        kLabelHeaders,
-        kLabelAuth,
-        kLabelQuery,
-        kLabelScripts,
-      ],
+      showIndicators: [headerLength > 0, hasAuth, hasQuery, scriptsLength > 0],
+      tabLabels: const [kLabelHeaders, kLabelAuth, kLabelQuery, kLabelScripts],
       children: const [
         EditRequestHeaders(),
         EditAuthType(),

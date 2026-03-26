@@ -25,8 +25,6 @@ class ApiToolBodyGen extends AIAgent {
         .replaceAll('```javascript\n', '')
         .replaceAll('```', '');
 
-    return {
-      'TOOL': validatedResponse,
-    };
+    return {'TOOL': validatedResponse};
   }
 }

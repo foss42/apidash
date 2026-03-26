@@ -58,8 +58,7 @@ void main() {
     expect(find.text('entering 123 for cell field'), findsOneWidget);
   });
 
-  testWidgets('Cell Field refreshes when initialValue changes',
-      (tester) async {
+  testWidgets('Cell Field refreshes when initialValue changes', (tester) async {
     // Build widget with initial value "first value"
     await tester.pumpWidget(
       MaterialApp(
@@ -68,10 +67,7 @@ void main() {
         home: const Scaffold(
           body: Column(
             children: [
-              CellField(
-                keyId: "test-field",
-                initialValue: "first value",
-              ),
+              CellField(keyId: "test-field", initialValue: "first value"),
             ],
           ),
         ),
@@ -89,10 +85,7 @@ void main() {
         home: const Scaffold(
           body: Column(
             children: [
-              CellField(
-                keyId: "test-field",
-                initialValue: "second value",
-              ),
+              CellField(keyId: "test-field", initialValue: "second value"),
             ],
           ),
         ),
@@ -118,12 +111,9 @@ void main() {
         title: 'URL Field',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: Column(children: [
-            URLField(
-              selectedId: '2',
-              onFieldSubmitted: testSubmit,
-            )
-          ]),
+          body: Column(
+            children: [URLField(selectedId: '2', onFieldSubmitted: testSubmit)],
+          ),
         ),
       ),
     );

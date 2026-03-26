@@ -6,11 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:path/path.dart' as p;
 
 class WorkspaceSelector extends HookWidget {
-  const WorkspaceSelector({
-    super.key,
-    required this.onContinue,
-    this.onCancel,
-  });
+  const WorkspaceSelector({super.key, required this.onContinue, this.onCancel});
 
   final Future<void> Function(String)? onContinue;
   final Future<void> Function()? onCancel;
@@ -27,18 +23,13 @@ class WorkspaceSelector extends HookWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                kMsgSelectWorkspace,
-                style: kTextStyleButton,
-              ),
+              const Text(kMsgSelectWorkspace, style: kTextStyleButton),
               kVSpacer20,
               Row(
                 children: [
                   Text(
                     "CHOOSE DIRECTORY",
-                    style: kCodeStyle.copyWith(
-                      fontSize: 12,
-                    ),
+                    style: kCodeStyle.copyWith(fontSize: 12),
                   ),
                 ],
               ),
@@ -72,9 +63,7 @@ class WorkspaceSelector extends HookWidget {
                 children: [
                   Text(
                     "WORKSPACE NAME [OPTIONAL]\n(FOLDER WILL BE CREATED IN THE SELECTED DIRECTORY)",
-                    style: kCodeStyle.copyWith(
-                      fontSize: 12,
-                    ),
+                    style: kCodeStyle.copyWith(fontSize: 12),
                   ),
                 ],
               ),
@@ -97,8 +86,10 @@ class WorkspaceSelector extends HookWidget {
                             String finalPath = selectedDirectory.value!;
                             if (workspaceName.value != null &&
                                 workspaceName.value!.trim().isNotEmpty) {
-                              finalPath =
-                                  p.join(finalPath, workspaceName.value);
+                              finalPath = p.join(
+                                finalPath,
+                                workspaceName.value,
+                              );
                             }
                             await onContinue?.call(finalPath);
                           },
@@ -108,17 +99,17 @@ class WorkspaceSelector extends HookWidget {
                   FilledButton(
                     onPressed: onCancel,
                     style: FilledButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).brightness == Brightness.dark
-                                ? kColorDarkDanger
-                                : kColorLightDanger,
-                        surfaceTintColor: kColorRed,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onPrimary),
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                          ? kColorDarkDanger
+                          : kColorLightDanger,
+                      surfaceTintColor: kColorRed,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
                     child: const Text(kLabelCancel),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),

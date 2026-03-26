@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class CodegenPopupMenu extends StatelessWidget {
-  const CodegenPopupMenu({
-    super.key,
-    required this.value,
-    this.onChanged,
-  });
+  const CodegenPopupMenu({super.key, required this.value, this.onChanged});
 
   final CodegenLanguage value;
   final void Function(CodegenLanguage? value)? onChanged;

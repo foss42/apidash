@@ -89,9 +89,7 @@ int main() {
   return 0;
 }""";
 
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
       var hasBody = false;
@@ -115,10 +113,7 @@ int main() {
 
       var method = requestModel.method.name.toUpperCase();
       var templateRequest = jj.Template(kTemplateRequest);
-      result += templateRequest.render({
-        "method": method,
-        "hasBody": hasBody,
-      });
+      result += templateRequest.render({"method": method, "hasBody": hasBody});
 
       var templateUrl = jj.Template(kTemplateUrl);
       result += templateUrl.render({"url": uri});
@@ -134,13 +129,13 @@ int main() {
         // }
         if (requestModel.hasTextData || requestModel.hasJsonData) {
           headers.putIfAbsent(
-              kHeaderContentType, () => requestModel.bodyContentType.header);
+            kHeaderContentType,
+            () => requestModel.bodyContentType.header,
+          );
         }
         if (headers.isNotEmpty) {
           var templateHeader = jj.Template(kTemplateHeader);
-          result += templateHeader.render({
-            "headers": headers,
-          });
+          result += templateHeader.render({"headers": headers});
         }
       }
 
@@ -149,8 +144,9 @@ int main() {
         var templateRawBody = jj.Template(kTemplateBody);
         String body = "";
         if (requestModel.body != null) {
-          body =
-              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n');
+          body = requestModel.body!
+              .replaceAll('"', '\\"')
+              .replaceAll('\n', '\\n');
         }
         result += templateRawBody.render({"body": body});
       } else if (requestModel.hasFormData) {
@@ -170,7 +166,8 @@ int main() {
         }
       }
       var headers = requestModel.enabledHeadersMap;
-      bool allow = headers.isNotEmpty ||
+      bool allow =
+          headers.isNotEmpty ||
           requestModel.hasTextData ||
           requestModel.hasJsonData;
       var templateEnd = jj.Template(kTemplateEnd);

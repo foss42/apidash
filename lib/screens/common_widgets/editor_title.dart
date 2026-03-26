@@ -23,15 +23,18 @@ class EditorTitle extends StatelessWidget {
           color: Colors.transparent,
           child: ItemCardMenu(
             offset: const Offset(0, 40),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
             splashRadius: 0,
             tooltip: title,
             onSelected: onSelected,
             child: Ink(
               color: Theme.of(context).colorScheme.surface,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 6,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -43,10 +46,7 @@ class EditorTitle extends StatelessWidget {
                     ),
                   ),
                   showMenu
-                      ? const Icon(
-                          Icons.more_vert_rounded,
-                          size: 20,
-                        )
+                      ? const Icon(Icons.more_vert_rounded, size: 20)
                       : const SizedBox.shrink(),
                 ],
               ),

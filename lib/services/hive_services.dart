@@ -117,8 +117,9 @@ class HiveHandler {
 
   dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(
-          String id, Map<String, dynamic>? requestModelJson) =>
-      dataBox.put(id, requestModelJson);
+    String id,
+    Map<String, dynamic>? requestModelJson,
+  ) => dataBox.put(id, requestModelJson);
 
   void delete(String key) => dataBox.delete(key);
 
@@ -128,8 +129,9 @@ class HiveHandler {
 
   dynamic getEnvironment(String id) => environmentBox.get(id);
   Future<void> setEnvironment(
-          String id, Map<String, dynamic>? environmentJson) =>
-      environmentBox.put(id, environmentJson);
+    String id,
+    Map<String, dynamic>? environmentJson,
+  ) => environmentBox.put(id, environmentJson);
 
   Future<void> deleteEnvironment(String id) => environmentBox.delete(id);
 
@@ -139,16 +141,18 @@ class HiveHandler {
 
   dynamic getHistoryMeta(String id) => historyMetaBox.get(id);
   Future<void> setHistoryMeta(
-          String id, Map<String, dynamic>? historyMetaJson) =>
-      historyMetaBox.put(id, historyMetaJson);
+    String id,
+    Map<String, dynamic>? historyMetaJson,
+  ) => historyMetaBox.put(id, historyMetaJson);
 
   Future<void> deleteHistoryMeta(String id) => historyMetaBox.delete(id);
 
   Future<dynamic> getHistoryRequest(String id) async =>
       await historyLazyBox.get(id);
   Future<void> setHistoryRequest(
-          String id, Map<String, dynamic>? historyRequestJson) =>
-      historyLazyBox.put(id, historyRequestJson);
+    String id,
+    Map<String, dynamic>? historyRequestJson,
+  ) => historyLazyBox.put(id, historyRequestJson);
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 

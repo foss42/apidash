@@ -10,8 +10,10 @@ class EnvironmentDropdown extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final environments = ref.watch(environmentsStateNotifierProvider);
     final environmentSequence = ref.watch(environmentSequenceProvider);
-    final environmentsList =
-        environmentSequence.map((e) => environments?[e]).nonNulls.toList();
+    final environmentsList = environmentSequence
+        .map((e) => environments?[e])
+        .nonNulls
+        .toList();
 
     final activeEnvironment = ref.watch(activeEnvironmentIdStateProvider);
     return EnvironmentPopupMenu(

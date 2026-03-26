@@ -84,19 +84,19 @@ fn main() {
 
       result += jj.Template(kTemplateStart).render({
         "hasJsonBody": requestModel.hasJsonData,
-        "hasHeaders": (requestModel.enabledHeaders != null &&
+        "hasHeaders":
+            (requestModel.enabledHeaders != null &&
                 requestModel.enabledHeaders!.isNotEmpty) ||
-            (requestModel.hasJsonData || requestModel.hasTextData)
+            (requestModel.hasJsonData || requestModel.hasTextData),
       });
 
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledParams,
-      );
+      var rec = getValidRequestUri(url, requestModel.enabledParams);
 
       Uri? uri = rec.$1;
-      var harJson =
-          requestModelToHARJsonRequest(requestModel, useEnabled: true);
+      var harJson = requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
+      );
 
       var templateUrl = jj.Template(kTemplateUrl);
       result += templateUrl.render({"url": harJson["url"]});
@@ -123,13 +123,13 @@ fn main() {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers.putIfAbsent(
-                kHeaderContentType, () => requestModel.bodyContentType.header);
+              kHeaderContentType,
+              () => requestModel.bodyContentType.header,
+            );
           }
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);
-            result += templateHeader.render({
-              "headers": headers,
-            });
+            result += templateHeader.render({"headers": headers});
           }
         }
 

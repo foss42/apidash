@@ -19,7 +19,7 @@ class UrlEnvService {
     required Map<String, EnvironmentModel>? Function() readEnvs,
     required String? Function() readActiveEnvId,
     required void Function(String id, {List<EnvironmentVariableModel>? values})
-        updateEnv,
+    updateEnv,
   }) async {
     if (baseUrl.isEmpty) return 'BASE_URL';
     String host = 'API';
@@ -43,11 +43,9 @@ class UrlEnvService {
       final exists = envModel.values.any((v) => v.key == key);
       if (!exists) {
         final values = [...envModel.values];
-        values.add(EnvironmentVariableModel(
-          key: key,
-          value: baseUrl,
-          enabled: true,
-        ));
+        values.add(
+          EnvironmentVariableModel(key: key, value: baseUrl, enabled: true),
+        );
         updateEnv(activeId, values: values);
       }
     }
@@ -82,12 +80,13 @@ class UrlEnvService {
     required Map<String, EnvironmentModel>? Function() readEnvs,
     required String? Function() readActiveEnvId,
     required void Function(String id, {List<EnvironmentVariableModel>? values})
-        updateEnv,
+    updateEnv,
   }) async {
     // Derive slug from title's first word upfront (used as fallback)
     final titleSlug = _slugFromOpenApiTitleFirstWord(title);
     final trimmedBase = baseUrl.trim();
-    final isTrivial = trimmedBase.isEmpty ||
+    final isTrivial =
+        trimmedBase.isEmpty ||
         trimmedBase == '/' ||
         // path-only or variable server (no scheme and no host component)
         (!trimmedBase.startsWith('http://') &&
@@ -127,10 +126,10 @@ class UrlEnvService {
     final slug = (host == 'API')
         ? titleSlug
         : host
-            .replaceAll(RegExp(r'[^A-Za-z0-9]+'), '_')
-            .replaceAll(RegExp(r'_+'), '_')
-            .replaceAll(RegExp(r'^_|_$'), '')
-            .toUpperCase();
+              .replaceAll(RegExp(r'[^A-Za-z0-9]+'), '_')
+              .replaceAll(RegExp(r'_+'), '_')
+              .replaceAll(RegExp(r'^_|_$'), '')
+              .toUpperCase();
     final key = 'BASE_URL_$slug';
 
     final envs = readEnvs();
@@ -142,11 +141,9 @@ class UrlEnvService {
       final exists = envModel.values.any((v) => v.key == key);
       if (!exists) {
         final values = [...envModel.values];
-        values.add(EnvironmentVariableModel(
-          key: key,
-          value: baseUrl,
-          enabled: true,
-        ));
+        values.add(
+          EnvironmentVariableModel(key: key, value: baseUrl, enabled: true),
+        );
         updateEnv(activeId, values: values);
       }
     }
@@ -160,10 +157,9 @@ class UrlEnvService {
     final trimmed = title.trim();
     if (trimmed.isEmpty) return 'API';
     // Split on whitespace, take first non-empty token
-    final firstToken = trimmed.split(RegExp(r'\s+')).firstWhere(
-          (t) => t.trim().isNotEmpty,
-          orElse: () => 'API',
-        );
+    final firstToken = trimmed
+        .split(RegExp(r'\s+'))
+        .firstWhere((t) => t.trim().isNotEmpty, orElse: () => 'API');
     final cleaned = firstToken
         .replaceAll(RegExp(r'[^A-Za-z0-9]+'), '_')
         .replaceAll(RegExp(r'_+'), '_')

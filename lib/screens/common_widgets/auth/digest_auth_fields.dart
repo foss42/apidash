@@ -95,10 +95,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
           const SizedBox(height: 12),
           Text(
             kAlgorithm,
-            style: TextStyle(
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-            ),
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
           ),
           SizedBox(height: 4),
           ADPopupMenu<String>(
@@ -154,13 +151,9 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
       qop: _qop.trim(),
       opaque: _opaque.trim(),
     );
-    widget.updateAuth?.call(widget.authData?.copyWith(
-          type: APIAuthType.digest,
-          digest: digest,
-        ) ??
-        AuthModel(
-          type: APIAuthType.digest,
-          digest: digest,
-        ));
+    widget.updateAuth?.call(
+      widget.authData?.copyWith(type: APIAuthType.digest, digest: digest) ??
+          AuthModel(type: APIAuthType.digest, digest: digest),
+    );
   }
 }

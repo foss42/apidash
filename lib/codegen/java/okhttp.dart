@@ -74,7 +74,7 @@ import okhttp3.MultipartBody;""";
 }
 
 """;
-// Converting list of form data objects to kolin multi part data
+  // Converting list of form data objects to kolin multi part data
   String kFormDataBody = '''
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
             {%- for item in formDataList -%}
@@ -88,9 +88,7 @@ import okhttp3.MultipartBody;""";
 
 ''';
 
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
       bool hasQuery = false;
@@ -111,8 +109,10 @@ import okhttp3.MultipartBody;""";
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams
-                .render({"url": url, "params": getQueryParams(params)});
+            result += templateParams.render({
+              "url": url,
+              "params": getQueryParams(params),
+            });
           }
         }
         if (!hasQuery) {
@@ -137,7 +137,7 @@ import okhttp3.MultipartBody;""";
             var templateBody = jj.Template(kTemplateRequestBody);
             result += templateBody.render({
               "contentType": contentType,
-              "body": kJsonEncoder.convert(requestBody)
+              "body": kJsonEncoder.convert(requestBody),
             });
           }
         }
@@ -146,7 +146,7 @@ import okhttp3.MultipartBody;""";
         var stringStart = templateStart.render({
           "importForQuery": hasQuery ? kStringImportForQuery : "",
           "importForBody": hasBody ? kStringImportForBody : "",
-          "importForFormData": hasFormData ? kStringImportForFormData : ""
+          "importForFormData": hasFormData ? kStringImportForFormData : "",
         });
 
         result = stringStart + result;

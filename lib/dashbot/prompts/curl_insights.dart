@@ -1,7 +1,4 @@
-String buildCurlInsightsPrompt({
-  String? diff,
-  Map<String, dynamic>? newReq,
-}) {
+String buildCurlInsightsPrompt({String? diff, Map<String, dynamic>? newReq}) {
   return """
 YOU ARE API Insights Assistant specialized in analyzing API Requests.
 

@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 class FrameWorkSelectorPage extends StatefulWidget {
   final String content;
   final Function(String, String) onNext;
-  const FrameWorkSelectorPage(
-      {super.key, required this.content, required this.onNext});
+  const FrameWorkSelectorPage({
+    super.key,
+    required this.content,
+    required this.onNext,
+  });
 
   @override
   State<FrameWorkSelectorPage> createState() => _FrameWorkSelectorPageState();
@@ -26,13 +29,15 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
   Widget build(BuildContext context) {
     final textContainerdecoration = BoxDecoration(
       color: Color.alphaBlend(
-          (Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.onPrimaryContainer
-                  : Theme.of(context).colorScheme.primaryContainer)
-              .withValues(alpha: kForegroundOpacity),
-          Theme.of(context).colorScheme.surface),
+        (Theme.of(context).brightness == Brightness.dark
+                ? Theme.of(context).colorScheme.onPrimaryContainer
+                : Theme.of(context).colorScheme.primaryContainer)
+            .withValues(alpha: kForegroundOpacity),
+        Theme.of(context).colorScheme.surface,
+      ),
       border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      ),
       borderRadius: kBorderRadius8,
     );
 
@@ -102,14 +107,8 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
               onPressed: () {
                 widget.onNext(controller.value.text, "FLUTTER");
               },
-              icon: Icon(
-                Icons.generating_tokens,
-              ),
-              label: const SizedBox(
-                child: Text(
-                  kLabelGenerateUI,
-                ),
-              ),
+              icon: Icon(Icons.generating_tokens),
+              label: const SizedBox(child: Text(kLabelGenerateUI)),
             ),
           ),
         ],

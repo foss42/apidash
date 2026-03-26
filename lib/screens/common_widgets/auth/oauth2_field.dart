@@ -93,8 +93,9 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
               }
               // Parse expiration time
               if (decoded['expiration'] != null) {
-                _tokenExpiration =
-                    DateTime.fromMillisecondsSinceEpoch(decoded['expiration']!);
+                _tokenExpiration = DateTime.fromMillisecondsSinceEpoch(
+                  decoded['expiration']!,
+                );
               } else {
                 _tokenExpiration = null;
               }
@@ -247,10 +248,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
           kVSpacer5,
           ADPopupMenu<String>(
             value: _codeChallengeMethod.toUpperCase(),
-            values: const [
-              ('SHA-256', 'sha-256'),
-              ('Plaintext', 'plaintext'),
-            ],
+            values: const [('SHA-256', 'sha-256'), ('Plaintext', 'plaintext')],
             tooltip: kTooltipOAuth2CodeChallengeMethod,
             isOutlined: true,
             onChanged: widget.readOnly
@@ -367,10 +365,10 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
                 Text(
                   getExpirationText(_tokenExpiration),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: _tokenExpiration!.isBefore(DateTime.now())
-                            ? Theme.of(context).colorScheme.error
-                            : Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: _tokenExpiration!.isBefore(DateTime.now())
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ],
@@ -382,10 +380,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
   }
 
   List<Widget> _buildFieldWithSpacing(Widget field) {
-    return [
-      field,
-      kVSpacer16,
-    ];
+    return [field, kVSpacer16];
   }
 
   bool _shouldShowField(OAuth2Field field) {
@@ -425,8 +420,9 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
   }
 
   void _updateOAuth2() async {
-    final String? credentialsFilePath =
-        ref.read(settingsProvider).workspaceFolderPath;
+    final String? credentialsFilePath = ref
+        .read(settingsProvider)
+        .workspaceFolderPath;
 
     final updatedOAuth2 = AuthOAuth2Model(
       grantType: _grantType,
@@ -453,10 +449,7 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
             type: APIAuthType.oauth2,
             oauth2: updatedOAuth2,
           ) ??
-          AuthModel(
-            type: APIAuthType.oauth2,
-            oauth2: updatedOAuth2,
-          ),
+          AuthModel(type: APIAuthType.oauth2, oauth2: updatedOAuth2),
     );
   }
 

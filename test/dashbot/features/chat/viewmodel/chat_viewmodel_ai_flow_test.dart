@@ -32,10 +32,18 @@ class _PromptCaptureBuilder extends PromptBuilder {
   String? lastSystemPrompt;
 
   @override
-  String buildSystemPrompt(RequestModel? req, ChatMessageType type,
-      {String? overrideLanguage, List<ChatMessage> history = const []}) {
-    final r = _inner.buildSystemPrompt(req, type,
-        overrideLanguage: overrideLanguage, history: history);
+  String buildSystemPrompt(
+    RequestModel? req,
+    ChatMessageType type, {
+    String? overrideLanguage,
+    List<ChatMessage> history = const [],
+  }) {
+    final r = _inner.buildSystemPrompt(
+      req,
+      type,
+      overrideLanguage: overrideLanguage,
+      history: history,
+    );
     lastSystemPrompt = r;
     return r;
   }
@@ -66,8 +74,10 @@ void main() {
     return pb;
   }
 
-  ProviderContainer createTestContainer(
-      {String? aiExplanation, String? actionsJson}) {
+  ProviderContainer createTestContainer({
+    String? aiExplanation,
+    String? actionsJson,
+  }) {
     mockRepo = MockChatRemoteRepository();
     if (aiExplanation != null) {
       // Build a response optionally with actions
@@ -90,14 +100,17 @@ void main() {
     final baseSettings = SettingsModel(defaultAIModel: aiModelJson);
     promptCapture = _PromptCaptureBuilder(basePromptBuilder());
 
-    return createContainer(overrides: [
-      chatRepositoryProvider.overrideWithValue(mockRepo),
-      settingsProvider.overrideWith(
-          (ref) => ThemeStateNotifier(settingsModel: baseSettings)),
-      // Force no selected request so chat uses the stable 'global' session key
-      selectedRequestModelProvider.overrideWith((ref) => null),
-      promptBuilderProvider.overrideWith((ref) => promptCapture),
-    ]);
+    return createContainer(
+      overrides: [
+        chatRepositoryProvider.overrideWithValue(mockRepo),
+        settingsProvider.overrideWith(
+          (ref) => ThemeStateNotifier(settingsModel: baseSettings),
+        ),
+        // Force no selected request so chat uses the stable 'global' session key
+        selectedRequestModelProvider.overrideWith((ref) => null),
+        promptBuilderProvider.overrideWith((ref) => promptCapture),
+      ],
+    );
   }
 
   group('ChatViewmodel AI Enabled Flow', () {
@@ -110,7 +123,9 @@ void main() {
       final vm = container.read(chatViewmodelProvider.notifier);
 
       await vm.sendMessage(
-          text: 'Generate code', type: ChatMessageType.generateCode);
+        text: 'Generate code',
+        type: ChatMessageType.generateCode,
+      );
 
       final msgs = vm.currentMessages;
       // Expect exactly 2 messages: user + system response
@@ -132,7 +147,9 @@ void main() {
       final vm = container.read(chatViewmodelProvider.notifier);
 
       await vm.sendMessage(
-          text: 'Explain', type: ChatMessageType.explainResponse);
+        text: 'Explain',
+        type: ChatMessageType.explainResponse,
+      );
 
       final msgs = vm.currentMessages;
       expect(msgs, isNotEmpty);
@@ -155,48 +172,60 @@ void main() {
           '{"explanation":"Something","actions":"not-a-list"}';
       final vm = container.read(chatViewmodelProvider.notifier);
       await vm.sendMessage(
-          text: 'Gen test', type: ChatMessageType.generateTest);
+        text: 'Gen test',
+        type: ChatMessageType.generateTest,
+      );
       final msgs = vm.currentMessages;
       expect(msgs, isNotEmpty);
       final sys = msgs.last;
       expect(sys.content, contains('Something'));
     });
 
-    test('handles malformed top-level JSON gracefully (no crash, fallback)',
-        () async {
-      container = createTestContainer();
-      // This will cause MessageJson.safeParse to catch and ignore malformed content
-      mockRepo.mockResponse =
-          '{"explanation":"ok","actions": [ { invalid json }';
-      final vm = container.read(chatViewmodelProvider.notifier);
-      await vm.sendMessage(
-          text: 'Gen code', type: ChatMessageType.generateCode);
-      final msgs = vm.currentMessages;
-      expect(msgs.length, equals(2)); // user + system with raw content
-      expect(msgs.last.content, contains('explanation'));
-    });
+    test(
+      'handles malformed top-level JSON gracefully (no crash, fallback)',
+      () async {
+        container = createTestContainer();
+        // This will cause MessageJson.safeParse to catch and ignore malformed content
+        mockRepo.mockResponse =
+            '{"explanation":"ok","actions": [ { invalid json }';
+        final vm = container.read(chatViewmodelProvider.notifier);
+        await vm.sendMessage(
+          text: 'Gen code',
+          type: ChatMessageType.generateCode,
+        );
+        final msgs = vm.currentMessages;
+        expect(msgs.length, equals(2)); // user + system with raw content
+        expect(msgs.last.content, contains('explanation'));
+      },
+    );
 
-    test('handles missing explanation key (still stores raw response)',
-        () async {
-      container = createTestContainer();
-      mockRepo.mockResponse = '{"note":"Just a note","actions": []}';
-      final vm = container.read(chatViewmodelProvider.notifier);
-      await vm.sendMessage(
-          text: 'Explain', type: ChatMessageType.explainResponse);
-      final msgs = vm.currentMessages;
-      expect(msgs.length, equals(2));
-      expect(msgs.last.content, contains('note'));
-    });
+    test(
+      'handles missing explanation key (still stores raw response)',
+      () async {
+        container = createTestContainer();
+        mockRepo.mockResponse = '{"note":"Just a note","actions": []}';
+        final vm = container.read(chatViewmodelProvider.notifier);
+        await vm.sendMessage(
+          text: 'Explain',
+          type: ChatMessageType.explainResponse,
+        );
+        final msgs = vm.currentMessages;
+        expect(msgs.length, equals(2));
+        expect(msgs.last.content, contains('note'));
+      },
+    );
 
-    test('catches repository exception and appends error system message',
-        () async {
-      container = createTestContainer();
-      mockRepo.mockError = Exception('boom');
-      final vm = container.read(chatViewmodelProvider.notifier);
-      await vm.sendMessage(text: 'Doc', type: ChatMessageType.generateDoc);
-      final msgs = vm.currentMessages;
-      expect(msgs, isNotEmpty);
-      expect(msgs.last.content, contains('Error:'));
-    });
+    test(
+      'catches repository exception and appends error system message',
+      () async {
+        container = createTestContainer();
+        mockRepo.mockError = Exception('boom');
+        final vm = container.read(chatViewmodelProvider.notifier);
+        await vm.sendMessage(text: 'Doc', type: ChatMessageType.generateDoc);
+        final msgs = vm.currentMessages;
+        expect(msgs, isNotEmpty);
+        expect(msgs.last.content, contains('Error:'));
+      },
+    );
   });
 }

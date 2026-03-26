@@ -98,15 +98,14 @@ public class Main {
       // we need to parse the body as it is, and write it to the body
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
-        result += templateBodyContent.render({
-          "body": requestModel.body,
-        });
+        result += templateBodyContent.render({"body": requestModel.body});
         hasBody = true;
       }
 
       var templateRequestCreation = jj.Template(kTemplateRequestCreation);
-      result += templateRequestCreation
-          .render({"method": requestModel.method.name.toLowerCase()});
+      result += templateRequestCreation.render({
+        "method": requestModel.method.name.toLowerCase(),
+      });
 
       // ~~~~~~~~~~~~~~~~~~ request header start ~~~~~~~~~~~~~~~~~~
 
@@ -129,8 +128,10 @@ public class Main {
         var params = uri.queryParameters;
         var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
         params.forEach((name, value) {
-          result +=
-              templateUrlQueryParam.render({"name": name, "value": value});
+          result += templateUrlQueryParam.render({
+            "name": name,
+            "value": value,
+          });
         });
       }
 
@@ -139,17 +140,23 @@ public class Main {
       // handling form data
       if (requestModel.hasFormData) {
         // including form data into the request
-        var templateRequestTextFormData =
-            jj.Template(kTemplateRequestTextFormData);
-        var templateRequestFileFormData =
-            jj.Template(kTemplateRequestFileFormData);
+        var templateRequestTextFormData = jj.Template(
+          kTemplateRequestTextFormData,
+        );
+        var templateRequestFileFormData = jj.Template(
+          kTemplateRequestFileFormData,
+        );
         for (var field in requestModel.formDataList) {
           if (field.type == FormDataType.text) {
-            result += templateRequestTextFormData
-                .render({"name": field.name, "value": field.value});
+            result += templateRequestTextFormData.render({
+              "name": field.name,
+              "value": field.value,
+            });
           } else if (field.type == FormDataType.file) {
-            result += templateRequestFileFormData
-                .render({"name": field.name, "value": field.value});
+            result += templateRequestFileFormData.render({
+              "name": field.name,
+              "value": field.value,
+            });
           }
         }
       }

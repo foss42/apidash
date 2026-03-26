@@ -3,8 +3,10 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import '../consts.dart';
 
-Color getResponseStatusCodeColor(int? statusCode,
-    {Brightness brightness = Brightness.light}) {
+Color getResponseStatusCodeColor(
+  int? statusCode, {
+  Brightness brightness = Brightness.light,
+}) {
   Color col = kColorStatusCodeDefault;
   if (statusCode != null) {
     if (statusCode >= 200) {
@@ -26,15 +28,9 @@ Color getResponseStatusCodeColor(int? statusCode,
   return col;
 }
 
-Color getAPIColor(
-  APIType apiType, {
-  HTTPVerb? method,
-  Brightness? brightness,
-}) {
+Color getAPIColor(APIType apiType, {HTTPVerb? method, Brightness? brightness}) {
   Color col = switch (apiType) {
-    APIType.rest => getHTTPMethodColor(
-        method,
-      ),
+    APIType.rest => getHTTPMethodColor(method),
     APIType.graphql => kColorGQL,
     APIType.ai => Colors.amber,
   };

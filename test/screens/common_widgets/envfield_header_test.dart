@@ -7,16 +7,14 @@ import 'package:spot/spot.dart';
 
 void main() {
   group('HeaderField Widget Tests', () {
-    testWidgets('HeaderField renders and displays ExtendedTextField',
-        (tester) async {
+    testWidgets('HeaderField renders and displays ExtendedTextField', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const Portal(
           child: MaterialApp(
             home: Scaffold(
-              body: EnvHeaderField(
-                keyId: "testKey",
-                hintText: "Enter header",
-              ),
+              body: EnvHeaderField(keyId: "testKey", hintText: "Enter header"),
             ),
           ),
         ),
@@ -25,8 +23,9 @@ void main() {
       spot<EnvHeaderField>().spot<ExtendedTextField>().existsOnce();
     });
 
-    testWidgets('HeaderField calls onChanged when text changes',
-        (tester) async {
+    testWidgets('HeaderField calls onChanged when text changes', (
+      tester,
+    ) async {
       String? changedText;
       await tester.pumpWidget(
         Portal(

@@ -68,7 +68,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
 }
 
 """;
-// Converting list of form data objects to kolin multi part data
+  // Converting list of form data objects to kolin multi part data
   String kFormDataBody = '''
     val body = MultipartBody.Builder().setType(MultipartBody.FORM){% for item in formDataList %}{% if item.type == 'file' %}
           .addFormDataPart("{{item.name}}",File("{{item.value}}").name,File("{{item.value}}").asRequestBody("application/octet-stream".toMediaType()))
@@ -76,9 +76,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
           {% endif %}{% endfor %}.build()
 ''';
 
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
       bool hasQuery = false;
@@ -100,8 +98,10 @@ import okhttp3.MediaType.Companion.toMediaType""";
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams
-                .render({"url": url, "params": getQueryParams(params)});
+            result += templateParams.render({
+              "url": url,
+              "params": getQueryParams(params),
+            });
           }
         }
         if (!hasQuery) {
@@ -122,16 +122,22 @@ import okhttp3.MediaType.Companion.toMediaType""";
                 modifiedFormDataList.add({
                   "name": item.name,
                   "value": item.value.substring(1),
-                  "type": "file"
+                  "type": "file",
                 });
               } else {
-                modifiedFormDataList.add(
-                    {"name": item.name, "value": item.value, "type": "file"});
+                modifiedFormDataList.add({
+                  "name": item.name,
+                  "value": item.value,
+                  "type": "file",
+                });
               }
               hasFile = true;
             } else {
-              modifiedFormDataList.add(
-                  {"name": item.name, "value": item.value, "type": "text"});
+              modifiedFormDataList.add({
+                "name": item.name,
+                "value": item.value,
+                "type": "text",
+              });
             }
           }
 
@@ -144,8 +150,10 @@ import okhttp3.MediaType.Companion.toMediaType""";
             hasBody = true;
             String contentType = requestModel.bodyContentType.header;
             var templateBody = jj.Template(kTemplateRequestBody);
-            result += templateBody
-                .render({"contentType": contentType, "body": requestBody});
+            result += templateBody.render({
+              "contentType": contentType,
+              "body": requestBody,
+            });
           }
         }
 

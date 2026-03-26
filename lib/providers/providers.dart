@@ -1,4 +1,5 @@
 export 'ai_providers.dart';
+export 'assertion_providers.dart';
 export 'collection_providers.dart';
 export 'environment_providers.dart';
 export 'history_providers.dart';

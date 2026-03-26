@@ -20,8 +20,8 @@ class EditorPaneRequestDetailsCard extends ConsumerWidget {
         rightWidget: !isDashbotPopped
             ? DashbotTab()
             : codePaneVisible
-                ? const CodePane()
-                : const ResponsePane(),
+            ? const CodePane()
+            : const ResponsePane(),
       ),
     );
   }

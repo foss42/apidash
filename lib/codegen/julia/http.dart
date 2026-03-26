@@ -109,12 +109,10 @@ println("Response Body: \n$(String(response.body))")
 
         if (requestModel.hasFormData) {
           final formDataBodyData = jj.Template(kTemplateFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "hasFile": requestModel.hasFileInFormData,
-              "formdata": requestModel.formDataMapList,
-            },
-          );
+          result += formDataBodyData.render({
+            "hasFile": requestModel.hasFileInFormData,
+            "formdata": requestModel.formDataMapList,
+          });
         }
 
         var headersList = requestModel.enabledHeaders;
@@ -136,9 +134,7 @@ println("Response Body: \n$(String(response.body))")
         }
 
         var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": requestModel.method.name,
-        });
+        result += templateRequest.render({"method": requestModel.method.name});
 
         if (hasHeaders) {
           result += kStringRequestHeaders;

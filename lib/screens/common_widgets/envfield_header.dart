@@ -43,16 +43,18 @@ class _EnvHeaderFieldState extends State<EnvHeaderField> {
       onChanged: widget.onChanged,
       colorScheme: colorScheme,
       autocompleteNoTrigger: AutocompleteNoTrigger(
-          optionsViewBuilder: (context, autocompleteQuery, controller) {
-        return HeaderSuggestions(
+        optionsViewBuilder: (context, autocompleteQuery, controller) {
+          return HeaderSuggestions(
             suggestionsCallback: headerSuggestionCallback,
             query: autocompleteQuery.query,
             onSuggestionTap: (suggestion) {
               controller.text = suggestion;
               widget.onChanged?.call(controller.text);
               focusNode.unfocus();
-            });
-      }),
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -62,7 +64,8 @@ class _EnvHeaderFieldState extends State<EnvHeaderField> {
     }
     return getHeaderSuggestions(pattern)
         .where(
-            (suggestion) => suggestion.toLowerCase() != pattern.toLowerCase())
+          (suggestion) => suggestion.toLowerCase() != pattern.toLowerCase(),
+        )
         .toList();
   }
 }

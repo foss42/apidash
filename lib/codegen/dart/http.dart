@@ -7,9 +7,7 @@ import 'package:dart_style/dart_style.dart';
 import 'shared.dart';
 
 class DartHttpCodeGen {
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       final next = generatedDartCode(
         url: requestModel.url,
@@ -44,8 +42,9 @@ class DartHttpCodeGen {
     final dioImport = Directive.import('package:http/http.dart', as: 'http');
     sbf.writeln(dioImport.accept(emitter));
 
-    final uriExp =
-        declareVar('uri').assign(refer('Uri.parse').call([literalString(url)]));
+    final uriExp = declareVar(
+      'uri',
+    ).assign(refer('Uri.parse').call([literalString(url)]));
 
     Expression? dataExp;
     if (kMethodsWithBody.contains(method) &&
@@ -55,7 +54,9 @@ class DartHttpCodeGen {
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
       if (!hasContentTypeHeader) {
         headers.putIfAbsent(
-            HttpHeaders.contentTypeHeader, () => contentType.header);
+          HttpHeaders.contentTypeHeader,
+          () => contentType.header,
+        );
       }
     }
 
@@ -82,43 +83,45 @@ class DartHttpCodeGen {
             ),
           ),
         if (uri.hasQuery)
-          refer('urlQueryParams')
-              .property('addAll')
-              .call([refer('queryParams')], {}),
-        refer('uri').assign(refer('uri').property('replace').call([], {
-          'queryParameters':
-              uri.hasQuery ? refer('urlQueryParams') : refer('queryParams'),
-        }))
+          refer(
+            'urlQueryParams',
+          ).property('addAll').call([refer('queryParams')], {}),
+        refer('uri').assign(
+          refer('uri').property('replace').call([], {
+            'queryParameters': uri.hasQuery
+                ? refer('urlQueryParams')
+                : refer('queryParams'),
+          }),
+        ),
       ];
     }
 
     Expression? headerExp;
     if (headers.isNotEmpty) {
-      headerExp = declareVar('headers').assign(
-        literalMap(headers.map((key, value) => MapEntry(key, value))),
-      );
+      headerExp = declareVar(
+        'headers',
+      ).assign(literalMap(headers.map((key, value) => MapEntry(key, value))));
     }
-    final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
-      refer(
-        'http.${method.name}',
-      ),
-      [refer('uri')],
-      {
-        if (headerExp != null) 'headers': refer('headers'),
-        if (dataExp != null) 'body': refer('body'),
-      },
-      [],
-    ).awaited);
-    final multiPartRequest =
-        declareFinal('request').assign(InvokeExpression.newOf(
-      refer(
-        'http.MultipartRequest',
-      ),
-      [refer(jsonEncode(method.name.toUpperCase())), refer('uri')],
-    ));
-    final multiPartFiles = declareFinal('formDataList').assign(refer(
-      jsonEncode(formData),
-    ));
+    final responseExp = declareFinal('response').assign(
+      InvokeExpression.newOf(
+        refer('http.${method.name}'),
+        [refer('uri')],
+        {
+          if (headerExp != null) 'headers': refer('headers'),
+          if (dataExp != null) 'body': refer('body'),
+        },
+        [],
+      ).awaited,
+    );
+    final multiPartRequest = declareFinal('request').assign(
+      InvokeExpression.newOf(refer('http.MultipartRequest'), [
+        refer(jsonEncode(method.name.toUpperCase())),
+        refer('uri'),
+      ]),
+    );
+    final multiPartFiles = declareFinal(
+      'formDataList',
+    ).assign(refer(jsonEncode(formData)));
 
     final addHeaders = refer('request.headers.addAll').call([refer('headers')]);
     const multiPartList = Code('''
@@ -147,10 +150,12 @@ class DartHttpCodeGen {
     }
   }
 ''');
-    var multiPartRequestSend =
-        declareFinal('response').assign(refer('request.send()').awaited);
-    var multiPartResponseBody = declareFinal('responseBody')
-        .assign(refer('response.stream.bytesToString()').awaited);
+    var multiPartRequestSend = declareFinal(
+      'response',
+    ).assign(refer('request.send()').awaited);
+    var multiPartResponseBody = declareFinal(
+      'responseBody',
+    ).assign(refer('response.stream.bytesToString()').awaited);
     final mainFunction = Method((m) {
       final statusRef = refer('statusCode');
       m
@@ -188,38 +193,51 @@ class DartHttpCodeGen {
             }
             b.statements.add(multiPartRequestSend.statement);
             b.statements.add(multiPartResponseBody.statement);
-            b.statements.add(declareVar('statusCode', type: refer('int'))
-                .assign(refer('response').property('statusCode'))
-                .statement);
+            b.statements.add(
+              declareVar(
+                'statusCode',
+                type: refer('int'),
+              ).assign(refer('response').property('statusCode')).statement,
+            );
             b.statements.add(const Code('\n'));
           } else {
             b.statements.add(responseExp.statement);
             b.statements.add(const Code('\n'));
-            b.statements.add(declareVar('statusCode', type: refer('int'))
-                .assign(refer('response').property('statusCode'))
-                .statement);
+            b.statements.add(
+              declareVar(
+                'statusCode',
+                type: refer('int'),
+              ).assign(refer('response').property('statusCode')).statement,
+            );
           }
 
-          b.statements.add(declareIfElse(
-            condition: statusRef
-                .greaterOrEqualTo(literalNum(200))
-                .and(statusRef.lessThan(literalNum(300))),
-            body: [
-              refer('print').call([literalString(r'Status Code: $statusCode')]),
-              refer('print').call([
-                literalString(
-                    'Response Body: ${contentType == ContentType.formdata ? ':\$responseBody' : '\${response.body}'}')
-              ]),
-            ],
-            elseBody: [
-              refer('print')
-                  .call([literalString(r'Error Status Code: $statusCode')]),
-              refer('print').call([
-                literalString(
-                    'Error Response Body: ${contentType == ContentType.formdata ? ':\$responseBody' : '\${response.body}'}')
-              ]),
-            ],
-          ));
+          b.statements.add(
+            declareIfElse(
+              condition: statusRef
+                  .greaterOrEqualTo(literalNum(200))
+                  .and(statusRef.lessThan(literalNum(300))),
+              body: [
+                refer(
+                  'print',
+                ).call([literalString(r'Status Code: $statusCode')]),
+                refer('print').call([
+                  literalString(
+                    'Response Body: ${contentType == ContentType.formdata ? ':\$responseBody' : '\${response.body}'}',
+                  ),
+                ]),
+              ],
+              elseBody: [
+                refer(
+                  'print',
+                ).call([literalString(r'Error Status Code: $statusCode')]),
+                refer('print').call([
+                  literalString(
+                    'Error Response Body: ${contentType == ContentType.formdata ? ':\$responseBody' : '\${response.body}'}',
+                  ),
+                ]),
+              ],
+            ),
+          );
         });
     });
 

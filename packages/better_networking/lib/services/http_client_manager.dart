@@ -5,8 +5,8 @@ import 'package:http/io_client.dart';
 
 http.Client createHttpClientWithNoSSL() {
   var ioClient = HttpClient()
-    ..badCertificateCallback = (X509Certificate cert, String host, int port) =>
-        true;
+    ..badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
   return IOClient(ioClient);
 }
 
@@ -40,9 +40,8 @@ class HttpClientManager {
   HttpClientManager._internal();
 
   http.Client createClient(String requestId, {bool noSSL = false}) {
-    final client = (noSSL && !kIsWeb)
-        ? createHttpClientWithNoSSL()
-        : http.Client();
+    final client =
+        (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
     _clients[requestId] = client;
     return client;
   }
@@ -82,9 +81,8 @@ class HttpClientManager {
     String requestId, {
     bool noSSL = false,
   }) {
-    final baseClient = (noSSL && !kIsWeb)
-        ? createHttpClientWithNoSSL()
-        : http.Client();
+    final baseClient =
+        (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
 
     final client = _JsonAcceptClient(baseClient);
     _clients[requestId] = client;

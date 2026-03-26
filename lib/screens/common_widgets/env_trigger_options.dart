@@ -20,8 +20,11 @@ class EnvironmentTriggerOptions extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     final activeEnvironmentId = ref.watch(activeEnvironmentIdStateProvider);
-    final suggestions =
-        getEnvironmentTriggerSuggestions(query, envMap, activeEnvironmentId);
+    final suggestions = getEnvironmentTriggerSuggestions(
+      query,
+      envMap,
+      activeEnvironmentId,
+    );
     return suggestions == null || suggestions.isEmpty
         ? const SizedBox.shrink()
         : SuggestionsMenuBox(

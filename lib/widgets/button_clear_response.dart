@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class ClearResponseButton extends StatelessWidget {
-  const ClearResponseButton({
-    super.key,
-    this.onPressed,
-  });
+  const ClearResponseButton({super.key, this.onPressed});
 
   final VoidCallback? onPressed;
 

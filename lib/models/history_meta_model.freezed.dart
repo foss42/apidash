@@ -12,7 +12,8 @@ part of 'history_meta_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 HistoryMetaModel _$HistoryMetaModelFromJson(Map<String, dynamic> json) {
   return _HistoryMetaModel.fromJson(json);
@@ -42,18 +43,20 @@ mixin _$HistoryMetaModel {
 /// @nodoc
 abstract class $HistoryMetaModelCopyWith<$Res> {
   factory $HistoryMetaModelCopyWith(
-          HistoryMetaModel value, $Res Function(HistoryMetaModel) then) =
-      _$HistoryMetaModelCopyWithImpl<$Res, HistoryMetaModel>;
+    HistoryMetaModel value,
+    $Res Function(HistoryMetaModel) then,
+  ) = _$HistoryMetaModelCopyWithImpl<$Res, HistoryMetaModel>;
   @useResult
-  $Res call(
-      {String historyId,
-      String requestId,
-      APIType apiType,
-      String name,
-      String url,
-      HTTPVerb method,
-      int responseStatus,
-      DateTime timeStamp});
+  $Res call({
+    String historyId,
+    String requestId,
+    APIType apiType,
+    String name,
+    String url,
+    HTTPVerb method,
+    int responseStatus,
+    DateTime timeStamp,
+  });
 }
 
 /// @nodoc
@@ -80,69 +83,75 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
     Object? responseStatus = null,
     Object? timeStamp = null,
   }) {
-    return _then(_value.copyWith(
-      historyId: null == historyId
-          ? _value.historyId
-          : historyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      requestId: null == requestId
-          ? _value.requestId
-          : requestId // ignore: cast_nullable_to_non_nullable
-              as String,
-      apiType: null == apiType
-          ? _value.apiType
-          : apiType // ignore: cast_nullable_to_non_nullable
-              as APIType,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as HTTPVerb,
-      responseStatus: null == responseStatus
-          ? _value.responseStatus
-          : responseStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeStamp: null == timeStamp
-          ? _value.timeStamp
-          : timeStamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            historyId: null == historyId
+                ? _value.historyId
+                : historyId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            requestId: null == requestId
+                ? _value.requestId
+                : requestId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            apiType: null == apiType
+                ? _value.apiType
+                : apiType // ignore: cast_nullable_to_non_nullable
+                      as APIType,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            url: null == url
+                ? _value.url
+                : url // ignore: cast_nullable_to_non_nullable
+                      as String,
+            method: null == method
+                ? _value.method
+                : method // ignore: cast_nullable_to_non_nullable
+                      as HTTPVerb,
+            responseStatus: null == responseStatus
+                ? _value.responseStatus
+                : responseStatus // ignore: cast_nullable_to_non_nullable
+                      as int,
+            timeStamp: null == timeStamp
+                ? _value.timeStamp
+                : timeStamp // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$HistoryMetaModelImplCopyWith<$Res>
     implements $HistoryMetaModelCopyWith<$Res> {
-  factory _$$HistoryMetaModelImplCopyWith(_$HistoryMetaModelImpl value,
-          $Res Function(_$HistoryMetaModelImpl) then) =
-      __$$HistoryMetaModelImplCopyWithImpl<$Res>;
+  factory _$$HistoryMetaModelImplCopyWith(
+    _$HistoryMetaModelImpl value,
+    $Res Function(_$HistoryMetaModelImpl) then,
+  ) = __$$HistoryMetaModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String historyId,
-      String requestId,
-      APIType apiType,
-      String name,
-      String url,
-      HTTPVerb method,
-      int responseStatus,
-      DateTime timeStamp});
+  $Res call({
+    String historyId,
+    String requestId,
+    APIType apiType,
+    String name,
+    String url,
+    HTTPVerb method,
+    int responseStatus,
+    DateTime timeStamp,
+  });
 }
 
 /// @nodoc
 class __$$HistoryMetaModelImplCopyWithImpl<$Res>
     extends _$HistoryMetaModelCopyWithImpl<$Res, _$HistoryMetaModelImpl>
     implements _$$HistoryMetaModelImplCopyWith<$Res> {
-  __$$HistoryMetaModelImplCopyWithImpl(_$HistoryMetaModelImpl _value,
-      $Res Function(_$HistoryMetaModelImpl) _then)
-      : super(_value, _then);
+  __$$HistoryMetaModelImplCopyWithImpl(
+    _$HistoryMetaModelImpl _value,
+    $Res Function(_$HistoryMetaModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.
@@ -158,55 +167,58 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
     Object? responseStatus = null,
     Object? timeStamp = null,
   }) {
-    return _then(_$HistoryMetaModelImpl(
-      historyId: null == historyId
-          ? _value.historyId
-          : historyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      requestId: null == requestId
-          ? _value.requestId
-          : requestId // ignore: cast_nullable_to_non_nullable
-              as String,
-      apiType: null == apiType
-          ? _value.apiType
-          : apiType // ignore: cast_nullable_to_non_nullable
-              as APIType,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as HTTPVerb,
-      responseStatus: null == responseStatus
-          ? _value.responseStatus
-          : responseStatus // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeStamp: null == timeStamp
-          ? _value.timeStamp
-          : timeStamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$HistoryMetaModelImpl(
+        historyId: null == historyId
+            ? _value.historyId
+            : historyId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        requestId: null == requestId
+            ? _value.requestId
+            : requestId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        apiType: null == apiType
+            ? _value.apiType
+            : apiType // ignore: cast_nullable_to_non_nullable
+                  as APIType,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        url: null == url
+            ? _value.url
+            : url // ignore: cast_nullable_to_non_nullable
+                  as String,
+        method: null == method
+            ? _value.method
+            : method // ignore: cast_nullable_to_non_nullable
+                  as HTTPVerb,
+        responseStatus: null == responseStatus
+            ? _value.responseStatus
+            : responseStatus // ignore: cast_nullable_to_non_nullable
+                  as int,
+        timeStamp: null == timeStamp
+            ? _value.timeStamp
+            : timeStamp // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$HistoryMetaModelImpl implements _HistoryMetaModel {
-  const _$HistoryMetaModelImpl(
-      {required this.historyId,
-      required this.requestId,
-      required this.apiType,
-      this.name = "",
-      required this.url,
-      required this.method,
-      required this.responseStatus,
-      required this.timeStamp});
+  const _$HistoryMetaModelImpl({
+    required this.historyId,
+    required this.requestId,
+    required this.apiType,
+    this.name = "",
+    required this.url,
+    required this.method,
+    required this.responseStatus,
+    required this.timeStamp,
+  });
 
   factory _$HistoryMetaModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryMetaModelImplFromJson(json);
@@ -255,8 +267,17 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, historyId, requestId, apiType,
-      name, url, method, responseStatus, timeStamp);
+  int get hashCode => Object.hash(
+    runtimeType,
+    historyId,
+    requestId,
+    apiType,
+    name,
+    url,
+    method,
+    responseStatus,
+    timeStamp,
+  );
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.
@@ -265,26 +286,27 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
   @pragma('vm:prefer-inline')
   _$$HistoryMetaModelImplCopyWith<_$HistoryMetaModelImpl> get copyWith =>
       __$$HistoryMetaModelImplCopyWithImpl<_$HistoryMetaModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$HistoryMetaModelImplToJson(
-      this,
-    );
+    return _$$HistoryMetaModelImplToJson(this);
   }
 }
 
 abstract class _HistoryMetaModel implements HistoryMetaModel {
-  const factory _HistoryMetaModel(
-      {required final String historyId,
-      required final String requestId,
-      required final APIType apiType,
-      final String name,
-      required final String url,
-      required final HTTPVerb method,
-      required final int responseStatus,
-      required final DateTime timeStamp}) = _$HistoryMetaModelImpl;
+  const factory _HistoryMetaModel({
+    required final String historyId,
+    required final String requestId,
+    required final APIType apiType,
+    final String name,
+    required final String url,
+    required final HTTPVerb method,
+    required final int responseStatus,
+    required final DateTime timeStamp,
+  }) = _$HistoryMetaModelImpl;
 
   factory _HistoryMetaModel.fromJson(Map<String, dynamic> json) =
       _$HistoryMetaModelImpl.fromJson;

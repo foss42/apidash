@@ -4,11 +4,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
 class APITypePopupMenu extends StatelessWidget {
-  const APITypePopupMenu({
-    super.key,
-    required this.apiType,
-    this.onChanged,
-  });
+  const APITypePopupMenu({super.key, required this.apiType, this.onChanged});
 
   final APIType? apiType;
   final void Function(APIType?)? onChanged;

@@ -10,8 +10,11 @@ class AIRequestConfigSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final modelConfigs = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.modelConfigs));
+    final modelConfigs = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.aiRequestModel?.modelConfigs,
+      ),
+    );
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!);
@@ -29,9 +32,9 @@ class AIRequestConfigSection extends ConsumerWidget {
       if (idx != null && aiRequestModel != null) {
         var l = [...aiRequestModel.modelConfigs];
         l[idx] = modelConfig;
-        ref.read(collectionStateNotifierProvider.notifier).update(
-              aiRequestModel: aiRequestModel.copyWith(modelConfigs: l),
-            );
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(aiRequestModel: aiRequestModel.copyWith(modelConfigs: l));
       }
     }
 
@@ -46,36 +49,34 @@ class AIRequestConfigSection extends ConsumerWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    el.description,
-                  ),
+                  Text(el.description),
                   SizedBox(height: 5),
                   switch (el.type) {
                     ConfigType.boolean => AIConfigBool(
-                        configuration: el,
-                        onConfigUpdated: (x) {
-                          updateRequestModel(x);
-                        },
-                      ),
+                      configuration: el,
+                      onConfigUpdated: (x) {
+                        updateRequestModel(x);
+                      },
+                    ),
                     ConfigType.numeric => AIConfigField(
-                        configuration: el,
-                        onConfigUpdated: (x) {
-                          updateRequestModel(x);
-                        },
-                        numeric: true,
-                      ),
+                      configuration: el,
+                      onConfigUpdated: (x) {
+                        updateRequestModel(x);
+                      },
+                      numeric: true,
+                    ),
                     ConfigType.text => AIConfigField(
-                        configuration: el,
-                        onConfigUpdated: (x) {
-                          updateRequestModel(x);
-                        },
-                      ),
+                      configuration: el,
+                      onConfigUpdated: (x) {
+                        updateRequestModel(x);
+                      },
+                    ),
                     ConfigType.slider => AIConfigSlider(
-                        configuration: el,
-                        onSliderUpdated: (x) {
-                          updateRequestModel(x);
-                        },
-                      ),
+                      configuration: el,
+                      onSliderUpdated: (x) {
+                        updateRequestModel(x);
+                      },
+                    ),
                   },
                   SizedBox(height: 10),
                 ],

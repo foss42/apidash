@@ -10,9 +10,7 @@ import 'history_sidebar.dart';
 import 'history_viewer.dart';
 
 class HistoryPage extends ConsumerWidget {
-  const HistoryPage({
-    super.key,
-  });
+  const HistoryPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,8 +23,9 @@ class HistoryPage extends ConsumerWidget {
     if (context.isMediumWindow) {
       return DrawerSplitView(
         scaffoldKey: kHisScaffoldKey,
-        mainContent:
-            hasHistoryKeys ? const HistoryViewer() : const HistoryEmpty(),
+        mainContent: hasHistoryKeys
+            ? const HistoryViewer()
+            : const HistoryEmpty(),
         title: Text(title),
         leftDrawerContent: const HistoryPane(),
         actions: const [SizedBox(width: 16)],
@@ -39,8 +38,9 @@ class HistoryPage extends ConsumerWidget {
         Expanded(
           child: DashboardSplitView(
             sidebarWidget: const HistoryPane(),
-            mainWidget:
-                hasHistoryKeys ? const HistoryViewer() : const HistoryEmpty(),
+            mainWidget: hasHistoryKeys
+                ? const HistoryViewer()
+                : const HistoryEmpty(),
           ),
         ),
       ],

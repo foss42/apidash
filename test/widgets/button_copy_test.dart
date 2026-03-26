@@ -9,9 +9,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Copy Button',
-        home: Scaffold(
-          body: CopyButton(toCopy: copyText, showLabel: true),
-        ),
+        home: Scaffold(body: CopyButton(toCopy: copyText, showLabel: true)),
       ),
     );
 
@@ -19,8 +17,9 @@ void main() {
     expect(icon, findsOneWidget);
 
     final button = find.ancestor(
-        of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is TextButton));
+      of: icon,
+      matching: find.byWidgetPredicate((widget) => widget is TextButton),
+    );
     expect(button, findsOneWidget);
 
     await tester.tap(button);
@@ -35,9 +34,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Copy Button',
-        home: Scaffold(
-          body: CopyButton(toCopy: copyText, showLabel: false),
-        ),
+        home: Scaffold(body: CopyButton(toCopy: copyText, showLabel: false)),
       ),
     );
 

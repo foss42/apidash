@@ -22,17 +22,22 @@ class ApidashTestRequestHelper {
       await tester.pumpAndSettle();
     }
     await act.tap(
-        spot<CollectionPane>().spot<ElevatedButton>().spotText(kLabelPlusNew));
+      spot<CollectionPane>().spot<ElevatedButton>().spotText(kLabelPlusNew),
+    );
     await tester.pumpAndSettle();
   }
 
   Future<void> renameNewRequest(String newReqName) async {
     Finder reqItems = find.byType(RequestItem);
     Finder newReqItem = reqItems.at(0);
-    expect(find.descendant(of: newReqItem, matching: find.text(kUntitled)),
-        findsOneWidget);
-    Finder itemCardMenu =
-        find.descendant(of: newReqItem, matching: find.byType(ItemCardMenu));
+    expect(
+      find.descendant(of: newReqItem, matching: find.text(kUntitled)),
+      findsOneWidget,
+    );
+    Finder itemCardMenu = find.descendant(
+      of: newReqItem,
+      matching: find.byType(ItemCardMenu),
+    );
     await tester.tap(itemCardMenu);
     await tester.pumpAndSettle();
 
@@ -57,54 +62,64 @@ class ApidashTestRequestHelper {
   }
 
   Future<void> addRequestParams(List<(String, String)> keyValuePairs) async {
-    final paramTabButton =
-        spot<RequestPane>().spot<TabBar>().spotText(kLabelURLParams);
+    final paramTabButton = spot<RequestPane>().spot<TabBar>().spotText(
+      kLabelURLParams,
+    );
     await act.tap(paramTabButton);
     await tester.pumpAndSettle();
 
     var paramCells = find.descendant(
-        of: find.byType(EditRequestURLParams),
-        matching: find.byType(EnvCellField));
+      of: find.byType(EditRequestURLParams),
+      matching: find.byType(EnvCellField),
+    );
     for (var i = 0; i < keyValuePairs.length; i++) {
       await tester.tap(paramCells.at(i));
       tester.testTextInput.enterText(keyValuePairs[i].$1);
       await tester.tap(paramCells.at(i + 1));
       tester.testTextInput.enterText(keyValuePairs[i].$2);
       paramCells = find.descendant(
-          of: find.byType(EditRequestURLParams),
-          matching: find.byType(EnvCellField));
+        of: find.byType(EditRequestURLParams),
+        matching: find.byType(EnvCellField),
+      );
     }
   }
 
   Future<void> addRequestHeaders(List<(String, String)> keyValuePairs) async {
-    final headerTabButton =
-        spot<RequestPane>().spot<TabBar>().spotText(kLabelHeaders);
+    final headerTabButton = spot<RequestPane>().spot<TabBar>().spotText(
+      kLabelHeaders,
+    );
     await act.tap(headerTabButton);
     await tester.pumpAndSettle();
 
     var headerCells = find.descendant(
-        of: find.byType(EditRequestHeaders),
-        matching: find.byType(EnvHeaderField));
+      of: find.byType(EditRequestHeaders),
+      matching: find.byType(EnvHeaderField),
+    );
     var valueCells = find.descendant(
-        of: find.byType(EditRequestHeaders),
-        matching: find.byType(EnvCellField));
+      of: find.byType(EditRequestHeaders),
+      matching: find.byType(EnvCellField),
+    );
     for (var i = 0; i < keyValuePairs.length; i++) {
       await tester.tap(headerCells.at(i));
       tester.testTextInput.enterText(keyValuePairs[i].$1);
       await tester.tap(valueCells.at(i));
       tester.testTextInput.enterText(keyValuePairs[i].$2);
       headerCells = find.descendant(
-          of: find.byType(EditRequestHeaders),
-          matching: find.byType(EnvHeaderField));
+        of: find.byType(EditRequestHeaders),
+        matching: find.byType(EnvHeaderField),
+      );
       valueCells = find.descendant(
-          of: find.byType(EditRequestHeaders),
-          matching: find.byType(EnvCellField));
+        of: find.byType(EditRequestHeaders),
+        matching: find.byType(EnvCellField),
+      );
     }
   }
 
   Future<void> unCheckFirstHeader() async {
     final headerCells = find.descendant(
-        of: find.byType(EditRequestHeaders), matching: find.byType(ADCheckBox));
+      of: find.byType(EditRequestHeaders),
+      matching: find.byType(ADCheckBox),
+    );
     await tester.tap(headerCells.at(0));
     await tester.pumpAndSettle();
   }
@@ -133,8 +148,9 @@ class ApidashTestRequestHelper {
     if (headers.isNotEmpty) await addRequestHeaders(headers);
   }
 
-  Future<void> sendRequest(
-      {Duration stallTime = const Duration(seconds: 3)}) async {
+  Future<void> sendRequest({
+    Duration stallTime = const Duration(seconds: 3),
+  }) async {
     await act.tap(spot<SendRequestButton>());
     await tester.pumpAndSettle(stallTime);
   }

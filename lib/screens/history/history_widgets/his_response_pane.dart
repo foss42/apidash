@@ -44,6 +44,11 @@ class HistoryResponsePane extends ConsumerWidget {
                   requestHeaders:
                       historyHttpResponseModel?.requestHeaders ?? {},
                 ),
+                AssertionPanel(
+                  requestId: selectedId,
+                  httpResponseModel: historyHttpResponseModel,
+                  requestUrl: requestModel.httpRequestModel?.url,
+                ),
               ],
             ),
           ),

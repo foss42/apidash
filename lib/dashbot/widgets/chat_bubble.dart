@@ -24,10 +24,12 @@ class ChatBubble extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final preview =
-        message.length > 100 ? '${message.substring(0, 100)}...' : message;
+    final preview = message.length > 100
+        ? '${message.substring(0, 100)}...'
+        : message;
     debugPrint(
-        '[ChatBubble] Actions count: ${actions?.length ?? 0} | msg: $preview');
+      '[ChatBubble] Actions count: ${actions?.length ?? 0} | msg: $preview',
+    );
     if (promptOverride != null &&
         role == MessageRole.user &&
         message == promptOverride) {
@@ -90,15 +92,14 @@ class ChatBubble extends ConsumerWidget {
             child: MarkdownBody(
               data: renderedMessage.isEmpty ? " " : renderedMessage,
               selectable: true,
-              styleSheet: MarkdownStyleSheet.fromTheme(
-                Theme.of(context),
-              ).copyWith(
-                p: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context))
+                  .copyWith(
+                    p: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: role == MessageRole.user
                           ? Theme.of(context).colorScheme.inverseSurface
                           : Theme.of(context).colorScheme.onSurface,
                     ),
-              ),
+                  ),
             ),
           ),
           if (role == MessageRole.system) ...[

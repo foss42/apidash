@@ -37,7 +37,8 @@ String getHistoryRequestKey(HistoryMetaModel model) {
 }
 
 String? getLatestRequestId(
-    Map<DateTime, List<HistoryMetaModel>> temporalGroups) {
+  Map<DateTime, List<HistoryMetaModel>> temporalGroups,
+) {
   if (temporalGroups.isEmpty) {
     return null;
   }
@@ -59,7 +60,8 @@ DateTime getDateTimeKey(List<DateTime> keys, DateTime currentKey) {
 }
 
 Map<DateTime, List<HistoryMetaModel>> getTemporalGroups(
-    List<HistoryMetaModel>? models) {
+  List<HistoryMetaModel>? models,
+) {
   Map<DateTime, List<HistoryMetaModel>> temporalGroups = {};
   if (models?.isEmpty ?? true) {
     return temporalGroups;
@@ -80,7 +82,8 @@ Map<DateTime, List<HistoryMetaModel>> getTemporalGroups(
 }
 
 Map<String, List<HistoryMetaModel>> getRequestGroups(
-    List<HistoryMetaModel>? models) {
+  List<HistoryMetaModel>? models,
+) {
   Map<String, List<HistoryMetaModel>> historyGroups = {};
   if (models?.isEmpty ?? true) {
     return historyGroups;
@@ -100,7 +103,9 @@ Map<String, List<HistoryMetaModel>> getRequestGroups(
 }
 
 List<HistoryMetaModel> getRequestGroup(
-    List<HistoryMetaModel>? models, HistoryMetaModel? selectedModel) {
+  List<HistoryMetaModel>? models,
+  HistoryMetaModel? selectedModel,
+) {
   List<HistoryMetaModel> requestGroup = [];
   if (selectedModel == null || (models?.isEmpty ?? true)) {
     return requestGroup;

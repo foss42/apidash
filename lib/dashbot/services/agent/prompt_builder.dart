@@ -12,11 +12,7 @@ class PromptBuilder {
   }) {
     final historyBlock = buildHistoryBlock(history);
     final contextBlock = buildContextBlock(req);
-    final task = buildTaskPrompt(
-      req,
-      type,
-      overrideLanguage: overrideLanguage,
-    );
+    final task = buildTaskPrompt(req, type, overrideLanguage: overrideLanguage);
     return [
       if (task != null) task,
       if (contextBlock != null) contextBlock,

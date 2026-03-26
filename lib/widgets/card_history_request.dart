@@ -29,8 +29,8 @@ class HistoryRequestCard extends StatelessWidget {
       surfaceTintColor: isSelected ? surfaceTint : null,
       color: isSelected
           ? Theme.of(context).colorScheme.brightness == Brightness.dark
-              ? colorVariant
-              : color
+                ? colorVariant
+                : color
           : color,
       margin: EdgeInsets.zero,
       child: InkWell(

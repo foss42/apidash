@@ -5,11 +5,7 @@ import 'package:window_manager/window_manager.dart';
 const double kWindowCaptionHeight = 30;
 
 class WindowCaption extends StatefulWidget {
-  const WindowCaption({
-    super.key,
-    this.backgroundColor,
-    this.brightness,
-  });
+  const WindowCaption({super.key, this.backgroundColor, this.brightness});
 
   final Color? backgroundColor;
   final Brightness? brightness;
@@ -41,9 +37,7 @@ class _WindowCaptionState extends State<WindowCaption> with WindowListener {
             onPanStart: (details) {
               windowManager.startDragging();
             },
-            child: const SizedBox(
-              height: double.infinity,
-            ),
+            child: const SizedBox(height: double.infinity),
           ),
         ),
         WindowCaptionButton.minimize(

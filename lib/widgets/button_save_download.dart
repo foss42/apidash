@@ -25,12 +25,12 @@ class SaveInDownloadsButton extends StatelessWidget {
     var sm = ScaffoldMessenger.of(context);
     final onPressed = (content != null)
         ? () => saveToDownloads(
-              sm,
-              content: content,
-              mimeType: mimeType,
-              ext: ext,
-              name: name,
-            )
+            sm,
+            content: content,
+            mimeType: mimeType,
+            ext: ext,
+            name: name,
+          )
         : null;
 
     return showLabel

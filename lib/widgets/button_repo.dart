@@ -4,11 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:apidash/consts.dart';
 
 class RepoButton extends StatelessWidget {
-  const RepoButton({
-    super.key,
-    this.text,
-    this.icon,
-  });
+  const RepoButton({super.key, this.text, this.icon});
 
   final String? text;
   final IconData? icon;

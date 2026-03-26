@@ -84,67 +84,74 @@ class _CodePreviewerState extends State<CodePreviewer> {
         future: spans,
         builder:
             (BuildContext context, AsyncSnapshot<List<TextSpan>> snapshot) {
-          if (snapshot.hasData &&
-              snapshot.connectionState == ConnectionState.done) {
-            var finalSpans = snapshot.data!;
-            return Scrollbar(
-              thickness: 10,
-              thumbVisibility: true,
-              controller: controllerV,
-              child: Scrollbar(
-                notificationPredicate: (notification) =>
-                    notification.depth == 1,
-                thickness: 10,
-                thumbVisibility: true,
-                controller: controllerH,
-                child: SingleChildScrollView(
+              if (snapshot.hasData &&
+                  snapshot.connectionState == ConnectionState.done) {
+                var finalSpans = snapshot.data!;
+                return Scrollbar(
+                  thickness: 10,
+                  thumbVisibility: true,
                   controller: controllerV,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+                  child: Scrollbar(
+                    notificationPredicate: (notification) =>
+                        notification.depth == 1,
+                    thickness: 10,
+                    thumbVisibility: true,
                     controller: controllerH,
-                    child: Column(
-                      children: [
-                        Row(
+                    child: SingleChildScrollView(
+                      controller: controllerV,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        controller: controllerH,
+                        child: Column(
                           children: [
-                            SelectionArea(
-                              child: Text.rich(
-                                TextSpan(
-                                  children: finalSpans,
-                                  style: textStyle,
+                            Row(
+                              children: [
+                                SelectionArea(
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: finalSpans,
+                                      style: textStyle,
+                                    ),
+                                    softWrap: false,
+                                    //selectionRegistrar:
+                                    //    SelectionContainer.maybeOf(context),
+                                    //selectionColor: const Color(0xAF6694e8),
+                                  ),
                                 ),
-                                softWrap: false,
-                                //selectionRegistrar:
-                                //    SelectionContainer.maybeOf(context),
-                                //selectionColor: const Color(0xAF6694e8),
-                              ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            return ErrorMessage(message: snapshot.error.toString());
-          }
-          return const CircularProgressIndicator();
-        },
+                );
+              }
+              if (snapshot.hasError) {
+                return ErrorMessage(message: snapshot.error.toString());
+              }
+              return const CircularProgressIndicator();
+            },
       ),
     );
   }
 }
 
-Future<List<TextSpan>> asyncGenerateSpans(String code, String? language,
-    Map<String, TextStyle> theme, bool limitedLines) async {
+Future<List<TextSpan>> asyncGenerateSpans(
+  String code,
+  String? language,
+  Map<String, TextStyle> theme,
+  bool limitedLines,
+) async {
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
   if (limitedLines) {
-    spans.add(const TextSpan(
+    spans.add(
+      const TextSpan(
         text:
-            "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result."));
+            "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result.",
+      ),
+    );
   }
   return spans;
 }

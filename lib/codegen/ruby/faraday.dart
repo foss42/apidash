@@ -83,9 +83,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
 
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
 
@@ -121,16 +119,15 @@ puts "Response Body: #{response.body}"
         result += payload.render({"params": requestModel.formDataMapList});
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         var templateBody = jj.Template(kTemplateBody);
-        result += templateBody.render({
-          "body": requestModel.body,
-        });
+        result += templateBody.render({"body": requestModel.body});
       }
 
       // creating faraday connection for request
       var templateConnection = jj.Template(kTemplateConnection);
       result += templateConnection.render({
-        "hasFile": requestModel.hasFormDataContentType &&
-            requestModel.hasFileInFormData
+        "hasFile":
+            requestModel.hasFormDataContentType &&
+            requestModel.hasFileInFormData,
       });
 
       // start of the request sending
@@ -139,7 +136,7 @@ puts "Response Body: #{response.body}"
         "method": requestModel.method.name,
         "doesMethodAcceptBody":
             kMethodsWithBody.contains(requestModel.method) &&
-                requestModel.method != HTTPVerb.delete,
+            requestModel.method != HTTPVerb.delete,
         "containsBody": requestModel.hasBody,
       });
 

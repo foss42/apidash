@@ -81,20 +81,29 @@ class _ExpandableSectionState extends State<ExpandableSection> {
     int idx;
     final hlStyle = style?.copyWith(
       background: Paint()
-        ..color = Theme.of(context)
-            .colorScheme
-            .tertiaryContainer
-            .withValues(alpha: 0.8),
+        ..color = Theme.of(
+          context,
+        ).colorScheme.tertiaryContainer.withValues(alpha: 0.8),
       fontWeight: FontWeight.w600,
     );
     while ((idx = lower.indexOf(lowerQ, start)) != -1) {
-      if (idx > start) spans.add(TextSpan(text: widget.title.substring(start, idx), style: style));
-      spans.add(TextSpan(text: widget.title.substring(idx, idx + lowerQ.length), style: hlStyle));
+      if (idx > start)
+        spans.add(
+          TextSpan(text: widget.title.substring(start, idx), style: style),
+        );
+      spans.add(
+        TextSpan(
+          text: widget.title.substring(idx, idx + lowerQ.length),
+          style: hlStyle,
+        ),
+      );
       start = idx + lowerQ.length;
     }
     if (start < widget.title.length) {
       spans.add(TextSpan(text: widget.title.substring(start), style: style));
     }
-    return RichText(text: TextSpan(children: spans, style: style));
+    return RichText(
+      text: TextSpan(children: spans, style: style),
+    );
   }
 }

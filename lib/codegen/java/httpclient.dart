@@ -107,28 +107,24 @@ multipart/form-data; boundary={{boundary}}''';
 }
 """;
 
-  String? getCode(
-    HttpRequestModel requestModel, {
-    String? boundary,
-  }) {
+  String? getCode(HttpRequestModel requestModel, {String? boundary}) {
     try {
       String result = "";
       var requestBody = requestModel.body;
       String url = requestModel.url;
 
-      result += jj.Template(kTemplateStart).render({
-        "hasFormData": requestModel.hasFormData,
-      });
+      result += jj.Template(
+        kTemplateStart,
+      ).render({"hasFormData": requestModel.hasFormData});
 
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledParams,
-      );
+      var rec = getValidRequestUri(url, requestModel.enabledParams);
 
       Uri? uri = rec.$1;
 
-      var harJson =
-          requestModelToHARJsonRequest(requestModel, useEnabled: true);
+      var harJson = requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
+      );
 
       if (uri != null) {
         var templateUrl = jj.Template(kTemplateUrl);
@@ -162,21 +158,20 @@ multipart/form-data; boundary={{boundary}}''';
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers.putIfAbsent(
-                kHeaderContentType, () => requestModel.bodyContentType.header);
+              kHeaderContentType,
+              () => requestModel.bodyContentType.header,
+            );
           }
           if (requestModel.hasFormData) {
             var formDataHeader = jj.Template(kTemplateFormHeaderContentType);
             headers.putIfAbsent(
-                kHeaderContentType,
-                () => formDataHeader.render({
-                      "boundary": boundary,
-                    }));
+              kHeaderContentType,
+              () => formDataHeader.render({"boundary": boundary}),
+            );
           }
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);
-            result += templateHeader.render({
-              "headers": headers,
-            });
+            result += templateHeader.render({"headers": headers});
           }
         }
 

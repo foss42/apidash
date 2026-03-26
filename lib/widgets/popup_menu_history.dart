@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class HistoryRetentionPopupMenu extends StatelessWidget {
-  const HistoryRetentionPopupMenu({
-    super.key,
-    this.value,
-    this.onChanged,
-  });
+  const HistoryRetentionPopupMenu({super.key, this.value, this.onChanged});
 
   final HistoryRetentionPeriod? value;
   final void Function(HistoryRetentionPeriod? value)? onChanged;

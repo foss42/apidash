@@ -77,9 +77,7 @@ class RustReqwestCodeGen {
 }
 """;
 
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
       bool hasBody = false;
@@ -87,17 +85,14 @@ class RustReqwestCodeGen {
 
       String url = requestModel.url;
 
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledParams,
-      );
+      var rec = getValidRequestUri(url, requestModel.enabledParams);
       Uri? uri = rec.$1;
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
           'isFormDataRequest': requestModel.hasFormData,
-          'isJson': requestModel.bodyContentType == ContentType.json
+          'isJson': requestModel.bodyContentType == ContentType.json,
         });
 
         var method = requestModel.method;
@@ -119,16 +114,12 @@ class RustReqwestCodeGen {
 
         if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "fields_list": requestModel.formDataMapList,
-            },
-          );
+          result += formDataBodyData.render({
+            "fields_list": requestModel.formDataMapList,
+          });
         }
         var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": method.name.toLowerCase(),
-        });
+        result += templateRequest.render({"method": method.name.toLowerCase()});
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;

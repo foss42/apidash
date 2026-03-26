@@ -6,9 +6,7 @@ import 'package:dart_style/dart_style.dart';
 import 'shared.dart';
 
 class DartDioCodeGen {
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       final next = generatedDartCode(
         url: requestModel.url,
@@ -47,9 +45,9 @@ class DartDioCodeGen {
     }
     Expression? headerExp;
     if (headers.isNotEmpty) {
-      headerExp = declareFinal('headers').assign(
-        literalMap(headers.map((key, value) => MapEntry(key, value))),
-      );
+      headerExp = declareFinal(
+        'headers',
+      ).assign(literalMap(headers.map((key, value) => MapEntry(key, value))));
     }
     final multiPartList = Code('''
       final List<Map<String,String>> formDataList = ${json.encode(formData)};
@@ -78,8 +76,9 @@ class DartDioCodeGen {
         case ContentType.json:
           final convertImport = Directive.import('dart:convert', as: 'convert');
           sbf.writeln(convertImport.accept(emitter));
-          dataExp = declareFinal('data')
-              .assign(refer('convert.json.decode').call([strContent]));
+          dataExp = declareFinal(
+            'data',
+          ).assign(refer('convert.json.decode').call([strContent]));
         case ContentType.text:
           dataExp = declareFinal('data').assign(strContent);
         // when add new type of [ContentType], need update [dataExp].
@@ -87,21 +86,22 @@ class DartDioCodeGen {
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
       }
     }
-    final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
-      refer('dio.Dio()'),
-      [literalString(url)],
-      {
-        if (queryParamExp != null) 'queryParameters': refer('queryParams'),
-        if (headerExp != null)
-          'options': refer('dio.Options').newInstance(
-            [],
-            {'headers': refer('headers')},
-          ),
-        if (dataExp != null) 'data': refer('data'),
-      },
-      [],
-      method.name,
-    ).awaited);
+    final responseExp = declareFinal('response').assign(
+      InvokeExpression.newOf(
+        refer('dio.Dio()'),
+        [literalString(url)],
+        {
+          if (queryParamExp != null) 'queryParameters': refer('queryParams'),
+          if (headerExp != null)
+            'options': refer(
+              'dio.Options',
+            ).newInstance([], {'headers': refer('headers')}),
+          if (dataExp != null) 'data': refer('data'),
+        },
+        [],
+        method.name,
+      ).awaited,
+    );
 
     final mainFunction = Method((m) {
       final content = declareTryCatch(
@@ -121,9 +121,9 @@ class DartDioCodeGen {
             refer('print').call([
               refer('e').property('response').nullSafeProperty('statusCode'),
             ]),
-            refer('print').call([
-              refer('e').property('response').nullSafeProperty('data'),
-            ]),
+            refer(
+              'print',
+            ).call([refer('e').property('response').nullSafeProperty('data')]),
             refer('print').call([refer('s')]),
           ],
           null: [

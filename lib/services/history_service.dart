@@ -20,8 +20,9 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
       var jsonModel = hiveHandler.getHistoryMeta(historyId);
       if (jsonModel != null) {
         var jsonMap = Map<String, Object?>.from(jsonModel);
-        HistoryMetaModel historyMetaModelFromJson =
-            HistoryMetaModel.fromJson(jsonMap);
+        HistoryMetaModel historyMetaModelFromJson = HistoryMetaModel.fromJson(
+          jsonMap,
+        );
         if (historyMetaModelFromJson.timeStamp.isBefore(retentionDate)) {
           toRemoveIds.add(historyId);
         }
@@ -37,6 +38,7 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
       hiveHandler.deleteHistoryMeta(id);
     }
     hiveHandler.setHistoryIds(
-        historyIds..removeWhere((id) => toRemoveIds.contains(id)));
+      historyIds..removeWhere((id) => toRemoveIds.contains(id)),
+    );
   }
 }

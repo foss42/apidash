@@ -9,30 +9,30 @@ import 'generate_test_cases.dart';
 import 'openapi_insights.dart';
 
 class DashbotPrompts {
-// ACTION SCHEMA
-// Dashbot must return:
-// { "explanation": string, "actions": [ { ... }, { ... } ] }
-// If only one action is needed, return a single-element actions array.
-// Each action object shape:
-// {
-//   "action": "update_field" | "add_header" | "update_header" | "delete_header" | "update_body" |
-//              "update_url" | "update_method" | "show_languages" | "upload_asset" | "other" | "no_action",
-//   "target": "httpRequestModel" | "codegen" | "test" | "code" | "attachment",
-//   "field":  string (optional, e.g. "url", "method", "headers", "body", "params"),
-//   "path":   string | null (header key, language name, etc.),
-//   "value":  string | object | array | null (new value / code / list of languages)
-// }
-// IMPORTANT: If no actionable changes: set "actions": [] (empty array).
-// EXAMPLE MULTI-ACTION (debugging):
-// {
-//   "explanation": "...details...",
-//   "actions": [
-//     {"action":"add_header","target":"httpRequestModel","field":"headers","path":"Authorization","value":"Bearer your_api_token"},
-//     {"action":"update_field","target":"httpRequestModel","field":"url","path":null,"value":"https://api.example.com/v2/users"}
-//   ]
-// }
-// EXAMPLE CODEGEN LANGUAGE PICKER:
-// {"explanation":"Choose a language","actions":[{"action":"show_languages","target":"codegen","path":null,"value":["JavaScript (fetch)","Python (requests)"]}]}
+  // ACTION SCHEMA
+  // Dashbot must return:
+  // { "explanation": string, "actions": [ { ... }, { ... } ] }
+  // If only one action is needed, return a single-element actions array.
+  // Each action object shape:
+  // {
+  //   "action": "update_field" | "add_header" | "update_header" | "delete_header" | "update_body" |
+  //              "update_url" | "update_method" | "show_languages" | "upload_asset" | "other" | "no_action",
+  //   "target": "httpRequestModel" | "codegen" | "test" | "code" | "attachment",
+  //   "field":  string (optional, e.g. "url", "method", "headers", "body", "params"),
+  //   "path":   string | null (header key, language name, etc.),
+  //   "value":  string | object | array | null (new value / code / list of languages)
+  // }
+  // IMPORTANT: If no actionable changes: set "actions": [] (empty array).
+  // EXAMPLE MULTI-ACTION (debugging):
+  // {
+  //   "explanation": "...details...",
+  //   "actions": [
+  //     {"action":"add_header","target":"httpRequestModel","field":"headers","path":"Authorization","value":"Bearer your_api_token"},
+  //     {"action":"update_field","target":"httpRequestModel","field":"url","path":null,"value":"https://api.example.com/v2/users"}
+  //   ]
+  // }
+  // EXAMPLE CODEGEN LANGUAGE PICKER:
+  // {"explanation":"Choose a language","actions":[{"action":"show_languages","target":"codegen","path":null,"value":["JavaScript (fetch)","Python (requests)"]}]}
 
   /// General user interaction prompt enforcing strict JSON-only output and off-topic refusal.
   String generalInteractionPrompt() {
@@ -169,13 +169,7 @@ class DashbotPrompts {
   }
 
   // Provide insights after parsing a cURL command
-  String curlInsightsPrompt({
-    String? diff,
-    Map<String, dynamic>? newReq,
-  }) {
-    return buildCurlInsightsPrompt(
-      diff: diff,
-      newReq: newReq,
-    );
+  String curlInsightsPrompt({String? diff, Map<String, dynamic>? newReq}) {
+    return buildCurlInsightsPrompt(diff: diff, newReq: newReq);
   }
 }

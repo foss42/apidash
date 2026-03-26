@@ -164,13 +164,13 @@ class DigestAuth {
 
   // Constructor that takes an AuthDigestModel
   DigestAuth.fromModel(AuthDigestModel model)
-    : username = model.username,
-      password = model.password,
-      _realm = model.realm,
-      _nonce = model.nonce,
-      _algorithm = model.algorithm,
-      _qop = model.qop,
-      _opaque = model.opaque.isNotEmpty ? model.opaque : null;
+      : username = model.username,
+        password = model.password,
+        _realm = model.realm,
+        _nonce = model.nonce,
+        _algorithm = model.algorithm,
+        _qop = model.qop,
+        _opaque = model.opaque.isNotEmpty ? model.opaque : null;
 
   String _computeNonce() {
     final rnd = math.Random.secure();

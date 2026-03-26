@@ -7,10 +7,11 @@ class Importer {
     String content,
   ) async {
     return switch (fileType) {
-      ImportFormat.curl => CurlIO()
-          .getHttpRequestModelList(content)
-          ?.map((t) => (null, t))
-          .toList(),
+      ImportFormat.curl =>
+        CurlIO()
+            .getHttpRequestModelList(content)
+            ?.map((t) => (null, t))
+            .toList(),
       ImportFormat.postman => PostmanIO().getHttpRequestModelList(content),
       ImportFormat.insomnia => InsomniaIO().getHttpRequestModelList(content),
       ImportFormat.har => HarParserIO().getHttpRequestModelList(content),

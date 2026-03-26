@@ -11,10 +11,7 @@ import 'request_auth.dart';
 import 'request_scripts.dart';
 
 class EditRestRequestPane extends ConsumerWidget {
-  const EditRestRequestPane({
-    super.key,
-    this.showViewCodeButton = true,
-  });
+  const EditRestRequestPane({super.key, this.showViewCodeButton = true});
 
   final bool showViewCodeButton;
 
@@ -23,26 +20,49 @@ class EditRestRequestPane extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.requestTabIndex));
+      selectedRequestModelProvider.select((value) => value?.requestTabIndex),
+    );
 
-    final headerLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.headersMap.length)) ??
+    final headerLength =
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.httpRequestModel?.headersMap.length,
+          ),
+        ) ??
         0;
-    final paramLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.paramsMap.length)) ??
+    final paramLength =
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.httpRequestModel?.paramsMap.length,
+          ),
+        ) ??
         0;
-    final hasBody = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasBody)) ??
+    final hasBody =
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.httpRequestModel?.hasBody,
+          ),
+        ) ??
         false;
 
-    final scriptsLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.preRequestScript?.length)) ??
-        ref.watch(selectedRequestModelProvider
-            .select((value) => value?.postRequestScript?.length)) ??
+    final scriptsLength =
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.preRequestScript?.length,
+          ),
+        ) ??
+        ref.watch(
+          selectedRequestModelProvider.select(
+            (value) => value?.postRequestScript?.length,
+          ),
+        ) ??
         0;
 
-    final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
-        value?.httpRequestModel?.authModel?.type != APIAuthType.none));
+    final hasAuth = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.authModel?.type != APIAuthType.none,
+      ),
+    );
 
     return RequestPane(
       selectedId: selectedId,

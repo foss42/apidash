@@ -3,11 +3,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
 class TabLabel extends StatelessWidget {
-  const TabLabel({
-    super.key,
-    required this.text,
-    this.showIndicator = false,
-  });
+  const TabLabel({super.key, required this.text, this.showIndicator = false});
   final String text;
   final bool showIndicator;
 
@@ -31,10 +27,7 @@ class TabLabel extends StatelessWidget {
               alignment: Alignment.topCenter,
               child: Padding(
                 padding: EdgeInsets.only(top: 1),
-                child: Icon(
-                  Icons.circle,
-                  size: 6,
-                ),
+                child: Icon(Icons.circle, size: 6),
               ),
             ),
         ],
