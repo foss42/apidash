@@ -215,25 +215,4 @@ ai-eval-framework/
 5. **Live progress tracking** — The UI polls experiment status and shows a real-time progress bar
 6. **Containerized deployment** — One `docker compose up -d` starts everything
 
----
 
-## What's Next (Full GSoC Scope)
-
-| Component | Status |
-|-----------|--------|
-| Eval Engine | ✅ Done |
-| Dataset Service | ✅ Done |
-| Streamlit UI | ✅ Done (replaces React for POC) |
-| Docker Compose | ✅ Done |
-| API Gateway (auth, rate limiting) | Not started |
-| Benchmark Runner (lm-harness, lighteval) | Not started |
-| Agent Tracer (tool-call tracing) | Not started |
-| Kafka (async job queue) | Not started |
-| PostgreSQL (persistent storage) | Not started |
-| Redis (caching) | Not started |
-| MinIO (object storage) | Not started |
-| Multi-modal (image/voice) | Not started |
-| Kubernetes manifests | Not started |
-| React UI with WebSocket progress | Not started |
-
-See [idea_doc_gsoc_microservices.md](idea_doc_gsoc_microservices.md) for the full architecture and timeline.
