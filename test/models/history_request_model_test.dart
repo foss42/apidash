@@ -1,9 +1,7 @@
 // test/models/history_request_model_test.dart
 import 'package:test/test.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'history_meta_models.dart';
-import 'http_response_models.dart';
 
 void main() {
   group("Testing HistoryRequestModel", () {
