@@ -45,12 +45,16 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
   bool get hasJsonContentType => bodyContentType == ContentType.json;
   bool get hasTextContentType => bodyContentType == ContentType.text;
+  bool get hasFormUrlEncodedContentType =>
+      bodyContentType == ContentType.formUrlEncoded;
   int get contentLength => utf8.encode(body ?? "").length;
-  bool get hasBody => hasJsonData || hasTextData || hasFormData;
+  bool get hasBody =>
+      hasJsonData || hasTextData || hasFormData || hasFormUrlEncodedData;
   bool get hasAnyBody =>
       (hasJsonContentType && contentLength > 0) ||
       (hasTextContentType && contentLength > 0) ||
-      (hasFormDataContentType && formDataMapList.isNotEmpty);
+      (hasFormDataContentType && formDataMapList.isNotEmpty) ||
+      (hasFormUrlEncodedContentType && formDataMapList.isNotEmpty);
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
@@ -63,6 +67,10 @@ class HttpRequestModel with _$HttpRequestModel {
       kMethodsWithBody.contains(method) &&
       hasFormDataContentType &&
       formDataMapList.isNotEmpty;
+  bool get hasFormUrlEncodedData =>
+      kMethodsWithBody.contains(method) &&
+      hasFormUrlEncodedContentType &&
+      formDataMapList.isNotEmpty;
   bool get hasQuery => query?.isNotEmpty ?? false;
   List<FormDataModel> get formDataList => formData ?? <FormDataModel>[];
   List<Map<String, String>> get formDataMapList =>
@@ -70,4 +78,9 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasFileInFormData => formDataList
       .map((e) => e.type == FormDataType.file)
       .any((element) => element);
+  String get formUrlEncodedBody => formDataList
+      .where((e) => e.name.trim().isNotEmpty)
+      .map((e) =>
+          '${Uri.encodeComponent(e.name)}=${Uri.encodeComponent(e.value)}')
+      .join('&');
 }

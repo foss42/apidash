@@ -35,6 +35,9 @@ ContentType? getContentTypeFromMediaType(MediaType? mediaType) {
     } else if (mediaType.type == kTypeMultipart &&
         mediaType.subtype == kSubTypeFormData) {
       return ContentType.formdata;
+    } else if (mediaType.type == kTypeApplication &&
+        mediaType.subtype == kSubTypeXWwwFormUrlencoded) {
+      return ContentType.formUrlEncoded;
     }
     return ContentType.text;
   }

@@ -139,7 +139,7 @@ class DashApp extends ConsumerWidget {
               )
             : //Stack(
               //  children: [
-                  !kIsLinux && !kIsMobile
+                      kIsDesktop && !kIsLinux
                       ? const App()
                       : context.isMediumWindow
                           ? (kIsMobile && !userOnboarded)

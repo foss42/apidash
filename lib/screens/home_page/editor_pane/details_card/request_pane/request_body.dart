@@ -45,7 +45,8 @@ class EditRequestBody extends ConsumerWidget {
         switch (apiType) {
           APIType.rest => Expanded(
             child: switch (contentType) {
-              ContentType.formdata => const Padding(
+              ContentType.formdata ||
+              ContentType.formUrlEncoded => const Padding(
                 padding: kPh4,
                 child: FormDataWidget(),
               ),

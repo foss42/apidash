@@ -6,8 +6,8 @@ part of 'auth_jwt_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AuthJwtModelImpl _$$AuthJwtModelImplFromJson(Map<String, dynamic> json) =>
-    _$AuthJwtModelImpl(
+_AuthJwtModel _$AuthJwtModelFromJson(Map<String, dynamic> json) =>
+    _AuthJwtModel(
       secret: json['secret'] as String,
       privateKey: json['privateKey'] as String?,
       payload: json['payload'] as String,
@@ -19,7 +19,7 @@ _$AuthJwtModelImpl _$$AuthJwtModelImplFromJson(Map<String, dynamic> json) =>
       header: json['header'] as String,
     );
 
-Map<String, dynamic> _$$AuthJwtModelImplToJson(_$AuthJwtModelImpl instance) =>
+Map<String, dynamic> _$AuthJwtModelToJson(_AuthJwtModel instance) =>
     <String, dynamic>{
       'secret': instance.secret,
       'privateKey': instance.privateKey,
