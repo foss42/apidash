@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: mcp-testing
+Version: 0.1.0
+Summary: Python MCP Audit Agent for automated MCP server testing
+Requires-Python: >=3.11
+Requires-Dist: mcp>=1.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.0; extra == "dev"
+Requires-Dist: ruff>=0.4.0; extra == "dev"
