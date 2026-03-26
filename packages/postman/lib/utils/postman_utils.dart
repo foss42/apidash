@@ -1,5 +1,30 @@
 import '../models/postman_collection.dart';
 
+String substituteVariables(String input, Map<String, String> variables) {
+  return input.replaceAllMapped(RegExp(r'\{\{([^{}]+)\}\}'), (match) {
+    final key = match.group(1)?.trim();
+    if (key == null || key.isEmpty) {
+      return match.group(0) ?? '';
+    }
+    return variables[key] ?? (match.group(0) ?? '');
+  });
+}
+
+Map<String, String> buildVariableMap(List<Variable>? variables) {
+  if (variables == null) {
+    return {};
+  }
+  final map = <String, String>{};
+  for (final variable in variables) {
+    final key = variable.key;
+    if (key == null || key.isEmpty) {
+      continue;
+    }
+    map[key] = variable.value ?? '';
+  }
+  return map;
+}
+
 List<(String?, Request)> getRequestsFromPostmanCollection(
     PostmanCollection? pc) {
   if (pc == null || pc.item == null) {
