@@ -28,6 +28,7 @@ Choose your programming language/library from the list provided below to learn m
 - [Rust (hyper)](#rust-hyper)
 - [Rust (reqwest)](#rust-reqwest)
 - [Rust (ureq)](#rust-ureq)
+- [Rust (curl-rust)](#rust-curl-rust)
 - [Rust (Actix Client)](#rust-actix-client)
 - [Swift (URLSession)](#swift-urlsession)
 - [Swift (Alamofire)](#swift-alamofire)
@@ -1685,6 +1686,119 @@ Run the generated code:
 ```sh
 cargo run
 ```
+
+## Rust (curl-rust)
+
+Here are the detailed instructions for running the generated API Dash code in **Rust (using `curl-rust`)** for macOS, Windows, and Linux:
+
+### 1. Download and Install Rust
+
+#### Windows
+1. Download and install `rustup` from [Rustup Official Site](https://rustup.rs).
+2. Run the installer (`rustup-init.exe`) and follow the instructions.
+3. Restart your terminal (Command Prompt or PowerShell).
+4. Verify the installation:
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+#### macOS/Linux
+1. Run the following in your terminal:
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+   Then follow the on-screen instructions.
+
+2. Restart the terminal and verify:
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+> Note: If you prefer not to use rustup for some reason, please see the Other [Rust Installation Methods](https://forge.rust-lang.org/infra/other-installation-methods.html) page for more options.
+
+### 2. Install System Dependencies
+
+`curl-rust` is a Rust binding for the native `libcurl` library, so `libcurl` must be installed on your system before building.
+
+#### macOS:
+libcurl comes pre-installed on macOS. Verify by running:
+```sh
+curl-config --version
+```
+If not installed, use Homebrew:
+```sh
+brew install curl
+```
+
+#### Windows:
+1. Download pre-built libcurl binaries from [curl.se/windows](https://curl.se/windows/).
+2. Or install via [vcpkg](https://github.com/microsoft/vcpkg):
+   ```sh
+   vcpkg install curl
+   ```
+
+#### Linux:
+- **Ubuntu/Debian**:
+  ```sh
+  sudo apt update
+  sudo apt install libcurl4-openssl-dev
+  ```
+- **Fedora/CentOS**:
+  ```sh
+  sudo dnf install libcurl-devel
+  ```
+- **Arch Linux**:
+  ```sh
+  sudo pacman -S curl
+  ```
+
+### 3. Set Up a New Rust Project
+
+1. Open a terminal and create a new Rust project:
+   ```sh
+   cargo new curl-rust-demo
+   ```
+2. Navigate into the project directory:
+   ```sh
+   cd curl-rust-demo
+   ```
+
+   Or open this project directory in your preferred code editor.
+
+### 4. Add Necessary Dependencies
+
+Run the following command to add the `curl` crate:
+```sh
+cargo add curl
+```
+
+Alternatively, you can manually edit `Cargo.toml` and add:
+```toml
+[dependencies]
+curl = "0.4"
+```
+
+Run the following command to fetch dependencies:
+```sh
+cargo build
+```
+
+### 5. Execute Code
+
+1. Copy the generated code from API Dash.
+2. Paste the code into your project's `src/main.rs` file.
+
+Run the generated code:
+```sh
+cargo run
+```
+
+### 6. Additional Notes
+
+- `curl-rust` is a low-level binding to `libcurl`, so it requires `libcurl` to be installed as a system dependency.
+- For more information, refer to the [curl-rust documentation](https://docs.rs/curl/).
 
 ## Rust (Actix Client)
 
