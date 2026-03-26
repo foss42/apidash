@@ -48,7 +48,7 @@ class AIModelSelectorButton extends StatelessWidget {
             },
       child: Text(
         (aiRequestModel?.model?.isNotEmpty == true)
-            ? aiRequestModel!.model
+            ? aiRequestModel!.model!
             : kLabelSelectModel,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
