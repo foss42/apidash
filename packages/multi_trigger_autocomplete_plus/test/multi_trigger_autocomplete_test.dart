@@ -310,7 +310,7 @@ class User {
 }
 
 class Boilerplate extends StatelessWidget {
-  const Boilerplate({Key? key, this.child}) : super(key: key);
+  const Boilerplate({super.key, this.child});
 
   final Widget? child;
 

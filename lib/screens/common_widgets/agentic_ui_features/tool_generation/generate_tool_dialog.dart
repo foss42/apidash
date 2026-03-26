@@ -67,7 +67,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
   String selectedAgent = 'GEMINI';
   String? generatedToolCode = '';
 
-  generateAPITool() async {
+  Future<void> generateAPITool() async {
     try {
       setState(() {
         generatedToolCode = null;

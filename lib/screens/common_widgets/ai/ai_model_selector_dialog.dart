@@ -145,7 +145,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     );
   }
 
-  _buildModelSelector(AIModelProvider? aiModelProvider) {
+  RenderObjectWidget _buildModelSelector(AIModelProvider? aiModelProvider) {
     if (aiModelProvider == null) {
       return Center(child: Text(kLabelSelectAIProvider));
     }

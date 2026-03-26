@@ -453,7 +453,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
         final stack = args['stack']?.toString();
         term.logJs(
           level: 'fatal',
-          args: [if (error != null) error, message],
+          args: [?error, message],
           stack: stack,
           context: 'global',
           contextRequestId: _currentRequestId,

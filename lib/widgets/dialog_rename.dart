@@ -1,7 +1,7 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-showRenameDialog(
+void showRenameDialog(
   BuildContext context,
   String dialogTitle,
   String? name,

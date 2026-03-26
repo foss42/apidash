@@ -1,4 +1,4 @@
-library seed;
+library;
 
 export 'models/models.dart';
 export 'consts.dart';
