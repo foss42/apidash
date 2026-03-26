@@ -197,6 +197,16 @@ void main() {
         [kvRow1, kvRow3],
       );
     });
+    test('Testing for duplicate rows with different enabled states', () {
+      const dupRow = NameValueModel(name: "code", value: "IN");
+      expect(
+        getEnabledRows(
+          [dupRow, dupRow, dupRow],
+          [true, false, true],
+        ),
+        [dupRow, dupRow],
+      );
+    });
   });
 
   group('Testing getRequestBody', () {
