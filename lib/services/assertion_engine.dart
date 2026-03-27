@@ -8,7 +8,8 @@ import '../models/assertion_model.dart';
 
 /// Executes [AssertionSuite] rules against an [HttpResponseModel].
 ///
-/// Supports 7 assertion types with dot-notation JSON path navigation.
+/// Supports 8 assertion types including full JSON Schema validation,
+/// with dot-notation navigation for nested JSON structures.
 class AssertionEngine {
   const AssertionEngine();
 
@@ -19,15 +20,20 @@ class AssertionEngine {
   /// Execute all rules in [suite] against [response].
   ///
   /// Returns a new [AssertionSuite] with updated rule statuses and [lastRunAt].
-  AssertionSuite executeAll(AssertionSuite suite, HttpResponseModel response) {
-    final updatedRules = suite.rules
-        .map((rule) => executeRule(rule, response))
-        .toList();
+  AssertionSuite executeAll(
+    AssertionSuite suite,
+    HttpResponseModel response,
+  ) {
+    final updatedRules =
+        suite.rules.map((rule) => executeRule(rule, response)).toList();
     return suite.copyWith(rules: updatedRules, lastRunAt: DateTime.now());
   }
 
   /// Execute a single [rule] against [response].
-  AssertionRule executeRule(AssertionRule rule, HttpResponseModel response) {
+  AssertionRule executeRule(
+    AssertionRule rule,
+    HttpResponseModel response,
+  ) {
     try {
       switch (rule.type) {
         case AssertionType.statusCode:
@@ -44,6 +50,8 @@ class AssertionEngine {
           return _checkHeaderValue(rule, response);
         case AssertionType.bodyContains:
           return _checkBodyContains(rule, response);
+        case AssertionType.jsonSchemaValid:
+          return _checkJsonSchemaValid(rule, response);
       }
     } catch (e) {
       return rule.copyWith(
@@ -65,11 +73,9 @@ class AssertionEngine {
       sb.writeln('**Request:** `$requestUrl`');
     }
     sb.writeln(
-      '**Run at:** ${suite.lastRunAt?.toLocal().toString() ?? 'Not run yet'}',
-    );
+        '**Run at:** ${suite.lastRunAt?.toLocal().toString() ?? 'Not run yet'}');
     sb.writeln(
-      '**Results:** ${suite.passCount} passed · ${suite.failCount} failed · ${suite.errorCount} errors',
-    );
+        '**Results:** ${suite.passCount} passed · ${suite.failCount} failed · ${suite.errorCount} errors');
     sb.writeln();
     sb.writeln('| Status | Assertion | Expected | Actual |');
     sb.writeln('|--------|-----------|----------|--------|');
@@ -106,18 +112,16 @@ class AssertionEngine {
         'pending': suite.pendingCount,
       },
       'results': suite.rules
-          .map(
-            (r) => {
-              'id': r.id,
-              'type': r.type.name,
-              'description': r.description,
-              'status': r.status.name,
-              'expected': r.expectedValue?.toString(),
-              'actual': r.actualValue,
-              'jsonPath': r.jsonPath,
-              'errorMessage': r.errorMessage,
-            },
-          )
+          .map((r) => {
+                'id': r.id,
+                'type': r.type.name,
+                'description': r.description,
+                'status': r.status.name,
+                'expected': r.expectedValue?.toString(),
+                'actual': r.actualValue,
+                'jsonPath': r.jsonPath,
+                'errorMessage': r.errorMessage,
+              })
           .toList(),
     };
   }
@@ -327,6 +331,160 @@ class AssertionEngine {
       status: passed ? AssertionStatus.pass : AssertionStatus.fail,
       actualValue: passed ? 'found' : 'not found',
     );
+  }
+
+  /// Validates the entire JSON response body against a JSON Schema definition.
+  ///
+  /// The schema is stored as a JSON-encoded string in [AssertionRule.expectedValue].
+  AssertionRule _checkJsonSchemaValid(
+    AssertionRule rule,
+    HttpResponseModel response,
+  ) {
+    try {
+      final schemaStr = rule.expectedValue?.toString() ?? '';
+      if (schemaStr.isEmpty) {
+        return rule.copyWith(
+          status: AssertionStatus.error,
+          errorMessage: 'Expected value must contain a JSON Schema definition',
+        );
+      }
+      Map<String, dynamic> schema;
+      try {
+        schema = json.decode(schemaStr) as Map<String, dynamic>;
+      } on FormatException {
+        return rule.copyWith(
+          status: AssertionStatus.error,
+          errorMessage: 'The schema definition is not valid JSON',
+        );
+      }
+      final bodyStr = response.body;
+      if (bodyStr == null || bodyStr.isEmpty) {
+        return rule.copyWith(
+          status: AssertionStatus.fail,
+          actualValue: 'Response body is empty',
+        );
+      }
+      dynamic body;
+      try {
+        body = json.decode(bodyStr);
+      } on FormatException {
+        return rule.copyWith(
+          status: AssertionStatus.fail,
+          actualValue: 'Response body is not valid JSON',
+        );
+      }
+      final error = _validateSchema(body, schema);
+      if (error == null) {
+        return rule.copyWith(
+          status: AssertionStatus.pass,
+          actualValue: 'Schema valid',
+        );
+      } else {
+        return rule.copyWith(status: AssertionStatus.fail, actualValue: error);
+      }
+    } catch (e) {
+      return rule.copyWith(
+        status: AssertionStatus.error,
+        errorMessage: 'Schema validation error: $e',
+      );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // JSON Schema validator (zero external dependencies)
+  // ---------------------------------------------------------------------------
+
+  /// Validates [data] against [schema].
+  ///
+  /// Supported keywords: `type`, `required`, `properties`, `items`,
+  /// `minimum`, `maximum`, `minLength`, `maxLength`, `enum`.
+  ///
+  /// Returns `null` if valid, or a human-readable error string if invalid.
+  String? _validateSchema(dynamic data, Map<String, dynamic> schema) {
+    // 1. type check
+    final type = schema['type'] as String?;
+    if (type != null) {
+      final valid = switch (type) {
+        'string' => data is String,
+        'number' => data is num,
+        'integer' => data is int,
+        'boolean' => data is bool,
+        'array' => data is List,
+        'object' => data is Map,
+        'null' => data == null,
+        _ => true,
+      };
+      if (!valid) {
+        return 'Expected type $type but got ${data.runtimeType}';
+      }
+    }
+
+    // 2. required fields (only for objects)
+    if (data is Map && schema.containsKey('required')) {
+      final required = (schema['required'] as List).cast<String>();
+      for (final key in required) {
+        if (!data.containsKey(key)) {
+          return 'Required field "$key" is missing';
+        }
+      }
+    }
+
+    // 3. properties (recurse for each declared property)
+    if (data is Map && schema.containsKey('properties')) {
+      final props = schema['properties'] as Map<String, dynamic>;
+      for (final entry in props.entries) {
+        if (data.containsKey(entry.key)) {
+          final err = _validateSchema(
+            data[entry.key],
+            entry.value as Map<String, dynamic>,
+          );
+          if (err != null) return '${entry.key}: $err';
+        }
+      }
+    }
+
+    // 4. items (recurse for each array element)
+    if (data is List && schema.containsKey('items')) {
+      final itemSchema = schema['items'] as Map<String, dynamic>;
+      for (int i = 0; i < data.length; i++) {
+        final err = _validateSchema(data[i], itemSchema);
+        if (err != null) return 'items[$i]: $err';
+      }
+    }
+
+    // 5. numeric constraints
+    if (data is num) {
+      if (schema.containsKey('minimum') &&
+          data < (schema['minimum'] as num)) {
+        return 'Value $data is less than minimum ${schema['minimum']}';
+      }
+      if (schema.containsKey('maximum') &&
+          data > (schema['maximum'] as num)) {
+        return 'Value $data exceeds maximum ${schema['maximum']}';
+      }
+    }
+
+    // 6. string constraints
+    if (data is String) {
+      if (schema.containsKey('minLength') &&
+          data.length < (schema['minLength'] as int)) {
+        return 'String length ${data.length} < minLength ${schema['minLength']}';
+      }
+      if (schema.containsKey('maxLength') &&
+          data.length > (schema['maxLength'] as int)) {
+        return 'String length ${data.length} > maxLength ${schema['maxLength']}';
+      }
+    }
+
+    // 7. enum constraint
+    if (schema.containsKey('enum')) {
+      final allowed = schema['enum'] as List;
+      if (!allowed.contains(data)) {
+        return 'Value "$data" not in enum $allowed';
+      }
+    }
+
+    return null; // valid ✅
   }
 
   // ---------------------------------------------------------------------------

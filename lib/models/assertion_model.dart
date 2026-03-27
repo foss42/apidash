@@ -10,7 +10,11 @@ enum AssertionType {
   responseTimeUnder,
   headerExists,
   headerValue,
-  bodyContains;
+  bodyContains,
+
+  /// Validates the entire response body against a JSON Schema definition.
+  /// The [AssertionRule.expectedValue] must be a JSON-encoded Schema string.
+  jsonSchemaValid;
 
   String get label {
     switch (this) {
@@ -28,6 +32,8 @@ enum AssertionType {
         return 'Header Value';
       case AssertionType.bodyContains:
         return 'Body Contains';
+      case AssertionType.jsonSchemaValid:
+        return 'JSON Schema Valid';
     }
   }
 
@@ -64,7 +70,7 @@ class AssertionRule {
   final AssertionType type;
   final String description;
 
-  /// The value to check against (status code, field value, header name, etc.)
+  /// The value to check against (status code, field value, header name, schema JSON, etc.)
   final dynamic expectedValue;
 
   /// Dot-notation JSON path for JSON field assertions, e.g. "user.address.city"
@@ -156,7 +162,109 @@ class AssertionRule {
 // Sentinel for nullable copyWith parameters
 const _sentinel = Object();
 
+// ---------------------------------------------------------------------------
+// AssertionRun — a snapshot of one execution run for history tracking
+// ---------------------------------------------------------------------------
+
+/// A single snapshot of assertion results captured during one execution run.
+///
+/// Stored in [AssertionSuite.runHistory] (capped at 20 entries) to provide
+/// observability over time — a key feature for agentic testing workflows.
+class AssertionRun {
+  final String id;
+  final DateTime runAt;
+  final int passCount;
+  final int failCount;
+  final int totalCount;
+
+  /// The HTTP status code of the response at the time of the run.
+  final int? statusCode;
+
+  /// The response time at the time of the run.
+  final Duration? responseTime;
+
+  const AssertionRun({
+    required this.id,
+    required this.runAt,
+    required this.passCount,
+    required this.failCount,
+    required this.totalCount,
+    this.statusCode,
+    this.responseTime,
+  });
+
+  /// Pass rate as a value between 0.0 and 1.0.
+  double get passRate => totalCount == 0 ? 0.0 : passCount / totalCount;
+
+  bool get allPassed => failCount == 0 && totalCount > 0;
+
+  AssertionRun copyWith({
+    String? id,
+    DateTime? runAt,
+    int? passCount,
+    int? failCount,
+    int? totalCount,
+    Object? statusCode = _sentinel,
+    Object? responseTime = _sentinel,
+  }) {
+    return AssertionRun(
+      id: id ?? this.id,
+      runAt: runAt ?? this.runAt,
+      passCount: passCount ?? this.passCount,
+      failCount: failCount ?? this.failCount,
+      totalCount: totalCount ?? this.totalCount,
+      statusCode:
+          statusCode == _sentinel ? this.statusCode : statusCode as int?,
+      responseTime: responseTime == _sentinel
+          ? this.responseTime
+          : responseTime as Duration?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'runAt': runAt.toIso8601String(),
+      'passCount': passCount,
+      'failCount': failCount,
+      'totalCount': totalCount,
+      'statusCode': statusCode,
+      'responseTimeMs': responseTime?.inMilliseconds,
+    };
+  }
+
+  factory AssertionRun.fromJson(Map<String, dynamic> json) {
+    return AssertionRun(
+      id: json['id'] as String,
+      runAt: DateTime.parse(json['runAt'] as String),
+      passCount: json['passCount'] as int? ?? 0,
+      failCount: json['failCount'] as int? ?? 0,
+      totalCount: json['totalCount'] as int? ?? 0,
+      statusCode: json['statusCode'] as int?,
+      responseTime: json['responseTimeMs'] != null
+          ? Duration(milliseconds: json['responseTimeMs'] as int)
+          : null,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AssertionRun &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+}
+
+// ---------------------------------------------------------------------------
+// AssertionSuite — collection of rules + run history for one request
+// ---------------------------------------------------------------------------
+
 /// A collection of assertion rules for a single API request.
+///
+/// Also maintains a [runHistory] for observability over time.
 class AssertionSuite {
   final String id;
 
@@ -167,12 +275,16 @@ class AssertionSuite {
   final List<AssertionRule> rules;
   final DateTime? lastRunAt;
 
+  /// Timestamped log of every test run. Capped at 20 entries.
+  final List<AssertionRun> runHistory;
+
   const AssertionSuite({
     required this.id,
     required this.requestId,
     this.name = 'Assertions',
     this.rules = const [],
     this.lastRunAt,
+    this.runHistory = const [],
   });
 
   int get passCount =>
@@ -193,6 +305,7 @@ class AssertionSuite {
     String? name,
     List<AssertionRule>? rules,
     Object? lastRunAt = _sentinel,
+    List<AssertionRun>? runHistory,
   }) {
     return AssertionSuite(
       id: id ?? this.id,
@@ -202,6 +315,7 @@ class AssertionSuite {
       lastRunAt: lastRunAt == _sentinel
           ? this.lastRunAt
           : lastRunAt as DateTime?,
+      runHistory: runHistory ?? this.runHistory,
     );
   }
 
@@ -212,6 +326,7 @@ class AssertionSuite {
       'name': name,
       'rules': rules.map((r) => r.toJson()).toList(),
       'lastRunAt': lastRunAt?.toIso8601String(),
+      'runHistory': runHistory.map((r) => r.toJson()).toList(),
     };
   }
 
@@ -226,6 +341,9 @@ class AssertionSuite {
       lastRunAt: json['lastRunAt'] != null
           ? DateTime.tryParse(json['lastRunAt'] as String)
           : null,
+      runHistory: (json['runHistory'] as List<dynamic>? ?? [])
+          .map((r) => AssertionRun.fromJson(r as Map<String, dynamic>))
+          .toList(),
     );
   }
 
