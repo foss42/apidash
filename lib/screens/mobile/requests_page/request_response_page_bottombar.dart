@@ -14,9 +14,7 @@ class RequestResponsePageBottombar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: Container(
+    return Container(
         height: 60 + MediaQuery.paddingOf(context).bottom,
         width: MediaQuery.sizeOf(context).width,
         padding: EdgeInsets.only(
@@ -67,7 +65,6 @@ class RequestResponsePageBottombar extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
