@@ -493,6 +493,19 @@ const kLabelRunAssertions = "Run";
 const kLabelAiSuggest = "AI Suggest";
 const kLabelAddRule = "Add Rule";
 const kLabelExportReport = "Export Report";
+const kLabelTemplates = "Templates";
+const kLabelApplyTemplate = "Apply Template";
+const kLabelRunHistory = "Run History";
+const kLabelJsonSchemaValid = "JSON Schema Valid";
+const kLabelSchemaHint =
+    '{"type":"object","required":["id"],"properties":{"id":{"type":"integer"}}}';
+const kTooltipSchemaValidation =
+    "Validates the entire response against a JSON Schema definition";
+// DashAssert – Preset template names
+const kPresetRestStandard = "REST Standard";
+const kPresetAuthProtected = "Auth Protected";
+const kPresetCrudSuccess = "CRUD Success";
+const kPresetPaginatedList = "Paginated List";
 const kHeaderRow = ["Header Name", "Header Value"];
 const kLabelRequestHeaders = "Request Headers";
 const kLabelResponseHeaders = "Response Headers";

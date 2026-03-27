@@ -4,7 +4,9 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:uuid/uuid.dart';
 import '../models/assertion_model.dart';
+import '../models/assertion_preset.dart';
 import '../services/assertion_engine.dart';
 import '../services/ai_assertion_suggester.dart';
 
@@ -32,6 +34,8 @@ final aiSuggestionLoadingProvider = StateProvider<bool>((ref) => false);
 // ---------------------------------------------------------------------------
 // Assertion suites state (keyed by requestId)
 // ---------------------------------------------------------------------------
+
+const _uuid = Uuid();
 
 /// Provides all [AssertionSuite]s across all requests, keyed by requestId.
 final assertionSuitesProvider =
@@ -106,11 +110,40 @@ class AssertionSuitesNotifier
     state = {...state, requestId: suite.copyWith(rules: updatedRules)};
   }
 
-  /// Replace the suite for [requestId] with [updatedSuite].
+  /// Replace the suite for [requestId] with [updatedSuite] and append a
+  /// new [AssertionRun] entry to the run history (capped at 20 entries).
   ///
   /// Typically called after [AssertionEngine.executeAll] completes.
-  void updateSuiteResults(String requestId, AssertionSuite updatedSuite) {
-    state = {...state, requestId: updatedSuite};
+  void updateSuiteResults(
+    String requestId,
+    AssertionSuite updatedSuite, {
+    Duration? responseTime,
+    int? statusCode,
+  }) {
+    final run = AssertionRun(
+      id: _uuid.v4(),
+      runAt: DateTime.now(),
+      passCount: updatedSuite.rules
+          .where((r) => r.status == AssertionStatus.pass)
+          .length,
+      failCount: updatedSuite.rules
+          .where((r) => r.status == AssertionStatus.fail)
+          .length,
+      totalCount: updatedSuite.rules.length,
+      statusCode: statusCode,
+      responseTime: responseTime,
+    );
+    // Keep only the last 20 runs
+    final history =
+        [...updatedSuite.runHistory, run].reversed
+            .take(20)
+            .toList()
+            .reversed
+            .toList();
+    state = {
+      ...state,
+      requestId: updatedSuite.copyWith(runHistory: history),
+    };
   }
 
   /// Update a single rule within the suite.
@@ -121,5 +154,27 @@ class AssertionSuitesNotifier
       return r.id == updatedRule.id ? updatedRule : r;
     }).toList();
     state = {...state, requestId: suite.copyWith(rules: updatedRules)};
+  }
+
+  // ---------------------------------------------------------------------------
+  // Preset Templates
+  // ---------------------------------------------------------------------------
+
+  /// Apply a preset template to the suite for [requestId].
+  ///
+  /// Deduplicates rules by description — preset rules already present in the
+  /// suite (matched by description) are skipped.
+  void applyPreset(String requestId, AssertionPreset preset) {
+    final suite = getSuiteForRequest(requestId);
+    final existingDescriptions =
+        suite.rules.map((r) => r.description).toSet();
+    final newRules = preset.rules
+        .where((r) => !existingDescriptions.contains(r.description))
+        .map((r) => r.copyWith(id: _uuid.v4())) // fresh IDs to avoid conflicts
+        .toList();
+    state = {
+      ...state,
+      requestId: suite.copyWith(rules: [...suite.rules, ...newRules]),
+    };
   }
 }
