@@ -5,7 +5,7 @@ import 'drag_and_drop_area.dart';
 import 'dropdown_import_format.dart';
 import '../consts.dart';
 
-showImportDialog({
+void showImportDialog({
   required BuildContext context,
   required ImportFormat importFormat,
   Function(ImportFormat?)? onImportFormatChange,

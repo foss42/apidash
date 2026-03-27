@@ -25,7 +25,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
   bool exportingCode = false;
   String modificationRequest = "";
 
-  exportCode() async {
+  Future<void> exportCode() async {
     setState(() {
       exportingCode = true;
     });

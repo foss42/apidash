@@ -79,7 +79,7 @@ class JsonUtils {
     );
   }
 
-  static validateJson({
+  static dynamic validateJson({
     required String json,
     required Function(String?) onError,
   }) {

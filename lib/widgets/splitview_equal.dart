@@ -11,7 +11,7 @@ class EqualSplitView extends StatelessWidget {
   final Widget leftWidget;
   final Widget rightWidget;
 
-  getMinFractionWidth(double width) {
+  double getMinFractionWidth(double width) {
     if (width < 900) {
       return 0.9;
     } else if (width < 1000) {

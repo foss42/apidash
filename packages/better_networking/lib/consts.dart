@@ -9,7 +9,7 @@ enum APIType {
   final String label;
   final String abbr;
 
-  static fromMethod(String method) {
+  static HTTPVerb fromMethod(String method) {
     return HTTPVerb.values.firstWhere(
       (model) => model.name == method.toLowerCase(),
       orElse: () => throw ArgumentError('INVALID HTTP METHOD'),

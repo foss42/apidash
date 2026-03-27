@@ -18,8 +18,8 @@ class PromptBuilder {
       overrideLanguage: overrideLanguage,
     );
     return [
-      if (task != null) task,
-      if (contextBlock != null) contextBlock,
+      ?task,
+      ?contextBlock,
       if (historyBlock.isNotEmpty) historyBlock,
     ].join('\n\n');
   }

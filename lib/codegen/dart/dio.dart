@@ -107,9 +107,9 @@ class DartDioCodeGen {
       final content = declareTryCatch(
         showStackStrace: true,
         body: [
-          if (queryParamExp != null) queryParamExp,
-          if (headerExp != null) headerExp,
-          if (dataExp != null) dataExp,
+          ?queryParamExp,
+          ?headerExp,
+          ?dataExp,
           if ((contentType == ContentType.formdata && formData.isNotEmpty))
             multiPartList,
           responseExp,
