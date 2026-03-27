@@ -44,3 +44,8 @@ flutter pub get
 ```
 flutter run
 ```
+### Troubleshooting
+
+**macOS Local Development:**
+If you are compiling locally on an Apple Silicon Mac and the file-picker freezes when attempting to select a workspace, it is due to Apple's App Sandbox blocking local file access in debug mode. 
+To fix this, go to `macos/Runner/DebugProfile.entitlements` and change `<key>com.apple.security.app-sandbox</key>` to `<false/>` before running the app.
