@@ -1,6 +1,7 @@
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/sdui_renderer.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/services/agentic_services/agents/stac_to_flutter.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +32,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
     final ans = await APIDashAgentCaller.instance.call(
       StacToFlutterBot(),
       ref: ref,
-      input: AgentInputs(
-        variables: {'VAR_CODE': widget.sduiCode},
-      ),
+      input: AgentInputs(variables: {'VAR_CODE': widget.sduiCode}),
     );
     final exportedCode = ans?['CODE'];
 
@@ -41,20 +40,23 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
       setState(() {
         exportingCode = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "Export Failed",
-          style: TextStyle(color: Colors.white),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            kMsgExportFailed,
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.redAccent,
         ),
-        backgroundColor: Colors.redAccent,
-      ));
+      );
       debugPrint("exportCode: Failed; ABORTING");
       return;
     }
 
     Clipboard.setData(ClipboardData(text: ans['CODE']));
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Copied to clipboard!")));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(kMsgCopiedToClipboard)));
     setState(() {
       exportingCode = false;
     });
@@ -71,18 +73,14 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
         children: [
           Row(
             children: [
-              Text(
-                "Generated Component",
-                style: TextStyle(
-                  fontSize: 20,
-                ),
-              ),
+              Text(kLabelGeneratedComponent, style: TextStyle(fontSize: 20)),
               Spacer(),
               IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.close)),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.close),
+              ),
             ],
           ),
           kVSpacer20,
@@ -99,13 +97,15 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                     stacRepresentation: widget.sduiCode,
                     onError: () {
                       Future.delayed(Duration(milliseconds: 200), () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                            "Failed to Display Preview",
-                            style: TextStyle(color: Colors.white),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              kMsgFailedToDisplayPreview,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.redAccent,
                           ),
-                          backgroundColor: Colors.redAccent,
-                        ));
+                        );
                       });
                     },
                   ),
@@ -121,7 +121,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: ADOutlinedTextField(
-                hintText: 'Any Modifications?',
+                hintText: kHintAnyModifications,
                 onChanged: (z) {
                   setState(() {
                     modificationRequest = z;
@@ -140,9 +140,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                 child: (exportingCode)
                     ? Container(
                         margin: EdgeInsets.only(right: 10),
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 1),
                       )
                     : FilledButton.tonalIcon(
                         style: FilledButton.styleFrom(
@@ -150,14 +148,8 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                           minimumSize: const Size(44, 44),
                         ),
                         onPressed: exportCode,
-                        icon: Icon(
-                          Icons.download,
-                        ),
-                        label: const SizedBox(
-                          child: Text(
-                            "Export Code",
-                          ),
-                        ),
+                        icon: Icon(Icons.download),
+                        label: const SizedBox(child: Text(kLabelExportCode)),
                       ),
               ),
               kHSpacer10,
@@ -174,14 +166,8 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                         widget.onModificationRequestMade(modificationRequest);
                       }
                     },
-                    icon: Icon(
-                      Icons.generating_tokens,
-                    ),
-                    label: const SizedBox(
-                      child: Text(
-                        "Make Modifications",
-                      ),
-                    ),
+                    icon: Icon(Icons.generating_tokens),
+                    label: const SizedBox(child: Text(kLabelMakeModifications)),
                   ),
                 ),
             ],

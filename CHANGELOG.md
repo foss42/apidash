@@ -5,7 +5,7 @@
 In this release, we have added the following features:
 
 1. Create workspace (directory) to persist your entire data locally in the provided file-system location
-2. Environment varibles
+2. Environment variables
 3. GraphQL support
 4. Import requests from cURL & Postman Collection (v2.1)
 5. History of your requests & response

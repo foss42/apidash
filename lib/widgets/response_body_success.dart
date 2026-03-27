@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/openresponses_structured_viewer.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -188,9 +189,14 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       width: double.maxFinite,
                       padding: kP8,
                       decoration: textContainerdecoration,
-                      child: OpenResponsesStructuredViewer(
-                        root: widget.openResponsesRoot,
-                      ),
+                      child: widget.openResponsesRoot == null
+                          ? const ErrorMessage(
+                              message:
+                                  'Unable to render Structured view. Please use Preview or Raw.',
+                            )
+                          : OpenResponsesStructuredViewer(
+                              root: widget.openResponsesRoot!,
+                            ),
                     ),
                   ),
               }

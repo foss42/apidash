@@ -13,9 +13,7 @@ import 'request_response_page_bottombar.dart';
 import 'request_tabs.dart';
 
 class RequestResponsePage extends StatefulHookConsumerWidget {
-  const RequestResponsePage({
-    super.key,
-  });
+  const RequestResponsePage({super.key});
 
   @override
   ConsumerState<RequestResponsePage> createState() =>
@@ -28,9 +26,12 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
   Widget build(BuildContext context) {
     final id = ref.watch(selectedIdStateProvider);
     final name = getRequestTitleFromUrl(
-        ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
-    final TabController requestTabController =
-        useTabController(initialLength: 3, vsync: this);
+      ref.watch(selectedRequestModelProvider.select((value) => value?.name)),
+    );
+    final TabController requestTabController = useTabController(
+      initialLength: 3,
+      vsync: this,
+    );
     return DrawerSplitView(
       scaffoldKey: kHomeScaffoldKey,
       title: Row(
@@ -41,7 +42,7 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
               title: name,
               onSelected: (ItemMenuOption item) {
                 if (item == ItemMenuOption.edit) {
-                  showRenameDialog(context, "Rename Request", name, (val) {
+                  showRenameDialog(context, kLabelRenameRequest, name, (val) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)
                         .update(name: val);

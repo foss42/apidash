@@ -24,6 +24,12 @@ class _BoundedTextFieldState extends State<BoundedTextField> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void didUpdateWidget(covariant BoundedTextField oldWidget) {
     //Assisting in Resetting on Change
     if (widget.value == '') {

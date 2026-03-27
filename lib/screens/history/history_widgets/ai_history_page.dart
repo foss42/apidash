@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/editor.dart';
 
@@ -10,8 +11,9 @@ class HisAIRequestPromptSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedHistoryModel =
-        ref.watch(selectedHistoryRequestModelProvider)!;
+    final selectedHistoryModel = ref.watch(
+      selectedHistoryRequestModelProvider,
+    )!;
     final aiReqM = selectedHistoryModel.aiRequestModel;
     if (aiReqM == null) {
       return kSizedBoxEmpty;
@@ -24,9 +26,7 @@ class HisAIRequestPromptSection extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
-            child: Text(
-              'System Prompt',
-            ),
+            child: Text(kLabelSystemPrompt),
           ),
           kVSpacer10,
           Expanded(
@@ -34,7 +34,8 @@ class HisAIRequestPromptSection extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: TextFieldEditor(
                 key: Key(
-                    "${selectedHistoryModel.historyId}-aireq-sysprompt-body"),
+                  "${selectedHistoryModel.historyId}-aireq-sysprompt-body",
+                ),
                 fieldKey:
                     "${selectedHistoryModel.historyId}-aireq-sysprompt-body",
                 initialValue: aiReqM.systemPrompt,
@@ -45,9 +46,7 @@ class HisAIRequestPromptSection extends ConsumerWidget {
           SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
-            child: Text(
-              'User Prompt / Input',
-            ),
+            child: Text(kLabelUserPromptInput),
           ),
           kVSpacer10,
           Expanded(
@@ -55,7 +54,8 @@ class HisAIRequestPromptSection extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: TextFieldEditor(
                 key: Key(
-                    "${selectedHistoryModel.historyId}-aireq-userprompt-body"),
+                  "${selectedHistoryModel.historyId}-aireq-userprompt-body",
+                ),
                 fieldKey:
                     "${selectedHistoryModel.historyId}-aireq-userprompt-body",
                 initialValue: aiReqM.userPrompt,
@@ -74,8 +74,9 @@ class HisAIRequestAuthorizationSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedHistoryModel =
-        ref.watch(selectedHistoryRequestModelProvider)!;
+    final selectedHistoryModel = ref.watch(
+      selectedHistoryRequestModelProvider,
+    )!;
     final aiReqM = selectedHistoryModel.aiRequestModel;
     if (aiReqM == null) {
       return kSizedBoxEmpty;
@@ -90,7 +91,8 @@ class HisAIRequestAuthorizationSection extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: TextFieldEditor(
                 key: Key(
-                    "${selectedHistoryModel.historyId}-aireq-authvalue-body"),
+                  "${selectedHistoryModel.historyId}-aireq-authvalue-body",
+                ),
                 fieldKey:
                     "${selectedHistoryModel.historyId}-aireq-authvalue-body",
                 initialValue: aiReqM.apiKey,
@@ -109,8 +111,9 @@ class HisAIRequestConfigSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedHistoryModel =
-        ref.watch(selectedHistoryRequestModelProvider)!;
+    final selectedHistoryModel = ref.watch(
+      selectedHistoryRequestModelProvider,
+    )!;
     final aiReqM = selectedHistoryModel.aiRequestModel;
     if (aiReqM == null) {
       return kSizedBoxEmpty;
@@ -126,32 +129,30 @@ class HisAIRequestConfigSection extends ConsumerWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    el.description,
-                  ),
+                  Text(el.description),
                   SizedBox(height: 5),
                   switch (el.type) {
                     ConfigType.boolean => AIConfigBool(
-                        readonly: true,
-                        configuration: el,
-                        onConfigUpdated: (x) {},
-                      ),
+                      readonly: true,
+                      configuration: el,
+                      onConfigUpdated: (x) {},
+                    ),
                     ConfigType.numeric => AIConfigField(
-                        readonly: true,
-                        configuration: el,
-                        onConfigUpdated: (x) {},
-                        numeric: true,
-                      ),
+                      readonly: true,
+                      configuration: el,
+                      onConfigUpdated: (x) {},
+                      numeric: true,
+                    ),
                     ConfigType.text => AIConfigField(
-                        readonly: true,
-                        configuration: el,
-                        onConfigUpdated: (x) {},
-                      ),
+                      readonly: true,
+                      configuration: el,
+                      onConfigUpdated: (x) {},
+                    ),
                     ConfigType.slider => AIConfigSlider(
-                        readonly: true,
-                        configuration: el,
-                        onSliderUpdated: (x) {},
-                      ),
+                      readonly: true,
+                      configuration: el,
+                      onSliderUpdated: (x) {},
+                    ),
                   },
                   SizedBox(height: 10),
                 ],

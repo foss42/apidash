@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -10,10 +11,16 @@ class AIRequestPromptSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final systemPrompt = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.systemPrompt));
-    final userPrompt = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.userPrompt));
+    final systemPrompt = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.aiRequestModel?.systemPrompt,
+      ),
+    );
+    final userPrompt = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.aiRequestModel?.userPrompt,
+      ),
+    );
     final aiRequestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)
@@ -29,9 +36,7 @@ class AIRequestPromptSection extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
-            child: Text(
-              'System Prompt',
-            ),
+            child: Text(kLabelSystemPrompt),
           ),
           kVSpacer10,
           Expanded(
@@ -42,20 +47,22 @@ class AIRequestPromptSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-sysprompt-body",
                 initialValue: systemPrompt,
                 onChanged: (String value) {
-                  ref.read(collectionStateNotifierProvider.notifier).update(
-                      aiRequestModel:
-                          aiRequestModel.copyWith(systemPrompt: value));
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(
+                        aiRequestModel: aiRequestModel.copyWith(
+                          systemPrompt: value,
+                        ),
+                      );
                 },
-                hintText: 'Enter System Prompt',
+                hintText: kHintEnterSystemPrompt,
               ),
             ),
           ),
           SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
-            child: Text(
-              'User Prompt / Input',
-            ),
+            child: Text(kLabelUserPromptInput),
           ),
           kVSpacer10,
           Expanded(
@@ -66,11 +73,15 @@ class AIRequestPromptSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-userprompt-body",
                 initialValue: userPrompt,
                 onChanged: (String value) {
-                  ref.read(collectionStateNotifierProvider.notifier).update(
-                      aiRequestModel:
-                          aiRequestModel.copyWith(userPrompt: value));
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(
+                        aiRequestModel: aiRequestModel.copyWith(
+                          userPrompt: value,
+                        ),
+                      );
                 },
-                hintText: 'Enter User Prompt',
+                hintText: kHintEnterUserPrompt,
               ),
             ),
           ),

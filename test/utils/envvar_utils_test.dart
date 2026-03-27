@@ -157,7 +157,7 @@ void main() {
       expect(substituteVariables(input, combinedEnvVarsMap), expected);
     });
 
-    test("Testing substituteVariables with incorrect paranthesis", () {
+    test("Testing substituteVariables with incorrect parenthesis", () {
       String input = "{{url}}}/humanize/social?num={{num}}";
       String expected = "api.apidash.dev}/humanize/social?num=8940000";
       expect(substituteVariables(input, combinedEnvVarsMap), expected);

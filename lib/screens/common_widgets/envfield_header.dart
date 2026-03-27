@@ -25,6 +25,13 @@ class EnvHeaderField extends StatefulWidget {
 
 class _EnvHeaderFieldState extends State<EnvHeaderField> {
   final FocusNode focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;

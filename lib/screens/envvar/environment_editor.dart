@@ -13,14 +13,11 @@ class EnvironmentEditor extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(selectedEnvironmentIdStateProvider);
-    final name = ref
-        .watch(selectedEnvironmentModelProvider.select((value) => value?.name));
+    final name = ref.watch(
+      selectedEnvironmentModelProvider.select((value) => value?.name),
+    );
     return Padding(
-      padding: context.isMediumWindow
-          ? kPb10
-          : kIsMacOS
-              ? kPt28o8
-              : kP8,
+      padding: context.isMediumWindow ? kPb10 : (kIsMacOS ? kPt28o8 : kP8),
       child: Column(
         children: [
           kVSpacer5,
@@ -37,17 +34,21 @@ class EnvironmentEditor extends ConsumerWidget {
                         maxLines: 1,
                       ),
                     ),
-                    const SizedBox(
-                      width: 6,
-                    ),
+                    const SizedBox(width: 6),
                     EditorTitleActions(
                       onRenamePressed: () {
-                        showRenameDialog(context, "Rename Environment", name,
-                            (val) {
-                          ref
-                              .read(environmentsStateNotifierProvider.notifier)
-                              .updateEnvironment(id!, name: val);
-                        });
+                        showRenameDialog(
+                          context,
+                          kLabelRenameEnvironment,
+                          name,
+                          (val) {
+                            ref
+                                .read(
+                                  environmentsStateNotifierProvider.notifier,
+                                )
+                                .updateEnvironment(id!, name: val);
+                          },
+                        );
                       },
                       onDuplicatePressed: () => ref
                           .read(environmentsStateNotifierProvider.notifier)
@@ -56,8 +57,9 @@ class EnvironmentEditor extends ConsumerWidget {
                           ? null
                           : () {
                               ref
-                                  .read(environmentsStateNotifierProvider
-                                      .notifier)
+                                  .read(
+                                    environmentsStateNotifierProvider.notifier,
+                                  )
                                   .removeEnvironment(id!);
                             },
                     ),
@@ -77,9 +79,9 @@ class EnvironmentEditor extends ConsumerWidget {
                     ? null
                     : RoundedRectangleBorder(
                         side: BorderSide(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
                         ),
                         borderRadius: kBorderRadius12,
                       ),
@@ -93,15 +95,15 @@ class EnvironmentEditor extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(width: 30),
-                          Text("Variable"),
+                          Text(kLabelVariable),
                           SizedBox(width: 30),
-                          Text("Value"),
+                          Text(kLabelValue),
                           SizedBox(width: 40),
                         ],
                       ),
                       kHSpacer40,
                       Divider(),
-                      Expanded(child: EditEnvironmentVariables())
+                      Expanded(child: EditEnvironmentVariables()),
                     ],
                   ),
                 ),

@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'openresponses_structured_viewer.dart';
 
-class SSEDisplay extends StatelessWidget {
+class SSEDisplay extends StatefulWidget {
   final AIRequestModel? aiRequestModel;
   final List<String>? sseOutput;
   const SSEDisplay({
@@ -13,11 +14,20 @@ class SSEDisplay extends StatelessWidget {
   });
 
   @override
+  State<SSEDisplay> createState() => _SSEDisplayState();
+}
+
+class _SSEDisplayState extends State<SSEDisplay> {
+  final List<Map<String, dynamic>> streamingOutput = [];
+  String out = '';
+  int processedChunks = 0;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fontSizeMedium = theme.textTheme.bodyMedium?.fontSize;
     final isDark = theme.brightness == Brightness.dark;
-    if (sseOutput == null || sseOutput!.isEmpty) {
+    if (widget.sseOutput == null || widget.sseOutput!.isEmpty) {
       return Text(
         'No content',
         style: kCodeStyle.copyWith(
@@ -27,29 +37,69 @@ class SSEDisplay extends StatelessWidget {
       );
     }
 
-    if (aiRequestModel != null) {
-      // For RAW Text output (only AI Requests)
-      String out = "";
-      for (String x in sseOutput!) {
+    if (widget.aiRequestModel != null) {
+      // For AI streaming: try to surface OpenResponses items live.
+      // Only process new chunks since the last build.
+      final chunks = widget.sseOutput!;
+      for (var i = processedChunks; i < chunks.length; i++) {
+        var x = chunks[i];
         x = x.trim();
         if (x.isEmpty || x.contains('[DONE]')) {
           continue;
         }
 
-        // Start with JSON
+        // Start with JSON (skip any SSE prefix before '{')
         final pos = x.indexOf('{');
         if (pos == -1) continue;
-        x = x.substring(pos);
+        final jsonStr = x.substring(pos);
 
-        Map? dec;
+        Map<String, dynamic>? dec;
         try {
-          dec = jsonDecode(x);
-          final z = aiRequestModel?.getFormattedStreamOutput(dec!);
-          out += z ?? '<?>';
+          final raw = jsonDecode(jsonStr);
+          if (raw is Map<String, dynamic>) {
+            dec = raw;
+          }
         } catch (e) {
           debugPrint("SSEDisplay -> Error in JSONDEC $e");
         }
+
+        if (dec != null) {
+          // Existing AI streaming formatting for raw text.
+          final z = widget.aiRequestModel?.getFormattedStreamOutput(dec);
+          out += z ?? '';
+
+          // Detect OpenResponses streaming items.
+          // 1) Full OpenResponses response with `output` array.
+          final output = dec['output'];
+          if (output is List) {
+            for (final item in output) {
+              if (item is Map && item['type'] != null) {
+                streamingOutput.add(
+                  item.cast<String, dynamic>(),
+                );
+              }
+            }
+          }
+
+          // 2) Streaming event carrying a single item (e.g. response.output_item.added).
+          final eventItem = dec['item'];
+          if (eventItem is Map && eventItem['type'] != null) {
+            streamingOutput.add(
+              eventItem.cast<String, dynamic>(),
+            );
+          }
+        }
       }
+      processedChunks = chunks.length;
+
+      if (streamingOutput.isNotEmpty) {
+        // Render current OpenResponses items using the existing structured viewer.
+        return OpenResponsesStructuredViewer(
+          root: <String, dynamic>{'output': streamingOutput},
+        );
+      }
+
+      // Fallback: existing raw text streaming view.
       return SingleChildScrollView(
         child: Text(out),
       );
@@ -58,7 +108,7 @@ class SSEDisplay extends StatelessWidget {
     return ListView(
       padding: kP1,
       children:
-          sseOutput!.reversed.where((e) => e.trim() != '').map<Widget>((chunk) {
+          widget.sseOutput!.reversed.where((e) => e.trim() != '').map<Widget>((chunk) {
         Map<String, dynamic>? parsedJson;
         try {
           parsedJson = jsonDecode(chunk);

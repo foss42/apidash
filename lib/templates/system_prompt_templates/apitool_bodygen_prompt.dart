@@ -11,7 +11,7 @@ Wherever you find this pattern replace it with the appropriate values)
 `TOOL_NAME`: The name of the API Tool, infer it from the function code
 `TOOL_DESCRIPTION`: The Description of the Tool, generate it based on the tool name
 `TOOL_PARAMS`: The example of parameters have been provided below, infer the parameters needed from the func body, it must be a dictionary
-`REQUIRED_PARAM_NAMES`: infer what parameters are required and add thier names in a list
+`REQUIRED_PARAM_NAMES`: infer what parameters are required and add their names in a list
 `INPUT_SCHEMA`: if this variable exists, then create a StructuredTool or DynamicStructuredTool schema of the input according to the language of the tool itself. 
 
 this is the general format of parameters:

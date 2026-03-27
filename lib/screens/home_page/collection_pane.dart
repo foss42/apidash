@@ -9,21 +9,18 @@ import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
 class CollectionPane extends ConsumerWidget {
-  const CollectionPane({
-    super.key,
-  });
+  const CollectionPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final collection = ref.watch(collectionStateNotifierProvider);
     var sm = ScaffoldMessenger.of(context);
     if (collection == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
     return Padding(
-      padding: (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
+      padding:
+          (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,23 +35,18 @@ class CollectionPane extends ConsumerWidget {
           ),
           if (context.isMediumWindow) kVSpacer6,
           if (context.isMediumWindow)
-            Padding(
-              padding: kPh8,
-              child: EnvironmentDropdown(),
-            ),
+            Padding(padding: kPh8, child: EnvironmentDropdown()),
           kVSpacer10,
           SidebarFilter(
-            filterHintText: "Filter by name or url",
+            filterHintText: kHintFilterByNameOrUrl,
             onFilterFieldChanged: (value) {
-              ref.read(collectionSearchQueryProvider.notifier).state =
-                  value.toLowerCase();
+              ref.read(collectionSearchQueryProvider.notifier).state = value
+                  .toLowerCase();
             },
           ),
           kVSpacer10,
-          const Expanded(
-            child: RequestList(),
-          ),
-          kVSpacer5
+          const Expanded(child: RequestList()),
+          kVSpacer5,
         ],
       ),
     );
@@ -62,9 +54,7 @@ class CollectionPane extends ConsumerWidget {
 }
 
 class RequestList extends ConsumerStatefulWidget {
-  const RequestList({
-    super.key,
-  });
+  const RequestList({super.key});
 
   @override
   ConsumerState<RequestList> createState() => _RequestListState();
@@ -89,8 +79,11 @@ class _RequestListState extends ConsumerState<RequestList> {
   Widget build(BuildContext context) {
     final requestSequence = ref.watch(requestSequenceProvider);
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
-    final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
-        .select((value) => value.alwaysShowCollectionPaneScrollbar));
+    final alwaysShowCollectionPaneScrollbar = ref.watch(
+      settingsProvider.select(
+        (value) => value.alwaysShowCollectionPaneScrollbar,
+      ),
+    );
     final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
 
     return Scrollbar(
@@ -138,10 +131,7 @@ class _RequestListState extends ConsumerState<RequestList> {
                   index: index,
                   child: Padding(
                     padding: kP1,
-                    child: RequestItem(
-                      id: id,
-                      requestModel: requestItems[id]!,
-                    ),
+                    child: RequestItem(id: id, requestModel: requestItems[id]!),
                   ),
                 );
               },
@@ -156,16 +146,13 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (item.httpRequestModel!.url
-                        .toLowerCase()
-                        .contains(filterQuery) ||
+                if (item.httpRequestModel!.url.toLowerCase().contains(
+                      filterQuery,
+                    ) ||
                     item.name.toLowerCase().contains(filterQuery)) {
                   return Padding(
                     padding: kP1,
-                    child: RequestItem(
-                      id: id,
-                      requestModel: item,
-                    ),
+                    child: RequestItem(id: id, requestModel: item),
                   );
                 }
                 return kSizedBoxEmpty;
@@ -176,11 +163,7 @@ class _RequestListState extends ConsumerState<RequestList> {
 }
 
 class RequestItem extends ConsumerWidget {
-  const RequestItem({
-    super.key,
-    required this.id,
-    required this.requestModel,
-  });
+  const RequestItem({super.key, required this.id, required this.requestModel});
 
   final String id;
   final RequestModel requestModel;
