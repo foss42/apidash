@@ -144,7 +144,6 @@ The focus of this project is to build a minimal and practical implementation tha
 
 
 ### Week 1
-Week 1
 Clean and organize current POC code
 Properly integrate Structured tab into existing UI (no breaking changes)
 Improve OpenResponses detection logic
