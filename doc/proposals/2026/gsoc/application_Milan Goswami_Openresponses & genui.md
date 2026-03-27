@@ -1,5 +1,3 @@
-![](images/gsoc_api.png)
-
 
 1. **Full Name** Milan Goswami
 
@@ -13,7 +11,7 @@
 
 6. **Time zone** IST (UTC +5:30)
 
-9. **Resume** [Google Drive link]
+9. **Resume** [Link](https://drive.google.com/file/d/1jTqh3D1l08OvUqCHE_NCufvbQdtE3ONK/view?usp=sharing)
 
 
 ## University Info
