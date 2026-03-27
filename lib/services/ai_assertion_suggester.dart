@@ -89,7 +89,7 @@ class AiAssertionSuggester {
       ),
     );
 
-    // 4. Parse JSON body and suggest top-level field existence checks
+    // 4. Parse JSON body and suggest field-level checks + JSON Schema
     final body = response.body ?? '';
     if (body.isNotEmpty) {
       try {
@@ -108,7 +108,7 @@ class AiAssertionSuggester {
             );
           }
 
-          // If there's a string "id" or "status" field, also suggest value check
+          // If there's a "id" or "status" field, also suggest value check
           if (decoded.containsKey('id') && decoded['id'] != null) {
             rules.add(
               AssertionRule(
@@ -120,6 +120,10 @@ class AiAssertionSuggester {
               ),
             );
           }
+
+          // Suggest a JSON Schema assertion automatically derived from response
+          final schemaRule = _suggestSchemaAssertion(decoded, nextId());
+          rules.add(schemaRule);
         } else if (decoded is List && decoded.isNotEmpty) {
           // Array response — check that it contains at least one item
           rules.add(
@@ -133,9 +137,8 @@ class AiAssertionSuggester {
 
           // If first element is a map, suggest its top field
           if (decoded.first is Map<String, dynamic>) {
-            final firstKeys = (decoded.first as Map<String, dynamic>).keys
-                .take(1)
-                .toList();
+            final firstKeys =
+                (decoded.first as Map<String, dynamic>).keys.take(1).toList();
             for (final key in firstKeys) {
               rules.add(
                 AssertionRule(
@@ -168,6 +171,48 @@ class AiAssertionSuggester {
   }
 
   // ---------------------------------------------------------------------------
+  // JSON Schema suggestion (NEW — Upgrade 1C)
+  // ---------------------------------------------------------------------------
+
+  /// Auto-generate a [jsonSchemaValid] assertion derived from a JSON object body.
+  ///
+  /// Captures the top-level keys (capped at 8) and their inferred types as a
+  /// minimal JSON Schema with a `required` array and `properties` map.
+  AssertionRule _suggestSchemaAssertion(
+    Map<String, dynamic> body,
+    String id,
+  ) {
+    final properties = <String, dynamic>{};
+    final required = <String>[];
+    for (final entry in body.entries.take(8)) {
+      required.add(entry.key);
+      properties[entry.key] = {'type': _dartTypeToJsonSchemaType(entry.value)};
+    }
+    final schema = jsonEncode({
+      'type': 'object',
+      'required': required,
+      'properties': properties,
+    });
+    return AssertionRule(
+      id: id,
+      type: AssertionType.jsonSchemaValid,
+      description: 'Response body matches expected JSON schema',
+      expectedValue: schema,
+    );
+  }
+
+  /// Map a Dart runtime value to its JSON Schema type string.
+  String _dartTypeToJsonSchemaType(dynamic value) {
+    if (value is int) return 'integer';
+    if (value is double) return 'number';
+    if (value is String) return 'string';
+    if (value is bool) return 'boolean';
+    if (value is List) return 'array';
+    if (value is Map) return 'object';
+    return 'string';
+  }
+
+  // ---------------------------------------------------------------------------
   // LLM prompt builder (ready for integration)
   // ---------------------------------------------------------------------------
 
@@ -181,9 +226,7 @@ class AiAssertionSuggester {
     String? requestUrl,
   }) {
     final body = response.body ?? '';
-    final truncatedBody = body.length > 500
-        ? body.substring(0, 500) + '…'
-        : body;
+    final truncatedBody = body.length > 500 ? body.substring(0, 500) + '…' : body;
     final headers = response.headers ?? {};
     final contentType = headers['content-type'] ?? 'unknown';
     final timeMs = response.time?.inMilliseconds ?? 0;
@@ -201,14 +244,14 @@ $truncatedBody
 Return ONLY a valid JSON array in this exact format (no extra text):
 [
   {
-    "type": "STATUS_CODE|JSON_FIELD_EXISTS|JSON_FIELD_VALUE|RESPONSE_TIME_UNDER|HEADER_EXISTS|HEADER_VALUE|BODY_CONTAINS",
+    "type": "STATUS_CODE|JSON_FIELD_EXISTS|JSON_FIELD_VALUE|RESPONSE_TIME_UNDER|HEADER_EXISTS|HEADER_VALUE|BODY_CONTAINS|JSON_SCHEMA_VALID",
     "description": "Human readable assertion label",
-    "expectedValue": "<expected value or number>",
+    "expectedValue": "<expected value or number or schema JSON string>",
     "jsonPath": "<dot.notation.path or null>"
   }
 ]
 
-Focus on: status codes, important JSON fields that must exist, response time limits.
+Focus on: status codes, important JSON fields that must exist, response time limits, and schema validation.
 ''';
   }
 
