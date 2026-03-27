@@ -382,4 +382,178 @@ void main() {
       expect(report['results'], isList);
     });
   });
+
+  // ── JSON Schema Validation ────────────────────────────────────────────────
+
+  group('JSON Schema Validation', () {
+    test('passes when body matches schema with required fields', () {
+      final schema = json.encode({
+        'type': 'object',
+        'required': ['id', 'name'],
+        'properties': {
+          'id': {'type': 'integer'},
+          'name': {'type': 'string'},
+        },
+      });
+      final response = _makeResponse(
+        body: json.encode({'id': 1, 'name': 'Alice'}),
+      );
+      final rule = _rule(
+        type: AssertionType.jsonSchemaValid,
+        expectedValue: schema,
+      );
+      final result = engine.executeRule(rule, response);
+      expect(result.status, equals(AssertionStatus.pass));
+      expect(result.actualValue, equals('Schema valid'));
+    });
+
+    test('fails when required field is missing', () {
+      final schema = json.encode({
+        'type': 'object',
+        'required': ['id', 'name'],
+      });
+      final response = _makeResponse(body: json.encode({'id': 1}));
+      final rule = _rule(
+        type: AssertionType.jsonSchemaValid,
+        expectedValue: schema,
+      );
+      final result = engine.executeRule(rule, response);
+      expect(result.status, equals(AssertionStatus.fail));
+      expect(result.actualValue, contains('Required field "name" is missing'));
+    });
+
+    test('fails when field type is wrong', () {
+      final schema = json.encode({
+        'properties': {
+          'id': {'type': 'integer'},
+        },
+      });
+      final response =
+          _makeResponse(body: json.encode({'id': 'not-a-number'}));
+      final rule = _rule(
+        type: AssertionType.jsonSchemaValid,
+        expectedValue: schema,
+      );
+      final result = engine.executeRule(rule, response);
+      expect(result.status, equals(AssertionStatus.fail));
+      expect(result.actualValue, contains('Expected type integer'));
+    });
+
+    test('handles non-JSON body gracefully without crashing', () {
+      final schema = json.encode({'type': 'object'});
+      final response = _makeResponse(body: 'plain text response');
+      final rule = _rule(
+        type: AssertionType.jsonSchemaValid,
+        expectedValue: schema,
+      );
+      final result = engine.executeRule(rule, response);
+      // Should fail gracefully, not throw/crash
+      expect(result.status, equals(AssertionStatus.fail));
+    });
+
+    test('validates enum constraint', () {
+      final schema = json.encode({
+        'properties': {
+          'status': {
+            'enum': ['active', 'inactive'],
+          },
+        },
+      });
+      final response = _makeResponse(body: json.encode({'status': 'invalid'}));
+      final rule = _rule(
+        type: AssertionType.jsonSchemaValid,
+        expectedValue: schema,
+      );
+      final result = engine.executeRule(rule, response);
+      expect(result.status, equals(AssertionStatus.fail));
+      expect(result.actualValue, contains('not in enum'));
+    });
+
+    test('validates minimum/maximum on numbers', () {
+      final schema = json.encode({
+        'properties': {
+          'age': {'type': 'integer', 'minimum': 0, 'maximum': 150},
+        },
+      });
+      final response = _makeResponse(body: json.encode({'age': 200}));
+      final rule = _rule(
+        type: AssertionType.jsonSchemaValid,
+        expectedValue: schema,
+      );
+      final result = engine.executeRule(rule, response);
+      expect(result.status, equals(AssertionStatus.fail));
+      expect(result.actualValue, contains('exceeds maximum'));
+    });
+  });
+
+  // ── AssertionRun & Run History ────────────────────────────────────────────
+
+  group('AssertionRun model', () {
+    test('passRate calculates correctly', () {
+      final run = AssertionRun(
+        id: 'run_1',
+        runAt: DateTime.utc(2025),
+        passCount: 3,
+        failCount: 1,
+        totalCount: 4,
+      );
+      expect(run.passRate, equals(0.75));
+    });
+
+    test('passRate is 0 for an empty run', () {
+      final run = AssertionRun(
+        id: 'run_empty',
+        runAt: DateTime.utc(2025),
+        passCount: 0,
+        failCount: 0,
+        totalCount: 0,
+      );
+      expect(run.passRate, equals(0.0));
+    });
+
+    test('AssertionSuite runHistory serialises and deserialises correctly', () {
+      final run = AssertionRun(
+        id: 'run_ser',
+        runAt: DateTime(2025, 1, 1),
+        passCount: 2,
+        failCount: 0,
+        totalCount: 2,
+        statusCode: 200,
+        responseTime: const Duration(milliseconds: 300),
+      );
+      final suite = AssertionSuite(
+        id: 'suite_hist',
+        requestId: 'req_hist',
+        runHistory: [run],
+      );
+      final json2 = suite.toJson();
+      final restored = AssertionSuite.fromJson(json2);
+      expect(restored.runHistory.length, equals(1));
+      expect(restored.runHistory.first.passCount, equals(2));
+      expect(restored.runHistory.first.statusCode, equals(200));
+    });
+  });
+
+  // ── AssertionSuite serialisation ─────────────────────────────────────────
+
+  group('AssertionSuite & AssertionRule serialisation', () {
+    test('round-trips through toJson / fromJson', () {
+      final rule = AssertionRule(
+        id: 'r1',
+        type: AssertionType.jsonSchemaValid,
+        description: 'schema check',
+        expectedValue: '{"type":"object"}',
+      );
+      final suite = AssertionSuite(
+        id: 's1',
+        requestId: 'req1',
+        rules: [rule],
+      );
+      final json2 = suite.toJson();
+      final restored = AssertionSuite.fromJson(json2);
+      expect(restored.rules.first.type, equals(AssertionType.jsonSchemaValid));
+      expect(restored.rules.first.id, equals('r1'));
+    });
+  });
 }
+
