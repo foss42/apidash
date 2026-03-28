@@ -1,3 +1,0 @@
-video_path,prompt,expected,task_kind
-moving_circle.mp4,"What is moving in this video and in which direction?","A red circle moving from left to right",video_understanding
-color_square.mp4,"What shape is shown and how does it change?","A square that changes color",video_understanding
