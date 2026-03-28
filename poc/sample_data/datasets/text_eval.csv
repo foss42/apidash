@@ -1,0 +1,6 @@
+prompt,expected,task_kind
+"What is the capital of France?","Paris",text
+"What is 2 + 2?","4",text
+"Name the largest planet in our solar system.","Jupiter",text
+"What color do you get when you mix red and blue?","Purple",text
+"Who wrote Romeo and Juliet?","William Shakespeare",text
