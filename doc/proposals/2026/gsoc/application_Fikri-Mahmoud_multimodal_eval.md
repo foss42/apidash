@@ -1,5 +1,7 @@
 # GSoC 2026 Application: Ahmed Fikri Mahmoud - Multimodal AI and Agent API Evaluation Framework
 
+> **Working PoC**: See implementation PR [#1545](https://github.com/foss42/apidash/pull/1545) and code in this proposal.
+
 ---
 
 ## About
