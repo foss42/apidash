@@ -1,0 +1,6 @@
+image_path,prompt,expected,task_kind
+red_circle.png,"What shape and color is in this image?","A red circle on a white background",image_understanding
+blue_square.png,"Describe what you see in this image.","A blue square on a green background",image_understanding
+yellow_triangle.png,"What geometric shape is shown?","A yellow triangle on a gray background",image_understanding
+hello_text.png,"What text is written in this image?","Hello World",image_understanding
+three_shapes.png,"How many shapes are in this image and what are they?","Three shapes: a red circle, a blue rectangle, and a green triangle",image_understanding
