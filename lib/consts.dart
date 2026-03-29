@@ -195,6 +195,12 @@ const kGenUIRawBodyViewOptions = [
   ResponseBodyView.genui,
   ResponseBodyView.raw,
 ];
+// Open Responses streaming: show Structured tab + raw SSE tab + raw text
+const kStructuredSSEBodyViewOptions = [
+  ResponseBodyView.structured,
+  ResponseBodyView.sse,
+  ResponseBodyView.raw,
+];
 
 const Map<String, Map<String, List<ResponseBodyView>>>
 kResponseBodyViewOptions = {

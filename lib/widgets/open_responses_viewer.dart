@@ -33,6 +33,8 @@ class OpenResponsesViewer extends StatelessWidget {
         widgets.add(switch (item) {
           MessageOutputItem() => _MessageCard(item: item),
           ReasoningOutputItem() => _ReasoningCard(item: item),
+          WebSearchCallOutputItem() => _WebSearchCard(item: item),
+          FileSearchCallOutputItem() => _FileSearchCard(item: item),
           UnknownOutputItem() => _UnknownCard(item: item),
           _ => const SizedBox.shrink(),
         });
@@ -387,6 +389,100 @@ class _ToolCallGroupState extends State<_ToolCallGroup> {
                   ],
                 ),
               ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _WebSearchCard extends StatelessWidget {
+  const _WebSearchCard({required this.item});
+  final WebSearchCallOutputItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: kP8,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLowest,
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: kBorderRadius8,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.search_rounded,
+              size: 16, color: theme.colorScheme.secondary),
+          kHSpacer8,
+          Text(
+            'Web Search',
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.secondary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const Spacer(),
+          _StatusChip(status: item.status),
+        ],
+      ),
+    );
+  }
+}
+
+class _FileSearchCard extends StatelessWidget {
+  const _FileSearchCard({required this.item});
+  final FileSearchCallOutputItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: kP8,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerLowest,
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: kBorderRadius8,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.folder_open_rounded,
+                  size: 16, color: theme.colorScheme.secondary),
+              kHSpacer8,
+              Text(
+                'File Search',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.secondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Spacer(),
+              _StatusChip(status: item.status),
+            ],
+          ),
+          if (item.queries.isNotEmpty) ...[
+            kVSpacer5,
+            ...item.queries.map(
+              (q) => Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Row(
+                  children: [
+                    Icon(Icons.subdirectory_arrow_right_rounded,
+                        size: 12, color: theme.colorScheme.outline),
+                    kHSpacer4,
+                    Expanded(
+                      child: Text(
+                        q,
+                        style: kCodeStyle.copyWith(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ],
       ),

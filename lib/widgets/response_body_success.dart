@@ -43,6 +43,21 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   int segmentIdx = 0;
 
   Widget _buildStructuredView() {
+    // If SSE output is present, parse with the streaming parser.
+    final sseOutput = widget.sseOutput;
+    if (sseOutput != null && sseOutput.isNotEmpty) {
+      final items = OpenResponsesStreamParser.parse(sseOutput);
+      if (items.isNotEmpty) {
+        final result = OpenResponsesResult(
+          id: '',
+          model: '',
+          status: 'streaming',
+          output: items,
+        );
+        return OpenResponsesViewer(result: result);
+      }
+    }
+    // Fall back to parsing the body JSON directly.
     try {
       final json = jsonDecode(widget.body) as Map<String, dynamic>;
       final result = OpenResponsesResult.fromJson(json);
@@ -58,9 +73,22 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
       return const ErrorMessage(message: 'Unable to parse A2UI payload');
     }
     return SingleChildScrollView(
-      child: A2UIRenderer(
-        components: parsed.components,
-        dataModel: parsed.dataModel,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (parsed.surfaceTitle != null)
+            Padding(
+              padding: kP8,
+              child: Text(
+                parsed.surfaceTitle!,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+          A2UIRenderer(
+            components: parsed.components,
+            dataModel: parsed.dataModel,
+          ),
+        ],
       ),
     );
   }

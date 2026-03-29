@@ -4,7 +4,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import 'a2ui_renderer.dart';
+import 'package:apidash/widgets/open_responses_viewer.dart';
 import 'error_message.dart';
 import 'response_body_success.dart';
 
@@ -47,6 +47,7 @@ class ResponseBody extends StatelessWidget {
       body: body,
       mediaType: mediaType,
       apiType: selectedRequestModel?.apiType,
+      sseOutput: responseModel.sseOutput,
     );
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
@@ -80,7 +81,15 @@ class ResponseBody extends StatelessWidget {
     required String body,
     required MediaType mediaType,
     APIType? apiType,
+    List<String>? sseOutput,
   }) {
+    // Check SSE output for Open Responses streaming events first.
+    if (sseOutput != null &&
+        sseOutput.isNotEmpty &&
+        OpenResponsesStreamParser.isOpenResponsesStream(sseOutput)) {
+      return (kStructuredSSEBodyViewOptions, null);
+    }
+
     if (mediaType.type == kTypeApplication &&
         mediaType.subtype == kSubTypeJson) {
       try {
