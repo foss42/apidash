@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:http/http.dart' as http;
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
@@ -20,6 +22,36 @@ final chatViewmodelProvider = StateNotifierProvider<ChatViewmodel, ChatState>((
 ) {
   return ChatViewmodel(ref);
 });
+
+const _kConnectionFailedMessage =
+    'Connection failed. Please check your internet or URL formatting.';
+
+String? _getConnectionErrorMessage(Object error) {
+  if (error is SocketException || error is http.ClientException) {
+    return _kConnectionFailedMessage;
+  }
+
+  final errorText = error.toString();
+  if (errorText.contains('SocketException') ||
+      errorText.contains('ClientException')) {
+    return _kConnectionFailedMessage;
+  }
+
+  return null;
+}
+
+String _toReadableChatErrorDetail(Object error) {
+  return _getConnectionErrorMessage(error) ?? error.toString();
+}
+
+String _getReadableChatErrorMessage(Object error) {
+  final connectionError = _getConnectionErrorMessage(error);
+  if (connectionError != null) {
+    return connectionError;
+  }
+
+  return 'Something went wrong: $error';
+}
 
 class ChatViewmodel extends StateNotifier<ChatState> {
   ChatViewmodel(this._ref) : super(const ChatState());
@@ -244,7 +276,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
     } catch (e) {
       debugPrint('[Chat] sendChat error: $e');
-      _appendSystem('Error: $e', type);
+      _appendSystem(_getReadableChatErrorMessage(e), type);
     } finally {
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
     }
@@ -308,7 +340,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
     } catch (e) {
       debugPrint('[Chat] Error applying auto-fix: $e');
-      _appendSystem('Failed to apply auto-fix: $e', ChatMessageType.general);
+      final errorText = _toReadableChatErrorDetail(e);
+      _appendSystem(
+        'Failed to apply auto-fix: $errorText',
+        ChatMessageType.general,
+      );
     }
   }
 
@@ -559,7 +595,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     } catch (e) {
       debugPrint('[cURL] Exception: $e');
-      final safe = e.toString().replaceAll('"', "'");
+      final safe = _toReadableChatErrorDetail(e).replaceAll('"', "'");
       _appendSystem(
         'Parsing failed: $safe. Please adjust the command (ensure it starts with `curl ` and quotes/escapes are correct) and paste it again.',
         ChatMessageType.importCurl,
@@ -580,7 +616,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final content = utf8.decode(att.data);
       await handlePotentialOpenApiPaste(content);
     } catch (e) {
-      final safe = e.toString().replaceAll('"', "'");
+      final safe = _toReadableChatErrorDetail(e).replaceAll('"', "'");
       _appendSystem(
         '{"explanation":"Failed to read attachment: $safe","actions":[]}',
         ChatMessageType.importOpenApi,
@@ -706,7 +742,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         ),
       );
     } catch (e) {
-      final safe = e.toString().replaceAll('"', "'");
+      final safe = _toReadableChatErrorDetail(e).replaceAll('"', "'");
       _appendSystem(
         '{"explanation":"Failed to fetch or parse OpenAPI from URL: $safe","actions":[]}',
         ChatMessageType.importOpenApi,
@@ -787,7 +823,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       // Do not generate a separate insights prompt; summary is inline now.
     } catch (e) {
       debugPrint('[OpenAPI] Exception: $e');
-      final safe = e.toString().replaceAll('"', "'");
+      final safe = _toReadableChatErrorDetail(e).replaceAll('"', "'");
       _appendSystem(
         '{"explanation":"Parsing failed: $safe","actions":[]}',
         ChatMessageType.importOpenApi,
@@ -847,8 +883,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         );
       }
     } catch (e) {
+      final errorText = _toReadableChatErrorDetail(e);
       _appendSystem(
-        'Error encountered while importing cURL - $e',
+        'Error encountered while importing cURL - $errorText',
         ChatMessageType.importCurl,
       );
     }

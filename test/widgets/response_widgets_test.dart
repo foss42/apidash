@@ -199,7 +199,7 @@ void main() {
 
     expect(
         find.text(
-            'Error: Response data does not exist. $kUnexpectedRaiseIssue'),
+        'Response data does not exist. $kUnexpectedRaiseIssue'),
         findsOneWidget);
   });
 

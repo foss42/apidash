@@ -18,6 +18,23 @@ typedef HttpStreamOutput = (
   String? err,
 )?;
 
+const kMsgConnectionFailed =
+    'Connection failed. Please check your internet or URL formatting.';
+
+String mapNetworkErrorMessage(dynamic error) {
+  if (error is SocketException || error is http.ClientException) {
+    return kMsgConnectionFailed;
+  }
+
+  final errorText = error.toString();
+  if (errorText.contains('SocketException') ||
+      errorText.contains('ClientException')) {
+    return kMsgConnectionFailed;
+  }
+
+  return errorText;
+}
+
 final httpClientManager = HttpClientManager();
 
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
@@ -146,7 +163,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
       if (httpClientManager.wasRequestCancelled(requestId)) {
         return (null, null, kMsgRequestCancelled);
       }
-      return (null, null, e.toString());
+      return (null, null, mapNetworkErrorMessage(e));
     } finally {
       httpClientManager.closeClient(requestId);
     }
@@ -243,7 +260,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     if (httpClientManager.wasRequestCancelled(requestId)) {
       await _addCancelledMessage();
     } else {
-      controller.add((null, null, null, error.toString()));
+      controller.add((null, null, null, mapNetworkErrorMessage(error)));
       await _cleanup();
     }
   }

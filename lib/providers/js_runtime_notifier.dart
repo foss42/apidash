@@ -77,7 +77,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       );
       return res;
     } on PlatformException catch (e) {
-      final msg = 'Platform ERROR: ${e.details}';
+      final msg = 'Platform issue: ${e.details}';
       state = state.copyWith(lastError: msg);
       rethrow;
     }
@@ -439,7 +439,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     } catch (e) {
       term.logSystem(
         category: 'provider',
-        message: '[JS ${level.toUpperCase()} HANDLER ERROR]: $args, Error: $e',
+        message: '[JS ${level.toUpperCase()} handler issue]: $args, details: $e',
       );
     }
   }
@@ -469,7 +469,7 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
     } catch (e) {
       term.logSystem(
         category: 'provider',
-        message: '[JS FATAL ERROR decoding error]: $args, Error: $e',
+        message: '[JS fatal issue while decoding]: $args, details: $e',
       );
     }
   }

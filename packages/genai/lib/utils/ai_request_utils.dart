@@ -1,9 +1,28 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:better_networking/better_networking.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:nanoid/nanoid.dart';
 import '../models/models.dart';
+
+const _kConnectionFailedMessage =
+    'Connection failed. Please check your internet or URL formatting.';
+
+String _toReadableNetworkError(dynamic error) {
+  if (error is SocketException || error is http.ClientException) {
+    return _kConnectionFailedMessage;
+  }
+
+  final errorText = error.toString();
+  if (errorText.contains('SocketException') ||
+      errorText.contains('ClientException')) {
+    return _kConnectionFailedMessage;
+  }
+
+  return errorText;
+}
 
 Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
   final httpRequestModel = aiRequestModel?.httpRequestModel;
@@ -76,7 +95,12 @@ Future<Stream<String?>> streamGenAIRequest(
         }
       },
       onError: (error) {
-        streamController.addError('STREAM ERROR: $error');
+        final readableError = _toReadableNetworkError(error);
+        if (readableError == _kConnectionFailedMessage) {
+          streamController.addError(readableError);
+        } else {
+          streamController.addError('STREAM ERROR: $readableError');
+        }
         streamController.close();
       },
       onDone: () {
