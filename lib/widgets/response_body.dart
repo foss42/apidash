@@ -4,7 +4,6 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/widgets/open_responses_viewer.dart';
 import 'error_message.dart';
 import 'response_body_success.dart';
 
