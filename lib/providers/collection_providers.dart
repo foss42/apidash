@@ -1,33 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:http/http.dart' as http;
 import 'package:apidash/consts.dart';
 import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
-
-const _kConnectionFailedMessage =
-    'Connection failed. Please check your internet or URL formatting.';
-
-String _toReadableStreamError(dynamic error) {
-  if (error is SocketException || error is http.ClientException) {
-    return _kConnectionFailedMessage;
-  }
-
-  final errorText = error.toString();
-  if (errorText.contains('SocketException') ||
-      errorText.contains('ClientException')) {
-    return _kConnectionFailedMessage;
-  }
-
-  return errorText;
-}
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -496,12 +477,10 @@ class CollectionStateNotifier
         unsave();
       },
       onError: (e) {
-        final errorText = _toReadableStreamError(e);
-        final streamError = 'Streaming failed: $errorText';
         if (!completer.isCompleted) {
-          completer.complete((null, null, streamError));
+          completer.complete((null, null, 'StreamError: $e'));
         }
-        terminal.failNetwork(logId, streamError);
+        terminal.failNetwork(logId, 'StreamError: $e');
       },
     );
 

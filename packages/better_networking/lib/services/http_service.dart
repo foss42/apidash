@@ -22,14 +22,14 @@ const kMsgConnectionFailed =
     'Connection failed. Please check your internet or URL formatting.';
 
 String mapNetworkErrorMessage(dynamic error) {
+  final errorText = error.toString();
   if (error is SocketException || error is http.ClientException) {
-    return kMsgConnectionFailed;
+    return '$kMsgConnectionFailed Technical details: $errorText';
   }
 
-  final errorText = error.toString();
   if (errorText.contains('SocketException') ||
       errorText.contains('ClientException')) {
-    return kMsgConnectionFailed;
+    return '$kMsgConnectionFailed Technical details: $errorText';
   }
 
   return errorText;

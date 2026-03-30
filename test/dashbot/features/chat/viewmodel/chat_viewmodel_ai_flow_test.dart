@@ -196,7 +196,7 @@ void main() {
       await vm.sendMessage(text: 'Doc', type: ChatMessageType.generateDoc);
       final msgs = vm.currentMessages;
       expect(msgs, isNotEmpty);
-      expect(msgs.last.content, contains('Something went wrong:'));
+      expect(msgs.last.content, contains('Error:'));
     });
   });
 }

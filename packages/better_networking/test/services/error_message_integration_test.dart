@@ -16,7 +16,9 @@ void main() {
         unreachableModel,
       );
 
-      expect(err, kMsgConnectionFailed);
+      expect(err, isNotNull);
+      expect(err!, startsWith(kMsgConnectionFailed));
+      expect(err, contains('SocketException'));
     });
 
     test('streamHttpRequest maps connection failures to friendly message', () async {
@@ -27,7 +29,9 @@ void main() {
       );
       final output = await stream.first;
 
-      expect(output?.$4, kMsgConnectionFailed);
+      expect(output?.$4, isNotNull);
+      expect(output?.$4, startsWith(kMsgConnectionFailed));
+      expect(output?.$4, contains('SocketException'));
     });
   });
 }

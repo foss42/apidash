@@ -8,17 +8,20 @@ void main() {
   group('mapNetworkErrorMessage', () {
     test('maps SocketException to connection-failed message', () {
       final msg = mapNetworkErrorMessage(const SocketException('dns failed'));
-      expect(msg, kMsgConnectionFailed);
+      expect(msg, startsWith(kMsgConnectionFailed));
+      expect(msg, contains('SocketException'));
     });
 
     test('maps http.ClientException to connection-failed message', () {
       final msg = mapNetworkErrorMessage(http.ClientException('client issue'));
-      expect(msg, kMsgConnectionFailed);
+      expect(msg, startsWith(kMsgConnectionFailed));
+      expect(msg, contains('ClientException'));
     });
 
     test('maps stringified SocketException text to connection-failed message', () {
       final msg = mapNetworkErrorMessage('SocketException: Failed host lookup');
-      expect(msg, kMsgConnectionFailed);
+      expect(msg, startsWith(kMsgConnectionFailed));
+      expect(msg, contains('Failed host lookup'));
     });
 
     test('passes through non-network errors', () {
