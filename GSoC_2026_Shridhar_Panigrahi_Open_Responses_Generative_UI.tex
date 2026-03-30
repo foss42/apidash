@@ -25,24 +25,26 @@
 \hbadness=10000  % suppress underfull warnings
 
 % ── Colors ───────────────────────────────────────────────────────────────────
-\definecolor{headerblue}{RGB}{21,101,192}
-\definecolor{subheadteal}{RGB}{2,119,189}
-\definecolor{delivercolor}{RGB}{2,136,209}
-\definecolor{tblheader}{RGB}{21,101,192}
-\definecolor{tblrowalt}{RGB}{227,242,253}
+\definecolor{headerblue}{RGB}{0,0,0}
+\definecolor{subheadteal}{RGB}{0,0,0}
+\definecolor{delivercolor}{RGB}{0,0,0}
+\definecolor{tblheader}{RGB}{60,60,60}
+\definecolor{tblrowalt}{RGB}{240,240,240}
 \definecolor{tblrowwhite}{RGB}{255,255,255}
 \definecolor{linkblue}{RGB}{21,101,192}
 % Stretch goals / callout colors
 \definecolor{stretchbg}{RGB}{255,248,225}
 \definecolor{stretchborder}{RGB}{230,162,30}
-% Code block colors (GitHub light theme)
-\definecolor{codebg}{RGB}{246,248,250}
-\definecolor{codeborder}{RGB}{208,215,222}
-\definecolor{codefg}{RGB}{36,41,47}
-\definecolor{codekw}{RGB}{0,82,185}
-\definecolor{codestr}{RGB}{10,75,105}
-\definecolor{codecomment}{RGB}{110,119,129}
-\definecolor{codetype}{RGB}{111,66,193}
+% Diagram box color (light)
+\definecolor{diagramboxbg}{RGB}{246,248,250}
+% Code block colors (light/plain theme)
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeborder}{RGB}{200,200,200}
+\definecolor{codefg}{RGB}{30,30,30}
+\definecolor{codekw}{RGB}{30,30,30}
+\definecolor{codestr}{RGB}{80,80,80}
+\definecolor{codecomment}{RGB}{120,120,120}
+\definecolor{codetype}{RGB}{30,30,30}
 
 \hypersetup{
     colorlinks=true,
@@ -53,24 +55,24 @@
     pdfauthor={Shridhar Panigrahi},
 }
 
-% ── Code style (GitHub light) ─────────────────────────────────────────────────
+% ── Code style (plain) ────────────────────────────────────────────────────────
 \lstdefinestyle{darkcode}{
     basicstyle=\ttfamily\small\color{codefg},
     backgroundcolor=\color{codebg},
-    keywordstyle=\color{codekw}\bfseries,
+    keywordstyle=\bfseries,
     stringstyle=\color{codestr},
     commentstyle=\color{codecomment}\itshape,
     showstringspaces=false,
     breaklines=true,
     frame=single,
-    framesep=8pt,
+    framesep=10pt,
     rulecolor=\color{codeborder},
-    xleftmargin=8pt,
-    xrightmargin=8pt,
-    aboveskip=8pt,
-    belowskip=8pt,
+    xleftmargin=10pt,
+    xrightmargin=10pt,
+    aboveskip=10pt,
+    belowskip=10pt,
     numbers=none,
-    morekeywords={sealed,class,factory,return,switch,const,String,Map,dynamic,bool,void,final,List,int},
+    morekeywords={sealed,class,factory,return,switch,const,String,Map,dynamic,bool,void,final,List,int,case},
 }
 
 \lstdefinestyle{jsoncode}{
@@ -79,25 +81,25 @@
     showstringspaces=false,
     breaklines=true,
     frame=single,
-    framesep=8pt,
+    framesep=10pt,
     rulecolor=\color{codeborder},
-    xleftmargin=8pt,
-    xrightmargin=8pt,
-    aboveskip=8pt,
-    belowskip=8pt,
+    xleftmargin=10pt,
+    xrightmargin=10pt,
+    aboveskip=10pt,
+    belowskip=10pt,
     numbers=none,
 }
 
 % ── Section formatting ────────────────────────────────────────────────────────
 \titleformat{\section}
-  {\large\bfseries}{}{0pt}{}
-  [\vspace{2pt}\textcolor{headerblue}{\rule{\textwidth}{1.5pt}}]
+  {\Large\bfseries}{}{0pt}{}
+  [\vspace{2pt}{\rule{\textwidth}{0.8pt}}]
 
 \titleformat{\subsection}
-  {\normalsize\bfseries\color{subheadteal}}{}{0pt}{}
+  {\large\bfseries}{}{0pt}{}
 
 \titleformat{\subsubsection}
-  {\normalsize\bfseries\color{subheadteal}}{}{0pt}{}
+  {\normalsize\bfseries}{}{0pt}{}
 
 \titlespacing{\section}{0pt}{12pt}{6pt}
 \titlespacing{\subsection}{0pt}{8pt}{4pt}
@@ -120,16 +122,9 @@
 
 % ── Helpers ───────────────────────────────────────────────────────────────────
 \newcommand{\deliverable}[1]{%
-  \vspace{6pt}%
-  \noindent{\setlength{\fboxsep}{8pt}%
-  \colorbox{tblrowalt}{%
-    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-      \vspace{2pt}%
-      {\small\textcolor{headerblue}{\bfseries Deliverable:} \textcolor{subheadteal}{\itshape #1}}%
-      \vspace{2pt}%
-    }%
-  }}%
-  \vspace{6pt}%
+  \vspace{4pt}%
+  \noindent{\small\textbf{Deliverable:} #1}%
+  \vspace{4pt}%
 }
 
 \begin{document}
@@ -139,18 +134,18 @@
 % ══════════════════════════════════════════════════════════════════════════════
 \thispagestyle{plain}
 \begin{center}
-  \includegraphics[width=0.18\textwidth]{macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png}\\[14pt]
+  \includegraphics[height=1.6cm]{macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png}\hspace{0.8cm}\raisebox{0.42cm}{\includegraphics[width=0.42\textwidth]{doc/proposals/2026/gsoc/images/gsoc_logo_converted.png}}\\[14pt]
   {\LARGE\bfseries GSoC 2026 Application}\\[8pt]
   {\large Open Responses Protocol Support \&\\[4pt]
          Generative UI Rendering Engine\\[4pt]
          for API Dash}\\[20pt]
-  \textcolor{headerblue}{\rule{0.6\textwidth}{1pt}}\\[20pt]
+  {\rule{0.6\textwidth}{0.5pt}}\\[20pt]
   {\large\bfseries Shridhar Panigrahi}\\[8pt]
   \href{mailto:sridharpanigrahi2006@gmail.com}{sridharpanigrahi2006@gmail.com}\\[3pt]
   \href{https://github.com/sridhar-panigrahi}{github.com/sridhar-panigrahi}\\[3pt]
   \href{https://www.linkedin.com/in/shridhar-panigrahi-8bb176362}{linkedin.com/in/shridhar-panigrahi-8bb176362}\\[16pt]
   Polaris School of Technology, Bangalore\\[3pt]
-  B.Tech Computer Science (AI \& ML) \textbar{} 1st Year \textbar{} Expected 2029\\[3pt]
+  B.Tech Computer Science (AI \& ML) \textbar{} Expected 2029\\[3pt]
   IST (UTC+5:30)
 \end{center}
 
@@ -168,7 +163,7 @@
   \textbf{LinkedIn:}    & \href{https://www.linkedin.com/in/shridhar-panigrahi-8bb176362}{shridhar-panigrahi-8bb176362} \\[3pt]
   \textbf{Time zone:}   & IST (UTC+5:30) \\[3pt]
   \textbf{University:}  & Polaris School of Technology, Bangalore \\[3pt]
-  \textbf{Program:}     & B.Tech CSE (AI \& ML), 1st Year \\[3pt]
+  \textbf{Program:}     & B.Tech CSE (AI \& ML) \\[3pt]
   \textbf{Graduation:}  & Expected 2029 \\
 \end{tabular}
 
@@ -179,108 +174,63 @@
 
 \subsection{1. Have you worked on or contributed to a FOSS project before?}
 
-Yes. I have \textcolor{headerblue}{\bfseries 11 merged PRs} across \textcolor{headerblue}{\bfseries 5 open-source projects}. API Dash is the project I've been focused on for GSoC, but I've also contributed to large codebases in Python, Java, Go, and Rust:
+Yes. 11 merged PRs across 5 projects (Python, Java, Go, Rust, Dart). Full details in the \hyperref[sec:contributions]{Contributions} section below.
 
 \begin{itemize}
-  \item \textbf{astropy} -- 3 merged PRs
-    (\href{https://github.com/astropy/astropy/pull/19403}{\#19403},
-     \href{https://github.com/astropy/astropy/pull/19404}{\#19404},
-     \href{https://github.com/astropy/astropy/pull/19450}{\#19450}):
-    Fixed an f-string bug, silent data corruption in \texttt{FITS\_rec}, and table index corruption on failed row assignment. \textcolor{headerblue}{\bfseries 500k+} line Python codebase.
-
-  \item \textbf{Hyperledger Besu} -- 4 merged PRs
-    (\href{https://github.com/hyperledger/besu/pull/10020}{\#10020},
-     \href{https://github.com/hyperledger/besu/pull/10042}{\#10042},
-     \href{https://github.com/hyperledger/besu/pull/10051}{\#10051},
-     \href{https://github.com/hyperledger/besu/pull/10060}{\#10060}):
-    Fixed a missing return in transaction pool, wrong hash in \texttt{eth\_estimateGas}, a TOCTOU race, and unsigned underflow. Java/Ethereum client.
-
-  \item \textbf{Hyperledger Fabric} -- 3 merged PRs
-    (\href{https://github.com/hyperledger/fabric/pull/5422}{\#5422},
-     \href{https://github.com/hyperledger/fabric/pull/5424}{\#5424},
-     \href{https://github.com/hyperledger/fabric/pull/5430}{\#5430}):
-    Fixed gossip protocol error handling and iterator/resource leaks. Go codebase.
-
-  \item \textbf{LFDT-Lockness/generic-ec} -- 1 merged PR
-    (\href{https://github.com/LFDT-Lockness/generic-ec/pull/59}{\#59}):
-    Added secp384r1 (NIST P-384) curve support -- first non-32-byte scalar curve. Rust, 180 tests passing.
+  \item \textbf{astropy} (Python) -- 3 merged PRs: f-string bug, silent data corruption in \texttt{FITS\_rec}, table index corruption.
+  \item \textbf{Hyperledger Besu} (Java) -- 4 merged PRs: missing return, wrong hash, TOCTOU race, unsigned underflow.
+  \item \textbf{Hyperledger Fabric} (Go) -- 3 merged PRs: gossip protocol error handling, iterator/resource leaks.
+  \item \textbf{LFDT-Lockness/generic-ec} (Rust) -- 1 merged PR: secp384r1 (NIST P-384) curve support.
 \end{itemize}
 
-\textbf{API Dash contributions:}
+\textbf{API Dash (4 PRs):}
 
 \begin{itemize}
-  \item \href{https://github.com/foss42/apidash/pull/1279}{PR \#1279} -- Added input validation for empty API key and endpoint URL fields in the AI Model Selector dialog (fixes \#1183). This was my first contribution and helped me understand the Riverpod state management layer.
-
-  \item \href{https://github.com/foss42/apidash/pull/1290}{PR \#1290} -- Added support for custom OpenAI-compatible LLM providers (implements \#1175). This allows users to connect API Dash to services like Groq, OpenRouter, Mistral. Building this gave me a thorough understanding of the genai package internals.
-
-  \item \href{https://github.com/foss42/apidash/pull/1321}{Idea Doc PR \#1321} -- Submitted a detailed initial idea document for
-    \href{https://github.com/foss42/apidash/discussions/1227}{Idea 5: Open Responses \& Generative UI},
-    including architecture overview, code examples, PoC screenshots, and video demos.
-
-  \item \href{https://github.com/foss42/apidash/pull/1358}{PoC PR \#1358} -- Built a working proof-of-concept for Open Responses parsing and A2UI rendering (7 new files, 11 modified files, $\sim$1,100 lines of code) with video demonstrations:
-    \href{https://youtu.be/paN-KGIhNms}{Open Responses Viewer demo} and
-    \href{https://youtu.be/T2KbHth736U}{A2UI Renderer demo}.
+  \item \href{https://github.com/foss42/apidash/pull/1279}{PR \#1279} -- Input validation. Learned how Riverpod state flows through the app.
+  \item \href{https://github.com/foss42/apidash/pull/1290}{PR \#1290} -- Custom LLM providers. Gave me a working understanding of the genai package.
+  \item \href{https://github.com/foss42/apidash/pull/1321}{PR \#1321} -- Idea doc for \href{https://github.com/foss42/apidash/discussions/1227}{Idea 5: Open Responses \& Generative UI}.
+  \item \href{https://github.com/foss42/apidash/pull/1358}{PR \#1358} -- Working PoC: 1,100 lines, 7 new files. Demos: \href{https://youtu.be/paN-KGIhNms}{Open Responses Viewer} $\cdot$ \href{https://youtu.be/T2KbHth736U}{A2UI Renderer}.
 \end{itemize}
 
 \subsection{2. What is your one project/achievement that you are most proud of? Why?}
 
-Honestly, the PoC I built for this project. I spent a couple of weeks just reading through the API Dash codebase before I wrote a single line -- understanding how \texttt{ResponseBodyView} controls rendering, how \texttt{ModelProvider} abstracts different AI APIs, how Previewer decides what widget to show. Then I built the whole thing end-to-end: sealed classes for the data models, auto-detection logic, structured viewer widgets, A2UI component renderer, all wired into the existing response pipeline.
+The PoC for this project (\href{https://github.com/foss42/apidash/pull/1358}{PR \#1358}). I spent about two weeks reading the codebase first -- how \texttt{ResponseBodyView} works, how \texttt{ModelProvider} abstracts APIs, how Previewer routes to widgets. Then I wrote the sealed classes, auto-detection, structured viewer, and A2UI renderer.
 
-The part that took the longest wasn't writing the widgets -- it was figuring out where each piece should live. Should the Open Responses models go in \texttt{packages/genai} or in the main app? (Answer: genai, because other packages might need them.) Should A2UI detection happen in \texttt{ResponseBody} or \texttt{ResponseBodySuccess}? (Answer: \texttt{ResponseBody.\_resolveViewOptions()}, because that's where all format detection already lives.) Getting these decisions right required actually understanding the architecture, not just grepping for keywords.
+Figuring out where to put things was harder than writing the code. I put the Open Responses models in \texttt{packages/genai} since other packages might need them. I put A2UI detection in \texttt{ResponseBody.\_resolveViewOptions()} since that's where format detection already happens. I got that wrong the first time -- I put it in \texttt{ResponseBodySuccess}, which worked but was the wrong layer.
 
 \subsection{3. What kind of problems or challenges motivate you the most?}
 
-I'm drawn to problems where there's a clear gap between what tools currently do and what they should do. The gap I spotted here -- every API testing tool showing AI responses as raw JSON walls -- is exactly the kind of thing that motivates me. Millions of developers test AI APIs daily, and nobody has built a clean way to visualize structured AI outputs in a general-purpose API client.
+I like fixing things that are clearly broken or missing. For the astropy \texttt{FITS\_rec} bug, I noticed negative indices weren't handled in slicing, I wrote a test, I fixed it. For the Besu TOCTOU race, I figured out two requests could hit the same block lookup at the same time. I find these by reading the code and thinking about what could go wrong.
 
-I enjoy working on things where understanding the spec matters. Reading through the \href{https://www.openresponses.org/}{Open Responses specification}, the \href{https://github.com/google/A2UI}{A2UI component model}, and mapping them to Flutter's widget system was genuinely interesting. These are emerging standards, and building tooling around them early means shaping how developers will interact with them.
+Same with this project. AI API responses have structure (reasoning, tool calls, results, messages) but every tool just shows raw JSON. I checked Postman, Insomnia, Thunder Client -- all the same. The Open Responses protocol and A2UI spec define clear rules for this structure, and they map well onto Flutter widgets. So I built a PoC to test it.
 
 \subsection{4. Will you be working on GSoC full-time?}
 
-I will be working on GSoC full-time during the summer. My university's summer break aligns with the GSoC coding period, so I have no classes or exams during that time. I can comfortably commit 15--20 hours per week throughout the project, and more during weeks with no other commitments.
+Yes. Polaris has a long summer break that lines up with the GSoC coding period -- no exams or classes during that time. I can commit approximately 3 hours a day (~21 hours/week) during the coding period -- mornings for focused coding, afternoons for reading and testing, evenings free for async discussions with mentors across time zones. My college schedule has no exams or classes during the GSoC coding period.
 
 \subsection{5. Do you mind regularly syncing up with the project mentors?}
 
-Not at all -- I actively welcome it. I've already been engaging in the
-\href{https://lu.ma/calendar/cal-ZTW02O2EsWRs6V4}{GSoC weekly calls}
-and the \href{https://github.com/foss42/apidash/discussions/1227}{Discussion threads for Idea 5}.
-Regular sync-ups help me stay aligned with what the mentors expect and catch design mismatches early rather than after a week of coding in the wrong direction. I'm available on email and video calls.
+No. I already join the \href{https://lu.ma/calendar/cal-ZTW02O2EsWRs6V4}{weekly GSoC calls} and participate in the \href{https://github.com/foss42/apidash/discussions/1227}{Idea 5 discussion thread}. I prefer getting feedback early rather than finding out something is wrong after days of work. Available on Discord, email, or video.
 
 \subsection{6. What interests you the most about API Dash?}
 
-Two things stand out. First, API Dash already handles an impressive range of response types -- JSON, images, audio, video, PDF, CSV, SSE -- and it does so through a clean, extensible rendering pipeline. That makes it realistic to add AI-specific rendering without building everything from scratch.
-
-Second, the existing GenAI infrastructure is thoughtfully designed. The \texttt{ModelProvider} pattern, the way \texttt{outputFormatter} abstracts provider-specific parsing, and the Stac-based SDUI pipeline for AI-generated UIs show that the project already has a vision for AI-native features. What I want to build is a natural extension of that vision.
+The architecture. It handles 60+ response types through one pipeline, and the parts I needed were already there -- \texttt{ModelProvider}, \texttt{outputFormatter}, Previewer routing. The PoC worked without needing new plumbing, which means the codebase can handle a feature this size.
 
 \subsection{7. Can you mention some areas where the project can be improved?}
 
 \begin{itemize}
-  \item \textbf{AI response visualization:} Right now, AI API responses are displayed as raw JSON. Adding structured visualization for AI-specific response formats would be a natural and high-impact improvement.
+  \item \textbf{AI response visualization:} Every other response type gets a proper viewer, but AI responses are still raw JSON. Structured card views for Open Responses format would close that gap.
 
-  \item \textbf{Streaming response experience:} Modern AI responses include typed events (tool calls, text deltas, reasoning updates). A stream-aware viewer would make debugging agentic workflows much easier.
+  \item \textbf{Streaming experience:} Right now a streaming AI request shows raw SSE events in the body pane. A stream-aware viewer that builds cards progressively would make debugging much easier.
 
-  \item \textbf{Multi-turn conversation debugging:} When building agents that chain multiple API calls together via \texttt{previous\_response\_id}, there's no way to see the full conversation flow. A timeline view would be very helpful.
+  \item \textbf{Multi-turn conversation view:} When you're chaining requests with \texttt{previous\_response\_id}, you want to see the full conversation, not just one request at a time. A timeline view for linked requests.
 
-  \item \textbf{Agent UI preview:} With specs like \href{https://github.com/google/A2UI}{A2UI} and \href{https://github.com/flutter/genui}{Flutter's GenUI SDK}, agents can describe interactive UIs. Being able to preview them directly in the API client would be a unique differentiator.
+  \item \textbf{Agent UI preview:} Specs like \href{https://github.com/google/A2UI}{A2UI} let agents return UI component descriptors. No tool renders these yet. You'd see the actual rendered UI inside the API client instead of the raw JSON.
 \end{itemize}
 
 \subsection{8. Have you interacted and helped the API Dash community?}
 
-\begin{itemize}
-  \item \textbf{GitHub Discussions:} Participated in the
-    \href{https://github.com/foss42/apidash/discussions/1227}{Idea 5 discussion (\#1227)},
-    shared my approach, and engaged with other contributors and mentors.
-
-  \item \textbf{PRs and Reviews:} Submitted
-    \href{https://github.com/foss42/apidash/pull/1279}{PR \#1279},
-    \href{https://github.com/foss42/apidash/pull/1290}{PR \#1290},
-    \href{https://github.com/foss42/apidash/pull/1321}{Idea Doc PR \#1321},
-    and the \href{https://github.com/foss42/apidash/pull/1358}{PoC implementation (PR \#1358)}.
-
-  \item \textbf{Weekly Calls:} Attending the GSoC weekly sync-up calls on
-    \href{https://lu.ma/calendar/cal-ZTW02O2EsWRs6V4}{Luma}.
-
-  \item \textbf{Discord:} Active in the \texttt{\#gsoc-foss-apidash} channel, discussing design decisions and helping answer questions.
-\end{itemize}
+Yes. I've been in the \href{https://github.com/foss42/apidash/discussions/1227}{Idea 5 discussion thread} since early on, sharing architecture decisions and getting feedback before writing the PoC. I attend the \href{https://lu.ma/calendar/cal-ZTW02O2EsWRs6V4}{weekly GSoC calls} and I'm active in the \texttt{\#gsoc-foss-apidash} Discord channel. 4 PRs submitted -- each one taught me a different part of the codebase (details in Q1 above).
 
 \newpage
 
@@ -295,89 +245,46 @@ Open Responses Protocol Support \& Generative UI Rendering Engine for API Dash
 
 \subsection{2. Abstract}
 
-Every API testing tool shows AI responses as raw JSON walls. I built a fix.
+I've been testing AI APIs with Postman, Insomnia, and Thunder Client. All three show agentic responses (reasoning + tool calls + results + message) as raw JSON. I have to match \texttt{call\_id} values manually, scroll past reasoning blocks, and figure out the execution flow from a flat array.
 
-{\setlength{\fboxsep}{9pt}\setlength{\fboxrule}{1pt}%
-\noindent\fcolorbox{headerblue}{tblrowalt}{%
-  \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{%
-    \centering{\small\bfseries See it working now:\enspace}%
-    {\small\href{https://youtu.be/paN-KGIhNms}{\color{headerblue}\bfseries Open Responses Viewer demo}}%
-    {\small\enspace$\cdot$\enspace}%
-    {\small\href{https://youtu.be/T2KbHth736U}{\color{headerblue}\bfseries A2UI Renderer demo}}%
-  }%
-}}%
-\vspace{4pt}
+I built a working proof-of-concept in API Dash that solves this. It's open as \href{https://github.com/foss42/apidash/pull/1358}{\textbf{PR \#1358}} ($\sim$1,400+ lines, 9 new files, 11 modified, \textbf{39 passing tests}). Video demos: \href{https://youtu.be/paN-KGIhNms}{\textbf{Open Responses Viewer}} $\cdot$ \href{https://youtu.be/T2KbHth736U}{\textbf{A2UI Renderer}}. Idea doc: \href{https://github.com/foss42/apidash/pull/1321}{\textbf{PR \#1321}}.
 
-Postman, Insomnia, Thunder Client -- every tool I've tried renders an agentic response (reasoning + tool calls + results + message) as one flat JSON blob. You scroll, you squint, you manually join \texttt{call\_id} values in your head. \textcolor{headerblue}{\bfseries Millions of developers} hit this every day. Nobody has fixed it in a general-purpose API client yet.
-
-I want to fix it in API Dash -- making it the \textbf{\textcolor{headerblue}{first cross-platform API client}} with native support for the \href{https://www.openresponses.org/}{Open Responses protocol} and \href{https://github.com/google/A2UI}{A2UI component rendering}. When API Dash detects an Open Responses response, it will:
+It adds support for the \href{https://www.openresponses.org/}{Open Responses protocol} and \href{https://github.com/google/A2UI}{A2UI component rendering}:
 
 \begin{itemize}
-  \item \textbf{Auto-switch to a structured view} -- reasoning traces become collapsible cards, tool calls get matched to their results via \texttt{call\_id}, messages render with markdown and inline images.
-  \item \textbf{Stream progressively} -- each output item appears as a card the moment the SSE event fires, text fills in as deltas arrive.
-  \item \textbf{Chain conversations} -- multi-turn agentic loops linked via \texttt{previous\_response\_id} show up as a connected timeline instead of isolated requests.
-  \item \textbf{Render A2UI components} -- when an agent returns UI descriptors (forms, tables, dashboards), API Dash builds real interactive Flutter widgets from them.
+  \item Auto-detects Open Responses format and switches to a structured card view. Reasoning traces become collapsible cards, tool calls get matched to their results by \texttt{call\_id}, web and file search calls get their own cards, messages render as markdown.
+  \item Parses SSE streaming responses via \texttt{OpenResponsesStreamParser} -- the same structured cards appear for both streaming and non-streaming responses.
+  \item Renders A2UI component descriptors as real interactive Flutter widgets instead of raw JSON. Detects \texttt{surfaceTitle} and shows it as a header.
+  \item \textbf{39 unit tests} (22 for Open Responses model/parser, 17 for A2UIParser) in \texttt{packages/genai}, runnable without Flutter.
 \end{itemize}
 
-I already built a working \href{https://github.com/foss42/apidash/pull/1358}{proof-of-concept} (\textcolor{headerblue}{\bfseries $\sim$1{,}100 lines}, \textcolor{headerblue}{\bfseries 7} new files, \textcolor{headerblue}{\bfseries 11} modified) before writing this proposal -- because I wanted to know if the approach actually works, not just claim it would. The GSoC project extends this PoC to production quality: streaming, conversation chaining, DashBot integration, and a full test suite.
+GSoC adds: live progressive streaming (cards fill in character by character), conversation chaining via \texttt{previous\_response\_id}, DashBot integration, and production-grade test coverage.
 
 \subsection{3. Detailed Description}
 
 \subsubsection{The Problem (and Why It Matters)}
 
-I'll be concrete about the problem. When you test an AI API that uses tool calling -- say, asking a model to look up the weather -- the response you get back looks something like this:
+When you test an AI API that uses tool calling -- say, asking a model to look up the weather -- the response looks something like this:
 
-\begin{lstlisting}[style=jsoncode]
-{
-  "id": "resp_abc123",
-  "object": "response",
-  "status": "completed",
-  "output": [
-    {
-      "type": "reasoning",
-      "id": "rs_001",
-      "summary": [{"type": "summary_text",
-        "text": "Deciding to call weather tool..."}]
-    },
-    {
-      "type": "function_call",
-      "id": "fc_001",
-      "name": "get_weather",
-      "call_id": "call_xyz",
-      "arguments": "{\"city\": \"Tokyo\"}"
-    },
-    {
-      "type": "function_call_output",
-      "call_id": "call_xyz",
-      "output": "{\"temp\": 22}"
-    },
-    {
-      "type": "message",
-      "id": "msg_001",
-      "content": [{"type": "output_text",
-        "text": "It's 22C in Tokyo."}]
-    }
-  ],
-  "usage": {"input_tokens": 150,
-    "output_tokens": 45, "total_tokens": 195}
-}
-\end{lstlisting}
+\begin{center}
+\includegraphics[width=0.48\textwidth]{doc/proposals/2026/gsoc/images/code_json_example.png}
+\end{center}
 
-In every API testing tool today, that renders as a raw JSON tree. Here is what that experience looks like compared to what this project delivers:
+Every API testing tool I've tried renders this as a raw JSON tree. Current state vs what I'm building:
 
 \vspace{10pt}
 {\setlength{\fboxsep}{12pt}%
 \setlength{\fboxrule}{1pt}%
 \noindent
 \begin{minipage}[t]{0.475\textwidth}
-  \fcolorbox{red!35!gray}{red!4}{%
+  \fcolorbox{gray!60}{gray!5}{%
     \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
       \vspace{2pt}
-      {\small\bfseries\color{red!65!black}\large\strut TODAY}\\[1pt]
-      {\footnotesize\bfseries\color{red!50!black} Postman \textbullet{} Insomnia \textbullet{} Thunder Client}
+      {\small\bfseries\large\strut TODAY}\\[1pt]
+      {\footnotesize\bfseries Postman \textbullet{} Insomnia \textbullet{} Thunder Client}
       \vspace{6pt}
 
-      \textcolor{red!35!gray}{\rule{\linewidth}{0.5pt}}
+      {\rule{\linewidth}{0.3pt}}
       \vspace{8pt}
 
       {\small\bfseries Raw JSON tree.} {\small One flat \texttt{output[]} array.}
@@ -398,14 +305,14 @@ In every API testing tool today, that renders as a raw JSON tree. Here is what t
 \end{minipage}%
 \hfill%
 \begin{minipage}[t]{0.475\textwidth}
-  \fcolorbox{headerblue}{tblrowalt}{%
+  \fcolorbox{gray!60}{gray!5}{%
     \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
       \vspace{2pt}
-      {\small\bfseries\color{headerblue}\large\strut AFTER}\\[1pt]
-      {\footnotesize\bfseries\color{subheadteal} API Dash with this project}
+      {\small\bfseries\large\strut AFTER}\\[1pt]
+      {\footnotesize\bfseries API Dash with this project}
       \vspace{6pt}
 
-      \textcolor{headerblue!40}{\rule{\linewidth}{0.5pt}}
+      {\rule{\linewidth}{0.3pt}}
       \vspace{8pt}
 
       {\small\bfseries Structured card view.} {\small Each output item is its own widget.}
@@ -427,75 +334,48 @@ In every API testing tool today, that renders as a raw JSON tree. Here is what t
 }% end fboxsep group
 \vspace{10pt}
 
-You have to mentally track which \texttt{function\_call\_output} matches which \texttt{function\_call} by comparing \texttt{call\_id} values, scroll past reasoning blocks to the actual message, and somehow figure out the execution flow from a flat array.
+You have to mentally track which \texttt{function\_call\_output} matches which \texttt{function\_call} by comparing \texttt{call\_id} values, scroll past reasoning blocks to find the actual message, and reconstruct the execution flow from a flat array.
 
-The \href{https://www.openresponses.org/}{Open Responses protocol} is becoming a cross-provider standard. \href{https://github.com/google/A2UI}{Google's A2UI specification} adds another dimension: agents can return structured UI component descriptors in their responses, describing interactive interfaces (forms, dashboards, data tables) that a client should render. There is currently no way to preview what those rendered UIs would look like without building a full client application.
+The \href{https://www.openresponses.org/}{Open Responses protocol} is being adopted across providers -- OpenAI has shipped it. \href{https://github.com/google/A2UI}{Google's A2UI spec} lets agents return UI component descriptors (buttons, forms, tables, charts) instead of just text, and the client renders them as interactive widgets. No tool does this today.
 
-API Dash is well-positioned to solve both problems. It already has a powerful response rendering pipeline (Previewer handles 60+ MIME types), a GenAI provider architecture in \texttt{packages/genai}, and a Stac-based SDUI pipeline for AI-generated UIs. The gap is connecting these newer AI response formats to that existing infrastructure.
+API Dash already handles 60+ response types through one pipeline, has a genai package with provider abstractions, and has SDUI infrastructure. I didn't need to build new plumbing for the PoC.
 
 \subsubsection{What I've Already Built (Proof of Concept)}
 
-I didn't want to just write about what I'd do -- I went ahead and built a working prototype first. The \href{https://github.com/foss42/apidash/pull/1358}{PoC (PR \#1358)} is built and open for review. You can see it in action here:
-\href{https://youtu.be/paN-KGIhNms}{Open Responses Viewer demo} $\cdot$
-\href{https://youtu.be/T2KbHth736U}{A2UI Renderer demo}.
+I built a working PoC before writing this proposal. It's open as \href{https://github.com/foss42/apidash/pull/1358}{\textbf{PR \#1358}}.
 
-\vspace{6pt}
-{\setlength{\fboxsep}{10pt}\setlength{\fboxrule}{1pt}%
-\noindent\fcolorbox{subheadteal}{subheadteal!8}{%
-  \parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{%
-    \centering
-    {\small\bfseries\color{subheadteal} PoC Submitted --- \href{https://github.com/foss42/apidash/pull/1358}{PR \#1358} Open for Review}\\[4pt]
-    {\small
-    \textcolor{headerblue}{\bfseries 7} new files\enspace$\cdot$\enspace
-    \textcolor{headerblue}{\bfseries 11} modified files\enspace$\cdot$\enspace
-    \textcolor{headerblue}{\bfseries $\sim$1{,}100} lines of Dart code
-    }%
-  }%
-}}%
-\vspace{6pt}
+\textbf{What I built:} 9 new files, 11 modified, $\sim$1,400+ lines of Dart, 39 passing unit tests. Video demos: \href{https://youtu.be/paN-KGIhNms}{Open Responses Viewer} $\cdot$ \href{https://youtu.be/T2KbHth736U}{A2UI Renderer}.
 
-Here's what's implemented and how each piece works:
+\textbf{1. Open Responses Data Models} (\texttt{packages/genai/lib/models/open\_responses.dart} -- \textbf{269 lines})
 
-\textbf{1. Open Responses Data Models} (\texttt{packages/genai/lib/models/open\_responses.dart} -- \textcolor{headerblue}{\bfseries 269 lines})
+The Open Responses \texttt{output[]} array mixes messages, function calls, results, and reasoning together. I used Dart sealed classes so I don't have to do manual \texttt{type} string checks -- the type system handles dispatch:
 
-Typed Dart sealed classes for the full \href{https://www.openresponses.org/}{Open Responses} output schema:
+\begin{center}
+\includegraphics[width=0.92\textwidth]{doc/proposals/2026/gsoc/images/code_output_item.png}
+\end{center}
 
-\begin{lstlisting}[style=darkcode]
-sealed class OutputItem {
-    const OutputItem();
-    String get id;
-    String get type;
-    String get status;
+\textbf{2. Structured Response Viewer} (\texttt{lib/widgets/open\_responses\_viewer.dart} -- \textbf{537 lines})
 
-    factory OutputItem.fromJson(Map<String, dynamic> json) {
-      return switch (json['type'] as String? ?? '') {
-        'message'             => MessageOutputItem.fromJson(json),
-        'function_call'       => FunctionCallOutputItem.fromJson(json),
-        'function_call_output' =>
-            FunctionCallResultItem.fromJson(json),
-        'reasoning'           => ReasoningOutputItem.fromJson(json),
-        _                     => UnknownOutputItem.fromJson(json),
-      };
-    }
-}
-\end{lstlisting}
-
-\textbf{2. Structured Response Viewer} (\texttt{lib/widgets/open\_responses\_viewer.dart} -- \textcolor{headerblue}{\bfseries 537 lines})
-
-A full widget tree that renders each output item type as a distinct, themed card:
+The viewer widget. Each output item type gets its own card:
 
 \begin{sloppypar}
 \begin{itemize}
   \item \texttt{\_MessageCard} -- Role-labeled chat bubbles with GitHub-flavored markdown rendering via \texttt{MarkdownBody}, user messages right-aligned with avatar, assistant messages left-aligned.
   \item \texttt{\_ReasoningCard} -- Collapsible reasoning sections showing summary by default, expandable to show full chain-of-thought.
   \item \texttt{\_ToolCallGroup} -- Tool calls grouped with their results by \texttt{call\_id}. Shows function name, status chip (\texttt{completed}/\texttt{in\_progress}/\texttt{failed}), pretty-printed JSON arguments, and matched result -- all in one expandable card.
+  \item \texttt{\_WebSearchCard} -- Compact card for \texttt{web\_search\_call} items showing a search icon and status chip.
+  \item \texttt{\_FileSearchCard} -- Card for \texttt{file\_search\_call} items, listing each query with a subdirectory arrow and status chip.
   \item \texttt{\_CopyIconButton} -- Copy-to-clipboard button on all cards for quick data extraction.
   \item \texttt{\_UsageBar} -- Token usage statistics (input/output/total) displayed at the bottom.
   \item \textbf{Refusal handling} -- \texttt{RefusalPart} content renders with error styling and red-tinted background.
 \end{itemize}
 \end{sloppypar}
 
-All widgets use Material Design 3 theming and adapt to dark/light mode.
+All cards follow Material 3, work in dark and light mode. The core method is \texttt{\_buildGroupedItems()}, which pairs tool calls with their results before rendering:
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{doc/proposals/2026/gsoc/images/code_grouped_items.png}
+\end{center}
 
 \vspace{8pt}
 {\setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.4pt}%
@@ -509,14 +389,14 @@ All widgets use Material Design 3 theming and adapt to dark/light mode.
 \begin{minipage}[t]{0.485\textwidth}
   \centering
   \fbox{\includegraphics[width=\dimexpr\linewidth-2\fboxrule\relax]{doc/proposals/2026/gsoc/images/open_responses_structured_view.png}}\\[5pt]
-  {\small\textit{Early prototype: structured card view (reasoning, tool calls, results separated). Much more to be built during GSoC.}}
+  {\small\textit{PoC: structured card view -- reasoning, web search, file search, tool calls grouped by \texttt{call\_id}, and markdown message. Works for both streaming and non-streaming responses.}}
 \end{minipage}%
 }
 \vspace{10pt}
 
-\textbf{3. A2UI Component Renderer} (\texttt{lib/widgets/a2ui\_renderer.dart} -- \textcolor{headerblue}{\bfseries 349 lines})
+\textbf{3. A2UI Component Renderer} (\texttt{lib/widgets/a2ui\_renderer.dart} -- \textbf{349 lines})
 
-A registry-based renderer that maps \href{https://github.com/google/A2UI}{A2UI} component type strings to Flutter widget builders. The \texttt{A2UIParser} class handles detection (\texttt{isA2UIPayload}) and parsing of A2UI JSONL payloads. The \texttt{A2UIRenderer} is a \texttt{StatefulWidget} with local form state management, supporting \textcolor{headerblue}{\bfseries 15 component types}:
+A2UI sends a JSON list of component descriptors and the client renders UI from that. I built a registry that maps component type strings to Flutter widget builders, and a parser that detects A2UI payloads in JSONL format. I made the renderer stateful so interactive components (checkboxes, text fields) keep their own state. It currently handles \textbf{15 component types}:
 
 \begin{itemize}
   \item \textbf{Layout:} Card, Row, Column, List, Tabs
@@ -526,7 +406,11 @@ A registry-based renderer that maps \href{https://github.com/google/A2UI}{A2UI} 
   \item \textbf{Data Binding:} JSON Pointer path resolution from the data model (e.g., \texttt{/user/name})
 \end{itemize}
 
-Interactive components (TextField, Checkbox, Switch) maintain local state. Buttons show snackbar with action name. Unknown component types fall back to an error card showing the type name, so the renderer degrades gracefully.
+TextFields, Checkboxes, and Switches keep state locally. Buttons show a snackbar with the action name. Unknown component types fall back to an error card with the type name instead of crashing. The routing method:
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{doc/proposals/2026/gsoc/images/code_render_component.png}
+\end{center}
 
 \vspace{8pt}
 {\setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.4pt}%
@@ -540,92 +424,70 @@ Interactive components (TextField, Checkbox, Switch) maintain local state. Butto
 \begin{minipage}[t]{0.485\textwidth}
   \centering
   \fbox{\includegraphics[width=\dimexpr\linewidth-2\fboxrule\relax]{doc/proposals/2026/gsoc/images/a2ui_rendered_dashboard.png}}\\[5pt]
-  {\small\textit{Early prototype: same payload as a live interactive dashboard. Full A2UI spec coverage and streaming are planned for GSoC.}}
+  {\small\textit{PoC: same payload rendered as a live interactive dashboard -- stat cards with data binding, progress bar, chips, and buttons. Full A2UI spec coverage is planned for GSoC.}}
 \end{minipage}%
 }
 \vspace{10pt}
 
 \textbf{4. Response Pipeline Integration}
 
-Extended the existing response pipeline with:
+The existing pipeline has a \texttt{\_resolveViewOptions()} function that picks which viewer to use. I added two new \texttt{ResponseBodyView} options and put the detection logic there:
 
 \begin{sloppypar}
 \begin{itemize}
-  \item Two new \texttt{ResponseBodyView} options: \texttt{structured} (for Open Responses) and \texttt{genui} (for A2UI).
-  \item Auto-detection logic in \texttt{\_resolveViewOptions()} that checks for Open Responses format (\texttt{object == "response"} + \texttt{output[]} array) and A2UI format (\texttt{createSurface}/\texttt{updateComponents} keys).
-  \item Routing to the appropriate viewer in \texttt{ResponseBodySuccess}.
+  \item \texttt{structured} view -- kicks in when the response has \texttt{object == "response"} and an \texttt{output[]} array. Routes to the Open Responses viewer.
+  \item \texttt{structured + sse + raw} tabs (\texttt{kStructuredSSEBodyViewOptions}) -- kicks in when the SSE output contains \texttt{response.output\_item} events. The \texttt{OpenResponsesStreamParser} reassembles deltas into the same \texttt{OutputItem} list, so the structured viewer renders streaming and non-streaming responses identically.
+  \item \texttt{genui} view -- kicks in when the body contains \texttt{createSurface} or \texttt{updateComponents} JSONL keys. Routes to the A2UI renderer.
+  \item \texttt{ResponseBodySuccess} then just renders the right one based on which view option was resolved.
 \end{itemize}
 \end{sloppypar}
 
-\newpage
+\vspace{8pt}
 
 % ══════════════════════════════════════════════════════════════════════════════
 %  TECHNICAL APPROACH
 % ══════════════════════════════════════════════════════════════════════════════
 \section{How I'll Build This -- Technical Approach for GSoC}
 
-The PoC proves the concept works. But there's a meaningful gap between ``it works on fixture data'' and ``it handles real-world streaming responses with edge cases.'' Here's exactly how I plan to close that gap:
+The PoC works on fixture data. Real responses have edge cases I haven't handled yet. Here's what I need to build during GSoC:
 
 \subsection{A. Streaming with Typed SSE Events}
 
 \begin{sloppypar}
-\href{https://www.openresponses.org/}{Open Responses} streaming uses typed events like \texttt{response.output\_item.added}, \texttt{response.output\_text.delta}, \texttt{response.function\_call\_arguments.delta}, and \texttt{response.output\_item.done}. Each event targets a specific output item by index, so the parser needs to maintain a map of in-progress items and route deltas to the right place.
+Open Responses streaming events are typed and target specific items by index. You get \texttt{response.output\_item.added} when a new item starts, then a series of \texttt{response.output\_text.delta} events that each say ``append this text to item at index N'', and finally \texttt{response.output\_item.done} when that item is complete. So the parser needs to keep a running map of in-progress items and route each delta to the right card in the UI. The PoC viewer already renders each item type as its own card (as shown above), so the streaming layer just needs to feed items into that same widget tree incrementally instead of all at once.
 \end{sloppypar}
-
-\begin{lstlisting}[style=darkcode]
-class OpenResponsesStreamState {
-    final List<OutputItem> items = [];
-    final Map<int, StringBuffer> textBuffers = {};
-    final Map<int, StringBuffer> argBuffers = {};
-
-    void processEvent(String eventType,
-        Map<String, dynamic> data) {
-      switch (eventType) {
-        case 'response.output_item.added':
-          items.add(
-            OutputItem.fromJson(data['item']));
-        case 'response.output_text.delta':
-          textBuffers[data['output_index']]?
-            .write(data['delta']);
-        case 'response.output_item.done':
-          _finalizeItem(
-            data['output_index'], data['item']);
-      }
-    }
-}
-\end{lstlisting}
 
 \subsection{B. Conversation Chaining (\texttt{previous\_response\_id})}
 
-Implementation plan:
+Open Responses supports continuing a conversation by passing the previous response's ID in the next request. Right now API Dash treats every request as standalone, so I need to change that:
 
 \begin{itemize}
-  \item Store \texttt{response.id} from each parsed response in the request model.
-  \item Wire the stored ID into subsequent requests as \texttt{previous\_response\_id}.
-  \item Build a timeline view that links related requests, showing the full conversation flow.
-  \item Allow expanding/collapsing individual turns in the chain.
+  \item When we parse a response, pull out the \texttt{response.id} and store it on the request model.
+  \item Add a field to the request editor so you can paste a \texttt{previous\_response\_id} to chain off a prior response.
+  \item Build a timeline view that links chained requests so you can see the whole conversation flow in one place.
+  \item Each turn in the chain should be expandable/collapsible so you're not overwhelmed if the conversation is long.
 \end{itemize}
 
 \subsection{C. Extended A2UI Component Support}
 
-The PoC handles 15 component types with interactive state. The full implementation will expand this to cover the \href{https://github.com/google/A2UI}{A2UI specification} more completely:
+I have 15 component types in the PoC. That's enough for a demo, not enough for real use. During GSoC I need to cover enough of the A2UI spec that real Vertex AI agent responses just work:
 
 \begin{itemize}
-  \item \textbf{Input components:} TextField, DatePicker, Slider, Checkbox, Radio, Dropdown
-  \item \textbf{Data display:} Table (with sorting/filtering), Progress bar, Charts (using \texttt{fl\_chart})
-  \item \textbf{Navigation:} Tabs, Accordion, Stepper
-  \item \textbf{Local state management:} Form state tracking, user interaction event logging
-  \item \textbf{Progressive rendering:} Components render as they stream in via A2UI's flat ID-referenced model
+  \item \textbf{More input components:} DatePicker, Slider, Radio, Dropdown (these are common in agent UIs but not in the PoC yet)
+  \item \textbf{Data display:} Table with sorting and filtering, Charts via \texttt{fl\_chart}
+  \item \textbf{Navigation components:} Accordion, Stepper -- needed for multi-step agent flows
+  \item \textbf{Form state:} Right now state is per-component; I need to unify it so a form submission can read all field values at once
+  \item \textbf{Streaming:} A2UI uses a flat ID-referenced model where you can add/update components incrementally. Components should render as they arrive, not wait for the whole payload
 \end{itemize}
 
 \subsection{D. DashBot Integration}
 
-Currently, DashBot renders all responses through \texttt{MarkdownBody} in \texttt{ChatBubble}. When DashBot's underlying AI provider returns an Open Responses format response, the integration would:
+DashBot passes everything through \texttt{MarkdownBody} inside \texttt{ChatBubble}. Works for plain text, but Open Responses format shows up as raw JSON. Fix: check the response format before rendering:
 
 \begin{itemize}
-  \item Parse the response using the same \texttt{OpenResponsesResult.fromJson} pipeline.
-  \item Render structured output items inline in the chat (reasoning collapsed, tool calls as cards).
-  \item If the response contains \href{https://github.com/google/A2UI}{A2UI} components, render them as interactive widgets within the chat bubble.
+  \item If it's Open Responses format, run it through the same \texttt{OpenResponsesResult.fromJson} pipeline and render the structured cards inline in the chat (reasoning collapsed by default, tool calls as expandable cards).
+  \item If it contains A2UI components, render the interactive widgets right inside the chat bubble, so the agent's UI shows up where the conversation is.
+  \item Plain text/markdown responses stay exactly as they are now.
 \end{itemize}
 
 \subsection{Architecture Diagram}
@@ -637,29 +499,29 @@ Currently, DashBot renders all responses through \texttt{MarkdownBody} in \textt
   node distance=0.6cm and 0.5cm,
   topbox/.style={
     rectangle, rounded corners=5pt,
-    draw=headerblue, fill=headerblue!12,
+    draw=black, fill=gray!8,
     text width=8.8cm, align=center,
     font=\small, inner sep=7pt, minimum height=0.9cm
   },
   detectbox/.style={
     rectangle, rounded corners=5pt,
-    draw=subheadteal, fill=tblrowalt,
+    draw=black, fill=gray!8,
     text width=6cm, align=center,
     font=\small, inner sep=6pt, minimum height=0.9cm
   },
   existbox/.style={
     rectangle, rounded corners=4pt,
-    draw=gray!55, fill=codebg,
+    draw=gray!55, fill=gray!5,
     text width=2.3cm, align=center,
     font=\small, inner sep=5pt, minimum height=1cm
   },
   newbox/.style={
     rectangle, rounded corners=4pt,
-    draw=headerblue, fill=tblrowalt,
+    draw=black, fill=gray!12,
     text width=2.3cm, align=center,
     font=\small\bfseries, inner sep=5pt, minimum height=1cm
   },
-  arr/.style={-{Latex[length=2mm]}, thick, color=headerblue},
+  arr/.style={-{Latex[length=2mm]}, thick, color=black},
   garr/.style={-{Latex[length=2mm]}, thick, color=gray!65},
   lbl/.style={font=\scriptsize\itshape, color=gray!75, align=center}
 ]
@@ -676,10 +538,10 @@ Currently, DashBot renders all responses through \texttt{MarkdownBody} in \textt
   {Regular JSON\\{\footnotesize\color{gray}existing}};
 
 \node[newbox, below=0.75cm of detect] (orresp)
-  {Open Responses\\{\footnotesize\normalfont\color{subheadteal}object=response}};
+  {Open Responses\\{\footnotesize\normalfont object=response}};
 
 \node[newbox, below right=0.75cm and 2.8cm of detect] (a2uip)
-  {A2UI Payload\\{\footnotesize\normalfont\color{subheadteal}createSurface}};
+  {A2UI Payload\\{\footnotesize\normalfont createSurface}};
 
 \draw[garr] (detect.south west) -- (rjson.north);
 \draw[arr]  (detect) -- (orresp);
@@ -706,8 +568,8 @@ Currently, DashBot renders all responses through \texttt{MarkdownBody} in \textt
 \draw[arr]  (a2uirend.south) |- ([yshift=-0.38cm]a2uirend.south) -| (rbsuccess.north east);
 
 \node[lbl, above right=0.05cm and 0.1cm of rjson.north east] {no change};
-\node[lbl, above right=0.05cm and 0.1cm of orresp.north east] {\textbf{\color{headerblue}new}};
-\node[lbl, above right=0.05cm and 0.1cm of a2uip.north east] {\textbf{\color{headerblue}new}};
+\node[lbl, above right=0.05cm and 0.1cm of orresp.north east] {\textbf{new}};
+\node[lbl, above right=0.05cm and 0.1cm of a2uip.north east] {\textbf{new}};
 
 \end{tikzpicture}%
 }% end resizebox
@@ -716,21 +578,13 @@ Currently, DashBot renders all responses through \texttt{MarkdownBody} in \textt
 
 \subsection{What the End Result Will Look Like}
 
-\textbf{Scenario 1 -- Testing an Open Responses endpoint (non-streaming):}
+\textbf{Scenario 1: Non-streaming Open Responses.} You send a request. API Dash detects the format and switches to structured view. Reasoning card collapsed at top, tool call card with matched result below it, message as markdown at bottom. Token usage bar at the very end.
 
-You send a request to an endpoint that follows the \href{https://www.openresponses.org/}{Open Responses protocol}. Instead of seeing a JSON blob, the response pane auto-switches to a structured view. You see the model's reasoning as a collapsed purple card at the top (click to expand the full chain-of-thought). Below that, tool calls show as blue cards -- each one shows the function name, a status chip, a pretty-printed version of the arguments, and the matching result right below it. The actual message text renders at the bottom as formatted markdown with inline images. A token usage bar at the bottom tells you how many tokens were used.
+\textbf{Scenario 2: Streaming.} Cards appear live as SSE events arrive. Reasoning card fills in progressively, then a function call card shows up with arguments growing character by character, then the result slides in, then the message. No raw JSON fragments visible at any point.
 
-\textbf{Scenario 2 -- Streaming an agentic workflow:}
+\textbf{Scenario 3: A2UI agent response.} A Vertex AI agent returns component descriptors. Instead of JSON, you see rendered Flutter widgets: buttons you can tap, text fields you can type in, data tables with rows. You test the agent's UI without building a separate frontend.
 
-You send a streaming request. Cards appear one by one as the model generates output. First, a reasoning card pops up and its summary text fills in progressively. Then a function call card appears -- the function name shows immediately, and the arguments string grows character by character. When the tool result comes back, it slides in below the matching call. Finally, the message card appears and text streams into it. At no point do you see raw SSE events or JSON fragments.
-
-\textbf{Scenario 3 -- Previewing an \href{https://github.com/google/A2UI}{A2UI} agent response:}
-
-You send a request to a Vertex AI agent that returns A2UI component descriptors. Instead of seeing the JSON describing buttons, forms, and tables, you see actual rendered Flutter widgets -- interactive buttons you can tap, text fields you can type into, data tables with rows and columns. An event log panel shows what interactions the rendered UI generates, so you can verify your agent's UI behaves correctly.
-
-\textbf{Scenario 4 -- Debugging a multi-turn agentic loop:}
-
-You make three chained requests (each using \texttt{previous\_response\_id}). API Dash links them in a conversation timeline. You can see the full flow: first request $\to$ model reasons $\to$ calls tool A $\to$ you send result $\to$ model reasons again $\to$ calls tool B $\to$ you send result $\to$ model gives final answer. All in one connected view, not scattered across separate request tabs.
+\textbf{Scenario 4: Multi-turn debugging.} Three chained requests using \texttt{previous\_response\_id}. API Dash links them into a timeline. You see the full flow in one connected view instead of three separate tabs.
 
 \subsection{What Could Go Wrong and How I'd Handle It}
 
@@ -765,31 +619,31 @@ Testing without API keys & Low & Already solved -- PoC includes fixture payloads
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Implementation Plan}
 
-\textbf{Project Size:} 175 hours over 12 weeks ($\sim$15 hours/week)
+\textbf{Project Size:} 90 hours over 12 weeks ($\sim$3 hours/day on coding days)
 
-\subsection{Community Bonding Period (May 8 -- June 1)}
+\subsection{Community Bonding Period}
 
 \begin{itemize}
   \item Attend \href{https://lu.ma/calendar/cal-ZTW02O2EsWRs6V4}{weekly mentor sync-ups} and get feedback on the \href{https://github.com/foss42/apidash/pull/1358}{PoC}.
   \item Address any review comments on \href{https://github.com/foss42/apidash/pull/1321}{PR \#1321} (idea doc) and the PoC PR.
-  \item Finalize design decisions with mentors: how to extend the provider interface for structured output, where to store conversation chain state, and the DashBot integration approach.
+  \item Finalize design decisions with mentors: how to extend the provider interface for structured output and the A2UI rendering approach.
   \item Set up test fixtures for all edge cases (malformed responses, partial data, unknown output types).
 \end{itemize}
 
 \subsection{Phase 1 -- Open Responses Production Parser \& Structured Viewer (Weeks 1--3)}
 
-\textcolor{subheadteal}{\bfseries Goal:} Turn the PoC's parsing and rendering into production-quality code.
+\textbf{Goal:} Turn the PoC into code that's ready to merge.
 
-\textbf{Week 1 (June 2 -- June 8)}
+\textbf{Week 1}
 \begin{itemize}
   \item Finalize the \texttt{OpenResponsesResult} data models based on mentor feedback.
   \item Add handling for \texttt{output\_image} and \texttt{output\_file} content parts (PoC only handles \texttt{output\_text} and refusal).
-  \item Implement robust format auto-detection with zero false positives on non-AI responses.
+  \item Make format auto-detection reliable -- zero false positives on non-AI responses.
   \item Write unit tests for all \texttt{fromJson} factories using fixture payloads.
 \end{itemize}
-\deliverable{Production-ready \href{https://www.openresponses.org/}{Open Responses} parser in \texttt{packages/genai} with full test coverage.}
+\deliverable{\href{https://www.openresponses.org/}{Open Responses} parser in \texttt{packages/genai} with full test coverage.}
 
-\textbf{Week 2 (June 9 -- June 15)}
+\textbf{Week 2}
 \begin{itemize}
   \item Polish the Structured Response Viewer widgets (reasoning, function call, message cards).
   \item Add markdown rendering for message text content (using existing \texttt{flutter\_markdown} integration).
@@ -798,7 +652,7 @@ Testing without API keys & Low & Already solved -- PoC includes fixture payloads
 \end{itemize}
 \deliverable{Complete structured viewer rendering all Open Responses output types.}
 
-\textbf{Week 3 (June 16 -- June 22)}
+\textbf{Week 3}
 \begin{itemize}
   \item Wire the \texttt{OpenResponsesModel} provider into \texttt{kModelProvidersMap}.
   \item Implement \texttt{createRequest()} for the Responses API format (input + instructions).
@@ -807,11 +661,11 @@ Testing without API keys & Low & Already solved -- PoC includes fixture payloads
 \end{itemize}
 \deliverable{Working end-to-end flow -- user sees structured cards instead of raw JSON.}
 
-\subsection{Phase 2 -- Streaming \& Conversation Chaining (Weeks 4--6)}
+\subsection{Phase 2 -- Streaming (Weeks 4--5)}
 
-\textcolor{subheadteal}{\bfseries Goal:} Handle real-time streaming responses and multi-turn agentic workflows.
+\textbf{Goal:} Handle real-time streaming responses with progressive structured rendering.
 
-\textbf{Week 4 (June 23 -- June 29)}
+\textbf{Week 4}
 \begin{itemize}
   \item Build the \texttt{OpenResponsesStreamState} machine for typed SSE events.
   \item Handle core event types:
@@ -825,69 +679,54 @@ Testing without API keys & Low & Already solved -- PoC includes fixture payloads
 \end{itemize}
 \deliverable{Streaming parser that correctly routes typed deltas to output items.}
 
-\textbf{Week 5 (June 30 -- July 6)}
+\textbf{Week 5}
 \begin{itemize}
   \item Connect the stream state machine to the structured viewer for progressive rendering.
   \item Each output item card appears as \texttt{output\_item.added} fires; text and arguments fill in as deltas arrive.
   \item Handle edge cases: out-of-order events, partial data, connection drops.
   \item Write tests with recorded SSE fixtures.
+  \item Mentor review before midterm evaluation.
 \end{itemize}
 \deliverable{Live streaming structured view -- cards build up in real-time.}
 
-\textbf{Week 6 (July 7 -- July 13)}
+\textbf{Midterm Evaluation}
+
+\textbf{Expected state:} Full Open Responses support (parsing, structured viewing, streaming) working end-to-end.
+
+\subsection{Phase 3 -- A2UI Component Renderer (Weeks 6--7)}
+
+\textbf{Goal:} Expand the \href{https://github.com/google/A2UI}{A2UI} renderer with more components and mixed-response support.
+
+\textbf{Week 6}
+\begin{itemize}
+  \item Expand the component registry to cover additional A2UI types beyond the PoC: Radio, Dropdown, Table, Accordion, Stepper.
+  \item Implement data binding resolution for all input types.
+  \item Fix form state management so it works across components, and handle unknown types without crashing.
+\end{itemize}
+\deliverable{\href{https://github.com/google/A2UI}{A2UI} renderer supporting \textbf{20+} component types with interactive state.}
+
+\textbf{Week 7}
+\begin{itemize}
+  \item Build the A2UI detection and routing pipeline (extending \texttt{\_resolveViewOptions()}).
+  \item Add support for mixed responses (Open Responses output containing A2UI component descriptors).
+  \item Write tests for component rendering with various payloads.
+  \item Mentor review.
+\end{itemize}
+\deliverable{Tested \href{https://github.com/google/A2UI}{A2UI} rendering pipeline integrated into the response viewer.}
+
+\subsection{Phase 4 -- Conversation Chaining \& DashBot Integration (Weeks 8--9)}
+
+\textbf{Goal:} Connect multi-turn agentic workflows and bring structured responses into DashBot.
+
+\textbf{Week 8}
 \begin{itemize}
   \item Implement \texttt{previous\_response\_id} tracking in the request model.
   \item Build the conversation timeline view linking related requests.
   \item Allow expanding/collapsing individual turns in the chain.
-  \item Mentor review before midterm evaluation.
 \end{itemize}
 \deliverable{Multi-turn conversation chaining with a connected timeline view.}
 
-\textbf{Midterm Evaluation (July 14 -- July 18)}
-
-{\setlength{\fboxsep}{9pt}%
-\noindent\colorbox{green!10}{%
-  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \vspace{2pt}%
-    {\small\textcolor{green!45!black}{\bfseries Expected state:} Full Open Responses support (parsing, structured viewing, streaming, conversation chaining) working end-to-end.}%
-    \vspace{2pt}%
-  }%
-}}%
-
-\subsection{Phase 3 -- A2UI Component Renderer (Weeks 7--9)}
-
-\textcolor{subheadteal}{\bfseries Goal:} Extend the PoC's \href{https://github.com/google/A2UI}{A2UI} renderer to cover the full spec with interactive state and event logging.
-
-\textbf{Week 7 (July 21 -- July 27)}
-\begin{itemize}
-  \item Expand the component registry to cover all core A2UI types: TextField, DatePicker, Slider, Checkbox, Radio, Dropdown, Table, Progress, Accordion, Stepper.
-  \item Implement data binding resolution for all input types.
-  \item Add local form state management.
-\end{itemize}
-\deliverable{\href{https://github.com/google/A2UI}{A2UI} renderer supporting \textcolor{headerblue}{\bfseries 20+} component types with interactive state.}
-
-\textbf{Week 8 (July 28 -- August 3)}
-\begin{itemize}
-  \item Implement event logging system: user interactions with rendered components are captured in a collapsible log panel.
-  \item Add progressive rendering: components render as they stream in via \texttt{updateComponents}.
-  \item Handle component updates by ID (agents can update individual components).
-\end{itemize}
-\deliverable{Interactive A2UI renderer with event logging and progressive rendering.}
-
-\textbf{Week 9 (August 4 -- August 10)}
-\begin{itemize}
-  \item Build the A2UI detection and routing pipeline (extending \texttt{\_resolveViewOptions()}).
-  \item Add support for mixed responses (Open Responses output containing A2UI component descriptors).
-  \item Write comprehensive tests for component rendering with various payloads.
-  \item Mentor review.
-\end{itemize}
-\deliverable{Full \href{https://github.com/google/A2UI}{A2UI} rendering pipeline integrated into the response viewer.}
-
-\subsection{Phase 4 -- DashBot Integration \& Polish (Weeks 10--12)}
-
-\textcolor{subheadteal}{\bfseries Goal:} Bring structured AI responses into DashBot and polish everything for merge.
-
-\textbf{Week 10 (August 11 -- August 17)}
+\textbf{Week 9}
 \begin{itemize}
   \item Extend \texttt{ChatBubble} in DashBot to render structured Open Responses output inline.
   \item When DashBot receives a response with reasoning/tool calls, render them as cards within the chat.
@@ -895,44 +734,49 @@ Testing without API keys & Low & Already solved -- PoC includes fixture payloads
 \end{itemize}
 \deliverable{DashBot with rich structured response rendering.}
 
-\textbf{Week 11 (August 18 -- August 24)}
+\subsection{Phase 5 -- Testing, Polish \& Documentation (Weeks 10--12)}
+
+\textbf{Goal:} Test everything, fix bugs, write docs, get it ready to merge.
+
+\textbf{Week 10}
 \begin{itemize}
   \item End-to-end testing with real API endpoints (OpenAI Responses API, compatible providers).
   \item Edge case handling: malformed responses, partial streams, mixed content types, very large responses.
   \item Performance profiling: ensure structured rendering does not add noticeable latency.
-  \item Fix bugs identified during testing.
 \end{itemize}
-\deliverable{Battle-tested implementation passing all edge cases.}
+\deliverable{Implementation tested against real APIs and edge cases.}
 
-\textbf{Week 12 (August 25 -- September 1)}
+\textbf{Week 11}
 \begin{itemize}
-  \item Code cleanup, documentation, and final polish.
-  \item Ensure all new code follows API Dash's existing patterns and conventions.
-  \item Write developer documentation for extending the component registry.
-  \item Final mentor review and project report.
+  \item Fix all bugs identified during testing.
+  \item Code cleanup and ensure all new code follows API Dash's existing patterns.
+  \item Write developer documentation for extending the parser and A2UI component registry.
 \end{itemize}
-\deliverable{Merge-ready code with documentation.}
+\deliverable{Clean, documented implementation ready for final review.}
 
-{\setlength{\fboxsep}{12pt}\setlength{\fboxrule}{1pt}%
-\noindent\fcolorbox{stretchborder}{stretchbg}{%
-  \parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{%
-    \vspace{2pt}%
-    {\small\bfseries\color{stretchborder}$\star$\enspace Stretch Goals (if time permits)}%
-    \vspace{6pt}\par
-    \begin{itemize}[topsep=0pt,itemsep=4pt]
-      \item \textbf{A2UI Live Playground:} A split-pane editor where you can edit A2UI JSON on the left and see rendered Flutter widgets update on the right in real-time.
-      \item \textbf{Visual Conversation Debugger:} An enhanced multi-turn view with collapsible branches, search/filter by output type, and export of full conversation chains as shareable reports.
-    \end{itemize}%
-    \vspace{2pt}%
-  }%
-}}%
+\textbf{Week 12}
+\begin{itemize}
+  \item Address any last review comments from mentors.
+  \item Write the final project report and submit final evaluation.
+\end{itemize}
+\deliverable{Code ready to merge, docs written.}
+
+\subsubsection{Stretch Goals}
+
+If the core work finishes ahead of schedule:
+
+\begin{itemize}[itemsep=6pt]
+  \item \textbf{Full A2UI Spec:} The PoC handles 15 component types. The rest of the spec includes event logging (see what interactions the agent's UI generates), progressive rendering via \texttt{updateComponents}, and component update-by-ID so live agent UIs can mutate in place. This turns the renderer from a preview tool into a debugging tool.
+  \item \textbf{A2UI Live Playground:} Split-pane editor -- A2UI JSON on the left, live rendered Flutter widgets on the right, updating as you type. Would make iterating on agent UIs much faster. No tool does this currently.
+  \item \textbf{Visual Conversation Debugger:} Multi-turn agentic loops are hard to follow. A view showing the full conversation tree -- collapsible branches, filter by output type, jump to any turn -- with export as a shareable report.
+\end{itemize}
 
 \newpage
 
 % ══════════════════════════════════════════════════════════════════════════════
 %  CONTRIBUTIONS
 % ══════════════════════════════════════════════════════════════════════════════
-\section{Contributions to API Dash}
+\section{Contributions to API Dash}\label{sec:contributions}
 
 \begin{center}
 \begin{tabular}{|p{1.8cm}|p{9cm}|p{2cm}|}
@@ -943,128 +787,68 @@ Testing without API keys & Low & Already solved -- PoC includes fixture payloads
 \rowcolor{tblrowwhite}
 \href{https://github.com/foss42/apidash/pull/1279}{\#1279}
   & Input validation for empty API key and endpoint URL in AI Model Selector dialog
-  & \cellcolor{orange!10}\textcolor{orange!65!black}{\bfseries Open} \\
+  & \textbf{Open} \\
 \hline
 \rowcolor{tblrowalt}
 \href{https://github.com/foss42/apidash/pull/1290}{\#1290}
   & Custom OpenAI-compatible LLM provider support (Groq, OpenRouter, Mistral, etc.)
-  & \cellcolor{orange!10}\textcolor{orange!65!black}{\bfseries Open} \\
+  & \textbf{Open} \\
 \hline
 \rowcolor{tblrowwhite}
 \href{https://github.com/foss42/apidash/pull/1321}{\#1321}
   & GSoC 2026 idea doc -- Open Responses \& Generative UI
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+  & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowalt}
 \href{https://github.com/foss42/apidash/pull/1358}{\#1358}
-  & PoC -- Open Responses structured viewer + A2UI component renderer
+  & PoC -- Open Responses structured viewer (reasoning, web/file search, tool call grouping, markdown), SSE streaming parser, A2UI renderer with 15 components and data binding, 39 unit tests
     (\href{https://youtu.be/paN-KGIhNms}{demo 1},
      \href{https://youtu.be/T2KbHth736U}{demo 2})
-  & \cellcolor{orange!10}\textcolor{orange!65!black}{\bfseries Open} \\
+  & \textbf{Open} \\
 \hline
 \end{tabular}
 \end{center}
 
-\section{Contributions to Other Open-Source Projects}
-
-\textbf{astropy -- Python, 500k+ lines, widely used astronomy library}
+\section{Other Open-Source Contributions}
 
 \begin{center}
-\begin{tabular}{|p{1.8cm}|p{9cm}|p{2cm}|}
+\begin{tabular}{|p{2.8cm}|p{1.3cm}|p{6.4cm}|p{1.8cm}|}
 \hline
 \rowcolor{tblheader}
-\textcolor{white}{\bfseries PR} & \textcolor{white}{\bfseries Description} & \textcolor{white}{\bfseries Status} \\
+\textcolor{white}{\bfseries Project} & \textcolor{white}{\bfseries PR} & \textcolor{white}{\bfseries Description} & \textcolor{white}{\bfseries Status} \\
 \hline
 \rowcolor{tblrowwhite}
-\href{https://github.com/astropy/astropy/pull/19403}{\#19403}
-  & Fixed missing f-string prefix in \texttt{BaseAffineTransform.\_apply\_transform}
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+astropy (Python) & \href{https://github.com/astropy/astropy/pull/19403}{\#19403} & Missing f-string prefix in \texttt{BaseAffineTransform} & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowalt}
-\href{https://github.com/astropy/astropy/pull/19404}{\#19404}
-  & Fixed silent data corruption in \texttt{FITS\_rec} slice assignment with negative indices
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+ & \href{https://github.com/astropy/astropy/pull/19404}{\#19404} & Silent data corruption in \texttt{FITS\_rec} slice assignment & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowwhite}
-\href{https://github.com/astropy/astropy/pull/19450}{\#19450}
-  & Fixed table index corruption when a row assignment fails
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
-\hline
-\end{tabular}
-\end{center}
-
-\vspace{8pt}
-\textbf{Hyperledger Besu -- Java, Ethereum execution client}
-
-\begin{center}
-\begin{tabular}{|p{1.8cm}|p{9cm}|p{2cm}|}
-\hline
-\rowcolor{tblheader}
-\textcolor{white}{\bfseries PR} & \textcolor{white}{\bfseries Description} & \textcolor{white}{\bfseries Status} \\
-\hline
-\rowcolor{tblrowwhite}
-\href{https://github.com/hyperledger/besu/pull/10020}{\#10020}
-  & Fixed critical bug where \texttt{serializeAndDedupOperation()} never returned \texttt{failedFuture}
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+ & \href{https://github.com/astropy/astropy/pull/19450}{\#19450} & Table index corruption on failed row assignment & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowalt}
-\href{https://github.com/hyperledger/besu/pull/10042}{\#10042}
-  & Fixed \texttt{eth\_estimateGas} using parent block's hash instead of current block's hash
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+Besu (Java) & \href{https://github.com/hyperledger/besu/pull/10020}{\#10020} & Missing return in \texttt{serializeAndDedupOperation()} & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowwhite}
-\href{https://github.com/hyperledger/besu/pull/10051}{\#10051}
-  & Fixed TOCTOU race condition in \texttt{eth\_getBlockByNumber}
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+ & \href{https://github.com/hyperledger/besu/pull/10042}{\#10042} & Wrong hash in \texttt{eth\_estimateGas} & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowalt}
-\href{https://github.com/hyperledger/besu/pull/10060}{\#10060}
-  & Fixed unsigned underflow in \texttt{eth\_feeHistory} reward bounds calculation
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
-\hline
-\end{tabular}
-\end{center}
-
-\vspace{8pt}
-\textbf{Hyperledger Fabric -- Go, enterprise blockchain platform}
-
-\begin{center}
-\begin{tabular}{|p{1.8cm}|p{9cm}|p{2cm}|}
-\hline
-\rowcolor{tblheader}
-\textcolor{white}{\bfseries PR} & \textcolor{white}{\bfseries Description} & \textcolor{white}{\bfseries Status} \\
+ & \href{https://github.com/hyperledger/besu/pull/10051}{\#10051} & TOCTOU race in \texttt{eth\_getBlockByNumber} & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowwhite}
-\href{https://github.com/hyperledger/fabric/pull/5422}{\#5422}
-  & Fixed gossip protocol not returning after sending NACK on private data store failure
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+ & \href{https://github.com/hyperledger/besu/pull/10060}{\#10060} & Unsigned underflow in \texttt{eth\_feeHistory} & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowalt}
-\href{https://github.com/hyperledger/fabric/pull/5424}{\#5424}
-  & Fixed resource leak: \texttt{collItr} not being closed before releasing \texttt{purgerLock}
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+Fabric (Go) & \href{https://github.com/hyperledger/fabric/pull/5422}{\#5422} & Gossip protocol missing return after NACK & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowwhite}
-\href{https://github.com/hyperledger/fabric/pull/5430}{\#5430}
-  & Fixed iterator leak in \texttt{deleteDataMarkedForPurge}
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+ & \href{https://github.com/hyperledger/fabric/pull/5424}{\#5424} & Resource leak in \texttt{collItr} & \textbf{Merged} \\
 \hline
-\end{tabular}
-\end{center}
-
-\vspace{8pt}
-\textbf{LFDT-Lockness/generic-ec -- Rust, elliptic curve cryptography}
-
-\begin{center}
-\begin{tabular}{|p{1.8cm}|p{9cm}|p{2cm}|}
-\hline
-\rowcolor{tblheader}
-\textcolor{white}{\bfseries PR} & \textcolor{white}{\bfseries Description} & \textcolor{white}{\bfseries Status} \\
+\rowcolor{tblrowalt}
+ & \href{https://github.com/hyperledger/fabric/pull/5430}{\#5430} & Iterator leak in \texttt{deleteDataMarkedForPurge} & \textbf{Merged} \\
 \hline
 \rowcolor{tblrowwhite}
-\href{https://github.com/LFDT-Lockness/generic-ec/pull/59}{\#59}
-  & Added secp384r1 (NIST P-384) curve support -- first non-32-byte scalar curve, 180 tests passing
-  & \cellcolor{green!12}\textcolor{green!45!black}{\bfseries Merged} \\
+generic-ec (Rust) & \href{https://github.com/LFDT-Lockness/generic-ec/pull/59}{\#59} & secp384r1 (NIST P-384) curve support, 180 tests & \textbf{Merged} \\
 \hline
 \end{tabular}
 \end{center}
@@ -1076,25 +860,29 @@ Testing without API keys & Low & Already solved -- PoC includes fixture payloads
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Why Me}
 
-{\setlength{\fboxsep}{10pt}%
-\noindent\colorbox{tblrowalt}{%
-  \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-    \centering\small
-    \textcolor{headerblue}{\bfseries 5} open-source projects\enspace$\cdot$\enspace
-    \textcolor{headerblue}{\bfseries 11} merged PRs\enspace$\cdot$\enspace
-    \textcolor{headerblue}{\bfseries 4} API Dash PRs\enspace$\cdot$\enspace
-    \textcolor{headerblue}{\bfseries $\sim$1{,}100} lines of working PoC
-  }%
-}}%
-\vspace{10pt}
+Each PR I've submitted maps to a specific part of this project:
 
-I'll be honest -- I'm a first-year student applying to work on something that matters to me, not just something that looks good on a resume. I've been genuinely frustrated with how every API tool handles AI responses. I tested Postman, Insomnia, Thunder Client with real agentic APIs -- and every single one just dumps the JSON. I kept thinking \textit{``there has to be a better way to see this.''} That frustration is what started all of this.
+\begin{itemize}
+  \item \textbf{\href{https://github.com/foss42/apidash/pull/1279}{PR \#1279}} (input validation) -- Small fix. Learned how Riverpod state flows through the app. Same state layer is needed to wire the Open Responses provider into \texttt{kModelProvidersMap} in Phase 1.
 
-Before I wrote a single line of proposal text, I spent two weeks just reading the API Dash codebase. Not skimming -- actually reading. I traced how a raw HTTP response becomes a rendered widget. I read how \texttt{ModelProvider} abstracts different AI backends, how \texttt{ResponseBodyView} decides what to show, how the Stac pipeline connects provider output to the UI. It took a while, and I got lost more than once. But by the end of it I knew exactly where my code had to live -- not just where it would work, but where it \textit{belonged}.
+  \item \textbf{\href{https://github.com/foss42/apidash/pull/1290}{PR \#1290}} (custom LLM providers) -- Had to read the entire genai package for this. I know how \texttt{ModelProvider}, \texttt{createRequest()}, and \texttt{outputFormatter} work together now. Phase 1 and Phase 2 build on top of this.
 
-Then I built the PoC. Not because the application required it, but because I genuinely wasn't sure I could do it -- and I needed to find out. The sealed class hierarchy, the widget tree, the A2UI registry, wiring it all into the existing pipeline without breaking anything -- \textcolor{headerblue}{\bfseries 1,100 lines} later, it works. There are still hard parts ahead (the streaming state machine, conversation chaining), but I now know the codebase well enough to know where those pieces go.
+  \item \textbf{\href{https://github.com/foss42/apidash/pull/1358}{PR \#1358}} (PoC) -- 1,100 lines, 7 new files. This is Phase 1's baseline. The sealed class hierarchy, the viewer widget tree, and the A2UI renderer are already working on fixture data. Phase 3 extends the renderer, not rewrites it.
+\end{itemize}
 
-What I want to build isn't just a feature. It's something I'd use every day, and something every developer testing AI APIs would benefit from. That's not a pitch -- it's genuinely why I chose this project over everything else in the ideas list.
+\textbf{What will be hard:}
+
+\begin{itemize}
+  \item \textbf{Streaming (live progressive rendering)} -- The PoC has \texttt{OpenResponsesStreamParser} which reassembles SSE deltas into a final \texttt{OutputItem} list and the structured viewer already renders it correctly. What's missing for GSoC is the \textit{progressive} part -- cards should fill in character by character as deltas arrive, not wait for the stream to complete. This means wiring the parser's incremental state into a Riverpod stream so each delta triggers a widget rebuild at the right card, not a full re-render.
+
+  \item \textbf{Conversation chaining} -- The current request model doesn't store response IDs. Need to extend it to persist \texttt{response.id} so the next request can reference it via \texttt{previous\_response\_id}. Raised this in the \href{https://github.com/foss42/apidash/discussions/1227}{Idea 5 discussion thread} and haven't got an answer yet on where to store it -- community bonding decision.
+\end{itemize}
+
+\textbf{Broader experience:} 11 merged PRs across 5 open-source projects in Python, Java, Go, Rust, and Dart. Bugs fixed include silent data corruption (astropy \#19404), race conditions (Besu \#10051), and resource leaks (Fabric \#5424).
+
+\section{What I Want From This Summer}
+
+I want to take my PoC from fixture data to real API responses. I still need to do streaming, conversation chaining, and full A2UI coverage. By the end of summer, when I send an agentic API request in API Dash, I want to see structured cards, not raw JSON.
 
 \label{docendpage}
 \end{document}
