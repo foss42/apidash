@@ -152,6 +152,40 @@
 \newpage
 
 % ══════════════════════════════════════════════════════════════════════════════
+%  PERSONAL STATEMENT
+% ══════════════════════════════════════════════════════════════════════════════
+\thispagestyle{plain}
+\vspace*{0.6cm}
+
+\section*{Why I Want to Build This}
+
+I debug AI API responses by hand. I am building a research project where a language model calls tools to gather data, and when something breaks --- wrong arguments passed, a reasoning loop that never exits, a tool result the model quietly ignores --- I open an API client to look at the raw response. What I see is a flat \texttt{output[]} array. Reasoning blocks mixed with function calls mixed with results mixed with the final message, all at the same indentation level, no visual hierarchy, no grouping.
+
+I checked Postman, Insomnia, and Thunder Client. All three show the same thing: a JSON tree. None of them treat \texttt{output[]} as structured data. They all treat it as bytes to display.
+
+The Open Responses spec defines exactly what each item type means. The A2UI spec defines how an agent's UI descriptors should be described. The rules exist. The rendering doesn't. This is a clearly bounded gap with a clear solution, and I wanted to build it.
+
+So I spent two weeks reading the API Dash codebase before writing a single line of PoC code. I learned where format detection happens (\texttt{\_resolveViewOptions}), how the genai package abstracts providers, how \texttt{ResponseBodyView} routes to the right widget. Then I built a working prototype --- not to have something to show for this application, but because I was debugging my own AI project and I wanted the tool. I made one architectural mistake: I put A2UI detection in \texttt{ResponseBodySuccess} because that's where widget selection happens. It worked. But that's the wrong layer --- format detection belongs in \texttt{ResponseBody.\_resolveViewOptions()}, where every other format decision already lives. I caught it and moved it before opening the PR. That kind of decision only comes from reading the codebase carefully enough to understand \emph{why} things are structured the way they are.
+
+The PoC is open as \href{https://github.com/foss42/apidash/pull/1358}{PR \#1358}: 1,400+ lines, 9 new files, 39 passing tests, and I use it. GSoC is how I take it to production.
+
+\subsection*{What I Want the Maintainers to Know}
+
+\begin{itemize}[itemsep=8pt]
+  \item \textbf{I picked this project because I need the output myself.} Every other GSoC idea I considered was interesting technically. This one I was already building. That matters for a 12-week commitment --- you don't stall on the hard weeks when the result is something you genuinely want to exist.
+
+  \item \textbf{I read the code before I write code.} Every PR I've submitted to API Dash was preceded by reading the relevant parts of the codebase. I don't guess at architecture.
+
+  \item \textbf{I fix my own mistakes.} The A2UI layer placement error above is not the only wrong decision I made during the PoC. It's the one I caught earliest. I expect to make more during GSoC --- the difference is I look for them and correct them before asking for review.
+
+  \item \textbf{I ship across ecosystems.} 11 merged PRs in Python, Java, Go, Rust, and Dart. I can context-switch, read unfamiliar code quickly, and write fixes that fit the project's style. The API Dash genai package is the most complex Flutter package I've worked in, and I understand it well enough to extend it.
+
+  \item \textbf{I am already in the community.} I attend the weekly GSoC calls, I'm active in the \texttt{\#gsoc-foss-apidash} Discord channel, and I participate in the \href{https://github.com/foss42/apidash/discussions/1227}{Idea 5 discussion thread}. I know the other applicants and what they have submitted. My PoC is the only one that includes a working streaming parser and unit tests.
+\end{itemize}
+
+\newpage
+
+% ══════════════════════════════════════════════════════════════════════════════
 %  CONTACT INFORMATION
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Name and Contact Information}
@@ -860,15 +894,20 @@ generic-ec (Rust) & \href{https://github.com/LFDT-Lockness/generic-ec/pull/59}{\
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Why Me}
 
-Each PR I've submitted maps to a specific part of this project:
+I am the person who already built the PoC. Not to have something to show for an application --- because I was debugging my own AI project and I needed the tool. Here is what that actually required:
 
+I started with \href{https://github.com/foss42/apidash/pull/1279}{PR \#1279} (input validation) to understand how Riverpod state flows through the app before touching anything deeper. Then \href{https://github.com/foss42/apidash/pull/1290}{PR \#1290} (custom LLM providers), which required reading the entire genai package: how \texttt{ModelProvider} abstracts backends, how \texttt{createRequest()} formats input, how \texttt{outputFormatter} pipes results back. I know that pipeline well enough to extend it, not just call it. Then I built the PoC: sealed class hierarchy for the Open Responses output types, 7-card structured viewer, A2UI renderer with 15 components, SSE streaming parser, 39 unit tests. All before applying. \href{https://github.com/foss42/apidash/pull/1358}{PR \#1358} is the result.
+
+\textbf{What the PoC already proves:}
 \begin{itemize}
-  \item \textbf{\href{https://github.com/foss42/apidash/pull/1279}{PR \#1279}} (input validation) -- Small fix. Learned how Riverpod state flows through the app. Same state layer is needed to wire the Open Responses provider into \texttt{kModelProvidersMap} in Phase 1.
-
-  \item \textbf{\href{https://github.com/foss42/apidash/pull/1290}{PR \#1290}} (custom LLM providers) -- Had to read the entire genai package for this. I know how \texttt{ModelProvider}, \texttt{createRequest()}, and \texttt{outputFormatter} work together now. Phase 1 and Phase 2 build on top of this.
-
-  \item \textbf{\href{https://github.com/foss42/apidash/pull/1358}{PR \#1358}} (PoC) -- 1,100 lines, 7 new files. This is Phase 1's baseline. The sealed class hierarchy, the viewer widget tree, and the A2UI renderer are already working on fixture data. Phase 3 extends the renderer, not rewrites it.
+  \item The format auto-detection works: Open Responses JSON, Open Responses SSE stream, and A2UI JSONL each route to the right viewer with zero false positives on regular JSON responses.
+  \item The sealed class dispatch is correct: all five output item types (\texttt{Message}, \texttt{Reasoning}, \texttt{FunctionCall}, \texttt{WebSearchCall}, \texttt{FileSearchCall}) each render as their own card type.
+  \item The A2UI renderer handles interactive state: TextFields, Checkboxes, and Switches keep local state; unknown component types fall back gracefully without crashing.
+  \item The streaming parser assembles a complete \texttt{OutputItem} list from SSE deltas --- the same viewer renders streaming and non-streaming responses identically.
+  \item The models live in \texttt{packages/genai} and are tested without Flutter. The test suite runs in 39ms.
 \end{itemize}
+
+The remaining GSoC work (progressive streaming, conversation chaining, DashBot integration, extended A2UI components) is extension, not invention. The foundation is already in the codebase and passing tests.
 
 \textbf{What will be hard:}
 
