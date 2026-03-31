@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:seed/seed.dart';
 import '../extensions/extensions.dart';
 import '../utils/utils.dart'

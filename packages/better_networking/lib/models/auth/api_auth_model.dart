@@ -1,3 +1,5 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:seed/seed.dart';
 import '../../consts.dart';
 import 'auth_api_key_model.dart';

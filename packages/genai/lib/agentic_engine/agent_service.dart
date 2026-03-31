@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import '../models/models.dart';
+import '../src/logging.dart';
 import '../utils/utils.dart';
 import 'blueprint.dart';
 
@@ -69,7 +69,7 @@ class AIAgentService {
         );
       }
       RETRY_COUNT += 1;
-      debugPrint(
+      logDebug(
         "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $RETRY_COUNT",
       );
     } while (RETRY_COUNT < 5);

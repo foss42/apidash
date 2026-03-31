@@ -1,3 +1,4 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:seed/seed.dart';
 
 part 'auth_basic_model.g.dart';

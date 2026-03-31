@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import '../utils/platform_utils.dart';
 
 http.Client createHttpClientWithNoSSL() {
   var ioClient = HttpClient()
@@ -40,7 +40,7 @@ class HttpClientManager {
   HttpClientManager._internal();
 
   http.Client createClient(String requestId, {bool noSSL = false}) {
-    final client = (noSSL && !kIsWeb)
+    final client = (noSSL && !PlatformUtils.isWeb)
         ? createHttpClientWithNoSSL()
         : http.Client();
     _clients[requestId] = client;
@@ -82,7 +82,7 @@ class HttpClientManager {
     String requestId, {
     bool noSSL = false,
   }) {
-    final baseClient = (noSSL && !kIsWeb)
+    final baseClient = (noSSL && !PlatformUtils.isWeb)
         ? createHttpClientWithNoSSL()
         : http.Client();
 
