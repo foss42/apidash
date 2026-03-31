@@ -377,6 +377,7 @@ class CollectionStateNotifier
         level: TerminalLevel.error,
       );
       ref.read(showTerminalBadgeProvider.notifier).state = true;
+      return;
     }
 
     // Terminal: start network log
