@@ -8,7 +8,18 @@ environment:
   flutter: ">=3.41.2"
 
 workspace:
-  - packages/*
+  - packages/apidash_core
+  - packages/apidash_design_system
+  - packages/better_networking
+  - packages/curl_parser
+  - packages/genai
+  - packages/har
+  - packages/insomnia_collection
+  - packages/json_explorer
+  - packages/json_field_editor
+  - packages/multi_trigger_autocomplete_plus
+  - packages/postman
+  - packages/seed
 
 dependencies:
   flutter:
