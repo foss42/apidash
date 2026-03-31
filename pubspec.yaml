@@ -91,6 +91,8 @@ dev_dependencies:
   flutter_native_splash: ^2.4.7
   freezed: ^3.2.5
   json_serializable: ^6.13.0
+  flutter_driver:
+    sdk: flutter
   integration_test:
     sdk: flutter
   melos: ^7.4.0

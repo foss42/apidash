@@ -12,7 +12,7 @@ abstract class ModelProvider {
     throw UnimplementedError();
   }
 
-  String? streamOutputFormatter(Map x) {
+  String? streamOutputFormatter(Map x, {String? eventType}) {
     throw UnimplementedError();
   }
 }
