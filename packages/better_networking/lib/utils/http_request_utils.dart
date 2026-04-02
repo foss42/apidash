@@ -80,8 +80,9 @@ List<NameValueModel>? getEnabledRows(
   if (rows == null || isRowEnabledList == null) {
     return rows;
   }
-  List<NameValueModel> finalRows = rows
-      .where((element) => isRowEnabledList[rows.indexOf(element)])
+  List<NameValueModel> finalRows = rows.asMap().entries
+      .where((entry) => entry.key < isRowEnabledList.length && isRowEnabledList[entry.key])
+      .map((entry) => entry.value)
       .toList();
   return finalRows == [] ? null : finalRows;
 }
