@@ -26,7 +26,9 @@ enum ChatActionType {
   downloadDoc('download_doc'),
   other('other'),
   noAction('no_action'),
-  uploadAsset('upload_asset');
+  uploadAsset('upload_asset'),
+  mcpCallTool('mcp_call_tool'),
+  viewMcpApp('view_mcp_app');
 
   const ChatActionType(this.text);
   final String text;

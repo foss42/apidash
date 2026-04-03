@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../pages/pages.dart';
+import '../ui/mcp_inspector.dart';
+import '../ui/server_config_view.dart';
 import 'dashbot_routes.dart';
 
 Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -22,6 +24,16 @@ Route<dynamic>? generateRoute(RouteSettings settings) {
       return MaterialPageRoute(
         settings: const RouteSettings(name: DashbotRoutes.dashbotChat),
         builder: (context) => ChatScreen(initialTask: initialTask),
+      );
+    case (DashbotRoutes.mcpInspector):
+      return MaterialPageRoute(
+        settings: const RouteSettings(name: DashbotRoutes.mcpInspector),
+        builder: (context) => const McpInspector(),
+      );
+    case (DashbotRoutes.mcpAddServer):
+      return MaterialPageRoute(
+        settings: const RouteSettings(name: DashbotRoutes.mcpAddServer),
+        builder: (context) => const ServerConfigView(),
       );
     default:
       return MaterialPageRoute(

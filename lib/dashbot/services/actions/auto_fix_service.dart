@@ -83,6 +83,8 @@ class AutoFixService {
       case ChatActionType.noAction:
       case ChatActionType.uploadAsset:
       case ChatActionType.downloadDoc:
+      case ChatActionType.mcpCallTool:
+      case ChatActionType.viewMcpApp:
         return null;
     }
   }

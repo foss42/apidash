@@ -7,3 +7,4 @@ export 'dashbot_generate_language_picker_button.dart';
 export 'dashbot_import_now_button.dart';
 export 'dashbot_select_operation_button.dart';
 export 'dashbot_upload_requests_button.dart';
+export 'dashbot_view_mcp_app_button.dart';

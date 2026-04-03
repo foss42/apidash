@@ -52,6 +52,7 @@ class DashbotActionWidgetFactory {
       case ChatActionType.updateBody:
       case ChatActionType.updateUrl:
       case ChatActionType.updateMethod:
+      case ChatActionType.mcpCallTool:
         return DashbotAutoFixButton(action: action);
 
       case ChatActionType.uploadAsset:
@@ -59,6 +60,8 @@ class DashbotActionWidgetFactory {
           return DashbotUploadRequestButton(action: action);
         }
         return null;
+      case ChatActionType.viewMcpApp:
+        return DashbotViewMcpAppButton(action: action);
     }
 
     if (action.action == 'other' && action.target == 'test') {

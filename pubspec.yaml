@@ -4,11 +4,22 @@ publish_to: "none"
 version: 0.5.0+5
 
 environment:
-  sdk: ">=3.11.0 <4.0.0"
-  flutter: ">=3.41.2"
+  sdk: ">=3.10.7 <4.0.0"
+  flutter: ">=3.38.7"
 
 workspace:
-  - packages/*
+  - packages/apidash_core
+  - packages/apidash_design_system
+  - packages/better_networking
+  - packages/curl_parser
+  - packages/genai
+  - packages/har
+  - packages/insomnia_collection
+  - packages/json_explorer
+  - packages/json_field_editor
+  - packages/multi_trigger_autocomplete_plus
+  - packages/postman
+  - packages/seed
 
 dependencies:
   flutter:
@@ -37,16 +48,20 @@ dependencies:
   highlight: ^0.7.0
   highlighter: ^0.1.1
   hive_ce_flutter: ^2.3.4
+  hive_ce: ^2.3.4
   hooks_riverpod: ^3.2.1
   intl: ^0.20.2
   jinja: ^0.6.5
   json_annotation: ^4.11.0
   json_explorer: any
   json_field_editor: any
+  json_rpc_2: ^4.1.0
+  stream_channel: ^2.1.2
   just_audio: ^0.10.5
   just_audio_media_kit: ^2.1.0
   media_kit_libs_linux: any
   media_kit_libs_windows_audio: any
+  mcp_dart: ^2.1.0
   lottie: ^3.3.2
   markdown: ^7.3.0
   mime_dart: ^3.0.0
@@ -80,6 +95,7 @@ dependency_overrides:
   pdf_widget_wrapper: ^1.0.4
   web: ^1.1.1
   freezed_annotation: ^3.1.0
+  test_api: 0.7.7
 
 dev_dependencies:
   flutter_test:

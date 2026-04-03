@@ -62,6 +62,14 @@ class DashbotDefaultPage extends StatelessWidget {
                 );
               },
             ),
+            HomeScreenTaskButton(
+              label: "🛠️ Manage MCP",
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  DashbotRoutes.mcpInspector,
+                );
+              },
+            ),
           ],
         ),
         kVSpacer16,

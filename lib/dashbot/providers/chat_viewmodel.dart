@@ -14,6 +14,9 @@ import '../services/services.dart';
 import '../utils/utils.dart';
 import 'dashbot_active_route_provider.dart';
 import 'service_providers.dart';
+import '../services/mcp_service.dart';
+import '../services/mcp_host_service.dart';
+import 'package:mcp_dart/mcp_dart.dart';
 
 final chatViewmodelProvider = StateNotifierProvider<ChatViewmodel, ChatState>((
   ref,
@@ -55,6 +58,23 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     if (text.trim().isEmpty && countAsUser) return;
 
     final requestId = _currentRequest?.id ?? 'global';
+
+    if (text.trim().startsWith('/')) {
+      if (countAsUser) {
+        _addMessage(
+          requestId,
+          ChatMessage(
+            id: getNewUuid(),
+            content: text,
+            role: MessageRole.user,
+            timestamp: DateTime.now(),
+            messageType: type,
+          ),
+        );
+      }
+      await _handleSlashCommand(text.trim());
+      return;
+    }
 
     if (countAsUser) {
       _addMessage(
@@ -250,6 +270,136 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
   }
 
+  Future<void> _handleSlashCommand(String command) async {
+    final parts = command.split(' ');
+    final mainCmd = parts[0].toLowerCase();
+    final args = parts.skip(1).toList();
+
+    switch (mainCmd) {
+      case '/mcp':
+        await _handleMcpSlashCommand(args);
+        break;
+      case '/help':
+        _appendSystem(
+          'Available commands:\n'
+          '- `/mcp list`: List all MCP servers\n'
+          '- `/mcp status`: Show connection status\n'
+          '- `/mcp tools`: List all available tools\n'
+          '- `/mcp resources`: List all available resources\n'
+          '- `/mcp prompts`: List all available prompts\n'
+          '- `/help`: Show this help message',
+          ChatMessageType.general,
+        );
+        break;
+      default:
+        _appendSystem('Unknown command: $mainCmd. Type `/help` for available commands.', ChatMessageType.general);
+    }
+  }
+
+  Future<void> _handleMcpSlashCommand(List<String> args) async {
+    if (args.isEmpty) {
+      _appendSystem('Usage: `/mcp [list|status|tools|resources|prompts]`', ChatMessageType.general);
+      return;
+    }
+
+    final subCmd = args[0].toLowerCase();
+    final mcpService = _ref.read(mcpHostServiceProvider);
+    
+    state = state.copyWith(isGenerating: true);
+    try {
+      switch (subCmd) {
+        case 'list':
+        case 'status':
+          final connections = _ref.read(mcpConnectionsProvider);
+          if (connections.isEmpty) {
+            _appendSystem('No MCP servers configured.', ChatMessageType.general);
+          } else {
+            final status = connections.entries.map((e) {
+              final conn = e.value;
+              final stateStr = conn.isEnabled 
+                  ? (conn.client != null ? 'Connected' : 'Connecting/Error')
+                  : 'Disabled';
+              return '- **${conn.name}** (${conn.id}): $stateStr';
+            }).join('\n');
+            _appendSystem('### MCP Server Status\n$status', ChatMessageType.general);
+          }
+          break;
+        case 'tools':
+          final tools = await mcpService.discoverTools();
+          if (tools.isEmpty) {
+            _appendSystem('No tools discovered.', ChatMessageType.general);
+          } else {
+            final list = tools.map((t) => '- **${t.name}**: ${t.description ?? 'No description'}').join('\n');
+            _appendSystem('### Available Tools\n$list', ChatMessageType.general);
+          }
+          break;
+        case 'resources':
+          final resources = await mcpService.discoverResources();
+          if (resources.isEmpty) {
+            _appendSystem('No resources discovered.', ChatMessageType.general);
+          } else {
+            final list = resources.map((r) => '- **${r.name}** (${r.uri}): ${r.description ?? 'No description'}').join('\n');
+            _appendSystem('### Available Resources\n$list', ChatMessageType.general);
+          }
+          break;
+        case 'prompts':
+          final prompts = await mcpService.discoverPrompts();
+          if (prompts.isEmpty) {
+            _appendSystem('No prompts discovered.', ChatMessageType.general);
+          } else {
+            final list = prompts.map((p) => '- **${p.name}**: ${p.description ?? 'No description'}').join('\n');
+            _appendSystem('### Available Prompts\n$list', ChatMessageType.general);
+          }
+          break;
+        default:
+          _appendSystem('Unknown MCP subcommand: $subCmd', ChatMessageType.general);
+      }
+    } catch (e) {
+      _appendSystem('Error executing MCP command: $e', ChatMessageType.general);
+    } finally {
+      state = state.copyWith(isGenerating: false);
+    }
+  }
+
+  Future<void> handleMcpToolCall(String name, Map<String, dynamic> arguments) async {
+    final mcpService = _ref.read(mcpHostServiceProvider);
+    state = state.copyWith(isGenerating: true);
+    try {
+      await mcpService.connect();
+      final response = await mcpService.callTool(name, arguments);
+      final textParts = response.content.map((c) {
+        if (c is TextContent) return c.text;
+        // Basic fallback for other content types
+        return c.toString();
+      }).join('\n');
+      
+      List<ChatAction>? actions;
+      // Heuristic for MCP App detection: if content contains HTML
+      for (final c in response.content) {
+        if (c is TextContent && (c.text.contains('<!DOCTYPE html>') || c.text.contains('<html'))) {
+          actions ??= [];
+          actions.add(ChatAction(
+              action: 'view_mcp_app',
+              target: 'mcp_app',
+              actionType: ChatActionType.viewMcpApp,
+              targetType: ChatActionTarget.code,
+              value: {'html': c.text},
+          ));
+        }
+      }
+
+      if (response.isError) {
+        _appendSystem('MCP Error:\n$textParts', ChatMessageType.general);
+      } else {
+        _appendSystem(textParts, ChatMessageType.general, actions: actions);
+      }
+    } catch (e) {
+      _appendSystem('MCP Exception: $e', ChatMessageType.general);
+    } finally {
+      state = state.copyWith(isGenerating: false);
+    }
+  }
+
   void cancel() {
     state = state.copyWith(isGenerating: false);
   }
@@ -295,6 +445,32 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
       if (action.actionType == ChatActionType.applyCurl) {
         await _applyCurl(action);
+        return;
+      }
+      if (action.actionType == ChatActionType.mcpCallTool) {
+        try {
+          String? name;
+          Map<String, dynamic> args = {};
+          
+          if (action.value is Map) {
+            name = action.value['name']?.toString();
+            final a = action.value['arguments'];
+            if (a is Map) {
+              args = a.cast<String, dynamic>();
+            } else if (a is String) {
+              try { args = jsonDecode(a); } catch(_) {}
+            }
+          }
+          if (name == null || name.isEmpty) name = action.field;
+          if (name == null || name.isEmpty || name == 'other') name = action.target;
+          if (name == null || name.isEmpty || name == 'other') {
+             _appendSystem('Could not determine tool name from AI response.', ChatMessageType.general);
+             return;
+          }
+          await handleMcpToolCall(name, args);
+        } catch(e) {
+          _appendSystem('Failed to setup MCP tool call: $e', ChatMessageType.general);
+        }
         return;
       }
 
@@ -864,7 +1040,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     state = state.copyWith(chatSessions: updatedSessions);
   }
 
-  void _appendSystem(String text, ChatMessageType type) {
+  void _appendSystem(String text, ChatMessageType type, {List<ChatAction>? actions}) {
     final id = _currentRequest?.id ?? 'global';
     _addMessage(
       id,
@@ -874,6 +1050,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         role: MessageRole.system,
         timestamp: DateTime.now(),
         messageType: type,
+        actions: actions,
       ),
     );
   }

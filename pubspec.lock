@@ -795,7 +795,7 @@ packages:
     source: hosted
     version: "2.2.3"
   hive_ce:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: hive_ce
       sha256: "8e9980e68643afb1e765d3af32b47996552a64e190d03faf622cea07c1294418"
@@ -943,6 +943,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.11.0"
+  json_rpc_2:
+    dependency: "direct main"
+    description:
+      name: json_rpc_2
+      sha256: "82dfd37d3b2e5030ae4729e1d7f5538cbc45eb1c73d618b9272931facac3bec1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   json_serializable:
     dependency: "direct dev"
     description:
@@ -1079,6 +1087,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.0"
+  mcp_dart:
+    dependency: "direct main"
+    description:
+      name: mcp_dart
+      sha256: "30ab03147fec3fd72e98172475cd720cd4e3aec7d5f8944ef36dbfabc75a353c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   media_kit:
     dependency: transitive
     description:
@@ -1805,7 +1821,7 @@ packages:
     source: hosted
     version: "1.0.0"
   stream_channel:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: stream_channel
       sha256: "969e04c80b8bcdf826f8f16579c7b14d780458bd97f56d107d3950fdbeef059d"
@@ -1861,13 +1877,13 @@ packages:
     source: hosted
     version: "1.30.0"
   test_api:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: test_api
-      sha256: "8161c84903fd860b26bfdefb7963b3f0b68fee7adea0f59ef805ecca346f0c7a"
+      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.10"
+    version: "0.7.7"
   test_core:
     dependency: transitive
     description:
@@ -2198,5 +2214,5 @@ packages:
     source: hosted
     version: "2.2.2"
 sdks:
-  dart: ">=3.11.0 <3.999.0"
-  flutter: ">=3.41.2"
+  dart: ">=3.10.7 <3.999.0"
+  flutter: ">=3.38.7"

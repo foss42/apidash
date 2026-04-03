@@ -68,7 +68,7 @@ class ModelManager {
     // All available models
     // final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
     // All loaded models
-    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/ps";
+    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
 
     try {
       final (resp, _, msg) = await sendHttpRequest(

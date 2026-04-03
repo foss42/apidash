@@ -7,6 +7,7 @@ import 'package:apidash/screens/common_widgets/ai/ai.dart';
 import 'providers/providers.dart';
 import 'routes/routes.dart';
 import 'utils/utils.dart';
+import 'widgets/widgets.dart';
 
 class DashbotWindow extends ConsumerWidget {
   final VoidCallback onClose;
@@ -99,45 +100,48 @@ class DashbotWindow extends ConsumerWidget {
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      kHSpacer20,
-                                      DashbotIcons.getDashbotIcon1(width: 38),
                                       kHSpacer12,
-                                      Text(
-                                        'DashBot',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surface,
+                                      DashbotIcons.getDashbotIcon1(width: 32),
+                                      kHSpacer8,
+                                      Expanded(
+                                        child: Text(
+                                          'DashBot',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       kHSpacer4,
-                                      Flexible(
-                                        child: AIModelSelectorButton(
-                                          aiRequestModel: AIRequestModel.fromJson(
-                                              settings.defaultAIModel ?? {}),
-                                          useRootNavigator: true,
-                                          onDialogOpen: () => ref
-                                              .read(dashbotWindowNotifierProvider
-                                                  .notifier)
-                                              .hide(),
-                                          onDialogClose: () => ref
-                                              .read(dashbotWindowNotifierProvider
-                                                  .notifier)
-                                              .show(),
-                                          onModelUpdated: (d) {
-                                            ref
-                                                .read(settingsProvider.notifier)
-                                                .update(
-                                                    defaultAIModel: d.copyWith(
-                                                        modelConfigs: [],
-                                                        stream: null,
-                                                        systemPrompt: '',
-                                                        userPrompt: '').toJson());
-                                          },
-                                        ),
+                                      AIModelSelectorButton(
+                                        aiRequestModel: AIRequestModel.fromJson(
+                                            settings.defaultAIModel ?? {}),
+                                        useRootNavigator: true,
+                                        onDialogOpen: () => ref
+                                            .read(dashbotWindowNotifierProvider
+                                                .notifier)
+                                            .hide(),
+                                        onDialogClose: () => ref
+                                            .read(dashbotWindowNotifierProvider
+                                                .notifier)
+                                            .show(),
+                                        onModelUpdated: (d) {
+                                          ref
+                                              .read(settingsProvider.notifier)
+                                              .update(
+                                                  defaultAIModel: d.copyWith(
+                                                      modelConfigs: [],
+                                                      stream: null,
+                                                      systemPrompt: '',
+                                                      userPrompt: '').toJson());
+                                        },
                                       ),
+                                      kHSpacer8,
+                                      const McpServerSelectorButton(),
                                     ],
                                   ),
                                 ),
