@@ -60,7 +60,7 @@ class HttpResponseModel with _$HttpResponseModel {
       _$HttpResponseModelFromJson(json);
 
   String? get contentType => headers?.getValueContentType();
-  MediaType? get mediaType => getMediaTypeFromHeaders(headers);
+  MediaType? get mediaType => getMediaTypeFromHeadersOrSniff(headers, bodyBytes);
 
   HttpResponseModel fromResponse({
     required Response response,
@@ -70,7 +70,7 @@ class HttpResponseModel with _$HttpResponseModel {
     final responseHeaders = mergeMaps({
       HttpHeaders.contentLengthHeader: response.contentLength.toString(),
     }, response.headers);
-    MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
+    MediaType? mediaType = getMediaTypeFromHeadersOrSniff(responseHeaders, response.bodyBytes);
 
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
