@@ -43,6 +43,11 @@ AVAILABLE MCP TOOLS:
 - get_environment_variables: Get environment variables for an environment. (arguments: envId)
 - debug: Run internal diagnostics on the current database state.
 - status: Get overall MCP server connection status.
+- create_request: Programmatically adds a new request to the local collection. (arguments: url, name, method)
+- replay_request: Re-executes a saved request directly through the API Dash engine. (arguments: requestId)
+- http_request: Generic HTTP execution tool. (arguments: url, method, headers, body)
+- graphql_query: Specialized GraphQL execution tool. (arguments: url, query, variables, headers)
+- ai_api_test: Autonomous multi-step validation and report generation. (arguments: requestId, prompt)
 
 CRITICAL: When the user asks to use an MCP tool (like checking status), DO NOT provide a lengthy explanation of what the tool does. Simply provide a short explanation like "Checking MCP server status..." and supply the `mcp_call_tool` action.
 
