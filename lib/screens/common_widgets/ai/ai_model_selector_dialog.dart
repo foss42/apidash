@@ -59,23 +59,23 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                     child: Text(kLabelUpdateModels),
                   ),
                   kVSpacer10,
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       Text(kLabelSelectModelProvider),
                       kHSpacer20,
-                      Expanded(
-                        child: ADDropdownButton<ModelAPIProvider>(
-                          onChanged: (x) {
-                            setState(() {
-                              selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
-                            });
-                          },
-                          value: selectedProvider,
-                          values: data.modelProviders.map(
-                            (e) => (e.providerId!, e.providerName),
-                          ),
+                      ADDropdownButton<ModelAPIProvider>(
+                        onChanged: (x) {
+                          setState(() {
+                            selectedProvider = x;
+                            newAIRequestModel = mappedData[selectedProvider]
+                                ?.toAiRequestModel();
+                          });
+                        },
+                        value: selectedProvider,
+                        values: data.modelProviders.map(
+                          (e) => (e.providerId!, e.providerName),
                         ),
                       ),
                     ],
