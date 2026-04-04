@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:apidash_mcp/src/tools/execute_saved_request_tool.dart';
 import 'package:apidash_mcp/src/tools/list_folder_from_collection_tool.dart';
 import 'package:apidash_mcp/src/tools/list_requests_tool.dart';
 import 'package:mcp_dart/mcp_dart.dart';
@@ -37,4 +38,5 @@ void toolRegister(McpServer server, String workspacePath) {
   registerListCollections(server, workspacePath: workspacePath);
   registerListFoldersFromCollectionTool(server, workspacePath: workspacePath);
   registerListRequestsTool(server, workspacePath: workspacePath);
+  registerExecuteSavedRequest(server, workspacePath: workspacePath);
 }
