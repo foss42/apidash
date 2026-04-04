@@ -204,5 +204,15 @@ void main() {
       const url = "https://example.com/page?";
       expect(stripUrlParams(url), "https://example.com/page");
     });
+
+    test('stripUrlParams with query-only input', () {
+      const url = "?x=1&y=2";
+      expect(stripUrlParams(url), "");
+    });
+
+    test('stripUrlParams splits on ? even when it appears after #', () {
+      const url = "https://example.com/page#frag?x=1";
+      expect(stripUrlParams(url), "https://example.com/page#frag");
+    });
   });
 }
