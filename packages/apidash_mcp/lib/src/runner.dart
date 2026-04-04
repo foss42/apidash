@@ -19,9 +19,10 @@ Future<void> runServer() async {
 
   final server = McpServer(
     const Implementation(name: 'apidash_mcp', version: '0.1.0'),
-    options: const McpServerOptions(
+    options: McpServerOptions(
       capabilities: ServerCapabilities(
-        tools: ServerCapabilitiesTools(),
+        tools:  const ServerCapabilitiesTools(),
+        extensions: withMcpUiExtension(),
       ),
     ),
   );
@@ -33,7 +34,7 @@ Future<void> runServer() async {
 
 
 void toolRegister(McpServer server, String workspacePath) {
-  registerListCollectionsTool(server, workspacePath: workspacePath);
+  registerListCollections(server, workspacePath: workspacePath);
   registerListFoldersFromCollectionTool(server, workspacePath: workspacePath);
   registerListRequestsTool(server, workspacePath: workspacePath);
 }

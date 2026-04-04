@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:mcp_dart/mcp_dart.dart';
-import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
+import '../ui/list_collection_ui.dart';
+
+
+const resourceUri = 'ui://collections/list.html';
 
 class CollectionSummary {
   const CollectionSummary({required this.id, required this.name});
@@ -19,20 +22,20 @@ class CollectionSummary {
 Future<List<CollectionSummary>> listCollectionsFromWorkspace(
   String workspacePath,
 ) async {
-  final collectionsDir = Directory(p.join(workspacePath, 'collections'));
+  final collectionsDir = Directory(path.join(workspacePath, 'collections'));
   if (!await collectionsDir.exists()) {
     return const <CollectionSummary>[];
   }
 
   final entities = await collectionsDir.list(followLinks: false).toList();
   final collectionDirs = entities.whereType<Directory>().toList()
-    ..sort((a, b) => p.basename(a.path).compareTo(p.basename(b.path)));
+    ..sort((a, b) => path.basename(a.path).compareTo(path.basename(b.path)));
 
   final output = <CollectionSummary>[];
 
   for (final collectionDir in collectionDirs) {
-    final id = p.basename(collectionDir.path);
-    final collectionFile = File(p.join(collectionDir.path, 'collection.json'));
+    final id = path.basename(collectionDir.path);
+    final collectionFile = File(path.join(collectionDir.path, 'collection.json'));
 
     String name = id;
 
@@ -55,21 +58,68 @@ Future<List<CollectionSummary>> listCollectionsFromWorkspace(
   return output;
 }
 
-void registerListCollectionsTool(
+void registerListCollections(
   McpServer server, {
   required String workspacePath,
 }) {
-  server.registerTool(
-    'list_collections',
-    description: 'List all collections available in the API Dash HIS workspace',
-    inputSchema: const ToolInputSchema(properties: {}),
-    callback: (args, extra) async {
-      final collections = await listCollectionsFromWorkspace(workspacePath);
-      final payload = collections.map((collection) => collection.toJson()).toList();
 
-      return CallToolResult.fromContent([
-        TextContent(text: jsonEncode(payload)),
-      ]);
+  registerAppResource(
+    server,
+    'Collections List UI',
+    resourceUri,
+    const McpUiAppResourceConfig(
+      description: 'Display all collections in the API Dash workspace',
+      meta: {
+        'ui': {
+          'csp': {
+            'resourceDomains': [],
+          },
+        },
+      },
+    ),
+    (uri, extra) async {
+      final collections = await listCollectionsFromWorkspace(workspacePath);
+      final html = buildListCollectionsHtml(
+        collections: collections
+            .map((c) => {'id': c.id, 'name': c.name})
+            .toList(),
+      );
+
+      return ReadResourceResult(
+        contents: [
+          TextResourceContents(
+            uri: uri.toString(),
+            mimeType: mcpUiResourceMimeType,
+            text: html,
+          ),
+        ],
+      );
+    },
+  );
+
+  registerAppTool(
+    server,
+    'list_collections',
+    McpUiAppToolConfig(
+      description: 'List all collections available in the API Dash HIS workspace',
+      inputSchema: const ToolInputSchema(properties: {}),
+      meta: const {
+        'ui': {
+          'resourceUri': resourceUri,
+          'visibility': ['model', 'app'],
+        }
+      },
+    ),
+    (args, extra) async {
+      return CallToolResult(
+        content: [
+          ResourceLink(
+            uri: resourceUri,
+            name: 'Collections',
+            mimeType: mcpUiResourceMimeType,
+          ),
+        ],
+      );
     },
   );
 }
