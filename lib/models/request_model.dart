@@ -26,6 +26,8 @@ class RequestModel with _$RequestModel {
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    MqttRequestModel? mqttRequestModel,
+    GrpcRequestModel? grpcRequestModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>

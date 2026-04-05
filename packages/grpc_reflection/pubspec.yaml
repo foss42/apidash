@@ -1,0 +1,13 @@
+name: grpc_reflection
+description: Generated Dart stubs for gRPC server reflection and protobuf descriptors.
+version: 0.0.1
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+resolution: workspace
+
+dependencies:
+  grpc: ^5.1.0
+  protobuf: ^6.0.0
+  fixnum: ^1.1.1

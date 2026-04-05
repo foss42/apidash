@@ -41,6 +41,7 @@ export 'markdown.dart';
 export 'menu_header_suggestions.dart';
 export 'menu_item_card.dart';
 export 'menu_sidebar_top.dart';
+export 'message_log_view.dart';
 export 'overlay_widget.dart';
 export 'popup_menu_api_type.dart';
 export 'popup_menu_codegen.dart';

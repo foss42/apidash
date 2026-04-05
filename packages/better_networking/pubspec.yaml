@@ -28,10 +28,18 @@ dependencies:
   http_parser: ^4.1.2
   json5: ^0.8.2
   json_annotation: ^4.9.0
-  seed: any
+  seed:
+    path: ../seed
+  mqtt_client: ^10.11.9
   xml: ^6.3.0
   oauth1: ^2.1.0
   oauth2: ^2.0.5
+  web_socket_channel: ^3.0.1
+  grpc: ^5.1.0
+  protobuf: ^6.0.0
+  fixnum: ^1.1.1
+  grpc_reflection:
+    path: ../grpc_reflection
 
 dev_dependencies:
   flutter_test:

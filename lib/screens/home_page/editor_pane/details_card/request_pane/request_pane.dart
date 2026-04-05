@@ -10,7 +10,10 @@ import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import '../response_pane.dart';
 import 'ai_request/request_pane_ai.dart';
 import 'request_pane_graphql.dart';
+import 'request_pane_grpc.dart';
+import 'request_pane_mqtt.dart';
 import 'request_pane_rest.dart';
+import 'request_pane_ws.dart';
 
 class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({
@@ -76,7 +79,21 @@ class EditRequestPane extends ConsumerWidget {
       );
     }
 
+    if (isPopped == false && apiType == APIType.mqtt) {
+      return const EditMqttRequestPane();
+    }
+
+    if (isPopped == false && apiType == APIType.grpc) {
+      return const EditGrpcRequestPane();
+    }
+
     return switch (apiType) {
+      APIType.rest => const EditRestRequestPane(),
+      APIType.graphql => const EditGraphQLRequestPane(),
+      APIType.ai => const EditAIRequestPane(),
+      APIType.mqtt => const EditMqttRequestPane(),
+      APIType.grpc => const EditGrpcRequestPane(),
+      APIType.websocket => const EditWSRequestPane(),
       APIType.rest => EditRestRequestPane(
           showViewCodeButton: showViewCodeButton,
         ),

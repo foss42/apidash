@@ -11,3 +11,4 @@ export 'package:collection/collection.dart';
 export 'package:http/http.dart';
 export 'package:http_parser/http_parser.dart';
 export 'package:seed/seed.dart';
+export 'package:web_socket_channel/web_socket_channel.dart';
