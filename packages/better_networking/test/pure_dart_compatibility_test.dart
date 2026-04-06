@@ -24,10 +24,12 @@ void main() {
   group('pure Dart compatibility', () {
     test('pubspec does not require Flutter and resolves local seed', () async {
       final root = _packageRoot();
-      final pubspec = await File('${root.path}${Platform.pathSeparator}pubspec.yaml')
-          .readAsString();
+      final pubspec =
+          await File('${root.path}${Platform.pathSeparator}pubspec.yaml')
+              .readAsString();
 
-      expect(pubspec, isNot(contains(RegExp(r'^\s*flutter:\s*$', multiLine: true))));
+      expect(pubspec,
+          isNot(contains(RegExp(r'^\s*flutter:\s*$', multiLine: true))));
       expect(pubspec, isNot(contains('sdk: flutter')));
       expect(pubspec, contains('path: ../seed'));
     });
@@ -50,6 +52,23 @@ void main() {
           reason: 'Unexpected dart:ui import in ${file.path}',
         );
       }
+    });
+
+    test('OAuth auth flow does not log access tokens', () async {
+      final root = _packageRoot();
+      final handleAuthFile = File(
+        '${root.path}${Platform.pathSeparator}lib${Platform.pathSeparator}utils${Platform.pathSeparator}auth${Platform.pathSeparator}handle_auth.dart',
+      );
+      final content = await handleAuthFile.readAsString();
+
+      expect(content,
+          isNot(contains('logDebug(res.\$1.credentials.accessToken)')));
+      expect(
+          content, isNot(contains('logDebug(client.credentials.accessToken)')));
+      expect(content,
+          isNot(contains('developer.log(res.\$1.credentials.accessToken)')));
+      expect(content,
+          isNot(contains('developer.log(client.credentials.accessToken)')));
     });
   });
 }

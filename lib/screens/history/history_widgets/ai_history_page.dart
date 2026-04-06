@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/editor.dart';
+import 'package:genai/genai_flutter.dart';
 
 class HisAIRequestPromptSection extends ConsumerWidget {
   const HisAIRequestPromptSection({super.key});

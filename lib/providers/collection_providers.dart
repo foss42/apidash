@@ -406,6 +406,7 @@ class CollectionStateNotifier
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      customCallbackHandler: flutterOAuth2CallbackHandler,
     );
 
     HttpResponseModel? httpResponseModel;

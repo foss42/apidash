@@ -7,6 +7,11 @@ import '../../services/http_client_manager.dart';
 import '../../services/oauth_callback_server.dart';
 import '../platform_utils.dart';
 
+typedef OAuth2CallbackHandler = Future<String> Function(
+  String url, {
+  required String callbackUrlScheme,
+});
+
 /// Advanced OAuth2 authorization code grant handler that returns both the client and server
 /// for cases where you need manual control over the callback server lifecycle.
 ///
@@ -21,6 +26,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   required File? credentialsFile,
   String? state,
   String? scope,
+  OAuth2CallbackHandler? customCallbackHandler,
 }) async {
   // Check for existing credentials first
   if (credentialsFile != null && await credentialsFile.exists()) {
@@ -106,8 +112,14 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
         }
       }
     } else {
-      throw UnsupportedError(
-        'OAuth2 authorizationCode without localhost callback requires Flutter-specific browser auth support, which is not available in the pure-Dart better_networking package.',
+      if (customCallbackHandler == null) {
+        throw Exception(
+          'A custom OAuth2 callback handler is required on this platform.',
+        );
+      }
+      callbackUri = await customCallbackHandler(
+        authorizationUrl.toString(),
+        callbackUrlScheme: actualRedirectUrl.scheme,
       );
     }
 

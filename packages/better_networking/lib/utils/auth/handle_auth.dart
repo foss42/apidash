@@ -11,8 +11,9 @@ import 'oauth1_utils.dart';
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
-  AuthModel? authData,
-) async {
+  AuthModel? authData, {
+  OAuth2CallbackHandler? customCallbackHandler,
+}) async {
   if (authData == null || authData.type == APIAuthType.none) {
     return httpRequestModel;
   }
@@ -206,6 +207,7 @@ Future<HttpRequestModel> handleAuth(
             tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
             credentialsFile: credentialsFile,
             scope: oauth2.scope,
+            customCallbackHandler: customCallbackHandler,
           );
 
           // Clean up the callback server if it exists and is still running
@@ -221,7 +223,7 @@ Future<HttpRequestModel> handleAuth(
             }
           }
 
-          logDebug(res.$1.credentials.accessToken);
+          logDebug('OAuth2 authorization code flow completed successfully.');
 
           // Add the access token to the request headers
           updatedHeaders.add(
@@ -238,7 +240,7 @@ Future<HttpRequestModel> handleAuth(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
           );
-          logDebug(client.credentials.accessToken);
+          logDebug('OAuth2 client credentials flow completed successfully.');
 
           // Add the access token to the request headers
           updatedHeaders.add(
@@ -250,12 +252,13 @@ Future<HttpRequestModel> handleAuth(
           updatedHeaderEnabledList.add(true);
           break;
         case OAuth2GrantType.resourceOwnerPassword:
-          logDebug("==Resource Owner Password==");
+          logDebug('Starting OAuth2 resource owner password flow.');
           final client = await oAuth2ResourceOwnerPasswordGrantHandler(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
           );
-          logDebug(client.credentials.accessToken);
+          logDebug(
+              'OAuth2 resource owner password flow completed successfully.');
 
           // Add the access token to the request headers
           updatedHeaders.add(
