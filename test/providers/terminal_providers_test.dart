@@ -185,6 +185,26 @@ void main() {
       expect(text, contains('System'));
       expect(text, contains('JS error'));
     });
+
+    test('terminal entries are limited to max capacity', () {
+      const int maxEntries = 1000;
+      for (int i = 0; i < maxEntries + 100; i++) {
+        controller.logSystem(category: 'test', message: 'entry $i');
+      }
+      final state = container.read(terminalStateProvider);
+      expect(state.entries.length, maxEntries);
+      expect(state.entries.first.system?.message, 'entry ${maxEntries + 99}');
+      expect(state.entries.last.system?.message, 'entry 100');
+    });
+
+    test('old entries are removed when max capacity is reached', () {
+      controller.logSystem(category: 'test', message: 'first entry');
+      for (int i = 0; i < 1001; i++) {
+        controller.logSystem(category: 'test', message: 'entry $i');
+      }
+      final state = container.read(terminalStateProvider);
+      expect(state.entries.any((e) => e.system?.message == 'first entry'), isFalse);
+    });
   });
 
   group('TerminalState.copyWith', () {
