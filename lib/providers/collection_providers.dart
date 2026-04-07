@@ -456,7 +456,7 @@ class CollectionStateNotifier
             historyModel = historyModel!.copyWith(
               httpResponseModel: httpResponseModel!,
             );
-            ref
+            await ref
                 .read(historyMetaStateNotifier.notifier)
                 .editHistoryRequest(historyModel!);
           }
@@ -548,7 +548,7 @@ class CollectionStateNotifier
         authModel: requestModel.httpRequestModel?.authModel,
       );
 
-      ref
+      await ref
           .read(historyMetaStateNotifier.notifier)
           .addHistoryRequest(historyModel!);
 
