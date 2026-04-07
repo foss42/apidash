@@ -21,7 +21,8 @@ class Assertion {
       };
 
   factory Assertion.fromJson(Map<String, dynamic> json) => Assertion(
-        id: json['id'] as String,
+      // LLM output may omit id; synthesize a stable fallback.
+      id: (json['id'] as String?) ?? 'assertion-${json['type']}',
         type: AssertionType.values.byName(json['type'] as String),
         expected: json['expected'],
         isSelected: json['isSelected'] as bool? ?? true,

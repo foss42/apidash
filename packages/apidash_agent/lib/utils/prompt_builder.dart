@@ -64,6 +64,16 @@ For each step, identify:
 2. Where that data is used in subsequent requests (via {{variableName}} placeholders)
 3. What assertions to verify at each step
 
+CRITICAL: Every assertion object MUST include ALL of these fields:
+{
+  "id": "a-unique-string-like-step1-status",
+  "type": "statusCode",
+  "expected": 200,
+  "isSelected": true
+}
+
+Allowed assertion types are exactly: statusCode, bodyContains, responseTimeUnder.
+
 Respond ONLY with a valid JSON object. No markdown, no explanation.
 Format:
 {
@@ -75,7 +85,12 @@ Format:
       "headers": { "key": "value" },
       "body": "string or null",
       "assertions": [
-        { "type": "status_code" | "body_contains", "expected": value }
+        {
+          "id": "step1-status",
+          "type": "statusCode" | "bodyContains" | "responseTimeUnder",
+          "expected": value,
+          "isSelected": true
+        }
       ],
       "dataExtractions": [
         { "variableName": "string", "jsonPath": "\$.path.to.value" }

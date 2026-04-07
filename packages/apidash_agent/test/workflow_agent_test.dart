@@ -10,7 +10,7 @@ void main() {
   final aiRequestModel = AIRequestModel(
     modelApiProvider: ModelAPIProvider.gemini,
     url: kGeminiUrl,
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-2.5-flash-lite',
     apiKey: apiKey,
     stream: false,
     modelConfigs: [
@@ -207,44 +207,49 @@ void main() {
       final steps = [
         // Step 1: POST — creates a resource
         WorkflowStep(
-          name: 'Step 1 — POST /posts (create)',
+          name: 'POST /post (create)',
           method: 'POST',
-          url: 'https://jsonplaceholder.typicode.com/posts',
+          url: 'https://httpbin.org/post',
           headers: {'Content-Type': 'application/json'},
-          body: '{"title": "Agentic Test", "body": "GSoC POC", "userId": 1}',
+          body: '{"title": "Agentic Test", "userId": 1}',
           assertions: [
             Assertion(
-              id: 'a-post-status',
+              id: 'step1-status',
               type: AssertionType.statusCode,
-              expected: 201,
+              expected: 200,
             ),
             Assertion(
-              id: 'a-post-body',
+              id: 'step1-body',
               type: AssertionType.bodyContains,
               expected: 'Agentic Test',
             ),
           ],
-          // ← Agent extracts the returned id for use in step 2
+          // httpbin echoes posted JSON under the "json" key.
           dataExtractions: [
             DataBinding(
-              variableName: 'postId',
-              jsonPath: r'$.id',
+              variableName: 'title',
+              jsonPath: r'$.json.title',
             ),
           ],
         ),
 
-        // Step 2: GET — uses the extracted postId from step 1
+        // Step 2: GET — uses the extracted title from step 1
         WorkflowStep(
-          name: 'Step 2 — GET /posts/{{postId}} (verify)',
+          name: 'GET /get (verify)',
           method: 'GET',
-          url: 'https://jsonplaceholder.typicode.com/posts/{{postId}}',
+          url: 'https://httpbin.org/get?title={{title}}',
           headers: {},
           body: null,
           assertions: [
             Assertion(
-              id: 'a-get-status',
+              id: 'step2-status',
               type: AssertionType.statusCode,
               expected: 200,
+            ),
+            Assertion(
+              id: 'step2-body',
+              type: AssertionType.bodyContains,
+              expected: 'Agentic Test',
             ),
           ],
           dataExtractions: [],
@@ -278,21 +283,21 @@ void main() {
 
       // Step 1 must pass
       expect(results[0].overallStatus, equals(TestStatus.passed),
-          reason: 'POST must return 201');
+          reason: 'POST must return 200');
 
-      // Step 1 must extract postId
-      expect(results[0].extractedValues.containsKey('postId'), isTrue,
-          reason: 'postId must be extracted for data binding');
+        // Step 1 must extract title
+        expect(results[0].extractedValues.containsKey('title'), isTrue,
+          reason: 'title must be extracted for data binding');
 
-      // Step 2 URL must have resolved the {{postId}} placeholder
+        // Step 2 URL must have resolved the {{title}} placeholder
       // (we check the resolved URL via actualBody being non-null — 
       //  the real URL resolved correctly if we got a 200)
       expect(results[1].actualStatusCode, equals(200),
-          reason: 'GET with resolved postId must return 200');
+          reason: 'GET with resolved title must return 200');
 
       expect(results[1].overallStatus, equals(TestStatus.passed));
 
-      print('\n🎯 Data binding verified: postId extracted from Step 1 '
+        print('\n🎯 Data binding verified: title extracted from Step 1 '
             'and injected into Step 2 URL');
     }, timeout: const Timeout(Duration(seconds: 60)));
 

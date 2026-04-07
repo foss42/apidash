@@ -31,15 +31,15 @@ class WorkflowStep {
       };
 
   factory WorkflowStep.fromJson(Map<String, dynamic> json) => WorkflowStep(
-        name: json['name'] as String,
-        method: json['method'] as String,
-        url: json['url'] as String,
-        headers: Map<String, String>.from(json['headers'] as Map),
+      name: (json['name'] as String?) ?? 'Step ${json['method'] ?? 'unknown'}',
+      method: (json['method'] as String?) ?? 'GET',
+      url: (json['url'] as String?) ?? '',
+      headers: Map<String, String>.from((json['headers'] as Map?) ?? const {}),
         body: json['body'] as String?,
-        assertions: (json['assertions'] as List)
+      assertions: ((json['assertions'] as List?) ?? const [])
             .map((a) => Assertion.fromJson(a as Map<String, dynamic>))
             .toList(),
-        dataExtractions: (json['dataExtractions'] as List)
+      dataExtractions: ((json['dataExtractions'] as List?) ?? const [])
             .map((d) => DataBinding.fromJson(d as Map<String, dynamic>))
             .toList(),
       );
