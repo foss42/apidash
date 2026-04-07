@@ -1,12 +1,30 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 
 import '../../models/auth/auth_oauth2_model.dart';
 import '../../services/http_client_manager.dart';
 import '../../services/oauth_callback_server.dart';
 import '../platform_utils.dart';
+import 'auth_exceptions.dart';
+
+typedef OAuth2CallbackHandler = Future<String> Function(
+  String url, {
+  required String callbackUrlScheme,
+});
+
+OAuth2CallbackHandler? _defaultOAuth2CallbackHandler;
+
+OAuth2CallbackHandler? get defaultOAuth2CallbackHandler =>
+    _defaultOAuth2CallbackHandler;
+
+void registerDefaultOAuth2CallbackHandler(OAuth2CallbackHandler handler) {
+  _defaultOAuth2CallbackHandler = handler;
+}
+
+void clearDefaultOAuth2CallbackHandler() {
+  _defaultOAuth2CallbackHandler = null;
+}
 
 /// Advanced OAuth2 authorization code grant handler that returns both the client and server
 /// for cases where you need manual control over the callback server lifecycle.
@@ -22,6 +40,10 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   required File? credentialsFile,
   String? state,
   String? scope,
+
+  /// Required when running the authorization-code flow on platforms that
+  /// cannot capture a localhost callback directly.
+  OAuth2CallbackHandler? customCallbackHandler,
 }) async {
   // Check for existing credentials first
   if (credentialsFile != null && await credentialsFile.exists()) {
@@ -85,7 +107,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
         callbackUri =
             'http://localhost${Uri.parse(callbackUri).path}${Uri.parse(callbackUri).query.isNotEmpty ? '?${Uri.parse(callbackUri).query}' : ''}';
       } on TimeoutException {
-        throw Exception(
+        throw const OAuth2AuthorizationException(
           'OAuth authorization timed out after 3 minutes. '
           'Please try again and complete the authorization in your browser. '
           'If you closed the browser tab, please restart the OAuth flow.',
@@ -94,27 +116,32 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
         // Handle custom exceptions like browser tab closure
         final errorMessage = e.toString();
         if (errorMessage.contains('Browser tab was closed')) {
-          throw Exception(
+          throw const OAuth2AuthorizationException(
             'OAuth authorization was cancelled because the browser tab was closed. '
             'Please try again and complete the authorization process without closing the browser tab.',
           );
         } else if (errorMessage.contains('OAuth callback cancelled')) {
-          throw Exception(
+          throw const OAuth2AuthorizationException(
             'OAuth authorization was cancelled. Please try again if you want to complete the authentication.',
           );
         } else {
-          throw Exception('OAuth authorization failed: $errorMessage');
+          throw OAuth2AuthorizationException(
+            'OAuth authorization failed: $errorMessage',
+          );
         }
       }
     } else {
-      // For mobile: Use the standard flutter_web_auth_2 approach
-      callbackUri = await FlutterWebAuth2.authenticate(
-        url: authorizationUrl.toString(),
+      final callbackHandler =
+          customCallbackHandler ?? _defaultOAuth2CallbackHandler;
+      if (callbackHandler == null) {
+        throw OAuth2CallbackHandlerRequiredException(
+          callbackUrlScheme: actualRedirectUrl.scheme,
+          platformDescription: Platform.operatingSystem,
+        );
+      }
+      callbackUri = await callbackHandler(
+        authorizationUrl.toString(),
         callbackUrlScheme: actualRedirectUrl.scheme,
-        options: const FlutterWebAuth2Options(
-          useWebview: true,
-          windowName: 'OAuth Authorization - API Dash',
-        ),
       );
     }
 
@@ -226,7 +253,9 @@ Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
   }
   if ((oauth2Model.username == null || oauth2Model.username!.isEmpty) ||
       (oauth2Model.password == null || oauth2Model.password!.isEmpty)) {
-    throw Exception("Username or Password cannot be empty");
+    throw const OAuth2ConfigurationException(
+      'Username or password cannot be empty for the resource owner password grant.',
+    );
   }
 
   // Create a unique request ID for this OAuth flow
@@ -290,6 +319,8 @@ Future<void> _openUrlInBrowser(String url) async {
     }
   } catch (e) {
     // Fallback: throw an exception so the calling code can handle it
-    throw Exception('Failed to open authorization URL in browser: $e');
+    throw OAuth2AuthorizationException(
+      'Failed to open authorization URL in browser: $e',
+    );
   }
 }

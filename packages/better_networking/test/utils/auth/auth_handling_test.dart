@@ -2,6 +2,8 @@ import 'package:better_networking/better_networking.dart';
 import 'package:test/test.dart';
 
 void main() {
+  tearDown(clearDefaultOAuth2CallbackHandler);
+
   group('Authentication Handling Tests', () {
     test(
       'given sendHttpRequest when no authentication is provided then it should not throw any error',
@@ -452,13 +454,47 @@ void main() {
         expect(
           () async => await handleAuth(httpRequestModel, authModel),
           throwsA(
-            isA<Exception>().having(
+            isA<OAuth2ConfigurationException>().having(
               (e) => e.toString(),
               'message',
-              contains('Failed to get OAuth2 Data'),
+              contains('Failed to get OAuth2 data'),
             ),
           ),
         );
+      },
+    );
+
+    test(
+      'given OAuth2 callback handler exception when converted to string then it should explain the missing mobile callback contract',
+      () {
+        final exception = OAuth2CallbackHandlerRequiredException(
+          callbackUrlScheme: 'apidash',
+          platformDescription: 'android',
+        );
+
+        expect(exception.toString(), contains('custom callback handler'));
+        expect(exception.toString(), contains('"apidash"'));
+        expect(exception.toString(), contains('android'));
+      },
+    );
+
+    test(
+      'given a default OAuth2 callback handler when registered then it should be available globally',
+      () async {
+        Future<String> handler(
+          String url, {
+          required String callbackUrlScheme,
+        }) async =>
+            '$callbackUrlScheme:$url';
+
+        registerDefaultOAuth2CallbackHandler(handler);
+
+        expect(defaultOAuth2CallbackHandler, isNotNull);
+        final result = await defaultOAuth2CallbackHandler!(
+          'https://auth.example.com',
+          callbackUrlScheme: 'apidash',
+        );
+        expect(result, equals('apidash:https://auth.example.com'));
       },
     );
 
