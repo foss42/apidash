@@ -1,0 +1,27 @@
+name: apidash_agent
+description: "Agentic API Testing Engine for API Dash - generates, reviews and executes intelligent test cases for APIs"
+version: 0.1.0-dev
+homepage: https://github.com/foss42/apidash/tree/main/packages/apidash_agent
+
+topics:
+  - ai
+  - agent
+  - api-testing
+  - mcp
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+resolution: workspace
+
+dependencies:
+  apidash_core: any
+  better_networking: any
+  genai: any
+  uuid: ^4.5.3
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+
+dev_dependencies:
+  lints: ^6.1.0
+  test: ^1.29.0
