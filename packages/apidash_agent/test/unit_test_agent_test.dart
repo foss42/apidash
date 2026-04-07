@@ -3,6 +3,8 @@ import 'package:test/test.dart';
 import 'package:genai/genai.dart';
 import 'package:apidash_agent/apidash_agent.dart';
 
+// ignore_for_file: avoid_print
+
 void main() {
   // ─── Read API key from environment ───────────────────────────────────────
   // Run with: dart test --define=GEMINI_API_KEY=your_key_here
