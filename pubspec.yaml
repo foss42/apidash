@@ -32,6 +32,7 @@ dependencies:
   flutter_markdown_plus: ^1.0.7
   flutter_portal: ^1.1.4
   flutter_riverpod: ^3.2.1
+  flutter_web_auth_2: ^5.0.1
   flutter_svg: ^2.2.4
   fvp: ^0.35.2
   highlight: ^0.7.0

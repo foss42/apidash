@@ -14,6 +14,10 @@ dependencies:
     path: ..
   cupertino_icons: ^1.0.8
 
+dependency_overrides:
+  seed:
+    path: ../../seed
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

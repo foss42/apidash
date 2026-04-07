@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:better_networking/better_networking.dart';
-import 'package:flutter/foundation.dart';
+
 import '../consts.dart';
 import '../interface/interface.dart';
 import '../models/models.dart';
+import '../src/logging.dart';
 
 class ModelManager {
   static Future<AvailableModels?> fetchModelsFromRemote({
@@ -19,13 +21,13 @@ class ModelManager {
         ),
       );
       if (resp == null) {
-        debugPrint('fetchModelsFromRemote -> resp == null');
+        logDebug('fetchModelsFromRemote -> resp == null');
       } else {
         var remoteModels = availableModelsFromJson(resp.body);
         return remoteModels;
       }
     } catch (e) {
-      debugPrint('fetchModelsFromRemote -> ${e.toString()}');
+      logDebug('fetchModelsFromRemote -> ${e.toString()}');
     }
     return null;
   }
@@ -57,7 +59,7 @@ class ModelManager {
         );
       }
     } catch (e) {
-      debugPrint('fetchAvailableModels -> ${e.toString()}');
+      logDebug('fetchAvailableModels -> ${e.toString()}');
     }
     return kAvailableModels;
   }
@@ -90,7 +92,7 @@ class ModelManager {
       }
       return ollamaModels;
     } catch (e) {
-      debugPrint('fetchInstalledOllamaModels -> ${e.toString()}');
+      logDebug('fetchInstalledOllamaModels -> ${e.toString()}');
       return null;
     }
   }

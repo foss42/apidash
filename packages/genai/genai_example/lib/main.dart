@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:genai/genai.dart';
+import 'package:genai/genai_flutter.dart';
 
 void main() {
   runApp(const GenAIExample());

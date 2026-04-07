@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:better_networking/better_networking.dart';
-import 'package:flutter/foundation.dart';
 import 'package:nanoid/nanoid.dart';
+
 import '../models/models.dart';
+import '../src/logging.dart';
 
 Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
   final httpRequestModel = aiRequestModel?.httpRequestModel;
   if (httpRequestModel == null) {
-    debugPrint("executeGenAIRequest -> httpRequestModel is null");
+    logDebug("executeGenAIRequest -> httpRequestModel is null");
     return null;
   }
   final (response, _, _) = await sendHttpRequest(
@@ -21,7 +23,7 @@ Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
     final data = jsonDecode(response.body);
     return aiRequestModel?.getFormattedOutput(data);
   } else {
-    debugPrint('LLM_EXCEPTION: ${response.statusCode}\n${response.body}');
+    logDebug('LLM_EXCEPTION: ${response.statusCode}\n${response.body}');
     return null;
   }
 }
@@ -32,7 +34,7 @@ Future<Stream<String?>> streamGenAIRequest(
   final httpRequestModel = aiRequestModel?.httpRequestModel;
   final streamController = StreamController<String?>();
   if (httpRequestModel == null) {
-    debugPrint("streamGenAIRequest -> httpRequestModel is null");
+    logDebug("streamGenAIRequest -> httpRequestModel is null");
   } else {
     final httpStream = await streamHttpRequest(
       nanoid(),
@@ -68,9 +70,7 @@ Future<Stream<String?>> streamGenAIRequest(
             );
             streamController.sink.add(formattedOutput);
           } catch (e) {
-            debugPrint(
-              '⚠️ JSON decode error in SSE: $e\nSending as Regular Text',
-            );
+            logDebug('JSON decode error in SSE: $e\nSending as Regular Text');
             streamController.sink.add(jsonStr);
           }
         }
@@ -123,10 +123,8 @@ void processGenAIStreamOutput(
     (chunk) {
       if (chunk == null || chunk.isEmpty) return;
       buffer += chunk;
-      // Split on spaces but preserve last partial word
       final parts = buffer.split(RegExp(r'\s+'));
       if (parts.length > 1) {
-        // Keep the last part in buffer (it may be incomplete)
         buffer = parts.removeLast();
         for (final word in parts) {
           if (word.trim().isNotEmpty) {
@@ -136,7 +134,6 @@ void processGenAIStreamOutput(
       }
     },
     onDone: () {
-      // Print any remaining word when stream is finished
       if (buffer.trim().isNotEmpty) {
         onWord(buffer);
       }

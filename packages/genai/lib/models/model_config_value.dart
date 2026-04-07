@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+
+import '../src/logging.dart';
 
 enum ConfigType { boolean, slider, numeric, text }
 
@@ -8,7 +9,7 @@ ConfigType getConfigTypeEnum(String? t) {
     final val = ConfigType.values.byName(t ?? "");
     return val;
   } catch (e) {
-    debugPrint("ConfigType <$t> not found.");
+    logDebug("ConfigType <$t> not found.");
     return ConfigType.text;
   }
 }
