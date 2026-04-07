@@ -290,7 +290,7 @@ void main() {
 
   testWidgets('Testing when type/subtype is text/csv', (tester) async {
     String csvDataString =
-        'Id,Name,Age\n1,John Doe,40\n2,Dbestech,41\n3,Voldermort,71\n4,Joe Biden,80\n5,Ryo Hanamura,35';
+        'Id,Name,Age\n1,John Doe,40\n2,Dbestach,41\n3,Voldermort,71\n4,Joe Biden,80\n5,Ryo Hanamura,35';
 
     await tester.pumpWidget(
       MaterialApp(
@@ -308,5 +308,26 @@ void main() {
     expect(find.byType(DataTable), findsOneWidget);
     expect(find.text('John Doe'), findsOneWidget);
     expect(find.text('41'), findsOneWidget);
+  });
+
+  testWidgets('Testing when type/subtype is text/csv with empty data', (
+    tester,
+  ) async {
+    String emptyCsvData = '';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Previewer(
+            type: kTypeText,
+            subtype: kSubTypeCsv,
+            bytes: Uint8List.fromList([]),
+            body: emptyCsvData,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(DataTable), findsNothing);
   });
 }
