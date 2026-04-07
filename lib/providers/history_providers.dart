@@ -84,10 +84,11 @@ class HistoryMetaStateNotifier
 
   Future<void> addHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
+    final previousKeys = state?.keys.toList() ?? [];
+    final List<String> updatedHistoryKeys = previousKeys.contains(id)
+        ? previousKeys
+        : [...previousKeys, id];
     state = {...state ?? {}, id: model.metaData};
-    final List<String> updatedHistoryKeys = state == null
-        ? [id]
-        : [...state!.keys, id];
     await hiveHandler.setHistoryIds(updatedHistoryKeys);
     await hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
@@ -96,11 +97,11 @@ class HistoryMetaStateNotifier
 
   Future<void> editHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
-    state = {...state ?? {}, id: model.metaData};
     final existingKeys = state?.keys.toList() ?? [];
     if (!existingKeys.contains(id)) {
       await hiveHandler.setHistoryIds([...existingKeys, id]);
     }
+    state = {...state ?? {}, id: model.metaData};
     await hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
