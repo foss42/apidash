@@ -317,6 +317,87 @@ AGENT_CHAT_JSON = {
 }
 
 
+def _mcp_query_response(message: str) -> dict:
+    """Route an incoming chat message to a canned Open Responses reply."""
+    if any(k in message for k in ('weather', 'london', 'temperature', 'forecast')):
+        return {
+            "id": "resp_q_weather", "object": "response",
+            "model": "gpt-4o-2024-11-20", "status": "completed",
+            "output": [
+                {"type": "reasoning", "id": "rs_q1", "status": "completed",
+                 "summary": [{"text": "User wants weather info. I'll call get_weather for London."}]},
+                {"type": "web_search_call", "id": "ws_q1", "status": "completed"},
+                {"type": "function_call", "id": "fc_q1", "call_id": "call_wq1",
+                 "name": "get_weather",
+                 "arguments": "{\"location\": \"London\", \"unit\": \"celsius\"}",
+                 "status": "completed"},
+                {"type": "function_call_output", "id": "fco_q1", "call_id": "call_wq1",
+                 "output": "{\"temperature\": 13, \"condition\": \"Cloudy\", \"humidity\": 78, \"wind_kph\": 18}",
+                 "status": "completed"},
+                {"type": "message", "id": "msg_q1", "role": "assistant", "status": "completed",
+                 "content": [{"type": "output_text",
+                              "text": "## London Weather\n\n**13°C**, cloudy. Humidity 78%, wind 18 km/h.\n\n| Metric | Value |\n|--------|-------|\n| Temperature | 13°C |\n| Condition | Cloudy |\n| Humidity | 78% |\n| Wind | 18 km/h |"}]}
+            ],
+            "usage": {"input_tokens": 98, "output_tokens": 112, "total_tokens": 210}
+        }
+
+    if any(k in message for k in ('stripe', 'payment', 'checkout', 'api test', 'balance')):
+        return {
+            "id": "resp_q_stripe", "object": "response",
+            "model": "gpt-4o-2024-11-20", "status": "completed",
+            "output": [
+                {"type": "reasoning", "id": "rs_q2", "status": "completed",
+                 "summary": [{"text": "User wants to test the Stripe balance endpoint. I'll fire a GET request with the test key."}]},
+                {"type": "function_call", "id": "fc_q2", "call_id": "call_sq2",
+                 "name": "send_http_request",
+                 "arguments": "{\"method\": \"GET\", \"url\": \"https://api.stripe.com/v1/balance\", \"headers\": {\"Authorization\": \"Bearer sk_test_***\"}}",
+                 "status": "completed"},
+                {"type": "function_call_output", "id": "fco_q2", "call_id": "call_sq2",
+                 "output": "{\"object\": \"balance\", \"available\": [{\"amount\": 92340, \"currency\": \"usd\"}], \"pending\": [{\"amount\": 4200, \"currency\": \"usd\"}], \"livemode\": false}",
+                 "status": "completed"},
+                {"type": "message", "id": "msg_q2", "role": "assistant", "status": "completed",
+                 "content": [{"type": "output_text",
+                              "text": "**Stripe Balance — HTTP 200 ✅**\n\nEndpoint is healthy. `available: $923.40`, `pending: $42.00`, `livemode: false` (sandbox)."}]}
+            ],
+            "usage": {"input_tokens": 143, "output_tokens": 97, "total_tokens": 240}
+        }
+
+    if any(k in message for k in ('health', 'status', 'uptime', 'dashboard', 'monitor')):
+        return {
+            "id": "resp_q_health", "object": "response",
+            "model": "gpt-4o-2024-11-20", "status": "completed",
+            "output": [
+                {"type": "reasoning", "id": "rs_q3", "status": "completed",
+                 "summary": [{"text": "User wants an API health check. I'll query the health endpoint and summarise the key metrics."}]},
+                {"type": "function_call", "id": "fc_q3", "call_id": "call_hq3",
+                 "name": "check_api_health",
+                 "arguments": "{\"endpoints\": [\"auth\", \"payments\", \"inventory\", \"notifications\"]}",
+                 "status": "completed"},
+                {"type": "function_call_output", "id": "fco_q3", "call_id": "call_hq3",
+                 "output": "{\"auth\": \"ok\", \"payments\": \"ok\", \"inventory\": \"degraded\", \"notifications\": \"ok\", \"uptime_pct\": 99.1, \"avg_latency_ms\": 187}",
+                 "status": "completed"},
+                {"type": "message", "id": "msg_q3", "role": "assistant", "status": "completed",
+                 "content": [{"type": "output_text",
+                              "text": "## API Health\n\n| Service | Status |\n|---------|--------|\n| Auth | ✅ OK |\n| Payments | ✅ OK |\n| Inventory | ⚠️ Degraded |\n| Notifications | ✅ OK |\n\n**Uptime:** 99.1% · **Avg latency:** 187ms\n\n`inventory` is degraded — worth investigating before the next deploy."}]}
+            ],
+            "usage": {"input_tokens": 121, "output_tokens": 134, "total_tokens": 255}
+        }
+
+    # default — generic help
+    return {
+        "id": "resp_q_default", "object": "response",
+        "model": "gpt-4o-2024-11-20", "status": "completed",
+        "output": [
+            {"type": "reasoning", "id": "rs_q0", "status": "completed",
+             "summary": [{"text": "General question. I'll answer based on what I know about API Dash."}]},
+            {"type": "message", "id": "msg_q0", "role": "assistant", "status": "completed",
+             "content": [{"type": "output_text",
+                          "text": "I can help with **API testing** inside APIDash. Try asking:\n\n- *\"Check London weather\"* — reasoning + web search + tool call\n- *\"Test the Stripe balance endpoint\"* — HTTP request tool + result\n- *\"Show API health dashboard\"* — multi-service health check\n\nEach response shows the full agent trace: reasoning, tool calls, and the final answer."}]}
+        ],
+        "usage": {"input_tokens": 54, "output_tokens": 76, "total_tokens": 130}
+    }
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         print(f"  {self.path}  {args[1]}")
@@ -362,7 +443,7 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
 
         else:
-            msg = b'Endpoints: /open-responses  /a2ui  /agent-chat  /stream'
+            msg = b'Endpoints: /open-responses  /a2ui  /agent-chat  /stream  POST /mcp/query'
             self.send_response(404)
             self.send_header('Content-Type', 'text/plain')
             self.send_header('Content-Length', str(len(msg)))
@@ -370,7 +451,24 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(msg)
 
     def do_POST(self):
-        self.do_GET()
+        if self.path == '/mcp/query':
+            length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(length)
+            try:
+                payload = json.loads(body)
+                message = payload.get('message', '').lower()
+            except Exception:
+                message = ''
+
+            response = _mcp_query_response(message)
+            out = json.dumps(response, indent=2).encode()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', str(len(out)))
+            self.end_headers()
+            self.wfile.write(out)
+        else:
+            self.do_GET()
 
 
 if __name__ == '__main__':
@@ -379,5 +477,6 @@ if __name__ == '__main__':
     print(f"  /open-responses  ->  Structured view (reasoning + web/file search + tool call + message)")
     print(f"  /a2ui            ->  GenUI view (dashboard with cards, progress, chips, buttons)")
     print(f"  /agent-chat      ->  Agent chatflow (2-turn MCP-style chat, each turn is Open Responses)")
-    print(f"  /stream          ->  SSE stream (Open Responses events, use with SSE request in APIDash)\n")
+    print(f"  /stream          ->  SSE stream (Open Responses events, use with SSE request in APIDash)")
+    print(f"  POST /mcp/query  ->  Interactive agent (AgentChatView backend, keyword-routed)\n")
     HTTPServer(('localhost', port), Handler).serve_forever()
