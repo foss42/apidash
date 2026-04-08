@@ -252,7 +252,7 @@ AGENT_CHAT_JSON = {
                         "content": [
                             {
                                 "type": "output_text",
-                                "text": "## Recommended Payment APIs to Test\n\nBased on your checkout flow, here are the **5 critical endpoints** to cover:\n\n| Priority | API | What to verify |\n|----------|-----|----------------|\n| 🔴 High | **Stripe Charges** | Request/response schema, error codes |\n| 🔴 High | **Stripe Balance** | Auth, currency format |\n| 🟡 Medium | **PayPal Orders** | Create + capture flow |\n| 🟡 Medium | **Razorpay Orders** | INR amount format |\n| 🟢 Low | **Braintree Transactions** | Sandbox vs production URLs |\n\nStart with the Stripe endpoints — they're used in the hot path and any regression there would break checkout immediately."
+                                "text": "## Recommended Payment APIs to Test\n\nBased on your checkout flow, here are the 5 critical endpoints to cover:\n\n| Priority | API | What to verify |\n|----------|-----|----------------|\n| High | **Stripe Charges** | Request/response schema, error codes |\n| High | **Stripe Balance** | Auth, currency format |\n| Medium | **PayPal Orders** | Create + capture flow |\n| Medium | **Razorpay Orders** | INR amount format |\n| Low | **Braintree Transactions** | Sandbox vs production URLs |\n\nStart with the Stripe endpoints — they're used in the hot path and any regression there would break checkout immediately."
                             }
                         ]
                     }
@@ -301,7 +301,7 @@ AGENT_CHAT_JSON = {
                         "content": [
                             {
                                 "type": "output_text",
-                                "text": "**Stripe Balance — HTTP 200 ✅**\n\nThe endpoint is healthy and returning the expected schema:\n\n```json\n{\n  \"object\": \"balance\",\n  \"available\": [{ \"amount\": 92340, \"currency\": \"usd\" }],\n  \"pending\":   [{ \"amount\":  4200, \"currency\": \"usd\" }],\n  \"livemode\": false\n}\n```\n\n- `livemode: false` confirms we're hitting the **sandbox** correctly.\n- `available.amount` is in **cents** (92340 = $923.40) — make sure your assertions account for that.\n- No auth errors, schema is valid. You can now add this as an automated test in your collection."
+                                "text": "**Stripe Balance — HTTP 200**\n\nThe endpoint is healthy and returning the expected schema:\n\n```json\n{\n  \"object\": \"balance\",\n  \"available\": [{ \"amount\": 92340, \"currency\": \"usd\" }],\n  \"pending\":   [{ \"amount\":  4200, \"currency\": \"usd\" }],\n  \"livemode\": false\n}\n```\n\n- `livemode: false` confirms we're hitting the **sandbox** correctly.\n- `available.amount` is in **cents** (92340 = $923.40) — make sure your assertions account for that.\n- No auth errors, schema is valid. You can now add this as an automated test in your collection."
                             }
                         ]
                     }
@@ -357,7 +357,7 @@ def _mcp_query_response(message: str) -> dict:
                  "status": "completed"},
                 {"type": "message", "id": "msg_q2", "role": "assistant", "status": "completed",
                  "content": [{"type": "output_text",
-                              "text": "**Stripe Balance — HTTP 200 ✅**\n\nEndpoint is healthy. `available: $923.40`, `pending: $42.00`, `livemode: false` (sandbox)."}]}
+                              "text": "**Stripe Balance — HTTP 200**\n\nEndpoint is healthy. `available: $923.40`, `pending: $42.00`, `livemode: false` (sandbox)."}]}
             ],
             "usage": {"input_tokens": 143, "output_tokens": 97, "total_tokens": 240}
         }
@@ -378,7 +378,7 @@ def _mcp_query_response(message: str) -> dict:
                  "status": "completed"},
                 {"type": "message", "id": "msg_q3", "role": "assistant", "status": "completed",
                  "content": [{"type": "output_text",
-                              "text": "## API Health\n\n| Service | Status |\n|---------|--------|\n| Auth | ✅ OK |\n| Payments | ✅ OK |\n| Inventory | ⚠️ Degraded |\n| Notifications | ✅ OK |\n\n**Uptime:** 99.1% · **Avg latency:** 187ms\n\n`inventory` is degraded — worth investigating before the next deploy."}]}
+                              "text": "## API Health\n\n| Service | Status |\n|---------|--------|\n| Auth | OK |\n| Payments | OK |\n| Inventory | Degraded |\n| Notifications | OK |\n\n**Uptime:** 99.1% | **Avg latency:** 187ms\n\n`inventory` is degraded — worth investigating before the next deploy."}]}
             ],
             "usage": {"input_tokens": 121, "output_tokens": 134, "total_tokens": 255}
         }
