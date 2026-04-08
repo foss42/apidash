@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    { "source": "/open-responses", "destination": "/api/open_responses" },
+    { "source": "/agent-chat",     "destination": "/api/agent_chat" },
+    { "source": "/a2ui",           "destination": "/api/a2ui" },
+    { "source": "/stream",         "destination": "/api/stream" },
+    { "source": "/mcp/query",      "destination": "/api/mcp/query" }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin",  "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+      ]
+    }
+  ]
+}
