@@ -1,0 +1,18 @@
+name: apidash_mcp_server
+description: Pure Dart MCP server for API Dash agentic testing
+version: 0.1.0-dev
+publish_to: none
+
+# DO NOT add resolution: workspace — this must stay standalone pure Dart
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+  http: ^1.2.0
+  uuid: ^4.5.3
+
+dev_dependencies:
+  lints: ^4.0.0
