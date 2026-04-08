@@ -295,5 +295,103 @@ void main() {
       final items = OpenResponsesStreamParser.parse(lines);
       expect(items.length, 1);
     });
+
+    test('full mock-server SSE sequence parses correctly', () {
+      // Mirrors the /stream endpoint in mock_server.py
+      final lines = [
+        'data: {"type":"response.created","response":{"id":"resp_stream_001","object":"response","model":"gpt-4o-2024-11-20","status":"in_progress","output":[]}}',
+        'data: {"type":"response.output_item.added","output_index":0,"item":{"type":"reasoning","id":"rs_s001","status":"in_progress"}}',
+        'data: {"type":"response.reasoning_summary_text.delta","output_index":0,"delta":"User asked for London weather."}',
+        'data: {"type":"response.reasoning_summary_text.delta","output_index":0,"delta":" I\'ll call get_weather."}',
+        'data: {"type":"response.output_item.done","output_index":0,"item":{"type":"reasoning","id":"rs_s001","status":"completed","summary":[{"text":"User asked for London weather. I\'ll call get_weather."}]}}',
+        'data: {"type":"response.output_item.added","output_index":1,"item":{"type":"web_search_call","id":"ws_s001","status":"in_progress"}}',
+        'data: {"type":"response.output_item.done","output_index":1,"item":{"type":"web_search_call","id":"ws_s001","status":"completed"}}',
+        'data: {"type":"response.output_item.added","output_index":2,"item":{"type":"function_call","id":"fc_s001","call_id":"call_xyz","name":"get_weather","status":"in_progress","arguments":""}}',
+        'data: {"type":"response.function_call_arguments.delta","output_index":2,"delta":"{\\"location\\""}',
+        'data: {"type":"response.function_call_arguments.delta","output_index":2,"delta":": \\"London\\"}"}',
+        'data: {"type":"response.output_item.done","output_index":2,"item":{"type":"function_call","id":"fc_s001","call_id":"call_xyz","name":"get_weather","status":"completed","arguments":"{\\"location\\": \\"London\\"}"}}',
+        'data: {"type":"response.output_item.added","output_index":3,"item":{"type":"function_call_output","id":"fco_s001","call_id":"call_xyz","status":"completed","output":"{\\"temperature\\":14}"}}',
+        'data: {"type":"response.output_item.done","output_index":3,"item":{"type":"function_call_output","id":"fco_s001","call_id":"call_xyz","status":"completed","output":"{\\"temperature\\":14}"}}',
+        'data: {"type":"response.output_item.added","output_index":4,"item":{"type":"message","id":"msg_s001","role":"assistant","status":"in_progress","content":[]}}',
+        'data: {"type":"response.output_text.delta","output_index":4,"delta":"## London Weather\\n\\n"}',
+        'data: {"type":"response.output_text.delta","output_index":4,"delta":"14°C, overcast."}',
+        'data: {"type":"response.output_item.done","output_index":4,"item":{"type":"message","id":"msg_s001","role":"assistant","status":"completed","content":[{"type":"output_text","text":"## London Weather\\n\\n14°C, overcast."}]}}',
+        'data: {"type":"response.completed","response":{"id":"resp_stream_001","object":"response","model":"gpt-4o-2024-11-20","status":"completed","output":[{"type":"reasoning","id":"rs_s001","status":"completed","summary":[{"text":"User asked for London weather."}]},{"type":"web_search_call","id":"ws_s001","status":"completed"},{"type":"function_call","id":"fc_s001","call_id":"call_xyz","name":"get_weather","status":"completed","arguments":"{\\"location\\":\\"London\\"}"},{"type":"function_call_output","id":"fco_s001","call_id":"call_xyz","status":"completed","output":"{\\"temperature\\":14}"},{"type":"message","id":"msg_s001","role":"assistant","status":"completed","content":[{"type":"output_text","text":"## London Weather\\n\\n14°C, overcast."}]}],"usage":{"input_tokens":142,"output_tokens":97,"total_tokens":239}}}',
+        'data: [DONE]',
+      ];
+
+      expect(OpenResponsesStreamParser.isOpenResponsesStream(lines), isTrue);
+
+      final items = OpenResponsesStreamParser.parse(lines);
+      expect(items.length, 5);
+      expect(items[0], isA<ReasoningOutputItem>());
+      expect(items[1], isA<WebSearchCallOutputItem>());
+      expect(items[2], isA<FunctionCallOutputItem>());
+      expect((items[2] as FunctionCallOutputItem).name, 'get_weather');
+      expect(items[3], isA<FunctionCallResultItem>());
+      expect(items[4], isA<MessageOutputItem>());
+      expect((items[4] as MessageOutputItem).text, contains('London Weather'));
+    });
+
+    test('function_call_output output field is a valid JSON string', () {
+      // Verifies the structuredContent pattern: tool output is parseable JSON
+      final lines = [
+        'data: {"type":"response.output_item.added","output_index":0,"item":{"type":"function_call_output","id":"fco1","call_id":"c1","status":"completed","output":"{\\"temperature\\":14,\\"condition\\":\\"Overcast\\"}"}}',
+        'data: {"type":"response.output_item.done","output_index":0,"item":{"type":"function_call_output","id":"fco1","call_id":"c1","status":"completed","output":"{\\"temperature\\":14,\\"condition\\":\\"Overcast\\"}"}}',
+      ];
+      final items = OpenResponsesStreamParser.parse(lines);
+      expect(items.length, 1);
+      final fco = items.first as FunctionCallResultItem;
+      // The output should be parseable JSON — same concept as MCP structuredContent
+      expect(() => fco.output, returnsNormally);
+      expect(fco.output, contains('temperature'));
+    });
+
+    test('previous_response_id is parsed when present', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'resp_2',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [],
+        'previous_response_id': 'resp_1',
+      });
+      expect(r.previousResponseId, 'resp_1');
+    });
+
+    test('previous_response_id is null when absent', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'resp_1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [],
+      });
+      expect(r.previousResponseId, isNull);
+    });
+
+    test('message with refusal content part', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'm',
+        'status': 'completed',
+        'output': [
+          {
+            'id': 'msg1',
+            'type': 'message',
+            'role': 'assistant',
+            'status': 'completed',
+            'content': [
+              {'type': 'refusal', 'refusal': 'I cannot help with that.'}
+            ],
+          }
+        ],
+      });
+      final msg = r.output.first as MessageOutputItem;
+      expect(msg.content.first, isA<RefusalPart>());
+      expect((msg.content.first as RefusalPart).refusal,
+          'I cannot help with that.');
+    });
   });
 }

@@ -68,6 +68,7 @@ class _AgentChatViewState extends State<AgentChatView> {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'message': message}),
       );
+      if (!mounted) return;
       if (res.statusCode == 200) {
         final json = jsonDecode(res.body) as Map<String, dynamic>;
         final result = OpenResponsesResult.fromJson(json);
@@ -88,9 +89,10 @@ class _AgentChatViewState extends State<AgentChatView> {
         setState(() => _error = 'Server returned ${res.statusCode}');
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() => _error = 'Could not reach ${widget.serverUrl} — is mock_server.py running?');
     } finally {
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
