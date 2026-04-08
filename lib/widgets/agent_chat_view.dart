@@ -4,11 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'open_responses_viewer.dart';
 
-/// A single turn in an agent chatflow.
-///
-/// [userMessage] is the prompt the user (or host app) sent to the agent.
-/// [agentResponse] is the full Open Responses object the agent returned —
-/// including any reasoning traces, tool invocations, and the final message.
 class AgentChatTurn {
   const AgentChatTurn({
     required this.userMessage,
@@ -19,27 +14,9 @@ class AgentChatTurn {
   final OpenResponsesResult agentResponse;
 }
 
-/// Renders a list of [AgentChatTurn]s as a scrollable chat timeline.
-///
-/// Each agent turn is displayed using [OpenResponsesViewer] so the same
-/// structured cards — reasoning traces, tool-call groups, web/file search
-/// indicators, and the final markdown message — that appear in the API Dash
-/// response panel are rendered **inline inside the conversation**.
-///
-/// This demonstrates the MCP Apps chatflow pattern described in:
-///   https://dev.to/aws/how-i-built-mcp-apps-based-sales-analytics-agentic-ui-deployed-it-on-amazon-bedrock-agentcore-4e9i
-///   https://github.com/ashitaprasad/sample-mcp-apps-chatflow
-///
-/// Architecture mapping:
-///   MCP server tool response  →  [OpenResponsesResult]
-///   Agent host chat UI        →  [AgentChatView]
-///   Per-turn structured output →  [OpenResponsesViewer] (embedded inline)
-///
-/// In the MCP Apps pattern the agent host receives structured tool output and
-/// renders interactive UI inside the chat window.  Here, [OpenResponsesViewer]
-/// plays that role: it receives the agent's [OpenResponsesResult] and renders
-/// the full agentic trace — reasoning, tool calls, results, and the final
-/// answer — directly inside the chat turn.
+// Chat timeline where each agent turn is rendered via OpenResponsesViewer.
+// Same structured cards as the response panel (reasoning, tool calls, message)
+// but embedded inline inside the conversation instead of a separate pane.
 class AgentChatView extends StatelessWidget {
   const AgentChatView({super.key, required this.turns});
 
@@ -72,10 +49,6 @@ class _TurnWidget extends StatelessWidget {
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// User bubble
-// ---------------------------------------------------------------------------
 
 class _UserBubble extends StatelessWidget {
   const _UserBubble({required this.message});
@@ -118,10 +91,6 @@ class _UserBubble extends StatelessWidget {
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// Agent response card — wraps OpenResponsesViewer in a chat bubble
-// ---------------------------------------------------------------------------
 
 class _AgentResponseCard extends StatefulWidget {
   const _AgentResponseCard({required this.response});
@@ -167,7 +136,6 @@ class _AgentResponseCardState extends State<_AgentResponseCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header row
                 InkWell(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
@@ -213,7 +181,6 @@ class _AgentResponseCardState extends State<_AgentResponseCard> {
                     ),
                   ),
                 ),
-                // Structured output rendered via OpenResponsesViewer
                 if (_expanded) ...[
                   Divider(
                       height: 1,

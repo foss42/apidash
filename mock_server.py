@@ -6,10 +6,7 @@ Then use http://localhost:8765/<endpoint> in APIDash.
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
-# --- Payload 1: Open Responses (JSON) ---
-# Triggers: Structured + Raw tabs
-# Shows: Reasoning card, Web Search card, File Search card,
-#        Tool Call group (with expandable args + result), Message card, token usage bar
+# open responses payload — hits the Structured tab in apidash
 OPEN_RESPONSES_JSON = {
     "id": "resp_mock_001",
     "object": "response",
@@ -68,10 +65,7 @@ OPEN_RESPONSES_JSON = {
     }
 }
 
-# --- Payload 2: A2UI Generative UI (JSONL) ---
-# Triggers: GenUI + Raw tabs
-# Shows: surfaceTitle header, Column layout, Cards, Row with stats,
-#        Progress bar, Chips, Buttons — all bound to data model
+# a2ui payload — hits the GenUI tab
 A2UI_JSONL = '\n'.join([
     json.dumps({"createSurface": {"id": "dash_001", "title": "API Health Dashboard", "layout": "scroll"}}),
     json.dumps({"updateComponents": {"components": [
@@ -120,12 +114,7 @@ A2UI_JSONL = '\n'.join([
 ])
 
 
-# --- Payload 3: Agent Chat (JSON) ---
-# Triggers: AgentChatView demo
-# Shows: two-turn chatflow where each agent turn is a full Open Responses
-# object (reasoning + tool calls + message) rendered inline in the chat.
-# Demonstrates the MCP Apps pattern:
-#   user query → agent reasoning → tool invocations → inline structured output
+# two-turn agent chatflow — each agent response is a full open responses object
 AGENT_CHAT_JSON = {
     "turns": [
         {
