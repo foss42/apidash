@@ -66,6 +66,7 @@ export 'splitview_history.dart';
 export 'sse_display.dart';
 export 'open_responses_viewer.dart';
 export 'a2ui_renderer.dart';
+export 'agent_chat_view.dart';
 export 'tabbar_segmented.dart';
 export 'table_map.dart';
 export 'table_request_form.dart';
