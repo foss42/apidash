@@ -15,7 +15,7 @@ void main() {
   final aiRequestModel = AIRequestModel(
     modelApiProvider: ModelAPIProvider.gemini,
     url: kGeminiUrl,
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-2.5-flash-lite',
     apiKey: apiKey,
     stream: false,
     modelConfigs: [
