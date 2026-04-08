@@ -5,6 +5,7 @@ Then use http://localhost:8765/<endpoint> in APIDash.
 """
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import time
 
 # open responses payload — hits the Structured tab in apidash
 OPEN_RESPONSES_JSON = {
@@ -112,6 +113,92 @@ A2UI_JSONL = '\n'.join([
     json.dumps({"updateDataModel": {"path": "/latency",    "value": "142ms"}}),
     json.dumps({"updateDataModel": {"path": "/error_rate", "value": "0.1%"}}),
 ])
+
+
+# SSE stream — emits Open Responses events that OpenResponsesStreamParser can consume live
+SSE_EVENTS = [
+    {"type": "response.created", "response": {
+        "id": "resp_stream_001", "object": "response",
+        "model": "gpt-4o-2024-11-20", "status": "in_progress", "output": []
+    }},
+
+    # reasoning
+    {"type": "response.output_item.added", "output_index": 0,
+     "item": {"type": "reasoning", "id": "rs_s001", "status": "in_progress"}},
+    {"type": "response.reasoning_summary_text.delta", "output_index": 0,
+     "delta": "User asked for London weather."},
+    {"type": "response.reasoning_summary_text.delta", "output_index": 0,
+     "delta": " I'll call get_weather and format the result clearly."},
+    {"type": "response.output_item.done", "output_index": 0,
+     "item": {"type": "reasoning", "id": "rs_s001", "status": "completed",
+              "summary": [{"text": "User asked for London weather. I'll call get_weather and format the result clearly."}]}},
+
+    # web search
+    {"type": "response.output_item.added", "output_index": 1,
+     "item": {"type": "web_search_call", "id": "ws_s001", "status": "in_progress"}},
+    {"type": "response.output_item.done", "output_index": 1,
+     "item": {"type": "web_search_call", "id": "ws_s001", "status": "completed"}},
+
+    # function call (streamed args)
+    {"type": "response.output_item.added", "output_index": 2,
+     "item": {"type": "function_call", "id": "fc_s001", "call_id": "call_xyz",
+              "name": "get_weather", "status": "in_progress", "arguments": ""}},
+    {"type": "response.function_call_arguments.delta", "output_index": 2, "delta": "{\"location\""},
+    {"type": "response.function_call_arguments.delta", "output_index": 2, "delta": ": \"London\","},
+    {"type": "response.function_call_arguments.delta", "output_index": 2, "delta": " \"unit\": \"celsius\"}"},
+    {"type": "response.output_item.done", "output_index": 2,
+     "item": {"type": "function_call", "id": "fc_s001", "call_id": "call_xyz",
+              "name": "get_weather", "status": "completed",
+              "arguments": "{\"location\": \"London\", \"unit\": \"celsius\"}"}},
+
+    # function call output
+    {"type": "response.output_item.added", "output_index": 3,
+     "item": {"type": "function_call_output", "id": "fco_s001", "call_id": "call_xyz",
+              "status": "completed",
+              "output": "{\"temperature\": 14, \"condition\": \"Overcast\", \"humidity\": 81}"}},
+    {"type": "response.output_item.done", "output_index": 3,
+     "item": {"type": "function_call_output", "id": "fco_s001", "call_id": "call_xyz",
+              "status": "completed",
+              "output": "{\"temperature\": 14, \"condition\": \"Overcast\", \"humidity\": 81}"}},
+
+    # message (streamed text)
+    {"type": "response.output_item.added", "output_index": 4,
+     "item": {"type": "message", "id": "msg_s001", "role": "assistant",
+              "status": "in_progress", "content": []}},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": "## London Weather\n\n"},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": "Current conditions: **14°C**"},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": ", overcast skies.\n\n"},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": "| Metric | Value |\n|--------|-------|\n"},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": "| Temperature | 14°C |\n"},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": "| Condition | Overcast |\n"},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": "| Humidity | 81% |\n\n"},
+    {"type": "response.output_text.delta", "output_index": 4, "delta": "Classic London — bring an umbrella."},
+    {"type": "response.output_item.done", "output_index": 4,
+     "item": {"type": "message", "id": "msg_s001", "role": "assistant", "status": "completed",
+              "content": [{"type": "output_text",
+                           "text": "## London Weather\n\nCurrent conditions: **14°C**, overcast skies.\n\n| Metric | Value |\n|--------|-------|\n| Temperature | 14°C |\n| Condition | Overcast |\n| Humidity | 81% |\n\nClassic London — bring an umbrella."}]}},
+
+    # completed — full response object so the parser can use the clean final state
+    {"type": "response.completed", "response": {
+        "id": "resp_stream_001", "object": "response",
+        "model": "gpt-4o-2024-11-20", "status": "completed",
+        "output": [
+            {"type": "reasoning", "id": "rs_s001", "status": "completed",
+             "summary": [{"text": "User asked for London weather. I'll call get_weather and format the result clearly."}]},
+            {"type": "web_search_call", "id": "ws_s001", "status": "completed"},
+            {"type": "function_call", "id": "fc_s001", "call_id": "call_xyz",
+             "name": "get_weather", "status": "completed",
+             "arguments": "{\"location\": \"London\", \"unit\": \"celsius\"}"},
+            {"type": "function_call_output", "id": "fco_s001", "call_id": "call_xyz",
+             "status": "completed",
+             "output": "{\"temperature\": 14, \"condition\": \"Overcast\", \"humidity\": 81}"},
+            {"type": "message", "id": "msg_s001", "role": "assistant", "status": "completed",
+             "content": [{"type": "output_text",
+                          "text": "## London Weather\n\nCurrent conditions: **14°C**, overcast skies.\n\n| Metric | Value |\n|--------|-------|\n| Temperature | 14°C |\n| Condition | Overcast |\n| Humidity | 81% |\n\nClassic London — bring an umbrella."}]}
+        ],
+        "usage": {"input_tokens": 142, "output_tokens": 97, "total_tokens": 239}
+    }},
+]
 
 
 # two-turn agent chatflow — each agent response is a full open responses object
@@ -251,6 +338,21 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
 
+        elif self.path == '/stream':
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/event-stream')
+            self.send_header('Cache-Control', 'no-cache')
+            self.send_header('Connection', 'keep-alive')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            for event in SSE_EVENTS:
+                line = f"data: {json.dumps(event)}\n\n".encode()
+                self.wfile.write(line)
+                self.wfile.flush()
+                time.sleep(0.12)
+            self.wfile.write(b"data: [DONE]\n\n")
+            self.wfile.flush()
+
         elif self.path == '/agent-chat':
             body = json.dumps(AGENT_CHAT_JSON, indent=2).encode()
             self.send_response(200)
@@ -260,7 +362,7 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
 
         else:
-            msg = b'Endpoints: /open-responses  /a2ui  /agent-chat'
+            msg = b'Endpoints: /open-responses  /a2ui  /agent-chat  /stream'
             self.send_response(404)
             self.send_header('Content-Type', 'text/plain')
             self.send_header('Content-Length', str(len(msg)))
@@ -276,5 +378,6 @@ if __name__ == '__main__':
     print(f"\nMock server running on http://localhost:{port}")
     print(f"  /open-responses  ->  Structured view (reasoning + web/file search + tool call + message)")
     print(f"  /a2ui            ->  GenUI view (dashboard with cards, progress, chips, buttons)")
-    print(f"  /agent-chat      ->  Agent chatflow (2-turn MCP-style chat, each turn is Open Responses)\n")
+    print(f"  /agent-chat      ->  Agent chatflow (2-turn MCP-style chat, each turn is Open Responses)")
+    print(f"  /stream          ->  SSE stream (Open Responses events, use with SSE request in APIDash)\n")
     HTTPServer(('localhost', port), Handler).serve_forever()

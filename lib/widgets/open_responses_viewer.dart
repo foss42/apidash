@@ -382,10 +382,7 @@ class _ToolCallGroupState extends State<_ToolCallGroup> {
                       ],
                     ),
                     kVSpacer5,
-                    SelectableText(
-                      widget.result!.output,
-                      style: kCodeStyle.copyWith(fontSize: 12),
-                    ),
+                    _StructuredOutput(raw: widget.result!.output),
                   ],
                 ),
               ),
@@ -393,6 +390,57 @@ class _ToolCallGroupState extends State<_ToolCallGroup> {
         ],
       ),
     );
+  }
+}
+
+// Renders tool output as a key-value table when it's a JSON object,
+// otherwise falls back to a plain code block.
+class _StructuredOutput extends StatelessWidget {
+  const _StructuredOutput({required this.raw});
+  final String raw;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    try {
+      final parsed = jsonDecode(raw);
+      if (parsed is Map<String, dynamic> && parsed.isNotEmpty) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: parsed.entries.map((e) {
+            final value = e.value is String
+                ? e.value as String
+                : const JsonEncoder.withIndent('  ').convert(e.value);
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 110,
+                    child: Text(
+                      e.key,
+                      style: kCodeStyle.copyWith(
+                        fontSize: 11,
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ),
+                  ),
+                  kHSpacer8,
+                  Expanded(
+                    child: SelectableText(
+                      value,
+                      style: kCodeStyle.copyWith(fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        );
+      }
+    } catch (_) {}
+    return SelectableText(raw, style: kCodeStyle.copyWith(fontSize: 12));
   }
 }
 
