@@ -13,6 +13,7 @@ workspace:
 dependencies:
   flutter:
     sdk: flutter
+  apidash_agent: any
   apidash_core: any
   apidash_design_system: any
   carousel_slider: ^5.1.2

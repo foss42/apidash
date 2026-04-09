@@ -1,5 +1,7 @@
 // Agentic API Testing Engine for API Dash
 
+export 'package:genai/genai.dart';
+
 // Models
 export 'models/assertion.dart';
 export 'models/test_case.dart';
