@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_agent/apidash_agent.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ---------------------------------------------------------------------------
 // State
@@ -10,6 +11,8 @@ enum AgentMode { unitTest, workflow }
 enum AgentStatus { idle, generating, review, running, complete }
 
 class AgentTestingState {
+  static const Object _keepErrorMessage = Object();
+
   final AgentMode mode;
   final AgentStatus status;
   final String apiKey;
@@ -38,7 +41,7 @@ class AgentTestingState {
     AgentMode? mode,
     AgentStatus? status,
     String? apiKey,
-    String? errorMessage,
+    Object? errorMessage = _keepErrorMessage,
     List<TestCase>? testCases,
     List<TestResult>? testResults,
     List<WorkflowStep>? workflowSteps,
@@ -48,7 +51,9 @@ class AgentTestingState {
       mode: mode ?? this.mode,
       status: status ?? this.status,
       apiKey: apiKey ?? this.apiKey,
-      errorMessage: errorMessage, // intentionally not `?? this.errorMessage` — allows clearing
+        errorMessage: errorMessage == _keepErrorMessage
+          ? this.errorMessage
+          : errorMessage as String?,
       testCases: testCases ?? this.testCases,
       testResults: testResults ?? this.testResults,
       workflowSteps: workflowSteps ?? this.workflowSteps,
@@ -62,8 +67,13 @@ class AgentTestingState {
 // ---------------------------------------------------------------------------
 
 class AgentTestingNotifier extends Notifier<AgentTestingState> {
+  static const _apiKeyPrefsKey = 'agent_api_key';
+
   @override
-  AgentTestingState build() => const AgentTestingState();
+  AgentTestingState build() {
+    Future.microtask(_loadSavedApiKey);
+    return const AgentTestingState();
+  }
 
   // Builds AIRequestModel from the stored API key (Gemini provider)
   AIRequestModel get _aiModel => AIRequestModel(
@@ -75,9 +85,23 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
   void setMode(AgentMode mode) =>
       state = state.copyWith(mode: mode, status: AgentStatus.idle);
 
-  void setApiKey(String key) => state = state.copyWith(apiKey: key);
+  void setApiKey(String key) {
+    state = state.copyWith(apiKey: key);
+    Future.microtask(() async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_apiKeyPrefsKey, key);
+    });
+  }
 
   void reset() => state = AgentTestingState(apiKey: state.apiKey, mode: state.mode);
+
+  Future<void> _loadSavedApiKey() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedKey = prefs.getString(_apiKeyPrefsKey) ?? '';
+    if (savedKey.isNotEmpty && state.apiKey != savedKey) {
+      state = state.copyWith(apiKey: savedKey);
+    }
+  }
 
   // ── Unit Test Flow ────────────────────────────────────────────────────────
 
@@ -116,14 +140,15 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
 
   void toggleTestCase(String id) {
     final updated = state.testCases
-        .map((tc) => tc.id == id ? (tc..isSelected = !tc.isSelected) : tc)
+        .map((tc) => tc.id == id ? tc.copyWith(isSelected: !tc.isSelected) : tc)
         .toList();
     state = state.copyWith(testCases: updated);
   }
 
   void selectAllTestCases(bool selected) {
-    final updated =
-        state.testCases.map((tc) => tc..isSelected = selected).toList();
+    final updated = state.testCases
+        .map((tc) => tc.copyWith(isSelected: selected))
+        .toList();
     state = state.copyWith(testCases: updated);
   }
 

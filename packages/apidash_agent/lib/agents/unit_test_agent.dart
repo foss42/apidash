@@ -1,7 +1,7 @@
-import 'dart:io';
 import 'dart:convert';
 import 'package:genai/agentic_engine/agentic_engine.dart';
 import 'package:genai/models/models.dart';
+import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import '../models/assertion.dart';
 import '../models/test_case.dart';
@@ -299,38 +299,20 @@ class _HttpClient {
     required Map<String, String> headers,
     String? body,
   }) async {
-    // Uses dart:io HttpClient — pure Dart, works in both Flutter and CLI
     final uri = Uri.parse(url);
-    final httpClient = HttpClient();
+    final client = http.Client();
+    try {
+      final request = http.Request(method.toUpperCase(), uri)
+        ..headers.addAll(headers);
+      if (body != null && body.isNotEmpty) {
+        request.body = body;
+      }
 
-    HttpClientRequest request;
-    switch (method.toUpperCase()) {
-      case 'POST':
-        request = await httpClient.postUrl(uri);
-        break;
-      case 'PUT':
-        request = await httpClient.putUrl(uri);
-        break;
-      case 'DELETE':
-        request = await httpClient.deleteUrl(uri);
-        break;
-      case 'PATCH':
-        request = await httpClient.patchUrl(uri);
-        break;
-      default:
-        request = await httpClient.getUrl(uri);
+      final streamed = await client.send(request);
+      final response = await http.Response.fromStream(streamed);
+      return _HttpResponse(response.statusCode, response.body);
+    } finally {
+      client.close();
     }
-
-    headers.forEach((key, value) => request.headers.set(key, value));
-
-    if (body != null && body.isNotEmpty) {
-      request.write(body);
-    }
-
-    final response = await request.close();
-    final responseBody = await response.transform(utf8.decoder).join();
-
-    httpClient.close();
-    return _HttpResponse(response.statusCode, responseBody);
   }
 }

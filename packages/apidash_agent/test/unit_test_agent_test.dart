@@ -89,8 +89,11 @@ void main() {
       );
 
       // Deselect all except the happy path
-      for (final tc in cases) {
-        tc.isSelected = tc.category == TestCategory.happyPath;
+      for (var i = 0; i < cases.length; i++) {
+        final tc = cases[i];
+        cases[i] = tc.copyWith(
+          isSelected: tc.category == TestCategory.happyPath,
+        );
       }
 
       final results = await agent.runSelectedTests(cases);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_agent/apidash_agent.dart';
 import 'package:apidash/providers/providers.dart';
 import 'providers/agent_testing_provider.dart';
 import 'widgets/api_key_input.dart';
@@ -382,15 +383,17 @@ class _InfoCard extends StatelessWidget {
 }
 
 class _ResultsSummaryBar extends StatelessWidget {
-  final List results;
+  final List<TestResult> results;
   const _ResultsSummaryBar({required this.results});
 
   @override
   Widget build(BuildContext context) {
-    final passed = results.where((r) => r.overallStatus.name == 'passed').length;
-    final failed = results.where((r) => r.overallStatus.name == 'failed').length;
+    final passed =
+        results.where((r) => r.overallStatus == TestStatus.passed).length;
+    final failed =
+        results.where((r) => r.overallStatus == TestStatus.failed).length;
     final skipped =
-        results.where((r) => r.overallStatus.name == 'skipped').length;
+        results.where((r) => r.overallStatus == TestStatus.skipped).length;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

@@ -18,6 +18,7 @@ dependencies:
   apidash_core: any
   better_networking: any
   genai: any
+  http: ^1.2.0
   uuid: ^4.5.3
   shelf: ^1.4.2
   shelf_router: ^1.1.4

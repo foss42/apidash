@@ -8,15 +8,15 @@ class TestCase {
   final String id;
   final String description;
   final TestCategory category;
-  
+
   // Complete independent request — original is NEVER touched
   final String method;
   final String url;
   final Map<String, String> headers;
   final String? body;
-  
+
   final List<Assertion> assertions;
-  bool isSelected; // user controls via checklist
+  final bool isSelected; // user controls via checklist
 
   TestCase({
     required this.id,
@@ -29,6 +29,28 @@ class TestCase {
     required this.assertions,
     this.isSelected = true,
   });
+
+  TestCase copyWith({
+    String? id,
+    String? description,
+    TestCategory? category,
+    String? method,
+    String? url,
+    Map<String, String>? headers,
+    String? body,
+    List<Assertion>? assertions,
+    bool? isSelected,
+  }) => TestCase(
+        id: id ?? this.id,
+        description: description ?? this.description,
+        category: category ?? this.category,
+        method: method ?? this.method,
+        url: url ?? this.url,
+        headers: headers ?? this.headers,
+        body: body ?? this.body,
+        assertions: assertions ?? this.assertions,
+        isSelected: isSelected ?? this.isSelected,
+      );
 
   Map<String, dynamic> toJson() => {
         'id': id,

@@ -4,7 +4,7 @@ class Assertion {
   final String id;
   final AssertionType type;
   final dynamic expected; // int for statusCode, String for bodyContains, int ms for responseTime
-  bool isSelected;
+  final bool isSelected;
 
   Assertion({
     required this.id,
@@ -12,6 +12,18 @@ class Assertion {
     required this.expected,
     this.isSelected = true,
   });
+
+  Assertion copyWith({
+    String? id,
+    AssertionType? type,
+    dynamic expected,
+    bool? isSelected,
+  }) => Assertion(
+        id: id ?? this.id,
+        type: type ?? this.type,
+        expected: expected ?? this.expected,
+        isSelected: isSelected ?? this.isSelected,
+      );
 
   Map<String, dynamic> toJson() => {
         'id': id,
