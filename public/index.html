@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APIDash — Mock Endpoints</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container { max-width: 640px; width: 100%; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+    .endpoints { display: flex; flex-direction: column; gap: 0.75rem; }
+    .endpoint {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border-color 0.15s;
+    }
+    .endpoint:hover { border-color: #444; }
+    .left { display: flex; align-items: center; gap: 0.75rem; }
+    .method {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #1a3a2a;
+      color: #4ade80;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+    .path { font-family: monospace; font-size: 0.95rem; }
+    .desc { font-size: 0.8rem; color: #666; }
+    .arrow { color: #444; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>APIDash Mock Server</h1>
+    <p class="subtitle">Hosted mock endpoints for Open Responses &amp; Generative UI (GSoC 2026 PoC)</p>
+    <div class="endpoints">
+      <a class="endpoint" href="/open-responses">
+        <div class="left">
+          <span class="method">GET</span>
+          <span class="path">/open-responses</span>
+        </div>
+        <span class="desc">Mock OpenAI Responses API output</span>
+        <span class="arrow">&#8594;</span>
+      </a>
+      <a class="endpoint" href="/agent-chat">
+        <div class="left">
+          <span class="method">GET</span>
+          <span class="path">/agent-chat</span>
+        </div>
+        <span class="desc">Agent chat message stream</span>
+        <span class="arrow">&#8594;</span>
+      </a>
+      <a class="endpoint" href="/a2ui">
+        <div class="left">
+          <span class="method">GET</span>
+          <span class="path">/a2ui</span>
+        </div>
+        <span class="desc">Agent-to-UI structured output</span>
+        <span class="arrow">&#8594;</span>
+      </a>
+      <a class="endpoint" href="/stream">
+        <div class="left">
+          <span class="method">GET</span>
+          <span class="path">/stream</span>
+        </div>
+        <span class="desc">SSE streaming response</span>
+        <span class="arrow">&#8594;</span>
+      </a>
+      <a class="endpoint" href="/mcp/query">
+        <div class="left">
+          <span class="method">POST</span>
+          <span class="path">/mcp/query</span>
+        </div>
+        <span class="desc">MCP tool query endpoint</span>
+        <span class="arrow">&#8594;</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

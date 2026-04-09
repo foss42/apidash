@@ -1,0 +1,34 @@
+# Flutter build artifacts
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.g.dart
+*.freezed.dart
+
+# Platform folders (not needed for API)
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
+# Dependencies
+node_modules/
+.pub-cache/
+
+# Test artifacts
+coverage/
+test/
+
+# Docs
+doc/
+docs/
+
+# Git
+.git/
+
+# Misc
+*.log
+.DS_Store
