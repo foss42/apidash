@@ -12,6 +12,7 @@ class _Demo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Agent Chat Demo',
       theme: ThemeData(
         colorSchemeSeed: Colors.indigo,
@@ -29,7 +30,7 @@ class _Demo extends StatelessWidget {
           centerTitle: true,
         ),
         body: const AgentChatView(
-          serverUrl: 'http://localhost:8765',
+          serverUrl: 'https://apidash-liart.vercel.app',
         ),
       ),
     );

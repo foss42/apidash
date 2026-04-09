@@ -393,5 +393,227 @@ void main() {
       expect((msg.content.first as RefusalPart).refusal,
           'I cannot help with that.');
     });
+
+    test('usage tokens are parsed correctly', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [],
+        'usage': {
+          'input_tokens': 100,
+          'output_tokens': 200,
+          'total_tokens': 300,
+        },
+      });
+      expect(r.usage?.inputTokens, 100);
+      expect(r.usage?.outputTokens, 200);
+      expect(r.usage?.totalTokens, 300);
+    });
+
+    test('usage is null when absent', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [],
+      });
+      expect(r.usage, isNull);
+    });
+
+    test('call_id links function_call to its output', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [
+          {
+            'id': 'fc1',
+            'type': 'function_call',
+            'call_id': 'call_xyz',
+            'name': 'get_weather',
+            'arguments': '{"location":"London"}',
+            'status': 'completed',
+          },
+          {
+            'id': 'fco1',
+            'type': 'function_call_output',
+            'call_id': 'call_xyz',
+            'output': '{"temperature":14}',
+            'status': 'completed',
+          },
+        ],
+      });
+      final call = r.output[0] as FunctionCallOutputItem;
+      final output = r.output[1] as FunctionCallResultItem;
+      expect(call.callId, output.callId);
+      expect(call.callId, 'call_xyz');
+    });
+
+    test('multiple output items parsed in order', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [
+          {'id': 'rs1', 'type': 'reasoning', 'status': 'completed', 'summary': []},
+          {'id': 'ws1', 'type': 'web_search_call', 'status': 'completed'},
+          {
+            'id': 'fc1',
+            'type': 'function_call',
+            'call_id': 'c1',
+            'name': 'fn',
+            'arguments': '{}',
+            'status': 'completed',
+          },
+          {
+            'id': 'fco1',
+            'type': 'function_call_output',
+            'call_id': 'c1',
+            'output': '{}',
+            'status': 'completed',
+          },
+          {
+            'id': 'msg1',
+            'type': 'message',
+            'role': 'assistant',
+            'status': 'completed',
+            'content': [{'type': 'output_text', 'text': 'Done'}],
+          },
+        ],
+      });
+      expect(r.output.length, 5);
+      expect(r.output[0], isA<ReasoningOutputItem>());
+      expect(r.output[1], isA<WebSearchCallOutputItem>());
+      expect(r.output[2], isA<FunctionCallOutputItem>());
+      expect(r.output[3], isA<FunctionCallResultItem>());
+      expect(r.output[4], isA<MessageOutputItem>());
+    });
+
+    test('reasoning summary text is concatenated from entries', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [
+          {
+            'id': 'rs1',
+            'type': 'reasoning',
+            'status': 'completed',
+            'summary': [
+              {'text': 'First thought.'},
+              {'text': ' Second thought.'},
+            ],
+          },
+        ],
+      });
+      final rs = r.output.first as ReasoningOutputItem;
+      expect(rs.summary, isNotNull);
+      expect(rs.summary, contains('First thought.'));
+    });
+
+    test('message with multiple content parts', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [
+          {
+            'id': 'msg1',
+            'type': 'message',
+            'role': 'assistant',
+            'status': 'completed',
+            'content': [
+              {'type': 'output_text', 'text': 'Part one.'},
+              {'type': 'output_text', 'text': 'Part two.'},
+            ],
+          },
+        ],
+      });
+      final msg = r.output.first as MessageOutputItem;
+      expect(msg.content.length, 2);
+      expect((msg.content[0] as OutputTextPart).text, 'Part one.');
+      expect((msg.content[1] as OutputTextPart).text, 'Part two.');
+    });
+
+    test('function_call_output with JSON object output', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [
+          {
+            'id': 'fco1',
+            'type': 'function_call_output',
+            'call_id': 'call_abc',
+            'output': '{"temperature":18,"condition":"Sunny","humidity":65}',
+            'status': 'completed',
+          },
+        ],
+      });
+      final fco = r.output.first as FunctionCallResultItem;
+      expect(fco.output, contains('temperature'));
+      expect(fco.callId, 'call_abc');
+    });
+
+    test('in_progress status is parsed', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'in_progress',
+        'output': [],
+      });
+      expect(r.status, 'in_progress');
+    });
+
+    test('empty output list returns no items', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [],
+      });
+      expect(r.output, isEmpty);
+    });
+
+    test('UnknownOutputItem preserves raw type string', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [
+          {'id': 'x1', 'type': 'future_item_type', 'status': 'completed'},
+        ],
+      });
+      final unknown = r.output.first as UnknownOutputItem;
+      expect(unknown.type, 'future_item_type');
+    });
+
+    test('multiple unknown types all become UnknownOutputItem', () {
+      final r = OpenResponsesResult.fromJson({
+        'id': 'r1',
+        'object': 'response',
+        'model': 'gpt-4o',
+        'status': 'completed',
+        'output': [
+          {'id': 'x1', 'type': 'image_generation_call', 'status': 'completed'},
+          {'id': 'x2', 'type': 'code_interpreter_call', 'status': 'completed'},
+        ],
+      });
+      expect(r.output[0], isA<UnknownOutputItem>());
+      expect(r.output[1], isA<UnknownOutputItem>());
+      expect((r.output[0] as UnknownOutputItem).type, 'image_generation_call');
+      expect((r.output[1] as UnknownOutputItem).type, 'code_interpreter_call');
+    });
   });
 }
