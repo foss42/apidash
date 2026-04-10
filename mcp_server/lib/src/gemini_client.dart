@@ -6,9 +6,12 @@ import 'package:http/http.dart' as http;
 class GeminiClient {
   static const _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models';
-  static const _model = 'gemini-2.5-flash-lite';
+
+  // gemini-1.5-flash supports JSON prompting reliably without responseMimeType
+  static const _model = 'gemini-2.5-flash';
 
   /// Sends [prompt] to Gemini and returns the text response.
+  /// The prompt itself must instruct the model to return JSON only.
   static Future<String> generate({
     required String apiKey,
     required String prompt,
@@ -29,17 +32,17 @@ class GeminiClient {
           }
         ],
         'generationConfig': {
-          'temperature': 0.3,       // lower = more deterministic JSON
+          'temperature': 0.2,
           'topP': 0.95,
           'maxOutputTokens': 8192,
-          'responseMimeType': 'application/json', // forces JSON output
+          // NOTE: responseMimeType removed — not supported on all models.
+          // JSON is enforced via prompt instruction instead.
         },
       }),
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-          'Gemini API error ${response.statusCode}: ${response.body}');
+      throw Exception('Gemini error ${response.statusCode}: ${response.body}');
     }
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -49,6 +52,20 @@ class GeminiClient {
       throw Exception('Gemini returned no candidates');
     }
 
-    return candidates[0]['content']['parts'][0]['text'] as String;
+    final rawText = candidates[0]['content']['parts'][0]['text'] as String;
+
+    // Strip markdown code fences if model wraps JSON in ```json ... ```
+    return _stripCodeFences(rawText);
+  }
+
+  /// Strips ```json ... ``` or ``` ... ``` wrappers from Gemini output.
+  static String _stripCodeFences(String text) {
+    final trimmed = text.trim();
+    if (trimmed.startsWith('```')) {
+      final start = trimmed.indexOf('\n') + 1;
+      final end = trimmed.lastIndexOf('```');
+      if (end > start) return trimmed.substring(start, end).trim();
+    }
+    return trimmed;
   }
 }
