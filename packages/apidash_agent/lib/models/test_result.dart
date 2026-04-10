@@ -12,6 +12,13 @@ class AssertionResult {
     required this.message,
     this.skipped = false,
   });
+
+  Map<String, dynamic> toJson() => {
+        'assertionId': assertionId,
+        'passed': passed,
+        'message': message,
+        'skipped': skipped,
+      };
 }
 
 class TestResult {
@@ -32,4 +39,15 @@ class TestResult {
     required this.overallStatus,
     this.errorMessage,
   });
+
+  Map<String, dynamic> toJson() => {
+        'testCase': testCase.toJson(),
+        'actualStatusCode': actualStatusCode ?? 0,
+        'actualBody': actualBody ?? '',
+        'durationMs': durationMs,
+        'assertionResults': assertionResults.map((r) => r.toJson()).toList(),
+        'overallStatus': overallStatus.name,
+        if (errorMessage != null) 'errorMessage': errorMessage,
+      };
 }
+

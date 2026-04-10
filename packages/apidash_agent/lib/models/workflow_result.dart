@@ -22,6 +22,17 @@ class WorkflowStepResult {
     required this.extractedValues,
     this.errorMessage,
   });
+
+  Map<String, dynamic> toJson() => {
+        'step': step.toJson(),
+        'actualStatusCode': actualStatusCode,
+        'actualBody': actualBody,
+        'durationMs': durationMs,
+        'assertionResults': assertionResults.map((r) => r.toJson()).toList(),
+        'overallStatus': overallStatus.name,
+        'extractedValues': extractedValues,
+        if (errorMessage != null) 'errorMessage': errorMessage,
+      };
 }
 
 class WorkflowResult {

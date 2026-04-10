@@ -7,5 +7,5 @@ void main() async {
   final handler = buildMcpServer();
 
   final server = await shelf_io.serve(handler, InternetAddress.loopbackIPv4, port);
-  print('[apidash_mcp_server] Listening on http://localhost:${server.port}');
+  stderr.writeln('[apidash_mcp_server] Listening on http://localhost:${server.port}');
 }
