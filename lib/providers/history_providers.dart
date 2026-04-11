@@ -82,26 +82,26 @@ class HistoryMetaStateNotifier
     }
   }
 
-  void addHistoryRequest(HistoryRequestModel model) async {
+  Future<void> addHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
     state = {...state ?? {}, id: model.metaData};
     final List<String> updatedHistoryKeys = state == null
         ? [id]
         : [...state!.keys, id];
-    hiveHandler.setHistoryIds(updatedHistoryKeys);
-    hiveHandler.setHistoryMeta(id, model.metaData.toJson());
+    await hiveHandler.setHistoryIds(updatedHistoryKeys);
+    await hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
   }
 
-  void editHistoryRequest(HistoryRequestModel model) async {
+  Future<void> editHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
     state = {...state ?? {}, id: model.metaData};
     final existingKeys = state?.keys.toList() ?? [];
     if (!existingKeys.contains(id)) {
-      hiveHandler.setHistoryIds([...existingKeys, id]);
+      await hiveHandler.setHistoryIds([...existingKeys, id]);
     }
-    hiveHandler.setHistoryMeta(id, model.metaData.toJson());
+    await hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
   }
