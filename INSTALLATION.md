@@ -148,9 +148,9 @@ Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
 
 ### Arch-based Linux Distributions (Manjaro, Arch Linux, etc.)
 
-Download the `.deb` file from the [latest release](https://github.com/foss42/apidash/releases/latest) corresponding to your CPU architecture (x86_64/amd64 or arm64/aarch64).
+Since API Dash does not provide a native Arch package, download the `.deb` file from the [latest release](https://github.com/foss42/apidash/releases/latest) corresponding to your CPU architecture (x86_64/amd64 or arm64/aarch64).
 
-First we have to convert the .deb file to .tar.xz file using the following commands.
+Then convert the `.deb` file to `.tar.xz` format compatible with Arch using the following commands.
 
 1. Install debtap using the following command.
     ```
