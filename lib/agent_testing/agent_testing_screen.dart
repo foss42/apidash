@@ -73,18 +73,32 @@ class AgentTestingScreen extends ConsumerWidget {
 
 // ── Unit Test Panel ────────────────────────────────────────────────────────
 
-class _UnitTestBody extends ConsumerWidget {
+class _UnitTestBody extends ConsumerStatefulWidget {
   final AgentTestingState state;
   final AgentTestingNotifier notifier;
 
   const _UnitTestBody({required this.state, required this.notifier});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // grab currently selected request from API Dash
-    final selectedRequest = ref.watch(
-      selectedRequestModelProvider.select((r) => r?.httpRequestModel),
-    );
+  ConsumerState<_UnitTestBody> createState() => _UnitTestBodyState();
+}
+
+class _UnitTestBodyState extends ConsumerState<_UnitTestBody> {
+  String? _selectedId;
+
+  @override
+  Widget build(BuildContext context) {
+    final endpoints = ref.watch(allEndpointsProvider);
+    final state = widget.state;
+    final notifier = widget.notifier;
+
+    if (_selectedId == null && endpoints.isNotEmpty) {
+      _selectedId = endpoints.first['id'] as String;
+    }
+
+    final selected = endpoints
+        .cast<Map<String, dynamic>?>()
+        .firstWhere((e) => e?['id'] == _selectedId, orElse: () => null);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -96,28 +110,39 @@ class _UnitTestBody extends ConsumerWidget {
           const SizedBox(height: 12),
 
           // Error banner
-          if (state.errorMessage != null)
-            _ErrorBanner(message: state.errorMessage!),
+          if (state.errorMessage != null) _ErrorBanner(message: state.errorMessage!),
 
           // ── IDLE ──
           if (state.status == AgentStatus.idle) ...[
             const SizedBox(height: 8),
-            if (selectedRequest == null)
+            if (endpoints.isEmpty)
               const _EmptyHint(
-                  message:
-                      'Select an API request on the left, then click Generate.')
-            else
-              _InfoCard(request: selectedRequest),
+                message: 'No API requests saved yet. '
+                    'Add endpoints in the main dashboard first.',
+              )
+            else ...[
+              Text(
+                'Select Endpoint',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 6),
+              _EndpointDropdown(
+                endpoints: endpoints,
+                selectedId: _selectedId,
+                onChanged: (id) => setState(() => _selectedId = id),
+              ),
+            ],
             const SizedBox(height: 16),
             FilledButton.icon(
-              onPressed: selectedRequest == null
+              onPressed: selected == null
                   ? null
                   : () => notifier.generateUnitTests(
-                      method: selectedRequest.method.abbr,
-                      url: selectedRequest.url,
-                      headers: selectedRequest.enabledHeadersMap,
-                      body: selectedRequest.body,
-                    ),
+                        method: selected['method'] as String,
+                        url: selected['url'] as String,
+                        headers:
+                            Map<String, String>.from(selected['headers'] as Map),
+                        body: selected['body'] as String?,
+                      ),
               icon: const Icon(Icons.auto_awesome, size: 16),
               label: const Text('Generate Test Cases'),
             ),
@@ -150,8 +175,7 @@ class _UnitTestBody extends ConsumerWidget {
                   ? notifier.runSelectedTests
                   : null,
               icon: const Icon(Icons.play_arrow, size: 16),
-              label: Text(
-                  'Run ${state.testCases.where((c) => c.isSelected).length} Selected'),
+                  label: Text('Run ${state.testCases.where((c) => c.isSelected).length} Selected'),
             ),
           ],
 
@@ -173,6 +197,81 @@ class _UnitTestBody extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _EndpointDropdown extends StatelessWidget {
+  final List<Map<String, dynamic>> endpoints;
+  final String? selectedId;
+  final ValueChanged<String?> onChanged;
+
+  const _EndpointDropdown({
+    required this.endpoints,
+    required this.selectedId,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    Color methodColor(String method) => switch (method) {
+          'GET' => Colors.green,
+          'POST' => Colors.blue,
+          'PUT' => Colors.orange,
+          'PATCH' => Colors.purple,
+          'DELETE' => Colors.red,
+          _ => cs.primary,
+        };
+
+    return DropdownButtonFormField<String>(
+      value: selectedId,
+      isExpanded: true,
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        filled: true,
+        fillColor: cs.surfaceContainerHighest,
+      ),
+      items: endpoints.map((e) {
+        final method = e['method'] as String;
+        final url = e['url'] as String;
+        final id = e['id'] as String;
+
+        return DropdownMenuItem<String>(
+          value: id,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: methodColor(method).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  method,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: methodColor(method),
+                    fontFamily: 'monospace',
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  url.isEmpty ? '(no url)' : url,
+                  style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: onChanged,
     );
   }
 }

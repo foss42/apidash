@@ -43,6 +43,30 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
+/// A flat list of all endpoints for Agent Testing dropdown selection.
+final allEndpointsProvider = Provider<List<Map<String, dynamic>>>((ref) {
+  final ids = ref.watch(requestSequenceProvider);
+  final collection = ref.watch(collectionStateNotifierProvider) ?? {};
+
+  return ids.map((id) {
+    final model = collection[id];
+    final http = model?.httpRequestModel;
+    if (http == null) return null;
+
+    final methodStr = http.method.abbr.toUpperCase();
+    final url = http.url.isEmpty ? '(no url)' : http.url;
+
+    return <String, dynamic>{
+      'id': id,
+      'label': '$methodStr  $url',
+      'method': methodStr,
+      'url': http.url,
+      'headers': http.enabledHeadersMap,
+      'body': http.body,
+    };
+  }).whereType<Map<String, dynamic>>().toList();
+});
+
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
 collectionStateNotifierProvider = StateNotifierProvider(
   (ref) => CollectionStateNotifier(ref, hiveHandler),
