@@ -22,6 +22,7 @@ class McpTools {
               'method':  {'type': 'string', 'description': 'HTTP method: GET/POST/PUT/DELETE/PATCH'},
               'headers': {'type': 'object', 'description': 'Request headers (optional)'},
               'body':    {'type': 'string', 'description': 'Request body (optional)'},
+              'count':   {'type': 'integer', 'description': 'Number of test cases to generate (default: 5, max: 10)'},
             },
           },
           '_meta': {'ui': {'resourceUri': '$_baseUri/test-checklist-ui', 'visibility': ['model', 'app']}},
@@ -64,9 +65,10 @@ class McpTools {
     final method = (args['method'] as String).toUpperCase();
     final headers = ((args['headers'] as Map?) ?? {}).map((k, v) => MapEntry('$k', '$v'));
     final body   = args['body'] as String?;
+    final count  = (args['count'] as int?)?.clamp(1, 10) ?? 5;
     final apiKey = _apiKey();
 
-    final cases = await _callGemini(apiKey, _testPrompt(method, url, headers, body));
+    final cases = await _callGemini(apiKey, _testPrompt(method, url, headers, body, count));
     McpResources.setTestCases(cases);
 
     return {
@@ -276,8 +278,8 @@ class McpTools {
   // ── Prompt ────────────────────────────────────────────────────────────────
 
   static String _testPrompt(String method, String url,
-      Map<String, String> headers, String? body) =>
-      '''You are an API testing expert. Output a JSON array of exactly 5 test cases. No explanation, no markdown.
+      Map<String, String> headers, String? body, int count) =>
+      '''You are an API testing expert. Output a JSON array of exactly $count test cases. No explanation, no markdown.
 
 Endpoint: $method $url
 Headers: ${headers.isEmpty ? '{}' : jsonEncode(headers)}
@@ -285,6 +287,7 @@ Body: ${body ?? 'null'}
 
 RULES:
 - Output ONLY a JSON array. Start with [ end with ]. Nothing else.
+- Generate EXACTLY $count test case(s). No more, no less.
 - "body" field: null OR a plain JSON string — never a raw object.
 - "expected" in assertions: plain string only — "200", "3000", "keyword".
 - No JavaScript. No .repeat(). No + operator.
@@ -292,7 +295,15 @@ RULES:
 Schema:
 [{"id":"tc_1","description":"...","category":"happy_path","method":"$method","url":"$url","headers":{},"body":null,"assertions":[{"type":"status_code","expected":"200"},{"type":"response_time_ms","expected":"3000"}],"isSelected":true}]
 
-Generate 5 tests: happy_path(x2), edge_case, security, performance.''';
+${_categoryHint(count)}''';
+
+  static String _categoryHint(int count) {
+    if (count == 1) return 'Generate 1 test: happy_path.';
+    if (count == 2) return 'Generate 2 tests: happy_path, edge_case.';
+    if (count == 3) return 'Generate 3 tests: happy_path(x2), edge_case.';
+    if (count == 4) return 'Generate 4 tests: happy_path(x2), edge_case, security.';
+    return 'Generate $count tests spread across: happy_path, edge_case, security, performance.';
+  }
 
   static Map<String, dynamic> _errResponse(String msg) => {
         'isError': true,
