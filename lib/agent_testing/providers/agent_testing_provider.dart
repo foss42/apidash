@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_agent/apidash_agent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:genai/interface/model_providers/gemini.dart'; // ← ADD
 
 // ---------------------------------------------------------------------------
 // State
@@ -51,7 +52,7 @@ class AgentTestingState {
       mode: mode ?? this.mode,
       status: status ?? this.status,
       apiKey: apiKey ?? this.apiKey,
-        errorMessage: errorMessage == _keepErrorMessage
+      errorMessage: errorMessage == _keepErrorMessage
           ? this.errorMessage
           : errorMessage as String?,
       testCases: testCases ?? this.testCases,
@@ -76,11 +77,8 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
   }
 
   // Builds AIRequestModel from the stored API key (Gemini provider)
-  AIRequestModel get _aiModel => AIRequestModel(
-      modelApiProvider: ModelAPIProvider.gemini,
-      model: 'gemini-2.5-flash-lite',
-        apiKey: state.apiKey,
-      );
+  AIRequestModel get _aiModel => GeminiModel.instance.defaultAIRequestModel
+      .copyWith(apiKey: state.apiKey, model: 'gemini-2.5-flash-lite');
 
   void setMode(AgentMode mode) =>
       state = state.copyWith(mode: mode, status: AgentStatus.idle);
@@ -93,7 +91,8 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
     });
   }
 
-  void reset() => state = AgentTestingState(apiKey: state.apiKey, mode: state.mode);
+  void reset() =>
+      state = AgentTestingState(apiKey: state.apiKey, mode: state.mode);
 
   Future<void> _loadSavedApiKey() async {
     final prefs = await SharedPreferences.getInstance();
@@ -112,7 +111,9 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
     String? body,
   }) async {
     if (state.apiKey.trim().isEmpty) {
-      state = state.copyWith(errorMessage: 'Please enter your Gemini API key first.');
+      state = state.copyWith(
+        errorMessage: 'Please enter your Gemini API key first.',
+      );
       return;
     }
     state = state.copyWith(
@@ -161,7 +162,10 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
     try {
       final agent = UnitTestAgent(aiRequestModel: _aiModel);
       final results = await agent.runSelectedTests(state.testCases);
-      state = state.copyWith(status: AgentStatus.complete, testResults: results);
+      state = state.copyWith(
+        status: AgentStatus.complete,
+        testResults: results,
+      );
     } catch (e) {
       state = state.copyWith(
         status: AgentStatus.review,
@@ -174,7 +178,9 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
 
   Future<void> generateWorkflow(List<Map<String, dynamic>> requests) async {
     if (state.apiKey.trim().isEmpty) {
-      state = state.copyWith(errorMessage: 'Please enter your Gemini API key first.');
+      state = state.copyWith(
+        errorMessage: 'Please enter your Gemini API key first.',
+      );
       return;
     }
     state = state.copyWith(
@@ -225,5 +231,5 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
 
 final agentTestingProvider =
     NotifierProvider<AgentTestingNotifier, AgentTestingState>(
-  AgentTestingNotifier.new,
-);
+      AgentTestingNotifier.new,
+    );

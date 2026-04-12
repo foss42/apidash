@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:genai/genai.dart';
 import '../models/assertion.dart';
-import '../models/test_case.dart'; // ← ADD: TestStatus lives here
-import '../models/test_result.dart'; // ← AssertionResult lives here
+import '../models/test_case.dart';
+import '../models/test_result.dart';
 import '../models/workflow_step.dart';
 import '../models/workflow_result.dart';
 import '../utils/prompt_builder.dart';
@@ -30,7 +30,6 @@ class _WorkflowPlannerAgent extends AIAgent {
     }
   }
 
-  // ✅ Correct signature: Future<dynamic>
   @override
   Future<dynamic> outputFormatter(String validatedResponse) async {
     final cleaned = _stripMarkdown(validatedResponse);
@@ -43,9 +42,15 @@ class _WorkflowPlannerAgent extends AIAgent {
 
   String _stripMarkdown(String raw) {
     var s = raw.trim();
-    if (s.startsWith('```')) {
-      s = s.replaceFirst(RegExp(r'^```[a-z]*\n?'), '');
-      s = s.replaceFirst(RegExp(r'```$'), '').trim();
+    // Remove opening fence (```json or ```)
+    s = s.replaceAll(RegExp(r'^```[a-z]*\s*', multiLine: false), '');
+    // Remove closing fence
+    s = s.replaceAll(RegExp(r'```\s*$', multiLine: false), '').trim();
+    // Extract only the JSON object portion
+    final start = s.indexOf('{');
+    final end = s.lastIndexOf('}');
+    if (start != -1 && end != -1 && end > start) {
+      s = s.substring(start, end + 1);
     }
     return s;
   }
@@ -56,7 +61,7 @@ class WorkflowAgent {
 
   WorkflowAgent({required this.aiRequestModel});
 
-  // ─── Stage 3A: Ask LLM to plan the workflow ─────────────────────────────
+  // ─── Stage 3A: Plan ──────────────────────────────────────────────────────
   Future<List<WorkflowStep>> generatePlan(
     List<Map<String, dynamic>> requests,
   ) async {
@@ -73,19 +78,18 @@ class WorkflowAgent {
     return result as List<WorkflowStep>;
   }
 
-  // ─── Stage 3B: Execute steps, passing context between them ──────────────
+  // ─── Stage 3B: Execute ───────────────────────────────────────────────────
   Stream<WorkflowStepResult> execute(List<WorkflowStep> steps) async* {
-    // Shared context: extracted variables flow from step N to step N+1
+    // Context accumulates extracted values across steps
     final Map<String, dynamic> context = {};
 
     for (final step in steps) {
       final startTime = DateTime.now();
 
-      // 1. Resolve {{placeholders}} in url, body, headers
+      // 1. Resolve {{placeholders}} in url, body, headers using current context
       final resolvedUrl = _resolvePlaceholders(step.url, context);
-      final resolvedBody = step.body != null
-          ? _resolvePlaceholders(step.body!, context)
-          : null;
+      final resolvedBody =
+          step.body != null ? _resolvePlaceholders(step.body!, context) : null;
       final resolvedHeaders = {
         for (final e in step.headers.entries)
           e.key: _resolvePlaceholders(e.value, context),
@@ -112,60 +116,70 @@ class WorkflowAgent {
           actualBody: '',
           durationMs: duration,
           assertionResults: [],
-          overallStatus: TestStatus.failed, // ✅ correct field name
-          extractedValues: {}, // ✅ correct field name
+          overallStatus: TestStatus.failed,
+          extractedValues: {},
           errorMessage: 'HTTP error: $e',
         );
         continue;
       }
 
-      // 3. Run assertions
+      final durationMs = DateTime.now().difference(startTime).inMilliseconds;
+
+      // 3. Run assertions — resolve {{placeholders}} in expected values too
       final assertionResults = <AssertionResult>[];
       for (final assertion in step.assertions) {
-        final passed = _evaluate(assertion, statusCode, responseBody);
+        // ← KEY FIX: resolve placeholders inside expected string values
+        final resolvedExpected = _resolveExpected(assertion.expected, context);
+
+        final passed = _evaluate(
+          assertion.type,
+          resolvedExpected,
+          statusCode,
+          responseBody,
+          durationMs,
+        );
+
+        // Build a human-readable message showing resolved values
+        final expectedDisplay = resolvedExpected.toString();
         assertionResults.add(
           AssertionResult(
             assertionId: assertion.id,
             passed: passed,
             message: passed
-                ? '✓ ${assertion.type.name} = ${assertion.expected}'
-                : '✗ ${assertion.type.name}: expected ${assertion.expected}',
+                ? '✓ ${assertion.type.name} = $expectedDisplay'
+                : '✗ ${assertion.type.name}: expected $expectedDisplay',
           ),
         );
       }
 
-      // 4. Extract data into context for next steps
+      // 4. Extract data into context for NEXT steps
       final extractedValues = <String, dynamic>{};
       for (final binding in step.dataExtractions) {
-        final value = JsonPathExtractor.extract(binding.jsonPath, responseBody);
+        final value =
+            JsonPathExtractor.extract(binding.jsonPath, responseBody);
         if (value != null) {
           context[binding.variableName] = value;
           extractedValues[binding.variableName] = value;
         }
       }
 
-      final duration = DateTime.now().difference(startTime).inMilliseconds;
-      final allPassed =
-          assertionResults.isEmpty ||
-          assertionResults.every((AssertionResult a) => a.passed);
+      final allPassed = assertionResults.isEmpty ||
+          assertionResults.every((a) => a.passed);
 
       yield WorkflowStepResult(
         step: step,
-        actualStatusCode: statusCode, // ✅ correct field name
-        actualBody: responseBody, // ✅ correct field name
-        durationMs: duration,
+        actualStatusCode: statusCode,
+        actualBody: responseBody,
+        durationMs: durationMs,
         assertionResults: assertionResults,
-        overallStatus:
-            allPassed // ✅ correct field name
-            ? TestStatus.passed
-            : TestStatus.failed,
-        extractedValues: extractedValues, // ✅ correct field name
+        overallStatus: allPassed ? TestStatus.passed : TestStatus.failed,
+        extractedValues: extractedValues,
         errorMessage: null,
       );
     }
   }
 
-  // ─── Resolve {{variableName}} placeholders ───────────────────────────────
+  // ─── Resolve {{placeholders}} in any value ───────────────────────────────
   String _resolvePlaceholders(String template, Map<String, dynamic> context) {
     var result = template;
     for (final entry in context.entries) {
@@ -174,7 +188,57 @@ class WorkflowAgent {
     return result;
   }
 
-  // ─── HTTP executor using dart:io ─────────────────────────────────────────
+  /// Resolves {{placeholders}} inside expected values.
+  /// Works for String, int, double — returns original type if no substitution needed.
+  dynamic _resolveExpected(dynamic expected, Map<String, dynamic> context) {
+    if (expected == null) return expected;
+    if (context.isEmpty) return expected;
+
+    final raw = expected.toString();
+    final resolved = _resolvePlaceholders(raw, context);
+
+    // If unchanged, return original (preserves int type for statusCode checks)
+    if (resolved == raw) return expected;
+
+    // Try to re-parse as int (e.g. statusCode assertions)
+    final asInt = int.tryParse(resolved);
+    if (asInt != null) return asInt;
+
+    // Try double
+    final asDouble = double.tryParse(resolved);
+    if (asDouble != null) return asDouble;
+
+    // Return as resolved string
+    return resolved;
+  }
+
+  // ─── Evaluate assertion ──────────────────────────────────────────────────
+  bool _evaluate(
+    AssertionType type,
+    dynamic expected,
+    int statusCode,
+    String responseBody,
+    int durationMs,
+  ) {
+    switch (type) {
+      case AssertionType.statusCode:
+        final expectedCode = expected is int
+            ? expected
+            : int.tryParse(expected.toString()) ?? -1;
+        return statusCode == expectedCode;
+
+      case AssertionType.bodyContains:
+        return responseBody.contains(expected.toString());
+
+      case AssertionType.responseTimeUnder:
+        final limit = expected is int
+            ? expected
+            : int.tryParse(expected.toString()) ?? 2000;
+        return durationMs < limit;
+    }
+  }
+
+  // ─── HTTP executor ───────────────────────────────────────────────────────
   Future<Map<String, dynamic>> _executeHttp({
     required String method,
     required String url,
@@ -215,19 +279,6 @@ class WorkflowAgent {
         return client.deleteUrl(uri);
       default:
         return client.openUrl(method, uri);
-    }
-  }
-
-  // ─── Evaluate a single assertion ─────────────────────────────────────────
-  bool _evaluate(Assertion assertion, int statusCode, String responseBody) {
-    switch (assertion.type) {
-      case AssertionType.statusCode:
-        return statusCode == (assertion.expected as int);
-      case AssertionType.bodyContains:
-        return responseBody.contains(assertion.expected.toString());
-      case AssertionType.responseTimeUnder:
-        // Cannot evaluate response time here — handled at caller level
-        return true;
     }
   }
 }

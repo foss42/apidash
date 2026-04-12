@@ -8,7 +8,7 @@ class GeminiClient {
       'https://generativelanguage.googleapis.com/v1beta/models';
 
   // gemini-1.5-flash supports JSON prompting reliably without responseMimeType
-  static const _model = 'gemini-2.5-flash';
+  static const _model = 'gemini-2.5-flash-lite';
 
   /// Sends [prompt] to Gemini and returns the text response.
   /// The prompt itself must instruct the model to return JSON only.

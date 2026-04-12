@@ -8,10 +8,7 @@ import '../models/test_case.dart';
 import '../models/test_result.dart';
 import '../utils/prompt_builder.dart';
 
-// ─── Agent Definition ───────────────────────────────────────────────────────
 
-// Implements AIAgent blueprint from genai package.
-// AIAgentService handles retry, backoff, and provider abstraction for us.
 class _TestGeneratorAgent extends AIAgent {
   final String method;
   final String url;
@@ -31,19 +28,32 @@ class _TestGeneratorAgent extends AIAgent {
   @override
   String getSystemPrompt() => PromptBuilder.unitTestSystemPrompt;
 
-  // Validates that the LLM returned parseable JSON array
   @override
   Future<bool> validator(String aiResponse) async {
     try {
       final cleaned = _stripMarkdown(aiResponse);
+      if (cleaned.isEmpty) return false;
+
+      // Quick structural check before full parse — avoid token-truncated JSON
+      if (!cleaned.startsWith('[') || !cleaned.endsWith(']')) return false;
+
       final parsed = jsonDecode(cleaned);
-      return parsed is List && parsed.isNotEmpty;
-    } catch (_) {
-      return false; // triggers retry in AIAgentService governor
+      if (parsed is! List || parsed.isEmpty) return false;
+
+      // Validate each item has minimum required fields
+      for (final item in parsed) {
+        if (item is! Map) return false;
+        if (item['description'] == null) return false;
+        if (item['category'] == null) return false;
+        if (item['assertions'] == null) return false;
+      }
+      return true;
+    } catch (e) {
+      debugLog('[UnitTestAgent] Validator error: $e');
+      return false;
     }
   }
 
-  // Parses validated JSON into List<TestCase>
   @override
   Future<List<TestCase>> outputFormatter(String validatedResponse) async {
     final cleaned = _stripMarkdown(validatedResponse);
@@ -55,55 +65,72 @@ class _TestGeneratorAgent extends AIAgent {
 
       final assertions = (map['assertions'] as List? ?? []).map((a) {
         final aMap = a as Map<String, dynamic>;
-        return Assertion(
-          id: uuid.v4(),
-          type: _parseAssertionType(aMap['type'] as String),
-          expected: aMap['expected'],
-        );
+
+        // Safely coerce expected — LLM sometimes sends string instead of int
+        dynamic expected = aMap['expected'];
+        final type = _parseAssertionType(aMap['type'] as String? ?? '');
+        if (type == AssertionType.statusCode && expected is String) {
+          expected = int.tryParse(expected) ?? 200;
+        }
+        if (type == AssertionType.responseTimeUnder && expected is String) {
+          expected = int.tryParse(expected) ?? 2000;
+        }
+
+        return Assertion(id: uuid.v4(), type: type, expected: expected);
       }).toList();
 
       return TestCase(
         id: uuid.v4(),
-        description: map['description'] as String,
-        category: _parseCategory(map['category'] as String),
-        method: map['method'] as String? ?? method,
+        description: (map['description'] as String? ?? 'Unnamed test').trim(),
+        category: _parseCategory(map['category'] as String? ?? ''),
+        method: (map['method'] as String? ?? method).toUpperCase(),
         url: map['url'] as String? ?? url,
-        headers: Map<String, String>.from(
-          (map['headers'] as Map?) ?? headers,
-        ),
+        headers: Map<String, String>.from((map['headers'] as Map?) ?? headers),
         body: map['body'] as String?,
         assertions: assertions,
       );
     }).toList();
   }
 
-  // Strips ```json ... ``` markdown wrapping that LLMs sometimes add
   String _stripMarkdown(String raw) {
-    final stripped = raw
-        .replaceAll(RegExp(r'```json\s*'), '')
+    // Remove ```json ... ``` or ``` ... ``` fences
+    var cleaned = raw
+        .replaceAll(RegExp(r'```json\s*', caseSensitive: false), '')
         .replaceAll(RegExp(r'```\s*'), '')
         .trim();
-    return stripped;
+
+    // Extract only the JSON array portion — handles trailing garbage text
+    final start = cleaned.indexOf('[');
+    final end = cleaned.lastIndexOf(']');
+    if (start != -1 && end != -1 && end > start) {
+      cleaned = cleaned.substring(start, end + 1);
+    }
+
+    return cleaned;
   }
 
+  // Handles both snake_case (from prompt) and camelCase (what Gemini actually returns)
   AssertionType _parseAssertionType(String raw) {
-    switch (raw) {
-      case 'status_code':
+    switch (raw.toLowerCase().replaceAll('_', '')) {
+      case 'statuscode':
         return AssertionType.statusCode;
-      case 'body_contains':
+      case 'bodycontains':
         return AssertionType.bodyContains;
-      case 'response_time_under':
+      case 'responsetimeunder':
         return AssertionType.responseTimeUnder;
       default:
+        debugLog(
+          '[UnitTestAgent] Unknown assertion type: "$raw" — defaulting to statusCode',
+        );
         return AssertionType.statusCode;
     }
   }
 
   TestCategory _parseCategory(String raw) {
-    switch (raw) {
-      case 'happy_path':
+    switch (raw.toLowerCase().replaceAll('_', '')) {
+      case 'happypath':
         return TestCategory.happyPath;
-      case 'edge_case':
+      case 'edgecase':
         return TestCategory.edgeCase;
       case 'security':
         return TestCategory.security;
@@ -115,15 +142,13 @@ class _TestGeneratorAgent extends AIAgent {
   }
 }
 
-// ─── Public UnitTestAgent ────────────────────────────────────────────────────
+// ─── Public UnitTestAgent (unchanged) ────────────────────────────────────────
 
 class UnitTestAgent {
   final AIRequestModel aiRequestModel;
 
   UnitTestAgent({required this.aiRequestModel});
 
-  // Calls LLM via AIAgentService (handles retry + backoff automatically)
-  // Returns list of test cases — all isSelected=true by default
   Future<List<TestCase>> generateTestCases({
     required String method,
     required String url,
@@ -154,11 +179,8 @@ class UnitTestAgent {
     return result as List<TestCase>;
   }
 
-  // Runs only test cases where isSelected == true
-  // Skipped cases recorded with status=skipped, no HTTP call made
   Future<List<TestResult>> runSelectedTests(List<TestCase> cases) async {
     final results = <TestResult>[];
-
     for (final testCase in cases) {
       if (!testCase.isSelected) {
         results.add(_skippedResult(testCase));
@@ -166,14 +188,11 @@ class UnitTestAgent {
       }
       results.add(await _executeTestCase(testCase));
     }
-
     return results;
   }
 
-  // Executes a single test case and validates all selected assertions
   Future<TestResult> _executeTestCase(TestCase testCase) async {
     final stopwatch = Stopwatch()..start();
-
     try {
       final client = _HttpClient();
       final response = await client.send(
@@ -222,7 +241,6 @@ class UnitTestAgent {
     required int durationMs,
   }) {
     return assertions.map((assertion) {
-      // Skipped assertions are not checked
       if (!assertion.isSelected) {
         return AssertionResult(
           assertionId: assertion.id,
@@ -231,7 +249,6 @@ class UnitTestAgent {
           skipped: true,
         );
       }
-
       switch (assertion.type) {
         case AssertionType.statusCode:
           final expected = assertion.expected as int;
@@ -243,7 +260,6 @@ class UnitTestAgent {
                 ? 'Status $statusCode ✓'
                 : 'Expected $expected, got $statusCode',
           );
-
         case AssertionType.bodyContains:
           final expected = assertion.expected as String;
           final passed = body.contains(expected);
@@ -254,7 +270,6 @@ class UnitTestAgent {
                 ? 'Body contains "$expected" ✓'
                 : 'Body does not contain "$expected"',
           );
-
         case AssertionType.responseTimeUnder:
           final expected = assertion.expected as int;
           final passed = durationMs < expected;
@@ -270,21 +285,23 @@ class UnitTestAgent {
   }
 
   TestResult _skippedResult(TestCase testCase) => TestResult(
-        testCase: testCase,
-        durationMs: 0,
-        assertionResults: testCase.assertions
-            .map((a) => AssertionResult(
-                  assertionId: a.id,
-                  passed: false,
-                  message: 'Skipped',
-                  skipped: true,
-                ))
-            .toList(),
-        overallStatus: TestStatus.skipped,
-      );
+    testCase: testCase,
+    durationMs: 0,
+    assertionResults: testCase.assertions
+        .map(
+          (a) => AssertionResult(
+            assertionId: a.id,
+            passed: false,
+            message: 'Skipped',
+            skipped: true,
+          ),
+        )
+        .toList(),
+    overallStatus: TestStatus.skipped,
+  );
 }
 
-// ─── Minimal HTTP Client (pure Dart, no flutter dependency) ─────────────────
+// ─── Minimal HTTP Client ─────────────────────────────────────────────────────
 
 class _HttpResponse {
   final int statusCode;
@@ -307,7 +324,6 @@ class _HttpClient {
       if (body != null && body.isNotEmpty) {
         request.body = body;
       }
-
       final streamed = await client.send(request);
       final response = await http.Response.fromStream(streamed);
       return _HttpResponse(response.statusCode, response.body);
@@ -316,3 +332,5 @@ class _HttpClient {
     }
   }
 }
+
+void debugLog(String msg) => print(msg);
