@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'mcp_resources.dart';
@@ -25,12 +26,8 @@ class McpTools {
                 'type': 'string',
                 'description': 'Request body (optional)'
               },
-              'gemini_api_key': {
-                'type': 'string',
-                'description': 'Gemini API key'
-              },
             },
-            'required': ['url', 'method', 'gemini_api_key'],
+            'required': ['url', 'method'],
           },
           '_meta': {
             'ui': {
@@ -73,9 +70,8 @@ class McpTools {
                 'items': {'type': 'object'},
                 'description': 'Array of API requests',
               },
-              'gemini_api_key': {'type': 'string'},
             },
-            'required': ['requests', 'gemini_api_key'],
+            'required': ['requests'],
           },
           '_meta': {
             'ui': {
@@ -133,7 +129,10 @@ class McpTools {
     final headers = (args['headers'] as Map<String, dynamic>? ?? {})
         .map((k, v) => MapEntry(k, v.toString()));
     final body = args['body'] as String?;
-    final apiKey = args['gemini_api_key'] as String;
+    final apiKey = Platform.environment['GEMINI_API_KEY'] ?? '';
+    if (apiKey.isEmpty) {
+      throw Exception('GEMINI_API_KEY not set in environment');
+    }
 
     final testCases = await _callGemini(
       apiKey,
@@ -147,12 +146,13 @@ class McpTools {
         {
           'type': 'text',
           'text': 'Generated ${testCases.length} test cases for $method $url. '
-              'Review and select in the checklist below.',
+              'Review and select in the interactive checklist above.',
         }
       ],
       'structuredContent': {
         'testCases': testCases,
-        'endpoint': '$method $url',
+        'url': url,
+        'method': method,
       },
     };
   }
@@ -191,10 +191,13 @@ class McpTools {
         {
           'type': 'text',
           'text':
-              'Test run complete: $passed passed, $failed failed out of ${selected.length} selected.',
+              'Test run complete: $passed passed, $failed failed out of ${selected.length} selected. '
+              'Results are available in the interactive dashboard above.',
         }
       ],
-      'structuredContent': {'results': results},
+      'structuredContent': {
+        'results': results,
+      },
     };
   }
 
@@ -203,7 +206,10 @@ class McpTools {
     final requests = (args['requests'] as List<dynamic>)
         .map((r) => r as Map<String, dynamic>)
         .toList();
-    final apiKey = args['gemini_api_key'] as String;
+    final apiKey = Platform.environment['GEMINI_API_KEY'] ?? '';
+    if (apiKey.isEmpty) {
+      throw Exception('GEMINI_API_KEY not set in environment');
+    }
 
     final steps = await _callGemini(apiKey, _workflowPrompt(requests));
     McpResources.setWorkflowSteps(steps);
@@ -212,11 +218,13 @@ class McpTools {
       'content': [
         {
           'type': 'text',
-          'text':
-              'Generated workflow with ${steps.length} steps. Review assertions in the checklist below.'
+          'text': 'Generated workflow with ${steps.length} steps. '
+              'Review assertions in the interactive checklist above.'
         },
       ],
-      'structuredContent': {'steps': steps},
+      'structuredContent': {
+        'steps': steps,
+      },
     };
   }
 
@@ -250,10 +258,13 @@ class McpTools {
       'content': [
         {
           'type': 'text',
-          'text': 'Workflow executed: ${results.length} steps completed.'
+          'text': 'Workflow executed: ${results.length} steps completed. '
+              'Live results are available in the dashboard above.'
         },
       ],
-      'structuredContent': {'results': results},
+      'structuredContent': {
+        'results': results,
+      },
     };
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'mcp_tools.dart';
 import 'mcp_resources.dart';
 
@@ -22,6 +24,13 @@ class McpProtocol {
     }
   }
 
+  /// Handles JSON-RPC notifications (no response needed).
+  static Future<void> handleNotification(Map<String, dynamic> rpc) async {
+    final method = rpc['method'] as String? ?? '';
+    stderr.writeln('[McpProtocol] notification: $method');
+    // No response for notifications per JSON-RPC 2.0 spec.
+  }
+
   static Future<Map<String, dynamic>> _dispatch(
       String method, Map<String, dynamic> params) async {
     switch (method) {
@@ -40,7 +49,9 @@ class McpProtocol {
         };
 
       case 'notifications/initialized':
-        return {};
+        // This is a notification and should be handled by handleNotification.
+        throw StateError(
+            'notifications/initialized is a notification, not a request');
 
       // ── Tools ──────────────────────────────────────────────────────────
       case 'tools/list':
