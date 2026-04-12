@@ -3,21 +3,25 @@ import 'dart:convert';
 const _mime = 'text/html;profile=mcp-app';
 const _baseUri = 'ui://apidash-mcp';
 
-/// Stores live data between tool call and resources/read.
-/// In a real deployment use session-scoped storage.
 class McpResources {
-  static List<Map<String, dynamic>> _testCases    = [];
-  static List<Map<String, dynamic>> _testResults  = [];
+  static List<Map<String, dynamic>> _testCases = [];
+  static List<Map<String, dynamic>> _selectedTestCases = [];
+  static List<Map<String, dynamic>> _testResults = [];
   static List<Map<String, dynamic>> _workflowSteps = [];
   static List<Map<String, dynamic>> _workflowResults = [];
 
-  static void setTestCases(List<Map<String, dynamic>> v)      => _testCases = v;
-  static void setTestResults(List<Map<String, dynamic>> v)    => _testResults = v;
-  static void setWorkflowSteps(List<Map<String, dynamic>> v)  => _workflowSteps = v;
-  static void setWorkflowResults(List<Map<String, dynamic>> v) => _workflowResults = v;
+  static void setTestCases(List<Map<String, dynamic>> v) => _testCases = v;
+  static void setSelectedTestCases(List<Map<String, dynamic>> v) =>
+      _selectedTestCases = v;
+  static List<Map<String, dynamic>> getSelectedTestCases() =>
+      _selectedTestCases;
+  static void setTestResults(List<Map<String, dynamic>> v) => _testResults = v;
+  static void setWorkflowSteps(List<Map<String, dynamic>> v) =>
+      _workflowSteps = v;
+  static void setWorkflowResults(List<Map<String, dynamic>> v) =>
+      _workflowResults = v;
 
-  /// Returns the raw HTML for a given resource URI.
-  /// Used by tools to embed HTML directly in content responses.
+  /// Returns raw HTML for a given MCP UI resource URI.
   static String readHtml(String uri) {
     return switch (uri) {
       '$_baseUri/test-checklist-ui' => _testChecklistHtml(_testCases),
@@ -29,316 +33,354 @@ class McpResources {
   }
 
   // ── resources/list ────────────────────────────────────────────────────────
+
   static List<Map<String, dynamic>> list() => [
-    {'uri': '$_baseUri/test-checklist-ui',   'mimeType': _mime, 'name': 'Test Checklist',    'description': 'Interactive test case selection UI'},
-    {'uri': '$_baseUri/test-results-ui',     'mimeType': _mime, 'name': 'Test Results',       'description': 'Test execution results dashboard'},
-    {'uri': '$_baseUri/workflow-plan-ui',    'mimeType': _mime, 'name': 'Workflow Plan',       'description': 'Multi-step workflow assertion selector'},
-    {'uri': '$_baseUri/workflow-results-ui', 'mimeType': _mime, 'name': 'Workflow Results',   'description': 'Workflow execution results'},
-  ];
+        {
+          'uri': '$_baseUri/test-checklist-ui',
+          'mimeType': _mime,
+          'name': 'Test Checklist',
+          'description': 'Interactive test case selection UI',
+        },
+        {
+          'uri': '$_baseUri/test-results-ui',
+          'mimeType': _mime,
+          'name': 'Test Results',
+          'description': 'Test execution results dashboard',
+        },
+        {
+          'uri': '$_baseUri/workflow-plan-ui',
+          'mimeType': _mime,
+          'name': 'Workflow Plan',
+          'description': 'Multi-step workflow assertion selector',
+        },
+        {
+          'uri': '$_baseUri/workflow-results-ui',
+          'mimeType': _mime,
+          'name': 'Workflow Results',
+          'description': 'Workflow execution results',
+        },
+      ];
 
   // ── resources/read ────────────────────────────────────────────────────────
+
   static Map<String, dynamic> read(String uri) {
     final html = switch (uri) {
-      '$_baseUri/test-checklist-ui'   => _testChecklistHtml(_testCases),
-      '$_baseUri/test-results-ui'     => _testResultsHtml(_testResults),
-      '$_baseUri/workflow-plan-ui'    => _workflowPlanHtml(_workflowSteps),
+      '$_baseUri/test-checklist-ui' => _testChecklistHtml(_testCases),
+      '$_baseUri/test-results-ui' => _testResultsHtml(_testResults),
+      '$_baseUri/workflow-plan-ui' => _workflowPlanHtml(_workflowSteps),
       '$_baseUri/workflow-results-ui' => _workflowResultsHtml(_workflowResults),
       _ => throw ArgumentError('Unknown resource URI: $uri'),
     };
-
     return {
       'contents': [
-        {'uri': uri, 'mimeType': _mime, 'text': html},
+        {'uri': uri, 'mimeType': _mime, 'text': html}
       ],
     };
   }
 
-  // ── HTML Builders ─────────────────────────────────────────────────────────
+  // ── Test Checklist HTML ──────────────────────────────────────────────────
+  // Exact pattern from sales-form.ts:
+  //   1. ui/initialize handshake
+  //   2. sendNotification("ui/notifications/initialized")
+  //   3. Listen for ui/notifications/tool-input to populate data
+  //   4. Button click → tools/call get_selected_cases (app-only validation)
+  //   5. ui/update-model-context → pushes selection into Claude/Copilot context
+  //   6. User types "Run tests" → model calls run_selected_tests
 
   static String _testChecklistHtml(List<Map<String, dynamic>> cases) {
-    final casesJson = _safeJson(cases);
-
-    return _page('🧪 Test Cases — API Dash', '''
+    final casesJson = _safe(cases);
+    return _page('API Test Cases', '''
 <div class="bar">
-  <button class="btn-s" onclick="sel(true)">☑ All</button>
-  <button class="btn-s" onclick="sel(false)">□ None</button>
-  <button class="btn-p" onclick="run()">⚡ Run Selected</button>
-  <span class="count" id="cl">Loading...</span>
+  <button class="bs" onclick="sel(true)">Select All</button>
+  <button class="bs" onclick="sel(false)">Clear</button>
+  <button class="bp" id="sb" onclick="submit()" disabled>Submit Selection</button>
+  <span class="cnt" id="cl">Loading...</span>
 </div>
-<table><thead><tr><th></th><th>Description</th><th>Category</th><th>Method</th><th>URL</th></tr></thead>
-<tbody id="tbody"></tbody></table>
+<table>
+  <thead><tr><th></th><th>Description</th><th>Category</th><th>Method</th><th>URL</th></tr></thead>
+  <tbody id="tb"></tbody>
+</table>
 <div id="msg" class="msg"></div>
 <script>
-let D = $casesJson;
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function renderTable(data){
-  const tbody=document.getElementById("tbody");
-  tbody.innerHTML=data.map((tc,i)=>`<tr>
-    <td><input type="checkbox" id="c\${i}" checked onchange="upd()"></td>
-    <td><label for="c\${i}">\${esc(tc.description||'')}</label></td>
-    <td><span class="badge badge-\${tc.category||''}">\${tc.category||''}</span></td>
-    <td class="mono primary">\${esc(tc.method||'')}</td>
-    <td class="mono url">\${esc(tc.url||'')}</td>
-  </tr>`).join('');
-  upd();
-}
-function upd(){const b=document.querySelectorAll("input[type=checkbox]");document.getElementById("cl").textContent=[...b].filter(x=>x.checked).length+" of "+b.length+" selected"}
-function sel(v){document.querySelectorAll("input[type=checkbox]").forEach(b=>b.checked=v);upd()}
-async function run(){
-  const b=document.querySelectorAll("input[type=checkbox]");
-  const selected=D.map((tc,i)=>({...tc,isSelected:b[i]?.checked??false}));
-  const m=document.getElementById("msg");
-  m.className="msg ml";m.style.display="block";m.textContent="⏳ Running...";
-  try{
-    // MCP Apps: call tool via postMessage to host
-    await sendMcpToolCall("run_selected_tests",{test_cases:selected});
-    m.className="msg ms";m.textContent="✅ Done! Results loading...";
-  }catch(e){m.className="msg me";m.textContent="❌ "+e.message;}
-}
-// MCP Apps postMessage bridge
-function sendMcpToolCall(name,args){
+let D=$casesJson,nid=1;
+const P=new Map();
+
+// ── MCP comms (exact pattern from sales-form.ts) ──
+function req(method,params){
+  const id=nid++;
   return new Promise((res,rej)=>{
-    const id=Date.now();
-    const handler=e=>{
-      if(e.data?.id===id){window.removeEventListener("message",handler);
-        if(e.data.error)rej(new Error(e.data.error.message));else res(e.data.result);}
-    };
-    window.addEventListener("message",handler);
-    window.parent.postMessage({jsonrpc:"2.0",id,method:"tools/call",params:{name,arguments:args}},"*");
+    P.set(id,{res,rej});
+    window.parent.postMessage({jsonrpc:'2.0',id,method,params:params||{}},'*');
   });
 }
-window.addEventListener("message",e=>{
-  const d=e.data;
-  if(d?.method==="ui/notifications/tool-input"){
-    const sc=d?.params?.structuredContent;
-    if(Array.isArray(sc?.testCases)){
-      D=sc.testCases;
-      renderTable(D);
-    }
+function notif(method,params){
+  window.parent.postMessage({jsonrpc:'2.0',method,params:params||{}},'*');
+}
+window.addEventListener('message',e=>{
+  const m=e.data;
+  if(!m||m.jsonrpc!=='2.0')return;
+  if(m.id!==undefined&&P.has(m.id)){
+    const {res,rej}=P.get(m.id);P.delete(m.id);
+    m.error?rej(new Error(m.error.message)):res(m.result);return;
+  }
+  // VSCode sends tool-input notification with structuredContent from tool response
+  if(m.method==='ui/notifications/tool-input'){
+    const sc=m.params&&m.params.structuredContent;
+    if(sc&&Array.isArray(sc.testCases)){D=sc.testCases;render(D);}
   }
 });
-if(D.length>0) renderTable(D);
-else document.getElementById("cl").textContent="Waiting for test cases...";
+
+function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function status(t,c){const m=document.getElementById('msg');m.textContent=t;m.style.display='block';m.className='msg '+(c||'mi');}
+
+function render(data){
+  document.getElementById('tb').innerHTML=data.map((t,i)=>
+    '<tr><td><input type="checkbox" id="c'+i+'" '+(t.isSelected!==false?'checked':'')+' onchange="upd()"></td>'+
+    '<td><label for="c'+i+'">'+e(t.description||'')+'</label></td>'+
+    '<td><span class="badge cat-'+e(t.category||'')+'">'+e(t.category||'')+'</span></td>'+
+    '<td class="mono p">'+e(t.method||'')+'</td>'+
+    '<td class="mono url">'+e(t.url||'')+'</td></tr>'
+  ).join('');
+  upd();
+}
+
+function upd(){
+  const b=document.querySelectorAll('input[type=checkbox]');
+  const n=Array.from(b).filter(x=>x.checked).length;
+  document.getElementById('cl').textContent=n+' of '+b.length+' selected';
+  document.getElementById('sb').disabled=n===0;
+}
+
+function sel(v){document.querySelectorAll('input[type=checkbox]').forEach(b=>b.checked=v);upd();}
+
+// ── Submit: validate → update-model-context ──
+async function submit(){
+  const b=document.querySelectorAll('input[type=checkbox]');
+  const sel=D.map((t,i)=>({...t,isSelected:b[i]?b[i].checked:false})).filter(t=>t.isSelected);
+  if(!sel.length){status('Select at least one test case','me');return;}
+  document.getElementById('sb').disabled=true;
+  status('Validating selection...','mi');
+  // Step 1: call app-only tool to validate (mirrors get-sales-data call)
+  let validated=sel;
+  try{
+    const r=await req('tools/call',{name:'get_selected_cases',arguments:{selected_cases:sel}});
+    if(r&&r.structuredContent&&r.structuredContent.selectedCases)validated=r.structuredContent.selectedCases;
+    status('Updating chat context...','mi');
+  }catch(err){status('Validation skipped, pushing context...','mi');}
+  // Step 2: push into model context (THE KEY STEP - mirrors sales-form.ts exactly)
+  try{
+    await req('ui/update-model-context',{structuredContent:{selectedCases:validated}});
+    status('Done! '+validated.length+' test case(s) added to context. Now ask Copilot to run the tests.','ms');
+  }catch(err){status('Context update failed: '+err.message,'me');}
+  finally{document.getElementById('sb').disabled=false;}
+}
+
+// ── Initialize (mirrors sales-form.ts initialize()) ──
+async function init(){
+  try{
+    await req('ui/initialize',{protocolVersion:'2025-11-21',capabilities:{},clientInfo:{name:'apidash-checklist',version:'1.0.0'}});
+    notif('ui/notifications/initialized',{});
+  }catch(e){/* standalone mode */}
+  if(D.length>0)render(D);
+  else document.getElementById('cl').textContent='Waiting for test cases...';
+  notif('ui/notifications/size-changed',{width:document.body.scrollWidth,height:document.body.scrollHeight+40});
+}
+init();
 </script>''');
   }
+
+  // ── Test Results HTML ────────────────────────────────────────────────────
 
   static String _testResultsHtml(List<Map<String, dynamic>> results) {
-    final resultsJson = _safeJson(results);
-
-    return _page('🧪 Test Results — API Dash', '''
+    final data = _safe(results);
+    return _page('Test Results', '''
 <div class="sum">
-  <div class="stat"><span class="sp" id="passed">0</span><span class="sl">Passed</span></div>
-  <div class="stat"><span class="sf" id="failed">0</span><span class="sl">Failed</span></div>
-  <div class="stat"><span class="sk" id="skipped">0</span><span class="sl">Skipped</span></div>
+  <div class="stat"><span class="sp" id="ps">0</span><span class="sl">Passed</span></div>
+  <div class="stat"><span class="sf" id="fs">0</span><span class="sl">Failed</span></div>
+  <div class="stat"><span class="sk" id="ss">0</span><span class="sl">Skipped</span></div>
 </div>
-<p class="sub">Click any row for assertion details</p>
+<p class="sub">Click any row to expand assertions</p>
 <table><thead><tr><th></th><th>Test</th><th>Status</th><th>Time</th></tr></thead>
-<tbody id="tbody"></tbody></table>
+<tbody id="tb"></tbody></table>
 <script>
-let D = $resultsJson;
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function tog(r){const n=r.nextElementSibling;if(n?.classList.contains("dr"))n.style.display=n.style.display==="none"?"table-row":"none";}
-function renderResults(data){
-  document.getElementById("passed").textContent=String(data.filter(r=>r.overallStatus==="passed").length);
-  document.getElementById("failed").textContent=String(data.filter(r=>r.overallStatus==="failed").length);
-  document.getElementById("skipped").textContent=String(data.filter(r=>r.overallStatus==="skipped").length);
-  const tbody=document.getElementById("tbody");
-  tbody.innerHTML=data.map(r=>{
-    const status=r.overallStatus||"skipped";
-    const icon=status==="passed"?"✅":status==="failed"?"❌":"⏭️";
-    const code=r.actualStatusCode||0;
-    const ms=r.durationMs||0;
+let D=$data,nid=1;
+const P=new Map();
+function req(method,params){const id=nid++;return new Promise((res,rej)=>{P.set(id,{res,rej});window.parent.postMessage({jsonrpc:'2.0',id,method,params:params||{}},'*');});}
+window.addEventListener('message',e=>{
+  const m=e.data;if(!m||m.jsonrpc!=='2.0')return;
+  if(m.id!==undefined&&P.has(m.id)){const {res,rej}=P.get(m.id);P.delete(m.id);m.error?rej(new Error(m.error.message)):res(m.result);return;}
+  if(m.method==='ui/notifications/tool-input'){const sc=m.params&&m.params.structuredContent;if(sc&&Array.isArray(sc.results)){D=sc.results;render(D);}}
+});
+function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function tog(r){const n=r.nextElementSibling;if(n&&n.classList.contains('dr'))n.style.display=n.style.display==='none'?'table-row':'none';}
+function render(data){
+  document.getElementById('ps').textContent=data.filter(r=>r.overallStatus==='passed').length;
+  document.getElementById('fs').textContent=data.filter(r=>r.overallStatus==='failed').length;
+  document.getElementById('ss').textContent=data.filter(r=>r.overallStatus==='skipped').length;
+  document.getElementById('tb').innerHTML=data.map(r=>{
+    const st=r.overallStatus||'skipped';
+    const ic=st==='passed'?'[OK]':st==='failed'?'[FAIL]':'[SKIP]';
     const tc=r.testCase||{};
-    const assertionRows=(r.assertionResults||[]).map(ar=>{
-      const pass=ar.passed===true;
-      const skip=ar.skipped===true;
-      const klass=skip?"as":pass?"ap":"af";
-      const prefix=skip?"⏭":pass?"✓":"✗";
-      return `<div class="\${klass}">\${prefix} \${esc(ar.message||"")}</div>`;
-    }).join("");
-    const err=r.errorMessage?`<div class="em">⚠️ \${esc(r.errorMessage)}</div>`:"";
-    const statusClass=status==="passed"?"sp":status==="failed"?"sf":"sk";
-    return `<tr onclick="tog(this)">
-      <td>\${icon}</td>
-      <td>\${esc(tc.description||"")}</td>
-      <td class="\${statusClass}">\${code>0?code:"—"}</td>
-      <td>\${ms>0?String(ms)+"ms":"—"}</td>
-    </tr>
-    <tr class="dr" style="display:none"><td colspan="4"><div class="db">\${assertionRows}\${err}</div></td></tr>`;
+    const ars=(r.assertionResults||[]).map(ar=>'<div class="'+(ar.skipped?'ask':ar.passed?'asp':'asf')+'">'+(ar.skipped?'skip':ar.passed?'pass':'fail')+' '+e(ar.message||'')+'</div>').join('');
+    const err=r.errorMessage?'<div class="em">Error: '+e(r.errorMessage)+'</div>':'';
+    const sc=st==='passed'?'sp':st==='failed'?'sf':'sk';
+    return '<tr onclick="tog(this)"><td>'+ic+'</td><td>'+e(tc.description||'')+'</td><td class="'+sc+'">'+(r.actualStatusCode>0?r.actualStatusCode:'-')+'</td><td>'+(r.durationMs>0?r.durationMs+'ms':'-')+'</td></tr>'+
+      '<tr class="dr" style="display:none"><td colspan="4"><div class="db">'+ars+err+'</div></td></tr>';
   }).join('');
 }
-window.addEventListener("message",e=>{
-  const d=e.data;
-  if(d?.method==="ui/notifications/tool-input"){
-    const sc=d?.params?.structuredContent;
-    if(Array.isArray(sc?.results)){
-      D=sc.results;
-      renderResults(D);
-    }
-  }
-});
-renderResults(D);
+async function init(){
+  try{await req('ui/initialize',{protocolVersion:'2025-11-21',capabilities:{},clientInfo:{name:'apidash-results',version:'1.0.0'}});}catch(e){}
+  render(D);
+  window.parent.postMessage({jsonrpc:'2.0',method:'ui/notifications/size-changed',params:{width:document.body.scrollWidth,height:document.body.scrollHeight+40}},'*');
+}
+init();
 </script>''');
   }
 
-  static String _workflowPlanHtml(List<Map<String, dynamic>> steps) {
-    final stepsJson = _safeJson(steps);
+  // ── Workflow Plan HTML ───────────────────────────────────────────────────
 
-    return _page('🔗 Workflow Plan — API Dash', '''
+  static String _workflowPlanHtml(List<Map<String, dynamic>> steps) {
+    final data = _safe(steps);
+    return _page('Workflow Plan', '''
 <div class="bar">
-  <button class="btn-p" onclick="exec()">⚡ Execute Workflow</button>
-  <span class="count" id="cl">Loading...</span>
+  <button class="bp" id="eb" onclick="submit()">Execute Workflow</button>
+  <span class="cnt" id="cl">Loading...</span>
 </div>
 <div id="cards"></div>
 <div id="msg" class="msg"></div>
 <script>
-let S = $stepsJson;
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function renderSteps(data){
-  const cards=document.getElementById("cards");
-  cards.innerHTML=data.map((step,si)=>{
-    const assertions=(step.assertions||[]).map((a,ai)=>`<div class="ar"><input type="checkbox" id="a\${si}_\${ai}" checked onchange="upd()"> <label for="a\${si}_\${ai}">\${esc(a.type||'')}: \${esc(String(a.expected||''))}</label></div>`).join('');
-    return `<div class="card"><div class="ch"><span class="sn">STEP \${si+1}</span><span class="sm">\${esc(step.method||'')}</span><span class="su">\${esc(step.url||'')}</span></div><div class="cb">\${assertions}</div></div>`;
+let S=$data,nid=1;
+const P=new Map();
+function req(method,params){const id=nid++;return new Promise((res,rej)=>{P.set(id,{res,rej});window.parent.postMessage({jsonrpc:'2.0',id,method,params:params||{}},'*');});}
+function notif(method,params){window.parent.postMessage({jsonrpc:'2.0',method,params:params||{}},'*');}
+window.addEventListener('message',ev=>{
+  const m=ev.data;if(!m||m.jsonrpc!=='2.0')return;
+  if(m.id!==undefined&&P.has(m.id)){const {res,rej}=P.get(m.id);P.delete(m.id);m.error?rej(new Error(m.error.message)):res(m.result);return;}
+  if(m.method==='ui/notifications/tool-input'){const sc=m.params&&m.params.structuredContent;if(sc&&Array.isArray(sc.steps)){S=sc.steps;render(S);}}
+});
+function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function status(t,c){const m=document.getElementById('msg');m.textContent=t;m.style.display='block';m.className='msg '+(c||'mi');}
+function render(data){
+  document.getElementById('cards').innerHTML=data.map((s,si)=>{
+    const ars=(s.assertions||[]).map((a,ai)=>
+      '<div class="ar"><input type="checkbox" id="a'+si+'_'+ai+'" '+(a.isSelected!==false?'checked':'')+' onchange="upd()"><label for="a'+si+'_'+ai+'"> '+e(a.type||'')+': '+e(String(a.expected||''))+'</label></div>'
+    ).join('');
+    return '<div class="card"><div class="ch"><span class="sn">STEP '+(si+1)+'</span><span class="sm">'+e(s.method||'')+'</span><span class="su">'+e(s.url||'')+'</span></div><div class="cb">'+ars+'</div></div>';
   }).join('');
   upd();
 }
-function upd(){const b=document.querySelectorAll("input[type=checkbox]");document.getElementById("cl").textContent=[...b].filter(x=>x.checked).length+" of "+b.length+" assertions";}
-async function exec(){
-  const steps=S.map((step,si)=>({...step,assertions:step.assertions.map((a,ai)=>({...a,isSelected:document.getElementById("a"+si+"_"+ai)?.checked??false}))}));
-  const m=document.getElementById("msg");m.className="msg ml";m.style.display="block";m.textContent="⏳ Executing...";
+function upd(){
+  const b=document.querySelectorAll('input[type=checkbox]');
+  document.getElementById('cl').textContent=Array.from(b).filter(x=>x.checked).length+' of '+b.length+' assertions';
+}
+async function submit(){
+  const steps=S.map((s,si)=>({...s,assertions:(s.assertions||[]).map((a,ai)=>({...a,isSelected:document.getElementById('a'+si+'_'+ai)?document.getElementById('a'+si+'_'+ai).checked:false}))}));
+  document.getElementById('eb').disabled=true;
+  status('Pushing workflow to chat context...','mi');
   try{
-    const result=await sendMcpToolCall("execute_workflow",{steps});
-    m.className="msg ms";m.textContent="✅ Done!";
-  }catch(e){m.className="msg me";m.textContent="❌ "+e.message;}
+    await req('ui/update-model-context',{structuredContent:{workflowSteps:steps}});
+    status('Done! Ask Copilot to execute the workflow.','ms');
+  }catch(err){status('Failed: '+err.message,'me');}
+  finally{document.getElementById('eb').disabled=false;}
 }
-function sendMcpToolCall(name,args){
-  return new Promise((res,rej)=>{
-    const id=Date.now();
-    const handler=e=>{if(e.data?.id===id){window.removeEventListener("message",handler);if(e.data.error)rej(new Error(e.data.error.message));else res(e.data.result);}};
-    window.addEventListener("message",handler);
-    window.parent.postMessage({jsonrpc:"2.0",id,method:"tools/call",params:{name,arguments:args}},"*");
-  });
+async function init(){
+  try{await req('ui/initialize',{protocolVersion:'2025-11-21',capabilities:{},clientInfo:{name:'apidash-workflow-plan',version:'1.0.0'}});notif('ui/notifications/initialized',{});}catch(e){}
+  if(S.length>0)render(S);else document.getElementById('cl').textContent='Waiting for workflow steps...';
+  notif('ui/notifications/size-changed',{width:document.body.scrollWidth,height:document.body.scrollHeight+40});
 }
-window.addEventListener("message",e=>{
-  const d=e.data;
-  if(d?.method==="ui/notifications/tool-input"){
-    const sc=d?.params?.structuredContent;
-    if(Array.isArray(sc?.steps)){
-      S=sc.steps;
-      renderSteps(S);
-    }
-  }
-});
-if(S.length>0) renderSteps(S);
-else document.getElementById("cl").textContent="Waiting for workflow steps...";
+init();
 </script>''');
   }
 
-  static String _workflowResultsHtml(List<Map<String, dynamic>> results) {
-    final resultsJson = _safeJson(results);
+  // ── Workflow Results HTML ────────────────────────────────────────────────
 
-    return _page('🔗 Workflow Results — API Dash', '''
+  static String _workflowResultsHtml(List<Map<String, dynamic>> results) {
+    final data = _safe(results);
+    return _page('Workflow Results', '''
 <div class="sum">
-  <div class="stat"><span class="sp" id="passed">0</span><span class="sl">Steps OK</span></div>
-  <div class="stat"><span class="sf" id="failed">0</span><span class="sl">Failed</span></div>
+  <div class="stat"><span class="sp" id="ps">0</span><span class="sl">Steps OK</span></div>
+  <div class="stat"><span class="sf" id="fs">0</span><span class="sl">Failed</span></div>
 </div>
 <div id="cards"></div>
 <script>
-let D = $resultsJson;
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function renderResults(data){
-  document.getElementById("passed").textContent=String(data.filter(r=>r.overallStatus==="passed").length);
-  document.getElementById("failed").textContent=String(data.filter(r=>r.overallStatus==="failed").length);
-  const cards=document.getElementById("cards");
-  cards.innerHTML=data.map((r,i)=>{
-    const icon=r.overallStatus==="passed"?"✅":"❌";
-    const step=r.step||r.testCase||{};
-    const assertionRows=(r.assertionResults||[]).map(ar=>{
-      const pass=ar.passed===true;
-      const skip=ar.skipped===true;
-      const klass=skip?"as":pass?"ap":"af";
-      const prefix=skip?"⏭":pass?"✓":"✗";
-      return `<div class="\${klass}">\${prefix} \${esc(ar.message||"")}</div>`;
-    }).join("");
-    const err=r.errorMessage?`<div class="em">⚠️ \${esc(r.errorMessage)}</div>`:"";
-    return `<div class="card"><div class="ch">\${icon} Step \${i+1} - \${esc(step.method||'')} \${esc(step.url||'')}<span class="sm">\${r.actualStatusCode||0} • \${r.durationMs||0}ms</span></div><div class="cb">\${assertionRows}\${err}</div></div>`;
+let D=$data,nid=1;
+const P=new Map();
+function req(method,params){const id=nid++;return new Promise((res,rej)=>{P.set(id,{res,rej});window.parent.postMessage({jsonrpc:'2.0',id,method,params:params||{}},'*');});}
+window.addEventListener('message',ev=>{
+  const m=ev.data;if(!m||m.jsonrpc!=='2.0')return;
+  if(m.id!==undefined&&P.has(m.id)){const {res,rej}=P.get(m.id);P.delete(m.id);m.error?rej(new Error(m.error.message)):res(m.result);return;}
+  if(m.method==='ui/notifications/tool-input'){const sc=m.params&&m.params.structuredContent;if(sc&&Array.isArray(sc.results)){D=sc.results;render(D);}}
+});
+function e(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function render(data){
+  document.getElementById('ps').textContent=data.filter(r=>r.overallStatus==='passed').length;
+  document.getElementById('fs').textContent=data.filter(r=>r.overallStatus==='failed').length;
+  document.getElementById('cards').innerHTML=data.map((r,i)=>{
+    const ic=r.overallStatus==='passed'?'[OK]':'[FAIL]';
+    const s=r.step||r.testCase||{};
+    const ars=(r.assertionResults||[]).map(ar=>'<div class="'+(ar.skipped?'ask':ar.passed?'asp':'asf')+'">'+(ar.skipped?'skip':ar.passed?'pass':'fail')+' '+e(ar.message||'')+'</div>').join('');
+    const err=r.errorMessage?'<div class="em">'+e(r.errorMessage)+'</div>':'';
+    return '<div class="card"><div class="ch">'+ic+' Step '+(i+1)+' - '+e(s.method||'')+' '+e(s.url||'')+'<span class="sm">'+(r.actualStatusCode||0)+' - '+(r.durationMs||0)+'ms</span></div><div class="cb">'+ars+err+'</div></div>';
   }).join('');
 }
-window.addEventListener("message",e=>{
-  const d=e.data;
-  if(d?.method==="ui/notifications/tool-input"){
-    const sc=d?.params?.structuredContent;
-    if(Array.isArray(sc?.results)){
-      D=sc.results;
-      renderResults(D);
-    }
-  }
-});
-renderResults(D);
+async function init(){
+  try{await req('ui/initialize',{protocolVersion:'2025-11-21',capabilities:{},clientInfo:{name:'apidash-workflow-results',version:'1.0.0'}});}catch(e){}
+  render(D);
+  window.parent.postMessage({jsonrpc:'2.0',method:'ui/notifications/size-changed',params:{width:document.body.scrollWidth,height:document.body.scrollHeight+40}},'*');
+}
+init();
 </script>''');
   }
 
-  // ── Page Template ─────────────────────────────────────────────────────────
+  // ── Shared page template ─────────────────────────────────────────────────
 
   static String _page(String title, String body) => '''<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>$title</title>
 <style>
-:root{--bg:#f7f6f2;--s:#fff;--b:#dcd9d5;--t:#28251d;--m:#7a7974;
---p:#01696f;--ph:#0c4e54;--ok:#437a22;--er:#a12c7b;--sk:#7a7974;--r:8px}
+:root{--bg:#f7f6f2;--s:#fff;--b:#dcd9d5;--t:#28251d;--m:#7a7974;--p:#01696f;--ph:#0c4e54;--ok:#437a22;--er:#a12c7b;--sk:#7a7974}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:14px;padding:20px}
-h1{font-size:18px;margin-bottom:6px} .sub{color:var(--m);font-size:13px;margin-bottom:16px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t);font-size:13px;padding:16px}
+h1{font-size:16px;margin-bottom:12px}
 .bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.count{font-size:13px;color:var(--m);margin-left:auto}
-button{padding:8px 16px;border-radius:var(--r);border:none;cursor:pointer;font-size:13px;font-weight:500}
-.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--ph)}
-.btn-s{background:var(--s);color:var(--t);border:1px solid var(--b)}
-table{width:100%;border-collapse:collapse;background:var(--s);border-radius:var(--r);
-overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;text-transform:uppercase;
-letter-spacing:.05em;color:var(--m);background:var(--bg);border-bottom:1px solid var(--b)}
-td{padding:10px 12px;border-bottom:1px solid var(--b);vertical-align:middle}
-tr:last-child td{border-bottom:none} tr:not(.dr):hover td{background:#f9f8f5}
-.mono{font-family:monospace;font-size:12px} .primary{color:var(--p);font-weight:700}
-.url{max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.badge{display:inline-flex;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500}
-.badge-happy_path{background:#d4dfcc;color:#1e3f0a}
-.badge-edge_case{background:#e9e0c6;color:#8a5b00}
-.badge-security{background:#e0ced7;color:#561740}
-.badge-performance{background:#c6d8e4;color:#0b3751}
-.sum{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.stat{padding:12px 20px;border-radius:var(--r);background:var(--s);border:1px solid var(--b);
-font-weight:600;font-size:15px;min-width:80px}
-.sl{font-size:11px;font-weight:400;color:var(--m);display:block}
+.cnt{font-size:12px;color:var(--m);margin-left:auto}
+.sub{color:var(--m);font-size:12px;margin-bottom:12px}
+button{padding:6px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:500}
+button:disabled{opacity:.5;cursor:not-allowed}
+.bp{background:var(--p);color:#fff}.bp:hover:not(:disabled){background:var(--ph)}
+.bs{background:var(--s);color:var(--t);border:1px solid var(--b)}
+table{width:100%;border-collapse:collapse;background:var(--s);border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+th{text-align:left;padding:8px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--m);background:var(--bg);border-bottom:1px solid var(--b)}
+td{padding:8px 10px;border-bottom:1px solid var(--b);vertical-align:middle}
+tr:last-child td{border-bottom:none}tr:not(.dr):hover td{background:#f9f8f5}
+.mono{font-family:monospace;font-size:11px}.p{color:var(--p);font-weight:700}
+.url{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge{display:inline-flex;padding:1px 6px;border-radius:99px;font-size:10px;font-weight:500}
+.cat-happy_path{background:#d4dfcc;color:#1e3f0a}.cat-edge_case{background:#e9e0c6;color:#8a5b00}
+.cat-security{background:#e0ced7;color:#561740}.cat-performance{background:#c6d8e4;color:#0b3751}
+.sum{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.stat{padding:10px 16px;border-radius:8px;background:var(--s);border:1px solid var(--b);font-weight:600;font-size:18px;min-width:70px}
+.sl{font-size:10px;font-weight:400;color:var(--m);display:block}
 .sp{color:var(--ok)}.sf{color:var(--er)}.sk{color:var(--sk)}
-.db{padding:8px 0} .ar{font-size:12px;padding:2px 8px}
-.ap{color:var(--ok)}.af{color:var(--er)}.as{color:var(--sk)}
-.em{color:var(--er);font-size:12px;padding:2px 8px}
-.msg{padding:12px 16px;border-radius:var(--r);font-size:13px;margin-top:16px;display:none}
-.ml{background:#cedcd8;color:var(--p);border:1px solid var(--p)}
-.ms{background:#d4dfcc;color:#1e3f0a;border:1px solid #437a22}
+.db{padding:6px 0}.asp,.asf,.ask{font-size:11px;padding:2px 8px}
+.asp{color:var(--ok)}.asf{color:var(--er)}.ask{color:var(--sk)}.em{color:var(--er);font-size:11px;padding:2px 8px}
+.msg{padding:10px 14px;border-radius:6px;font-size:12px;margin-top:12px;display:none}
+.mi{background:#cedcd8;color:var(--p);border:1px solid #b2ceca}
+.ms{background:#d4dfcc;color:#1e3f0a;border:1px solid #b8cfb0}
 .me{background:#f9e8f1;color:var(--er);border:1px solid #e0ced7}
-.card{background:var(--s);border:1px solid var(--b);border-radius:var(--r);
-margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.ch{display:flex;align-items:center;gap:10px;padding:10px 14px;
-background:var(--bg);border-bottom:1px solid var(--b);font-weight:500}
-.cb{padding:10px 14px;display:flex;flex-direction:column;gap:6px}
-.sn{font-size:11px;font-weight:700;color:var(--m);text-transform:uppercase}
-.sm{font-family:monospace;font-weight:700;color:var(--p);font-size:13px}
-.su{font-family:monospace;font-size:12px;color:var(--m)}
+.card{background:var(--s);border:1px solid var(--b);border-radius:8px;margin-bottom:10px;overflow:hidden}
+.ch{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border-bottom:1px solid var(--b);font-weight:500;flex-wrap:wrap}
+.cb{padding:8px 12px;display:flex;flex-direction:column;gap:4px}
+.sn{font-size:10px;font-weight:700;color:var(--m);text-transform:uppercase}
+.sm{font-family:monospace;font-weight:700;color:var(--p);font-size:12px}
+.su{font-family:monospace;font-size:11px;color:var(--m)}
+.ar{font-size:12px;margin:2px 0}
 </style></head><body>
 <h1>$title</h1>
 $body
 </body></html>''';
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-
-  static String _e(String s) => s
-      .replaceAll('&', '&amp;').replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-
-  static String _safeJson(dynamic obj) =>
+  static String _safe(dynamic obj) =>
       jsonEncode(obj).replaceAll('</', '<\\/');
 }

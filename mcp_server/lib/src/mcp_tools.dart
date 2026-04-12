@@ -6,12 +6,13 @@ import 'mcp_resources.dart';
 const _baseUri = 'ui://apidash-mcp';
 
 class McpTools {
-  // ── Manifest (tools/list) ────────────────────────────────────────────────
+  // ── tools/list manifest ──────────────────────────────────────────────────
 
   static List<Map<String, dynamic>> manifest() => [
         {
           'name': 'generate_unit_tests',
-          'description': 'Generate AI-powered test cases for an API endpoint. '
+          'description':
+              'Generate AI-powered test cases for an API endpoint. '
               'Opens an interactive checklist UI inside the chat.',
           'inputSchema': {
             'type': 'object',
@@ -21,7 +22,10 @@ class McpTools {
                 'type': 'string',
                 'description': 'HTTP method: GET/POST/PUT/DELETE/PATCH'
               },
-              'headers': {'type': 'object', 'description': 'Request headers'},
+              'headers': {
+                'type': 'object',
+                'description': 'Request headers (optional)'
+              },
               'body': {
                 'type': 'string',
                 'description': 'Request body (optional)'
@@ -33,62 +37,78 @@ class McpTools {
             'ui': {
               'resourceUri': '$_baseUri/test-checklist-ui',
               'visibility': ['model', 'app'],
-            },
+            }
           },
         },
         {
           'name': 'run_selected_tests',
           'description':
-              'Run selected test cases and display results dashboard.',
+              'Execute the user-selected test cases against the real API. '
+              'Call this after the user has confirmed their selection in the checklist UI. '
+              'If test_cases is omitted, uses the last submitted selection.',
           'inputSchema': {
             'type': 'object',
             'properties': {
               'test_cases': {
                 'type': 'array',
-                'items': {'type': 'object'},
-                'description': 'Test cases with isSelected flags',
+                'description':
+                    'Array of test case objects from the chat context',
+                'items': {'type': 'object'}
               },
             },
-            'required': ['test_cases'],
+            'required': [],
           },
           '_meta': {
             'ui': {
               'resourceUri': '$_baseUri/test-results-ui',
               'visibility': ['model', 'app'],
-            },
+            }
           },
         },
         {
           'name': 'generate_workflow_plan',
           'description':
-              'Generate a multi-step API workflow plan as an interactive checklist.',
+              'Generate a multi-step API workflow test plan. '
+              'Opens an interactive step selector UI inside the chat.',
           'inputSchema': {
             'type': 'object',
             'properties': {
-              'requests': {
-                'type': 'array',
-                'items': {'type': 'object'},
-                'description': 'Array of API requests',
+              'description': {
+                'type': 'string',
+                'description':
+                    'Natural language description of the workflow '
+                    '(e.g. "create a user then fetch it then delete it")'
+              },
+              'base_url': {
+                'type': 'string',
+                'description': 'Base API URL (e.g. https://api.example.com)'
+              },
+              'headers': {
+                'type': 'object',
+                'description': 'Common request headers (optional)'
               },
             },
-            'required': ['requests'],
+            'required': ['description', 'base_url'],
           },
           '_meta': {
             'ui': {
               'resourceUri': '$_baseUri/workflow-plan-ui',
               'visibility': ['model', 'app'],
-            },
+            }
           },
         },
         {
           'name': 'execute_workflow',
-          'description': 'Execute workflow steps and display live results.',
+          'description':
+              'Execute a multi-step API workflow sequentially, passing data between steps. '
+              'Call this after the user confirms workflow steps in the plan UI.',
           'inputSchema': {
             'type': 'object',
             'properties': {
               'steps': {
                 'type': 'array',
-                'items': {'type': 'object'},
+                'description': 'Array of workflow step objects from chat context',
+                'items': {'type': 'object'}
               },
             },
             'required': ['steps'],
@@ -97,552 +117,565 @@ class McpTools {
             'ui': {
               'resourceUri': '$_baseUri/workflow-results-ui',
               'visibility': ['model', 'app'],
+            }
+          },
+        },
+        // App-only tool: called by the HTML UI, not exposed to the model
+        // Mirrors get-sales-data in the TypeScript reference
+        {
+          'name': 'get_selected_cases',
+          'description':
+              'App-only: validate and echo selected test cases back to the UI.',
+          'inputSchema': {
+            'type': 'object',
+            'properties': {
+              'selected_cases': {
+                'type': 'array',
+                'items': {'type': 'object'}
+              }
             },
+            'required': ['selected_cases'],
+          },
+          '_meta': {
+            'ui': {
+              'resourceUri': '$_baseUri/test-checklist-ui',
+              'visibility': ['app'], // app-only, not shown to model
+            }
           },
         },
       ];
 
-  // ── Dispatcher (tools/call) ───────────────────────────────────────────────
+  // ── tools/call dispatcher ────────────────────────────────────────────────
 
   static Future<Map<String, dynamic>> call(
       String name, Map<String, dynamic> args) async {
-    switch (name) {
-      case 'generate_unit_tests':
-        return _generateUnitTests(args);
-      case 'run_selected_tests':
-        return _runSelectedTests(args);
-      case 'generate_workflow_plan':
-        return _generateWorkflowPlan(args);
-      case 'execute_workflow':
-        return _executeWorkflow(args);
-      default:
-        throw ArgumentError('Unknown tool: $name');
-    }
+    return switch (name) {
+      'generate_unit_tests' => await _generateUnitTests(args),
+      'run_selected_tests' => await _runSelectedTests(args),
+      'generate_workflow_plan' => await _generateWorkflowPlan(args),
+      'execute_workflow' => await _executeWorkflow(args),
+      'get_selected_cases' => _getSelectedCases(args),
+      _ => _err('Unknown tool: $name'),
+    };
   }
 
-  // ── Handlers ─────────────────────────────────────────────────────────────
+  // ── generate_unit_tests ──────────────────────────────────────────────────
 
   static Future<Map<String, dynamic>> _generateUnitTests(
       Map<String, dynamic> args) async {
-    final url = args['url'] as String;
-    final method = (args['method'] as String).toUpperCase();
-    final headers = (args['headers'] as Map<String, dynamic>? ?? {})
-        .map((k, v) => MapEntry(k, v.toString()));
-    final body = args['body'] as String?;
-    final apiKey = Platform.environment['GEMINI_API_KEY'] ?? '';
-    if (apiKey.isEmpty) {
-      throw Exception('GEMINI_API_KEY not set in environment');
+    try {
+      final url = args['url'] as String;
+      final method = args['method'] as String;
+      final headers = (args['headers'] as Map?)?.cast<String, dynamic>() ?? {};
+      final body = args['body'] as String? ?? '';
+
+      final testCases = await _callGemini(
+        prompt: _testCasePrompt(url, method, headers, body),
+      );
+
+      McpResources.setTestCases(testCases);
+      final html = McpResources.readHtml('$_baseUri/test-checklist-ui');
+
+      return {
+        'content': [
+          {
+            'type': 'text',
+            'text': 'Generated ${testCases.length} test cases for $method $url. '
+                'Select the cases you want to run in the checklist below.',
+          },
+          {
+            'type': 'text',
+            'text': html,
+            'mimeType': 'text/html;profile=mcp-app',
+          },
+        ],
+        // structuredContent → VSCode sends this as ui/notifications/tool-input
+        // to the embedded iframe so the checklist populates automatically
+        'structuredContent': {
+          'testCases': testCases,
+          'url': url,
+          'method': method,
+        },
+        '_meta': {
+          'ui': {
+            'resourceUri': '$_baseUri/test-checklist-ui',
+            'visibility': ['model', 'app'],
+          }
+        },
+      };
+    } catch (e) {
+      return _err('generate_unit_tests failed: $e');
     }
-
-    final testCases = await _callGemini(
-      apiKey,
-      _unitTestPrompt(method: method, url: url, headers: headers, body: body),
-    );
-
-    McpResources.setTestCases(testCases);
-
-    return {
-      'content': [
-        {
-          'type': 'text',
-          'text': 'Generated ${testCases.length} test cases for $method $url. '
-              'Review and select in the interactive checklist above.',
-        }
-      ],
-      'structuredContent': {
-        'testCases': testCases,
-        'url': url,
-        'method': method,
-      },
-    };
   }
+
+  // ── run_selected_tests ───────────────────────────────────────────────────
 
   static Future<Map<String, dynamic>> _runSelectedTests(
       Map<String, dynamic> args) async {
-    final rawList = args['test_cases'] as List<dynamic>;
-    final selected = rawList
-        .where((tc) => tc['isSelected'] == true)
-        .map((tc) => tc as Map<String, dynamic>)
-        .toList();
+    try {
+      final rawList = args['test_cases'] as List? ?? McpResources.getSelectedTestCases();
+      final testCases =
+          rawList.map((e) => (e as Map).cast<String, dynamic>()).toList();
 
-    final results = <Map<String, dynamic>>[];
-    for (final tc in selected) {
-      results.add(await _executeTestCase(tc));
-    }
-    for (final tc in rawList) {
-      if (tc['isSelected'] != true) {
-        results.add({
-          'testCase': tc,
-          'overallStatus': 'skipped',
-          'actualStatusCode': 0,
-          'durationMs': 0,
-          'assertionResults': [],
-        });
+      if (testCases.isEmpty) {
+        return _err(
+            'No test cases provided. Submit your selection in the checklist first.');
       }
+
+      final results = <Map<String, dynamic>>[];
+      for (final tc in testCases) {
+        results.add(await _runSingleTest(tc));
+      }
+
+      McpResources.setTestResults(results);
+      final html = McpResources.readHtml('$_baseUri/test-results-ui');
+
+      final passed = results.where((r) => r['overallStatus'] == 'passed').length;
+      final failed = results.where((r) => r['overallStatus'] == 'failed').length;
+
+      return {
+        'content': [
+          {
+            'type': 'text',
+            'text': 'Test run complete: $passed passed, $failed failed '
+                'out of ${testCases.length} selected.',
+          },
+          {
+            'type': 'text',
+            'text': html,
+            'mimeType': 'text/html;profile=mcp-app',
+          },
+        ],
+        'structuredContent': {'results': results},
+        '_meta': {
+          'ui': {
+            'resourceUri': '$_baseUri/test-results-ui',
+            'visibility': ['model', 'app'],
+          }
+        },
+      };
+    } catch (e) {
+      return _err('run_selected_tests failed: $e');
     }
-
-    McpResources.setTestResults(results);
-
-    final passed = results.where((r) => r['overallStatus'] == 'passed').length;
-    final failed = results.where((r) => r['overallStatus'] == 'failed').length;
-
-    return {
-      'content': [
-        {
-          'type': 'text',
-          'text':
-              'Test run complete: $passed passed, $failed failed out of ${selected.length} selected. '
-              'Results are available in the interactive dashboard above.',
-        }
-      ],
-      'structuredContent': {
-        'results': results,
-      },
-    };
   }
+
+  // ── generate_workflow_plan ───────────────────────────────────────────────
 
   static Future<Map<String, dynamic>> _generateWorkflowPlan(
       Map<String, dynamic> args) async {
-    final requests = (args['requests'] as List<dynamic>)
-        .map((r) => r as Map<String, dynamic>)
-        .toList();
-    final apiKey = Platform.environment['GEMINI_API_KEY'] ?? '';
-    if (apiKey.isEmpty) {
-      throw Exception('GEMINI_API_KEY not set in environment');
-    }
+    try {
+      final description = args['description'] as String;
+      final baseUrl = args['base_url'] as String;
+      final headers = (args['headers'] as Map?)?.cast<String, dynamic>() ?? {};
 
-    final steps = await _callGemini(apiKey, _workflowPrompt(requests));
-    McpResources.setWorkflowSteps(steps);
+      final steps = await _callGemini(
+        prompt: _workflowPrompt(description, baseUrl, headers),
+      );
 
-    return {
-      'content': [
-        {
-          'type': 'text',
-          'text': 'Generated workflow with ${steps.length} steps. '
-              'Review assertions in the interactive checklist above.'
+      McpResources.setWorkflowSteps(steps);
+      final html = McpResources.readHtml('$_baseUri/workflow-plan-ui');
+
+      return {
+        'content': [
+          {
+            'type': 'text',
+            'text': 'Generated workflow with ${steps.length} steps. '
+                'Review assertions in the checklist below.',
+          },
+          {
+            'type': 'text',
+            'text': html,
+            'mimeType': 'text/html;profile=mcp-app',
+          },
+        ],
+        'structuredContent': {'steps': steps},
+        '_meta': {
+          'ui': {
+            'resourceUri': '$_baseUri/workflow-plan-ui',
+            'visibility': ['model', 'app'],
+          }
         },
-      ],
-      'structuredContent': {
-        'steps': steps,
-      },
-    };
+      };
+    } catch (e) {
+      return _err('generate_workflow_plan failed: $e');
+    }
   }
+
+  // ── execute_workflow ─────────────────────────────────────────────────────
 
   static Future<Map<String, dynamic>> _executeWorkflow(
       Map<String, dynamic> args) async {
-    final steps = (args['steps'] as List<dynamic>)
-        .map((s) => s as Map<String, dynamic>)
-        .toList();
+    try {
+      final rawList = args['steps'] as List? ?? [];
+      final steps =
+          rawList.map((e) => (e as Map).cast<String, dynamic>()).toList();
 
-    final results = <Map<String, dynamic>>[];
-    final context = <String, dynamic>{};
-
-    for (final step in steps) {
-      final result = await _executeWorkflowStep(step, context);
-      final extractions = step['dataExtractions'] as List<dynamic>? ?? [];
-      for (final ex in extractions) {
-        final varName = ex['variableName'] as String? ?? '';
-        final path = ex['jsonPath'] as String? ?? '';
-        if (varName.isNotEmpty && path.isNotEmpty) {
-          context[varName] =
-              _extractJsonPath(result['responseBody'] as String? ?? '{}', path);
-        }
+      if (steps.isEmpty) {
+        return _err(
+            'No workflow steps provided. Submit your selection in the plan UI first.');
       }
-      results.add(result);
-      if (result['overallStatus'] == 'failed') break;
+
+      final results = <Map<String, dynamic>>[];
+      final ctx = <String, dynamic>{}; // shared variable context between steps
+
+      for (final step in steps) {
+        final result = await _runWorkflowStep(step, ctx);
+        results.add(result);
+        _extractVariables(result, step, ctx);
+      }
+
+      McpResources.setWorkflowResults(results);
+      final html = McpResources.readHtml('$_baseUri/workflow-results-ui');
+
+      final passed = results.where((r) => r['overallStatus'] == 'passed').length;
+      final failed = results.where((r) => r['overallStatus'] == 'failed').length;
+
+      return {
+        'content': [
+          {
+            'type': 'text',
+            'text': 'Workflow complete: $passed steps passed, $failed failed.',
+          },
+          {
+            'type': 'text',
+            'text': html,
+            'mimeType': 'text/html;profile=mcp-app',
+          },
+        ],
+        'structuredContent': {'results': results},
+        '_meta': {
+          'ui': {
+            'resourceUri': '$_baseUri/workflow-results-ui',
+            'visibility': ['model', 'app'],
+          }
+        },
+      };
+    } catch (e) {
+      return _err('execute_workflow failed: $e');
     }
+  }
 
-    McpResources.setWorkflowResults(results);
+  // ── get_selected_cases (app-only) ────────────────────────────────────────
 
+  static Map<String, dynamic> _getSelectedCases(Map<String, dynamic> args) {
+    final rawList = args['selected_cases'] as List? ?? [];
+    final cases =
+        rawList.map((e) => (e as Map).cast<String, dynamic>()).toList();
+    McpResources.setSelectedTestCases(cases);
     return {
       'content': [
-        {
-          'type': 'text',
-          'text': 'Workflow executed: ${results.length} steps completed. '
-              'Live results are available in the dashboard above.'
-        },
+        {'type': 'text', 'text': 'Validated ${cases.length} selected cases.'}
       ],
-      'structuredContent': {
-        'results': results,
-      },
+      // structuredContent echoed back to the iframe
+      'structuredContent': {'selectedCases': cases},
     };
   }
 
-  // ── HTTP Test Execution ───────────────────────────────────────────────────
+  // ── Gemini prompts ────────────────────────────────────────────────────────
 
-  static Future<Map<String, dynamic>> _executeTestCase(
-      Map<String, dynamic> tc) async {
-    final url = tc['url'] as String;
-    final method = (tc['method'] as String).toUpperCase();
-    final headers = (tc['headers'] as Map<String, dynamic>? ?? {})
-        .map((k, v) => MapEntry(k, v.toString()));
+  static String _testCasePrompt(String url, String method,
+      Map<String, dynamic> headers, String body) =>
+      '''
+You are an API testing expert. Generate comprehensive test cases for this endpoint.
 
-    // body can be String or Map (if Gemini put a raw object) — normalise to String
-    final rawBody = tc['body'];
-    final String? body = rawBody == null
-        ? null
-        : rawBody is String
-            ? rawBody
-            : jsonEncode(rawBody); // ← handles Map body from Gemini
+ENDPOINT:
+  Method:  $method
+  URL:     $url
+  Headers: ${jsonEncode(headers)}
+  Body:    ${body.isEmpty ? '(none)' : body}
 
-    final sw = Stopwatch()..start();
-    try {
-      final uri = Uri.parse(url);
-      final req = http.Request(method, uri);
-      headers.forEach((k, v) => req.headers[k] = v);
-      if (body != null && body.isNotEmpty) req.body = body;
-
-      final streamed = await req.send();
-      final resp = await http.Response.fromStream(streamed);
-      sw.stop();
-
-      final assertions = tc['assertions'] as List<dynamic>? ?? [];
-      final assertionResults = <Map<String, dynamic>>[];
-      var overallPass = true;
-
-      for (final a in assertions) {
-        final type = a['type'] as String;
-        final expected = a['expected'].toString(); // safe toString
-        final result = _checkAssertion(
-            type, expected, resp.statusCode, resp.body, sw.elapsedMilliseconds);
-        if (!result['passed']) overallPass = false;
-        assertionResults.add(result);
-      }
-
-      return {
-        'testCase': tc,
-        'actualStatusCode': resp.statusCode,
-        'durationMs': sw.elapsedMilliseconds,
-        'assertionResults': assertionResults,
-        'overallStatus': overallPass ? 'passed' : 'failed',
-      };
-    } catch (e) {
-      sw.stop();
-      return {
-        'testCase': tc,
-        'actualStatusCode': 0,
-        'durationMs': sw.elapsedMilliseconds,
-        'assertionResults': [],
-        'overallStatus': 'failed',
-        'errorMessage': e.toString(),
-      };
+Return ONLY a JSON array. Each element must have exactly these fields:
+{
+  "description": "short human-readable label",
+  "category":    "happy_path" | "edge_case" | "security" | "performance",
+  "method":      "GET" | "POST" | ...,
+  "url":         "full URL",
+  "headers":     {},
+  "body":        null or "string",
+  "assertions": [
+    {
+      "type":     "status_code" | "response_time" | "body_contains" | "json_schema",
+      "expected": <value>,
+      "message":  "human description"
     }
-  }
+  ],
+  "isSelected": true
+}
 
-  static Future<Map<String, dynamic>> _executeWorkflowStep(
-      Map<String, dynamic> step, Map<String, dynamic> context) async {
-    var url = step['url'] as String;
-    var body = step['body'] as String?;
-    context.forEach((k, v) {
-      url = url.replaceAll('{{$k}}', v.toString());
-      if (body != null) body = body!.replaceAll('{{$k}}', v.toString());
-    });
+Generate 5-8 test cases. Return ONLY the JSON array, no markdown fences.
+''';
 
-    final tc = {...step, 'url': url, 'body': body, 'isSelected': true};
-    final result = await _executeTestCase(tc);
-    return {...result, 'step': step};
-  }
+  static String _workflowPrompt(String description, String baseUrl,
+      Map<String, dynamic> headers) =>
+      r'''
+You are an API workflow expert. Generate a multi-step API workflow test plan.
 
-  static Map<String, dynamic> _checkAssertion(String type, String expected,
-      int statusCode, String body, int durationMs) {
-    switch (type) {
-      case 'status_code':
-        final pass = statusCode == int.tryParse(expected);
-        return {
-          'type': type,
-          'passed': pass,
-          'skipped': false,
-          'message': pass
-              ? 'Status $statusCode == $expected ✓'
-              : 'Expected $expected, got $statusCode',
-        };
-      case 'body_contains':
-        final pass = body.contains(expected);
-        return {
-          'type': type,
-          'passed': pass,
-          'skipped': false,
-          'message': pass
-              ? 'Body contains "$expected" ✓'
-              : 'Body does not contain "$expected"',
-        };
-      case 'body_does_not_contain':
-      case 'body_not_contains':
-        final pass = !body.contains(expected);
-        return {
-          'type': type,
-          'passed': pass,
-          'skipped': false,
-          'message': pass
-              ? 'Body does not contain "$expected" ✓'
-              : 'Body unexpectedly contains "$expected"',
-        };
-      case 'response_time_ms':
-        final limit = int.tryParse(expected) ?? 2000;
-        final pass = durationMs <= limit;
-        return {
-          'type': type,
-          'passed': pass,
-          'skipped': false,
-          'message': pass
-              ? 'Response time ${durationMs}ms <= ${limit}ms ✓'
-              : 'Response time ${durationMs}ms exceeded ${limit}ms',
-        };
-      case 'body_schema':
-        try {
-          final bodyJson = jsonDecode(body) as Map<String, dynamic>;
-          final schema = jsonDecode(expected) as Map<String, dynamic>;
-          final props =
-              (schema['properties'] as Map<String, dynamic>?)?.keys.toList() ??
-                  [];
-          final missing = props.where((k) => !bodyJson.containsKey(k)).toList();
-          final pass = missing.isEmpty;
-          return {
-            'type': type,
-            'passed': pass,
-            'skipped': false,
-            'message': pass
-                ? 'Schema valid — all keys present ✓'
-                : 'Missing keys: ${missing.join(', ')}',
-          };
-        } catch (_) {
-          return {
-            'type': type,
-            'passed': false,
-            'skipped': false,
-            'message': 'Schema check failed — invalid JSON'
-          };
-        }
-      case 'body_value':
-        try {
-          final bodyJson = jsonDecode(body) as Map<String, dynamic>;
-          final parts = expected.split('==').map((s) => s.trim()).toList();
-          final key = parts[0];
-          final expectedVal = parts.length > 1 ? parts[1] : '';
-          final actualVal = bodyJson[key];
-          final pass = actualVal.toString() == expectedVal;
-          return {
-            'type': type,
-            'passed': pass,
-            'skipped': false,
-            'message': pass
-                ? 'body["$key"] == $expectedVal ✓'
-                : 'Expected body["$key"] == $expectedVal, got $actualVal',
-          };
-        } catch (_) {
-          return {
-            'type': type,
-            'passed': false,
-            'skipped': false,
-            'message': 'body_value check failed'
-          };
-        }
-      case 'body_type':
-        try {
-          final bodyJson = jsonDecode(body) as Map<String, dynamic>;
-          final parts = expected.split(':').map((s) => s.trim()).toList();
-          final key = parts[0];
-          final expectedType = parts.length > 1 ? parts[1] : '';
-          final val = bodyJson[key];
-          final actualType = val is int
-              ? 'integer'
-              : val is double
-                  ? 'number'
-                  : val is bool
-                      ? 'boolean'
-                      : val is String
-                          ? 'string'
-                          : val is List
-                              ? 'array'
-                              : val is Map
-                                  ? 'object'
-                                  : 'null';
-          final pass = actualType == expectedType ||
-              (expectedType == 'integer' && val is num);
-          return {
-            'type': type,
-            'passed': pass,
-            'skipped': false,
-            'message': pass
-                ? 'body["$key"] is $expectedType ✓'
-                : 'Expected $expectedType, got $actualType',
-          };
-        } catch (_) {
-          return {
-            'type': type,
-            'passed': false,
-            'skipped': false,
-            'message': 'body_type check failed'
-          };
-        }
-      default:
-        return {
-          'type': type,
-          'passed': false,
-          'skipped': true,
-          'message': 'Unknown assertion type: $type'
-        };
+DESCRIPTION: $description
+BASE URL:    $baseUrl
+HEADERS:     ${jsonEncode(headers)}
+
+Return ONLY a JSON array of steps. Each step:
+{
+  "stepName":    "short label",
+  "method":      "GET" | "POST" | ...,
+  "url":         "full URL (use {{varName}} for extracted values from prev steps)",
+  "headers":     {},
+  "body":        null or "string body (use {{varName}} for extracted values)",
+  "extractVars": { "varName": "$.jsonPath" },
+  "assertions": [
+    {
+      "type":       "status_code" | "body_contains" | "json_schema",
+      "expected":   <value>,
+      "message":    "human description",
+      "isSelected": true
     }
-  }
+  ]
+}
 
-  // ── Gemini Client ─────────────────────────────────────────────────────────
+Generate 2-5 sequential steps. Return ONLY the JSON array.
+''';
 
-  /// Sanitizes JS expressions that Gemini sometimes emits inside JSON strings.
-  /// Must run BEFORE jsonDecode.
-  static String _sanitizeGeminiJson(String raw) {
-    // Pass 1: "string".repeat(N) → repeated plain string (capped at 80 chars)
-    raw = raw.replaceAllMapped(
-      RegExp(r'"([^"\\]*)"\s*\.\s*repeat\s*\(\s*(\d+)\s*\)'),
-      (m) {
-        final base = m.group(1)!;
-        final count = int.tryParse(m.group(2)!) ?? 1;
-        final full = base * count;
-        return '"${full.length > 80 ? full.substring(0, 80) : full}"';
-      },
-    );
-
-    // Pass 2: "a" + "b" chains → "ab" (repeat until no matches)
-    final concat = RegExp(r'"([^"\\]*)"\s*\+\s*"([^"\\]*)"');
-    var prev = '';
-    while (prev != raw) {
-      prev = raw;
-      raw =
-          raw.replaceAllMapped(concat, (m) => '"${m.group(1)!}${m.group(2)!}"');
-    }
-
-    // Pass 3: any remaining value like identifier.method(...) outside quotes → "value"
-    // e.g.  "body": null.toString()  or  "body": someVar.trim()
-    raw = raw.replaceAllMapped(
-      RegExp(r':\s*([a-zA-Z_\$][a-zA-Z0-9_\$]*)\s*\.\s*\w+\s*\([^)]*\)'),
-      (_) => ': "invalid"',
-    );
-
-    // Pass 4: body field that is a raw JSON object → stringify it
-    // Gemini sometimes writes: "body": {"key": "value"}  instead of "body": "{...}"
-    // We leave this as-is since _executeTestCase now handles Map body natively.
-
-    return raw;
-  }
+  // ── Gemini caller ─────────────────────────────────────────────────────────
 
   static Future<List<Map<String, dynamic>>> _callGemini(
-      String apiKey, String prompt) async {
-    final uri = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=$apiKey',
-    );
-    final resp = await http.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'contents': [
-          {
-            'role': 'user',
-            'parts': [
-              {'text': prompt}
-            ]
-          }
-        ],
-        'generationConfig': {
-          'temperature': 0.1,
-          'maxOutputTokens': 4096,
-          'responseMimeType': 'application/json', // Force JSON output mode
-        },
-      }),
-    );
+      {required String prompt}) async {
+    final apiKey = Platform.environment['GEMINI_API_KEY'] ?? '';
+    if (apiKey.isEmpty) throw Exception('GEMINI_API_KEY env var not set');
 
-    if (resp.statusCode != 200) {
-      throw Exception('Gemini error ${resp.statusCode}: ${resp.body}');
+    final response = await http
+        .post(
+          Uri.parse('https://generativelanguage.googleapis.com/v1beta/models/'
+              'gemini-2.5-flash-lite:generateContent?key=$apiKey'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'contents': [
+              {
+                'parts': [
+                  {'text': prompt}
+                ]
+              }
+            ],
+            'generationConfig': {
+              'temperature': 0.3,
+              'maxOutputTokens': 8192,
+            }
+          }),
+        )
+        .timeout(const Duration(seconds: 60));
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          'Gemini API error ${response.statusCode}: ${response.body}');
     }
 
-    final decoded = jsonDecode(resp.body) as Map<String, dynamic>;
-    final text =
-        decoded['candidates'][0]['content']['parts'][0]['text'] as String;
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    var text =
+        (data['candidates'] as List).first['content']['parts'].first['text']
+            as String;
 
-    // Step 1: strip markdown fences
-    var cleaned = text
+    // Strip markdown fences that Gemini often wraps around JSON
+    text = text
         .replaceAll(RegExp(r'```json\s*'), '')
         .replaceAll(RegExp(r'```\s*'), '')
         .trim();
 
-    // Step 2: extract only the JSON array
-    final start = cleaned.indexOf('[');
-    final end = cleaned.lastIndexOf(']');
-    if (start == -1 || end == -1 || end <= start) {
-      throw Exception(
-          'Gemini did not return a JSON array. Preview: ${cleaned.substring(0, cleaned.length.clamp(0, 200))}');
-    }
-    cleaned = cleaned.substring(start, end + 1);
+    // Sanitize common Gemini JSON issues (trailing commas etc.)
+    text = text.replaceAll(RegExp(r',\s*([}\]])'), r'\1').trim();
 
-    // Step 3: sanitize JS expressions BEFORE parsing
-    cleaned = _sanitizeGeminiJson(cleaned);
+    // Handle both bare [] array and {"steps":[...]} wrapper object
+    final startArr = text.indexOf('[');
+    final startObj = text.indexOf('{');
 
-    // Step 4: parse
-    try {
-      final parsed = jsonDecode(cleaned);
-      if (parsed is List) return parsed.cast<Map<String, dynamic>>();
-      if (parsed is Map && parsed.containsKey('steps')) {
-        return (parsed['steps'] as List).cast<Map<String, dynamic>>();
+    if (startObj != -1 && (startArr == -1 || startObj < startArr)) {
+      // Object wrapper — extract the first list value
+      final end = text.lastIndexOf('}');
+      final obj = jsonDecode(text.substring(startObj, end + 1))
+          as Map<String, dynamic>;
+      for (final key in ['steps', 'testCases', 'test_cases', 'data']) {
+        if (obj.containsKey(key) && obj[key] is List) {
+          return (obj[key] as List).cast<Map<String, dynamic>>();
+        }
       }
-      return [parsed as Map<String, dynamic>];
+    }
+
+    // Bare array
+    final end = text.lastIndexOf(']');
+    final arr = jsonDecode(text.substring(startArr, end + 1)) as List;
+    return arr.cast<Map<String, dynamic>>();
+  }
+
+  // ── HTTP test runner ──────────────────────────────────────────────────────
+
+  static Future<Map<String, dynamic>> _runSingleTest(
+      Map<String, dynamic> tc) async {
+    final sw = Stopwatch()..start();
+    http.Response? response;
+    String? errorMessage;
+
+    try {
+      final uri = Uri.parse(tc['url'] as String? ?? '');
+      final method = (tc['method'] as String? ?? 'GET').toUpperCase();
+      final hdrs = ((tc['headers'] as Map?) ?? {})
+          .map((k, v) => MapEntry(k.toString(), v.toString()));
+      final bodyStr = tc['body'] as String?;
+      final client = http.Client();
+
+      response = await (switch (method) {
+        'GET' => client.get(uri, headers: hdrs),
+        'POST' => client.post(uri, headers: hdrs, body: bodyStr),
+        'PUT' => client.put(uri, headers: hdrs, body: bodyStr),
+        'PATCH' => client.patch(uri, headers: hdrs, body: bodyStr),
+        'DELETE' => client.delete(uri, headers: hdrs),
+        _ => client.get(uri, headers: hdrs),
+      })
+          .timeout(const Duration(seconds: 30));
     } catch (e) {
-      throw Exception(
-          'Failed to parse Gemini JSON: $e\nPreview: ${cleaned.substring(0, cleaned.length.clamp(0, 400))}');
+      errorMessage = e.toString();
+    } finally {
+      sw.stop();
+    }
+
+    final durationMs = sw.elapsedMilliseconds;
+    final actualStatus = response?.statusCode ?? 0;
+    final bodyText = response?.body ?? '';
+
+    final assertions = (tc['assertions'] as List? ?? [])
+        .map((a) => (a as Map).cast<String, dynamic>())
+        .toList();
+
+    final assertionResults = assertions
+        .map((a) => _evalAssertion(a, actualStatus, durationMs, bodyText))
+        .toList();
+
+    final overallStatus = errorMessage != null
+        ? 'failed'
+        : assertionResults.every(
+                (r) => r['passed'] == true || r['skipped'] == true)
+            ? 'passed'
+            : 'failed';
+
+    return {
+      'testCase': tc,
+      'actualStatusCode': actualStatus,
+      'durationMs': durationMs,
+      'overallStatus': overallStatus,
+      'errorMessage': errorMessage,
+      'assertionResults': assertionResults,
+    };
+  }
+
+  static Map<String, dynamic> _evalAssertion(
+      Map<String, dynamic> a, int status, int durationMs, String body) {
+    final type = a['type'] as String? ?? '';
+    final expected = a['expected'];
+    final message = a['message'] as String? ?? type;
+
+    try {
+      return switch (type) {
+        'status_code' => _assertBool(
+            status == (expected as num).toInt(),
+            message,
+            'Expected $expected, got $status',
+          ),
+        'response_time' => _assertBool(
+            durationMs <= (expected as num).toInt(),
+            message,
+            '${durationMs}ms exceeded ${expected}ms limit',
+          ),
+        'body_contains' => _assertBool(
+            body.contains(expected.toString()),
+            message,
+            'Body does not contain "$expected"',
+          ),
+        'json_schema' => _assertSchema(body, expected, message),
+        _ => {'passed': false, 'skipped': true, 'message': 'Unknown type: $type'},
+      };
+    } catch (e) {
+      return {'passed': false, 'skipped': false, 'message': '$message: $e'};
     }
   }
 
-  // ── Prompts ───────────────────────────────────────────────────────────────
+  static Map<String, dynamic> _assertBool(bool ok, String msg, String fail) =>
+      {'passed': ok, 'skipped': false, 'message': ok ? msg : fail};
 
-  static String _unitTestPrompt({
-    required String method,
-    required String url,
-    required Map<String, String> headers,
-    String? body,
-  }) =>
-      '''You are an API testing expert. Output a JSON array of exactly 5 test cases. No explanation, no markdown.
-
-Endpoint: $method $url
-Headers: ${headers.isEmpty ? '{}' : jsonEncode(headers)}
-Body: ${body ?? 'null'}
-
-RULES:
-- Output ONLY a JSON array. Start with [ end with ]. Nothing else.
-- "body" field: null OR a plain JSON string like "{\\"k\\": \\"v\\"}" — never a raw object.
-- "expected" in assertions: plain string only — "200", "3000", "keyword".
-- No JavaScript. No .repeat(). No + operator. Short plain strings only.
-
-Use compact JSON (no extra whitespace). Schema:
-[{"id":"tc_1","description":"...","category":"happy_path","method":"$method","url":"$url","headers":{},"body":null,"assertions":[{"type":"status_code","expected":"200"},{"type":"response_time_ms","expected":"3000"}],"isSelected":true}]
-
-Generate exactly 5 test cases covering: happy_path(x2), edge_case, security, performance.''';
-
-  static String _workflowPrompt(List<Map<String, dynamic>> requests) => '''
-Design a multi-step API workflow for these requests: ${jsonEncode(requests)}
-
-STRICT OUTPUT RULES:
-1. Output a JSON array ONLY. Nothing before [ or after ].
-2. All values must be valid JSON — no JavaScript expressions.
-3. The "body" field must be null or a JSON-encoded string.
-
-Return this exact shape:
-[
-  {
-    "id": "step_1",
-    "name": "Step description",
-    "method": "GET",
-    "url": "https://...",
-    "headers": {},
-    "body": null,
-    "assertions": [{"type": "status_code", "expected": "200"}],
-    "dataExtractions": [{"variableName": "userId", "jsonPath": "\$.id"}]
-  }
-]
-''';
-
-  static dynamic _extractJsonPath(String jsonBody, String path) {
+  static Map<String, dynamic> _assertSchema(
+      String body, dynamic schema, String message) {
     try {
-      final data = jsonDecode(jsonBody);
-      final field = path.replaceAll(r'$.', '').split('.').first;
-      if (data is Map) return data[field];
-    } catch (_) {}
-    return null;
+      final parsed = jsonDecode(body);
+      if (schema is Map) {
+        final required = schema['required'] as List? ?? [];
+        if (parsed is Map) {
+          final missing = required.where((k) => !parsed.containsKey(k)).toList();
+          return missing.isEmpty
+              ? {'passed': true, 'skipped': false, 'message': message}
+              : {
+                  'passed': false,
+                  'skipped': false,
+                  'message': 'Missing fields: $missing'
+                };
+        }
+      }
+      return {'passed': true, 'skipped': false, 'message': message};
+    } catch (e) {
+      return {'passed': false, 'skipped': false, 'message': 'JSON error: $e'};
+    }
   }
+
+  // ── Workflow runner ───────────────────────────────────────────────────────
+
+  static Future<Map<String, dynamic>> _runWorkflowStep(
+      Map<String, dynamic> step, Map<String, dynamic> ctx) async {
+    var url = step['url'] as String? ?? '';
+    var body = step['body'] as String?;
+
+    // Replace {{varName}} placeholders from previous step extractions
+    ctx.forEach((k, v) {
+      url = url.replaceAll('{{$k}}', v.toString());
+      if (body != null) body = body!.replaceAll('{{$k}}', v.toString());
+    });
+
+    final updatedStep = Map<String, dynamic>.from(step)
+      ..['url'] = url
+      ..['body'] = body;
+
+    final result = await _runSingleTest(updatedStep);
+    return {'step': step, ...result};
+  }
+
+  static void _extractVariables(Map<String, dynamic> result,
+      Map<String, dynamic> step, Map<String, dynamic> ctx) {
+    final extractVars =
+        (step['extractVars'] as Map?)?.cast<String, String>() ?? {};
+    if (extractVars.isEmpty) return;
+
+    try {
+      final parsed = jsonDecode(result['body'] as String? ?? '');
+      extractVars.forEach((varName, jsonPath) {
+        final value = _extractPath(parsed, jsonPath);
+        if (value != null) ctx[varName] = value;
+      });
+    } catch (_) {}
+  }
+
+  // Minimal $.field.nested JSONPath extractor
+  static dynamic _extractPath(dynamic data, String path) {
+    if (!path.startsWith(r'$.')) return null;
+    final parts = path.substring(2).split('.');
+    dynamic cur = data;
+    for (final p in parts) {
+      if (cur is Map && cur.containsKey(p)) {
+        cur = cur[p];
+      } else {
+        return null;
+      }
+    }
+    return cur;
+  }
+
+  static Map<String, dynamic> _err(String msg) => {
+        'isError': true,
+        'content': [
+          {'type': 'text', 'text': msg}
+        ],
+      };
 }
