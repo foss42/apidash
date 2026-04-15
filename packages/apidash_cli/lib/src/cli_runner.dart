@@ -3,14 +3,15 @@ import 'package:args/command_runner.dart';
 import 'commands/exec_command.dart';
 import 'commands/init_command.dart';
 import 'commands/list_command.dart';
+import 'commands/run_command.dart';
 
 /// CliRunner wires commands and global flags.
 class CliRunner extends CommandRunner<void> {
   CliRunner()
-      : super(
-          'apidash',
-          'API Dash CLI - run and inspect HTTP requests from your terminal.',
-        ) {
+    : super(
+        'apidash',
+        'API Dash CLI - run and inspect HTTP requests from your terminal.',
+      ) {
     argParser
       ..addFlag(
         'version',
@@ -28,6 +29,7 @@ class CliRunner extends CommandRunner<void> {
     addCommand(InitCommand());
     addCommand(ListCommand());
     addCommand(ExecCommand());
+    addCommand(RunCommand());
   }
 
   @override

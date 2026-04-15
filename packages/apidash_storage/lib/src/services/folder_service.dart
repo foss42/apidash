@@ -4,7 +4,7 @@ import 'package:path/path.dart' as path;
 
 class FolderServices {
   FolderServices({required this.workspacePath, FileService? fileService})
-      : _fileService = fileService ?? const FileService();
+    : _fileService = fileService ?? const FileService();
 
   final String workspacePath;
   final FileService _fileService;
@@ -22,14 +22,11 @@ class FolderServices {
 
     await _fileService.writeJsonFile(
       File(path.join(folderDir.path, 'folder.json')),
-      <String, Object?>{
-        'id': folderId,
-        'name': name,
-      },
+      <String, Object?>{'id': folderId, 'name': name},
     );
   }
 
-Future<void> upsertRequestIndexEntry({
+  Future<void> upsertRequestIndexEntry({
     required String collectionId,
     required String folderId,
     required String requestId,
@@ -39,11 +36,19 @@ Future<void> upsertRequestIndexEntry({
     required String file,
   }) async {
     final folderFile = File(
-      path.join(workspacePath, 'collections', collectionId, folderId, 'folder.json'),
+      path.join(
+        workspacePath,
+        'collections',
+        collectionId,
+        folderId,
+        'folder.json',
+      ),
     );
 
     if (!await folderFile.exists()) {
-      throw Exception('Folder not found: $folderId in collection $collectionId');
+      throw Exception(
+        'Folder not found: $folderId in collection $collectionId',
+      );
     }
 
     final index = await _fileService.readJsonFile(folderFile);
@@ -67,5 +72,4 @@ Future<void> upsertRequestIndexEntry({
     index['requests'] = updatedRequests;
     await _fileService.writeJsonFile(folderFile, index);
   }
-
 }

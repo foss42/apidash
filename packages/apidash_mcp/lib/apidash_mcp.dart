@@ -1,3 +1,2 @@
 export 'src/runner.dart' show runServer;
-export 'src/tools/list_collections_tool.dart'
-    show listCollectionsFromWorkspace, CollectionSummary;
+export 'src/tools/browse_collections.dart' show registerBrowserCollectionsTool;

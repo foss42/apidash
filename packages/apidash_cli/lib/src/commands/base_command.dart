@@ -5,7 +5,7 @@ import 'package:mason_logger/mason_logger.dart';
 /// - Enforces consistency across all commands
 abstract class BaseCommand extends Command<void> {
   /// Every command must declare its name (the keyword user types)
-  /// e.g. 'run', 'list', 'codegen'
+  /// e.g. 'run', 'list', 'init', etc.
   @override
   String get name;
 

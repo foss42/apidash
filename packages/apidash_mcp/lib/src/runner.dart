@@ -1,11 +1,8 @@
 import 'dart:io';
 import 'package:apidash_mcp/src/tools/execute_saved_request_tool.dart';
-import 'package:apidash_mcp/src/tools/list_folder_from_collection_tool.dart';
-import 'package:apidash_mcp/src/tools/list_requests_tool.dart';
 import 'package:mcp_dart/mcp_dart.dart';
-import 'tools/list_collections_tool.dart';
+import 'tools/browse_collections.dart';
 
-/// Starts the MCP server over stdio.
 Future<void> runServer() async {
   final workspacePath = Platform.environment['APIDASH_WORKSPACE_PATH'];
 
@@ -23,6 +20,7 @@ Future<void> runServer() async {
     options: McpServerOptions(
       capabilities: ServerCapabilities(
         tools:  const ServerCapabilitiesTools(),
+        resources: const ServerCapabilitiesResources(),
         extensions: withMcpUiExtension(),
       ),
     ),
@@ -35,8 +33,6 @@ Future<void> runServer() async {
 
 
 void toolRegister(McpServer server, String workspacePath) {
-  registerListCollections(server, workspacePath: workspacePath);
-  registerListFoldersFromCollectionTool(server, workspacePath: workspacePath);
-  registerListRequestsTool(server, workspacePath: workspacePath);
+  registerBrowserCollectionsTool(server, workspacePath: workspacePath);
   registerExecuteSavedRequest(server, workspacePath: workspacePath);
 }

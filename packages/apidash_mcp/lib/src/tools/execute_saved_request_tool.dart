@@ -1,103 +1,167 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_storage/apidash_storage.dart';
 import 'package:mcp_dart/mcp_dart.dart';
 import 'package:path/path.dart' as path;
 
-const resourceUri = 'ui://collections/request.html';
+Future<void> _syncRequestAndIndexFiles(Map<String, dynamic> payload) async {
+  final requestObject = payload['request'];
+  if (requestObject is! Map) return;
 
-Future<HttpRequestModel?> loadRequest(String workspacePath, String collectionId, String? folderId, String requestId) async {
-  String requestPath;
+  final request = requestObject.map(
+    (key, value) => MapEntry(key.toString(), value),
+  );
 
- if (folderId != null && folderId.trim().isNotEmpty) {
-    requestPath = path.join(
-      workspacePath,
-      'collections',
-      collectionId,
-      folderId,
-      '$requestId.json',
-    );
-  } else {
-    requestPath = path.join(
-      workspacePath,
-      'collections',
-      collectionId,
-      '$requestId.json',
-    );
+  final requestPath = request['path'].toString().trim();
+  final requestFileName = request['file'].toString().trim();
+  final requestData = request['data'];
+  final requestId = request['id'].toString().trim();
+  final collectionId = request['collectionId'].toString().trim();
+  final folderId = request['folderId'].toString().trim();
+
+  if (requestPath.isNotEmpty && requestData is Map) {
+    try {
+      final file = File(requestPath);
+      await file.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(requestData),
+      );
+    } catch (_) {}
   }
 
- final requestFile = File(requestPath);
+  if (requestId.isEmpty || collectionId.isEmpty) return;
 
-  if (!await requestFile.exists()) {
-    return null;
-  }
+  final methodFromRequestData = requestData is Map
+      ? requestData['method'].toString().trim().toUpperCase()
+      : request['method'].toString().trim().toUpperCase();
+
+  final urlFromRequestData = requestData is Map
+      ? requestData['url'].toString().trim()
+      : request['url'].toString().trim();
+
+  if (methodFromRequestData.isEmpty) return;
+
+  final indexPath = folderId.isNotEmpty
+      ? path.join(
+          path.dirname(path.dirname(requestPath)),
+          folderId,
+          'folder.json',
+        )
+      : path.join(path.dirname(requestPath), 'collection.json');
 
   try {
-    final raw = await requestFile.readAsString();
-    final decodedJson = jsonDecode(raw);
+    final file = File(indexPath);
+    if (!await file.exists()) return;
 
-    if(decodedJson is Map<String, dynamic>) {
-      return HttpRequestModel.fromJson(decodedJson);
+    final decoded = jsonDecode(await file.readAsString());
+    if (decoded is! Map<String, dynamic>) return;
+
+    final requests = decoded['requests'];
+    if (requests is! List) return;
+
+    var changed = false;
+
+    for (var i = 0; i < requests.length; i++) {
+      final entry = requests[i];
+      if (entry is! Map<String, dynamic>) continue;
+      final sanitized = <String, dynamic>{...entry}..remove('url');
+      if (sanitized.length != entry.length) {
+        requests[i] = sanitized;
+        changed = true;
+      }
+
+      final normalizedEntry = requests[i];
+      if (normalizedEntry is! Map<String, dynamic>) continue;
+      final entryId = normalizedEntry['id'].toString().trim();
+      final entryFile = normalizedEntry['file'].toString().trim();
+
+      final isMatch =
+          entryId == requestId ||
+          (requestFileName.isNotEmpty && entryFile == requestFileName);
+      if (!isMatch) continue;
+
+      final currentName = normalizedEntry['name'].toString().trim();
+      final computedName = currentName.isNotEmpty
+          ? currentName
+          : (urlFromRequestData.isNotEmpty
+                ? '$methodFromRequestData $urlFromRequestData'
+                : requestId);
+
+      final updated = <String, dynamic>{
+        ...normalizedEntry,
+        'method': methodFromRequestData,
+        'name': computedName,
+      };
+
+      requests[i] = updated;
+      changed = true;
+      break;
     }
-  } catch (e) {
-    print('Error decoding request: $e');
-  }
 
-  return null;
+    if (!changed) return;
 
-}
-
-Future<Map<String, dynamic>> executeRequest(String workspacePath, String collectionId, String? folderId, String requestId) async {
-
-    final request = await loadRequest(workspacePath, collectionId, folderId, requestId);
-
-    if (request == null){
-      throw Exception('Request with id $requestId not found in collection $collectionId');
-    }
-
-    final (response, duration, error) = await sendHttpRequest(
-      requestId,
-      APIType.rest,
-      request,
+    await file.writeAsString(
+      const JsonEncoder.withIndent('  ').convert(decoded),
     );
-    if (error != null || response == null) {
-      throw Exception(error ?? 'Request failed');
-    }
-    return HttpResponseModel().fromResponse(response: response, time: duration).toJson();
+  } catch (_) {}
 }
 
 void registerExecuteSavedRequest(
   McpServer server, {
   required String workspacePath,
 }) {
-    server.registerTool(
-      "execute_saved_request",
-      description: "Execute a saved request from a collection",
-      inputSchema: ToolInputSchema(
-          properties: {
-            'collectionId': JsonSchema.string(),
-            'folderId': JsonSchema.string(),
-            'requestId': JsonSchema.string(),
-          },
-          required: ['collectionId', 'requestId']
+  final requestService = RequestService(workspacePath: workspacePath);
 
-      ),
-      callback: (args, extra) async {
-        final collectionId = args['collectionId'] as String;
-        final folderId = args['folderId'] as String?;
-        final requestId = args['requestId'] as String;
-
-        final result = await executeRequest(workspacePath, collectionId, folderId, requestId);
-
-        return CallToolResult(
-          content: [
-          TextContent(
-            text: result.toString(),
-          )
-        ]);
-        
+  server.registerTool(
+    'execute_request',
+    description:
+        'Executes a saved API request by id, resolving it from HIS storage across all collections',
+    inputSchema: ToolInputSchema(
+      properties: {
+        'id': JsonSchema.fromJson({
+          'type': 'string',
+          'description': 'The ID of the request to execute',
+        }),
       },
-      );
-}
+      required: ['id'],
+    ),
+    callback: (args, extra) async {
+      final requestId = args['id'] is String
+          ? (args['id'] as String).trim()
+          : null;
 
+      if (requestId == null || requestId.isEmpty) {
+        return CallToolResult.fromContent([
+          TextContent(
+            text: jsonEncode({'ok': false, 'error': 'Request id is required.'}),
+          ),
+        ]);
+      }
+
+      try {
+        final payload = await requestService.executeStoredRequestById(
+          requestId: requestId,
+        );
+
+        await _syncRequestAndIndexFiles(payload);
+
+        return CallToolResult.fromContent([
+          TextContent(text: jsonEncode(payload)),
+        ]);
+      } catch (e) {
+        final now = DateTime.now().toUtc();
+
+        final errorPayload = {
+          'ok': false,
+          'id': requestId,
+          'error': e.toString(),
+          'executedAt': now.toIso8601String(),
+        };
+
+        return CallToolResult.fromContent([
+          TextContent(text: jsonEncode(errorPayload)),
+        ]);
+      }
+    },
+  );
+}

@@ -1,7 +1,6 @@
 name: apidash_mcp
 description: MCP server package for API Dash.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
 
 environment:
   sdk: ^3.11.3
@@ -12,6 +11,9 @@ resolution: workspace
 dependencies:
   mcp_dart: ^2.1.0
   path: ^1.9.0
+
+  apidash_storage:
+    path: ../apidash_storage
 
 dev_dependencies:
   lints: ^6.0.0

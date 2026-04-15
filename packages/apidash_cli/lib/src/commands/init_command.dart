@@ -22,11 +22,10 @@ class InitCommand extends BaseCommand {
       final his = HisService(workspacePath: workspacePath);
       await his.createWorkspace();
 
-      final workspaceService = WorkspaceService();
       log.success('Workspace created at $workspacePath');
       log.info(
         'Run this in your shell to set workspace path: '
-        '${workspaceService.shellExportCommand(workspacePath)}',
+        '${WorkspaceService.shellExportCommand(workspacePath)}',
       );
     } catch (e) {
       log.err('Failed to create workspace: $e');

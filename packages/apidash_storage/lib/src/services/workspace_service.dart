@@ -46,7 +46,7 @@ class WorkspaceService {
     return null;
   }
 
-  String shellExportCommand(String workspacePath) {
+  static String shellExportCommand(String workspacePath) {
     return 'export $envWorkspacePath="$workspacePath"';
   }
 }
