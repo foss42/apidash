@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_agent/apidash_agent.dart';
 import 'package:apidash/providers/providers.dart';
 import 'providers/agent_testing_provider.dart';
-import 'widgets/api_key_input.dart';
 import 'widgets/test_case_checklist.dart';
 import 'widgets/test_result_card.dart';
 import 'widgets/workflow_step_card.dart';
@@ -105,9 +104,7 @@ class _UnitTestBodyState extends ConsumerState<_UnitTestBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // API key input
-          const ApiKeyInput(),
-          const SizedBox(height: 12),
+          const _NoModelBanner(),
 
           // Error banner
           if (state.errorMessage != null) _ErrorBanner(message: state.errorMessage!),
@@ -294,8 +291,7 @@ class _WorkflowBody extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const ApiKeyInput(),
-          const SizedBox(height: 12),
+          const _NoModelBanner(),
 
           if (state.errorMessage != null)
             _ErrorBanner(message: state.errorMessage!),
@@ -534,6 +530,47 @@ class _SummaryItem extends StatelessWidget {
                 fontSize: 11,
                 color: Theme.of(context).colorScheme.onSurfaceVariant)),
       ],
+    );
+  }
+}
+
+class _NoModelBanner extends ConsumerWidget {
+  const _NoModelBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasModel = ref.watch(
+      settingsProvider.select((s) => s.defaultAIModel != null),
+    );
+
+    if (hasModel) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 16,
+            color: Theme.of(context).colorScheme.onTertiaryContainer,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'No AI model configured. Go to Settings -> Models to set one.',
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onTertiaryContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

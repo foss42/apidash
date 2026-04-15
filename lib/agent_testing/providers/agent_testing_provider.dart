@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_agent/apidash_agent.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:genai/interface/model_providers/gemini.dart'; // ← ADD
+import 'package:apidash/providers/providers.dart';
 
 // ---------------------------------------------------------------------------
 // State
@@ -16,7 +15,6 @@ class AgentTestingState {
 
   final AgentMode mode;
   final AgentStatus status;
-  final String apiKey;
   final String? errorMessage;
 
   // Unit test
@@ -30,7 +28,6 @@ class AgentTestingState {
   const AgentTestingState({
     this.mode = AgentMode.unitTest,
     this.status = AgentStatus.idle,
-    this.apiKey = '',
     this.errorMessage,
     this.testCases = const [],
     this.testResults = const [],
@@ -41,7 +38,6 @@ class AgentTestingState {
   AgentTestingState copyWith({
     AgentMode? mode,
     AgentStatus? status,
-    String? apiKey,
     Object? errorMessage = _keepErrorMessage,
     List<TestCase>? testCases,
     List<TestResult>? testResults,
@@ -51,7 +47,6 @@ class AgentTestingState {
     return AgentTestingState(
       mode: mode ?? this.mode,
       status: status ?? this.status,
-      apiKey: apiKey ?? this.apiKey,
       errorMessage: errorMessage == _keepErrorMessage
           ? this.errorMessage
           : errorMessage as String?,
@@ -68,39 +63,23 @@ class AgentTestingState {
 // ---------------------------------------------------------------------------
 
 class AgentTestingNotifier extends Notifier<AgentTestingState> {
-  static const _apiKeyPrefsKey = 'agent_api_key';
-
   @override
-  AgentTestingState build() {
-    Future.microtask(_loadSavedApiKey);
-    return const AgentTestingState();
-  }
+  AgentTestingState build() => const AgentTestingState();
 
-  // Builds AIRequestModel from the stored API key (Gemini provider)
-  AIRequestModel get _aiModel => GeminiModel.instance.defaultAIRequestModel
-      .copyWith(apiKey: state.apiKey, model: 'gemini-2.5-flash-lite');
+  AIRequestModel? get _aiModel {
+    final json = ref.read(settingsProvider).defaultAIModel;
+    if (json == null) return null;
+    try {
+      return AIRequestModel.fromJson(json);
+    } catch (_) {
+      return null;
+    }
+  }
 
   void setMode(AgentMode mode) =>
       state = state.copyWith(mode: mode, status: AgentStatus.idle);
 
-  void setApiKey(String key) {
-    state = state.copyWith(apiKey: key);
-    Future.microtask(() async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_apiKeyPrefsKey, key);
-    });
-  }
-
-  void reset() =>
-      state = AgentTestingState(apiKey: state.apiKey, mode: state.mode);
-
-  Future<void> _loadSavedApiKey() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedKey = prefs.getString(_apiKeyPrefsKey) ?? '';
-    if (savedKey.isNotEmpty && state.apiKey != savedKey) {
-      state = state.copyWith(apiKey: savedKey);
-    }
-  }
+  void reset() => state = AgentTestingState(mode: state.mode);
 
   // ── Unit Test Flow ────────────────────────────────────────────────────────
 
@@ -110,9 +89,11 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
     required Map<String, String> headers,
     String? body,
   }) async {
-    if (state.apiKey.trim().isEmpty) {
+    final model = _aiModel;
+    if (model == null) {
       state = state.copyWith(
-        errorMessage: 'Please enter your Gemini API key first.',
+        errorMessage:
+            'No AI model configured. Go to Settings -> Models and set a default model.',
       );
       return;
     }
@@ -123,7 +104,7 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
       testResults: [],
     );
     try {
-      final agent = UnitTestAgent(aiRequestModel: _aiModel);
+      final agent = UnitTestAgent(aiRequestModel: model);
       final cases = await agent.generateTestCases(
         method: method,
         url: url,
@@ -154,13 +135,21 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
   }
 
   Future<void> runSelectedTests() async {
+    final model = _aiModel;
+    if (model == null) {
+      state = state.copyWith(
+        errorMessage:
+            'No AI model configured. Go to Settings -> Models and set a default model.',
+      );
+      return;
+    }
     state = state.copyWith(
       status: AgentStatus.running,
       testResults: [],
       errorMessage: null,
     );
     try {
-      final agent = UnitTestAgent(aiRequestModel: _aiModel);
+      final agent = UnitTestAgent(aiRequestModel: model);
       final results = await agent.runSelectedTests(state.testCases);
       state = state.copyWith(
         status: AgentStatus.complete,
@@ -177,9 +166,11 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
   // ── Workflow Flow ─────────────────────────────────────────────────────────
 
   Future<void> generateWorkflow(List<Map<String, dynamic>> requests) async {
-    if (state.apiKey.trim().isEmpty) {
+    final model = _aiModel;
+    if (model == null) {
       state = state.copyWith(
-        errorMessage: 'Please enter your Gemini API key first.',
+        errorMessage:
+            'No AI model configured. Go to Settings -> Models and set a default model.',
       );
       return;
     }
@@ -190,7 +181,7 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
       stepResults: [],
     );
     try {
-      final agent = WorkflowAgent(aiRequestModel: _aiModel);
+      final agent = WorkflowAgent(aiRequestModel: model);
       final steps = await agent.generatePlan(requests);
       state = state.copyWith(status: AgentStatus.review, workflowSteps: steps);
     } catch (e) {
@@ -202,13 +193,21 @@ class AgentTestingNotifier extends Notifier<AgentTestingState> {
   }
 
   Future<void> executeWorkflow() async {
+    final model = _aiModel;
+    if (model == null) {
+      state = state.copyWith(
+        errorMessage:
+            'No AI model configured. Go to Settings -> Models and set a default model.',
+      );
+      return;
+    }
     state = state.copyWith(
       status: AgentStatus.running,
       stepResults: [],
       errorMessage: null,
     );
     try {
-      final agent = WorkflowAgent(aiRequestModel: _aiModel);
+      final agent = WorkflowAgent(aiRequestModel: model);
       final results = <WorkflowStepResult>[];
       await for (final result in agent.execute(state.workflowSteps)) {
         results.add(result);
