@@ -9,7 +9,6 @@ environment:
 
 workspace:
   - packages/*
-  - mcp_server
 
 dependencies:
   flutter:
