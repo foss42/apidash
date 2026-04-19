@@ -588,6 +588,7 @@ const kLabelSelectAIProvider = "Please select an AI API Provider";
 const kLabelApiKeyCredential = "API Key / Credential";
 const kLabelEndpoint = "Endpoint";
 const kLabelModels = "Models";
+const kLabelModelName = "Model Name";
 const kLabelAddCustomModel = "Add Custom Model";
 const kHintModelId = "Model ID";
 const kHintModelDisplayName = "Model Display Name";

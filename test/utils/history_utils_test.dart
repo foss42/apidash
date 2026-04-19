@@ -78,20 +78,20 @@ void main() {
         historyMetaModel1.copyWith(
             historyId: 'historyId1-1',
             timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 1))),
+                historyMetaModel1.timeStamp!.add(const Duration(seconds: 1))),
         historyMetaModel1.copyWith(
             historyId: 'historyId1-2',
             timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 2))),
+                historyMetaModel1.timeStamp!.add(const Duration(seconds: 2))),
         historyMetaModel2,
         historyMetaModel2.copyWith(
             historyId: 'historyId2-1',
             timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 1))),
+                historyMetaModel2.timeStamp!.add(const Duration(seconds: 1))),
         historyMetaModel2.copyWith(
             historyId: 'historyId2-2',
             timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 2))),
+                historyMetaModel2.timeStamp!.add(const Duration(seconds: 2))),
       ];
 
       final result = getRequestGroups(models);
@@ -102,7 +102,7 @@ void main() {
 
       result.forEach((key, value) {
         for (int i = 0; i < value.length - 1; i++) {
-          expect(value[i].timeStamp.isAfter(value[i + 1].timeStamp), isTrue);
+          expect(value[i].timeStamp!.isAfter(value[i + 1].timeStamp!), isTrue);
         }
       });
     });
@@ -137,27 +137,27 @@ void main() {
         historyMetaModel1.copyWith(
             historyId: 'historyId1-1',
             timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 1))),
+                historyMetaModel1.timeStamp!.add(const Duration(seconds: 1))),
         historyMetaModel1.copyWith(
             historyId: 'historyId1-2',
             timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 2))),
+                historyMetaModel1.timeStamp!.add(const Duration(seconds: 2))),
         historyMetaModel2,
         historyMetaModel2.copyWith(
             historyId: 'historyId2-1',
             timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 1))),
+                historyMetaModel2.timeStamp!.add(const Duration(seconds: 1))),
         historyMetaModel2.copyWith(
             historyId: 'historyId2-2',
             timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 2))),
+                historyMetaModel2.timeStamp!.add(const Duration(seconds: 2))),
       ];
 
       final result = getRequestGroup(models, models[1]);
       expect(result.length, 3);
 
       for (int i = 0; i < result.length - 1; i++) {
-        expect(result[i].timeStamp.isAfter(result[i + 1].timeStamp), isTrue);
+        expect(result[i].timeStamp!.isAfter(result[i + 1].timeStamp!), isTrue);
       }
     });
   });

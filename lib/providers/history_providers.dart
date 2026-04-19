@@ -63,7 +63,9 @@ class HistoryMetaStateNotifier
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var historyMetaModelFromJson = HistoryMetaModel.fromJson(jsonMap);
-          historyMetaMap[historyId] = historyMetaModelFromJson;
+          if (historyMetaModelFromJson.timeStamp != null) {
+            historyMetaMap[historyId] = historyMetaModelFromJson;
+          }
         }
       }
       state = historyMetaMap;

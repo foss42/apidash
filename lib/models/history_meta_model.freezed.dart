@@ -27,7 +27,7 @@ mixin _$HistoryMetaModel {
   String get url => throw _privateConstructorUsedError;
   HTTPVerb get method => throw _privateConstructorUsedError;
   int get responseStatus => throw _privateConstructorUsedError;
-  DateTime get timeStamp => throw _privateConstructorUsedError;
+  DateTime? get timeStamp => throw _privateConstructorUsedError;
 
   /// Serializes this HistoryMetaModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,7 +53,7 @@ abstract class $HistoryMetaModelCopyWith<$Res> {
       String url,
       HTTPVerb method,
       int responseStatus,
-      DateTime timeStamp});
+      DateTime? timeStamp});
 }
 
 /// @nodoc
@@ -78,7 +78,7 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
     Object? url = null,
     Object? method = null,
     Object? responseStatus = null,
-    Object? timeStamp = null,
+    Object? timeStamp = freezed,
   }) {
     return _then(_value.copyWith(
       historyId: null == historyId
@@ -109,10 +109,10 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
               as int,
-      timeStamp: null == timeStamp
+      timeStamp: freezed == timeStamp
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -133,7 +133,7 @@ abstract class _$$HistoryMetaModelImplCopyWith<$Res>
       String url,
       HTTPVerb method,
       int responseStatus,
-      DateTime timeStamp});
+      DateTime? timeStamp});
 }
 
 /// @nodoc
@@ -156,7 +156,7 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
     Object? url = null,
     Object? method = null,
     Object? responseStatus = null,
-    Object? timeStamp = null,
+    Object? timeStamp = freezed,
   }) {
     return _then(_$HistoryMetaModelImpl(
       historyId: null == historyId
@@ -187,10 +187,10 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
               as int,
-      timeStamp: null == timeStamp
+      timeStamp: freezed == timeStamp
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
     ));
   }
 }
@@ -199,35 +199,41 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$HistoryMetaModelImpl implements _HistoryMetaModel {
   const _$HistoryMetaModelImpl(
-      {required this.historyId,
-      required this.requestId,
-      required this.apiType,
+      {this.historyId = "",
+      this.requestId = "",
+      this.apiType = APIType.rest,
       this.name = "",
-      required this.url,
-      required this.method,
-      required this.responseStatus,
-      required this.timeStamp});
+      this.url = "",
+      this.method = HTTPVerb.get,
+      this.responseStatus = 200,
+      this.timeStamp});
 
   factory _$HistoryMetaModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryMetaModelImplFromJson(json);
 
   @override
+  @JsonKey()
   final String historyId;
   @override
+  @JsonKey()
   final String requestId;
   @override
+  @JsonKey()
   final APIType apiType;
   @override
   @JsonKey()
   final String name;
   @override
+  @JsonKey()
   final String url;
   @override
+  @JsonKey()
   final HTTPVerb method;
   @override
+  @JsonKey()
   final int responseStatus;
   @override
-  final DateTime timeStamp;
+  final DateTime? timeStamp;
 
   @override
   String toString() {
@@ -277,14 +283,14 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 
 abstract class _HistoryMetaModel implements HistoryMetaModel {
   const factory _HistoryMetaModel(
-      {required final String historyId,
-      required final String requestId,
-      required final APIType apiType,
+      {final String historyId,
+      final String requestId,
+      final APIType apiType,
       final String name,
-      required final String url,
-      required final HTTPVerb method,
-      required final int responseStatus,
-      required final DateTime timeStamp}) = _$HistoryMetaModelImpl;
+      final String url,
+      final HTTPVerb method,
+      final int responseStatus,
+      final DateTime? timeStamp}) = _$HistoryMetaModelImpl;
 
   factory _HistoryMetaModel.fromJson(Map<String, dynamic> json) =
       _$HistoryMetaModelImpl.fromJson;
@@ -304,7 +310,7 @@ abstract class _HistoryMetaModel implements HistoryMetaModel {
   @override
   int get responseStatus;
   @override
-  DateTime get timeStamp;
+  DateTime? get timeStamp;
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.

@@ -7,14 +7,14 @@ part 'history_meta_model.g.dart';
 @freezed
 class HistoryMetaModel with _$HistoryMetaModel {
   const factory HistoryMetaModel({
-    required String historyId,
-    required String requestId,
-    required APIType apiType,
+    @Default("") String historyId,
+    @Default("") String requestId,
+    @Default(APIType.rest) APIType apiType,
     @Default("") String name,
-    required String url,
-    required HTTPVerb method,
-    required int responseStatus,
-    required DateTime timeStamp,
+    @Default("") String url,
+    @Default(HTTPVerb.get) HTTPVerb method,
+    @Default(200) int responseStatus,
+    DateTime? timeStamp,
   }) = _HistoryMetaModel;
 
   factory HistoryMetaModel.fromJson(Map<String, Object?> json) =>
