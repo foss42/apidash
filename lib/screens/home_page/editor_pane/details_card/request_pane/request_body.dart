@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/common_widgets/envfield_editor.dart';
 import 'request_form_data.dart';
 
 class EditRequestBody extends ConsumerWidget {
@@ -66,7 +67,7 @@ class EditRequestBody extends ConsumerWidget {
               ),
               _ => Padding(
                 padding: kPt5o10,
-                child: TextFieldEditor(
+                child: EnvTextFieldEditor(
                   key: Key("$selectedId-body"),
                   fieldKey: "$selectedId-body-editor",
                   initialValue: requestModel?.httpRequestModel?.body,
