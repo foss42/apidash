@@ -124,6 +124,21 @@ class URLTextField extends ConsumerWidget {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }
       },
+      onMethodChanged: (method) {
+        if (requestModel.apiType == APIType.rest) {
+          try {
+            final httpMethod = HTTPVerb.values.firstWhere(
+              (verb) => verb.name.toLowerCase() == method.toLowerCase(),
+              orElse: () => HTTPVerb.get,
+            );
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .update(method: httpMethod);
+          } catch (e) {
+            // do nothing
+          }
+        }
+      },
       onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
