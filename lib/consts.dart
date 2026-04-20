@@ -187,7 +187,7 @@ const kAnswerRawBodyViewOptions = [
 ];
 
 const Map<String, Map<String, List<ResponseBodyView>>>
-kResponseBodyViewOptions = {
+    kResponseBodyViewOptions = {
   kTypeApplication: {
     kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
     kSubTypeJson: kPreviewRawBodyViewOptions,
@@ -508,6 +508,9 @@ const kLabelGenerateUI = "Generate UI";
 // Terminal Page
 const kMsgNoLogs = 'No logs yet';
 const kMsgSendToView = 'Send a request to view its details in the console.';
+
+//Timeout
+const String kMsgTimeoutError = "Request timed out. Please try again.";
 
 // Dashboard Navigation
 const kLabelRequests = "Requests";
