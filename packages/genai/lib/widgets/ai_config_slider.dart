@@ -24,6 +24,7 @@ class AIConfigSlider extends StatelessWidget {
             max: val.$3,
             onChanged: (x) {
               if (readonly) return;
+              if (x.isInfinite || x.isNaN) return;
               configuration.value.value = (val.$1, x, val.$3);
               onSliderUpdated(configuration);
             },

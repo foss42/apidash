@@ -45,15 +45,38 @@ void main() {
       expect(configMap['max_tokens'], equals(200));
     });
 
-    test('should return correct config index', () {
+    test('getModelConfigMap should throw on Infinity values', () {
       final model = AIRequestModel(
         modelConfigs: [
-          kDefaultModelConfigTemperature,
-          kDefaultModelConfigMaxTokens,
+          kDefaultModelConfigMaxTokens.copyWith(
+            value: ConfigNumericValue(value: double.infinity),
+          ),
         ],
       );
-      expect(model.getModelConfigIdx('max_tokens'), equals(1));
-      expect(model.getModelConfigIdx('foo'), isNull);
+      expect(() => model.getModelConfigMap(), throwsArgumentError);
+    });
+
+    test('getModelConfigMap should throw on NaN values', () {
+      final model = AIRequestModel(
+        modelConfigs: [
+          kDefaultModelConfigMaxTokens.copyWith(
+            value: ConfigNumericValue(value: double.nan),
+          ),
+        ],
+      );
+      expect(() => model.getModelConfigMap(), throwsArgumentError);
+    });
+
+    test('getModelConfigMap should work with valid numeric values', () {
+      final model = AIRequestModel(
+        modelConfigs: [
+          kDefaultModelConfigMaxTokens.copyWith(
+            value: ConfigNumericValue(value: 512),
+          ),
+        ],
+      );
+      final configMap = model.getModelConfigMap();
+      expect(configMap['max_tokens'], equals(512));
     });
   });
 }
