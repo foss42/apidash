@@ -10,12 +10,20 @@ class ResponsePaneHeader extends StatelessWidget {
     this.responseStatus,
     this.message,
     this.time,
+    this.headerBytes,
+    this.bodyBytes,
     this.onClearResponse,
   });
 
   final int? responseStatus;
   final String? message;
   final Duration? time;
+  final int? headerBytes;
+  final int? bodyBytes;
+  int? get totalBytes =>
+      (headerBytes != null || bodyBytes != null)
+          ? (headerBytes ?? 0) + (bodyBytes ?? 0)
+          : null;
   final VoidCallback? onClearResponse;
 
   @override
@@ -51,6 +59,20 @@ class ResponsePaneHeader extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
             ),
+            if (totalBytes != null) ...[
+              kHSpacer10,
+              Tooltip(
+                message:
+                    "Headers: ${humanizeBytes(headerBytes)}\nBody: ${humanizeBytes(bodyBytes)}",
+                child: Text(
+                  humanizeBytes(totalBytes),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontFamily: kCodeStyle.fontFamily,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                ),
+              ),
+            ],
             kHSpacer10,
             showClearButton
                 ? ClearResponseButton(

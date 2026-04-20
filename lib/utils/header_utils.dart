@@ -10,3 +10,15 @@ List<String> getHeaderSuggestions(String pattern) {
 
   return matches.map((item) => item.$2).toList();
 }
+
+int getHeaderSize(Map<String, String>? headers) {
+  if (headers == null || headers.isEmpty) {
+    return 0;
+  }
+  int size = 0;
+  headers.forEach((key, value) {
+    // key: value\r\n
+    size += key.length + value.length + 4;
+  });
+  return size;
+}

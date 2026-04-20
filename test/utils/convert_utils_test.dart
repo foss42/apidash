@@ -196,4 +196,31 @@ Easily manipulate and play around with request inputs like headers, query parame
       expect(audioPosition(dur4), dur4Expected);
     });
   });
+
+  group("Testing humanizeBytes function", () {
+    test("Testing for null", () {
+      expect(humanizeBytes(null), "");
+    });
+    test("Testing for 0 B", () {
+      expect(humanizeBytes(0), "0 B");
+    });
+    test("Testing for bytes < 1024", () {
+      expect(humanizeBytes(1023), "1023 B");
+    });
+    test("Testing for bytes = 1024", () {
+      expect(humanizeBytes(1024), "1.0 KB");
+    });
+    test("Testing for KB", () {
+      expect(humanizeBytes(1024 * 5 + 512), "5.5 KB");
+    });
+    test("Testing for MB", () {
+      expect(humanizeBytes(1024 * 1024 * 2 + 1024 * 512), "2.5 MB");
+    });
+    test("Testing for GB", () {
+      expect(humanizeBytes(1024 * 1024 * 1024 * 3), "3.0 GB");
+    });
+    test("Testing for negative bytes", () {
+      expect(humanizeBytes(-1), "");
+    });
+  });
 }
