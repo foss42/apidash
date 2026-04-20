@@ -38,6 +38,17 @@ class HistoryList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useEffect(() {
+      // Pull latest history from Hive when the history pane is opened.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted) {
+          return;
+        }
+        ref.read(historyMetaStateNotifier.notifier).loadHistoryMetas();
+      });
+      return null;
+    }, const []);
+
     final historySequence = ref.watch(historySequenceProvider);
     final alwaysShowHistoryPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));

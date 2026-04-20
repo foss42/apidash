@@ -1,0 +1,17 @@
+name: apidash_cli
+description: CLI for API Dash — run, search, and log requests without opening the GUI.
+publish_to: none
+resolution: workspace        # ← REQUIRED — workspace: packages/* picks this up
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"    # match root sdk constraint exactly
+
+dependencies:
+  args: ^2.5.0
+  hive_ce: ^2.10.0            # use hive_ce (not hive) — matches what apidash uses
+  path: ^1.8.3                # already in root, workspace resolves it
+  http: ^1.2.0
+
+dev_dependencies:
+  lints: ^6.1.0
+  test: ^1.29.0
