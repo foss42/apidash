@@ -24,15 +24,19 @@ const kHiveBoxes = [
   (kDashBotBox, HiveBoxType.lazy),
 ];
 
+String? lastHiveInitError;
+
 Future<bool> initHiveBoxes(
   bool initializeUsingPath,
   String? workspaceFolderPath,
 ) async {
+  lastHiveInitError = null;
   try {
     if (initializeUsingPath) {
       if (workspaceFolderPath != null) {
         Hive.init(workspaceFolderPath);
       } else {
+        lastHiveInitError = "Workspace path is missing.";
         return false;
       }
     } else {
@@ -40,7 +44,9 @@ Future<bool> initHiveBoxes(
     }
     final openHiveBoxesStatus = await openHiveBoxes();
     return openHiveBoxesStatus;
-  } catch (e) {
+  } catch (e, stackTrace) {
+    lastHiveInitError = e.toString();
+    debugPrint("ERROR INIT HIVE: $e\n$stackTrace");
     return false;
   }
 }
@@ -55,8 +61,12 @@ Future<bool> openHiveBoxes() async {
       }
     }
     return true;
-  } catch (e) {
-    debugPrint("ERROR OPEN HIVE BOXES: $e");
+  } catch (e, stackTrace) {
+    lastHiveInitError = e.toString();
+    debugPrint("ERROR OPEN HIVE BOXES: $e\n$stackTrace");
+    try {
+      await Hive.close();
+    } catch (_) {}
     return false;
   }
 }
@@ -117,8 +127,9 @@ class HiveHandler {
 
   dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(
-          String id, Map<String, dynamic>? requestModelJson) =>
-      dataBox.put(id, requestModelJson);
+    String id,
+    Map<String, dynamic>? requestModelJson,
+  ) => dataBox.put(id, requestModelJson);
 
   void delete(String key) => dataBox.delete(key);
 
@@ -128,8 +139,9 @@ class HiveHandler {
 
   dynamic getEnvironment(String id) => environmentBox.get(id);
   Future<void> setEnvironment(
-          String id, Map<String, dynamic>? environmentJson) =>
-      environmentBox.put(id, environmentJson);
+    String id,
+    Map<String, dynamic>? environmentJson,
+  ) => environmentBox.put(id, environmentJson);
 
   Future<void> deleteEnvironment(String id) => environmentBox.delete(id);
 
@@ -139,16 +151,18 @@ class HiveHandler {
 
   dynamic getHistoryMeta(String id) => historyMetaBox.get(id);
   Future<void> setHistoryMeta(
-          String id, Map<String, dynamic>? historyMetaJson) =>
-      historyMetaBox.put(id, historyMetaJson);
+    String id,
+    Map<String, dynamic>? historyMetaJson,
+  ) => historyMetaBox.put(id, historyMetaJson);
 
   Future<void> deleteHistoryMeta(String id) => historyMetaBox.delete(id);
 
   Future<dynamic> getHistoryRequest(String id) async =>
       await historyLazyBox.get(id);
   Future<void> setHistoryRequest(
-          String id, Map<String, dynamic>? historyRequestJson) =>
-      historyLazyBox.put(id, historyRequestJson);
+    String id,
+    Map<String, dynamic>? historyRequestJson,
+  ) => historyLazyBox.put(id, historyRequestJson);
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 

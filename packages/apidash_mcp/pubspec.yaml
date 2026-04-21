@@ -1,0 +1,14 @@
+name: apidash_mcp
+description: MCP server for API Dash CLI features over stdio.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+dependencies:
+  apidash_cli: any
+
+dev_dependencies:
+  lints: ^6.1.0
+  test: ^1.29.0

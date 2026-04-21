@@ -60,14 +60,16 @@ class _AppState extends ConsumerState<App> with WindowListener {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
       if (ref.watch(
-              settingsProvider.select((value) => value.promptBeforeClosing)) &&
+            settingsProvider.select((value) => value.promptBeforeClosing),
+          ) &&
           ref.watch(hasUnsavedChangesProvider)) {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
             title: const Text('Save Changes'),
-            content:
-                const Text('Want to save changes before you close API Dash?'),
+            content: const Text(
+              'Want to save changes before you close API Dash?',
+            ),
             actions: [
               OutlinedButton(
                 child: const Text('No'),
@@ -109,10 +111,12 @@ class DashApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode =
-        ref.watch(settingsProvider.select((value) => value.isDark));
-    final workspaceFolderPath = ref
-        .watch(settingsProvider.select((value) => value.workspaceFolderPath));
+    final isDarkMode = ref.watch(
+      settingsProvider.select((value) => value.isDark),
+    );
+    final workspaceFolderPath = ref.watch(
+      settingsProvider.select((value) => value.workspaceFolderPath),
+    );
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
     final userOnboarded = ref.watch(userOnboardedProvider);
     return Portal(
@@ -124,7 +128,36 @@ class DashApp extends ConsumerWidget {
         home: showWorkspaceSelector
             ? WorkspaceSelector(
                 onContinue: (val) async {
-                  await initHiveBoxes(kIsDesktop, val);
+                  final initSuccessful = await initHiveBoxes(kIsDesktop, val);
+                  if (!initSuccessful) {
+                    final hiveError = lastHiveInitError;
+                    final isLockError =
+                        hiveError != null &&
+                        hiveError.contains("Unable to lock file");
+                    final message = isLockError
+                        ? "Could not open this workspace because it is already in use. Close any other API Dash or apidash_cli process using this workspace and try again."
+                        : "Could not open this workspace. Please verify the folder is accessible and try again.";
+                    if (context.mounted) {
+                      await showDialog<void>(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text("Workspace initialization failed"),
+                          content: Text(
+                            "$message\n\nPath:\n$val${hiveError == null ? "" : "\n\nDetails:\n$hiveError"}",
+                          ),
+                          actions: [
+                            FilledButton(
+                              onPressed: () =>
+                                  Navigator.of(dialogContext).pop(),
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return;
+                  }
+
                   ref
                       .read(settingsProvider.notifier)
                       .update(workspaceFolderPath: val);
@@ -139,33 +172,31 @@ class DashApp extends ConsumerWidget {
               )
             : //Stack(
               //  children: [
-                  !kIsLinux && !kIsMobile
-                      ? const App()
-                      : context.isMediumWindow
-                          ? (kIsMobile && !userOnboarded)
-                              ? OnboardingScreen(
-                                  onComplete: () async {
-                                    await setOnboardingStatusToSharedPrefs(
-                                      isOnboardingComplete: true,
-                                    );
-                                    ref
-                                        .read(userOnboardedProvider.notifier)
-                                        .state = true;
-                                  },
-                                )
-                              : const MobileDashboard()
-                          : const Dashboard(),
-              //     if (kIsWindows)
-              //       SizedBox(
-              //         height: 29,
-              //         child: WindowCaption(
-              //           backgroundColor: Colors.transparent,
-              //           brightness:
-              //               isDarkMode ? Brightness.dark : Brightness.light,
-              //         ),
-              //       ),
-              //   ],
-              // ),
+              !kIsLinux && !kIsMobile
+            ? const App()
+            : context.isMediumWindow
+            ? (kIsMobile && !userOnboarded)
+                  ? OnboardingScreen(
+                      onComplete: () async {
+                        await setOnboardingStatusToSharedPrefs(
+                          isOnboardingComplete: true,
+                        );
+                        ref.read(userOnboardedProvider.notifier).state = true;
+                      },
+                    )
+                  : const MobileDashboard()
+            : const Dashboard(),
+        //     if (kIsWindows)
+        //       SizedBox(
+        //         height: 29,
+        //         child: WindowCaption(
+        //           backgroundColor: Colors.transparent,
+        //           brightness:
+        //               isDarkMode ? Brightness.dark : Brightness.light,
+        //         ),
+        //       ),
+        //   ],
+        // ),
       ),
     );
   }
