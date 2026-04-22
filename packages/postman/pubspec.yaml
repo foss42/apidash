@@ -11,12 +11,13 @@ topics:
   - network
 
 environment:
-  sdk: ">=3.6.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
 
 resolution: workspace
 
 dependencies:
   freezed_annotation: ^3.0.0
+  json_annotation: ^4.11.0
 
 dev_dependencies:
   build_runner: ^2.11.1
