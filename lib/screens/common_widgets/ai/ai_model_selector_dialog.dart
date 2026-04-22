@@ -19,6 +19,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  String? urlErrorText;
 
   @override
   void initState() {
@@ -185,8 +186,12 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           onChanged: (x) {
             setState(() {
               newAIRequestModel = newAIRequestModel?.copyWith(url: x);
+              if (x.isNotEmpty) {
+                urlErrorText = null;
+              }
             });
           },
+          errorText: urlErrorText,
           value: newAIRequestModel?.url ?? "",
         ),
         kVSpacer20,
@@ -243,7 +248,15 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop(newAIRequestModel);
+              if (newAIRequestModel?.url != null &&
+                  newAIRequestModel!.url.isNotEmpty) {
+                Navigator.of(context).pop(newAIRequestModel);
+              } else {
+                setState(() {
+                  // Error message
+                  urlErrorText = "Endpoint URL cannot be empty";
+                });
+              }
             },
             child: Text(kLabelSave),
           ),
