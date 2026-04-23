@@ -57,6 +57,7 @@ fn main() -> Result<(), ureq::Error> {
     let url = "https://api.apidash.dev/country/data";
     let response = ureq::get(url)
         .query("code", "IND")
+        .query("code", "US")
         .call()?;
 
     println!("Response Status: {}", response.status());
@@ -331,7 +332,6 @@ fn main() -> Result<(), ureq::Error> {
     let payload = r#"{
 "text": "I LOVE Flutter"
 }"#;
-
     let response = ureq::post(url)
         .header("content-type", "text/plain")
         .send(payload)?;
@@ -866,6 +866,7 @@ fn main() -> Result<(), ureq::Error> {
 });
 
     let response = ureq::put(url)
+        .header("x-api-key", "reqres-free-v1")
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
@@ -886,8 +887,7 @@ fn main() -> Result<(), ureq::Error> {
 
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = r'''
-use serde_json::json;
+      const expectedCode = r'''use serde_json::json;
 fn main() -> Result<(), ureq::Error> {
     let url = "https://reqres.in/api/users/2";
 
@@ -897,6 +897,7 @@ fn main() -> Result<(), ureq::Error> {
 });
 
     let response = ureq::patch(url)
+        .header("x-api-key", "reqres-free-v1")
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
@@ -917,10 +918,10 @@ fn main() -> Result<(), ureq::Error> {
 
   group('DELETE Request', () {
     test('DELETE 1', () {
-      const expectedCode = r"""
-fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
     let url = "https://reqres.in/api/users/2";
     let response = ureq::delete(url)
+        .header("x-api-key", "reqres-free-v1")
         .call()?;
 
     println!("Response Status: {}", response.status());
@@ -939,8 +940,7 @@ fn main() -> Result<(), ureq::Error> {
     });
 
     test('DELETE 2', () {
-      const expectedCode = r'''
-use serde_json::json;
+      const expectedCode = r'''use serde_json::json;
 fn main() -> Result<(), ureq::Error> {
     let url = "https://reqres.in/api/users/2";
 
@@ -950,6 +950,7 @@ fn main() -> Result<(), ureq::Error> {
 });
 
     let response = ureq::delete(url)
+        .header("x-api-key", "reqres-free-v1")
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());

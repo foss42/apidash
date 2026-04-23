@@ -50,9 +50,13 @@ void main() {
     test('GET 3', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.apidash.dev/country/data?code=IND",
+  "url": "https://api.apidash.dev/country/data?code=US&code=IND",
   "httpVersion": "HTTP/1.1",
   "queryString": [
+    {
+      "name": "code",
+      "value": "US"
+    },
     {
       "name": "code",
       "value": "IND"
@@ -668,6 +672,10 @@ void main() {
     {
       "name": "Content-Type",
       "value": "application/json"
+    },
+    {
+      "name": "x-api-key",
+      "value": "reqres-free-v1"
     }
   ],
   "postData": {
@@ -696,6 +704,10 @@ void main() {
     {
       "name": "Content-Type",
       "value": "application/json"
+    },
+    {
+      "name": "x-api-key",
+      "value": "reqres-free-v1"
     }
   ],
   "postData": {
@@ -720,7 +732,12 @@ void main() {
   "url": "https://reqres.in/api/users/2",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
-  "headers": []
+  "headers": [
+    {
+      "name": "x-api-key",
+      "value": "reqres-free-v1"
+    }
+  ]
 }""";
       expect(
           codeGen.getCode(
@@ -741,6 +758,10 @@ void main() {
     {
       "name": "Content-Type",
       "value": "application/json"
+    },
+    {
+      "name": "x-api-key",
+      "value": "reqres-free-v1"
     }
   ],
   "postData": {

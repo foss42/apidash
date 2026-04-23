@@ -120,7 +120,7 @@ class DashbotPrompts {
     Map<String, String>? headersMap,
     String? body,
     String? bodyContentType,
-    Map<String, String>? paramsMap,
+    Map<String, List<String>>? paramsMap,
     String? authType,
   }) {
     return buildCodeGenerationIntroPrompt(
@@ -141,7 +141,7 @@ class DashbotPrompts {
     Map<String, String>? headersMap,
     String? body,
     String? bodyContentType,
-    Map<String, String>? paramsMap,
+    Map<String, List<String>>? paramsMap,
     String? authType,
     String? language,
   }) {

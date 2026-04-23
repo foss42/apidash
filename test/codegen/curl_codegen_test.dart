@@ -33,7 +33,7 @@ void main() {
 
     test('GET 3', () {
       const expectedCode =
-          r"""curl --url 'https://api.apidash.dev/country/data?code=IND'""";
+          r"""curl --url 'https://api.apidash.dev/country/data?code=US&code=IND'""";
       expect(
           codeGen.getCode(
             CodegenLanguage.curl,
@@ -331,6 +331,7 @@ void main() {
       const expectedCode = r"""curl --request PUT \
   --url 'https://reqres.in/api/users/2' \
   --header 'Content-Type: application/json' \
+  --header 'x-api-key: reqres-free-v1' \
   --data '{
 "name": "morpheus",
 "job": "zion resident"
@@ -350,6 +351,7 @@ void main() {
       const expectedCode = r"""curl --request PATCH \
   --url 'https://reqres.in/api/users/2' \
   --header 'Content-Type: application/json' \
+  --header 'x-api-key: reqres-free-v1' \
   --data '{
 "name": "marfeus",
 "job": "accountant"
@@ -367,7 +369,8 @@ void main() {
   group('DELETE Request', () {
     test('DELETE 1', () {
       const expectedCode = r"""curl --request DELETE \
-  --url 'https://reqres.in/api/users/2'""";
+  --url 'https://reqres.in/api/users/2' \
+  --header 'x-api-key: reqres-free-v1'""";
       expect(
           codeGen.getCode(
             CodegenLanguage.curl,
@@ -381,6 +384,7 @@ void main() {
       const expectedCode = r"""curl --request DELETE \
   --url 'https://reqres.in/api/users/2' \
   --header 'Content-Type: application/json' \
+  --header 'x-api-key: reqres-free-v1' \
   --data '{
 "name": "marfeus",
 "job": "accountant"
