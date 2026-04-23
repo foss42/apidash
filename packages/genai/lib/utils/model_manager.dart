@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:better_networking/better_networking.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:developer' as developer;
 import '../consts.dart';
 import '../interface/interface.dart';
 import '../models/models.dart';
@@ -19,13 +19,13 @@ class ModelManager {
         ),
       );
       if (resp == null) {
-        debugPrint('fetchModelsFromRemote -> resp == null');
+        developer.log('fetchModelsFromRemote -> resp == null');
       } else {
         var remoteModels = availableModelsFromJson(resp.body);
         return remoteModels;
       }
     } catch (e) {
-      debugPrint('fetchModelsFromRemote -> ${e.toString()}');
+      developer.log('fetchModelsFromRemote -> ${e.toString()}');
     }
     return null;
   }
@@ -57,7 +57,7 @@ class ModelManager {
         );
       }
     } catch (e) {
-      debugPrint('fetchAvailableModels -> ${e.toString()}');
+      developer.log('fetchAvailableModels -> ${e.toString()}');
     }
     return kAvailableModels;
   }
@@ -90,7 +90,7 @@ class ModelManager {
       }
       return ollamaModels;
     } catch (e) {
-      debugPrint('fetchInstalledOllamaModels -> ${e.toString()}');
+      developer.log('fetchInstalledOllamaModels -> ${e.toString()}');
       return null;
     }
   }

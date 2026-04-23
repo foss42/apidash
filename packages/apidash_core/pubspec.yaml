@@ -6,13 +6,10 @@ publish_to: none
 
 environment:
   sdk: ^3.5.3
-  flutter: ">=1.17.0"
 
 resolution: workspace
 
 dependencies:
-  flutter:
-    sdk: flutter
   curl_parser: any
   freezed_annotation: ^3.0.0
   genai: any
