@@ -155,6 +155,15 @@ class TestChatRemoteRepository implements ChatRemoteRepository {
   Future<String?> sendChat({required AIRequestModel request}) async {
     return 'test response';
   }
+
+  @override
+  Future<Stream<String?>> streamChat({required AIRequestModel request}) async {
+    return Stream.fromIterable([
+      '{"explanation": "Hello',
+      ' world",',
+      ' "actions": []}'
+    ]);
+  }
 }
 
 // Mock for testing provider overrides

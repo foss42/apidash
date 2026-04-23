@@ -16,8 +16,8 @@ import 'dashbot_active_route_provider.dart';
 import 'service_providers.dart';
 
 final chatViewmodelProvider = StateNotifierProvider<ChatViewmodel, ChatState>((
-  ref,
-) {
+    ref,
+    ) {
   return ChatViewmodel(ref);
 });
 
@@ -61,7 +61,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         requestId,
         ChatMessage(
           id: getNewUuid(),
-          content: text,
+          explanation: text,
+          actions: const [],
           role: MessageRole.user,
           timestamp: DateTime.now(),
           messageType: type,
@@ -80,12 +81,13 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final existingMessages = state.chatSessions[requestId] ?? const [];
 
     final lastSystemImport = existingMessages.lastWhere(
-      (m) =>
-          m.role == MessageRole.system &&
+          (m) =>
+      m.role == MessageRole.system &&
           m.messageType == ChatMessageType.importCurl,
       orElse: () => ChatMessage(
         id: '',
-        content: '',
+        explanation: '',
+        actions: const [],
         role: MessageRole.system,
         timestamp: DateTime.fromMillisecondsSinceEpoch(0),
       ),
@@ -100,12 +102,13 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     // Detect OpenAPI import flow: if the last system message was an OpenAPI import prompt,
     // then treat pasted URL or raw spec as part of the import flow.
     final lastSystemOpenApi = existingMessages.lastWhere(
-      (m) =>
-          m.role == MessageRole.system &&
+          (m) =>
+      m.role == MessageRole.system &&
           m.messageType == ChatMessageType.importOpenApi,
       orElse: () => ChatMessage(
         id: '',
-        content: '',
+        explanation: '',
+        actions: const [],
         role: MessageRole.system,
         timestamp: DateTime.fromMillisecondsSinceEpoch(0),
       ),
@@ -126,8 +129,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final currentReq = _currentRequest;
     final substitutedReq = (currentReq?.httpRequestModel != null)
         ? currentReq!.copyWith(
-            httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith(),
-          )
+      httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith(),
+    )
         : currentReq;
     String systemPrompt;
     if (type == ChatMessageType.generateCode) {
@@ -140,14 +143,13 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     } else if (type == ChatMessageType.importCurl) {
       final rqId = _currentRequest?.id ?? 'global';
-      // Briefly toggle loading to indicate processing of the import flow prompt
       state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
       _addMessage(
         rqId,
         ChatMessage(
           id: getNewUuid(),
-          content:
-              '{"explanation":"Let\'s import a cURL request. Paste your complete cURL command below.","actions":[]}',
+          explanation: 'Let\'s import a cURL request. Paste your complete cURL command below.',
+          actions: const [],
           role: MessageRole.system,
           timestamp: DateTime.now(),
           messageType: ChatMessageType.importCurl,
@@ -178,12 +180,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         rqId,
         ChatMessage(
           id: getNewUuid(),
-          content:
-              '{"explanation":"Upload your OpenAPI (JSON or YAML) specification, paste the full spec text, or paste a URL to a spec (e.g., https://api.apidash.dev/openapi.json).","actions":[${jsonEncode(uploadAction.toJson())}]}',
+          explanation: 'Upload your OpenAPI (JSON or YAML) specification, paste the full spec text, or paste a URL to a spec (e.g., https://api.apidash.dev/openapi.json).',
+          actions: [uploadAction],
           role: MessageRole.system,
           timestamp: DateTime.now(),
           messageType: ChatMessageType.importOpenApi,
-          actions: [uploadAction],
         ),
       );
       if (_looksLikeOpenApi(text)) {
@@ -206,37 +207,69 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final enriched = ai!.copyWith(
       systemPrompt: systemPrompt,
       userPrompt: userPrompt,
-      stream: false,
+      stream: true,
     );
 
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
-      final response = await _repo.sendChat(request: enriched);
-      if (response != null && response.isNotEmpty) {
-        List<ChatAction>? actions;
+      final chatStream = await _repo.streamChat(request: enriched);
+      final buffer = StringBuffer();
+
+      await for (final chunk in chatStream) {
+        if (chunk != null && chunk.isNotEmpty) {
+          buffer.write(chunk);
+
+          final rawText = buffer.toString();
+
+          // Extract just the explanation text for progressive display
+          final match = RegExp(
+            r'"explanation"\s*:\s*"((?:\\.|[^"\\])*)',
+          ).firstMatch(rawText);
+          if (match != null) {
+            final displayText = match
+                .group(1)
+                ?.replaceAll(r'\"', '"')
+                .replaceAll(r'\n', '\n') ??
+                rawText;
+            state = state.copyWith(currentStreamingResponse: displayText);
+          } else {
+            state = state.copyWith(currentStreamingResponse: '...');
+          }
+        }
+      }
+
+      // Stream finished — parse once at the boundary
+      final response = buffer.toString();
+
+      if (response.isNotEmpty) {
+        String explanation = response;
+        List<ChatAction> actions = const [];
+
         try {
-          debugPrint('[Chat] Parsing non-streaming response');
           final Map<String, dynamic> parsed = MessageJson.safeParse(response);
-          if (parsed.containsKey('actions') && parsed['actions'] is List) {
+          if (parsed['explanation'] is String) {
+            explanation = parsed['explanation'] as String;
+          }
+          if (parsed['actions'] is List) {
             actions = (parsed['actions'] as List)
                 .whereType<Map<String, dynamic>>()
                 .map(ChatAction.fromJson)
                 .toList();
-            debugPrint('[Chat] Parsed actions list: ${actions.length}');
           }
+          debugPrint('[Chat] Parsed actions: ${actions.length}');
         } catch (e) {
-          debugPrint('[Chat] Error parsing action: $e');
+          debugPrint('[Chat] Error parsing response: $e');
         }
 
         _addMessage(
           requestId,
           ChatMessage(
             id: getNewUuid(),
-            content: response,
+            explanation: explanation,
+            actions: actions,
             role: MessageRole.system,
             timestamp: DateTime.now(),
             messageType: type,
-            actions: actions,
           ),
         );
       } else {
@@ -263,7 +296,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       isGenerating: false,
       currentStreamingResponse: '',
     );
-    // Reset to base route (unpins chat) after clearing messages.
     _ref.read(dashbotActiveRouteProvider.notifier).resetToBaseRoute();
   }
 
@@ -277,7 +309,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       requestId,
       ChatMessage(
         id: getNewUuid(),
-        content: userMessage,
+        explanation: userMessage,
+        actions: const [],
         role: MessageRole.user,
         timestamp: DateTime.now(),
         messageType: ChatMessageType.general,
@@ -300,8 +333,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
       final msg = await _ref.read(autoFixServiceProvider).apply(action);
       if (msg != null && msg.isNotEmpty) {
-        final t = ChatMessageType.general;
-        _appendSystem(msg, t);
+        _appendSystem(msg, ChatMessageType.general);
       }
       if (action.actionType == ChatActionType.other) {
         await _applyOtherAction(action);
@@ -330,7 +362,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           await _applyOpenApi(action);
           break;
         }
-        // Unsupported other action
         debugPrint('[Chat] Unsupported other action target: ${action.target}');
         break;
       default:
@@ -346,12 +377,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
     String methodStr = (payload['method'] as String?)?.toLowerCase() ?? 'get';
     final method = HTTPVerb.values.firstWhere(
-      (m) => m.name == methodStr,
+          (m) => m.name == methodStr,
       orElse: () => HTTPVerb.get,
     );
     final url = payload['url'] as String? ?? '';
     final baseUrl = payload['baseUrl'] as String? ?? _inferBaseUrl(url);
-    // Derive a human-readable route path for naming
     String routePath;
     if (baseUrl.isNotEmpty && url.startsWith(baseUrl)) {
       routePath = url.substring(baseUrl.length);
@@ -377,24 +407,24 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final formData = formDataListRaw == null
         ? <FormDataModel>[]
         : formDataListRaw
-              .whereType<Map>()
-              .map(
-                (e) => FormDataModel(
-                  name: (e['name'] as String?) ?? '',
-                  value: (e['value'] as String?) ?? '',
-                  type: (() {
-                    final t = (e['type'] as String?) ?? 'text';
-                    try {
-                      return FormDataType.values.firstWhere(
-                        (ft) => ft.name == t,
-                      );
-                    } catch (_) {
-                      return FormDataType.text;
-                    }
-                  })(),
-                ),
-              )
-              .toList();
+        .whereType<Map>()
+        .map(
+          (e) => FormDataModel(
+        name: (e['name'] as String?) ?? '',
+        value: (e['value'] as String?) ?? '',
+        type: (() {
+          final t = (e['type'] as String?) ?? 'text';
+          try {
+            return FormDataType.values.firstWhere(
+                  (ft) => ft.name == t,
+            );
+          } catch (_) {
+            return FormDataType.text;
+          }
+        })(),
+      ),
+    )
+        .toList();
 
     ContentType bodyContentType;
     if (formFlag || formData.isNotEmpty) {
@@ -426,9 +456,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       baseUrl,
       sourceTitle,
     );
-    debugPrint('[OpenAPI] withEnvUrl="$withEnvUrl');
+    debugPrint('[OpenAPI] withEnvUrl="$withEnvUrl"');
     if (action.field == 'apply_to_new') {
-      debugPrint('[OpenAPI] withEnvUrl="$withEnvUrl');
       final model = HttpRequestModel(
         method: method,
         url: withEnvUrl,
@@ -469,12 +498,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     );
   }
 
-  // Parse a pasted cURL and present actions to apply to current or new request
   Future<void> handlePotentialCurlPaste(String text) async {
-    // quick check
     final trimmed = text.trim();
     if (!trimmed.startsWith('curl ')) return;
-    // Show loading while parsing and generating insights
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
       debugPrint('[cURL] Original: $trimmed');
@@ -487,16 +513,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         return;
       }
       final currentSubstitutedHttpRequestJson =
-          _currentSubstitutedHttpRequestModel?.toJson();
+      _currentSubstitutedHttpRequestModel?.toJson();
       final payload = convertCurlToHttpRequestModel(curl).toJson();
-      // Prepare base message first (without AI insights)
       var built = CurlImportService.buildResponseFromParsed(
         payload,
         currentJson: currentSubstitutedHttpRequestJson,
       );
       var msg = jsonDecode(built.jsonMessage) as Map<String, dynamic>;
 
-      // Ask AI for cURL insights
       try {
         final ai = _selectedAIModel;
         if (ai != null) {
@@ -520,48 +544,47 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             }
           }
           if (insights != null && insights.isNotEmpty) {
-            // Rebuild message including insights in explanation
-            final payload = (msg['actions'] as List).isNotEmpty
+            final actionPayload = (msg['actions'] as List).isNotEmpty
                 ? (((msg['actions'] as List).first as Map)['value']
-                      as Map<String, dynamic>)
+            as Map<String, dynamic>)
                 : <String, dynamic>{};
             final enriched = CurlImportService.buildActionMessageFromPayload(
-              payload,
+              actionPayload,
               current: currentSubstitutedHttpRequestJson,
               insights: insights,
             );
             msg = enriched;
             built = (
-              jsonMessage: jsonEncode(enriched),
-              actions: (enriched['actions'] as List)
-                  .whereType<Map<String, dynamic>>()
-                  .toList(),
+            jsonMessage: jsonEncode(enriched),
+            actions: (enriched['actions'] as List)
+                .whereType<Map<String, dynamic>>()
+                .toList(),
             );
           }
         }
       } catch (e) {
         debugPrint('[cURL] insights error: $e');
       }
+
       final rqId = _currentRequest?.id ?? 'global';
       _addMessage(
         rqId,
         ChatMessage(
           id: getNewUuid(),
-          content: jsonEncode(msg),
-          role: MessageRole.system,
-          timestamp: DateTime.now(),
-          messageType: ChatMessageType.importCurl,
+          explanation: msg['explanation'] as String? ?? '',
           actions: (msg['actions'] as List)
               .whereType<Map<String, dynamic>>()
               .map(ChatAction.fromJson)
               .toList(),
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importCurl,
         ),
       );
     } catch (e) {
       debugPrint('[cURL] Exception: $e');
-      final safe = e.toString().replaceAll('"', "'");
       _appendSystem(
-        'Parsing failed: $safe. Please adjust the command (ensure it starts with `curl ` and quotes/escapes are correct) and paste it again.',
+        'Parsing failed: ${e.toString()}. Please adjust the command (ensure it starts with `curl ` and quotes/escapes are correct) and paste it again.',
         ChatMessageType.importCurl,
       );
     } finally {
@@ -580,9 +603,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final content = utf8.decode(att.data);
       await handlePotentialOpenApiPaste(content);
     } catch (e) {
-      final safe = e.toString().replaceAll('"', "'");
       _appendSystem(
-        '{"explanation":"Failed to read attachment: $safe","actions":[]}',
+        'Failed to read attachment: ${e.toString()}',
         ChatMessageType.importOpenApi,
       );
     }
@@ -599,12 +621,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     if (!_looksLikeUrl(trimmed)) return;
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
-      // Build a simple GET using existing networking stack
       final httpModel = HttpRequestModel(
         method: HTTPVerb.get,
         url: trimmed,
         headers: const [
-          // Hint servers that we can accept JSON or YAML
           NameValueModel(
             name: 'Accept',
             value: 'application/json, application/yaml, text/yaml, */*',
@@ -620,16 +640,15 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
 
       if (err != null) {
-        final safe = err.replaceAll('"', "'");
         _appendSystem(
-          '{"explanation":"Failed to fetch URL: $safe","actions":[]}',
+          'Failed to fetch URL: $err',
           ChatMessageType.importOpenApi,
         );
         return;
       }
       if (resp == null) {
         _appendSystem(
-          '{"explanation":"No response received when fetching the URL.","actions":[]}',
+          'No response received when fetching the URL.',
           ChatMessageType.importOpenApi,
         );
         return;
@@ -638,23 +657,21 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       final body = resp.body;
       if (body.trim().isEmpty) {
         _appendSystem(
-          '{"explanation":"The fetched URL returned an empty body.","actions":[]}',
+          'The fetched URL returned an empty body.',
           ChatMessageType.importOpenApi,
         );
         return;
       }
 
-      // Try to parse fetched content as OpenAPI
       final spec = OpenApiImportService.tryParseSpec(body);
       if (spec == null) {
         _appendSystem(
-          '{"explanation":"The fetched content does not look like a valid OpenAPI spec (JSON or YAML).","actions":[]}',
+          'The fetched content does not look like a valid OpenAPI spec (JSON or YAML).',
           ChatMessageType.importOpenApi,
         );
         return;
       }
 
-      // Build insights and show picker (reuse local method)
       String? insights;
       try {
         final ai = _selectedAIModel;
@@ -669,7 +686,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             request: ai.copyWith(
               systemPrompt: sys,
               userPrompt:
-                  'Provide concise, actionable insights about these endpoints.',
+              'Provide concise, actionable insights about these endpoints.',
               stream: false,
             ),
           );
@@ -695,20 +712,19 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         rqId,
         ChatMessage(
           id: getNewUuid(),
-          content: jsonEncode(picker),
-          role: MessageRole.system,
-          timestamp: DateTime.now(),
-          messageType: ChatMessageType.importOpenApi,
+          explanation: picker['explanation'] as String? ?? '',
           actions: (picker['actions'] as List)
               .whereType<Map<String, dynamic>>()
               .map(ChatAction.fromJson)
               .toList(),
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importOpenApi,
         ),
       );
     } catch (e) {
-      final safe = e.toString().replaceAll('"', "'");
       _appendSystem(
-        '{"explanation":"Failed to fetch or parse OpenAPI from URL: $safe","actions":[]}',
+        'Failed to fetch or parse OpenAPI from URL: ${e.toString()}',
         ChatMessageType.importOpenApi,
       );
     } finally {
@@ -719,19 +735,17 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   Future<void> handlePotentialOpenApiPaste(String text) async {
     final trimmed = text.trim();
     if (!_looksLikeOpenApi(trimmed)) return;
-    // Show loading while parsing and generating insights
     state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
     try {
       debugPrint('[OpenAPI] Original length: ${trimmed.length}');
       final spec = OpenApiImportService.tryParseSpec(trimmed);
       if (spec == null) {
         _appendSystem(
-          '{"explanation":"Sorry, I couldn\'t parse that OpenAPI spec. Ensure it\'s valid JSON or YAML.","actions":[]}',
+          'Sorry, I couldn\'t parse that OpenAPI spec. Ensure it\'s valid JSON or YAML.',
           ChatMessageType.importOpenApi,
         );
         return;
       }
-      // Build a short summary + structured meta for the insights prompt
       final summary = OpenApiImportService.summaryForSpec(spec);
 
       String? insights;
@@ -747,17 +761,16 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             request: ai.copyWith(
               systemPrompt: sys,
               userPrompt:
-                  'Provide concise, actionable insights about these endpoints.',
+              'Provide concise, actionable insights about these endpoints.',
               stream: false,
             ),
           );
           if (res != null && res.isNotEmpty) {
-            // Ensure we only pass the explanation string to embed into explanation
             try {
               final map = MessageJson.safeParse(res);
               if (map['explanation'] is String) insights = map['explanation'];
             } catch (_) {
-              insights = res; // fallback raw text
+              insights = res;
             }
           }
         }
@@ -774,22 +787,20 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         rqId,
         ChatMessage(
           id: getNewUuid(),
-          content: jsonEncode(picker),
-          role: MessageRole.system,
-          timestamp: DateTime.now(),
-          messageType: ChatMessageType.importOpenApi,
+          explanation: picker['explanation'] as String? ?? '',
           actions: (picker['actions'] as List)
               .whereType<Map<String, dynamic>>()
               .map(ChatAction.fromJson)
               .toList(),
+          role: MessageRole.system,
+          timestamp: DateTime.now(),
+          messageType: ChatMessageType.importOpenApi,
         ),
       );
-      // Do not generate a separate insights prompt; summary is inline now.
     } catch (e) {
       debugPrint('[OpenAPI] Exception: $e');
-      final safe = e.toString().replaceAll('"', "'");
       _appendSystem(
-        '{"explanation":"Parsing failed: $safe","actions":[]}',
+        'Parsing failed: ${e.toString()}',
         ChatMessageType.importOpenApi,
       );
     } finally {
@@ -815,23 +826,23 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         _ref
             .read(collectionStateNotifierProvider.notifier)
             .update(
-              method: httpRequestModel.method,
-              url: withEnvUrl,
-              headers: httpRequestModel.headers,
-              isHeaderEnabledList: List<bool>.filled(
-                httpRequestModel.headers?.length ?? 0,
-                true,
-              ),
-              body: httpRequestModel.body,
-              bodyContentType: httpRequestModel.bodyContentType,
-              formData: httpRequestModel.formData,
-              params: httpRequestModel.params,
-              isParamEnabledList: List<bool>.filled(
-                httpRequestModel.params?.length ?? 0,
-                true,
-              ),
-              authModel: null,
-            );
+          method: httpRequestModel.method,
+          url: withEnvUrl,
+          headers: httpRequestModel.headers,
+          isHeaderEnabledList: List<bool>.filled(
+            httpRequestModel.headers?.length ?? 0,
+            true,
+          ),
+          body: httpRequestModel.body,
+          bodyContentType: httpRequestModel.bodyContentType,
+          formData: httpRequestModel.formData,
+          params: httpRequestModel.params,
+          isParamEnabledList: List<bool>.filled(
+            httpRequestModel.params?.length ?? 0,
+            true,
+          ),
+          authModel: null,
+        );
         _appendSystem(
           'Applied cURL to the selected request.',
           ChatMessageType.importCurl,
@@ -864,21 +875,21 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     state = state.copyWith(chatSessions: updatedSessions);
   }
 
+  /// Appends a plain-text system message. Never pass JSON here — just the text.
   void _appendSystem(String text, ChatMessageType type) {
     final id = _currentRequest?.id ?? 'global';
     _addMessage(
       id,
       ChatMessage(
         id: getNewUuid(),
-        content: text,
+        explanation: text,
+        actions: const [],
         role: MessageRole.system,
         timestamp: DateTime.now(),
         messageType: type,
       ),
     );
   }
-
-  // Prompt helper methods moved to PromptBuilder service.
 
   bool _looksLikeOpenApi(String text) {
     final t = text.trim();
@@ -920,10 +931,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   Future<String> _maybeSubstituteBaseUrlForOpenApi(
-    String url,
-    String baseUrl,
-    String title,
-  ) async {
+      String url,
+      String baseUrl,
+      String title,
+      ) async {
     final svc = _ref.read(urlEnvServiceProvider);
     return svc.maybeSubstituteBaseUrl(
       url,
