@@ -583,6 +583,8 @@ const kLabelOnboardingDesc3 =
 
 // AI Model Selector Dialog
 const kLabelUpdateModels = "Update Models";
+const kValidationApiKeyRequired = "API Key is required";
+const kValidationEndpointRequired = "Endpoint URL is required";
 const kLabelSelectModelProvider = "Select Model Provider";
 const kLabelSelectAIProvider = "Please select an AI API Provider";
 const kLabelApiKeyCredential = "API Key / Credential";
