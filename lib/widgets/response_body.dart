@@ -44,7 +44,7 @@ class ResponseBody extends StatelessWidget {
     // if (mediaType == null) {
     //   return ErrorMessage(
     //       message:
-    //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
+    //           '$kMsgUnknownContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     // }
 
     var responseBodyView = selectedRequestModel?.apiType == APIType.ai

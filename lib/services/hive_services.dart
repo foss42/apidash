@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
@@ -40,7 +41,8 @@ Future<bool> initHiveBoxes(
     }
     final openHiveBoxesStatus = await openHiveBoxes();
     return openHiveBoxesStatus;
-  } catch (e) {
+  } on Exception catch (e) {
+    developer.log('Failed to init Hive boxes', name: 'Hive', error: e);
     return false;
   }
 }
@@ -55,8 +57,8 @@ Future<bool> openHiveBoxes() async {
       }
     }
     return true;
-  } catch (e) {
-    debugPrint("ERROR OPEN HIVE BOXES: $e");
+  } on Exception catch (e) {
+    developer.log('Failed to open Hive boxes', name: 'Hive', error: e);
     return false;
   }
 }
@@ -72,8 +74,8 @@ Future<void> clearHiveBoxes() async {
         }
       }
     }
-  } catch (e) {
-    debugPrint("ERROR CLEAR HIVE BOXES: $e");
+  } on Exception catch (e) {
+    developer.log('Failed to clear Hive boxes', name: 'Hive', error: e);
   }
 }
 
@@ -89,8 +91,8 @@ Future<void> deleteHiveBoxes() async {
       }
     }
     await Hive.close();
-  } catch (e) {
-    debugPrint("ERROR DELETE HIVE BOXES: $e");
+  } on Exception catch (e) {
+    developer.log('Failed to delete Hive boxes', name: 'Hive', error: e);
   }
 }
 
@@ -104,7 +106,7 @@ class HiveHandler {
   late final LazyBox dashBotBox;
 
   HiveHandler() {
-    debugPrint("Trying to open Hive boxes");
+    developer.log('Opening Hive boxes', name: 'Hive');
     dataBox = Hive.box(kDataBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);

@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+import 'dart:ui';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +13,31 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Global error handlers (HIGH-7)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    developer.log(
+      'Flutter framework error',
+      name: 'FlutterError',
+      error: details.exception,
+      stackTrace: details.stack,
+    );
+    // Default handler prints to console in debug mode
+    FlutterError.presentError(details);
+  };
+  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+    developer.log(
+      'Unhandled platform error',
+      name: 'PlatformError',
+      error: error,
+      stackTrace: stack,
+    );
+    return true;
+  };
+
   await Stac.initialize();
 
-  //Load all LLMs
+  // Load all LLMs
   await ModelManager.fetchAvailableModels();
 
   var settingsModel = await getSettingsFromSharedPrefs();
@@ -48,19 +72,22 @@ Future<bool> initApp(
 }) async {
   GoogleFonts.config.allowRuntimeFetching = false;
   try {
-    debugPrint("initializeUsingPath: $initializeUsingPath");
-    debugPrint("workspaceFolderPath: ${settingsModel?.workspaceFolderPath}");
+    developer.log(
+      'initializeUsingPath: $initializeUsingPath, '
+      'workspaceFolderPath: ${settingsModel?.workspaceFolderPath}',
+      name: 'initApp',
+    );
     final openBoxesStatus = await initHiveBoxes(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );
-    debugPrint("openBoxesStatus: $openBoxesStatus");
+    developer.log('openBoxesStatus: $openBoxesStatus', name: 'initApp');
     if (openBoxesStatus) {
       await autoClearHistory(settingsModel: settingsModel);
     }
     return openBoxesStatus;
-  } catch (e) {
-    debugPrint("initApp failed due to $e");
+  } on Exception catch (e) {
+    developer.log('initApp failed', name: 'initApp', error: e);
     return false;
   }
 }
