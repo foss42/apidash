@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+import 'dart:developer' as developer;
 
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +32,12 @@ class _AppState extends ConsumerState<App> with WindowListener {
     super.dispose();
   }
 
-  void _init() async {
-    // Add this line to override the default close handler
-    await windowManager.setPreventClose(true);
-    setState(() {});
+  Future<void> _init() async {
+    try {
+      await windowManager.setPreventClose(true);
+    } catch (e) {
+      developer.log('Failed to set prevent close: $e', name: 'App');
+    }
   }
 
   @override
@@ -57,11 +59,14 @@ class _AppState extends ConsumerState<App> with WindowListener {
 
   @override
   void onWindowClose() async {
-    bool isPreventClose = await windowManager.isPreventClose();
+    final bool isPreventClose = await windowManager.isPreventClose();
+    if (!mounted) return;
     if (isPreventClose) {
-      if (ref.watch(
-              settingsProvider.select((value) => value.promptBeforeClosing)) &&
-          ref.watch(hasUnsavedChangesProvider)) {
+      final promptBeforeClosing =
+          ref.read(settingsProvider).promptBeforeClosing;
+      final hasUnsaved = ref.read(hasUnsavedChangesProvider);
+      if (promptBeforeClosing && hasUnsaved) {
+        final navigator = Navigator.of(context);
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -72,7 +77,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
               OutlinedButton(
                 child: const Text('No'),
                 onPressed: () async {
-                  Navigator.of(context).pop();
+                  navigator.pop();
                   await windowManager.setPreventClose(false);
                   await windowManager.close();
                 },
@@ -83,7 +88,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
                   await ref
                       .read(collectionStateNotifierProvider.notifier)
                       .saveData();
-                  Navigator.of(context).pop();
+                  navigator.pop();
                   await windowManager.setPreventClose(false);
                   await windowManager.close();
                 },
@@ -133,13 +138,14 @@ class DashApp extends ConsumerWidget {
                   try {
                     await windowManager.destroy();
                   } catch (e) {
-                    debugPrint(e.toString());
+                    developer.log(
+                      'Failed to destroy window: $e',
+                      name: 'DashApp',
+                    );
                   }
                 },
               )
-            : //Stack(
-              //  children: [
-                  !kIsLinux && !kIsMobile
+            : !kIsLinux && !kIsMobile
                       ? const App()
                       : context.isMediumWindow
                           ? (kIsMobile && !userOnboarded)
@@ -155,17 +161,6 @@ class DashApp extends ConsumerWidget {
                                 )
                               : const MobileDashboard()
                           : const Dashboard(),
-              //     if (kIsWindows)
-              //       SizedBox(
-              //         height: 29,
-              //         child: WindowCaption(
-              //           backgroundColor: Colors.transparent,
-              //           brightness:
-              //               isDarkMode ? Brightness.dark : Brightness.light,
-              //         ),
-              //       ),
-              //   ],
-              // ),
       ),
     );
   }
