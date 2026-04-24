@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:better_networking/src/web_auth/web_auth.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 
 import '../../models/auth/auth_oauth2_model.dart';
