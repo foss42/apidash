@@ -110,7 +110,7 @@ class EnvironmentsStateNotifier
   void addEnvironment() {
     final id = getNewUuid();
     final newEnvironmentModel = EnvironmentModel(id: id, values: []);
-    state = {...state!, id: newEnvironmentModel};
+    state = {...state!}..[ id ] = newEnvironmentModel;
     ref
         .read(environmentSequenceProvider.notifier)
         .update((state) => [...state, id]);
@@ -129,7 +129,7 @@ class EnvironmentsStateNotifier
       name: name ?? environment.name,
       values: values ?? environment.values,
     );
-    state = {...state!, id: updatedEnvironment};
+    state = {...state!}..[ id ] = updatedEnvironment;
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
@@ -142,11 +142,11 @@ class EnvironmentsStateNotifier
       name: "${environment.name} Copy",
     );
 
-    var environmentIds = ref.read(environmentSequenceProvider);
+    final environmentIds = [...ref.read(environmentSequenceProvider)];
     final idx = environmentIds.indexOf(id);
     environmentIds.insert(idx + 1, newId);
 
-    state = {...state!, newId: newEnvironment};
+    state = {...state!}..[ newId ] = newEnvironment;
 
     ref
         .read(environmentSequenceProvider.notifier)
@@ -156,7 +156,7 @@ class EnvironmentsStateNotifier
   }
 
   void removeEnvironment(String id) {
-    final environmentIds = ref.read(environmentSequenceProvider);
+    final environmentIds = [...ref.read(environmentSequenceProvider)];
     final idx = environmentIds.indexOf(id);
     environmentIds.remove(id);
     ref.read(environmentSequenceProvider.notifier).state = [...environmentIds];
@@ -178,7 +178,7 @@ class EnvironmentsStateNotifier
   }
 
   void reorder(int oldIdx, int newIdx) {
-    final environmentIds = ref.read(environmentSequenceProvider);
+    final environmentIds = [...ref.read(environmentSequenceProvider)];
     final id = environmentIds.removeAt(oldIdx);
     environmentIds.insert(newIdx, id);
     ref.read(environmentSequenceProvider.notifier).state = [...environmentIds];

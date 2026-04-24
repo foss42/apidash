@@ -110,7 +110,7 @@ class CollectionStateNotifier
   }
 
   void reorder(int oldIdx, int newIdx) {
-    var itemIds = ref.read(requestSequenceProvider);
+    final itemIds = [...ref.read(requestSequenceProvider)];
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
@@ -119,7 +119,7 @@ class CollectionStateNotifier
 
   void remove({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
-    var itemIds = ref.read(requestSequenceProvider);
+    final itemIds = [...ref.read(requestSequenceProvider)];
     int idx = itemIds.indexOf(rId!);
     cancelHttpRequest(rId);
     itemIds.remove(rId);
@@ -163,7 +163,7 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     final newId = getNewUuid();
 
-    var itemIds = ref.read(requestSequenceProvider);
+    final itemIds = [...ref.read(requestSequenceProvider)];
     int idx = itemIds.indexOf(rId!);
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
@@ -192,7 +192,7 @@ class CollectionStateNotifier
   void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
     final newId = getNewUuid();
 
-    var itemIds = ref.read(requestSequenceProvider);
+    final itemIds = [...ref.read(requestSequenceProvider)];
     var currentModel = historyRequestModel;
 
     final newModel = RequestModel(
@@ -595,7 +595,7 @@ class CollectionStateNotifier
 
   bool loadData() {
     var ids = hiveHandler.getIds();
-    if (ids == null || ids.length == 0) {
+    if (ids == null || ids.isEmpty) {
       String newId = getNewUuid();
       state = {
         newId: RequestModel(
