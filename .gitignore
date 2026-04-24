@@ -65,3 +65,7 @@ installers/*
 # Testing Files & Folders
 test-hive-storage
 /logs
+
+# Environment files with secrets
+.env
+.env.*

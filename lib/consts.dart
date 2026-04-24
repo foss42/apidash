@@ -64,7 +64,7 @@ const kIconRemoveDark = Icon(
   color: kColorDarkDanger,
 );
 
-final kIconRemoveLight = Icon(
+const kIconRemoveLight = Icon(
   Icons.remove_circle,
   size: 16,
   color: kColorLightDanger,
@@ -155,7 +155,7 @@ const String kGlobalEnvironmentId = "global";
 
 enum ResponseBodyView {
   preview("Preview", Icons.visibility_rounded),
-  code("Preview", Icons.code_rounded),
+  code("Code", Icons.code_rounded),
   raw("Raw", Icons.text_snippet_rounded),
   answer("Answer", Icons.abc),
   sse("SSE", Icons.stream),
@@ -494,7 +494,7 @@ const kLabelItems = "items";
 const kNullResponseModelError = "Error: Response data does not exist.";
 const kMsgNullBody = "Response body is missing (null).";
 const kMsgNoContent = "No content";
-const kMsgUnknowContentType = "Unknown Response Content-Type";
+const kMsgUnknownContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
 // History Page
@@ -520,7 +520,7 @@ const kLabelSettings = "Settings";
 // Settings Page
 const kLabelSwitchThemeMode = "Switch Theme Mode";
 const kLabelDashBotSetting = "DashBot";
-const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visiblity";
+const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visibility";
 const kLabelDefaultUriScheme = "Default URI Scheme";
 const kLabelDisableSSL = "Disable SSL verification";
 const kLabelDefaultCodeGen = "Default Code Generator";
@@ -604,7 +604,7 @@ const kMsgCopiedToClipboard = "Copied to clipboard!";
 const kMsgFailedToDisplayPreview = "Failed to Display Preview";
 const kMsgPreviewGenerationFailed = "Preview Generation Failed!";
 const kMsgModificationRequestFailed = "Modification Request Failed!";
-const kMsgUnexpectedError = "Unexpected Error Occured";
+const kMsgUnexpectedError = "Unexpected Error Occurred";
 const kMsgSelectDefaultAIModel = "Please Select Default AI Model in Settings";
 const kMsgAPIToolGenerationFailed = "API Tool generation failed!";
 
