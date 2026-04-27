@@ -13,6 +13,17 @@ import 'previewer_video.dart';
 import 'uint8_audio_player.dart';
 import '../consts.dart';
 import '../utils/file_utils.dart';
+import 'package:mime/mime.dart';
+
+/// Sniffs the first bytes of [bytes] using the `mime` package's built-in
+/// magic-number database. Returns a (type, subtype) pair, or null if unknown.
+(String, String)? _sniffMimeFromBytes(Uint8List bytes) {
+  final mimeStr = lookupMimeType('', headerBytes: bytes);
+  if (mimeStr == null) return null;
+  final parts = mimeStr.split('/');
+  if (parts.length != 2) return null;
+  return (parts[0], parts[1]);
+}
 
 class Previewer extends StatefulWidget {
   const Previewer({
@@ -38,7 +49,19 @@ class _PreviewerState extends State<Previewer> {
   @override
   Widget build(BuildContext context) {
     var errorTemplate = jj.Template(kMimeTypeRaiseIssue);
-    if (widget.type == kTypeApplication && widget.subtype == kSubTypeJson) {
+
+    // Sniff magic bytes when server reports a generic binary type.
+    var type = widget.type;
+    var subtype = widget.subtype;
+    if (type == kTypeApplication && subtype == kSubTypeOctetStream) {
+      final sniffed = _sniffMimeFromBytes(widget.bytes);
+      if (sniffed != null) {
+        type = sniffed.$1;
+        subtype = sniffed.$2;
+      }
+    }
+
+    if (type == kTypeApplication && subtype == kSubTypeJson) {
       try {
         var preview = JsonPreviewer(code: jsonDecode(widget.body));
         return preview;
@@ -46,7 +69,7 @@ class _PreviewerState extends State<Previewer> {
         // pass
       }
     }
-    if (widget.type == kTypeImage && widget.subtype == kSubTypeSvg) {
+    if (type == kTypeImage && subtype == kSubTypeSvg) {
       final String rawSvg = widget.body;
       try {
         parseWithoutOptimizers(rawSvg);
@@ -62,7 +85,7 @@ class _PreviewerState extends State<Previewer> {
         );
       }
     }
-    if (widget.type == kTypeImage) {
+    if (type == kTypeImage) {
       return Image.memory(
         widget.bytes,
         errorBuilder: (context, _, stackTrace) {
@@ -76,7 +99,7 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
-    if (widget.type == kTypeApplication && widget.subtype == kSubTypePdf) {
+    if (type == kTypeApplication && subtype == kSubTypePdf) {
       return PdfPreview(
         build: (_) => widget.bytes,
         useActions: false,
@@ -91,11 +114,11 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
-    if (widget.type == kTypeAudio) {
+    if (type == kTypeAudio) {
       return Uint8AudioPlayer(
         bytes: widget.bytes,
-        type: widget.type!,
-        subtype: widget.subtype!,
+        type: type!,
+        subtype: subtype!,
         errorBuilder: (context, error, stacktrace) {
           return ErrorMessage(
             message: errorTemplate.render({
@@ -107,7 +130,7 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
-    if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
+    if (type == kTypeText && subtype == kSubTypeCsv) {
       return CsvPreviewer(
         body: widget.body,
         errorWidget: ErrorMessage(
@@ -119,12 +142,12 @@ class _PreviewerState extends State<Previewer> {
         ),
       );
     }
-    if (widget.type == kTypeVideo) {
+    if (type == kTypeVideo) {
       try {
         var preview = VideoPreviewer(
           videoBytes: widget.bytes,
           videoFileExtension: getFileExtension(
-            '${widget.type}/${widget.subtype}',
+            '$type/$subtype',
           ),
         );
         return preview;
@@ -141,7 +164,7 @@ class _PreviewerState extends State<Previewer> {
     var errorText = errorTemplate.render({
       "showRaw": widget.hasRaw,
       "showContentType": true,
-      "type": "${widget.type}/${widget.subtype}",
+      "type": "$type/$subtype",
     });
     return ErrorMessage(message: errorText);
   }
