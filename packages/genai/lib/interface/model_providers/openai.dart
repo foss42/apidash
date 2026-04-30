@@ -47,7 +47,7 @@ class OpenAIModel extends ModelProvider {
   }
 
   @override
-  String? streamOutputFormatter(Map x) {
+  String? streamOutputFormatter(Map x, {String? eventType}) {
     return x["choices"]?[0]["delta"]?["content"];
   }
 }

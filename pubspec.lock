@@ -583,7 +583,7 @@ packages:
     source: hosted
     version: "0.3.5"
   flutter_driver:
-    dependency: transitive
+    dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"

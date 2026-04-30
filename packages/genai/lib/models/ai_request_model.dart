@@ -31,8 +31,11 @@ class AIRequestModel with _$AIRequestModel {
   String? getFormattedOutput(Map x) =>
       kModelProvidersMap[modelApiProvider]?.outputFormatter(x);
 
-  String? getFormattedStreamOutput(Map x) =>
-      kModelProvidersMap[modelApiProvider]?.streamOutputFormatter(x);
+  String? getFormattedStreamOutput(Map x, {String? eventType}) =>
+      kModelProvidersMap[modelApiProvider]?.streamOutputFormatter(
+        x,
+        eventType: eventType,
+      );
 
   Map<String, dynamic> getModelConfigMap() {
     Map<String, dynamic> m = {};

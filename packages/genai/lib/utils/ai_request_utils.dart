@@ -40,6 +40,10 @@ Future<Stream<String?>> streamGenAIRequest(
       httpRequestModel,
     );
 
+    // Tracks the most recent SSE `event:` field so that `data:` lines can
+    // be associated with their event type even across chunk boundaries.
+    String? lastEventType;
+
     final subscription = httpStream.listen(
       (dat) {
         if (dat == null) {
@@ -59,14 +63,39 @@ Future<Stream<String?>> streamGenAIRequest(
 
         final lines = ans.split('\n');
         for (final line in lines) {
-          if (!line.startsWith('data: ') || line.contains('[DONE]')) continue;
-          final jsonStr = line.substring(6).trim();
+          // Trim \r to handle both \n and \r\n line endings.
+          final trimmedLine = line.trimRight();
+
+          // An empty line signals the end of an SSE event block; reset the
+          // tracked event type so it is not applied to the next block.
+          if (trimmedLine.isEmpty) {
+            lastEventType = null;
+            continue;
+          }
+
+          // Capture the SSE event type for the current event block.
+          if (trimmedLine.startsWith('event: ')) {
+            lastEventType = trimmedLine.substring(7).trim();
+            continue;
+          }
+
+          if (!trimmedLine.startsWith('data: ') ||
+              trimmedLine.contains('[DONE]')) {
+            continue;
+          }
+
+          final jsonStr = trimmedLine.substring(6).trim();
           try {
             final jsonData = jsonDecode(jsonStr);
             final formattedOutput = aiRequestModel?.getFormattedStreamOutput(
               jsonData,
+              eventType: lastEventType,
             );
-            streamController.sink.add(formattedOutput);
+            // Only emit non-null, non-empty chunks to avoid polluting the
+            // stream with unrelated SSE events (e.g. ping, message_start).
+            if (formattedOutput != null && formattedOutput.isNotEmpty) {
+              streamController.sink.add(formattedOutput);
+            }
           } catch (e) {
             debugPrint(
               '⚠️ JSON decode error in SSE: $e\nSending as Regular Text',
