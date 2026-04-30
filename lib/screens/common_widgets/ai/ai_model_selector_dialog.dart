@@ -33,7 +33,9 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   @override
   Widget build(BuildContext context) {
     // ref.watch(aiApiCredentialProvider);
-    final width = MediaQuery.of(context).size.width * 0.8;
+    final mediaQuery = MediaQuery.of(context);
+    final width = mediaQuery.size.width * 0.8;
+    final maxContentHeight = mediaQuery.size.height * 0.75;
     return FutureBuilder(
       future: aM,
       builder: (context, snapshot) {
@@ -43,59 +45,13 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           final data = snapshot.data!;
           final mappedData = data.map;
           if (context.isMediumWindow) {
-            return Container(
-              padding: kP20,
+            return SizedBox(
               width: width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ElevatedButton(
-                    onPressed: null,
-                    // TODO: Add update model logic
-                    //() async {
-                    // await LLMManager.fetchAvailableLLMs();
-                    // setState(() {});
-                    //},
-                    child: Text(kLabelUpdateModels),
-                  ),
-                  kVSpacer10,
-                  Row(
-                    children: [
-                      Text(kLabelSelectModelProvider),
-                      kHSpacer20,
-                      Expanded(
-                        child: ADDropdownButton<ModelAPIProvider>(
-                          onChanged: (x) {
-                            setState(() {
-                              selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
-                            });
-                          },
-                          value: selectedProvider,
-                          values: data.modelProviders.map(
-                            (e) => (e.providerId!, e.providerName),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  kVSpacer10,
-                  _buildModelSelector(mappedData[selectedProvider]),
-                ],
-              ),
-            );
-          }
-
-          return Container(
-            padding: kP20,
-            width: width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxContentHeight),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: kP20,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -108,35 +64,99 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                           //},
                           child: Text(kLabelUpdateModels),
                         ),
-                        SizedBox(height: 20),
-                        ...data.modelProviders.map(
-                          (x) => ListTile(
-                            title: Text(x.providerName ?? ""),
-                            trailing: selectedProvider != x.providerId
-                                ? null
-                                : CircleAvatar(
-                                    radius: 5,
-                                    backgroundColor: Colors.green,
-                                  ),
-                            onTap: () {
-                              setState(() {
-                                selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
-                              });
-                            },
-                          ),
+                        kVSpacer10,
+                        Row(
+                          children: [
+                            Text(kLabelSelectModelProvider),
+                            kHSpacer20,
+                            Expanded(
+                              child: ADDropdownButton<ModelAPIProvider>(
+                                onChanged: (x) {
+                                  setState(() {
+                                    selectedProvider = x;
+                                    newAIRequestModel =
+                                        mappedData[selectedProvider]
+                                            ?.toAiRequestModel();
+                                  });
+                                },
+                                value: selectedProvider,
+                                values: data.modelProviders.map(
+                                  (e) => (e.providerId!, e.providerName),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+                        kVSpacer10,
+                        _buildModelSelector(mappedData[selectedProvider]),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(width: 40),
-                Flexible(
-                  flex: 3,
-                  child: _buildModelSelector(mappedData[selectedProvider]),
+              ),
+            );
+          }
+
+          return SizedBox(
+            width: width,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxContentHeight),
+              child: Padding(
+                padding: kP20,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ElevatedButton(
+                              onPressed: null,
+                              // TODO: Add update model logic
+                              //() async {
+                              // await LLMManager.fetchAvailableLLMs();
+                              // setState(() {});
+                              //},
+                              child: Text(kLabelUpdateModels),
+                            ),
+                            SizedBox(height: 20),
+                            ...data.modelProviders.map(
+                              (x) => ListTile(
+                                title: Text(x.providerName ?? ""),
+                                trailing: selectedProvider != x.providerId
+                                    ? null
+                                    : CircleAvatar(
+                                        radius: 5,
+                                        backgroundColor: Colors.green,
+                                      ),
+                                onTap: () {
+                                  setState(() {
+                                    selectedProvider = x.providerId;
+                                    newAIRequestModel =
+                                        mappedData[selectedProvider]
+                                            ?.toAiRequestModel();
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    Flexible(
+                      flex: 3,
+                      child: SingleChildScrollView(
+                        child: _buildModelSelector(
+                          mappedData[selectedProvider],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         }
