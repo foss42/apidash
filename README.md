@@ -193,6 +193,11 @@ API Dash currently supports API integration code generation for the following la
 | Swift                  | `Alamofire`   |         |
 | Swift                  | `URLSession`  |         |
 
+### Running Generated Code
+
+Detailed instructions for running generated code (including Python with requests) are available here:
+[Run Generated Code Guide](doc/user_guide/instructions_to_run_generated_code.md)
+
 ## MIME Types supported by API Dash Response Previewer
 
 API Dash is a next-gen API client that supports exploring, testing & previewing various data & multimedia API responses which is limited/not supported by other API clients. You can directly test APIs that return images, PDF, audio & more.
