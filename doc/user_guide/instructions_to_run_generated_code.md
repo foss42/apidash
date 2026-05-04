@@ -1338,6 +1338,73 @@ Unlike other Python libraries (like `requests`), `http.client` is part of Python
 ### 3. Execute the generated code:
 Check out the instructions [here](#3-execute-the-generated-code) for detailed steps on how to run the code.
 
+## Python (aiohttp)
+
+Here are the detailed instructions for running the generated API Dash code in **Python (using `aiohttp`)** for macOS, Windows, and Linux.
+
+`aiohttp` is an asynchronous HTTP client/server framework for Python, widely used in async applications and LLM integrations.
+
+### 1. Install Python:
+Check out the instructions [here](#1-install-python) for detailed steps on how to install Python on macOS, Windows, or Linux.
+
+### 2. Install the `aiohttp` library:
+
+#### macOS and Linux:
+Open the terminal and type the following command to install the `aiohttp` library using `pip`:
+
+```bash
+pip3 install aiohttp
+```
+
+#### Windows:
+Open Command Prompt (or PowerShell) and type the following command:
+
+```bash
+pip install aiohttp
+```
+
+Verify the installation was successful:
+
+```bash
+pip show aiohttp
+```
+
+> **Note:** If you have multiple Python versions installed and `pip` does not point to the right one, use `pip3 install aiohttp` on macOS/Linux or `py -m pip install aiohttp` on Windows.
+
+### 3. Execute the generated code:
+Once you have Python and `aiohttp` installed, follow these steps to execute the generated code:
+
+1. **Open a text editor** ✍️ (like Notepad on Windows, TextEdit on macOS, or any code editor like Visual Studio Code).
+2. **Copy the generated code** 📋 from API Dash.
+3. **Paste the code** into the text editor 🔄.
+4. **Save the file** 💾 with a `.py` extension, such as `api_test.py`.
+
+#### macOS and Linux:
+1. Open the **Terminal**.
+2. Navigate to the directory where you saved the `.py` file:
+```bash
+cd /path/to/your/file
+```
+3. Run the Python script:
+```bash
+python3 api_test.py
+```
+
+#### Windows:
+1. Open **Command Prompt** (or PowerShell).
+2. Navigate to the directory where you saved the `.py` file:
+```bash
+cd C:\path\to\your\file
+```
+3. Run the Python script:
+```bash
+python api_test.py
+```
+
+### 4. Running Async Code
+
+`aiohttp` is async by default. The generated code from API Dash wraps the async logic in `asyncio.run()` automatically, so you can run it the same way as synchronous code — no additional setup required.
+
 ## Ruby (faraday)
 
 Here are the detailed instructions for running the generated API Dash code in **Ruby (using `Faraday`)** for macOS, Windows, and Linux:
