@@ -23,6 +23,7 @@ Choose your programming language/library from the list provided below to learn m
 - [PHP (HTTPlug)](#php-httplug)
 - [Python (requests)](#python-requests)
 - [Python (http.client)](#python-httpclient)
+- [Python (urllib3)](#python-urllib3)
 - [Ruby (faraday)](#ruby-faraday)
 - [Ruby (net/http)](#ruby-nethttp)
 - [Rust (hyper)](#rust-hyper)
@@ -1290,9 +1291,9 @@ pip install requests
 ### 3. Execute the generated code:
 Once you have Python and `requests` installed, follow these steps to execute the generated code:
 
-1. **Open a text editor** ✍️ (like Notepad on Windows, TextEdit on macOS, or any code editor like Visual Studio Code).
+1. **Open a text editor**  (like Notepad on Windows, TextEdit on macOS, or any code editor like Visual Studio Code).
 2. **Copy the generated code** 📋 from API Dash.
-3. **Paste the code** into the text editor 🔄.
+3. **Paste the code** into the text editor .
 4. **Save the file** 💾 with a `.py` extension, such as `api_test.py`.
 
 This makes the steps a little more visual and fun!
@@ -1337,6 +1338,64 @@ Unlike other Python libraries (like `requests`), `http.client` is part of Python
 
 ### 3. Execute the generated code:
 Check out the instructions [here](#3-execute-the-generated-code) for detailed steps on how to run the code.
+
+## Python (urllib3)
+
+Here are the detailed instructions for running the generated API Dash code in **Python (using `urllib3`)** for macOS, Windows, and Linux.
+
+`urllib3` is a powerful, user-friendly HTTP client for Python that provides connection pooling, SSL/TLS verification, and retry handling.
+
+### 1. Install Python:
+Check out the instructions [here](#1-install-python) for detailed steps on how to install Python on macOS, Windows, or Linux.
+
+### 2. Install the `urllib3` library:
+
+#### macOS and Linux:
+```bash
+pip3 install urllib3
+```
+
+#### Windows:
+```bash
+pip install urllib3
+```
+
+Verify the installation:
+```bash
+pip show urllib3
+```
+
+> **Note:** If you have multiple Python versions installed, use `pip3 install urllib3` on macOS/Linux or `py -m pip install urllib3` on Windows.
+
+### 3. Execute the generated code:
+Once you have Python and `urllib3` installed, follow these steps to execute the generated code:
+
+1. **Open a text editor**  (like Notepad on Windows, TextEdit on macOS, or any code editor like Visual Studio Code).
+2. **Copy the generated code**  from API Dash.
+3. **Paste the code** into the text editor .
+4. **Save the file**  with a `.py` extension, such as `api_test.py`.
+
+#### macOS and Linux:
+1. Open the **Terminal**.
+2. Navigate to the directory where you saved the `.py` file:
+```bash
+cd /path/to/your/file
+```
+3. Run the Python script:
+```bash
+python3 api_test.py
+```
+
+#### Windows:
+1. Open **Command Prompt** (or PowerShell).
+2. Navigate to the directory where you saved the `.py` file:
+```bash
+cd C:\path\to\your\file
+```
+3. Run the Python script:
+```bash
+python api_test.py
+```
 
 ## Ruby (faraday)
 
