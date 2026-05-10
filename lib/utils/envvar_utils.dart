@@ -289,7 +289,7 @@ EnvironmentVariableSuggestion getVariableStatus(
     String? activeEnvironmentId) {
   if (activeEnvironmentId != null) {
     final variable =
-        envMap[activeEnvironmentId]!.firstWhereOrNull((v) => v.key == key);
+        envMap[activeEnvironmentId]?.firstWhereOrNull((v) => v.key == key);
     if (variable != null) {
       return EnvironmentVariableSuggestion(
         environmentId: activeEnvironmentId,
