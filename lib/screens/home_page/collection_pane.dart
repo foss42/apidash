@@ -5,6 +5,7 @@ import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
@@ -146,10 +147,11 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (item.httpRequestModel!.url.toLowerCase().contains(
-                      filterQuery,
-                    ) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
+                if (matchesNameOrUrlFilter(
+                  query: filterQuery,
+                  name: item.name,
+                  url: item.httpRequestModel?.url,
+                )) {
                   return Padding(
                     padding: kP1,
                     child: RequestItem(id: id, requestModel: item),
