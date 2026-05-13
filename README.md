@@ -148,13 +148,6 @@ Dashbot is the AI assistant available in API Dash (powered by local or cloud LLM
 
 <img width="1470" height="956" alt="dashbot_tab" src="https://github.com/user-attachments/assets/b67b42dc-6281-4c71-bd85-b70199f3cfbd" />
 
-
-## ❤️ Supported by
-
-<a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=apidash" target="_blank">
-    <img width="200" height="60" alt="testmu-ai-logo" src="https://github.com/user-attachments/assets/a40dde8e-6068-4993-98e4-ffb90c082f30" />
-</a>
-
 ## Code Generators
 
 API Dash currently supports API integration code generation for the following languages/libraries.
