@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler;
+import '../services/services.dart' show fileSystemHandler, FileSystemHandler;
 import '../utils/history_utils.dart';
 
 final selectedHistoryIdStateProvider = StateProvider<String?>((ref) => null);
@@ -30,12 +30,12 @@ final StateNotifierProvider<
   Map<String, HistoryMetaModel>?
 >
 historyMetaStateNotifier = StateNotifierProvider(
-  (ref) => HistoryMetaStateNotifier(ref, hiveHandler),
+  (ref) => HistoryMetaStateNotifier(ref, fileSystemHandler),
 );
 
 class HistoryMetaStateNotifier
     extends StateNotifier<Map<String, HistoryMetaModel>?> {
-  HistoryMetaStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  HistoryMetaStateNotifier(this.ref, this.fileSystemHandler) : super(null) {
     var status = loadHistoryMetas();
     Future.microtask(() {
       if (status) {
@@ -49,17 +49,17 @@ class HistoryMetaStateNotifier
   }
 
   final Ref ref;
-  final HiveHandler hiveHandler;
+  final FileSystemHandler fileSystemHandler;
 
   bool loadHistoryMetas() {
-    List<String>? historyIds = hiveHandler.getHistoryIds();
+    List<String>? historyIds = fileSystemHandler.getHistoryIds();
     if (historyIds == null || historyIds.isEmpty) {
       state = null;
       return false;
     } else {
       Map<String, HistoryMetaModel> historyMetaMap = {};
       for (var historyId in historyIds) {
-        var jsonModel = hiveHandler.getHistoryMeta(historyId);
+        var jsonModel = fileSystemHandler.getHistoryMeta(historyId);
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var historyMetaModelFromJson = HistoryMetaModel.fromJson(jsonMap);
@@ -72,7 +72,7 @@ class HistoryMetaStateNotifier
   }
 
   Future<void> loadHistoryRequest(String id) async {
-    var jsonModel = await hiveHandler.getHistoryRequest(id);
+    var jsonModel = await fileSystemHandler.getHistoryRequest(id);
     if (jsonModel != null) {
       var jsonMap = Map<String, Object?>.from(jsonModel);
       var historyRequestModelFromJson = HistoryRequestModel.fromJson(jsonMap);
@@ -88,9 +88,9 @@ class HistoryMetaStateNotifier
     final List<String> updatedHistoryKeys = state == null
         ? [id]
         : [...state!.keys, id];
-    hiveHandler.setHistoryIds(updatedHistoryKeys);
-    hiveHandler.setHistoryMeta(id, model.metaData.toJson());
-    await hiveHandler.setHistoryRequest(id, model.toJson());
+    fileSystemHandler.setHistoryIds(updatedHistoryKeys);
+    fileSystemHandler.setHistoryMeta(id, model.metaData.toJson());
+    await fileSystemHandler.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
   }
 
@@ -99,15 +99,15 @@ class HistoryMetaStateNotifier
     state = {...state ?? {}, id: model.metaData};
     final existingKeys = state?.keys.toList() ?? [];
     if (!existingKeys.contains(id)) {
-      hiveHandler.setHistoryIds([...existingKeys, id]);
+      fileSystemHandler.setHistoryIds([...existingKeys, id]);
     }
-    hiveHandler.setHistoryMeta(id, model.metaData.toJson());
-    await hiveHandler.setHistoryRequest(id, model.toJson());
+    fileSystemHandler.setHistoryMeta(id, model.metaData.toJson());
+    await fileSystemHandler.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
   }
 
   Future<void> clearAllHistory() async {
-    await hiveHandler.clearAllHistory();
+    await fileSystemHandler.clearAllHistory();
     ref.read(selectedHistoryIdStateProvider.notifier).state = null;
     ref.read(selectedHistoryRequestModelProvider.notifier).state = null;
     loadHistoryMetas();

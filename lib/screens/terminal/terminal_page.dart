@@ -15,9 +15,8 @@ class TerminalPage extends ConsumerStatefulWidget {
 
 class _TerminalPageState extends ConsumerState<TerminalPage> {
   final TextEditingController _searchCtrl = TextEditingController();
-  bool _showTimestamps = false; // user toggle
+  bool _showTimestamps = false;
 
-  // Initially all levels will be selected
   final Set<TerminalLevel> _selectedLevels = {
     TerminalLevel.debug,
     TerminalLevel.info,
@@ -33,137 +32,169 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(terminalStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider);
-    final allEntries = state.entries;
-    final filtered = _applyFilters(allEntries);
-
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SearchField(
-                    controller: _searchCtrl,
-                    hintText: kHintSearchLogs,
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Filter button
-                TerminalLevelFilterMenu(
-                  selected: _selectedLevels,
-                  onChanged: (set) => setState(() {
-                    _selectedLevels
-                      ..clear()
-                      ..addAll(set);
-                  }),
-                ),
-                const SizedBox(width: 4),
-                // Timestamp toggle
-                IconButton(
-                  tooltip: kTooltipShowTimestamps,
-                  isSelected: _showTimestamps,
-                  icon: const Icon(Icons.access_time),
-                  selectedIcon: const Icon(Icons.access_time_filled),
-                  onPressed: () {
-                    setState(() => _showTimestamps = !_showTimestamps);
-                  },
-                ),
-                const SizedBox(width: 4),
-                // Clear button
-                ADIconButton(
-                  tooltip: kTooltipClearLogs,
-                  icon: Icons.delete_outline,
-                  iconSize: 22,
-                  onPressed: () {
-                    ref.read(terminalStateProvider.notifier).clear();
-                  },
-                ),
-                const SizedBox(width: 4),
-                // Copy all button
-                CopyButton(
-                  showLabel: false,
-                  toCopy: ref
-                      .read(terminalStateProvider.notifier)
-                      .serializeAll(entries: allEntries),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: filtered.isEmpty
-                ? const Center(
-                    child: SimpleText(
-                      title: kMsgNoLogs,
-                      subtitle: kMsgSendToView,
-                    ),
-                  )
-                : ListView.separated(
-                    itemCount: filtered.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (ctx, i) {
-                      final e = filtered[filtered.length - 1 - i];
-                      final searchQuery = _searchCtrl.text.trim();
-                      String requestName = '';
-                      if (e.source == TerminalSource.js &&
-                          e.requestId != null) {
-                        final model = collection?[e.requestId];
-                        if (model != null) {
-                          requestName = model.name.isNotEmpty
-                              ? model.name
-                              : kLabelUntitled;
-                        }
-                      } else if (e.requestId != null) {
-                        final model = collection?[e.requestId];
-                        if (model != null) {
-                          requestName = model.name.isNotEmpty
-                              ? model.name
-                              : kLabelUntitled;
-                        }
-                      }
-                      switch (e.source) {
-                        case TerminalSource.js:
-                          return JsLogTile(
-                            entry: e,
-                            showTimestamp: _showTimestamps,
-                            searchQuery: searchQuery,
-                            requestName: requestName.isNotEmpty
-                                ? requestName
-                                : null,
-                          );
-                        case TerminalSource.network:
-                          return NetworkLogTile(
-                            entry: e,
-                            showTimestamp: _showTimestamps,
-                            searchQuery: searchQuery,
-                            requestName: requestName.isNotEmpty
-                                ? requestName
-                                : null,
-                          );
-                        case TerminalSource.system:
-                          return SystemLogTile(
-                            entry: e,
-                            showTimestamp: _showTimestamps,
-                            searchQuery: searchQuery,
-                          );
-                      }
-                    },
-                  ),
-          ),
-        ],
+      body: _LogsTab(
+        searchCtrl: _searchCtrl,
+        showTimestamps: _showTimestamps,
+        selectedLevels: _selectedLevels,
+        onTimestampToggle: () =>
+            setState(() => _showTimestamps = !_showTimestamps),
+        onLevelsChanged: (s) => setState(() {
+          _selectedLevels
+            ..clear()
+            ..addAll(s);
+        }),
+        onSearchChanged: () => setState(() {}),
       ),
     );
   }
+}
 
-  List<TerminalEntry> _applyFilters(List<TerminalEntry> entries) {
-    final q = _searchCtrl.text.trim().toLowerCase();
+class _LogsTab extends ConsumerWidget {
+  const _LogsTab({
+    required this.searchCtrl,
+    required this.showTimestamps,
+    required this.selectedLevels,
+    required this.onTimestampToggle,
+    required this.onLevelsChanged,
+    required this.onSearchChanged,
+  });
+
+  final TextEditingController searchCtrl;
+  final bool showTimestamps;
+  final Set<TerminalLevel> selectedLevels;
+  final VoidCallback onTimestampToggle;
+  final ValueChanged<Set<TerminalLevel>> onLevelsChanged;
+  final VoidCallback onSearchChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(terminalStateProvider);
+    final collection = ref.watch(collectionStateNotifierProvider);
+    final allEntries = state.entries;
+    final filtered = _applyFilters(
+      ref,
+      allEntries,
+      searchCtrl.text,
+      selectedLevels,
+    );
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: SearchField(
+                  controller: searchCtrl,
+                  hintText: kHintSearchLogs,
+                  onChanged: (_) => onSearchChanged(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TerminalLevelFilterMenu(
+                selected: selectedLevels,
+                onChanged: onLevelsChanged,
+              ),
+              const SizedBox(width: 4),
+              IconButton(
+                tooltip: kTooltipShowTimestamps,
+                isSelected: showTimestamps,
+                icon: const Icon(Icons.access_time),
+                selectedIcon: const Icon(Icons.access_time_filled),
+                onPressed: onTimestampToggle,
+              ),
+              const SizedBox(width: 4),
+              ADIconButton(
+                tooltip: kTooltipClearLogs,
+                icon: Icons.delete_outline,
+                iconSize: 22,
+                onPressed: () {
+                  ref.read(terminalStateProvider.notifier).clear();
+                },
+              ),
+              const SizedBox(width: 4),
+              CopyButton(
+                showLabel: false,
+                toCopy: ref
+                    .read(terminalStateProvider.notifier)
+                    .serializeAll(entries: allEntries),
+              ),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: filtered.isEmpty
+              ? const Center(
+                  child: SimpleText(
+                    title: kMsgNoLogs,
+                    subtitle: kMsgSendToView,
+                  ),
+                )
+              : ListView.separated(
+                  itemCount: filtered.length,
+                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  itemBuilder: (ctx, i) {
+                    final e = filtered[filtered.length - 1 - i];
+                    final searchQuery = searchCtrl.text.trim();
+                    String requestName = '';
+                    if (e.source == TerminalSource.js && e.requestId != null) {
+                      final model = collection?[e.requestId];
+                      if (model != null) {
+                        requestName = model.name.isNotEmpty
+                            ? model.name
+                            : kLabelUntitled;
+                      }
+                    } else if (e.requestId != null) {
+                      final model = collection?[e.requestId];
+                      if (model != null) {
+                        requestName = model.name.isNotEmpty
+                            ? model.name
+                            : kLabelUntitled;
+                      }
+                    }
+                    switch (e.source) {
+                      case TerminalSource.js:
+                        return JsLogTile(
+                          entry: e,
+                          showTimestamp: showTimestamps,
+                          searchQuery: searchQuery,
+                          requestName:
+                              requestName.isNotEmpty ? requestName : null,
+                        );
+                      case TerminalSource.network:
+                        return NetworkLogTile(
+                          entry: e,
+                          showTimestamp: showTimestamps,
+                          searchQuery: searchQuery,
+                          requestName:
+                              requestName.isNotEmpty ? requestName : null,
+                        );
+                      case TerminalSource.system:
+                        return SystemLogTile(
+                          entry: e,
+                          showTimestamp: showTimestamps,
+                          searchQuery: searchQuery,
+                        );
+                    }
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  static List<TerminalEntry> _applyFilters(
+    WidgetRef ref,
+    List<TerminalEntry> entries,
+    String searchText,
+    Set<TerminalLevel> levels,
+  ) {
+    final q = searchText.trim().toLowerCase();
     bool matches(TerminalEntry e) {
-      if (!_selectedLevels.contains(e.level)) return false;
+      if (!levels.contains(e.level)) return false;
       if (q.isEmpty) return true;
       final controller = ref.read(terminalStateProvider.notifier);
       final title = controller.titleFor(e).toLowerCase();

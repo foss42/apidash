@@ -1,4 +1,6 @@
+export 'collection_id_utils.dart';
 export 'convert_utils.dart';
+export 'open_external_terminal.dart';
 export 'envvar_utils.dart';
 export 'file_utils.dart';
 export 'har_utils.dart';

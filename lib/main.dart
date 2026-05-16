@@ -50,11 +50,11 @@ Future<bool> initApp(
   try {
     debugPrint("initializeUsingPath: $initializeUsingPath");
     debugPrint("workspaceFolderPath: ${settingsModel?.workspaceFolderPath}");
-    final openBoxesStatus = await initHiveBoxes(
+    final openBoxesStatus = await initFileSystemHandler(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );
-    debugPrint("openBoxesStatus: $openBoxesStatus");
+    debugPrint("openFileSystemStatus: $openBoxesStatus");
     if (openBoxesStatus) {
       await autoClearHistory(settingsModel: settingsModel);
     }

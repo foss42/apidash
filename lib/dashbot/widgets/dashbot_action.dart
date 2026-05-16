@@ -38,6 +38,8 @@ class DashbotActionWidgetFactory {
           return DashbotImportNowButton(action: action);
         }
         return null;
+      case ChatActionType.applyWorkflowGraph:
+        return DashbotApplyWorkflowButton(action: action);
       case ChatActionType.downloadDoc:
         return DashbotDownloadDocButton(action: action);
       case ChatActionType.noAction:

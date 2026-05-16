@@ -5,10 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/services/workflow_graph_validation_service.dart';
 import 'package:apidash/utils/utils.dart';
 import '../constants.dart';
 import '../models/models.dart';
 import '../prompts/prompts.dart' as dash;
+import '../prompts/workflow_generation_system_prompt.dart';
 import '../repository/repository.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
@@ -130,7 +132,13 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           )
         : currentReq;
     String systemPrompt;
-    if (type == ChatMessageType.generateCode) {
+    if (type == ChatMessageType.generateWorkflow) {
+      systemPrompt = buildWorkflowGenerationSystemPrompt(
+        ref: _ref,
+        history: currentMessages,
+        formatHistory: promptBuilder.buildHistoryBlock,
+      );
+    } else if (type == ChatMessageType.generateCode) {
       final detectedLang = promptBuilder.detectLanguage(text);
       systemPrompt = promptBuilder.buildSystemPrompt(
         substitutedReq,
@@ -297,6 +305,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         await _applyCurl(action);
         return;
       }
+      if (action.actionType == ChatActionType.applyWorkflowGraph) {
+        await _applyWorkflowGraph(action);
+        return;
+      }
 
       final msg = await _ref.read(autoFixServiceProvider).apply(action);
       if (msg != null && msg.isNotEmpty) {
@@ -309,6 +321,50 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } catch (e) {
       debugPrint('[Chat] Error applying auto-fix: $e');
       _appendSystem('Failed to apply auto-fix: $e', ChatMessageType.general);
+    }
+  }
+
+  Future<void> _applyWorkflowGraph(ChatAction action) async {
+    final payload = action.value is Map<String, dynamic>
+        ? (action.value as Map<String, dynamic>)
+        : (action.value is Map
+            ? (action.value as Map).map((k, v) => MapEntry(k.toString(), v))
+            : <String, dynamic>{});
+
+    final rawGraph = payload['graphData'] ?? payload['graph'] ?? payload;
+    final validator = const WorkflowGraphValidationService();
+    final result = validator.normalizeAndValidate(rawGraph);
+    if (!result.isValid) {
+      _appendSystem(
+        'Workflow generation failed validation:\n- ${result.errors.join('\n- ')}',
+        ChatMessageType.generateWorkflow,
+      );
+      return;
+    }
+
+    final warnings = result.warnings;
+    final notifier = _ref.read(workflowsStateProvider.notifier);
+    var workflowId = _ref.read(workflowIdStateProvider);
+    if (workflowId == null || workflowId.isEmpty) {
+      final created = await notifier.createDefault();
+      workflowId = created.id;
+    }
+
+    notifier.setActive(workflowId);
+    await notifier.saveGraph(workflowId: workflowId, graphData: result.graphData);
+
+    _ref.read(navRailIndexStateProvider.notifier).state = 4;
+
+    if (warnings.isNotEmpty) {
+      _appendSystem(
+        'Applied workflow graph with warnings:\n- ${warnings.join('\n- ')}',
+        ChatMessageType.generateWorkflow,
+      );
+    } else {
+      _appendSystem(
+        'Applied workflow graph to the active workflow.',
+        ChatMessageType.generateWorkflow,
+      );
     }
   }
 
@@ -567,12 +623,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } finally {
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
     }
-  }
-
-  Map<String, dynamic>? _currentRequestContext() {
-    final originalRq = _currentSubstitutedHttpRequestModel;
-    if (originalRq == null) return null;
-    return originalRq.toJson();
   }
 
   Future<void> handleOpenApiAttachment(ChatAttachment att) async {

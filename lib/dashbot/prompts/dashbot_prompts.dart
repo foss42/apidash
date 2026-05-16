@@ -6,6 +6,7 @@ import 'general_interaction.dart';
 import 'generate_code.dart';
 import 'generate_documentation.dart';
 import 'generate_test_cases.dart';
+import 'generate_workflow.dart';
 import 'openapi_insights.dart';
 
 class DashbotPrompts {
@@ -176,6 +177,16 @@ class DashbotPrompts {
     return buildCurlInsightsPrompt(
       diff: diff,
       newReq: newReq,
+    );
+  }
+
+  String generateWorkflowPrompt({
+    required String workflowContextText,
+    required String requestsContextText,
+  }) {
+    return buildGenerateWorkflowPrompt(
+      workflowContextText: workflowContextText,
+      requestsContextText: requestsContextText,
     );
   }
 }

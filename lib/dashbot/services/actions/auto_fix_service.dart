@@ -76,6 +76,8 @@ class AutoFixService {
           );
           return res?.systemMessage;
         }
+      case ChatActionType.applyWorkflowGraph:
+        return null;
       case ChatActionType.other:
         // defer to specific target logic if needed
         return null;

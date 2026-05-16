@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler;
+import '../services/services.dart' show fileSystemHandler, FileSystemHandler;
 
 final selectedEnvironmentIdStateProvider = StateProvider<String?>(
   (ref) => null,
@@ -48,7 +50,7 @@ final availableEnvironmentVariablesStateProvider =
     });
 
 final environmentSequenceProvider = StateProvider<List<String>>((ref) {
-  var ids = hiveHandler.getEnvironmentIds();
+  var ids = fileSystemHandler.getEnvironmentIds();
   return ids ?? [kGlobalEnvironmentId];
 });
 
@@ -57,12 +59,16 @@ final StateNotifierProvider<
   Map<String, EnvironmentModel>?
 >
 environmentsStateNotifierProvider = StateNotifierProvider(
-  (ref) => EnvironmentsStateNotifier(ref, hiveHandler),
+  (ref) {
+    final notifier = EnvironmentsStateNotifier(ref, fileSystemHandler);
+    ref.onDispose(notifier.cancelEnvironmentAutosaveTimer);
+    return notifier;
+  },
 );
 
 class EnvironmentsStateNotifier
     extends StateNotifier<Map<String, EnvironmentModel>?> {
-  EnvironmentsStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  EnvironmentsStateNotifier(this.ref, this.fileSystemHandler) : super(null) {
     var status = loadEnvironments();
     Future.microtask(() {
       if (status) {
@@ -74,10 +80,43 @@ class EnvironmentsStateNotifier
   }
 
   final Ref ref;
-  final HiveHandler hiveHandler;
+  final FileSystemHandler fileSystemHandler;
+
+  Timer? _envAutosaveTimer;
+
+  void cancelEnvironmentAutosaveTimer() {
+    _envAutosaveTimer?.cancel();
+    _envAutosaveTimer = null;
+  }
+
+  void _scheduleEnvironmentAutosave() {
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    _envAutosaveTimer?.cancel();
+    _envAutosaveTimer = Timer(kAutosaveDebounce, () {
+      unawaited(_persistEnvironmentsDebounced());
+    });
+  }
+
+  Future<void> _persistEnvironmentsDebounced() async {
+    if (state == null) return;
+    ref.read(saveDataStateProvider.notifier).state = true;
+    try {
+      final environmentIds = ref.read(environmentSequenceProvider);
+      await fileSystemHandler.setEnvironmentIds(environmentIds);
+      for (final environmentId in environmentIds) {
+        await fileSystemHandler.setEnvironment(
+          environmentId,
+          state![environmentId]!.toJson(),
+        );
+      }
+    } finally {
+      ref.read(saveDataStateProvider.notifier).state = false;
+    }
+    ref.read(hasUnsavedChangesProvider.notifier).state = false;
+  }
 
   bool loadEnvironments() {
-    List<String>? environmentIds = hiveHandler.getEnvironmentIds();
+    List<String>? environmentIds = fileSystemHandler.getEnvironmentIds();
     if (environmentIds == null || environmentIds.isEmpty) {
       const globalEnvironment = EnvironmentModel(
         id: kGlobalEnvironmentId,
@@ -89,7 +128,7 @@ class EnvironmentsStateNotifier
     } else {
       Map<String, EnvironmentModel> environmentsMap = {};
       for (var environmentId in environmentIds) {
-        var jsonModel = hiveHandler.getEnvironment(environmentId);
+        var jsonModel = fileSystemHandler.getEnvironment(environmentId);
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var environmentModelFromJson = EnvironmentModel.fromJson(jsonMap);
@@ -116,7 +155,7 @@ class EnvironmentsStateNotifier
         .update((state) => [...state, id]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state =
         newEnvironmentModel.id;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    _scheduleEnvironmentAutosave();
   }
 
   void updateEnvironment(
@@ -130,7 +169,7 @@ class EnvironmentsStateNotifier
       values: values ?? environment.values,
     );
     state = {...state!, id: updatedEnvironment};
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    _scheduleEnvironmentAutosave();
   }
 
   void duplicateEnvironment(String id) {
@@ -152,7 +191,7 @@ class EnvironmentsStateNotifier
         .read(environmentSequenceProvider.notifier)
         .update((state) => [...environmentIds]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    _scheduleEnvironmentAutosave();
   }
 
   void removeEnvironment(String id) {
@@ -174,7 +213,7 @@ class EnvironmentsStateNotifier
 
     state = {...state!}..remove(id);
 
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    _scheduleEnvironmentAutosave();
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -182,18 +221,66 @@ class EnvironmentsStateNotifier
     final id = environmentIds.removeAt(oldIdx);
     environmentIds.insert(newIdx, id);
     ref.read(environmentSequenceProvider.notifier).state = [...environmentIds];
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    _scheduleEnvironmentAutosave();
   }
 
   Future<void> saveEnvironments() async {
+    cancelEnvironmentAutosaveTimer();
+    if (state == null) return;
     ref.read(saveDataStateProvider.notifier).state = true;
-    final environmentIds = ref.read(environmentSequenceProvider);
-    await hiveHandler.setEnvironmentIds(environmentIds);
-    for (var environmentId in environmentIds) {
-      var environment = state![environmentId]!;
-      await hiveHandler.setEnvironment(environmentId, environment.toJson());
+    try {
+      final environmentIds = ref.read(environmentSequenceProvider);
+      await fileSystemHandler.setEnvironmentIds(environmentIds);
+      for (var environmentId in environmentIds) {
+        var environment = state![environmentId]!;
+        await fileSystemHandler.setEnvironment(environmentId, environment.toJson());
+      }
+      await fileSystemHandler.removeUnused();
+    } finally {
+      ref.read(saveDataStateProvider.notifier).state = false;
     }
-    await hiveHandler.removeUnused();
+    ref.read(hasUnsavedChangesProvider.notifier).state = false;
+  }
+
+  /// Replaces/merges environments from a Git collection import.
+  /// For MVP we merge remote values into existing ones, while keeping any
+  /// locally existing environments that are not present in the remote.
+  Future<void> importEnvironmentsFromGit({
+    required Map<String, EnvironmentModel> environmentsById,
+    required List<String> environmentOrder,
+  }) async {
+    cancelEnvironmentAutosaveTimer();
+    final current = state ?? {};
+
+    // Ensure global environment always exists (many parts assume it).
+    final merged = <String, EnvironmentModel>{
+      ...current,
+      ...environmentsById,
+    };
+    merged.putIfAbsent(
+      kGlobalEnvironmentId,
+      () => const EnvironmentModel(id: kGlobalEnvironmentId, name: "Global", values: []),
+    );
+
+    final remoteIds = environmentOrder.where(merged.containsKey).toList();
+    final currentIds = ref.read(environmentSequenceProvider);
+
+    final mergedOrder = <String>[
+      ...remoteIds,
+      ...currentIds.where((id) => !remoteIds.contains(id)).where(merged.containsKey),
+    ];
+
+    state = merged;
+    ref.read(environmentSequenceProvider.notifier).state = mergedOrder;
+    ref.read(hasUnsavedChangesProvider.notifier).state = false;
+    ref.read(saveDataStateProvider.notifier).state = true;
+
+    await fileSystemHandler.setEnvironmentIds(mergedOrder);
+    for (final id in mergedOrder) {
+      await fileSystemHandler.setEnvironment(id, merged[id]!.toJson());
+    }
+    await fileSystemHandler.removeUnused();
+
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

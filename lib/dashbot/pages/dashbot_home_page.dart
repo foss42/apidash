@@ -100,6 +100,16 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                 },
               ),
               HomeScreenTaskButton(
+                label: "🧠 Generate Workflow",
+                onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                    arguments: ChatMessageType.generateWorkflow,
+                  );
+                },
+              ),
+              HomeScreenTaskButton(
                 label: "📥 Import cURL",
                 onPressed: () {
                   ref.read(dashbotActiveRouteProvider.notifier).goToChat();

@@ -62,12 +62,14 @@ class PromptBuilder {
     ChatMessageType type, {
     String? overrideLanguage,
   }) {
-    if (req == null) return null;
-    final http = req.httpRequestModel;
-    final resp = req.httpResponseModel;
     final prompts = dash.DashbotPrompts();
     switch (type) {
+      case ChatMessageType.generateWorkflow:
+        return null;
       case ChatMessageType.explainResponse:
+        if (req == null) return null;
+        final http = req.httpRequestModel;
+        final resp = req.httpResponseModel;
         return prompts.explainApiResponsePrompt(
           url: http?.url,
           method: http?.method.name.toUpperCase(),
@@ -78,6 +80,9 @@ class PromptBuilder {
           body: http?.body,
         );
       case ChatMessageType.debugError:
+        if (req == null) return null;
+        final http = req.httpRequestModel;
+        final resp = req.httpResponseModel;
         return prompts.debugApiErrorPrompt(
           url: http?.url,
           method: http?.method.name.toUpperCase(),
@@ -88,6 +93,8 @@ class PromptBuilder {
           body: http?.body,
         );
       case ChatMessageType.generateTest:
+        if (req == null) return null;
+        final http = req.httpRequestModel;
         return prompts.generateTestCasesPrompt(
           url: http?.url,
           method: http?.method.name.toUpperCase(),
@@ -95,6 +102,9 @@ class PromptBuilder {
           body: http?.body,
         );
       case ChatMessageType.generateDoc:
+        if (req == null) return null;
+        final http = req.httpRequestModel;
+        final resp = req.httpResponseModel;
         return prompts.generateDocumentationPrompt(
           url: http?.url,
           method: http?.method.name.toUpperCase(),
@@ -105,6 +115,8 @@ class PromptBuilder {
           body: http?.body,
         );
       case ChatMessageType.generateCode:
+        if (req == null) return null;
+        final http = req.httpRequestModel;
         if (overrideLanguage == null || overrideLanguage.isEmpty) {
           return prompts.codeGenerationIntroPrompt(
             url: http?.url,
@@ -161,6 +173,8 @@ class PromptBuilder {
         return "Can you generate tests for this request?";
       case ChatMessageType.generateCode:
         return "Can you generate code for this request?";
+      case ChatMessageType.generateWorkflow:
+        return "Generate a workflow for my current requests and overwrite the active workflow.";
       case ChatMessageType.importCurl:
         return "I'd like to import a cURL command";
       case ChatMessageType.importOpenApi:

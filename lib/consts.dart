@@ -11,6 +11,10 @@ const kLearnScriptingUrl =
 const kIssueUrl = "$kGitUrl/issues";
 const kDefaultUri = "api.apidash.dev";
 
+/// Collections, manifest, environments, etc. live under `<workspace>/apidash-data/`
+/// or `<Documents>/apidash-data/` when no workspace is set.
+const kApidashDataDirectoryName = 'apidash-data';
+
 const kAssetIntroMd = "assets/intro.md";
 const kAssetSendingLottie = "assets/sending.json";
 const kAssetSavingLottie = "assets/saving.json";
@@ -41,6 +45,8 @@ final kEnvScaffoldKey = GlobalKey<ScaffoldState>();
 final kHisScaffoldKey = GlobalKey<ScaffoldState>();
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
+
+const kAutosaveDebounce = Duration(seconds: 2);
 const kTabHeight = 40.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
@@ -514,6 +520,9 @@ const kLabelRequests = "Requests";
 const kLabelVariables = "Variables";
 const kLabelHistory = "History";
 const kLabelLogs = "Logs";
+const kLabelShell = "Shell";
+const kLabelWorkflows = "Workflows";
+const kLabelDashboard = "Dashboard";
 const kLabelAbout = "About";
 const kLabelSettings = "Settings";
 

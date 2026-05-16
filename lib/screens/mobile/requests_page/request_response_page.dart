@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/home_bottom_terminal_bar.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../home_page/collection_pane.dart';
@@ -32,48 +33,60 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
       initialLength: 3,
       vsync: this,
     );
-    return DrawerSplitView(
-      scaffoldKey: kHomeScaffoldKey,
-      title: Row(
-        children: [
-          APITypeDropdown(),
-          Expanded(
-            child: EditorTitle(
-              title: name,
-              onSelected: (ItemMenuOption item) {
-                if (item == ItemMenuOption.edit) {
-                  showRenameDialog(context, kLabelRenameRequest, name, (val) {
-                    ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .update(name: val);
-                  });
-                }
-                if (item == ItemMenuOption.delete) {
-                  ref.read(collectionStateNotifierProvider.notifier).remove();
-                }
-                if (item == ItemMenuOption.duplicate) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .duplicate();
-                }
-              },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: DrawerSplitView(
+            scaffoldKey: kHomeScaffoldKey,
+            title: Row(
+              children: [
+                APITypeDropdown(),
+                Expanded(
+                  child: EditorTitle(
+                    title: name,
+                    onSelected: (ItemMenuOption item) {
+                      if (item == ItemMenuOption.edit) {
+                        showRenameDialog(context, kLabelRenameRequest, name, (
+                          val,
+                        ) {
+                          ref
+                              .read(collectionStateNotifierProvider.notifier)
+                              .update(name: val);
+                        });
+                      }
+                      if (item == ItemMenuOption.delete) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .remove();
+                      }
+                      if (item == ItemMenuOption.duplicate) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .duplicate();
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
+            leftDrawerContent: const CollectionPane(),
+            actions: const [kHSpacer12],
+            mainContent: id == null
+                ? const RequestEditorDefault()
+                : RequestTabs(
+                    controller: requestTabController,
+                    showDashbot: ref.watch(dashbotShowMobileProvider),
+                  ),
+            bottomNavigationBar: RequestResponsePageBottombar(
+              requestTabController: requestTabController,
+            ),
+            onDrawerChanged: (value) =>
+                ref.read(leftDrawerStateProvider.notifier).state = value,
           ),
-        ],
-      ),
-      leftDrawerContent: const CollectionPane(),
-      actions: const [kHSpacer12],
-      mainContent: id == null
-          ? const RequestEditorDefault()
-          : RequestTabs(
-              controller: requestTabController,
-              showDashbot: ref.watch(dashbotShowMobileProvider),
-            ),
-      bottomNavigationBar: RequestResponsePageBottombar(
-        requestTabController: requestTabController,
-      ),
-      onDrawerChanged: (value) =>
-          ref.read(leftDrawerStateProvider.notifier).state = value,
+        ),
+        if (kIsDesktop) const HomeBottomTerminalBar(),
+      ],
     );
   }
 }

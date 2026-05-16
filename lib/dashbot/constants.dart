@@ -7,6 +7,7 @@ enum ChatMessageType {
   generateTest,
   generateDoc,
   generateCode,
+  generateWorkflow,
   importCurl,
   importOpenApi,
   general
@@ -23,6 +24,7 @@ enum ChatActionType {
   showLanguages('show_languages'),
   applyCurl('apply_curl'),
   applyOpenApi('apply_openapi'),
+  applyWorkflowGraph('apply_workflow_graph'),
   downloadDoc('download_doc'),
   other('other'),
   noAction('no_action'),
@@ -39,6 +41,7 @@ enum ChatActionTarget {
   code,
   attachment,
   documentation,
+  workflow,
 }
 
 ChatActionType chatActionTypeFromString(String s) {
