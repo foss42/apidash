@@ -1,4 +1,4 @@
-// import 'package:apidash/providers/providers.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -19,6 +19,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  Map<String, String> _localAIKeys = {};
 
   @override
   void initState() {
@@ -28,6 +29,14 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
     }
     aM = ModelManager.fetchAvailableModels();
+
+    final settings = ref.read(settingsProvider);
+    _localAIKeys = Map<String, String>.from(settings.aiKeys);
+    if (newAIRequestModel?.apiKey != null &&
+        newAIRequestModel!.apiKey!.isNotEmpty &&
+        selectedProvider != null) {
+      _localAIKeys[selectedProvider!.name] = newAIRequestModel!.apiKey!;
+    }
   }
 
   @override
@@ -70,6 +79,15 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                               selectedProvider = x;
                               newAIRequestModel = mappedData[selectedProvider]
                                   ?.toAiRequestModel();
+                              if (newAIRequestModel != null &&
+                                  selectedProvider != null) {
+                                final storedKey =
+                                    _localAIKeys[selectedProvider!.name];
+                                if (storedKey != null) {
+                                  newAIRequestModel = newAIRequestModel!
+                                      .copyWith(apiKey: storedKey);
+                                }
+                              }
                             });
                           },
                           value: selectedProvider,
@@ -123,6 +141,15 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                                 selectedProvider = x.providerId;
                                 newAIRequestModel = mappedData[selectedProvider]
                                     ?.toAiRequestModel();
+                                if (newAIRequestModel != null &&
+                                    selectedProvider != null) {
+                                  final storedKey =
+                                      _localAIKeys[selectedProvider!.name];
+                                  if (storedKey != null) {
+                                    newAIRequestModel = newAIRequestModel!
+                                        .copyWith(apiKey: storedKey);
+                                  }
+                                }
                               });
                             },
                           ),
@@ -165,16 +192,12 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
               setState(() {
+                _localAIKeys[aiModelProvider.providerId!.name] = x;
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
               });
             },
-            value: newAIRequestModel?.apiKey ?? "",
-            // value: currentCredential,
+            value: _localAIKeys[aiModelProvider.providerId!.name] ?? "",
           ),
           kVSpacer10,
         ],
@@ -243,6 +266,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
+              ref.read(settingsProvider.notifier).update(aiKeys: _localAIKeys);
               Navigator.of(context).pop(newAIRequestModel);
             },
             child: Text(kLabelSave),
