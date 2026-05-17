@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:better_networking/better_networking.dart';
 import 'dart:developer';
+import 'package:better_networking/better_networking.dart';
 import '../consts.dart';
 import '../interface/interface.dart';
 import '../models/models.dart';
