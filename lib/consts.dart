@@ -54,9 +54,7 @@ const kSuggestionsMenuMaxHeight = 200.0;
 const kSegmentedTabWidth = 140.0;
 const kSegmentedTabHeight = 32.0;
 
-const kDataTableScrollbarTheme = ScrollbarThemeData(
-  crossAxisMargin: -4,
-);
+const kDataTableScrollbarTheme = ScrollbarThemeData(crossAxisMargin: -4);
 const kDataTableBottomPadding = 12.0;
 const kDataTableRowHeight = 36.0;
 
@@ -172,26 +170,24 @@ const kNoBodyViewOptions = [ResponseBodyView.none];
 const kNoRawBodyViewOptions = [ResponseBodyView.none, ResponseBodyView.raw];
 const kRawBodyViewOptions = [ResponseBodyView.raw];
 const kCodeRawBodyViewOptions = [ResponseBodyView.code, ResponseBodyView.raw];
-const kPreviewBodyViewOptions = [
-  ResponseBodyView.preview,
-];
+const kPreviewBodyViewOptions = [ResponseBodyView.preview];
 const kPreviewRawBodyViewOptions = [
   ResponseBodyView.preview,
-  ResponseBodyView.raw
+  ResponseBodyView.raw,
 ];
 const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.preview,
   ResponseBodyView.code,
-  ResponseBodyView.raw
+  ResponseBodyView.raw,
 ];
 const kSSERawBodyViewOptions = [ResponseBodyView.sse, ResponseBodyView.raw];
 const kAnswerRawBodyViewOptions = [
   ResponseBodyView.answer,
-  ResponseBodyView.raw
+  ResponseBodyView.raw,
 ];
 
 const Map<String, Map<String, List<ResponseBodyView>>>
-    kResponseBodyViewOptions = {
+kResponseBodyViewOptions = {
   kTypeApplication: {
     kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
     kSubTypeJson: kPreviewRawBodyViewOptions,
@@ -216,12 +212,8 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
     kSubTypeSvg: kPreviewRawBodyViewOptions,
   },
-  kTypeAudio: {
-    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
-  },
-  kTypeVideo: {
-    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
-  },
+  kTypeAudio: {kSubTypeDefaultViewOptions: kPreviewBodyViewOptions},
+  kTypeVideo: {kSubTypeDefaultViewOptions: kPreviewBodyViewOptions},
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
@@ -489,7 +481,7 @@ const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
 // TODO: CodeField widget does not allow this hint. To be solved.
-const kHintScript = "// Use Javacript to modify this request dynamically";
+const kHintScript = "// Use Javascript to modify this request dynamically";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
@@ -516,3 +508,177 @@ const kLabelGenerateUI = "Generate UI";
 // Terminal Page
 const kMsgNoLogs = 'No logs yet';
 const kMsgSendToView = 'Send a request to view its details in the console.';
+
+// Dashboard Navigation
+const kLabelRequests = "Requests";
+const kLabelVariables = "Variables";
+const kLabelHistory = "History";
+const kLabelLogs = "Logs";
+const kLabelAbout = "About";
+const kLabelSettings = "Settings";
+
+// Settings Page
+const kLabelSwitchThemeMode = "Switch Theme Mode";
+const kLabelDashBotSetting = "DashBot";
+const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visiblity";
+const kLabelDefaultUriScheme = "Default URI Scheme";
+const kLabelDisableSSL = "Disable SSL verification";
+const kLabelDefaultCodeGen = "Default Code Generator";
+const kLabelDefaultLLM = "Default Large Language Model (LLM)";
+const kLabelSaveResponses = "Save Responses";
+const kLabelSaveResponsesSubtitle =
+    "Save disk space by not storing API responses";
+const kLabelShowSaveAlert = "Show Save Alert on App Close";
+const kLabelShowSaveAlertSubtitle =
+    "Show a confirmation dialog to save workspace when the user closes the app";
+const kLabelHistoryRetention = "History Retention Period";
+const kLabelExportData = "Export Data";
+const kLabelExportDataSubtitle =
+    "Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.";
+const kLabelExport = "Export";
+const kLabelClearData = "Clear Data";
+const kLabelClearDataSubtitle = "Delete all requests data from the disk";
+const kMsgClearDataConfirmation =
+    "This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?";
+const kLabelYes = "Yes";
+const kLabelClear = "Clear";
+const kLabelAboutSubtitle =
+    "Release Details, Support Channel, Report Bug / Request New Feature";
+const kMsgRequestsDataCleared = "Requests Data Cleared";
+const kLabelCurrentSelectionPrefix = "Current selection: ";
+const kLabelDarkMode = "Dark Mode";
+const kLabelLightMode = "Light mode";
+const kLabelEnabled = "Enabled";
+const kLabelDisabled = "Disabled";
+const kLabelAlwaysShow = "Always show";
+const kLabelShowOnlyWhenScrolling = "Show only when scrolling";
+const kLabelSSLDisabled = "SSL Verification Disabled";
+const kLabelSSLEnabled = "SSL Verification Enabled";
+
+// Terminal Page Labels
+const kHintSearchLogs = "Search logs";
+const kTooltipShowTimestamps = "Show timestamps";
+const kTooltipClearLogs = "Clear logs";
+const kLabelUntitled = "Untitled";
+
+// History Page Labels
+const kTooltipClearHistory = "Clear History";
+const kTooltipManageHistory = "Manage History";
+const kTooltipDuplicateRequest = "Duplicate Request";
+const kTooltipGoToRequest = "Go to Request";
+const kTooltipRequestNotFound = "Couldn't find Request";
+const kLabelNoRequestSelected = "No Request Selected";
+
+// Onboarding Screen
+const kLabelSkip = "Skip";
+const kLabelOnboardingTitle1 = "Test APIs with Ease";
+const kLabelOnboardingDesc1 =
+    "Send requests, preview responses, and test APIs with ease. REST and GraphQL support included!";
+const kLabelOnboardingTitle2 = "Organize & Save Requests";
+const kLabelOnboardingDesc2 =
+    "Save and organize API requests into collections for quick access and better workflow.";
+const kLabelOnboardingTitle3 = "Generate Code Instantly";
+const kLabelOnboardingDesc3 =
+    "Integrate APIs using well tested code generators for JavaScript, Python, Dart, Kotlin & others.";
+
+// AI Model Selector Dialog
+const kLabelUpdateModels = "Update Models";
+const kLabelSelectModelProvider = "Select Model Provider";
+const kLabelSelectAIProvider = "Please select an AI API Provider";
+const kLabelApiKeyCredential = "API Key / Credential";
+const kLabelEndpoint = "Endpoint";
+const kLabelModels = "Models";
+const kLabelAddCustomModel = "Add Custom Model";
+const kHintModelId = "Model ID";
+const kHintModelDisplayName = "Model Display Name";
+const kLabelAddModel = "Add Model";
+
+// SDUI Preview
+const kLabelGeneratedComponent = "Generated Component";
+const kLabelExportCode = "Export Code";
+const kLabelMakeModifications = "Make Modifications";
+const kHintAnyModifications = "Any Modifications?";
+const kLabelComponentPreview = "Component Preview";
+const kMsgExportFailed = "Export Failed";
+const kMsgCopiedToClipboard = "Copied to clipboard!";
+const kMsgFailedToDisplayPreview = "Failed to Display Preview";
+const kMsgPreviewGenerationFailed = "Preview Generation Failed!";
+const kMsgModificationRequestFailed = "Modification Request Failed!";
+const kMsgUnexpectedError = "Unexpected Error Occured";
+const kMsgSelectDefaultAIModel = "Please Select Default AI Model in Settings";
+const kMsgAPIToolGenerationFailed = "API Tool generation failed!";
+
+// Tool Generation
+const kLabelGenerateAPITool = "Generate API Tool";
+const kLabelSelectFrameworkAndLang = "Select an agent framework & language";
+const kLabelAgentFramework = "Agent Framework";
+const kLabelTargetLanguage = "Target Language";
+const kLabelGenerateTool = "Generate Tool";
+
+// Editor Title Actions
+const kTooltipRename = "Rename";
+const kTooltipDelete = "Delete";
+const kTooltipDuplicate = "Duplicate";
+
+// Rename Dialogs
+const kLabelRenameRequest = "Rename Request";
+const kLabelRenameEnvironment = "Rename Environment";
+
+// Filter
+const kHintFilterByName = "Filter by name";
+const kHintFilterByNameOrUrl = "Filter by name or url";
+
+// Environment Editor
+const kLabelVariable = "Variable";
+const kLabelValue = "Value";
+const kLabelVariableName = "Variable name";
+const kLabelVariableValue = "Variable value";
+const kLabelSecretValue = "Secret value";
+const kHintAddVariable = "Add Variable";
+const kHintAddSecretValue = "Add Secret Value";
+const kLabelAddSecret = "Add Secret";
+const kLabelSelectContentType = "Select Content Type:";
+
+// EnvVar Popover
+const kLabelVALUE = "VALUE";
+const kLabelSCOPE = "SCOPE";
+const kLabelUnknown = "unknown";
+
+// AI Model Selector
+const kLabelSelectModel = "Select Model";
+
+// Code Pane Messages
+const kMsgCodegenAINotAvailable =
+    "Code generation for AI Requests is currently not available.";
+const kMsgCodegenGraphQLNotAvailable =
+    "Code generation for GraphQL is currently not available.";
+const kMsgCodegenError =
+    "An error was encountered while generating code. $kRaiseIssue";
+
+// Scripts Tabs
+const kLabelPreRequest = "Pre Request";
+const kLabelPostResponse = "Post Response";
+
+// History Bottombar
+const kLabelShowAll = "Show All";
+
+// AI Request Pane Tabs
+const kLabelPrompt = "Prompt";
+const kLabelPrompts = "Prompts";
+const kLabelAuthorization = "Authorization";
+const kLabelConfiguration = "Configuration";
+const kLabelConfigurations = "Configurations";
+
+// History Request Pane
+const kLabelContentType = "Content Type: ";
+const kLabelDefaultContentType = "text";
+
+// Tool Requirements Selector
+const kLabelWith = "with";
+
+// AI Request
+const kLabelSystemPrompt = "System Prompt";
+const kHintEnterSystemPrompt = "Enter System Prompt";
+const kLabelUserPromptInput = "User Prompt / Input";
+const kHintEnterUserPrompt = "Enter User Prompt";
+const kHintEnterApiKey = "Enter API key or Authorization Credentials";

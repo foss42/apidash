@@ -157,7 +157,7 @@ void main() {
       expect(substituteVariables(input, combinedEnvVarsMap), expected);
     });
 
-    test("Testing substituteVariables with incorrect paranthesis", () {
+    test("Testing substituteVariables with incorrect parenthesis", () {
       String input = "{{url}}}/humanize/social?num={{num}}";
       String expected = "api.apidash.dev}/humanize/social?num=8940000";
       expect(substituteVariables(input, combinedEnvVarsMap), expected);
@@ -275,6 +275,61 @@ void main() {
         ],
         body: "The API key is token and the number is 8940000",
       );
+      expect(
+          substituteHttpRequestModel(
+              httpRequestModel, envMap, activeEnvironmentId),
+          expected);
+    });
+
+    test(
+        "Testing substituteHttpRequestModel with environment variables in form data names and values",
+        () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/submit",
+        bodyContentType: ContentType.formdata,
+        formData: [
+          FormDataModel(
+            name: "{{header_name}}",
+            value: "{{token}}",
+            type: FormDataType.text,
+          ),
+          FormDataModel(
+            name: "file_{{num}}",
+            value: "/tmp/upload.txt",
+            type: FormDataType.file,
+          ),
+        ],
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+        "activeEnvId2": [
+          const EnvironmentVariableModel(
+            key: "header_name",
+            value: "X-Token",
+          ),
+        ],
+      };
+
+      const activeEnvironmentId = "activeEnvId2";
+      const expected = HttpRequestModel(
+        url: "api.foss42.com/submit",
+        bodyContentType: ContentType.formdata,
+        formData: [
+          FormDataModel(
+            name: "X-Token",
+            value: "token",
+            type: FormDataType.text,
+          ),
+          FormDataModel(
+            name: "file_5670000",
+            value: "/tmp/upload.txt",
+            type: FormDataType.file,
+          ),
+        ],
+      );
+
       expect(
           substituteHttpRequestModel(
               httpRequestModel, envMap, activeEnvironmentId),

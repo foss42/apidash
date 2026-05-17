@@ -148,50 +148,45 @@ Dashbot is the AI assistant available in API Dash (powered by local or cloud LLM
 
 <img width="1470" height="956" alt="dashbot_tab" src="https://github.com/user-attachments/assets/b67b42dc-6281-4c71-bd85-b70199f3cfbd" />
 
-
-## ❤️ Supported by
-
-<a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=apidash" target="_blank">
-    <img width="200" height="60" alt="testmu-ai-logo" src="https://github.com/user-attachments/assets/a40dde8e-6068-4993-98e4-ffb90c082f30" />
-</a>
-
 ## Code Generators
 
 API Dash currently supports API integration code generation for the following languages/libraries.
 
-| Language               | Library       | Comment/Issues |
-| ---------------------- | ------------- | ------- |
-| cURL                   |               |         |
-| HAR                    |               |         |
-| C                      | `libcurl`     |         |
-| C#                     | `HttpClient`  |         |
-| C#                     | `RestSharp`   |         |
-| Dart                   | `http`        |         |
-| Dart                   | `dio`         |         |
-| Go                     | `net/http`    |         |
-| JavaScript             | `axios`       |         |
-| JavaScript             | `fetch`       |         |
-| JavaScript (`node.js`) | `axios`       |         |
-| JavaScript (`node.js`) | `fetch`       |         |
-| Java                   | `asynchttpclient` |     |
-| Java                   | `HttpClient`  |         |
-| Java                   | `okhttp3`     |         |
-| Java                   | `Unirest`     |         |
-| Julia                  | `HTTP`        |         |
-| Kotlin                 | `okhttp3`     |         |
-| PHP                    | `curl`        |         |
-| PHP                    | `guzzle`      |         |
-| PHP                    | `HTTPlug`     |         |
-| Python                 | `requests`    |         |
-| Python                 | `http.client` |         |
-| Ruby                   | `faraday`     |         |
-| Ruby                   | `net/http`    |         |
-| Rust                   | `hyper`       |         |
-| Rust                   | `reqwest`     |         |
-| Rust                   | `ureq`        |         |
-| Rust                   | `Actix Client` |        |
-| Swift                  | `Alamofire`   |         |
-| Swift                  | `URLSession`  |         |
+| Language               | Library       | 
+| ---------------------- | ------------- | 
+| cURL                   |               |
+| HAR                    |               |
+| C                      | `libcurl`     |
+| C#                     | `HttpClient`  |
+| C#                     | `RestSharp`   |
+| Dart                   | `http`        |
+| Dart                   | `dio`         |
+| Go                     | `net/http`    |
+| JavaScript             | `axios`       |
+| JavaScript             | `fetch`       |
+| JavaScript (`node.js`) | `axios`       |
+| JavaScript (`node.js`) | `fetch`       |
+| Java                   | `asynchttpclient` |
+| Java                   | `HttpClient`  |
+| Java                   | `okhttp3`     |
+| Java                   | `Unirest`     |
+| Julia                  | `HTTP`        |
+| Kotlin                 | `okhttp3`     |
+| PHP                    | `curl`        |
+| PHP                    | `guzzle`      |
+| PHP                    | `HTTPlug`     |
+| Python                 | `requests`    |
+| Python                 | `http.client` |
+| Ruby                   | `faraday`     |
+| Ruby                   | `net/http`    |
+| Rust                   | `hyper`       |
+| Rust                   | `reqwest`     |
+| Rust                   | `ureq`        |
+| Rust                   | `Actix Client` |
+| Swift                  | `Alamofire`   |
+| Swift                  | `URLSession`  |
+
+Code for any other langauge can be easily generated via DashBot.
 
 ## MIME Types supported by API Dash Response Previewer
 

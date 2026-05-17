@@ -6,10 +6,7 @@ import 'package:apidash/consts.dart';
 import 'widgets/onboarding_slide.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({
-    super.key,
-    this.onComplete,
-  });
+  const OnboardingScreen({super.key, this.onComplete});
 
   final AsyncCallback? onComplete;
   @override
@@ -40,9 +37,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             onPressed: () async {
               await widget.onComplete?.call();
             },
-            child: const Text(
-              'Skip',
-            ),
+            child: const Text(kLabelSkip),
           ),
         ],
       ),
@@ -68,25 +63,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     context: context,
                     assetPath: kAssetApiServerLottie,
                     assetSize: context.width * 0.75,
-                    title: "Test APIs with Ease",
-                    description:
-                        "Send requests, preview responses, and test APIs with ease. REST and GraphQL support included!",
+                    title: kLabelOnboardingTitle1,
+                    description: kLabelOnboardingDesc1,
                   ),
                   OnboardingSlide(
                     context: context,
                     assetPath: kAssetFolderLottie,
                     assetSize: context.width * 0.55,
-                    title: "Organize & Save Requests",
-                    description:
-                        "Save and organize API requests into collections for quick access and better workflow.",
+                    title: kLabelOnboardingTitle2,
+                    description: kLabelOnboardingDesc2,
                   ),
                   OnboardingSlide(
                     context: context,
                     assetPath: kAssetGenerateCodeLottie,
                     assetSize: context.width * 0.65,
-                    title: "Generate Code Instantly",
-                    description:
-                        "Integrate APIs using well tested code generators for JavaScript, Python, Dart, Kotlin & others.",
+                    title: kLabelOnboardingTitle3,
+                    description: kLabelOnboardingDesc3,
                   ),
                 ],
               ),
@@ -111,9 +103,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .secondaryContainer,
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.secondaryContainer,
                             borderRadius: BorderRadius.circular(9),
                           ),
                           duration: const Duration(milliseconds: 300),
@@ -131,10 +123,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         await widget.onComplete?.call();
                       }
                     },
-                    icon: const Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 30,
-                    ),
+                    icon: const Icon(Icons.arrow_forward_rounded, size: 30),
                     style: IconButton.styleFrom(
                       elevation: 8,
                       shape: RoundedRectangleBorder(

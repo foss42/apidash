@@ -51,10 +51,13 @@ When constructing a request, insert the variable into a field by typing the vari
 - URL field.
 - Params (key & value).
 - Header (key & value).
+- Request body (Text).
+- Request body (JSON).
+- Form body fields (key & value) for Form URL-Encoded and Multipart Form Data.
 
 > Note: The Header key field supports variable substitution but does not offer highlighting or suggestions.
 
-4. **Checing scope and value**
+4. **Checking scope and value**
 
 ![Image](./images/env/active_variable.png)
 

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../utils/history_utils.dart';
@@ -14,18 +15,23 @@ final selectedRequestGroupIdStateProvider = StateProvider<String?>((ref) {
   return getHistoryRequestKey(historyMetaState![selectedHistoryId]!);
 });
 
-final selectedHistoryRequestModelProvider =
-    StateProvider<HistoryRequestModel?>((ref) => null);
+final selectedHistoryRequestModelProvider = StateProvider<HistoryRequestModel?>(
+  (ref) => null,
+);
 
 final historySequenceProvider =
     StateProvider<Map<DateTime, List<HistoryMetaModel>>?>((ref) {
-  final historyMetas = ref.watch(historyMetaStateNotifier);
-  return getTemporalGroups(historyMetas?.values.toList());
-});
+      final historyMetas = ref.watch(historyMetaStateNotifier);
+      return getTemporalGroups(historyMetas?.values.toList());
+    });
 
-final StateNotifierProvider<HistoryMetaStateNotifier,
-        Map<String, HistoryMetaModel>?> historyMetaStateNotifier =
-    StateNotifierProvider((ref) => HistoryMetaStateNotifier(ref, hiveHandler));
+final StateNotifierProvider<
+  HistoryMetaStateNotifier,
+  Map<String, HistoryMetaModel>?
+>
+historyMetaStateNotifier = StateNotifierProvider(
+  (ref) => HistoryMetaStateNotifier(ref, hiveHandler),
+);
 
 class HistoryMetaStateNotifier
     extends StateNotifier<Map<String, HistoryMetaModel>?> {
@@ -78,12 +84,10 @@ class HistoryMetaStateNotifier
 
   void addHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
-    state = {
-      ...state ?? {},
-      id: model.metaData,
-    };
-    final List<String> updatedHistoryKeys =
-        state == null ? [id] : [...state!.keys, id];
+    state = {...state ?? {}, id: model.metaData};
+    final List<String> updatedHistoryKeys = state == null
+        ? [id]
+        : [...state!.keys, id];
     hiveHandler.setHistoryIds(updatedHistoryKeys);
     hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
@@ -92,10 +96,7 @@ class HistoryMetaStateNotifier
 
   void editHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
-    state = {
-      ...state ?? {},
-      id: model.metaData,
-    };
+    state = {...state ?? {}, id: model.metaData};
     final existingKeys = state?.keys.toList() ?? [];
     if (!existingKeys.contains(id)) {
       hiveHandler.setHistoryIds([...existingKeys, id]);

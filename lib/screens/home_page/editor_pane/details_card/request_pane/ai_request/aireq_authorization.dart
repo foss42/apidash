@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -10,8 +11,11 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final apiKey = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.apiKey));
+    final apiKey = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.aiRequestModel?.apiKey,
+      ),
+    );
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!);
@@ -36,7 +40,7 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
                       .read(collectionStateNotifierProvider.notifier)
                       .update(aiRequestModel: aiReqM.copyWith(apiKey: value));
                 },
-                hintText: 'Enter API key or Authorization Credentials',
+                hintText: kHintEnterApiKey,
               ),
             ),
           ),

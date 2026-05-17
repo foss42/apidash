@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 /// A decoded json object can be converted to a [NodeViewModelState] by calling
 /// the [buildViewModelNodes] method.
 ///
-/// A node item can be eiter a class root, an array or a single
+/// A node item can be either a class root, an array or a single
 /// class/array field.
 ///
 ///
@@ -686,7 +686,7 @@ class JsonExplorerStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Finds all occurences of [searchTerm] in [victim] and retrieves all their
+  /// Finds all occurrences of [searchTerm] in [victim] and retrieves all their
   /// indexes.
   Iterable<int> _getSearchTermMatchesIndexes(String victim) {
     final pattern = RegExp(searchTerm, caseSensitive: false);

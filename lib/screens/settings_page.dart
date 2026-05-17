@@ -25,18 +25,15 @@ class SettingsPage extends ConsumerWidget {
             ? Padding(
                 padding: kPh20t40,
                 child: kIsDesktop
-                    ? Text("Settings",
-                        style: Theme.of(context).textTheme.headlineLarge)
+                    ? Text(
+                        kLabelSettings,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      )
                     : kSizedBoxEmpty,
               )
             : kSizedBoxEmpty,
         kIsDesktop
-            ? const Padding(
-                padding: kPh20,
-                child: Divider(
-                  height: 1,
-                ),
-              )
+            ? const Padding(padding: kPh20, child: Divider(height: 1))
             : kSizedBoxEmpty,
         Expanded(
           child: ListView(
@@ -44,9 +41,9 @@ class SettingsPage extends ConsumerWidget {
             children: [
               ADListTile(
                 type: ListTileType.switchOnOff,
-                title: 'Switch Theme Mode',
+                title: kLabelSwitchThemeMode,
                 subtitle:
-                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}',
+                    '$kLabelCurrentSelectionPrefix${settings.isDark ? kLabelDarkMode : kLabelLightMode}',
                 value: settings.isDark,
                 onChanged: (bool? value) {
                   ref.read(settingsProvider.notifier).update(isDark: value);
@@ -54,9 +51,9 @@ class SettingsPage extends ConsumerWidget {
               ),
               ADListTile(
                 type: ListTileType.switchOnOff,
-                title: 'DashBot',
+                title: kLabelDashBotSetting,
                 subtitle:
-                    'Current selection: ${settings.isDashBotEnabled ? "Enabled" : "Disabled"}',
+                    '$kLabelCurrentSelectionPrefix${settings.isDashBotEnabled ? kLabelEnabled : kLabelDisabled}',
                 value: settings.isDashBotEnabled,
                 onChanged: (bool? value) {
                   ref
@@ -66,9 +63,9 @@ class SettingsPage extends ConsumerWidget {
               ),
               ADListTile(
                 type: ListTileType.switchOnOff,
-                title: 'Collection Pane Scrollbar Visiblity',
+                title: kLabelCollectionPaneScrollbar,
                 subtitle:
-                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
+                    '$kLabelCurrentSelectionPrefix${settings.alwaysShowCollectionPaneScrollbar ? kLabelAlwaysShow : kLabelShowOnlyWhenScrolling}',
                 value: settings.alwaysShowCollectionPaneScrollbar,
                 onChanged: (bool? value) {
                   ref
@@ -78,9 +75,10 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('Default URI Scheme'),
+                title: const Text(kLabelDefaultUriScheme),
                 subtitle: Text(
-                    '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
+                  '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri',
+                ),
                 trailing: DefaultUriSchemePopupMenu(
                   value: settings.defaultUriScheme,
                   onChanged: (value) {
@@ -93,9 +91,9 @@ class SettingsPage extends ConsumerWidget {
               !kIsWeb
                   ? ADListTile(
                       type: ListTileType.switchOnOff,
-                      title: 'Disable SSL verification',
+                      title: kLabelDisableSSL,
                       subtitle:
-                          'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
+                          '$kLabelCurrentSelectionPrefix${settings.isSSLDisabled ? kLabelSSLDisabled : kLabelSSLEnabled}',
                       value: settings.isSSLDisabled,
                       onChanged: (bool? value) {
                         ref
@@ -106,7 +104,7 @@ class SettingsPage extends ConsumerWidget {
                   : kSizedBoxEmpty,
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('Default Code Generator'),
+                title: const Text(kLabelDefaultCodeGen),
                 trailing: CodegenPopupMenu(
                   value: settings.defaultCodeGenLang,
                   onChanged: (value) {
@@ -118,24 +116,30 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('Default Large Language Model (LLM)'),
+                title: const Text(kLabelDefaultLLM),
                 trailing: AIModelSelectorButton(
-                  aiRequestModel:
-                      AIRequestModel.fromJson(settings.defaultAIModel ?? {}),
+                  aiRequestModel: AIRequestModel.fromJson(
+                    settings.defaultAIModel ?? {},
+                  ),
                   onModelUpdated: (d) {
-                    ref.read(settingsProvider.notifier).update(
-                        defaultAIModel: d.copyWith(
-                            modelConfigs: [],
-                            stream: null,
-                            systemPrompt: '',
-                            userPrompt: '').toJson());
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(
+                          defaultAIModel: d
+                              .copyWith(
+                                modelConfigs: [],
+                                stream: null,
+                                systemPrompt: '',
+                                userPrompt: '',
+                              )
+                              .toJson(),
+                        );
                   },
                 ),
               ),
               CheckboxListTile(
-                title: const Text("Save Responses"),
-                subtitle:
-                    const Text("Save disk space by not storing API responses"),
+                title: const Text(kLabelSaveResponses),
+                subtitle: const Text(kLabelSaveResponsesSubtitle),
                 value: settings.saveResponses,
                 onChanged: (value) {
                   ref
@@ -144,9 +148,8 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               CheckboxListTile(
-                title: const Text("Show Save Alert on App Close"),
-                subtitle: const Text(
-                    "Show a confirmation dialog to save workspace when the user closes the app"),
+                title: const Text(kLabelShowSaveAlert),
+                subtitle: const Text(kLabelShowSaveAlertSubtitle),
                 value: settings.promptBeforeClosing,
                 onChanged: (value) {
                   ref
@@ -156,9 +159,10 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('History Retention Period'),
+                title: const Text(kLabelHistoryRetention),
                 subtitle: Text(
-                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
+                  'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}',
+                ),
                 trailing: HistoryRetentionPopupMenu(
                   value: settings.historyRetentionPeriod,
                   onChanged: (value) {
@@ -170,9 +174,8 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('Export Data'),
-                subtitle: const Text(
-                    'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
+                title: const Text(kLabelExportData),
+                subtitle: const Text(kLabelExportDataSubtitle),
                 trailing: FilledButton.icon(
                   onPressed: () async {
                     var data = await ref
@@ -180,73 +183,74 @@ class SettingsPage extends ConsumerWidget {
                         .exportDataToHAR();
                     await saveCollection(data, sm);
                   },
-                  label: const Text("Export"),
-                  icon: const Icon(
-                    Icons.arrow_outward_rounded,
-                    size: 20,
-                  ),
+                  label: const Text(kLabelExport),
+                  icon: const Icon(Icons.arrow_outward_rounded, size: 20),
                 ),
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('Clear Data'),
-                subtitle: const Text('Delete all requests data from the disk'),
+                title: const Text(kLabelClearData),
+                subtitle: const Text(kLabelClearDataSubtitle),
                 trailing: FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
-                    backgroundColor:
-                        settings.isDark ? kColorDarkDanger : kColorLightDanger,
+                    backgroundColor: settings.isDark
+                        ? kColorDarkDanger
+                        : kColorLightDanger,
                     surfaceTintColor: kColorRed,
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   ),
                   onPressed: clearingData
                       ? null
                       : () => showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              icon: const Icon(Icons.manage_history_rounded),
-                              iconColor: settings.isDark
-                                  ? kColorDarkDanger
-                                  : kColorLightDanger,
-                              title: const Text('Clear Data'),
-                              titleTextStyle:
-                                  Theme.of(context).textTheme.titleLarge,
-                              content: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 300),
-                                child: const Text(
-                                    'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            icon: const Icon(Icons.manage_history_rounded),
+                            iconColor: settings.isDark
+                                ? kColorDarkDanger
+                                : kColorLightDanger,
+                            title: const Text(kLabelClearData),
+                            titleTextStyle: Theme.of(
+                              context,
+                            ).textTheme.titleLarge,
+                            content: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 300),
+                              child: const Text(kMsgClearDataConfirmation),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, 'Cancel'),
+                                child: const Text(kLabelCancel),
                               ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, 'Cancel'),
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context, 'Yes');
-                                    await clearSharedPrefs();
-                                    await ref
-                                        .read(collectionStateNotifierProvider
-                                            .notifier)
-                                        .clearData();
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context, 'Yes');
+                                  await clearSharedPrefs();
+                                  await ref
+                                      .read(
+                                        collectionStateNotifierProvider
+                                            .notifier,
+                                      )
+                                      .clearData();
 
-                                    sm.hideCurrentSnackBar();
-                                    sm.showSnackBar(
-                                        getSnackBar("Requests Data Cleared"));
-                                  },
-                                  child: Text(
-                                    'Yes',
-                                    style: kTextStyleButton.copyWith(
-                                        color: settings.isDark
-                                            ? kColorDarkDanger
-                                            : kColorLightDanger),
+                                  sm.hideCurrentSnackBar();
+                                  sm.showSnackBar(
+                                    getSnackBar(kMsgRequestsDataCleared),
+                                  );
+                                },
+                                child: Text(
+                                  kLabelYes,
+                                  style: kTextStyleButton.copyWith(
+                                    color: settings.isDark
+                                        ? kColorDarkDanger
+                                        : kColorLightDanger,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                  label: const Text("Clear"),
+                        ),
+                  label: const Text(kLabelClear),
                   icon: Icon(
                     Icons.delete_forever_rounded,
                     size: 20,
@@ -255,9 +259,8 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
               ListTile(
-                title: const Text('About'),
-                subtitle: const Text(
-                    'Release Details, Support Channel, Report Bug / Request New Feature'),
+                title: const Text(kLabelAbout),
+                subtitle: const Text(kLabelAboutSubtitle),
                 onTap: () {
                   showAboutAppDialog(context);
                 },
