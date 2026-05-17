@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
@@ -24,19 +23,19 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
 
 final selectedSubstitutedHttpRequestModelProvider =
     StateProvider<HttpRequestModel?>((ref) {
-      final selectedRequestModel = ref.watch(selectedRequestModelProvider);
-      final envMap = ref.read(availableEnvironmentVariablesStateProvider);
-      final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
-      if (selectedRequestModel?.httpRequestModel == null) {
-        return null;
-      } else {
-        return substituteHttpRequestModel(
-          selectedRequestModel!.httpRequestModel!,
-          envMap,
-          activeEnvId,
-        );
-      }
-    });
+  final selectedRequestModel = ref.watch(selectedRequestModelProvider);
+  final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+  final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+  if (selectedRequestModel?.httpRequestModel == null) {
+    return null;
+  } else {
+    return substituteHttpRequestModel(
+      selectedRequestModel!.httpRequestModel!,
+      envMap,
+      activeEnvId,
+    );
+  }
+});
 
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
@@ -44,27 +43,36 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 });
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
-collectionStateNotifierProvider = StateNotifierProvider(
-  (ref) => CollectionStateNotifier(ref, hiveHandler),
-);
+    collectionStateNotifierProvider =
+    StateNotifierProvider((ref) => CollectionStateNotifier(
+          ref,
+          hiveHandler,
+        ));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  CollectionStateNotifier(
+    this.ref,
+    this.hiveHandler,
+  ) : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
-        ref.read(requestSequenceProvider.notifier).state = [state!.keys.first];
+        ref.read(requestSequenceProvider.notifier).state = [
+          state!.keys.first,
+        ];
       }
-      ref.read(selectedIdStateProvider.notifier).state = ref.read(
-        requestSequenceProvider,
-      )[0];
+      ref.read(selectedIdStateProvider.notifier).state =
+          ref.read(requestSequenceProvider)[0];
     });
   }
 
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  RequestModel? _lastDeletedModel;
+  String? _lastDeletedId;
+  int? _lastDeletedIndex;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -92,7 +100,10 @@ class CollectionStateNotifier
     unsave();
   }
 
-  void addRequestModel(HttpRequestModel httpRequestModel, {String? name}) {
+  void addRequestModel(
+    HttpRequestModel httpRequestModel, {
+    String? name,
+  }) {
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
@@ -110,7 +121,7 @@ class CollectionStateNotifier
   }
 
   void reorder(int oldIdx, int newIdx) {
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
@@ -121,6 +132,9 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId!);
+    _lastDeletedModel = state![rId];
+    _lastDeletedId = rId;
+    _lastDeletedIndex = idx;
     cancelHttpRequest(rId);
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
@@ -142,6 +156,31 @@ class CollectionStateNotifier
     unsave();
   }
 
+  void undoDelete() {
+  if (_lastDeletedModel == null ||
+      _lastDeletedId == null ||
+      _lastDeletedIndex == null) {
+    return;
+  }
+
+  var itemIds = [...ref.read(requestSequenceProvider)];
+  final insertIdx = _lastDeletedIndex!.clamp(0, itemIds.length);
+  itemIds.insert(insertIdx, _lastDeletedId!);
+
+  var map = {...state!};
+  map[_lastDeletedId!] = _lastDeletedModel!;
+  state = map;
+
+  ref.read(requestSequenceProvider.notifier).state = itemIds;
+  ref.read(selectedIdStateProvider.notifier).state = _lastDeletedId;
+
+  _lastDeletedModel = null;
+  _lastDeletedId = null;
+  _lastDeletedIndex = null;
+
+  unsave();
+}
+
   void clearResponse({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null || state?[rId] == null) return;
@@ -162,8 +201,7 @@ class CollectionStateNotifier
   void duplicate({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     final newId = getNewUuid();
-
-    var itemIds = ref.read(requestSequenceProvider);
+    var itemIds = [...ref.read(requestSequenceProvider)];
     int idx = itemIds.indexOf(rId!);
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
@@ -257,23 +295,22 @@ class CollectionStateNotifier
       final defaultModel = ref.read(settingsProvider).defaultAIModel;
       newModel = switch (apiType) {
         APIType.rest || APIType.graphql => currentModel.copyWith(
-          apiType: apiType,
-          requestTabIndex: 0,
-          name: name ?? currentModel.name,
-          description: description ?? currentModel.description,
-          httpRequestModel: const HttpRequestModel(),
-          aiRequestModel: null,
-        ),
+            apiType: apiType,
+            requestTabIndex: 0,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: const HttpRequestModel(),
+            aiRequestModel: null,
+          ),
         APIType.ai => currentModel.copyWith(
-          apiType: apiType,
-          requestTabIndex: 0,
-          name: name ?? currentModel.name,
-          description: description ?? currentModel.description,
-          httpRequestModel: null,
-          aiRequestModel: defaultModel == null
-              ? const AIRequestModel()
-              : AIRequestModel.fromJson(defaultModel),
-        ),
+            apiType: apiType,
+            requestTabIndex: 0,
+            name: name ?? currentModel.name,
+            description: description ?? currentModel.description,
+            httpRequestModel: null,
+            aiRequestModel: defaultModel == null
+                ? const AIRequestModel()
+                : AIRequestModel.fromJson(defaultModel)),
       };
     } else {
       newModel = currentModel.copyWith(
@@ -287,8 +324,7 @@ class CollectionStateNotifier
           headers: headers ?? currentHttpRequestModel.headers,
           params: params ?? currentHttpRequestModel.params,
           authModel: authModel ?? currentHttpRequestModel.authModel,
-          isHeaderEnabledList:
-              isHeaderEnabledList ??
+          isHeaderEnabledList: isHeaderEnabledList ??
               currentHttpRequestModel.isHeaderEnabledList,
           isParamEnabledList:
               isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
@@ -328,9 +364,8 @@ class CollectionStateNotifier
     }
 
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
-    final EnvironmentModel? originalEnvironmentModel = ref.read(
-      activeEnvironmentModelProvider,
-    );
+    final EnvironmentModel? originalEnvironmentModel =
+        ref.read(activeEnvironmentModelProvider);
 
     RequestModel executionRequestModel = requestModel!.copyWith();
 
@@ -338,18 +373,18 @@ class CollectionStateNotifier
       executionRequestModel = await ref
           .read(jsRuntimeNotifierProvider.notifier)
           .handlePreRequestScript(
-            executionRequestModel,
-            originalEnvironmentModel,
-            (envModel, updatedValues) {
-              ref
-                  .read(environmentsStateNotifierProvider.notifier)
-                  .updateEnvironment(
-                    envModel.id,
-                    name: envModel.name,
-                    values: updatedValues,
-                  );
-            },
-          );
+        executionRequestModel,
+        originalEnvironmentModel,
+        (envModel, updatedValues) {
+          ref
+              .read(environmentsStateNotifierProvider.notifier)
+              .updateEnvironment(
+                envModel.id,
+                name: envModel.name,
+                values: updatedValues,
+              );
+        },
+      );
     }
 
     APIType apiType = executionRequestModel.apiType;
@@ -358,12 +393,10 @@ class CollectionStateNotifier
 
     if (apiType == APIType.ai) {
       substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
-        executionRequestModel.aiRequestModel!.httpRequestModel!,
-      );
+          executionRequestModel.aiRequestModel!.httpRequestModel!);
     } else {
       substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
-        executionRequestModel.httpRequestModel!,
-      );
+          executionRequestModel.httpRequestModel!);
     }
 
     // Terminal
@@ -416,73 +449,71 @@ class CollectionStateNotifier
 
     StreamSubscription? sub;
 
-    sub = stream.listen(
-      (rec) async {
-        if (rec == null) return;
+    sub = stream.listen((rec) async {
+      if (rec == null) return;
 
-        isStreamingResponse = rec.$1 ?? false;
-        final response = rec.$2;
-        final duration = rec.$3;
-        final errorMessage = rec.$4;
+      isStreamingResponse = rec.$1 ?? false;
+      final response = rec.$2;
+      final duration = rec.$3;
+      final errorMessage = rec.$4;
 
-        if (isStreamingResponse) {
-          httpResponseModel = httpResponseModel?.copyWith(
-            time: duration,
-            sseOutput: [
-              ...(httpResponseModel?.sseOutput ?? []),
-              if (response != null) response.body,
-            ],
-          );
+      if (isStreamingResponse) {
+        httpResponseModel = httpResponseModel?.copyWith(
+          time: duration,
+          sseOutput: [
+            ...(httpResponseModel?.sseOutput ?? []),
+            if (response != null) response.body,
+          ],
+        );
 
-          newRequestModel = newRequestModel.copyWith(
-            httpResponseModel: httpResponseModel,
-            isStreaming: true,
-          );
-          state = {...state!, requestId: newRequestModel};
-          // Terminal: append chunk preview
-          if (response != null && response.body.isNotEmpty) {
-            terminal.addNetworkChunk(
-              logId,
-              BodyChunk(
-                ts: DateTime.now(),
-                text: response.body,
-                sizeBytes: response.body.codeUnits.length,
-              ),
-            );
-          }
-          unsave();
-
-          if (historyModel != null && httpResponseModel != null) {
-            historyModel = historyModel!.copyWith(
-              httpResponseModel: httpResponseModel!,
-            );
-            ref
-                .read(historyMetaStateNotifier.notifier)
-                .editHistoryRequest(historyModel!);
-          }
-        } else {
-          streamingMode = false;
-        }
-
-        if (!completer.isCompleted) {
-          completer.complete((response, duration, errorMessage));
-        }
-      },
-      onDone: () {
-        sub?.cancel();
+        newRequestModel = newRequestModel.copyWith(
+          httpResponseModel: httpResponseModel,
+          isStreaming: true,
+        );
         state = {
           ...state!,
-          requestId: newRequestModel.copyWith(isStreaming: false),
+          requestId: newRequestModel,
         };
-        unsave();
-      },
-      onError: (e) {
-        if (!completer.isCompleted) {
-          completer.complete((null, null, 'StreamError: $e'));
+        // Terminal: append chunk preview
+        if (response != null && response.body.isNotEmpty) {
+          terminal.addNetworkChunk(
+            logId,
+            BodyChunk(
+              ts: DateTime.now(),
+              text: response.body,
+              sizeBytes: response.body.codeUnits.length,
+            ),
+          );
         }
-        terminal.failNetwork(logId, 'StreamError: $e');
-      },
-    );
+        unsave();
+
+        if (historyModel != null && httpResponseModel != null) {
+          historyModel =
+              historyModel!.copyWith(httpResponseModel: httpResponseModel!);
+          ref
+              .read(historyMetaStateNotifier.notifier)
+              .editHistoryRequest(historyModel!);
+        }
+      } else {
+        streamingMode = false;
+      }
+
+      if (!completer.isCompleted) {
+        completer.complete((response, duration, errorMessage));
+      }
+    }, onDone: () {
+      sub?.cancel();
+      state = {
+        ...state!,
+        requestId: newRequestModel.copyWith(isStreaming: false),
+      };
+      unsave();
+    }, onError: (e) {
+      if (!completer.isCompleted) {
+        completer.complete((null, null, 'StreamError: $e'));
+      }
+      terminal.failNetwork(logId, 'StreamError: $e');
+    });
 
     final (response, duration, errorMessage) = await completer.future;
 
@@ -502,13 +533,13 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
-      //AI-FORMATTING for Non Streaming Variant
+      //AI-FORMATTING for Non Streaming Varaint
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
         final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
-          kJsonDecoder.convert(httpResponseModel?.body ?? "Error parsing body"),
-        );
+            kJsonDecoder
+                .convert(httpResponseModel?.body ?? "Error parsing body"));
         httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
       }
 
@@ -556,23 +587,26 @@ class CollectionStateNotifier
         newRequestModel = await ref
             .read(jsRuntimeNotifierProvider.notifier)
             .handlePostResponseScript(
-              newRequestModel,
-              originalEnvironmentModel,
-              (envModel, updatedValues) {
-                ref
-                    .read(environmentsStateNotifierProvider.notifier)
-                    .updateEnvironment(
-                      envModel.id,
-                      name: envModel.name,
-                      values: updatedValues,
-                    );
-              },
-            );
+          newRequestModel,
+          originalEnvironmentModel,
+          (envModel, updatedValues) {
+            ref
+                .read(environmentsStateNotifierProvider.notifier)
+                .updateEnvironment(
+                  envModel.id,
+                  name: envModel.name,
+                  values: updatedValues,
+                );
+          },
+        );
       }
     }
 
     // Final state update
-    state = {...state!, requestId: newRequestModel};
+    state = {
+      ...state!,
+      requestId: newRequestModel,
+    };
 
     unsave();
   }
@@ -652,11 +686,14 @@ class CollectionStateNotifier
   }
 
   HttpRequestModel getSubstitutedHttpRequestModel(
-    HttpRequestModel httpRequestModel,
-  ) {
+      HttpRequestModel httpRequestModel) {
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
 
-    return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
+    return substituteHttpRequestModel(
+      httpRequestModel,
+      envMap,
+      activeEnvId,
+    );
   }
 }

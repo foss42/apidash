@@ -13,9 +13,8 @@ class RequestEditorTopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final name = ref.watch(
-      selectedRequestModelProvider.select((value) => value?.name),
-    );
+    final name =
+        ref.watch(selectedRequestModelProvider.select((value) => value?.name));
     return Padding(
       padding: kP4,
       child: Row(
@@ -33,7 +32,7 @@ class RequestEditorTopBar extends ConsumerWidget {
           kHSpacer10,
           EditorTitleActions(
             onRenamePressed: () {
-              showRenameDialog(context, kLabelRenameRequest, name, (val) {
+              showRenameDialog(context, "Rename Request", name, (val) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)
                     .update(name: val);
@@ -41,8 +40,24 @@ class RequestEditorTopBar extends ConsumerWidget {
             },
             onDuplicatePressed: () =>
                 ref.read(collectionStateNotifierProvider.notifier).duplicate(),
-            onDeletePressed: () =>
-                ref.read(collectionStateNotifierProvider.notifier).remove(),
+            onDeletePressed: () {
+              final deletedName = name.isNullOrEmpty() ? kUntitled : name!;
+              final notifier =
+                  ref.read(collectionStateNotifierProvider.notifier);
+              notifier.remove();
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                getSnackBar(
+                  '"$deletedName" deleted',
+                  small: false,
+                  duration: const Duration(seconds: 5),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () => notifier.undoDelete(),
+                  ),
+                ),
+              );
+            },
           ),
           kHSpacer10,
           const EnvironmentDropdown(),
