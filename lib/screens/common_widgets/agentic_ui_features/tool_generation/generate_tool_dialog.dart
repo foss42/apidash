@@ -68,18 +68,24 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
   String? generatedToolCode = '';
 
   generateAPITool() async {
-    try {
-      setState(() {
-        generatedToolCode = null;
-        index = 1;
-      });
-      final res = await generateAPIToolUsingRequestData(
-        ref: ref,
-        requestData: widget.requestDesc.generateREQDATA,
-        targetLanguage: selectedLanguage,
-        selectedAgent: selectedAgent,
-      );
-      if (res == null) {
+    setState(() {
+      generatedToolCode = null;
+      index = 1;
+    });
+    final result = await generateAPIToolUsingRequestData(
+      ref: ref,
+      requestData: widget.requestDesc.generateREQDATA,
+      targetLanguage: selectedLanguage,
+      selectedAgent: selectedAgent,
+    );
+    result.when(
+      success: (code) {
+        setState(() {
+          generatedToolCode = code;
+          index = 1;
+        });
+      },
+      failure: (exception) {
         setState(() {
           generatedToolCode = '';
           index = 0;
@@ -87,34 +93,14 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              kMsgAPIToolGenerationFailed,
+              exception.message,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.redAccent,
           ),
         );
-        return;
-      }
-      setState(() {
-        generatedToolCode = res;
-        index = 1;
-      });
-    } catch (e) {
-      setState(() {
-        index = 0;
-      });
-      String errMsg = kMsgUnexpectedError;
-      if (e.toString().contains('NO_DEFAULT_LLM')) {
-        errMsg = kMsgSelectDefaultAIModel;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errMsg, style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-      Navigator.pop(context);
-    }
+      },
+    );
   }
 
   @override

@@ -29,34 +29,45 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
     setState(() {
       exportingCode = true;
     });
-    final ans = await APIDashAgentCaller.instance.call(
+    final result = await APIDashAgentCaller.instance.call(
       StacToFlutterBot(),
       ref: ref,
       input: AgentInputs(variables: {'VAR_CODE': widget.sduiCode}),
     );
-    final exportedCode = ans?['CODE'];
-
-    if (exportedCode == null) {
-      setState(() {
-        exportingCode = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            kMsgExportFailed,
-            style: TextStyle(color: Colors.white),
+    result.when(
+      success: (ans) {
+        final exportedCode = ans?['CODE'];
+        if (exportedCode == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                kMsgExportFailed,
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+          debugPrint("exportCode: Failed; ABORTING");
+        } else {
+          Clipboard.setData(ClipboardData(text: exportedCode));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(kMsgCopiedToClipboard)));
+        }
+      },
+      failure: (exception) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              exception.message,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.redAccent,
           ),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-      debugPrint("exportCode: Failed; ABORTING");
-      return;
-    }
-
-    Clipboard.setData(ClipboardData(text: ans['CODE']));
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(kMsgCopiedToClipboard)));
+        );
+        debugPrint("exportCode: $exception");
+      },
+    );
     setState(() {
       exportingCode = false;
     });
