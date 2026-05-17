@@ -6,6 +6,7 @@ import '../codegen_utils.dart';
 
 class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
+import json
 {% if hasFormData %}from requests_toolbelt.multipart.encoder import MultipartEncoder
 {% endif %}
 url = '{{url}}'
@@ -67,7 +68,10 @@ payload = MultipartEncoder({
   final String kStringRequestEnd = """)
 
 print('Status Code:', response.status_code)
-print('Response Body:', response.text)
+try:
+    print(json.dumps(response.json(), indent=4))
+except ValueError:
+    print('Response Body:', response.text)
 """;
 
   String kStringFormDataContentType = "payload.content_type";
