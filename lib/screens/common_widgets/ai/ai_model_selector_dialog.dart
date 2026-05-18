@@ -1,6 +1,7 @@
 // import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/common_widgets/ai/dialog_add_ai_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,8 @@ class AIModelSelectorDialog extends ConsumerStatefulWidget {
 }
 
 class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
-  late final Future<AvailableModels> aM;
+  late Future<AvailableModels> aM;
+  AvailableModels? availableModelsData;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
 
@@ -40,7 +42,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData &&
             snapshot.data != null) {
-          final data = snapshot.data!;
+          availableModelsData = snapshot.data!;
+          final data = availableModelsData!;
           final mappedData = data.map;
           if (context.isMediumWindow) {
             return Container(
@@ -194,8 +197,34 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(kLabelModels),
-            // IconButton(
-            //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
+            IconButton(
+              onPressed: () async {
+                final newModel = await addNewModel(context);
+                if (newModel != null) {
+                  final updatedModels = <Model>[
+                    ...(aiModelProvider.models ?? []),
+                    newModel,
+                  ];
+                  final updatedProvider = aiModelProvider.copyWith(
+                    models: updatedModels,
+                  );
+                  final updatedProviders = availableModelsData!.modelProviders
+                      .map(
+                        (p) => p.providerId == aiModelProvider.providerId
+                            ? updatedProvider
+                            : p,
+                      )
+                      .toList();
+                  setState(() {
+                    availableModelsData = availableModelsData!.copyWith(
+                      modelProviders: updatedProviders,
+                    );
+                    aM = Future.value(availableModelsData);
+                  });
+                }
+              },
+              icon: Icon(Icons.add),
+            ),
           ],
         ),
         kVSpacer8,
