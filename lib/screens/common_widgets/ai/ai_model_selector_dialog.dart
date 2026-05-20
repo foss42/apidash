@@ -1,4 +1,4 @@
-// import 'package:apidash/providers/providers.dart';
+import 'ai.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -16,7 +16,8 @@ class AIModelSelectorDialog extends ConsumerStatefulWidget {
 }
 
 class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
-  late final Future<AvailableModels> aM;
+  AvailableModels? availableModels;
+  bool isLoading = true;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
 
@@ -27,154 +28,163 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     if (selectedProvider != null && widget.aiRequestModel?.model != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
     }
-    aM = ModelManager.fetchAvailableModels();
+    ModelManager.fetchAvailableModels().then((value) {
+      if (mounted) {
+        setState(() {
+          availableModels = value;
+          isLoading = false;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // ref.watch(aiApiCredentialProvider);
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (availableModels == null) {
+      return const Center(child: Text("Error loading models"));
+    }
+
+    final data = availableModels!;
+    final mappedData = data.map;
     final width = MediaQuery.of(context).size.width * 0.8;
-    return FutureBuilder(
-      future: aM,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasData &&
-            snapshot.data != null) {
-          final data = snapshot.data!;
-          final mappedData = data.map;
-          if (context.isMediumWindow) {
-            return Container(
-              padding: kP20,
-              width: width,
+
+    if (context.isMediumWindow) {
+      return Container(
+        padding: kP20,
+        width: width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                final models = await ModelManager.fetchAvailableModels();
+                if (mounted) {
+                  setState(() {
+                    availableModels = models;
+                    isLoading = false;
+                  });
+                }
+              },
+              child: Text(kLabelUpdateModels),
+            ),
+            kVSpacer10,
+            Row(
+              children: [
+                Text(kLabelSelectModelProvider),
+                kHSpacer20,
+                Expanded(
+                  child: ADDropdownButton<ModelAPIProvider>(
+                    onChanged: (x) {
+                      setState(() {
+                        selectedProvider = x;
+                        newAIRequestModel =
+                            mappedData[selectedProvider]?.toAiRequestModel();
+                      });
+                    },
+                    value: selectedProvider,
+                    values: data.modelProviders.map(
+                      (e) => (e.providerId!, e.providerName),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            kVSpacer10,
+            _buildModelSelector(mappedData[selectedProvider]),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: kP20,
+      width: width,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            flex: 1,
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
-                    onPressed: null,
-                    // TODO: Add update model logic
-                    //() async {
-                    // await LLMManager.fetchAvailableLLMs();
-                    // setState(() {});
-                    //},
+                    onPressed: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      final models = await ModelManager.fetchAvailableModels();
+                      if (mounted) {
+                        setState(() {
+                          availableModels = models;
+                          isLoading = false;
+                        });
+                      }
+                    },
                     child: Text(kLabelUpdateModels),
                   ),
-                  kVSpacer10,
-                  Row(
-                    children: [
-                      Text(kLabelSelectModelProvider),
-                      kHSpacer20,
-                      Expanded(
-                        child: ADDropdownButton<ModelAPIProvider>(
-                          onChanged: (x) {
-                            setState(() {
-                              selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
-                            });
-                          },
-                          value: selectedProvider,
-                          values: data.modelProviders.map(
-                            (e) => (e.providerId!, e.providerName),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  kVSpacer10,
-                  _buildModelSelector(mappedData[selectedProvider]),
-                ],
-              ),
-            );
-          }
-
-          return Container(
-            padding: kP20,
-            width: width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ElevatedButton(
-                          onPressed: null,
-                          // TODO: Add update model logic
-                          //() async {
-                          // await LLMManager.fetchAvailableLLMs();
-                          // setState(() {});
-                          //},
-                          child: Text(kLabelUpdateModels),
-                        ),
-                        SizedBox(height: 20),
-                        ...data.modelProviders.map(
-                          (x) => ListTile(
-                            title: Text(x.providerName ?? ""),
-                            trailing: selectedProvider != x.providerId
-                                ? null
-                                : CircleAvatar(
-                                    radius: 5,
-                                    backgroundColor: Colors.green,
-                                  ),
-                            onTap: () {
-                              setState(() {
-                                selectedProvider = x.providerId;
-                                newAIRequestModel = mappedData[selectedProvider]
-                                    ?.toAiRequestModel();
-                              });
-                            },
-                          ),
-                        ),
-                      ],
+                  SizedBox(height: 20),
+                  ...data.modelProviders.map(
+                    (x) => ListTile(
+                      title: Text(x.providerName ?? ""),
+                      trailing: selectedProvider != x.providerId
+                          ? null
+                          : const CircleAvatar(
+                              radius: 5,
+                              backgroundColor: Colors.green,
+                            ),
+                      onTap: () {
+                        setState(() {
+                          selectedProvider = x.providerId;
+                          newAIRequestModel =
+                              mappedData[selectedProvider]?.toAiRequestModel();
+                        });
+                      },
                     ),
                   ),
-                ),
-                SizedBox(width: 40),
-                Flexible(
-                  flex: 3,
-                  child: _buildModelSelector(mappedData[selectedProvider]),
-                ),
-              ],
+                ],
+              ),
             ),
-          );
-        }
-        return Center(child: CircularProgressIndicator());
-      },
+          ),
+          const SizedBox(width: 40),
+          Flexible(
+            flex: 3,
+            child: _buildModelSelector(mappedData[selectedProvider]),
+          ),
+        ],
+      ),
     );
   }
 
-  _buildModelSelector(AIModelProvider? aiModelProvider) {
+  Widget _buildModelSelector(AIModelProvider? aiModelProvider) {
     if (aiModelProvider == null) {
-      return Center(child: Text(kLabelSelectAIProvider));
+      return const Center(child: Text(kLabelSelectAIProvider));
     }
-    // final currentCredential =
-    //     ref.watch(aiApiCredentialProvider)[aiModelProvider.providerId!] ?? "";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       children: [
         Text(
           aiModelProvider.providerName ?? "",
-          style: TextStyle(fontSize: 28),
+          style: const TextStyle(fontSize: 28),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         if (aiModelProvider.providerId != ModelAPIProvider.ollama) ...[
           Text(kLabelApiKeyCredential),
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
-            // value: currentCredential,
           ),
           kVSpacer10,
         ],
@@ -194,8 +204,27 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(kLabelModels),
-            // IconButton(
-            //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
+            IconButton(
+              onPressed: () async {
+                final newModel = await addNewModel(context);
+                if (!mounted) return;
+                if (newModel != null && availableModels != null) {
+                  setState(() {
+                    final providerId = selectedProvider;
+                    final providers = availableModels!.modelProviders.map((p) {
+                      if (p.providerId == providerId) {
+                        return p.copyWith(
+                            models: [...(p.models ?? []), newModel]);
+                      }
+                      return p;
+                    }).toList();
+                    availableModels =
+                        availableModels!.copyWith(modelProviders: providers);
+                  });
+                }
+              },
+              icon: const Icon(Icons.add),
+            )
           ],
         ),
         kVSpacer8,
@@ -218,7 +247,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (newAIRequestModel?.model == x.id)
-                            CircleAvatar(
+                            const CircleAvatar(
                               radius: 5,
                               backgroundColor: Colors.green,
                             ),
