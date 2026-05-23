@@ -37,6 +37,9 @@ Color getAPIColor(
       ),
     APIType.graphql => kColorGQL,
     APIType.ai => Colors.amber,
+    APIType.websocket => Colors.teal,
+    APIType.mqtt => Colors.indigo,
+    APIType.grpc => Colors.deepOrange,
   };
   if (brightness == Brightness.dark) {
     col = col.toDark;
