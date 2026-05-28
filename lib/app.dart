@@ -154,7 +154,7 @@ class DashApp extends ConsumerWidget {
                           ? (kIsMobile && !userOnboarded)
                               ? OnboardingScreen(
                                   onComplete: () async {
-                                    await saveOnboardingStatus(
+                                    await setOnboardingStatusToSharedPrefs(
                                       isOnboardingComplete: true,
                                     );
                                     ref
