@@ -64,4 +64,8 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     state = model;
     await saveAppSettings(state);
   }
+
+  void clearWorkspacePath() {
+    state = state.copyWithPath(workspaceFolderPath: null);
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import '../providers/providers.dart';
+import '../services/services.dart';
 import '../utils/utils.dart';
 import '../widgets/widgets.dart';
 import '../consts.dart';
@@ -224,13 +225,13 @@ class SettingsPage extends ConsumerWidget {
                               TextButton(
                                 onPressed: () async {
                                   Navigator.pop(context, 'Yes');
+                                  await clearSharedPrefs();
                                   await ref
                                       .read(
                                         collectionStateNotifierProvider
                                             .notifier,
                                       )
                                       .clearData();
-
                                   sm.hideCurrentSnackBar();
                                   sm.showSnackBar(
                                     getSnackBar(kMsgRequestsDataCleared),
