@@ -60,23 +60,57 @@ class CollectionStateNotifier
 
   bool _isReady = false;
 
-  void _syncRequestSequence(List<String> diskOrder) {
-    final loaded =
-        diskOrder.where((id) => state?.containsKey(id) ?? false).toList();
-    ref.read(requestSequenceProvider.notifier).state = loaded;
+  List<String> _diskRequestIds(String collectionId) {
+    return ref.read(collectionsStateNotifierProvider)?[collectionId]?.requestIds ??
+        workspaceStorage.getIds(collectionId) ??
+        [];
+  }
+
+  RequestModel? _requestModelFromDisk(String collectionId, String id) {
+    final jsonModel = workspaceStorage.getRequestModel(collectionId, id);
+    if (jsonModel == null) {
+      return null;
+    }
+    final jsonMap = Map<String, Object?>.from(jsonModel);
+    var requestModel = RequestModel.fromJson(jsonMap);
+    if (requestModel.httpRequestModel == null &&
+        requestModel.aiRequestModel == null) {
+      requestModel = requestModel.copyWith(
+        httpRequestModel: const HttpRequestModel(),
+      );
+    }
+    return requestModel;
+  }
+
+  /// Loads a single request from disk into memory. No-op if already loaded.
+  void loadRequest(String id) {
+    if (state?[id] != null) {
+      return;
+    }
+    final model = _requestModelFromDisk(_activeCollectionId, id);
+    if (model == null) {
+      return;
+    }
+    state = {...state ?? {}, id: model};
   }
 
   void activateCollection(String collectionId) {
-    final diskIds = workspaceStorage.getIds(collectionId) ?? [];
-    final status = loadData(collectionId);
-    if (status && state != null && state!.isNotEmpty) {
-      ref.read(requestSequenceProvider.notifier).state = [state!.keys.first];
-    } else {
-      _syncRequestSequence(diskIds);
+    final diskIds = _diskRequestIds(collectionId);
+    if (diskIds.isEmpty) {
+      final newId = getNewUuid();
+      state = {
+        newId: RequestModel(
+          id: newId,
+          httpRequestModel: const HttpRequestModel(),
+        ),
+      };
+      ref.read(requestSequenceProvider.notifier).state = [newId];
+      ref.read(selectedIdStateProvider.notifier).state = newId;
+      return;
     }
-    final sequence = ref.read(requestSequenceProvider);
-    ref.read(selectedIdStateProvider.notifier).state =
-        sequence.isNotEmpty ? sequence.first : null;
+    state = {};
+    ref.read(requestSequenceProvider.notifier).state = [...diskIds];
+    ref.read(selectedIdStateProvider.notifier).state = null;
   }
 
   String get _activeCollectionId => ref.read(selectedCollectionIdStateProvider);
@@ -102,15 +136,10 @@ class CollectionStateNotifier
     ref
         .read(collectionsStateNotifierProvider.notifier)
         .syncRequestIds(from, ref.read(requestSequenceProvider));
-    final requestIds =
-        ref.read(collectionsStateNotifierProvider)?[to]?.requestIds ??
-        workspaceStorage.getIds(to) ??
-        [];
-    loadData(to);
-    _syncRequestSequence(requestIds);
-    final sequence = ref.read(requestSequenceProvider);
-    ref.read(selectedIdStateProvider.notifier).state =
-        sequence.isNotEmpty ? sequence.first : null;
+    state = {};
+    final requestIds = _diskRequestIds(to);
+    ref.read(requestSequenceProvider.notifier).state = [...requestIds];
+    ref.read(selectedIdStateProvider.notifier).state = null;
   }
 
   final Ref ref;
@@ -203,10 +232,11 @@ class CollectionStateNotifier
 
   void duplicate({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
+    loadRequest(rId!);
     final newId = getNewUuid();
 
     var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(rId!);
+    int idx = itemIds.indexOf(rId);
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       id: newId,
@@ -360,6 +390,7 @@ class CollectionStateNotifier
       return;
     }
 
+    loadRequest(requestId);
     RequestModel? requestModel = state![requestId];
     if (requestModel?.httpRequestModel == null &&
         requestModel?.aiRequestModel == null) {
@@ -627,37 +658,6 @@ class CollectionStateNotifier
     state = {};
   }
 
-  bool loadData(String collectionId) {
-    var ids = workspaceStorage.getIds(collectionId);
-    if (ids == null || ids.isEmpty) {
-      String newId = getNewUuid();
-      state = {
-        newId: RequestModel(
-          id: newId,
-          httpRequestModel: const HttpRequestModel(),
-        ),
-      };
-      return true;
-    } else {
-      Map<String, RequestModel> data = {};
-      for (var id in ids) {
-        var jsonModel = workspaceStorage.getRequestModel(collectionId, id);
-        if (jsonModel != null) {
-          var jsonMap = Map<String, Object?>.from(jsonModel);
-          var requestModel = RequestModel.fromJson(jsonMap);
-          if (requestModel.httpRequestModel == null) {
-            requestModel = requestModel.copyWith(
-              httpRequestModel: const HttpRequestModel(),
-            );
-          }
-          data[id] = requestModel;
-        }
-      }
-      state = data;
-      return false;
-    }
-  }
-
   Future<void> saveData() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final collectionId = _activeCollectionId;
@@ -668,13 +668,27 @@ class CollectionStateNotifier
         .read(collectionsStateNotifierProvider.notifier)
         .syncRequestIds(collectionId, ids);
     for (var id in ids) {
-      await workspaceStorage.setRequestModel(
-        collectionId,
-        id,
-        saveResponse
-            ? (state?[id])?.toJson()
-            : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
-      );
+      final inMemory = state?[id];
+      Map<String, dynamic>? json;
+      if (inMemory != null) {
+        json = saveResponse
+            ? inMemory.toJson()
+            : inMemory.copyWith(httpResponseModel: null).toJson();
+      } else {
+        final diskJson = workspaceStorage.getRequestModel(collectionId, id);
+        if (diskJson == null) {
+          continue;
+        }
+        if (saveResponse) {
+          json = Map<String, dynamic>.from(diskJson);
+        } else {
+          final diskModel = RequestModel.fromJson(
+            Map<String, Object?>.from(diskJson),
+          );
+          json = diskModel.copyWith(httpResponseModel: null).toJson();
+        }
+      }
+      await workspaceStorage.setRequestModel(collectionId, id, json);
     }
 
     await workspaceStorage.removeUnused(collectionId);
@@ -683,7 +697,16 @@ class CollectionStateNotifier
   }
 
   Future<Map<String, dynamic>> exportDataToHAR() async {
-    var result = await collectionToHAR(state?.values.toList());
+    final collectionId = _activeCollectionId;
+    final models = <RequestModel>[];
+    for (final id in ref.read(requestSequenceProvider)) {
+      final model =
+          state?[id] ?? _requestModelFromDisk(collectionId, id);
+      if (model != null) {
+        models.add(model);
+      }
+    }
+    var result = await collectionToHAR(models);
     return result;
     // return {
     //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()

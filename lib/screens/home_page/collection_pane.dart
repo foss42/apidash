@@ -144,17 +144,12 @@ class _CollectionSection extends ConsumerWidget {
 
   List<String> _requestIds(WidgetRef ref) {
     if (isActive) {
-      final sequence = ref.watch(requestSequenceProvider);
-      final items = ref.watch(collectionStateNotifierProvider)!;
-      return sequence.where(items.containsKey).toList();
+      return ref.watch(requestSequenceProvider);
     }
     return collection.requestIds;
   }
 
   RequestModel? _requestModel(WidgetRef ref, String requestId) {
-    if (isActive) {
-      return ref.watch(collectionStateNotifierProvider)?[requestId];
-    }
     final json = workspaceStorage.getRequestModel(collectionId, requestId);
     if (json == null) {
       return null;
@@ -440,6 +435,7 @@ class RequestItem extends ConsumerWidget {
               .read(collectionStateNotifierProvider.notifier)
               .ensureActive(collectionId);
         }
+        ref.read(collectionStateNotifierProvider.notifier).loadRequest(id);
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
