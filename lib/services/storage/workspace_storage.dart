@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 
@@ -113,13 +112,6 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
     });
   }
 
-  final settingsFile = File(p.join(root.path, kAppSettingsFileName));
-  if (!await settingsFile.exists()) {
-    const defaults = SettingsModel();
-    final json = Map<String, Object?>.from(defaults.toJson());
-    json[kAppSettingsVersionKey] = kAppSettingsVersion;
-    await writeJsonAtomic(settingsFile.path, json);
-  }
 }
 
 final workspaceStorage = WorkspaceStorage();

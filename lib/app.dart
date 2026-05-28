@@ -6,7 +6,6 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'widgets/widgets.dart';
-import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
@@ -134,12 +133,9 @@ class DashApp extends ConsumerWidget {
                   if (!opened) {
                     return;
                   }
-                  final snapshot = await AppSettingsStore.instance.load();
-                  final settings = (snapshot.settings ?? const SettingsModel())
-                      .copyWith(workspaceFolderPath: val);
                   await ref
                       .read(settingsProvider.notifier)
-                      .applySettings(settings);
+                      .update(workspaceFolderPath: val);
                 },
                 onCancel: () async {
                   try {

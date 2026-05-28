@@ -72,14 +72,6 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
-// File-based storage
-const kAppConfigDirName = 'apidash';
-const kRecentWorkspaceFileName = 'recent_workspace';
-const kAppSettingsFileName = 'settings.json';
-const kAppSettingsVersion = 1;
-const kAppSettingsVersionKey = 'version';
-const kAppSettingsOnboardingCompleteKey = 'onboardingComplete';
-
 const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
 
 const kDefaultCollectionId = 'default';

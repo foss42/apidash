@@ -1,28 +1,14 @@
 import '../models/models.dart';
-import 'storage/app_settings_store.dart';
-import 'storage/recent_workspace_store.dart';
+import 'shared_preferences_services.dart';
 
-Future<SettingsModel?> loadAppSettings() async {
-  final snapshot = await AppSettingsStore.instance.load();
-  return snapshot.settings;
-}
+Future<SettingsModel?> loadAppSettings() => getSettingsFromSharedPrefs();
 
-Future<void> saveAppSettings(SettingsModel settingsModel) async {
-  await AppSettingsStore.instance.saveSettings(settingsModel);
-  await writeRecentWorkspacePath(settingsModel.workspaceFolderPath);
-}
+Future<void> saveAppSettings(SettingsModel settingsModel) =>
+    setSettingsToSharedPrefs(settingsModel);
 
-Future<void> saveOnboardingStatus({required bool isOnboardingComplete}) async {
-  await AppSettingsStore.instance.saveOnboarding(
-    isOnboardingComplete: isOnboardingComplete,
-  );
-}
+Future<void> saveOnboardingStatus({required bool isOnboardingComplete}) =>
+    setOnboardingStatusToSharedPrefs(isOnboardingComplete: isOnboardingComplete);
 
-Future<bool> loadOnboardingStatus() async {
-  final snapshot = await AppSettingsStore.instance.load();
-  return snapshot.onboardingComplete;
-}
+Future<bool> loadOnboardingStatus() => getOnboardingStatusFromSharedPrefs();
 
-Future<void> clearAppSettings() async {
-  await AppSettingsStore.instance.clear();
-}
+Future<void> clearAppSettings() => clearSharedPrefs();

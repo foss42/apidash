@@ -16,25 +16,17 @@ void main() async {
   //Load all LLMs
   await ModelManager.fetchAvailableModels();
 
-  final recentPath = await readRecentWorkspacePath();
-  var settingsModel = SettingsModel(workspaceFolderPath: recentPath);
-  var onboardingStatus = false;
-
+  var settingsModel = await getSettingsFromSharedPrefs();
+  var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,
   );
-  if (initStatus) {
-    final appSnapshot = await AppSettingsStore.instance.load();
-    settingsModel = appSnapshot.settings ?? settingsModel;
-    onboardingStatus = appSnapshot.onboardingComplete;
-  }
   if (kIsDesktop) {
     await initWindow(settingsModel: settingsModel);
   }
   if (!initStatus) {
-    await clearRecentWorkspacePath();
-    settingsModel = settingsModel.copyWithPath(workspaceFolderPath: null);
+    settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
 
   runApp(
