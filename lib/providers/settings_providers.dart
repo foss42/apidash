@@ -57,6 +57,11 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
     );
-    await setSettingsToSharedPrefs(state);
+    await saveAppSettings(state);
+  }
+
+  Future<void> applySettings(SettingsModel model) async {
+    state = model;
+    await saveAppSettings(state);
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'widgets/widgets.dart';
+import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
@@ -113,7 +114,8 @@ class DashApp extends ConsumerWidget {
         ref.watch(settingsProvider.select((value) => value.isDark));
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
-    final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
+    final showWorkspaceSelector = kIsDesktop &&
+        (workspaceFolderPath == null || workspaceFolderPath.isEmpty);
     final userOnboarded = ref.watch(userOnboardedProvider);
     return Portal(
       child: MaterialApp(
@@ -124,10 +126,20 @@ class DashApp extends ConsumerWidget {
         home: showWorkspaceSelector
             ? WorkspaceSelector(
                 onContinue: (val) async {
-                  await initHiveBoxes(kIsDesktop, val);
-                  ref
+                  final opened = await initWorkspaceStorage(
+                    kIsDesktop,
+                    val,
+                    createIfMissing: true,
+                  );
+                  if (!opened) {
+                    return;
+                  }
+                  final snapshot = await AppSettingsStore.instance.load();
+                  final settings = (snapshot.settings ?? const SettingsModel())
+                      .copyWith(workspaceFolderPath: val);
+                  await ref
                       .read(settingsProvider.notifier)
-                      .update(workspaceFolderPath: val);
+                      .applySettings(settings);
                 },
                 onCancel: () async {
                   try {
@@ -145,7 +157,7 @@ class DashApp extends ConsumerWidget {
                           ? (kIsMobile && !userOnboarded)
                               ? OnboardingScreen(
                                   onComplete: () async {
-                                    await setOnboardingStatusToSharedPrefs(
+                                    await saveOnboardingStatus(
                                       isOnboardingComplete: true,
                                     );
                                     ref

@@ -4,7 +4,7 @@ import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler;
+import '../services/services.dart' show workspaceStorage, WorkspaceStorage;
 
 final selectedEnvironmentIdStateProvider = StateProvider<String?>(
   (ref) => null,
@@ -48,7 +48,7 @@ final availableEnvironmentVariablesStateProvider =
     });
 
 final environmentSequenceProvider = StateProvider<List<String>>((ref) {
-  var ids = hiveHandler.getEnvironmentIds();
+  var ids = workspaceStorage.getEnvironmentIds();
   return ids ?? [kGlobalEnvironmentId];
 });
 
@@ -57,12 +57,12 @@ final StateNotifierProvider<
   Map<String, EnvironmentModel>?
 >
 environmentsStateNotifierProvider = StateNotifierProvider(
-  (ref) => EnvironmentsStateNotifier(ref, hiveHandler),
+  (ref) => EnvironmentsStateNotifier(ref, workspaceStorage),
 );
 
 class EnvironmentsStateNotifier
     extends StateNotifier<Map<String, EnvironmentModel>?> {
-  EnvironmentsStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  EnvironmentsStateNotifier(this.ref, this.workspaceStorage) : super(null) {
     var status = loadEnvironments();
     Future.microtask(() {
       if (status) {
@@ -74,10 +74,10 @@ class EnvironmentsStateNotifier
   }
 
   final Ref ref;
-  final HiveHandler hiveHandler;
+  final WorkspaceStorage workspaceStorage;
 
   bool loadEnvironments() {
-    List<String>? environmentIds = hiveHandler.getEnvironmentIds();
+    List<String>? environmentIds = workspaceStorage.getEnvironmentIds();
     if (environmentIds == null || environmentIds.isEmpty) {
       const globalEnvironment = EnvironmentModel(
         id: kGlobalEnvironmentId,
@@ -89,7 +89,7 @@ class EnvironmentsStateNotifier
     } else {
       Map<String, EnvironmentModel> environmentsMap = {};
       for (var environmentId in environmentIds) {
-        var jsonModel = hiveHandler.getEnvironment(environmentId);
+        var jsonModel = workspaceStorage.getEnvironment(environmentId);
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var environmentModelFromJson = EnvironmentModel.fromJson(jsonMap);
@@ -188,12 +188,12 @@ class EnvironmentsStateNotifier
   Future<void> saveEnvironments() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final environmentIds = ref.read(environmentSequenceProvider);
-    await hiveHandler.setEnvironmentIds(environmentIds);
+    await workspaceStorage.setEnvironmentIds(environmentIds);
     for (var environmentId in environmentIds) {
       var environment = state![environmentId]!;
-      await hiveHandler.setEnvironment(environmentId, environment.toJson());
+      await workspaceStorage.setEnvironment(environmentId, environment.toJson());
     }
-    await hiveHandler.removeUnused();
+    await workspaceStorage.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

@@ -16,17 +16,25 @@ void main() async {
   //Load all LLMs
   await ModelManager.fetchAvailableModels();
 
-  var settingsModel = await getSettingsFromSharedPrefs();
-  var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
+  final recentPath = await readRecentWorkspacePath();
+  var settingsModel = SettingsModel(workspaceFolderPath: recentPath);
+  var onboardingStatus = false;
+
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,
   );
+  if (initStatus) {
+    final appSnapshot = await AppSettingsStore.instance.load();
+    settingsModel = appSnapshot.settings ?? settingsModel;
+    onboardingStatus = appSnapshot.onboardingComplete;
+  }
   if (kIsDesktop) {
     await initWindow(settingsModel: settingsModel);
   }
   if (!initStatus) {
-    settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
+    await clearRecentWorkspacePath();
+    settingsModel = settingsModel.copyWithPath(workspaceFolderPath: null);
   }
 
   runApp(
@@ -50,15 +58,15 @@ Future<bool> initApp(
   try {
     debugPrint("initializeUsingPath: $initializeUsingPath");
     debugPrint("workspaceFolderPath: ${settingsModel?.workspaceFolderPath}");
-    final openBoxesStatus = await initHiveBoxes(
+    final workspaceReady = await initWorkspaceStorage(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );
-    debugPrint("openBoxesStatus: $openBoxesStatus");
-    if (openBoxesStatus) {
+    debugPrint("workspaceReady: $workspaceReady");
+    if (workspaceReady) {
       await autoClearHistory(settingsModel: settingsModel);
     }
-    return openBoxesStatus;
+    return workspaceReady;
   } catch (e) {
     debugPrint("initApp failed due to $e");
     return false;

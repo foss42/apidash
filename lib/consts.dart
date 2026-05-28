@@ -72,6 +72,37 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
+// File-based storage
+const kAppConfigDirName = 'apidash';
+const kRecentWorkspaceFileName = 'recent_workspace';
+const kAppSettingsFileName = 'settings.json';
+const kAppSettingsVersion = 1;
+const kAppSettingsVersionKey = 'version';
+const kAppSettingsOnboardingCompleteKey = 'onboardingComplete';
+
+const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
+
+const kDefaultCollectionId = 'default';
+const kWorkspaceCollectionsDir = 'collections';
+const kWorkspaceRequestsSubdir = 'requests';
+const kWorkspaceCollectionFile = 'collection.json';
+const kWorkspaceEnvironmentsDir = 'environments';
+const kWorkspaceEnvironmentIndexFile = 'index.json';
+const kWorkspaceHistoryDir = 'history';
+const kWorkspaceHistoryIndexFile = 'index.json';
+const kWorkspaceHistoryMetaFile = 'meta.json';
+const kWorkspaceHistoryBodyFile = 'body.json';
+const kJsonFileExtension = '.json';
+
+const kWorkspaceRequestIdsKey = 'requestIds';
+const kWorkspaceEnvironmentIdsKey = 'environmentIds';
+const kWorkspaceHistoryIdsKey = 'historyIds';
+const kWorkspaceActiveEnvironmentIdKey = 'activeEnvironmentId';
+const kWorkspaceSaveResponsesKey = 'saveResponses';
+const kWorkspaceHistoryRetentionPeriodKey = 'historyRetentionPeriod';
+
+const kGlobalEnvironmentName = 'Global Variables';
+
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),

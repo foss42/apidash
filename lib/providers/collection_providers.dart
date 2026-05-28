@@ -39,18 +39,18 @@ final selectedSubstitutedHttpRequestModelProvider =
     });
 
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
-  var ids = hiveHandler.getIds();
+  var ids = workspaceStorage.getIds();
   return ids ?? [];
 });
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
 collectionStateNotifierProvider = StateNotifierProvider(
-  (ref) => CollectionStateNotifier(ref, hiveHandler),
+  (ref) => CollectionStateNotifier(ref, workspaceStorage),
 );
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  CollectionStateNotifier(this.ref, this.workspaceStorage) : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
@@ -63,7 +63,7 @@ class CollectionStateNotifier
   }
 
   final Ref ref;
-  final HiveHandler hiveHandler;
+  final WorkspaceStorage workspaceStorage;
   final baseHttpResponseModel = const HttpResponseModel();
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
@@ -586,7 +586,7 @@ class CollectionStateNotifier
   Future<void> clearData() async {
     ref.read(clearDataStateProvider.notifier).state = true;
     ref.read(selectedIdStateProvider.notifier).state = null;
-    await hiveHandler.clear();
+    await workspaceStorage.clear();
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
@@ -594,7 +594,7 @@ class CollectionStateNotifier
   }
 
   bool loadData() {
-    var ids = hiveHandler.getIds();
+    var ids = workspaceStorage.getIds();
     if (ids == null || ids.length == 0) {
       String newId = getNewUuid();
       state = {
@@ -607,7 +607,7 @@ class CollectionStateNotifier
     } else {
       Map<String, RequestModel> data = {};
       for (var id in ids) {
-        var jsonModel = hiveHandler.getRequestModel(id);
+        var jsonModel = workspaceStorage.getRequestModel(id);
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var requestModel = RequestModel.fromJson(jsonMap);
@@ -628,9 +628,9 @@ class CollectionStateNotifier
     ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
     final ids = ref.read(requestSequenceProvider);
-    await hiveHandler.setIds(ids);
+    await workspaceStorage.setIds(ids);
     for (var id in ids) {
-      await hiveHandler.setRequestModel(
+      await workspaceStorage.setRequestModel(
         id,
         saveResponse
             ? (state?[id])?.toJson()
@@ -638,7 +638,7 @@ class CollectionStateNotifier
       );
     }
 
-    await hiveHandler.removeUnused();
+    await workspaceStorage.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

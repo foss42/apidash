@@ -1,6 +1,6 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
-import 'hive_services.dart';
+import 'workspace_service.dart';
 
 Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
   final historyRetentionPeriod = settingsModel?.historyRetentionPeriod;
@@ -9,7 +9,7 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
   if (retentionDate == null) {
     return;
   } else {
-    List<String>? historyIds = hiveHandler.getHistoryIds();
+    List<String>? historyIds = workspaceStorage.getHistoryIds();
     List<String> toRemoveIds = [];
 
     if (historyIds == null || historyIds.isEmpty) {
@@ -17,7 +17,7 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
     }
 
     for (var historyId in historyIds) {
-      var jsonModel = hiveHandler.getHistoryMeta(historyId);
+      var jsonModel = workspaceStorage.getHistoryMeta(historyId);
       if (jsonModel != null) {
         var jsonMap = Map<String, Object?>.from(jsonModel);
         HistoryMetaModel historyMetaModelFromJson =
@@ -33,10 +33,10 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
     }
 
     for (var id in toRemoveIds) {
-      await hiveHandler.deleteHistoryRequest(id);
-      hiveHandler.deleteHistoryMeta(id);
+      await workspaceStorage.deleteHistoryRequest(id);
+      workspaceStorage.deleteHistoryMeta(id);
     }
-    hiveHandler.setHistoryIds(
+    workspaceStorage.setHistoryIds(
         historyIds..removeWhere((id) => toRemoveIds.contains(id)));
   }
 }
