@@ -1,8 +1,10 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/services/services.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
@@ -13,6 +15,8 @@ class CollectionPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(autoSaveNotifierProvider);
+    ref.watch(collectionsStateNotifierProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
     var sm = ScaffoldMessenger.of(context);
     if (collection == null) {
@@ -27,7 +31,7 @@ class CollectionPane extends ConsumerWidget {
         children: [
           SidebarHeader(
             onAddNew: () {
-              ref.read(collectionStateNotifierProvider.notifier).add();
+              ref.read(collectionsStateNotifierProvider.notifier).addCollection();
             },
             onImport: () {
               importToCollectionPane(context, ref, sm);
@@ -45,7 +49,7 @@ class CollectionPane extends ConsumerWidget {
             },
           ),
           kVSpacer10,
-          const Expanded(child: RequestList()),
+          const Expanded(child: CollectionRequestList()),
           kVSpacer5,
         ],
       ),
@@ -53,20 +57,28 @@ class CollectionPane extends ConsumerWidget {
   }
 }
 
-class RequestList extends ConsumerStatefulWidget {
-  const RequestList({super.key});
+class CollectionRequestList extends ConsumerStatefulWidget {
+  const CollectionRequestList({super.key});
 
   @override
-  ConsumerState<RequestList> createState() => _RequestListState();
+  ConsumerState<CollectionRequestList> createState() =>
+      _CollectionRequestListState();
 }
 
-class _RequestListState extends ConsumerState<RequestList> {
+class _CollectionRequestListState extends ConsumerState<CollectionRequestList> {
   late final ScrollController controller;
 
   @override
   void initState() {
     super.initState();
     controller = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selected = ref.read(selectedCollectionIdStateProvider);
+      final expanded = ref.read(expandedCollectionIdsProvider);
+      if (expanded.isEmpty) {
+        ref.read(expandedCollectionIdsProvider.notifier).state = {selected};
+      }
+    });
   }
 
   @override
@@ -77,96 +89,335 @@ class _RequestListState extends ConsumerState<RequestList> {
 
   @override
   Widget build(BuildContext context) {
-    final requestSequence = ref.watch(requestSequenceProvider);
-    final requestItems = ref.watch(collectionStateNotifierProvider)!;
-    final alwaysShowCollectionPaneScrollbar = ref.watch(
+    final collectionSequence = ref.watch(collectionSequenceProvider);
+    final collections = ref.watch(collectionsStateNotifierProvider)!;
+    final expandedIds = ref.watch(expandedCollectionIdsProvider);
+    final selectedCollectionId = ref.watch(selectedCollectionIdStateProvider);
+    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
+    final alwaysShowScrollbar = ref.watch(
       settingsProvider.select(
         (value) => value.alwaysShowCollectionPaneScrollbar,
       ),
     );
-    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
 
     return Scrollbar(
       controller: controller,
-      thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
+      thumbVisibility: alwaysShowScrollbar ? true : null,
       radius: const Radius.circular(12),
-      child: filterQuery.isEmpty
-          ? ReorderableListView.builder(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              scrollController: controller,
-              buildDefaultDragHandles: false,
-              itemCount: requestSequence.length,
-              onReorder: (int oldIndex, int newIndex) {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                if (oldIndex != newIndex) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .reorder(oldIndex, newIndex);
-                }
-              },
-              itemBuilder: (context, index) {
-                var id = requestSequence[index];
-                if (kIsMobile) {
-                  return ReorderableDelayedDragStartListener(
-                    key: ValueKey(id),
-                    index: index,
-                    child: Padding(
-                      padding: kP1,
-                      child: RequestItem(
-                        id: id,
-                        requestModel: requestItems[id]!,
-                      ),
-                    ),
-                  );
-                }
-                return ReorderableDragStartListener(
-                  key: ValueKey(id),
-                  index: index,
-                  child: Padding(
-                    padding: kP1,
-                    child: RequestItem(id: id, requestModel: requestItems[id]!),
-                  ),
-                );
-              },
-            )
-          : ListView(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              controller: controller,
-              children: requestSequence.map((id) {
-                var item = requestItems[id]!;
-                if (item.httpRequestModel!.url.toLowerCase().contains(
-                      filterQuery,
-                    ) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
-                  return Padding(
-                    padding: kP1,
-                    child: RequestItem(id: id, requestModel: item),
-                  );
-                }
-                return kSizedBoxEmpty;
-              }).toList(),
+      child: ListView(
+        padding: context.isMediumWindow
+            ? EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom,
+                right: 8,
+              )
+            : kPe8,
+        controller: controller,
+        children: [
+          for (final collectionId in collectionSequence)
+            _CollectionSection(
+              collectionId: collectionId,
+              collection: collections[collectionId]!,
+              isExpanded: expandedIds.contains(collectionId),
+              isActive: collectionId == selectedCollectionId,
+              filterQuery: filterQuery,
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CollectionSection extends ConsumerWidget {
+  const _CollectionSection({
+    required this.collectionId,
+    required this.collection,
+    required this.isExpanded,
+    required this.isActive,
+    required this.filterQuery,
+  });
+
+  final String collectionId;
+  final CollectionModel collection;
+  final bool isExpanded;
+  final bool isActive;
+  final String filterQuery;
+
+  List<String> _requestIds(WidgetRef ref) {
+    if (isActive) {
+      final sequence = ref.watch(requestSequenceProvider);
+      final items = ref.watch(collectionStateNotifierProvider)!;
+      return sequence.where(items.containsKey).toList();
+    }
+    return collection.requestIds;
+  }
+
+  RequestModel? _requestModel(WidgetRef ref, String requestId) {
+    if (isActive) {
+      return ref.watch(collectionStateNotifierProvider)?[requestId];
+    }
+    final json = workspaceStorage.getRequestModel(collectionId, requestId);
+    if (json == null) {
+      return null;
+    }
+    final jsonMap = Map<String, Object?>.from(json);
+    var model = RequestModel.fromJson(jsonMap);
+    if (model.httpRequestModel == null && model.aiRequestModel == null) {
+      model = model.copyWith(httpRequestModel: const HttpRequestModel());
+    }
+    return model;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final requestIds = _requestIds(ref);
+    final visibleIds = filterQuery.isEmpty
+        ? requestIds
+        : requestIds.where((id) {
+            final model = _requestModel(ref, id);
+            if (model == null) {
+              return false;
+            }
+            final url = model.httpRequestModel?.url ?? '';
+            return url.toLowerCase().contains(filterQuery) ||
+                model.name.toLowerCase().contains(filterQuery);
+          }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _CollectionSectionHeader(
+          collectionId: collectionId,
+          name: collection.name,
+          requestCount: requestIds.length,
+          isExpanded: isExpanded,
+          isActive: isActive,
+        ),
+        if (isExpanded)
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Column(
+              children: [
+                for (final requestId in visibleIds)
+                  Padding(
+                    padding: kP1,
+                    child: RequestItem(
+                      id: requestId,
+                      requestModel: _requestModel(ref, requestId)!,
+                      collectionId: collectionId,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _CollectionSectionHeader extends ConsumerWidget {
+  const _CollectionSectionHeader({
+    required this.collectionId,
+    required this.name,
+    required this.requestCount,
+    required this.isExpanded,
+    required this.isActive,
+  });
+
+  final String collectionId;
+  final String name;
+  final int requestCount;
+  final bool isExpanded;
+  final bool isActive;
+
+  Future<String?> _showRenameDialog(BuildContext context) async {
+    final controller = TextEditingController(text: name);
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text(kLabelRenameCollection),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: kLabelCollectionName),
+            onSubmitted: (value) => Navigator.of(context).pop(value),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(kLabelCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(controller.text),
+              child: const Text(kLabelOk),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      controller.dispose();
+    }
+  }
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(kLabelDeleteCollection),
+        content: Text('Delete "$name" and all its requests?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(kLabelCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(ItemMenuOption.delete.label),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref
+          .read(collectionsStateNotifierProvider.notifier)
+          .deleteCollection(collectionId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Material(
+      color: isActive ? colorScheme.surfaceContainerHighest : Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () async {
+          if (!isActive) {
+            ref.read(selectedCollectionIdStateProvider.notifier).state =
+                collectionId;
+          }
+          ref.read(expandedCollectionIdsProvider.notifier).update(
+                (ids) => {...ids, collectionId},
+              );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+          child: Row(
+            children: [
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                iconSize: 18,
+                onPressed: () {
+                  ref.read(expandedCollectionIdsProvider.notifier).update(
+                        (ids) {
+                          final next = {...ids};
+                          if (next.contains(collectionId)) {
+                            next.remove(collectionId);
+                          } else {
+                            next.add(collectionId);
+                          }
+                          return next;
+                        },
+                      );
+                },
+                icon: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_down
+                      : Icons.keyboard_arrow_right,
+                ),
+              ),
+              Icon(
+                Icons.folder_outlined,
+                size: 18,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              kHSpacer4,
+              Expanded(
+                child: Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              Text(
+                '$requestCount',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+              ),
+              IconButton(
+                tooltip: kLabelPlusNew,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                iconSize: 18,
+                onPressed: () async {
+                  await ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .ensureActive(collectionId);
+                  ref.read(collectionStateNotifierProvider.notifier).add();
+                  ref.read(expandedCollectionIdsProvider.notifier).update(
+                        (ids) => {...ids, collectionId},
+                      );
+                },
+                icon: const Icon(Icons.add),
+              ),
+              PopupMenuButton<ItemMenuOption>(
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.more_horiz, size: 18),
+                splashRadius: 18,
+                onSelected: (option) async {
+                  if (option == ItemMenuOption.edit) {
+                    final result = await _showRenameDialog(context);
+                    if (!context.mounted) {
+                      return;
+                    }
+                    if (result != null && result.trim().isNotEmpty) {
+                      ref
+                          .read(collectionsStateNotifierProvider.notifier)
+                          .renameCollection(collectionId, result);
+                    }
+                  }
+                  if (option == ItemMenuOption.delete) {
+                    if (!context.mounted) {
+                      return;
+                    }
+                    await _confirmDelete(context, ref);
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: ItemMenuOption.edit,
+                    child: Text(kLabelRenameCollection),
+                  ),
+                  PopupMenuItem(
+                    value: ItemMenuOption.delete,
+                    child: Text(ItemMenuOption.delete.label),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
 
 class RequestItem extends ConsumerWidget {
-  const RequestItem({super.key, required this.id, required this.requestModel});
+  const RequestItem({
+    super.key,
+    required this.id,
+    required this.requestModel,
+    required this.collectionId,
+  });
 
   final String id;
   final RequestModel requestModel;
+  final String collectionId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -181,18 +432,20 @@ class RequestItem extends ConsumerWidget {
       url: requestModel.httpRequestModel?.url,
       selectedId: selectedId,
       editRequestId: editRequestId,
-      onTap: () {
+      onTap: () async {
+        if (ref.read(selectedCollectionIdStateProvider) != collectionId) {
+          ref.read(selectedCollectionIdStateProvider.notifier).state =
+              collectionId;
+          await ref
+              .read(collectionStateNotifierProvider.notifier)
+              .ensureActive(collectionId);
+        }
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
       onSecondaryTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
       },
-      // onDoubleTap: () {
-      //   ref.read(selectedIdStateProvider.notifier).state = id;
-      //   ref.read(selectedIdEditStateProvider.notifier).state = id;
-      // },
-      // controller: ref.watch(nameTextFieldControllerProvider),
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),
       onChangedNameEditor: (value) {
         value = value.trim();
@@ -205,12 +458,6 @@ class RequestItem extends ConsumerWidget {
       },
       onMenuSelected: (ItemMenuOption item) {
         if (item == ItemMenuOption.edit) {
-          // var controller =
-          //     ref.read(nameTextFieldControllerProvider.notifier).state;
-          // controller.text = requestModel.name;
-          // controller.selection = TextSelection.fromPosition(
-          //   TextPosition(offset: controller.text.length),
-          // );
           ref.read(selectedIdEditStateProvider.notifier).state = id;
           Future.delayed(
             const Duration(milliseconds: 150),

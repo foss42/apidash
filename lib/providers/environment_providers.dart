@@ -188,7 +188,8 @@ class EnvironmentsStateNotifier
       var environment = state![environmentId]!;
       await workspaceStorage.setEnvironment(environmentId, environment.toJson());
     }
-    await workspaceStorage.removeUnused();
+    final collectionId = ref.read(selectedCollectionIdStateProvider);
+    await workspaceStorage.removeUnused(collectionId);
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

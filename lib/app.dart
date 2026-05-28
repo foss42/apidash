@@ -110,7 +110,6 @@ class DashApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(autoSaveNotifierProvider);
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final workspaceFolderPath = ref

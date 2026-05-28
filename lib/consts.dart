@@ -76,10 +76,15 @@ const kAutoSaveDebounceDuration = Duration(seconds: 2);
 
 const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
 
-const kDefaultCollectionId = 'default';
+const kDefaultCollectionId = 'collection-1';
+const kDefaultCollectionName = 'Collection 1';
 const kWorkspaceCollectionsDir = 'collections';
+const kWorkspaceCollectionsIndexFile = 'index.json';
 const kWorkspaceRequestsSubdir = 'requests';
 const kWorkspaceCollectionFile = 'collection.json';
+const kWorkspaceCollectionIdsKey = 'collectionIds';
+const kWorkspaceCollectionIdKey = 'id';
+const kWorkspaceCollectionNameKey = 'name';
 const kWorkspaceEnvironmentsDir = 'environments';
 const kWorkspaceEnvironmentIndexFile = 'index.json';
 const kWorkspaceHistoryDir = 'history';
@@ -456,6 +461,10 @@ const kRaiseIssue =
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
+const kLabelNewCollection = "New collection";
+const kLabelRenameCollection = "Rename collection";
+const kLabelDeleteCollection = "Delete collection";
+const kLabelCollectionName = "Collection name";
 const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";

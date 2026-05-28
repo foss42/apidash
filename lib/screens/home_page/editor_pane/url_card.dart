@@ -102,13 +102,10 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.url));
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.url));
-    final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(selectedId!)!;
+    final requestModel = ref.watch(selectedRequestModelProvider);
+    if (selectedId == null || requestModel == null) {
+      return const SizedBox.shrink();
+    }
     return EnvURLField(
       selectedId: selectedId,
       initialValue: switch (requestModel.apiType) {

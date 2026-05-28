@@ -38,11 +38,6 @@ final selectedSubstitutedHttpRequestModelProvider =
       }
     });
 
-final requestSequenceProvider = StateProvider<List<String>>((ref) {
-  var ids = workspaceStorage.getIds();
-  return ids ?? [];
-});
-
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
 collectionStateNotifierProvider = StateNotifierProvider(
   (ref) => CollectionStateNotifier(ref, workspaceStorage),
@@ -51,15 +46,71 @@ collectionStateNotifierProvider = StateNotifierProvider(
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
   CollectionStateNotifier(this.ref, this.workspaceStorage) : super(null) {
-    var status = loadData();
-    Future.microtask(() {
-      if (status) {
-        ref.read(requestSequenceProvider.notifier).state = [state!.keys.first];
+    ref.listen(selectedCollectionIdStateProvider, (previous, next) {
+      if (!_isReady || previous == null || previous == next) {
+        return;
       }
-      ref.read(selectedIdStateProvider.notifier).state = ref.read(
-        requestSequenceProvider,
-      )[0];
+      unawaited(_switchCollection(from: previous, to: next));
     });
+    Future.microtask(() {
+      activateCollection(ref.read(selectedCollectionIdStateProvider));
+      _isReady = true;
+    });
+  }
+
+  bool _isReady = false;
+
+  void _syncRequestSequence(List<String> diskOrder) {
+    final loaded =
+        diskOrder.where((id) => state?.containsKey(id) ?? false).toList();
+    ref.read(requestSequenceProvider.notifier).state = loaded;
+  }
+
+  void activateCollection(String collectionId) {
+    final diskIds = workspaceStorage.getIds(collectionId) ?? [];
+    final status = loadData(collectionId);
+    if (status && state != null && state!.isNotEmpty) {
+      ref.read(requestSequenceProvider.notifier).state = [state!.keys.first];
+    } else {
+      _syncRequestSequence(diskIds);
+    }
+    final sequence = ref.read(requestSequenceProvider);
+    ref.read(selectedIdStateProvider.notifier).state =
+        sequence.isNotEmpty ? sequence.first : null;
+  }
+
+  String get _activeCollectionId => ref.read(selectedCollectionIdStateProvider);
+
+  Future<void> ensureActive(String collectionId) async {
+    if (_activeCollectionId == collectionId && state != null) {
+      return;
+    }
+    final from = _activeCollectionId;
+    if (state != null && from != collectionId) {
+      await _switchCollection(from: from, to: collectionId);
+    } else {
+      ref.read(selectedCollectionIdStateProvider.notifier).state = collectionId;
+      activateCollection(collectionId);
+    }
+  }
+
+  Future<void> _switchCollection({
+    required String from,
+    required String to,
+  }) async {
+    await saveData();
+    ref
+        .read(collectionsStateNotifierProvider.notifier)
+        .syncRequestIds(from, ref.read(requestSequenceProvider));
+    final requestIds =
+        ref.read(collectionsStateNotifierProvider)?[to]?.requestIds ??
+        workspaceStorage.getIds(to) ??
+        [];
+    loadData(to);
+    _syncRequestSequence(requestIds);
+    final sequence = ref.read(requestSequenceProvider);
+    ref.read(selectedIdStateProvider.notifier).state =
+        sequence.isNotEmpty ? sequence.first : null;
   }
 
   final Ref ref;
@@ -576,9 +627,9 @@ class CollectionStateNotifier
     state = {};
   }
 
-  bool loadData() {
-    var ids = workspaceStorage.getIds();
-    if (ids == null || ids.length == 0) {
+  bool loadData(String collectionId) {
+    var ids = workspaceStorage.getIds(collectionId);
+    if (ids == null || ids.isEmpty) {
       String newId = getNewUuid();
       state = {
         newId: RequestModel(
@@ -590,7 +641,7 @@ class CollectionStateNotifier
     } else {
       Map<String, RequestModel> data = {};
       for (var id in ids) {
-        var jsonModel = workspaceStorage.getRequestModel(id);
+        var jsonModel = workspaceStorage.getRequestModel(collectionId, id);
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var requestModel = RequestModel.fromJson(jsonMap);
@@ -609,11 +660,16 @@ class CollectionStateNotifier
 
   Future<void> saveData() async {
     ref.read(saveDataStateProvider.notifier).state = true;
+    final collectionId = _activeCollectionId;
     final saveResponse = ref.read(settingsProvider).saveResponses;
     final ids = ref.read(requestSequenceProvider);
-    await workspaceStorage.setIds(ids);
+    await workspaceStorage.setIds(collectionId, ids);
+    ref
+        .read(collectionsStateNotifierProvider.notifier)
+        .syncRequestIds(collectionId, ids);
     for (var id in ids) {
       await workspaceStorage.setRequestModel(
+        collectionId,
         id,
         saveResponse
             ? (state?[id])?.toJson()
@@ -621,7 +677,7 @@ class CollectionStateNotifier
       );
     }
 
-    await workspaceStorage.removeUnused();
+    await workspaceStorage.removeUnused(collectionId);
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import 'collection_providers.dart';
+import 'collections_providers.dart';
 import 'environment_providers.dart';
 import 'ui_providers.dart';
 
@@ -44,6 +45,23 @@ class AutoSaveNotifier extends Notifier<void> {
         onWorkspaceDataChanged();
       },
     );
+
+    ref.listen<Map<String, CollectionModel>?>(
+      collectionsStateNotifierProvider,
+      (previous, next) {
+        if (previous == null) {
+          return;
+        }
+        onWorkspaceDataChanged();
+      },
+    );
+
+    ref.listen<List<String>>(collectionSequenceProvider, (previous, next) {
+      if (previous == null) {
+        return;
+      }
+      onWorkspaceDataChanged();
+    });
 
     ref.listen<List<String>>(requestSequenceProvider, (previous, next) {
       if (previous == null) {
@@ -86,6 +104,7 @@ class AutoSaveNotifier extends Notifier<void> {
       return;
     }
     await ref.read(collectionStateNotifierProvider.notifier).saveData();
+    await ref.read(collectionsStateNotifierProvider.notifier).saveCollections();
     await ref.read(environmentsStateNotifierProvider.notifier).saveEnvironments();
   }
 }
