@@ -72,6 +72,8 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
+const kAutoSaveDebounceDuration = Duration(seconds: 2);
+
 const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
 
 const kDefaultCollectionId = 'default';

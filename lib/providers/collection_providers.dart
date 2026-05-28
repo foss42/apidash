@@ -72,10 +72,6 @@ class CollectionStateNotifier
     return state?[id];
   }
 
-  void unsave() {
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
-  }
-
   void add() {
     final id = getNewUuid();
     final newRequestModel = RequestModel(
@@ -89,7 +85,6 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
-    unsave();
   }
 
   void addRequestModel(HttpRequestModel httpRequestModel, {String? name}) {
@@ -106,7 +101,6 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
-    unsave();
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -114,7 +108,6 @@ class CollectionStateNotifier
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
-    unsave();
   }
 
   void remove({String? id}) {
@@ -139,7 +132,6 @@ class CollectionStateNotifier
     var map = {...state!};
     map.remove(rId);
     state = map;
-    unsave();
   }
 
   void clearResponse({String? id}) {
@@ -156,7 +148,6 @@ class CollectionStateNotifier
     var map = {...state!};
     map[rId] = newModel;
     state = map;
-    unsave();
   }
 
   void duplicate({String? id}) {
@@ -186,7 +177,6 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    unsave();
   }
 
   void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
@@ -216,7 +206,6 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    unsave();
   }
 
   void update({
@@ -310,7 +299,6 @@ class CollectionStateNotifier
     var map = {...state!};
     map[rId] = newModel;
     state = map;
-    unsave();
   }
 
   Future<void> sendRequest() async {
@@ -450,8 +438,6 @@ class CollectionStateNotifier
               ),
             );
           }
-          unsave();
-
           if (historyModel != null && httpResponseModel != null) {
             historyModel = historyModel!.copyWith(
               httpResponseModel: httpResponseModel!,
@@ -474,7 +460,6 @@ class CollectionStateNotifier
           ...state!,
           requestId: newRequestModel.copyWith(isStreaming: false),
         };
-        unsave();
       },
       onError: (e) {
         if (!completer.isCompleted) {
@@ -574,23 +559,21 @@ class CollectionStateNotifier
     // Final state update
     state = {...state!, requestId: newRequestModel};
 
-    unsave();
   }
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
     cancelHttpRequest(id);
-    unsave();
   }
 
   Future<void> clearData() async {
+    ref.read(autoSaveNotifierProvider.notifier).cancelPending();
     ref.read(clearDataStateProvider.notifier).state = true;
     ref.read(selectedIdStateProvider.notifier).state = null;
     await workspaceStorage.clear();
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
-    unsave();
   }
 
   bool loadData() {

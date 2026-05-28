@@ -4,8 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'sidebar_save_button.dart';
-
 class SidebarHeader extends ConsumerWidget {
   const SidebarHeader({
     super.key,
@@ -23,7 +21,6 @@ class SidebarHeader extends ConsumerWidget {
       padding: kPe8,
       child: Row(
         children: [
-          const SaveButton(),
           const Spacer(),
           ElevatedButton(
             onPressed: onAddNew,

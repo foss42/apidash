@@ -80,6 +80,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
               FilledButton(
                 child: const Text('Save'),
                 onPressed: () async {
+                  ref.read(autoSaveNotifierProvider.notifier).cancelPending();
                   await ref
                       .read(collectionStateNotifierProvider.notifier)
                       .saveData();
@@ -109,6 +110,7 @@ class DashApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(autoSaveNotifierProvider);
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final workspaceFolderPath = ref

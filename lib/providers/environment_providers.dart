@@ -116,7 +116,6 @@ class EnvironmentsStateNotifier
         .update((state) => [...state, id]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state =
         newEnvironmentModel.id;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void updateEnvironment(
@@ -130,7 +129,6 @@ class EnvironmentsStateNotifier
       values: values ?? environment.values,
     );
     state = {...state!, id: updatedEnvironment};
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void duplicateEnvironment(String id) {
@@ -152,7 +150,6 @@ class EnvironmentsStateNotifier
         .read(environmentSequenceProvider.notifier)
         .update((state) => [...environmentIds]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void removeEnvironment(String id) {
@@ -174,7 +171,6 @@ class EnvironmentsStateNotifier
 
     state = {...state!}..remove(id);
 
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -182,7 +178,6 @@ class EnvironmentsStateNotifier
     final id = environmentIds.removeAt(oldIdx);
     environmentIds.insert(newIdx, id);
     ref.read(environmentSequenceProvider.notifier).state = [...environmentIds];
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   Future<void> saveEnvironments() async {

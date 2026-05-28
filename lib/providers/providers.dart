@@ -1,3 +1,4 @@
+export 'auto_save.dart';
 export 'ai_providers.dart';
 export 'collection_providers.dart';
 export 'environment_providers.dart';
