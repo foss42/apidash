@@ -3,6 +3,7 @@ export 'graphql_utils.dart';
 export 'http_request_utils.dart';
 export 'http_response_utils.dart';
 export 'platform_utils.dart';
+export 'sensitive_data_redactor.dart';
 export 'string_utils.dart' hide RandomStringGenerator;
 export 'uri_utils.dart';
 export 'auth/handle_auth.dart';

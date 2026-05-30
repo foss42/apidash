@@ -5,6 +5,7 @@ import 'package:better_networking/utils/auth/jwt_auth_utils.dart';
 import 'package:better_networking/utils/auth/digest_auth_utils.dart';
 import 'package:better_networking/better_networking.dart';
 import 'package:better_networking/utils/auth/oauth2_utils.dart';
+import 'package:better_networking/utils/sensitive_data_redactor.dart';
 import 'package:flutter/foundation.dart';
 
 import 'oauth1_utils.dart';
@@ -221,7 +222,13 @@ Future<HttpRequestModel> handleAuth(
             }
           }
 
-          debugPrint(res.$1.credentials.accessToken);
+          debugPrint(
+            'OAuth2 authorization code token: '
+            '${redactSensitiveValue(
+              res.$1.credentials.accessToken,
+              name: 'access_token',
+            )}',
+          );
 
           // Add the access token to the request headers
           updatedHeaders.add(
@@ -238,7 +245,13 @@ Future<HttpRequestModel> handleAuth(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
           );
-          debugPrint(client.credentials.accessToken);
+          debugPrint(
+            'OAuth2 client credentials token: '
+            '${redactSensitiveValue(
+              client.credentials.accessToken,
+              name: 'access_token',
+            )}',
+          );
 
           // Add the access token to the request headers
           updatedHeaders.add(
@@ -255,7 +268,13 @@ Future<HttpRequestModel> handleAuth(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
           );
-          debugPrint(client.credentials.accessToken);
+          debugPrint(
+            'OAuth2 resource owner password token: '
+            '${redactSensitiveValue(
+              client.credentials.accessToken,
+              name: 'access_token',
+            )}',
+          );
 
           // Add the access token to the request headers
           updatedHeaders.add(

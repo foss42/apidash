@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:developer' show log;
+import 'package:better_networking/utils/sensitive_data_redactor.dart';
 
 /// A lightweight HTTP server for handling OAuth callbacks on desktop platforms.
 /// This provides a standard localhost callback URL that's compatible with most OAuth providers.
@@ -152,7 +153,7 @@ class OAuthCallbackServer {
   }
 
   void _handleRequest(HttpRequest request) {
-    log('OAuth request received: ${request.uri}');
+    log('OAuth request received: ${redactSensitiveUri(request.uri)}');
 
     try {
       // Handle OPTIONS preflight requests for CORS
