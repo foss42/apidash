@@ -589,3 +589,814 @@ if (sessionCookie) {
 ```
 
 *Tip: Instead of a pre-request script, you can also simply add a header in the UI with the name `Cookie` and the value `{{session_cookie}}` to achieve the same result.*
+
+---
+
+## Testing and Assertions
+
+You can use post-response scripts to test your APIs automatically. Check status codes, validate response structures, and verify your endpoints behave as expected.
+
+### Basic Assertions
+
+#### Example 1: Check Status Codes
+
+```javascript
+// Simple status check
+if (ad.response.status !== 200) {
+  ad.console.error(`Expected 200, got ${ad.response.status}`);
+  ad.environment.set("test_status", "FAILED");
+  return;
+}
+
+ad.console.log("Status check passed");
+ad.environment.set("test_status", "PASSED");
+```
+
+#### Example 2: Verify Headers
+
+```javascript
+// Check for expected headers
+const contentType = ad.response.getHeader("Content-Type");
+if (!contentType || !contentType.includes("application/json")) {
+  ad.console.error("Missing or wrong Content-Type header");
+}
+
+const corsHeader = ad.response.getHeader("Access-Control-Allow-Origin");
+if (!corsHeader) {
+  ad.console.warn("CORS header not found");
+}
+
+ad.console.log("Header checks complete");
+```
+
+#### Example 3: Performance Checks
+
+```javascript
+// Make sure response is fast enough
+const maxTime = 500; // milliseconds
+
+if (ad.response.time > maxTime) {
+  ad.console.warn(`Slow response: ${ad.response.time}ms`);
+} else {
+  ad.console.log(`Response time OK: ${ad.response.time}ms`);
+}
+
+// Save most recent response time (gets overwritten on each run)
+ad.environment.set("last_response_time", ad.response.time);
+```
+
+#### Example 3b: Track Performance Over Time
+
+```javascript
+// Track response times across multiple runs for trend analysis
+const history = JSON.parse(ad.environment.get("response_time_history") || "[]");
+
+history.push({
+  time: ad.response.time,
+  timestamp: Date.now(),
+  url: ad.request.url.get()
+});
+
+// Keep only last 10 runs to avoid growing indefinitely
+if (history.length > 10) {
+  history.shift();
+}
+
+ad.environment.set("response_time_history", JSON.stringify(history));
+
+// Calculate average and detect degradation
+const avgTime = history.reduce((sum, h) => sum + h.time, 0) / history.length;
+ad.console.log(`Current: ${ad.response.time}ms, Average: ${avgTime.toFixed(2)}ms`);
+
+if (ad.response.time > avgTime * 1.5) {
+  ad.console.warn(`Performance degradation detected! 50% slower than average`);
+}
+```
+
+### Checking JSON Responses
+
+#### Example 4: Verify Required Fields
+
+```javascript
+// Check response has the fields we need
+const data = ad.response.json();
+
+if (!data) {
+  ad.console.error("Failed to parse JSON");
+  return;
+}
+
+const required = ["id", "name", "email", "createdAt"];
+const missing = required.filter(field => !(field in data));
+
+if (missing.length > 0) {
+  ad.console.error(`Missing fields: ${missing.join(", ")}`);
+} else {
+  ad.console.log("All required fields found");
+}
+```
+
+#### Example 5: Check Data Types
+
+```javascript
+// Verify data types are correct
+const data = ad.response.json();
+
+if (typeof data.id !== "number") {
+  ad.console.error("id should be a number");
+}
+
+if (typeof data.name !== "string") {
+  ad.console.error("name should be a string");
+}
+
+if (!Array.isArray(data.tags)) {
+  ad.console.error("tags should be an array");
+}
+
+ad.console.log("Type validation complete");
+```
+
+#### Example 6: Validate Values
+
+```javascript
+// Check data values make sense
+const data = ad.response.json();
+
+if (data.age && (data.age < 0 || data.age > 150)) {
+  ad.console.error("Age looks wrong: " + data.age);
+}
+
+if (data.price && data.price < 0) {
+  ad.console.error("Price can't be negative");
+}
+
+// Verify email format
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (data.email && !emailRegex.test(data.email)) {
+  ad.console.error("Invalid email: " + data.email);
+}
+```
+
+### Running Multiple Tests
+
+#### Example 7: Complete Test for an Endpoint
+
+```javascript
+// Test a user creation endpoint thoroughly
+const data = ad.response.json();
+let passed = 0;
+let failed = 0;
+
+function check(name, condition) {
+  if (condition) {
+    ad.console.log("✓ " + name);
+    passed++;
+  } else {
+    ad.console.error("✗ " + name);
+    failed++;
+  }
+}
+
+// Run all checks
+check("Status is 201", ad.response.status === 201);
+check("Response under 1s", ad.response.time < 1000);
+check("Content-Type is JSON", 
+  ad.response.getHeader("Content-Type")?.includes("application/json"));
+
+if (data) {
+  check("Has id field", "id" in data);
+  check("Has username field", "username" in data);
+  check("Has email field", "email" in data);
+  check("id is string", typeof data.id === "string");
+  check("email format valid", /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email));
+  check("password not exposed", !("password" in data));
+  
+  // Save the ID for next request
+  if (data.id) {
+    ad.environment.set("user_id", data.id);
+  }
+}
+
+// Summary
+const total = passed + failed;
+const rate = total > 0 ? Math.round((passed / total) * 100) : 0;
+ad.console.log(`\n${passed}/${total} tests passed (${rate}%)`);
+ad.environment.set("test_result", failed === 0 ? "PASSED" : "FAILED");
+```
+
+### Chaining Requests
+
+#### Example 8: Multi-Step Test Flow
+
+```javascript
+// Test flow: login -> fetch user -> update user
+const step = ad.environment.get("test_step") || "login";
+
+if (step === "login") {
+  if (ad.response.status === 200) {
+    const data = ad.response.json();
+    if (data?.token) {
+      ad.environment.set("auth_token", data.token);
+      ad.environment.set("test_step", "fetch_user");
+      ad.console.log("Login OK, moving to next step");
+    }
+  }
+} 
+else if (step === "fetch_user") {
+  if (ad.response.status === 200) {
+    const data = ad.response.json();
+    if (data?.id) {
+      ad.environment.set("user_id", data.id);
+      ad.environment.set("test_step", "update_user");
+      ad.console.log("User fetched, moving to update");
+    }
+  }
+} 
+else if (step === "update_user") {
+  if (ad.response.status === 200) {
+    ad.environment.set("test_step", "complete");
+    ad.console.log("All steps passed!");
+  }
+}
+```
+
+### Advanced Testing
+
+These patterns help with contract testing, regression detection, and integration with AI tools.
+
+#### Example 9: Verify API Contract
+
+```javascript
+// Make sure API matches expected contract
+const data = ad.response.json();
+
+// Check status
+if (ad.response.status !== 200) {
+  ad.console.error(`Wrong status: ${ad.response.status}`);
+}
+
+// Check content type
+if (!ad.response.getHeader("Content-Type")?.includes("json")) {
+  ad.console.error("Wrong content type");
+}
+
+// Check required fields
+const required = ["id", "name", "status"];
+required.forEach(field => {
+  if (!(field in data)) {
+    ad.console.error(`Missing field: ${field}`);
+  }
+});
+
+// Check field types
+if (typeof data.id !== "number") {
+  ad.console.error("id should be number");
+}
+
+if (typeof data.name !== "string") {
+  ad.console.error("name should be string");
+}
+
+// Check allowed values
+const validStatuses = ["active", "inactive", "pending"];
+if (!validStatuses.includes(data.status)) {
+  ad.console.error(`Invalid status: ${data.status}`);
+}
+```
+
+#### Example 10: Detect Changes
+
+```javascript
+// Compare with a previous baseline
+const baseline = JSON.parse(ad.environment.get("baseline") || "{}");
+const current = {
+  status: ad.response.status,
+  time: ad.response.time,
+  fields: Object.keys(ad.response.json() || {}).sort()
+};
+
+// Check for differences
+if (baseline.status && baseline.status !== current.status) {
+  ad.console.warn(`Status changed: ${baseline.status} -> ${current.status}`);
+}
+
+if (baseline.time && current.time > baseline.time * 1.5) {
+  ad.console.warn(`Response much slower: ${baseline.time}ms -> ${current.time}ms`);
+}
+
+if (baseline.fields) {
+  const removed = baseline.fields.filter(f => !current.fields.includes(f));
+  const added = current.fields.filter(f => !baseline.fields.includes(f));
+  
+  if (removed.length > 0) {
+    ad.console.error(`Fields removed: ${removed.join(", ")}`);
+  }
+  if (added.length > 0) {
+    ad.console.log(`New fields: ${added.join(", ")}`);
+  }
+}
+
+// Save new baseline if needed
+if (ad.environment.get("save_baseline") === "true") {
+  ad.environment.set("baseline", JSON.stringify(current));
+  ad.environment.unset("save_baseline");
+  ad.console.log("Baseline updated");
+}
+```
+
+### Tips for Testing
+
+1. **Be specific with test names** - Clear descriptions make failures easy to understand and debug
+2. **Use environment variables** - Store test results to chain tests, track state, or generate reports  
+3. **Test one thing at a time** - Focused tests are easier to debug when they fail
+4. **Always check for null/undefined** - Verify data exists before accessing properties to avoid script errors
+5. **Track performance over time** - Monitor response times and set degradation alerts
+6. **Include security checks** - Verify sensitive data (passwords, tokens) isn't leaked in responses
+7. **Handle edge cases** - Test empty arrays, null values, missing fields, and error responses
+8. **Use try-catch blocks** - Prevent one failing test from stopping all others
+9. **Log meaningful messages** - Include actual vs expected values in error messages
+10. **Document your tests** - Add comments explaining what each test validates and why it matters
+
+### Error Handling
+
+```javascript
+// Handle missing data and errors
+const data = ad.response.json();
+
+if (!data) {
+  ad.console.error("No response body");
+  return;
+}
+
+if (data.error) {
+  ad.console.error(`API error: ${data.error}`);
+  return;
+}
+
+// Validate error status codes
+if (ad.response.status >= 400) {
+  if (data.stack_trace) {
+    ad.console.error("Stack trace exposed - security issue!");
+  }
+  return;
+}
+
+// Handle arrays
+if (Array.isArray(data) && data.length > 0) {
+  ad.console.log(`Received ${data.length} items`);
+}
+```
+
+### Security Testing
+
+```javascript
+// Check for exposed sensitive data
+const data = ad.response.json();
+const sensitive = ["password", "password_hash", "secret", "private_key"];
+
+sensitive.forEach(field => {
+  if (field in data) {
+    ad.console.error(`SECURITY: ${field} exposed!`);
+  }
+});
+
+// Validate token
+if (data.token) {
+  if (data.token.length < 20) {
+    ad.console.warn("Token too short");
+  }
+  ad.environment.set("auth_token", data.token);
+}
+
+// Check security headers
+const headers = ["Strict-Transport-Security", "X-Content-Type-Options"];
+headers.forEach(h => {
+  if (!ad.response.getHeader(h)) {
+    ad.console.warn(`Missing security header: ${h}`);
+  }
+});
+```
+
+### Real-World Test Scenarios
+
+#### Login Flow Testing
+
+```javascript
+// Complete login validation
+const data = ad.response.json();
+
+// Status check
+if (ad.response.status !== 200) {
+  ad.console.error(`Login failed with status ${ad.response.status}`);
+  
+  if (ad.response.status === 401) {
+    ad.console.log("Invalid credentials");
+  } else if (ad.response.status === 429) {
+    ad.console.log("Rate limited - too many attempts");
+  }
+  
+  return;
+}
+
+// Required fields
+const required = ["access_token", "refresh_token", "expires_in"];
+const missing = required.filter(field => !(field in data));
+
+if (missing.length > 0) {
+  ad.console.error(`Missing required fields: ${missing.join(", ")}`);
+  return;
+}
+
+// Save tokens
+ad.environment.set("access_token", data.access_token);
+ad.environment.set("refresh_token", data.refresh_token);
+
+// Calculate expiry
+const expiresAt = Date.now() + (data.expires_in * 1000);
+ad.environment.set("token_expires_at", expiresAt);
+
+// Optional user info
+if (data.user) {
+  ad.environment.set("user_id", data.user.id);
+  ad.environment.set("user_email", data.user.email);
+  ad.console.log(`Logged in as ${data.user.email}`);
+}
+
+ad.console.log("✓ Login successful, tokens saved");
+```
+
+#### Pagination Testing
+
+```javascript
+// Test paginated API responses
+const data = ad.response.json();
+
+// Check pagination metadata
+const pagination = {
+  total: parseInt(ad.response.getHeader("X-Total-Count") || "0"),
+  page: parseInt(ad.response.getHeader("X-Page") || "1"),
+  perPage: parseInt(ad.response.getHeader("X-Per-Page") || "20")
+};
+
+if (pagination.total > 0) {
+  const expectedPages = Math.ceil(pagination.total / pagination.perPage);
+  ad.console.log(`Total items: ${pagination.total}, Pages: ${expectedPages}`);
+  
+  // Verify we're not on an invalid page
+  if (pagination.page > expectedPages) {
+    ad.console.error("Page number exceeds total pages");
+  }
+}
+
+// Validate data array
+if (!Array.isArray(data)) {
+  ad.console.error("Response should be an array");
+  return;
+}
+
+// Check expected page size
+if (data.length > pagination.perPage) {
+  ad.console.error(`Too many items: ${data.length} > ${pagination.perPage}`);
+}
+
+// Save next page info
+if (pagination.page < Math.ceil(pagination.total / pagination.perPage)) {
+  ad.environment.set("next_page", pagination.page + 1);
+  ad.console.log(`Next page available: ${pagination.page + 1}`);
+} else {
+  ad.environment.unset("next_page");
+  ad.console.log("Last page reached");
+}
+```
+
+#### CRUD Operation Testing
+
+```javascript
+// Test POST/PUT responses for resource creation/update
+const data = ad.response.json();
+
+// Check appropriate status codes
+const expectedStatus = ad.request.method.get() === "post" ? 201 : 200;
+if (ad.response.status !== expectedStatus) {
+  ad.console.error(`Expected ${expectedStatus}, got ${ad.response.status}`);
+}
+
+// Verify returned resource
+if (!data.id) {
+  ad.console.error("Response should include resource ID");
+  return;
+}
+
+// For POST: Save the created resource ID
+if (ad.request.method.get() === "post") {
+  ad.environment.set("created_resource_id", data.id);
+  ad.console.log(`Created resource with ID: ${data.id}`);
+}
+
+// Check timestamps
+if (data.created_at) {
+  const created = new Date(data.created_at);
+  if (isNaN(created.getTime())) {
+    ad.console.error("Invalid created_at timestamp");
+  }
+}
+
+if (data.updated_at) {
+  const updated = new Date(data.updated_at);
+  if (isNaN(updated.getTime())) {
+    ad.console.error("Invalid updated_at timestamp");
+  }
+  
+  // For updates, updated_at should be recent
+  const ageMinutes = (Date.now() - updated.getTime()) / (1000 * 60);
+  if (ageMinutes > 5) {
+    ad.console.warn("updated_at seems old - was resource actually updated?");
+  }
+}
+
+ad.console.log("✓ CRUD operation validated");
+```
+
+### Working with AI Tools
+
+AI agents like Dashbot can generate and execute these test scripts. Structure your output for easy parsing:
+
+#### Structured Test Results
+
+```javascript
+// Comprehensive test result structure for AI agents
+const testRun = {
+  timestamp: new Date().toISOString(),
+  endpoint: ad.request.url.get(),
+  method: ad.request.method.get(),
+  status: ad.response.status,
+  responseTime: ad.response.time,
+  tests: [],
+  summary: {
+    total: 0,
+    passed: 0,
+    failed: 0,
+    warnings: 0
+  }
+};
+
+function test(name, condition, severity = "error") {
+  testRun.summary.total++;
+  
+  const result = {
+    name: name,
+    passed: condition,
+    severity: severity
+  };
+  
+  if (condition) {
+    testRun.summary.passed++;
+    ad.console.log(`✓ ${name}`);
+  } else {
+    if (severity === "warning") {
+      testRun.summary.warnings++;
+      ad.console.warn(`⚠ ${name}`);
+    } else {
+      testRun.summary.failed++;
+      ad.console.error(`✗ ${name}`);
+    }
+  }
+  
+  testRun.tests.push(result);
+  return condition;
+}
+
+// Run tests
+test("Status is 200", ad.response.status === 200);
+test("Response under 500ms", ad.response.time < 500, "warning");
+
+const data = ad.response.json();
+test("Valid JSON", data !== undefined);
+
+if (data) {
+  test("Has id field", "id" in data);
+  test("Has name field", "name" in data);
+  test("id is correct type", typeof data.id === "number");
+}
+
+// Calculate pass rate
+testRun.summary.passRate = testRun.summary.total > 0 
+  ? Math.round((testRun.summary.passed / testRun.summary.total) * 100)
+  : 0;
+
+// Save for AI agent
+ad.environment.set("test_results", JSON.stringify(testRun));
+ad.environment.set("last_test_passed", testRun.summary.passed);
+ad.environment.set("last_test_failed", testRun.summary.failed);
+ad.environment.set("last_pass_rate", testRun.summary.passRate);
+
+// Log summary
+ad.console.log(`\n📊 Summary: ${testRun.summary.passed}/${testRun.summary.total} passed (${testRun.summary.passRate}%)`);
+
+if (testRun.summary.warnings > 0) {
+  ad.console.log(`⚠ ${testRun.summary.warnings} warnings`);
+}
+```
+
+#### Test Orchestration for AI Agents
+
+```javascript
+// Multi-endpoint test orchestration
+const testSuite = ad.environment.get("test_suite") || "start";
+
+if (testSuite === "start") {
+  // First test: Health check
+  if (ad.response.status === 200) {
+    ad.environment.set("test_suite", "auth");
+    ad.environment.set("health_check", "PASSED");
+    ad.console.log("✓ Health check passed, proceeding to auth");
+  } else {
+    ad.environment.set("test_suite", "failed");
+    ad.console.error("✗ Health check failed, stopping test suite");
+  }
+}
+else if (testSuite === "auth") {
+  // Second test: Authentication
+  const data = ad.response.json();
+  if (data?.token) {
+    ad.environment.set("auth_token", data.token);
+    ad.environment.set("test_suite", "crud");
+    ad.console.log("✓ Auth successful, proceeding to CRUD tests");
+  } else {
+    ad.environment.set("test_suite", "failed");
+    ad.console.error("✗ Auth failed, stopping test suite");
+  }
+}
+else if (testSuite === "crud") {
+  // Third test: CRUD operations
+  const data = ad.response.json();
+  if (data?.id) {
+    ad.environment.set("resource_id", data.id);
+    ad.environment.set("test_suite", "cleanup");
+    ad.console.log("✓ CRUD test passed, proceeding to cleanup");
+  } else {
+    ad.environment.set("test_suite", "failed");
+    ad.console.error("✗ CRUD test failed");
+  }
+}
+else if (testSuite === "cleanup") {
+  // Final test: Cleanup
+  if (ad.response.status === 204) {
+    ad.environment.set("test_suite", "complete");
+    ad.console.log("✓ All tests completed successfully!");
+    
+    // Generate final report
+    const report = {
+      suite: "complete",
+      tests: ["health", "auth", "crud", "cleanup"],
+      allPassed: true,
+      completedAt: new Date().toISOString()
+    };
+    ad.environment.set("test_suite_report", JSON.stringify(report));
+  }
+}
+```
+
+#### Contract Validation for AI
+
+```javascript
+// AI-friendly contract validation with detailed reporting
+function validateContract(response, contract) {
+  const violations = [];
+  
+  // Validate status
+  if (response.status !== contract.expectedStatus) {
+    violations.push({
+      type: "status",
+      expected: contract.expectedStatus,
+      actual: response.status
+    });
+  }
+  
+  // Validate headers
+  if (contract.requiredHeaders) {
+    contract.requiredHeaders.forEach(header => {
+      const value = ad.response.getHeader(header);
+      if (!value) {
+        violations.push({
+          type: "header",
+          field: header,
+          message: "Required header missing"
+        });
+      }
+    });
+  }
+  
+  // Validate body structure
+  const data = ad.response.json();
+  if (contract.requiredFields && data) {
+    contract.requiredFields.forEach(field => {
+      if (!(field in data)) {
+        violations.push({
+          type: "field",
+          field: field,
+          message: "Required field missing"
+        });
+      }
+    });
+  }
+  
+  // Validate types
+  if (contract.fieldTypes && data) {
+    Object.entries(contract.fieldTypes).forEach(([field, expectedType]) => {
+      if (field in data) {
+        const actualType = Array.isArray(data[field]) ? "array" : typeof data[field];
+        if (actualType !== expectedType) {
+          violations.push({
+            type: "type",
+            field: field,
+            expected: expectedType,
+            actual: actualType
+          });
+        }
+      }
+    });
+  }
+  
+  return violations;
+}
+
+// Define contract (could be loaded from environment)
+const contract = {
+  expectedStatus: 200,
+  requiredHeaders: ["Content-Type"],
+  requiredFields: ["id", "name", "email"],
+  fieldTypes: {
+    id: "number",
+    name: "string",
+    email: "string",
+    isActive: "boolean"
+  }
+};
+
+// Run validation
+const violations = validateContract(ad.response, contract);
+
+if (violations.length === 0) {
+  ad.console.log("✓ Contract validation passed");
+  ad.environment.set("contract_status", "PASSED");
+} else {
+  ad.console.error(`✗ Contract validation failed with ${violations.length} violations`);
+  violations.forEach(v => {
+    ad.console.error(`  ${v.type}: ${v.field || "general"} - ${v.message || `expected ${v.expected}, got ${v.actual}`}`);
+  });
+  ad.environment.set("contract_status", "FAILED");
+  ad.environment.set("contract_violations", JSON.stringify(violations));
+}
+```
+
+#### AI Agent Patterns and Conventions
+
+For best integration with AI tools, follow these conventions:
+
+**Environment Variable Naming:**
+- `test_status` - Overall test result ("PASSED" / "FAILED")
+- `test_results` - JSON string with full test details
+- `tests_passed` - Number of passed tests
+- `tests_failed` - Number of failed tests
+- `test_step` - Current step in multi-request flow
+- `[feature]_test` - Specific test results (e.g., `auth_test`, `validation_test`)
+
+**Standard Test Output:**
+```javascript
+// Minimal structure AI agents expect
+const result = {
+  passed: 0,
+  failed: 0,
+  status: "PASSED",  // or "FAILED"
+  errors: []
+};
+
+// Always set these after tests
+ad.environment.set("test_status", result.status);
+ad.environment.set("tests_passed", result.passed);
+ad.environment.set("tests_failed", result.failed);
+```
+
+**Error Reporting:**
+```javascript
+// Structured error reporting
+const errors = [];
+
+if (someCondition) {
+  errors.push({
+    test: "validation_check",
+    message: "Expected value X, got Y",
+    severity: "error",
+    field: "email"
+  });
+}
+
+if (errors.length > 0) {
+  ad.environment.set("test_errors", JSON.stringify(errors));
+  errors.forEach(e => ad.console.error(`${e.test}: ${e.message}`));
+}
+```
+
+Use standard variable names like `test_status`, `tests_passed`, `tests_failed`, and `test_results` so AI agents know where to look for test outcomes and can make decisions based on them.
