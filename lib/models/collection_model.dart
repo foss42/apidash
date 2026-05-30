@@ -39,5 +39,3 @@ class CollectionModel {
     };
   }
 }
-
-// Re-export keys from consts for fromJson — import in models.dart with consts

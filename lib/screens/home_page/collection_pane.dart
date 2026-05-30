@@ -150,6 +150,12 @@ class _CollectionSection extends ConsumerWidget {
   }
 
   RequestModel? _requestModel(WidgetRef ref, String requestId) {
+    if (isActive) {
+      final inMemory = ref.watch(collectionStateNotifierProvider)?[requestId];
+      if (inMemory != null) {
+        return inMemory;
+      }
+    }
     final json = workspaceStorage.getRequestModel(collectionId, requestId);
     if (json == null) {
       return null;
@@ -183,7 +189,6 @@ class _CollectionSection extends ConsumerWidget {
         _CollectionSectionHeader(
           collectionId: collectionId,
           name: collection.name,
-          requestCount: requestIds.length,
           isExpanded: isExpanded,
           isActive: isActive,
         ),
@@ -193,14 +198,15 @@ class _CollectionSection extends ConsumerWidget {
             child: Column(
               children: [
                 for (final requestId in visibleIds)
-                  Padding(
-                    padding: kP1,
-                    child: RequestItem(
-                      id: requestId,
-                      requestModel: _requestModel(ref, requestId)!,
-                      collectionId: collectionId,
+                  if (_requestModel(ref, requestId) case final requestModel?)
+                    Padding(
+                      padding: kP1,
+                      child: RequestItem(
+                        id: requestId,
+                        requestModel: requestModel,
+                        collectionId: collectionId,
+                      ),
                     ),
-                  ),
               ],
             ),
           ),
@@ -213,14 +219,12 @@ class _CollectionSectionHeader extends ConsumerWidget {
   const _CollectionSectionHeader({
     required this.collectionId,
     required this.name,
-    required this.requestCount,
     required this.isExpanded,
     required this.isActive,
   });
 
   final String collectionId;
   final String name;
-  final int requestCount;
   final bool isExpanded;
   final bool isActive;
 
@@ -290,8 +294,9 @@ class _CollectionSectionHeader extends ConsumerWidget {
         borderRadius: BorderRadius.circular(8),
         onTap: () async {
           if (!isActive) {
-            ref.read(selectedCollectionIdStateProvider.notifier).state =
-                collectionId;
+            await ref
+                .read(collectionStateNotifierProvider.notifier)
+                .ensureActive(collectionId);
           }
           ref.read(expandedCollectionIdsProvider.notifier).update(
                 (ids) => {...ids, collectionId},
@@ -337,12 +342,6 @@ class _CollectionSectionHeader extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
-              ),
-              Text(
-                '$requestCount',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
               ),
               IconButton(
                 tooltip: kLabelPlusNew,
@@ -428,13 +427,9 @@ class RequestItem extends ConsumerWidget {
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () async {
-        if (ref.read(selectedCollectionIdStateProvider) != collectionId) {
-          ref.read(selectedCollectionIdStateProvider.notifier).state =
-              collectionId;
-          await ref
-              .read(collectionStateNotifierProvider.notifier)
-              .ensureActive(collectionId);
-        }
+        await ref
+            .read(collectionStateNotifierProvider.notifier)
+            .ensureActive(collectionId);
         ref.read(collectionStateNotifierProvider.notifier).loadRequest(id);
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();

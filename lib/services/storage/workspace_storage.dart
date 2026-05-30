@@ -160,12 +160,7 @@ class WorkspaceStorage {
 
   late final Directory _root;
 
-  bool get isInitialized => _workspaceRoot != null;
-
   String _path(String relative) => p.join(_root.path, relative);
-
-  String get workspaceRootPath => _root.path;
-
 
   List<String>? getCollectionIds() {
     final json = _readJsonSync(
@@ -238,6 +233,15 @@ class WorkspaceStorage {
     return null;
   }
 
+  List<String> existingRequestIds(String collectionId) {
+    final ids = getIds(collectionId) ?? [];
+    return ids
+        .where(
+          (id) => File(_path(_requestFilePath(collectionId, id))).existsSync(),
+        )
+        .toList();
+  }
+
   Future<void> setIds(String collectionId, List<String>? ids) async {
     final existing = getCollection(collectionId);
     final payload = Map<String, Object?>.from(existing ?? {
@@ -271,13 +275,6 @@ class WorkspaceStorage {
       return;
     }
     await writeJsonAtomic(filePath, Map<String, Object?>.from(requestModelJson));
-  }
-
-  Future<void> delete(String collectionId, String key) async {
-    final file = File(_path(_requestFilePath(collectionId, key)));
-    if (await file.exists()) {
-      await file.delete();
-    }
   }
 
   // --- Environments ---
@@ -432,12 +429,6 @@ class WorkspaceStorage {
       }
     }
   }
-
-  // --- DashBot (in-memory only; no persistence in v1) ---
-
-  Future<dynamic> getDashbotMessages() async => null;
-
-  Future<void> saveDashbotMessages(String messages) async {}
 
   // --- Clear / maintenance ---
 

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../services/services.dart';
+import 'collection_providers.dart';
 
 final selectedCollectionIdStateProvider = StateProvider<String>((ref) {
   final ids = workspaceStorage.getCollectionIds();
@@ -55,12 +56,18 @@ class CollectionsStateNotifier
     for (final id in collectionIds) {
       final json = workspaceStorage.getCollection(id);
       if (json != null) {
-        map[id] = CollectionModel.fromJson(Map<String, Object?>.from(json));
+        var model = CollectionModel.fromJson(Map<String, Object?>.from(json));
+        final pruned = workspaceStorage.existingRequestIds(id);
+        if (pruned.length != model.requestIds.length) {
+          unawaited(workspaceStorage.setIds(id, pruned));
+        }
+        map[id] = model.copyWith(requestIds: pruned);
       } else {
+        final pruned = workspaceStorage.existingRequestIds(id);
         map[id] = CollectionModel(
           id: id,
           name: id == kDefaultCollectionId ? kDefaultCollectionName : id,
-          requestIds: workspaceStorage.getIds(id) ?? [],
+          requestIds: pruned,
         );
       }
     }
@@ -77,15 +84,20 @@ class CollectionsStateNotifier
     };
   }
 
-  void addCollection() {
+  Future<void> addCollection() async {
     final id = getNewUuid();
     final name = 'Collection ${state!.length + 1}';
-    final model = CollectionModel(id: id, name: name, requestIds: []);
+    final model = CollectionModel(id: id, name: name);
     collectionSequence = [...collectionSequence, id];
     state = {...state!, id: model};
-    unawaited(workspaceStorage.setCollection(id, model.toJson()));
-    unawaited(workspaceStorage.setCollectionIds(collectionSequence));
-    ref.read(selectedCollectionIdStateProvider.notifier).state = id;
+    await workspaceStorage.setCollection(id, model.toJson());
+    await workspaceStorage.setCollectionIds(collectionSequence);
+    ref.read(expandedCollectionIdsProvider.notifier).update(
+          (ids) => {...ids, id},
+        );
+    await ref
+        .read(collectionStateNotifierProvider.notifier)
+        .ensureActive(id);
   }
 
   void renameCollection(String id, String name) {
@@ -100,23 +112,33 @@ class CollectionsStateNotifier
     if (state == null || collectionSequence.length <= 1) {
       return;
     }
+    final wasActive = ref.read(selectedCollectionIdStateProvider) == id;
     collectionSequence = [...collectionSequence]..remove(id);
     state = {...state!}..remove(id);
-    await workspaceStorage.deleteCollection(id);
     await workspaceStorage.setCollectionIds(collectionSequence);
     ref.read(expandedCollectionIdsProvider.notifier).update((s) => {...s}..remove(id));
-    if (ref.read(selectedCollectionIdStateProvider) == id) {
-      ref.read(selectedCollectionIdStateProvider.notifier).state =
-          collectionSequence.first;
+    if (wasActive) {
+      await ref
+          .read(collectionStateNotifierProvider.notifier)
+          .ensureActive(collectionSequence.first);
     }
+    await workspaceStorage.deleteCollection(id);
   }
 
   Future<void> saveCollections() async {
     await workspaceStorage.setCollectionIds(collectionSequence);
     final activeId = ref.read(selectedCollectionIdStateProvider);
-    syncRequestIds(activeId, ref.read(requestSequenceProvider));
+    final activeSequence = ref.read(requestSequenceProvider);
+    syncRequestIds(activeId, activeSequence);
     for (final entry in state!.entries) {
-      await workspaceStorage.setCollection(entry.key, entry.value.toJson());
+      final requestIds = entry.key == activeId
+          ? activeSequence
+          : workspaceStorage.existingRequestIds(entry.key);
+      final model = entry.value.copyWith(requestIds: requestIds);
+      await workspaceStorage.setCollection(entry.key, model.toJson());
+      if (entry.key != activeId) {
+        state = {...state!, entry.key: model};
+      }
     }
   }
 }
