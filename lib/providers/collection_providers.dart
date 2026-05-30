@@ -539,6 +539,7 @@ class CollectionStateNotifier
           method: substitutedHttpRequestModel.method,
           responseStatus: statusCode,
           timeStamp: DateTime.now(),
+          latency: duration,
         ),
         httpRequestModel: substitutedHttpRequestModel,
         aiRequestModel: executionRequestModel.aiRequestModel,

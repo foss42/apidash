@@ -28,6 +28,7 @@ mixin _$HistoryMetaModel {
   HTTPVerb get method => throw _privateConstructorUsedError;
   int get responseStatus => throw _privateConstructorUsedError;
   DateTime get timeStamp => throw _privateConstructorUsedError;
+  Duration? get latency => throw _privateConstructorUsedError;
 
   /// Serializes this HistoryMetaModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,7 +54,8 @@ abstract class $HistoryMetaModelCopyWith<$Res> {
       String url,
       HTTPVerb method,
       int responseStatus,
-      DateTime timeStamp});
+      DateTime timeStamp,
+      Duration? latency});
 }
 
 /// @nodoc
@@ -79,6 +81,7 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
     Object? method = null,
     Object? responseStatus = null,
     Object? timeStamp = null,
+    Object? latency = freezed,
   }) {
     return _then(_value.copyWith(
       historyId: null == historyId
@@ -113,6 +116,10 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      latency: freezed == latency
+          ? _value.latency
+          : latency // ignore: cast_nullable_to_non_nullable
+              as Duration?,
     ) as $Val);
   }
 }
@@ -133,7 +140,8 @@ abstract class _$$HistoryMetaModelImplCopyWith<$Res>
       String url,
       HTTPVerb method,
       int responseStatus,
-      DateTime timeStamp});
+      DateTime timeStamp,
+      Duration? latency});
 }
 
 /// @nodoc
@@ -157,6 +165,7 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
     Object? method = null,
     Object? responseStatus = null,
     Object? timeStamp = null,
+    Object? latency = freezed,
   }) {
     return _then(_$HistoryMetaModelImpl(
       historyId: null == historyId
@@ -191,6 +200,10 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
               as DateTime,
+      latency: freezed == latency
+          ? _value.latency
+          : latency // ignore: cast_nullable_to_non_nullable
+              as Duration?,
     ));
   }
 }
@@ -206,7 +219,8 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
       required this.url,
       required this.method,
       required this.responseStatus,
-      required this.timeStamp});
+      required this.timeStamp,
+      this.latency});
 
   factory _$HistoryMetaModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryMetaModelImplFromJson(json);
@@ -228,10 +242,12 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
   final int responseStatus;
   @override
   final DateTime timeStamp;
+  @override
+  final Duration? latency;
 
   @override
   String toString() {
-    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, apiType: $apiType, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
+    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, apiType: $apiType, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp, latency: $latency)';
   }
 
   @override
@@ -250,13 +266,15 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
             (identical(other.responseStatus, responseStatus) ||
                 other.responseStatus == responseStatus) &&
             (identical(other.timeStamp, timeStamp) ||
-                other.timeStamp == timeStamp));
+                other.timeStamp == timeStamp) &&
+            (identical(other.latency, latency) ||
+                other.latency == latency));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, historyId, requestId, apiType,
-      name, url, method, responseStatus, timeStamp);
+      name, url, method, responseStatus, timeStamp, latency);
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.
@@ -284,7 +302,8 @@ abstract class _HistoryMetaModel implements HistoryMetaModel {
       required final String url,
       required final HTTPVerb method,
       required final int responseStatus,
-      required final DateTime timeStamp}) = _$HistoryMetaModelImpl;
+      required final DateTime timeStamp,
+      final Duration? latency}) = _$HistoryMetaModelImpl;
 
   factory _HistoryMetaModel.fromJson(Map<String, dynamic> json) =
       _$HistoryMetaModelImpl.fromJson;
@@ -305,6 +324,8 @@ abstract class _HistoryMetaModel implements HistoryMetaModel {
   int get responseStatus;
   @override
   DateTime get timeStamp;
+  @override
+  Duration? get latency;
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.

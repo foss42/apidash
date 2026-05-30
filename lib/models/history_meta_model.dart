@@ -15,6 +15,7 @@ class HistoryMetaModel with _$HistoryMetaModel {
     required HTTPVerb method,
     required int responseStatus,
     required DateTime timeStamp,
+    Duration? latency,
   }) = _HistoryMetaModel;
 
   factory HistoryMetaModel.fromJson(Map<String, Object?> json) =>
