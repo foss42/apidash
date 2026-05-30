@@ -254,7 +254,7 @@ class WorkspaceStorage {
     if (json == null) {
       return null;
     }
-    return Map<String, dynamic>.from(json);
+    return Map<String, dynamic>.from(_fixBodyBytesForFromJson(json));
   }
 
   Future<void> setRequestModel(
@@ -396,7 +396,10 @@ class WorkspaceStorage {
     final json = await readJsonFile(
       _path(p.join(kWorkspaceHistoryDir, id, kWorkspaceHistoryBodyFile)),
     );
-    return json;
+    if (json == null) {
+      return null;
+    }
+    return _fixBodyBytesForFromJson(json);
   }
 
   Future<void> setHistoryRequest(
@@ -522,6 +525,20 @@ class WorkspaceStorage {
         }
       }
     }
+  }
+
+  static Map<String, Object?> _fixBodyBytesForFromJson(Map<String, Object?> json) {
+    final http = json['httpResponseModel'];
+    if (http is Map) {
+      final response = Map<String, Object?>.from(http);
+      final bytes = response['bodyBytes'];
+      if (bytes is List && bytes is! List<int>) {
+        response['bodyBytes'] =
+            bytes.map((e) => (e as num).toInt()).toList(growable: false);
+      }
+      return {...json, 'httpResponseModel': response};
+    }
+    return json;
   }
 
   Map<String, Object?>? _readJsonSync(String relativePath) {
