@@ -36,16 +36,7 @@ historyMetaStateNotifier = StateNotifierProvider(
 class HistoryMetaStateNotifier
     extends StateNotifier<Map<String, HistoryMetaModel>?> {
   HistoryMetaStateNotifier(this.ref, this.workspaceStorage) : super(null) {
-    var status = loadHistoryMetas();
-    Future.microtask(() {
-      if (status) {
-        final temporalGroups = getTemporalGroups(state?.values.toList());
-        final latestRequestId = getLatestRequestId(temporalGroups);
-        if (latestRequestId != null) {
-          loadHistoryRequest(latestRequestId);
-        }
-      }
-    });
+    loadHistoryMetas();
   }
 
   final Ref ref;

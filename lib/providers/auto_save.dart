@@ -13,7 +13,6 @@ import 'ui_providers.dart';
 final autoSaveNotifierProvider =
     NotifierProvider<AutoSaveNotifier, void>(AutoSaveNotifier.new);
 
-/// Debounces workspace persistence after collection/environment mutations.
 class AutoSaveNotifier extends Notifier<void> {
   Timer? _timer;
 
