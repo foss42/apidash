@@ -1203,63 +1203,65 @@ void main() async {
         // Verify that the execution copy is separate from original
         expect(executionRequestModel.id, equals(originalRequest.id));
         expect(
-          executionRequestModel.httpRequestModel?.url,
-          equals(originalRequest.httpRequestModel?.url),
+          executionRequestModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.url,
+          equals(originalRequest.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.url),
         );
         expect(
-          executionRequestModel.httpRequestModel?.headers,
-          equals(originalRequest.httpRequestModel?.headers),
+          executionRequestModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers,
+          equals(originalRequest.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers),
         );
         expect(
-          executionRequestModel.httpRequestModel?.params,
-          equals(originalRequest.httpRequestModel?.params),
+          executionRequestModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.params,
+          equals(originalRequest.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.params),
         );
 
         // Simulate script modifications on the execution copy
         final modifiedExecutionModel = executionRequestModel.copyWith(
-          httpRequestModel: executionRequestModel.httpRequestModel?.copyWith(
-            url: 'https://api.apidash.dev/',
-            headers: [
-              ...originalHttpRequestModel.headers ?? [],
-              const NameValueModel(name: 'X-Script-Modified', value: 'true'),
-              const NameValueModel(
-                name: 'Authorization',
-                value: 'Bearer script-token',
-              ),
-            ],
-            params: [
-              ...originalHttpRequestModel.params ?? [],
-              const NameValueModel(name: 'scriptParam', value: 'scriptValue'),
-            ],
-          ),
+          protocolModel: executionRequestModel.protocolModel.mapOrNull(rest: (r) => r.copyWith(
+            httpRequestModel: r.httpRequestModel?.copyWith(
+              url: 'https://api.apidash.dev/',
+              headers: [
+                ...originalHttpRequestModel.headers ?? [],
+                const NameValueModel(name: 'X-Script-Modified', value: 'true'),
+                const NameValueModel(
+                  name: 'Authorization',
+                  value: 'Bearer script-token',
+                ),
+              ],
+              params: [
+                ...originalHttpRequestModel.params ?? [],
+                const NameValueModel(name: 'scriptParam', value: 'scriptValue'),
+              ],
+            ),
+          )) ?? executionRequestModel.protocolModel,
         );
 
         // Verify the execution copy has been modified
         expect(
-          modifiedExecutionModel.httpRequestModel?.url,
+          modifiedExecutionModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.url,
           equals('https://api.apidash.dev/'),
         );
         expect(
-          modifiedExecutionModel.httpRequestModel?.headers?.length,
+          modifiedExecutionModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?.length,
           equals(4),
         );
 
         final hasScriptModifiedHeader =
-            modifiedExecutionModel.httpRequestModel?.headers?.any(
+            modifiedExecutionModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?.any(
               (header) => header.name == 'X-Script-Modified',
             ) ??
             false;
         expect(hasScriptModifiedHeader, isTrue);
 
         final hasAuthHeader =
-            modifiedExecutionModel.httpRequestModel?.headers?.any(
+            modifiedExecutionModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?.any(
               (header) => header.name == 'Authorization',
             ) ??
             false;
         expect(hasAuthHeader, isTrue);
 
         final hasScriptParam =
-            modifiedExecutionModel.httpRequestModel?.params?.any(
+            modifiedExecutionModel.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.params?.any(
               (param) => param.name == 'scriptParam',
             ) ??
             false;
@@ -1269,46 +1271,46 @@ void main() async {
         final currentRequest = notifier.getRequestModel(id);
 
         expect(
-          currentRequest?.httpRequestModel?.url,
+          currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.url,
           equals('https://api.apidash.dev/api'),
         );
-        expect(currentRequest?.httpRequestModel?.headers?.length, equals(2));
+        expect(currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?.length, equals(2));
         expect(
-          currentRequest?.httpRequestModel?.headers?[0].name,
+          currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?[0].name,
           equals('Content-Type'),
         );
         expect(
-          currentRequest?.httpRequestModel?.headers?[0].value,
+          currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?[0].value,
           equals('application/json'),
         );
         expect(
-          currentRequest?.httpRequestModel?.headers?[1].name,
+          currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?[1].name,
           equals('Accept'),
         );
         expect(
-          currentRequest?.httpRequestModel?.headers?[1].value,
+          currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?[1].value,
           equals('application/json'),
         );
-        expect(currentRequest?.httpRequestModel?.params?.length, equals(1));
+        expect(currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.params?.length, equals(1));
         expect(
-          currentRequest?.httpRequestModel?.params?[0].name,
+          currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.params?[0].name,
           equals('originalParam'),
         );
         expect(
-          currentRequest?.httpRequestModel?.params?[0].value,
+          currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.params?[0].value,
           equals('originalValue'),
         );
 
         // Verify no script-modified headers are present in the original state
         final hasScriptModifiedHeaderInOriginal =
-            currentRequest?.httpRequestModel?.headers?.any(
+            currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?.any(
               (header) => header.name == 'X-Script-Modified',
             ) ??
             false;
         expect(hasScriptModifiedHeaderInOriginal, isFalse);
 
         final hasAuthHeaderInOriginal =
-            currentRequest?.httpRequestModel?.headers?.any(
+            currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.headers?.any(
               (header) => header.name == 'Authorization',
             ) ??
             false;
@@ -1316,7 +1318,7 @@ void main() async {
 
         // Verify no script-modified params are present in the original state
         final hasScriptParamInOriginal =
-            currentRequest?.httpRequestModel?.params?.any(
+            currentRequest?.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)?.params?.any(
               (param) => param.name == 'scriptParam',
             ) ??
             false;

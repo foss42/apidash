@@ -7,7 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/models/models.dart';
 import '../../../../providers/helpers.dart';
 
 // Mock ChatRemoteRepository
@@ -373,11 +372,11 @@ info:
       // Create a container with a mock request to test substitution
       final mockRequest = RequestModel(
         id: 'test-req-1',
-        httpRequestModel: HttpRequestModel(
+        protocolModel: ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://{{baseUrl}}/api/test',
           headers: [NameValueModel(name: 'Authorization', value: '{{token}}')],
-        ),
+        )),
       );
 
       final testContainer = createContainer(
@@ -1214,10 +1213,10 @@ paths:
       // Create a mock request for this test
       final mockRequest = RequestModel(
         id: 'test-request-456',
-        httpRequestModel: HttpRequestModel(
+        protocolModel: ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.post,
           url: 'https://api.apidash.dev/users',
-        ),
+        )),
         postRequestScript: 'console.log("Existing script");',
       );
 
@@ -1256,10 +1255,10 @@ paths:
         () async {
       final mockRequest = RequestModel(
         id: 'test-request-789',
-        httpRequestModel: HttpRequestModel(
+        protocolModel: ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://api.apidash.dev/test',
-        ),
+        )),
       );
 
       final testContainer = createContainer(

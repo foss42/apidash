@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:apidash/providers/providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash/models/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Base HTTP Request Model for GET request
@@ -153,7 +152,7 @@ const EnvironmentModel testEnvironment = EnvironmentModel(
 RequestModel requestWithHeaderModificationScript = RequestModel(
   id: 'header-mod-request',
   name: 'Header Modification Test',
-  httpRequestModel: baseGetRequest,
+  protocolModel: const ProtocolModel.rest(httpRequestModel: baseGetRequest),
   preRequestScript: '''
       ad.request.headers.set('Authorization', 'Bearer ' + ad.environment.get('apiKey'));
       ad.request.headers.set('X-Custom-Header', 'custom-value');
@@ -165,7 +164,7 @@ RequestModel requestWithHeaderModificationScript = RequestModel(
 RequestModel requestWithUrlModificationScript = RequestModel(
   id: 'url-mod-request',
   name: 'URL Modification Test',
-  httpRequestModel: baseGetRequest,
+  protocolModel: const ProtocolModel.rest(httpRequestModel: baseGetRequest),
   preRequestScript: '''
       const baseUrl = ad.environment.get('baseUrl');
       ad.request.url.set(baseUrl + '/v2/users');
@@ -178,7 +177,7 @@ RequestModel requestWithUrlModificationScript = RequestModel(
 RequestModel requestWithBodyModificationScript = RequestModel(
   id: 'body-mod-request',
   name: 'Body Modification Test',
-  httpRequestModel: basePostRequest,
+  protocolModel: const ProtocolModel.rest(httpRequestModel: basePostRequest),
   preRequestScript: '''
       const currentBody = JSON.parse(ad.request.body.get() || '{}');
       currentBody.timestamp = new Date().toISOString();
@@ -191,7 +190,7 @@ RequestModel requestWithBodyModificationScript = RequestModel(
 RequestModel requestWithGraphQLScript = RequestModel(
   id: 'graphql-request',
   name: 'GraphQL Query Modification Test',
-  httpRequestModel: baseGraphQLRequest,
+  protocolModel: const ProtocolModel.graphql(httpRequestModel: baseGraphQLRequest),
   preRequestScript: r'''
       const userId = ad.environment.get('userId') || '123';
       ad.request.query.set('query GetUser($id: ID!) { user(id: $id) { name email roles { name } } }');
@@ -205,7 +204,7 @@ RequestModel requestWithGraphQLScript = RequestModel(
 RequestModel requestWithEnvironmentUpdateScript = RequestModel(
   id: 'env-update-request',
   name: 'Environment Update Test',
-  httpRequestModel: baseGetRequest,
+  protocolModel: const ProtocolModel.rest(httpRequestModel: baseGetRequest),
   preRequestScript: '''
       ad.environment.set('requestId', 'req_' + Date.now());
       ad.environment.set('retryCount', 0);
@@ -218,7 +217,7 @@ RequestModel requestWithEnvironmentUpdateScript = RequestModel(
 RequestModel requestWithComplexScript = RequestModel(
   id: 'complex-request',
   name: 'Complex Pre-request Script Test',
-  httpRequestModel: basePostRequest,
+  protocolModel: const ProtocolModel.rest(httpRequestModel: basePostRequest),
   preRequestScript: '''
       // Modify headers
       ad.request.headers.set('Authorization', 'Bearer ' + ad.environment.get('apiKey'));
@@ -246,8 +245,10 @@ RequestModel requestWithComplexScript = RequestModel(
 RequestModel requestWithTokenExtractionScript = RequestModel(
   id: 'token-extract-request',
   name: 'Token Extraction Test',
-  httpRequestModel: basePostRequest,
-  httpResponseModel: successLoginResponse,
+  protocolModel: const ProtocolModel.rest(
+    httpRequestModel: basePostRequest,
+    httpResponseModel: successLoginResponse,
+  ),
   postRequestScript: '''
       if (ad.response.status === 200) {
         const data = ad.response.json();
@@ -267,8 +268,10 @@ RequestModel requestWithTokenExtractionScript = RequestModel(
 RequestModel requestWithHeaderExtractionScript = RequestModel(
   id: 'header-extract-request',
   name: 'Header Extraction Test',
-  httpRequestModel: baseGetRequest,
-  httpResponseModel: successLoginResponse,
+  protocolModel: const ProtocolModel.rest(
+    httpRequestModel: baseGetRequest,
+    httpResponseModel: successLoginResponse,
+  ),
   postRequestScript: '''
       const authHeader = ad.response.getHeader('x-auth-token');
       if (authHeader) {
@@ -290,8 +293,10 @@ RequestModel requestWithHeaderExtractionScript = RequestModel(
 RequestModel requestWithStatusCheckScript = RequestModel(
   id: 'status-check-request',
   name: 'Status Check Test',
-  httpRequestModel: baseGetRequest,
-  httpResponseModel: errorResponse,
+  protocolModel: const ProtocolModel.rest(
+    httpRequestModel: baseGetRequest,
+    httpResponseModel: errorResponse,
+  ),
   postRequestScript: '''
       ad.environment.set('lastResponseStatus', ad.response.status.toString());
       ad.environment.set('lastResponseTime', ad.response.time.toString());
@@ -314,8 +319,10 @@ RequestModel requestWithStatusCheckScript = RequestModel(
 RequestModel requestWithDataProcessingScript = RequestModel(
   id: 'data-processing-request',
   name: 'Data Processing Test',
-  httpRequestModel: baseGetRequest,
-  httpResponseModel: usersListResponse,
+  protocolModel: const ProtocolModel.rest(
+    httpRequestModel: baseGetRequest,
+    httpResponseModel: usersListResponse,
+  ),
   postRequestScript: '''
       const responseData = ad.response.json();
       if (responseData && responseData.users) {
@@ -367,7 +374,7 @@ void main() {
         id: 'test-request-1',
         name: 'Test Request',
         description: 'A test request for unit testing',
-        httpRequestModel: testHttpRequest,
+        protocolModel: ProtocolModel.rest(httpRequestModel: testHttpRequest),
         preRequestScript: 'ad.console.log("Pre-request script executed");',
       );
       testEnvironmentModel = const EnvironmentModel(
@@ -617,8 +624,10 @@ void main() {
         id: 'test-request-2',
         name: 'Login Request',
         description: 'A login request for testing',
-        httpRequestModel: testHttpRequest,
-        httpResponseModel: testHttpResponse,
+        protocolModel: ProtocolModel.rest(
+          httpRequestModel: testHttpRequest,
+          httpResponseModel: testHttpResponse,
+        ),
         postRequestScript: 'ad.console.log("Post-response script executed");',
       );
 
@@ -954,13 +963,15 @@ void main() {
             ad.environment.set("lastSuccessfulRequest", Date.now());
           }
         ''',
-        httpRequestModel: const HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.apidash.dev/data',
-        ),
-        httpResponseModel: const HttpResponseModel(
-          statusCode: 200,
-          body: '{"success": true}',
+        protocolModel: const ProtocolModel.rest(
+          httpRequestModel: HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.apidash.dev/data',
+          ),
+          httpResponseModel: HttpResponseModel(
+            statusCode: 200,
+            body: '{"success": true}',
+          ),
         ),
       );
 
@@ -1008,13 +1019,15 @@ void main() {
           const requestId = ad.environment.get("requestId");
           ad.environment.set("completedRequestId", requestId);
         ''',
-        httpRequestModel: const HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.apidash.dev/test',
-        ),
-        httpResponseModel: const HttpResponseModel(
-          statusCode: 200,
-          body: '{"data": "test"}',
+        protocolModel: const ProtocolModel.rest(
+          httpRequestModel: HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.apidash.dev/test',
+          ),
+          httpResponseModel: HttpResponseModel(
+            statusCode: 200,
+            body: '{"data": "test"}',
+          ),
         ),
       );
 
@@ -1059,10 +1072,10 @@ void main() {
         id: 'malformed-request',
         name: 'Malformed Script Request',
         preRequestScript: 'ad.environment.set("test", ; // Syntax error',
-        httpRequestModel: const HttpRequestModel(
+        protocolModel: const ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://api.apidash.dev/test',
-        ),
+        )),
       );
 
       final environment = const EnvironmentModel(
@@ -1090,10 +1103,10 @@ void main() {
         id: 'test-empty-env',
         name: 'Test Empty Environment',
         preRequestScript: 'ad.environment.set("newVar", "value");',
-        httpRequestModel: const HttpRequestModel(
+        protocolModel: const ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://api.apidash.dev/test',
-        ),
+        )),
       );
 
       List<EnvironmentVariableModel>? capturedValues;
@@ -1118,7 +1131,7 @@ void main() {
       final scriptWithMissingVar = RequestModel(
         id: 'missing-var-request',
         name: 'Missing Variable Test',
-        httpRequestModel: baseGetRequest,
+        protocolModel: const ProtocolModel.rest(httpRequestModel: baseGetRequest),
         preRequestScript: '''
           const missingVar = ad.environment.get('nonExistentVar');
           ad.request.headers.set('X-Missing-Var', missingVar || 'default-value');
@@ -1150,8 +1163,10 @@ void main() {
       final requestWithInvalidJson = RequestModel(
         id: 'invalid-json-request',
         name: 'Invalid JSON Test',
-        httpRequestModel: baseGetRequest,
-        httpResponseModel: invalidJsonResponse,
+        protocolModel: const ProtocolModel.rest(
+          httpRequestModel: baseGetRequest,
+          httpResponseModel: invalidJsonResponse,
+        ),
         postRequestScript: '''
           const data = ad.response.json();
           if (data) {
@@ -1192,8 +1207,10 @@ void main() {
       final requestWithNullBody = RequestModel(
         id: 'null-body-request',
         name: 'Null Body Test',
-        httpRequestModel: baseGetRequest,
-        httpResponseModel: nullBodyResponse,
+        protocolModel: const ProtocolModel.rest(
+          httpRequestModel: baseGetRequest,
+          httpResponseModel: nullBodyResponse,
+        ),
         postRequestScript: '''
           const body = ad.response.body;
           ad.environment.set('bodyExists', body ? 'true' : 'false');
@@ -1241,10 +1258,10 @@ void main() {
         id: 'performance-test',
         name: 'Performance Test',
         preRequestScript: 'ad.environment.set("perfTest", "completed");',
-        httpRequestModel: const HttpRequestModel(
+        protocolModel: const ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://api.apidash.dev/test',
-        ),
+        )),
       );
 
       final stopwatch = Stopwatch()..start();
@@ -1268,10 +1285,10 @@ void main() {
                 name: 'Rapid Test $index',
                 preRequestScript:
                     'ad.environment.set("rapidVar$index", "$index");',
-                httpRequestModel: HttpRequestModel(
+                protocolModel: ProtocolModel.rest(httpRequestModel: HttpRequestModel(
                   method: HTTPVerb.get,
                   url: 'https://api.apidash.dev/test$index',
-                ),
+                )),
               ));
 
       final environment = const EnvironmentModel(
@@ -1605,7 +1622,7 @@ void main() {
       final dataTypeScript = RequestModel(
         id: 'data-type-request',
         name: 'Data Type Conversion Test',
-        httpRequestModel: baseGetRequest,
+        protocolModel: const ProtocolModel.rest(httpRequestModel: baseGetRequest),
         preRequestScript: '''
           ad.environment.set('stringVar', 'hello');
           ad.environment.set('numberVar', 42);
@@ -1649,7 +1666,7 @@ void main() {
       final headerTypeScript = RequestModel(
         id: 'header-type-request',
         name: 'Header Type Test',
-        httpRequestModel: baseGetRequest,
+        protocolModel: const ProtocolModel.rest(httpRequestModel: baseGetRequest),
         preRequestScript: '''
           ad.request.headers.set('X-String-Header', 'string-value');
           ad.request.headers.set('X-Number-Header', 123);
@@ -1688,7 +1705,7 @@ void main() {
       final preRequestModel = RequestModel(
         id: 'workflow-request',
         name: 'Complete Workflow Test',
-        httpRequestModel: basePostRequest,
+        protocolModel: const ProtocolModel.rest(httpRequestModel: basePostRequest),
         preRequestScript: '''
           ad.request.headers.set('Authorization', 'Bearer ' + ad.environment.get('apiKey'));
           ad.request.headers.set('X-Request-ID', 'req_' + Date.now());
@@ -1723,7 +1740,9 @@ void main() {
 
       // Simulate response and add post-response script
       final postRequestModel = afterPre.copyWith(
-        httpResponseModel: successLoginResponse,
+        protocolModel: afterPre.protocolModel.mapOrNull(
+          rest: (rest) => rest.copyWith(httpResponseModel: successLoginResponse),
+        ) ?? afterPre.protocolModel,
         postRequestScript: '''
           const data = ad.response.json();
           if (data && data.token) {

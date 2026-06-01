@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/models/models.dart';
 import 'package:test/test.dart';
 import 'http_response_models.dart';
 import 'request_models.dart';
@@ -17,7 +18,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet1.id,
       requestModelGet1.apiType,
-      requestModelGet1.httpRequestModel!,
+      requestModelGet1.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );
@@ -37,7 +38,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet13.id,
       requestModelGet13.apiType,
-      requestModelGet13.httpRequestModel!,
+      requestModelGet13.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );
@@ -55,7 +56,7 @@ void main() {
       var responseRec = await sendHttpRequest(
         requestModelPost11.id,
         requestModelPost11.apiType,
-        requestModelPost11.httpRequestModel!,
+        requestModelPost11.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
       );
 
       final responseData = responseModel.fromResponse(
@@ -74,7 +75,7 @@ void main() {
       var responseRec = await sendHttpRequest(
         requestModelPost12.id,
         requestModelPost12.apiType,
-        requestModelPost12.httpRequestModel!,
+        requestModelPost12.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
       );
 
       final responseData = responseModel.fromResponse(
@@ -89,7 +90,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost13.id,
       requestModelPost13.apiType,
-      requestModelPost13.httpRequestModel!,
+      requestModelPost13.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
     );
 
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
@@ -104,7 +105,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
-      requestModelGetBadSSL.httpRequestModel!,
+      requestModelGetBadSSL.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );
@@ -116,7 +117,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
-      requestModelGetBadSSL.httpRequestModel!,
+      requestModelGetBadSSL.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: true,
     );
@@ -136,7 +137,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelOptions1.id,
       requestModelOptions1.apiType,
-      requestModelOptions1.httpRequestModel!,
+      requestModelOptions1.protocolModel.mapOrNull(rest: (r) => r.httpRequestModel)!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );

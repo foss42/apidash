@@ -1,7 +1,7 @@
 import 'package:apidash/dashbot/constants.dart';
 import 'package:apidash/dashbot/models/models.dart';
 import 'package:apidash/dashbot/services/services.dart';
-import 'package:apidash/models/request_model.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 
@@ -21,7 +21,7 @@ void main() {
         headers: [NameValueModel(name: 'Accept', value: 'application/json')],
         isHeaderEnabledList: [true],
       );
-      reqModel = RequestModel(id: 'r1', httpRequestModel: http, name: 'Req');
+      reqModel = RequestModel(id: 'r1', protocolModel: ProtocolModel.rest(httpRequestModel: http), name: 'Req');
       auto = AutoFixService(
         requestApply: requestApply,
         updateSelected: ({
@@ -47,7 +47,7 @@ void main() {
             formData: formData ?? http.formData,
             params: params ?? http.params,
           );
-          reqModel = reqModel.copyWith(httpRequestModel: http);
+          reqModel = reqModel.copyWith(protocolModel: reqModel.protocolModel.mapOrNull(rest: (r) => r.copyWith(httpRequestModel: http)) ?? reqModel.protocolModel);
         },
         addNewRequest: (_, {name}) {},
         readCurrentRequestId: () => 'r1',

@@ -122,16 +122,18 @@ void main() {
             return RequestModel(
               id: 'test-request-id',
               name: 'Test Request',
-              httpRequestModel: HttpRequestModel(
-                method: HTTPVerb.get,
-                url: 'https://api.apidash.dev/test',
-                headers: [
-                  NameValueModel(
-                    name: 'Content-Type',
-                    value: 'application/json',
-                  ),
-                ],
-                body: '{"test": "data"}',
+              protocolModel: ProtocolModel.rest(
+                httpRequestModel: HttpRequestModel(
+                  method: HTTPVerb.get,
+                  url: 'https://api.apidash.dev/test',
+                  headers: [
+                    NameValueModel(
+                      name: 'Content-Type',
+                      value: 'application/json',
+                    ),
+                  ],
+                  body: '{"test": "data"}',
+                ),
               ),
             );
           }),
@@ -438,9 +440,11 @@ void main() {
               return RequestModel(
                 id: 'real-test-request-id',
                 name: 'Real Test Request',
-                httpRequestModel: HttpRequestModel(
-                  method: HTTPVerb.get,
-                  url: 'https://api.apidash.dev/real-test',
+                protocolModel: ProtocolModel.rest(
+                  httpRequestModel: HttpRequestModel(
+                    method: HTTPVerb.get,
+                    url: 'https://api.apidash.dev/real-test',
+                  ),
                 ),
               );
             }),

@@ -3,7 +3,7 @@ import 'package:apidash/dashbot/models/chat_state.dart';
 import 'package:apidash/dashbot/providers/chat_viewmodel.dart';
 import 'package:apidash/dashbot/providers/dashbot_window_notifier.dart';
 import 'package:apidash/dashbot/widgets/dashbot_task_buttons.dart';
-import 'package:apidash/models/request_model.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
@@ -92,8 +92,10 @@ void main() {
     final windowNotifier = RecordingDashbotWindowNotifier();
     final requestModel = RequestModel(
       id: 'req-2',
-      httpRequestModel: const HttpRequestModel(),
-      httpResponseModel: const HttpResponseModel(body: 'response body'),
+      protocolModel: const ProtocolModel.rest(
+        httpRequestModel: HttpRequestModel(),
+        httpResponseModel: HttpResponseModel(body: 'response body'),
+      ),
     );
 
     await tester.pumpWidget(
