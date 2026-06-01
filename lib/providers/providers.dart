@@ -1,3 +1,4 @@
+export '../models/models.dart';
 export 'ai_providers.dart';
 export 'collection_providers.dart';
 export 'environment_providers.dart';
