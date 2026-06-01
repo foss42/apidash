@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 
 import 'atomic_file_io.dart';
+import 'workspace_meta.dart';
 import 'workspace_paths.dart';
 
 Directory? _workspaceRoot;
@@ -51,6 +52,7 @@ Future<bool> initWorkspaceStorage(
     }
     _workspaceRoot = root;
     await _ensureWorkspaceStructure(root);
+    await ensureAndReadWorkspaceName(root.path);
     debugPrint('Workspace opened at ${root.path}');
     return true;
   } catch (e, st) {
@@ -144,16 +146,16 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
 final workspaceStorage = WorkspaceStorage();
 
 class WorkspaceStorage {
-  WorkspaceStorage() {
+  WorkspaceStorage();
+
+  Directory get _root {
     if (_workspaceRoot == null) {
       throw StateError(
         'Workspace not initialized. Call initWorkspaceStorage before using workspaceStorage.',
       );
     }
-    _root = _workspaceRoot!;
+    return _workspaceRoot!;
   }
-
-  late final Directory _root;
 
   String _path(String relative) => p.join(_root.path, relative);
 

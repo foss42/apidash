@@ -4,6 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'workspace_dropdown.dart';
+
 class SidebarHeader extends ConsumerWidget {
   const SidebarHeader({
     super.key,
@@ -21,7 +23,11 @@ class SidebarHeader extends ConsumerWidget {
       padding: kPe8,
       child: Row(
         children: [
-          const Spacer(),
+          if (kIsDesktop)
+            const Expanded(
+              child: WorkspaceDropdown(),
+            ),
+          if (kIsDesktop) kHSpacer4,
           ElevatedButton(
             onPressed: onAddNew,
             style: kButtonSidebarStyle,

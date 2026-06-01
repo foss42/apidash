@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/saved_workspace_entry.dart';
 
 @immutable
 class SettingsModel {
@@ -17,6 +18,7 @@ class SettingsModel {
     this.activeEnvironmentId,
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
+    this.savedWorkspaces = const [],
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
@@ -33,6 +35,7 @@ class SettingsModel {
   final String? activeEnvironmentId;
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
+  final List<SavedWorkspaceEntry> savedWorkspaces;
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
@@ -49,6 +52,7 @@ class SettingsModel {
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
+    List<SavedWorkspaceEntry>? savedWorkspaces,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
@@ -67,6 +71,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
+      savedWorkspaces: savedWorkspaces ?? this.savedWorkspaces,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
@@ -88,6 +93,7 @@ class SettingsModel {
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
+      savedWorkspaces: savedWorkspaces,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
@@ -144,6 +150,17 @@ class SettingsModel {
       }
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
+    final savedWorkspaces = <SavedWorkspaceEntry>[];
+    final rawWorkspaces = data['savedWorkspaces'];
+    if (rawWorkspaces is List) {
+      for (final item in rawWorkspaces) {
+        if (item is Map) {
+          savedWorkspaces.add(
+            SavedWorkspaceEntry.fromJson(Map<String, Object?>.from(item)),
+          );
+        }
+      }
+    }
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final isDashBotEnabled = data["isDashBotEnabled"] as bool?;
     final defaultAIModel = data["defaultAIModel"] == null
@@ -164,6 +181,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
+      savedWorkspaces: savedWorkspaces,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
@@ -185,6 +203,7 @@ class SettingsModel {
       "activeEnvironmentId": activeEnvironmentId,
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
+      "savedWorkspaces": savedWorkspaces.map((e) => e.toJson()).toList(),
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
@@ -212,6 +231,7 @@ class SettingsModel {
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
+        listEquals(other.savedWorkspaces, savedWorkspaces) &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
         mapEquals(other.defaultAIModel, defaultAIModel);
@@ -232,6 +252,7 @@ class SettingsModel {
       activeEnvironmentId,
       historyRetentionPeriod,
       workspaceFolderPath,
+      Object.hashAll(savedWorkspaces),
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,

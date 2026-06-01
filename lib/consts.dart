@@ -76,6 +76,10 @@ const kAutoSaveDebounceDuration = Duration(seconds: 1);
 
 const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
 
+const kWorkspaceMetaFile = 'workspace.json';
+const kWorkspaceMetaNameKey = 'name';
+const kMaxSavedWorkspaces = 10;
+
 const kDefaultCollectionId = 'collection-1';
 const kDefaultCollectionName = 'Collection 1';
 const kWorkspaceCollectionsDir = 'collections';
@@ -529,6 +533,9 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+const kLabelSelectWorkspace = "Select workspace";
+const kLabelOpenWorkspaceMenu = "Open workspace…";
+const kMsgWorkspaceOpenFailed = 'Could not open that workspace folder.';
 // History Page
 const kTitleClearHistory = 'Clear History';
 const kMsgClearHistory =

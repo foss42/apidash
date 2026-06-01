@@ -125,18 +125,12 @@ class DashApp extends ConsumerWidget {
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         home: showWorkspaceSelector
             ? WorkspaceSelector(
-                onContinue: (val) async {
-                  final opened = await initWorkspaceStorage(
-                    kIsDesktop,
-                    val,
-                    createIfMissing: true,
+                onContinue: (path, {workspaceDisplayName}) async {
+                  await activateWorkspace(
+                    ref,
+                    path,
+                    preferredName: workspaceDisplayName,
                   );
-                  if (!opened) {
-                    return;
-                  }
-                  await ref
-                      .read(settingsProvider.notifier)
-                      .update(workspaceFolderPath: val);
                 },
                 onCancel: () async {
                   try {
