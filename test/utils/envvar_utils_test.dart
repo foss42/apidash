@@ -280,6 +280,61 @@ void main() {
               httpRequestModel, envMap, activeEnvironmentId),
           expected);
     });
+
+    test(
+        "Testing substituteHttpRequestModel with environment variables in form data names and values",
+        () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/submit",
+        bodyContentType: ContentType.formdata,
+        formData: [
+          FormDataModel(
+            name: "{{header_name}}",
+            value: "{{token}}",
+            type: FormDataType.text,
+          ),
+          FormDataModel(
+            name: "file_{{num}}",
+            value: "/tmp/upload.txt",
+            type: FormDataType.file,
+          ),
+        ],
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+        "activeEnvId2": [
+          const EnvironmentVariableModel(
+            key: "header_name",
+            value: "X-Token",
+          ),
+        ],
+      };
+
+      const activeEnvironmentId = "activeEnvId2";
+      const expected = HttpRequestModel(
+        url: "api.foss42.com/submit",
+        bodyContentType: ContentType.formdata,
+        formData: [
+          FormDataModel(
+            name: "X-Token",
+            value: "token",
+            type: FormDataType.text,
+          ),
+          FormDataModel(
+            name: "file_5670000",
+            value: "/tmp/upload.txt",
+            type: FormDataType.file,
+          ),
+        ],
+      );
+
+      expect(
+          substituteHttpRequestModel(
+              httpRequestModel, envMap, activeEnvironmentId),
+          expected);
+    });
   });
 
   group("Testing getEnvironmentTriggerSuggestions function", () {
