@@ -41,11 +41,23 @@ class CodePane extends ConsumerWidget {
     var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
 
     final substitutedRequestModel = selectedRequestModel?.copyWith(
-      httpRequestModel: substituteHttpRequestModel(
-        selectedRequestModel.httpRequestModel!,
-        envMap,
-        activeEnvId,
-      ),
+      protocolModel: selectedRequestModel.protocolModel.mapOrNull(
+        rest: (p) => p.copyWith(
+          httpRequestModel: substituteHttpRequestModel(
+            selectedRequestModel.httpRequestModel!,
+            envMap,
+            activeEnvId,
+          ),
+        ),
+        graphql: (p) => p.copyWith(
+          httpRequestModel: substituteHttpRequestModel(
+            selectedRequestModel.httpRequestModel!,
+            envMap,
+            activeEnvId,
+          ),
+        ),
+        ai: (p) => p,
+      ) ?? const ProtocolModel.rest(),
     );
 
     final code = codegen.getCode(

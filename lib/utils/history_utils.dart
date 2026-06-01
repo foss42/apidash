@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'convert_utils.dart';
@@ -13,9 +14,17 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     name: model.metaData.name,
     responseStatus: model.httpResponseModel.statusCode,
     message: kResponseCodeReasons[model.httpResponseModel.statusCode],
-    aiRequestModel: model.aiRequestModel,
-    httpRequestModel: model.httpRequestModel,
-    httpResponseModel: model.httpResponseModel,
+    protocolModel: switch (model.metaData.apiType) {
+      APIType.ai => ProtocolModel.ai(aiRequestModel: model.aiRequestModel),
+      APIType.graphql => ProtocolModel.graphql(
+          httpRequestModel: model.httpRequestModel,
+          httpResponseModel: model.httpResponseModel,
+        ),
+      _ => ProtocolModel.rest(
+          httpRequestModel: model.httpRequestModel,
+          httpResponseModel: model.httpResponseModel,
+        ),
+    },
   );
 }
 
