@@ -14,6 +14,9 @@ String _requestFileName(String id) => '$id$kJsonFileExtension';
 
 String _environmentFileName(String id) => '$id$kJsonFileExtension';
 
+String _historyRecordPath(String id) =>
+    p.join(kWorkspaceHistoryDir, '$id$kJsonFileExtension');
+
 String _collectionDir(String collectionId) =>
     p.join(kWorkspaceCollectionsDir, collectionId);
 
@@ -136,14 +139,6 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
     });
   }
 
-  final historyIndexFile = File(
-    p.join(root.path, kWorkspaceHistoryDir, kWorkspaceHistoryIndexFile),
-  );
-  if (!await historyIndexFile.exists()) {
-    await writeJsonAtomic(historyIndexFile.path, {
-      kWorkspaceHistoryIdsKey: <String>[],
-    });
-  }
 }
 
 final workspaceStorage = WorkspaceStorage();
@@ -333,37 +328,47 @@ class WorkspaceStorage {
     }
   }
 
-  // --- History ---
+  String _historyMetasPath() =>
+      p.join(kWorkspaceHistoryDir, kWorkspaceHistoryMetasFile);
 
-  List<String>? getHistoryIds() {
-    final json = _readJsonSync(
-      p.join(kWorkspaceHistoryDir, kWorkspaceHistoryIndexFile),
-    );
+  Map<String, Map<String, dynamic>>? getAllHistoryMetas() {
+    final json = _readJsonSync(_historyMetasPath());
     if (json == null) {
       return null;
     }
-    final ids = json[kWorkspaceHistoryIdsKey];
-    if (ids is List) {
-      return ids.map((e) => e.toString()).toList();
+    final metas = json[kWorkspaceHistoryMetasKey];
+    if (metas is! Map || metas.isEmpty) {
+      return null;
     }
-    return null;
-  }
-
-  Future<void> setHistoryIds(List<String>? ids) async {
-    await writeJsonAtomic(
-      _path(p.join(kWorkspaceHistoryDir, kWorkspaceHistoryIndexFile)),
-      {kWorkspaceHistoryIdsKey: ids ?? <String>[]},
+    return Map<String, Map<String, dynamic>>.fromEntries(
+      metas.entries.map((e) {
+        final value = e.value;
+        if (value is! Map) {
+          return MapEntry(e.key.toString(), <String, dynamic>{});
+        }
+        return MapEntry(
+          e.key.toString(),
+          Map<String, dynamic>.from(value),
+        );
+      }),
     );
   }
 
   Map<String, dynamic>? getHistoryMeta(String id) {
-    final json = _readJsonSync(
-      p.join(kWorkspaceHistoryDir, id, kWorkspaceHistoryMetaFile),
+    return getAllHistoryMetas()?[id];
+  }
+
+  Future<void> setAllHistoryMetas(
+    Map<String, Map<String, dynamic>>? metas,
+  ) async {
+    await writeJsonAtomic(
+      _path(_historyMetasPath()),
+      {
+        kWorkspaceHistoryMetasKey:
+            metas?.map((k, v) => MapEntry(k, Map<String, Object?>.from(v))) ??
+                <String, Map<String, Object?>>{},
+      },
     );
-    if (json == null) {
-      return null;
-    }
-    return Map<String, dynamic>.from(json);
   }
 
   Future<void> setHistoryMeta(
@@ -374,25 +379,24 @@ class WorkspaceStorage {
       await deleteHistoryMeta(id);
       return;
     }
-    await writeJsonAtomic(
-      _path(p.join(kWorkspaceHistoryDir, id, kWorkspaceHistoryMetaFile)),
-      Map<String, Object?>.from(historyMetaJson),
+    final all = Map<String, Map<String, dynamic>>.from(
+      getAllHistoryMetas() ?? {},
     );
+    all[id] = Map<String, dynamic>.from(historyMetaJson);
+    await setAllHistoryMetas(all);
   }
 
   Future<void> deleteHistoryMeta(String id) async {
-    final file = File(
-      _path(p.join(kWorkspaceHistoryDir, id, kWorkspaceHistoryMetaFile)),
-    );
-    if (await file.exists()) {
-      await file.delete();
+    final all = getAllHistoryMetas();
+    if (all == null || !all.containsKey(id)) {
+      return;
     }
+    all.remove(id);
+    await setAllHistoryMetas(all.isEmpty ? null : all);
   }
 
   Future<dynamic> getHistoryRequest(String id) async {
-    final json = await readJsonFile(
-      _path(p.join(kWorkspaceHistoryDir, id, kWorkspaceHistoryBodyFile)),
-    );
+    final json = await readJsonFile(_path(_historyRecordPath(id)));
     if (json == null) {
       return null;
     }
@@ -408,42 +412,45 @@ class WorkspaceStorage {
       return;
     }
     await writeJsonAtomic(
-      _path(p.join(kWorkspaceHistoryDir, id, kWorkspaceHistoryBodyFile)),
+      _path(_historyRecordPath(id)),
       Map<String, Object?>.from(historyRequestJson),
     );
   }
 
   Future<void> deleteHistoryRequest(String id) async {
-    final bodyFile = File(
-      _path(p.join(kWorkspaceHistoryDir, id, kWorkspaceHistoryBodyFile)),
-    );
-    if (await bodyFile.exists()) {
-      await bodyFile.delete();
+    final recordFile = File(_path(_historyRecordPath(id)));
+    if (await recordFile.exists()) {
+      await recordFile.delete();
     }
-    final dir = Directory(_path(p.join(kWorkspaceHistoryDir, id)));
-    if (await dir.exists()) {
+    final legacyDir = Directory(_path(p.join(kWorkspaceHistoryDir, id)));
+    if (await legacyDir.exists()) {
       try {
-        await dir.delete(recursive: true);
+        await legacyDir.delete(recursive: true);
       } catch (e) {
-        debugPrint('deleteHistoryRequest dir cleanup: $e');
+        debugPrint('deleteHistoryRequest legacy dir cleanup: $e');
       }
     }
   }
 
-  // --- Clear / maintenance ---
 
   Future<void> clearAllHistory() async {
     final historyDir = Directory(_path(kWorkspaceHistoryDir));
     if (await historyDir.exists()) {
       await for (final entity in historyDir.list()) {
-        if (entity is File &&
-            entity.path.endsWith(kWorkspaceHistoryIndexFile)) {
-          continue;
+        if (entity is File) {
+          final name = p.basename(entity.path);
+          if (name == kWorkspaceHistoryMetasFile) {
+            continue;
+          }
+          if (name.endsWith(kJsonFileExtension)) {
+            await entity.delete();
+          }
+        } else if (entity is Directory) {
+          await entity.delete(recursive: true);
         }
-        await entity.delete(recursive: true);
       }
     }
-    await setHistoryIds([]);
+    await setAllHistoryMetas(null);
   }
 
   Future<void> clear() async {

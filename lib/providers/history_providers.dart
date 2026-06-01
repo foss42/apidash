@@ -43,23 +43,18 @@ class HistoryMetaStateNotifier
   final WorkspaceStorage workspaceStorage;
 
   bool loadHistoryMetas() {
-    List<String>? historyIds = workspaceStorage.getHistoryIds();
-    if (historyIds == null || historyIds.isEmpty) {
+    final allMetas = workspaceStorage.getAllHistoryMetas();
+    if (allMetas == null || allMetas.isEmpty) {
       state = null;
       return false;
-    } else {
-      Map<String, HistoryMetaModel> historyMetaMap = {};
-      for (var historyId in historyIds) {
-        var jsonModel = workspaceStorage.getHistoryMeta(historyId);
-        if (jsonModel != null) {
-          var jsonMap = Map<String, Object?>.from(jsonModel);
-          var historyMetaModelFromJson = HistoryMetaModel.fromJson(jsonMap);
-          historyMetaMap[historyId] = historyMetaModelFromJson;
-        }
-      }
-      state = historyMetaMap;
-      return true;
     }
+    final historyMetaMap = <String, HistoryMetaModel>{};
+    for (final entry in allMetas.entries) {
+      final jsonMap = Map<String, Object?>.from(entry.value);
+      historyMetaMap[entry.key] = HistoryMetaModel.fromJson(jsonMap);
+    }
+    state = historyMetaMap;
+    return true;
   }
 
   Future<void> loadHistoryRequest(String id) async {
@@ -76,11 +71,7 @@ class HistoryMetaStateNotifier
   void addHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
     state = {...state ?? {}, id: model.metaData};
-    final List<String> updatedHistoryKeys = state == null
-        ? [id]
-        : [...state!.keys, id];
-    workspaceStorage.setHistoryIds(updatedHistoryKeys);
-    workspaceStorage.setHistoryMeta(id, model.metaData.toJson());
+    await workspaceStorage.setHistoryMeta(id, model.metaData.toJson());
     await workspaceStorage.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
   }
@@ -88,11 +79,7 @@ class HistoryMetaStateNotifier
   void editHistoryRequest(HistoryRequestModel model) async {
     final id = model.historyId;
     state = {...state ?? {}, id: model.metaData};
-    final existingKeys = state?.keys.toList() ?? [];
-    if (!existingKeys.contains(id)) {
-      workspaceStorage.setHistoryIds([...existingKeys, id]);
-    }
-    workspaceStorage.setHistoryMeta(id, model.metaData.toJson());
+    await workspaceStorage.setHistoryMeta(id, model.metaData.toJson());
     await workspaceStorage.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
   }

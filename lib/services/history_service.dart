@@ -9,22 +9,18 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
   if (retentionDate == null) {
     return;
   } else {
-    List<String>? historyIds = workspaceStorage.getHistoryIds();
-    List<String> toRemoveIds = [];
-
-    if (historyIds == null || historyIds.isEmpty) {
+    final allMetas = workspaceStorage.getAllHistoryMetas();
+    if (allMetas == null || allMetas.isEmpty) {
       return;
     }
 
-    for (var historyId in historyIds) {
-      var jsonModel = workspaceStorage.getHistoryMeta(historyId);
-      if (jsonModel != null) {
-        var jsonMap = Map<String, Object?>.from(jsonModel);
-        HistoryMetaModel historyMetaModelFromJson =
-            HistoryMetaModel.fromJson(jsonMap);
-        if (historyMetaModelFromJson.timeStamp.isBefore(retentionDate)) {
-          toRemoveIds.add(historyId);
-        }
+    final toRemoveIds = <String>[];
+
+    for (final entry in allMetas.entries) {
+      final jsonMap = Map<String, Object?>.from(entry.value);
+      final historyMetaModelFromJson = HistoryMetaModel.fromJson(jsonMap);
+      if (historyMetaModelFromJson.timeStamp.isBefore(retentionDate)) {
+        toRemoveIds.add(entry.key);
       }
     }
 
@@ -32,11 +28,14 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
       return;
     }
 
-    for (var id in toRemoveIds) {
+    for (final id in toRemoveIds) {
       await workspaceStorage.deleteHistoryRequest(id);
-      workspaceStorage.deleteHistoryMeta(id);
     }
-    workspaceStorage.setHistoryIds(
-        historyIds..removeWhere((id) => toRemoveIds.contains(id)));
+    final remainingMetas = Map<String, Map<String, dynamic>>.from(
+      workspaceStorage.getAllHistoryMetas() ?? {},
+    )..removeWhere((id, _) => toRemoveIds.contains(id));
+    await workspaceStorage.setAllHistoryMetas(
+      remainingMetas.isEmpty ? null : remainingMetas,
+    );
   }
 }

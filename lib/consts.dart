@@ -72,7 +72,7 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
-const kAutoSaveDebounceDuration = Duration(seconds: 2);
+const kAutoSaveDebounceDuration = Duration(seconds: 1);
 
 const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
 
@@ -88,14 +88,12 @@ const kWorkspaceCollectionNameKey = 'name';
 const kWorkspaceEnvironmentsDir = 'environments';
 const kWorkspaceEnvironmentIndexFile = 'index.json';
 const kWorkspaceHistoryDir = 'history';
-const kWorkspaceHistoryIndexFile = 'index.json';
-const kWorkspaceHistoryMetaFile = 'meta.json';
-const kWorkspaceHistoryBodyFile = 'body.json';
+const kWorkspaceHistoryMetasFile = 'historyMeta.json';
 const kJsonFileExtension = '.json';
 
 const kWorkspaceRequestIdsKey = 'requestIds';
 const kWorkspaceEnvironmentIdsKey = 'environmentIds';
-const kWorkspaceHistoryIdsKey = 'historyIds';
+const kWorkspaceHistoryMetasKey = 'historyMeta';
 const kWorkspaceActiveEnvironmentIdKey = 'activeEnvironmentId';
 const kWorkspaceSaveResponsesKey = 'saveResponses';
 const kWorkspaceHistoryRetentionPeriodKey = 'historyRetentionPeriod';
