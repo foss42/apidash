@@ -10,9 +10,9 @@ import '../services/services.dart';
 import 'collection_providers.dart';
 
 final selectedCollectionIdStateProvider = StateProvider<String>((ref) {
-  final ids = workspaceStorage.getCollectionIds();
-  if (ids != null && ids.isNotEmpty) {
-    return ids.first;
+  final index = workspaceStorage.getCollectionsIndex();
+  if (index.isNotEmpty) {
+    return index.first.id;
   }
   return kDefaultCollectionId;
 });
@@ -34,9 +34,11 @@ collectionsStateNotifierProvider = StateNotifierProvider(
 class CollectionsStateNotifier
     extends StateNotifier<Map<String, CollectionModel>?> {
   CollectionsStateNotifier(this.ref, this.workspaceStorage) : super(null) {
-    collectionSequence = _readCollectionIds();
+    final index = _readCollectionsIndex();
+    collectionSequence = index.map((e) => e.id).toList();
     state = {
-      for (final id in collectionSequence) id: _placeholderCollection(id),
+      for (final entry in index)
+        entry.id: CollectionModel(id: entry.id, name: entry.name),
     };
     loadCollection(ref.read(selectedCollectionIdStateProvider));
   }
@@ -46,20 +48,20 @@ class CollectionsStateNotifier
   List<String> collectionSequence = [];
   final Set<String> _loadedCollectionIds = {};
 
-  List<String> _readCollectionIds() {
-    var collectionIds = workspaceStorage.getCollectionIds();
-    if (collectionIds == null || collectionIds.isEmpty) {
-      collectionIds = [kDefaultCollectionId];
-      unawaited(workspaceStorage.setCollectionIds(collectionIds));
+  List<({String id, String name})> _readCollectionsIndex() {
+    var index = workspaceStorage.getCollectionsIndex();
+    if (index.isEmpty) {
+      index = [(id: kDefaultCollectionId, name: kDefaultCollectionName)];
+      unawaited(workspaceStorage.setCollectionsIndex(index));
     }
-    return [...collectionIds];
+    return index;
   }
 
-  CollectionModel _placeholderCollection(String id) {
-    return CollectionModel(
-      id: id,
-      name: id == kDefaultCollectionId ? kDefaultCollectionName : id,
-    );
+  Future<void> _persistIndex() async {
+    await workspaceStorage.setCollectionsIndex([
+      for (final id in collectionSequence)
+        (id: id, name: state![id]!.name),
+    ]);
   }
 
   void loadCollection(String collectionId) {
@@ -67,14 +69,16 @@ class CollectionsStateNotifier
       return;
     }
     final json = workspaceStorage.getCollection(collectionId);
+    final catalogName = state![collectionId]!.name;
     final model = json != null
         ? CollectionModel.fromJson(Map<String, Object?>.from(json))
-        : _placeholderCollection(collectionId);
+        : CollectionModel(id: collectionId, name: catalogName);
     final onDisk = workspaceStorage.existingRequestIds(collectionId).toSet();
     _loadedCollectionIds.add(collectionId);
     state = {
       ...state!,
       collectionId: model.copyWith(
+        name: catalogName,
         requests: model.requests.where((r) => onDisk.contains(r.id)).toList(),
       ),
     };
@@ -99,7 +103,7 @@ class CollectionsStateNotifier
     _loadedCollectionIds.add(id);
     state = {...state!, id: model};
     await workspaceStorage.setCollection(id, model.toJson());
-    await workspaceStorage.setCollectionIds(collectionSequence);
+    await _persistIndex();
     ref.read(expandedCollectionIdsProvider.notifier).update(
           (ids) => {...ids, id},
         );
@@ -113,8 +117,8 @@ class CollectionsStateNotifier
     if (trimmed.isEmpty || state == null) {
       return;
     }
-    loadCollection(id);
     state = {...state!, id: state![id]!.copyWith(name: trimmed)};
+    unawaited(_persistIndex());
   }
 
   Future<void> deleteCollection(String id) async {
@@ -125,7 +129,7 @@ class CollectionsStateNotifier
     collectionSequence = [...collectionSequence]..remove(id);
     _loadedCollectionIds.remove(id);
     state = {...state!}..remove(id);
-    await workspaceStorage.setCollectionIds(collectionSequence);
+    await _persistIndex();
     ref.read(expandedCollectionIdsProvider.notifier).update((s) => {...s}..remove(id));
     if (wasActive) {
       await ref
@@ -136,7 +140,7 @@ class CollectionsStateNotifier
   }
 
   Future<void> saveCollections() async {
-    await workspaceStorage.setCollectionIds(collectionSequence);
+    await _persistIndex();
     final activeId = ref.read(selectedCollectionIdStateProvider);
     final activeSequence = ref.read(requestSequenceProvider);
     final collectionNotifier =

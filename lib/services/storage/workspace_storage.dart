@@ -84,7 +84,12 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
   );
   if (!await indexFile.exists()) {
     await writeJsonAtomic(indexFile.path, {
-      kWorkspaceCollectionIdsKey: <String>[kDefaultCollectionId],
+      kWorkspaceCollectionsIndexKey: [
+        {
+          kWorkspaceCollectionIdKey: kDefaultCollectionId,
+          kWorkspaceCollectionNameKey: kDefaultCollectionName,
+        },
+      ],
     });
   }
 
@@ -167,26 +172,50 @@ class WorkspaceStorage {
 
   String _path(String relative) => p.join(_root.path, relative);
 
-  List<String>? getCollectionIds() {
+  List<({String id, String name})> getCollectionsIndex() {
     final json = _readJsonSync(
       p.join(kWorkspaceCollectionsDir, kWorkspaceCollectionsIndexFile),
     );
     if (json == null) {
-      return null;
+      return [];
     }
-    final ids = json[kWorkspaceCollectionIdsKey];
-    if (ids is List) {
-      return ids.map((e) => e.toString()).toList();
+    final entries = json[kWorkspaceCollectionsIndexKey];
+    if (entries is! List) {
+      return [];
     }
-    return null;
+    final result = <({String id, String name})>[];
+    for (final item in entries) {
+      if (item is! Map) {
+        continue;
+      }
+      final id = item[kWorkspaceCollectionIdKey]?.toString();
+      if (id == null || id.isEmpty) {
+        continue;
+      }
+      result.add((
+        id: id,
+        name: item[kWorkspaceCollectionNameKey] as String? ?? '',
+      ));
+    }
+    return result;
   }
 
-  Future<void> setCollectionIds(List<String> ids) async {
+  Future<void> setCollectionsIndex(
+    List<({String id, String name})> collections,
+  ) async {
     await writeJsonAtomic(
       _path(
         p.join(kWorkspaceCollectionsDir, kWorkspaceCollectionsIndexFile),
       ),
-      {kWorkspaceCollectionIdsKey: ids},
+      {
+        kWorkspaceCollectionsIndexKey: [
+          for (final entry in collections)
+            {
+              kWorkspaceCollectionIdKey: entry.id,
+              kWorkspaceCollectionNameKey: entry.name,
+            },
+        ],
+      },
     );
   }
 
@@ -459,14 +488,6 @@ class WorkspaceStorage {
     if (await recordFile.exists()) {
       await recordFile.delete();
     }
-    final legacyDir = Directory(_path(p.join(kWorkspaceHistoryDir, id)));
-    if (await legacyDir.exists()) {
-      try {
-        await legacyDir.delete(recursive: true);
-      } catch (e) {
-        debugPrint('deleteHistoryRequest legacy dir cleanup: $e');
-      }
-    }
   }
 
 
@@ -491,7 +512,10 @@ class WorkspaceStorage {
   }
 
   Future<void> clear() async {
-    final collectionIds = getCollectionIds() ?? [kDefaultCollectionId];
+    final collectionIds = getCollectionsIndex().map((e) => e.id).toList();
+    if (collectionIds.isEmpty) {
+      collectionIds.add(kDefaultCollectionId);
+    }
     for (final collectionId in collectionIds) {
       final existing = getCollection(collectionId);
       await setCollection(collectionId, {
