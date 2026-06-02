@@ -6,7 +6,6 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 
 class EditEnvironmentVariables extends ConsumerStatefulWidget {
@@ -31,17 +30,26 @@ class EditEnvironmentVariablesState
   }
 
   void _onFieldChange(String selectedId) {
-    final environment = ref.read(selectedEnvironmentModelProvider);
-    final secrets = getEnvironmentSecrets(environment);
     ref
         .read(environmentsStateNotifierProvider.notifier)
         .updateEnvironment(
           selectedId,
           values: [
             ...variableRows.sublist(0, variableRows.length - 1),
-            ...secrets,
           ],
         );
+  }
+
+  void _toggleSecret(String selectedId, int index) {
+    setState(() {
+      final current = variableRows[index];
+      variableRows[index] = current.copyWith(
+        type: current.type == EnvironmentVariableType.secret
+            ? EnvironmentVariableType.variable
+            : EnvironmentVariableType.secret,
+      );
+    });
+    _onFieldChange(selectedId);
   }
 
   @override
@@ -49,16 +57,11 @@ class EditEnvironmentVariablesState
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
     ref.watch(
-      selectedEnvironmentModelProvider.select(
-        (environment) => getEnvironmentVariables(environment).length,
-      ),
+      selectedEnvironmentModelProvider.select((environment) => environment?.values.length),
     );
-    var rows = getEnvironmentVariables(
-      ref.read(selectedEnvironmentModelProvider),
-    );
-    variableRows = rows.isEmpty
-        ? [kEnvironmentVariableEmptyModel]
-        : rows + [kEnvironmentVariableEmptyModel];
+    final env = ref.read(selectedEnvironmentModelProvider);
+    final rows = env?.values ?? <EnvironmentVariableModel>[];
+    variableRows = rows.isEmpty ? [kEnvironmentVariableEmptyModel] : [...rows, kEnvironmentVariableEmptyModel];
     isAddingRow = false;
 
     List<DataColumn> columns = const [
@@ -66,7 +69,7 @@ class EditEnvironmentVariablesState
       DataColumn2(label: Text(kLabelVariableName)),
       DataColumn2(label: Text('='), fixedWidth: 30),
       DataColumn2(label: Text(kLabelVariableValue)),
-      DataColumn2(label: Text(''), fixedWidth: 32),
+      DataColumn2(label: Text(''), fixedWidth: 72),
     ];
 
     List<DataRow> dataRows = List<DataRow>.generate(variableRows.length, (
@@ -120,46 +123,86 @@ class EditEnvironmentVariablesState
           ),
           DataCell(Center(child: Text("=", style: kCodeStyle))),
           DataCell(
-            CellField(
-              keyId: "$selectedId-$index-variables-v-$seed",
-              initialValue: variableRows[index].value,
-              hintText: kHintAddValue,
-              onChanged: (value) {
-                if (isLast && !isAddingRow) {
-                  isAddingRow = true;
-                  variableRows[index] = variableRows[index].copyWith(
-                    value: value,
-                    enabled: true,
-                  );
-                  variableRows.add(kEnvironmentVariableEmptyModel);
-                } else {
-                  variableRows[index] = variableRows[index].copyWith(
-                    value: value,
-                  );
-                }
-                _onFieldChange(selectedId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            ),
-          ),
-          DataCell(
-            InkWell(
-              onTap: isLast
-                  ? null
-                  : () {
-                      seed = random.nextInt(kRandMax);
-                      if (variableRows.length == 2) {
-                        setState(() {
-                          variableRows = [kEnvironmentVariableEmptyModel];
-                        });
+            variableRows[index].type == EnvironmentVariableType.secret
+                ? ObscurableCellField(
+                    keyId: "$selectedId-$index-variables-v-$seed",
+                    initialValue: variableRows[index].value,
+                    hintText: kHintAddValue,
+                    onChanged: (value) {
+                      if (isLast && !isAddingRow) {
+                        isAddingRow = true;
+                        variableRows[index] = variableRows[index].copyWith(
+                          value: value,
+                          enabled: true,
+                        );
+                        variableRows.add(kEnvironmentVariableEmptyModel);
                       } else {
-                        variableRows.removeAt(index);
+                        variableRows[index] = variableRows[index].copyWith(
+                          value: value,
+                        );
                       }
                       _onFieldChange(selectedId!);
                     },
-              child: Theme.of(context).brightness == Brightness.dark
-                  ? kIconRemoveDark
-                  : kIconRemoveLight,
+                    colorScheme: Theme.of(context).colorScheme,
+                  )
+                : CellField(
+                    keyId: "$selectedId-$index-variables-v-$seed",
+                    initialValue: variableRows[index].value,
+                    hintText: kHintAddValue,
+                    onChanged: (value) {
+                      if (isLast && !isAddingRow) {
+                        isAddingRow = true;
+                        variableRows[index] = variableRows[index].copyWith(
+                          value: value,
+                          enabled: true,
+                        );
+                        variableRows.add(kEnvironmentVariableEmptyModel);
+                      } else {
+                        variableRows[index] = variableRows[index].copyWith(
+                          value: value,
+                        );
+                      }
+                      _onFieldChange(selectedId!);
+                    },
+                    colorScheme: Theme.of(context).colorScheme,
+                  ),
+          ),
+          DataCell(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: isLast
+                      ? null
+                      : () => _toggleSecret(selectedId!, index),
+                  child: Icon(
+                    variableRows[index].type == EnvironmentVariableType.secret
+                        ? Icons.lock
+                        : Icons.lock_open,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  onTap: isLast
+                      ? null
+                      : () {
+                          seed = random.nextInt(kRandMax);
+                          if (variableRows.length == 2) {
+                            setState(() {
+                              variableRows = [kEnvironmentVariableEmptyModel];
+                            });
+                          } else {
+                            variableRows.removeAt(index);
+                          }
+                          _onFieldChange(selectedId!);
+                        },
+                  child: Theme.of(context).brightness == Brightness.dark
+                      ? kIconRemoveDark
+                      : kIconRemoveLight,
+                ),
+              ],
             ),
           ),
         ],

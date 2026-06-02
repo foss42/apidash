@@ -94,7 +94,6 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
   }
 }
 
-/// Label for the sidebar workspace control from [savedWorkspaces].
 String? savedWorkspaceNameForPath(
   List<SavedWorkspaceEntry> saved,
   String? workspaceFolderPath,
