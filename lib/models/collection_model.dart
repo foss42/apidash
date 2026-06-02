@@ -1,33 +1,47 @@
 import 'package:apidash/consts.dart';
 
+import 'request_summary_model.dart';
+
 class CollectionModel {
   const CollectionModel({
     required this.id,
     required this.name,
-    this.requestIds = const [],
+    this.requests = const [],
   });
 
   final String id;
   final String name;
-  final List<String> requestIds;
+  final List<RequestSummary> requests;
+
+  List<String> get requestIds => requests.map((r) => r.id).toList();
 
   CollectionModel copyWith({
     String? name,
-    List<String>? requestIds,
+    List<RequestSummary>? requests,
   }) {
     return CollectionModel(
       id: id,
       name: name ?? this.name,
-      requestIds: requestIds ?? this.requestIds,
+      requests: requests ?? this.requests,
     );
   }
 
   factory CollectionModel.fromJson(Map<String, Object?> json) {
-    final ids = json[kWorkspaceRequestIdsKey];
+    final requestsJson = json[kWorkspaceRequestsKey];
+    final requests = <RequestSummary>[];
+    if (requestsJson is List) {
+      for (final item in requestsJson) {
+        if (item is Map) {
+          requests.add(
+            RequestSummary.fromJson(Map<String, Object?>.from(item)),
+          );
+        }
+      }
+    }
     return CollectionModel(
       id: json[kWorkspaceCollectionIdKey] as String? ?? '',
       name: json[kWorkspaceCollectionNameKey] as String? ?? '',
-      requestIds: ids is List ? ids.map((e) => e.toString()).toList() : [],
+      requests: requests,
     );
   }
 
@@ -35,7 +49,7 @@ class CollectionModel {
     return {
       kWorkspaceCollectionIdKey: id,
       kWorkspaceCollectionNameKey: name,
-      kWorkspaceRequestIdsKey: requestIds,
+      kWorkspaceRequestsKey: requests.map((r) => r.toJson()).toList(),
     };
   }
 }

@@ -35,12 +35,16 @@ class CollectionsStateNotifier
     extends StateNotifier<Map<String, CollectionModel>?> {
   CollectionsStateNotifier(this.ref, this.workspaceStorage) : super(null) {
     collectionSequence = _readCollectionIds();
-    state = _readCollectionsMap(collectionSequence);
+    state = {
+      for (final id in collectionSequence) id: _placeholderCollection(id),
+    };
+    loadCollection(ref.read(selectedCollectionIdStateProvider));
   }
 
   final Ref ref;
   final WorkspaceStorage workspaceStorage;
   List<String> collectionSequence = [];
+  final Set<String> _loadedCollectionIds = {};
 
   List<String> _readCollectionIds() {
     var collectionIds = workspaceStorage.getCollectionIds();
@@ -51,36 +55,39 @@ class CollectionsStateNotifier
     return [...collectionIds];
   }
 
-  Map<String, CollectionModel> _readCollectionsMap(List<String> collectionIds) {
-    final map = <String, CollectionModel>{};
-    for (final id in collectionIds) {
-      final json = workspaceStorage.getCollection(id);
-      if (json != null) {
-        var model = CollectionModel.fromJson(Map<String, Object?>.from(json));
-        final pruned = workspaceStorage.existingRequestIds(id);
-        if (pruned.length != model.requestIds.length) {
-          unawaited(workspaceStorage.setIds(id, pruned));
-        }
-        map[id] = model.copyWith(requestIds: pruned);
-      } else {
-        final pruned = workspaceStorage.existingRequestIds(id);
-        map[id] = CollectionModel(
-          id: id,
-          name: id == kDefaultCollectionId ? kDefaultCollectionName : id,
-          requestIds: pruned,
-        );
-      }
-    }
-    return map;
+  CollectionModel _placeholderCollection(String id) {
+    return CollectionModel(
+      id: id,
+      name: id == kDefaultCollectionId ? kDefaultCollectionName : id,
+    );
   }
 
-  void syncRequestIds(String collectionId, List<String> requestIds) {
+  void loadCollection(String collectionId) {
+    if (_loadedCollectionIds.contains(collectionId)) {
+      return;
+    }
+    final json = workspaceStorage.getCollection(collectionId);
+    final model = json != null
+        ? CollectionModel.fromJson(Map<String, Object?>.from(json))
+        : _placeholderCollection(collectionId);
+    final onDisk = workspaceStorage.existingRequestIds(collectionId).toSet();
+    _loadedCollectionIds.add(collectionId);
+    state = {
+      ...state!,
+      collectionId: model.copyWith(
+        requests: model.requests.where((r) => onDisk.contains(r.id)).toList(),
+      ),
+    };
+  }
+
+  void syncRequests(String collectionId, List<RequestSummary> requests) {
     if (state == null || !state!.containsKey(collectionId)) {
       return;
     }
+    _loadedCollectionIds.add(collectionId);
     state = {
       ...state!,
-      collectionId: state![collectionId]!.copyWith(requestIds: requestIds),
+      collectionId: state![collectionId]!.copyWith(requests: requests),
     };
   }
 
@@ -89,6 +96,7 @@ class CollectionsStateNotifier
     final name = 'Collection ${state!.length + 1}';
     final model = CollectionModel(id: id, name: name);
     collectionSequence = [...collectionSequence, id];
+    _loadedCollectionIds.add(id);
     state = {...state!, id: model};
     await workspaceStorage.setCollection(id, model.toJson());
     await workspaceStorage.setCollectionIds(collectionSequence);
@@ -105,6 +113,7 @@ class CollectionsStateNotifier
     if (trimmed.isEmpty || state == null) {
       return;
     }
+    loadCollection(id);
     state = {...state!, id: state![id]!.copyWith(name: trimmed)};
   }
 
@@ -114,6 +123,7 @@ class CollectionsStateNotifier
     }
     final wasActive = ref.read(selectedCollectionIdStateProvider) == id;
     collectionSequence = [...collectionSequence]..remove(id);
+    _loadedCollectionIds.remove(id);
     state = {...state!}..remove(id);
     await workspaceStorage.setCollectionIds(collectionSequence);
     ref.read(expandedCollectionIdsProvider.notifier).update((s) => {...s}..remove(id));
@@ -129,12 +139,20 @@ class CollectionsStateNotifier
     await workspaceStorage.setCollectionIds(collectionSequence);
     final activeId = ref.read(selectedCollectionIdStateProvider);
     final activeSequence = ref.read(requestSequenceProvider);
-    syncRequestIds(activeId, activeSequence);
+    final collectionNotifier =
+        ref.read(collectionStateNotifierProvider.notifier);
     for (final entry in state!.entries) {
-      final requestIds = entry.key == activeId
-          ? activeSequence
-          : workspaceStorage.existingRequestIds(entry.key);
-      final model = entry.value.copyWith(requestIds: requestIds);
+      if (!_loadedCollectionIds.contains(entry.key)) {
+        continue;
+      }
+      final onDisk = workspaceStorage.existingRequestIds(entry.key).toSet();
+      final requests = entry.key == activeId
+          ? collectionNotifier.summariesForSequence(entry.key, activeSequence)
+          : entry.value.requests.where((r) => onDisk.contains(r.id)).toList();
+      if (entry.key == activeId) {
+        syncRequests(activeId, requests);
+      }
+      final model = entry.value.copyWith(requests: requests);
       await workspaceStorage.setCollection(entry.key, model.toJson());
       if (entry.key != activeId) {
         state = {...state!, entry.key: model};

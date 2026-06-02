@@ -1,10 +1,8 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/services/services.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
@@ -142,45 +140,30 @@ class _CollectionSection extends ConsumerWidget {
   final bool isActive;
   final String filterQuery;
 
-  List<String> _requestIds(WidgetRef ref) {
-    if (isActive) {
-      return ref.watch(requestSequenceProvider);
+  List<RequestSummary> _requestSummaries(WidgetRef ref) {
+    if (!isActive) {
+      return collection.requests;
     }
-    return collection.requestIds;
-  }
-
-  RequestModel? _requestModel(WidgetRef ref, String requestId) {
-    if (isActive) {
-      final inMemory = ref.watch(collectionStateNotifierProvider)?[requestId];
-      if (inMemory != null) {
-        return inMemory;
-      }
-    }
-    final json = workspaceStorage.getRequestModel(collectionId, requestId);
-    if (json == null) {
-      return null;
-    }
-    final jsonMap = Map<String, Object?>.from(json);
-    var model = RequestModel.fromJson(jsonMap);
-    if (model.httpRequestModel == null && model.aiRequestModel == null) {
-      model = model.copyWith(httpRequestModel: const HttpRequestModel());
-    }
-    return model;
+    ref.watch(collectionStateNotifierProvider);
+    final sequence = ref.watch(requestSequenceProvider);
+    return ref
+        .read(collectionStateNotifierProvider.notifier)
+        .summariesForSequence(collectionId, sequence);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requestIds = _requestIds(ref);
-    final visibleIds = filterQuery.isEmpty
-        ? requestIds
-        : requestIds.where((id) {
-            final model = _requestModel(ref, id);
-            if (model == null) {
-              return false;
-            }
-            final url = model.httpRequestModel?.url ?? '';
-            return url.toLowerCase().contains(filterQuery) ||
-                model.name.toLowerCase().contains(filterQuery);
+    if (isExpanded) {
+      ref.read(collectionsStateNotifierProvider.notifier).loadCollection(
+            collectionId,
+          );
+    }
+    final summaries = _requestSummaries(ref);
+    final visibleSummaries = filterQuery.isEmpty
+        ? summaries
+        : summaries.where((summary) {
+            return summary.url.toLowerCase().contains(filterQuery) ||
+                summary.name.toLowerCase().contains(filterQuery);
           }).toList();
 
     return Column(
@@ -197,16 +180,14 @@ class _CollectionSection extends ConsumerWidget {
             padding: const EdgeInsets.only(left: 8),
             child: Column(
               children: [
-                for (final requestId in visibleIds)
-                  if (_requestModel(ref, requestId) case final requestModel?)
-                    Padding(
-                      padding: kP1,
-                      child: RequestItem(
-                        id: requestId,
-                        requestModel: requestModel,
-                        collectionId: collectionId,
-                      ),
+                for (final summary in visibleSummaries)
+                  Padding(
+                    padding: kP1,
+                    child: RequestItem(
+                      summary: summary,
+                      collectionId: collectionId,
                     ),
+                  ),
               ],
             ),
           ),
@@ -311,6 +292,15 @@ class _CollectionSectionHeader extends ConsumerWidget {
                 constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
                 iconSize: 18,
                 onPressed: () {
+                  final expanding =
+                      !ref.read(expandedCollectionIdsProvider).contains(
+                            collectionId,
+                          );
+                  if (expanding) {
+                    ref
+                        .read(collectionsStateNotifierProvider.notifier)
+                        .loadCollection(collectionId);
+                  }
                   ref.read(expandedCollectionIdsProvider.notifier).update(
                         (ids) {
                           final next = {...ids};
@@ -404,26 +394,25 @@ class _CollectionSectionHeader extends ConsumerWidget {
 class RequestItem extends ConsumerWidget {
   const RequestItem({
     super.key,
-    required this.id,
-    required this.requestModel,
+    required this.summary,
     required this.collectionId,
   });
 
-  final String id;
-  final RequestModel requestModel;
+  final RequestSummary summary;
   final String collectionId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
+    final id = summary.id;
 
     return SidebarRequestCard(
       id: id,
-      apiType: requestModel.apiType,
-      method: requestModel.httpRequestModel?.method,
-      name: requestModel.name,
-      url: requestModel.httpRequestModel?.url,
+      apiType: summary.apiType,
+      method: summary.method,
+      name: summary.name,
+      url: summary.url,
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () async {

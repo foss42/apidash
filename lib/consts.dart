@@ -85,6 +85,8 @@ const kDefaultCollectionName = 'Collection 1';
 const kWorkspaceCollectionsDir = 'collections';
 const kWorkspaceCollectionsIndexFile = 'index.json';
 const kWorkspaceRequestsSubdir = 'requests';
+const kWorkspaceRequestFile = 'request.json';
+const kWorkspaceResponseFile = 'response.json';
 const kWorkspaceCollectionFile = 'collection.json';
 const kWorkspaceCollectionIdsKey = 'collectionIds';
 const kWorkspaceCollectionIdKey = 'id';
@@ -95,7 +97,7 @@ const kWorkspaceHistoryDir = 'history';
 const kWorkspaceHistoryMetasFile = 'historyMeta.json';
 const kJsonFileExtension = '.json';
 
-const kWorkspaceRequestIdsKey = 'requestIds';
+const kWorkspaceRequestsKey = 'requests';
 const kWorkspaceEnvironmentIdsKey = 'environmentIds';
 const kWorkspaceHistoryMetasKey = 'historyMeta';
 const kWorkspaceActiveEnvironmentIdKey = 'activeEnvironmentId';

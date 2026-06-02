@@ -52,8 +52,40 @@ class CollectionStateNotifier
   }
 
   List<String> _catalogRequestIds(String collectionId) {
-    return ref.read(collectionsStateNotifierProvider)?[collectionId]?.requestIds ??
+    return ref
+            .read(collectionsStateNotifierProvider)?[collectionId]
+            ?.requestIds ??
         const [];
+  }
+
+  List<RequestSummary> summariesForSequence(
+    String collectionId,
+    List<String> ids,
+  ) {
+    final byId = {
+      for (final summary
+          in ref.read(collectionsStateNotifierProvider)?[collectionId]
+                  ?.requests ??
+              const <RequestSummary>[])
+        summary.id: summary,
+    };
+    final useMemory = collectionId == _activeCollectionId;
+    return [
+      for (final id in ids)
+        useMemory && state?[id] != null
+            ? RequestSummary.fromRequestModel(state![id]!)
+            : byId[id]!,
+    ];
+  }
+
+  void _syncActiveCollectionSummaries() {
+    ref.read(collectionsStateNotifierProvider.notifier).syncRequests(
+          _activeCollectionId,
+          summariesForSequence(
+            _activeCollectionId,
+            ref.read(requestSequenceProvider),
+          ),
+        );
   }
 
   RequestModel? _requestModelFromDisk(String collectionId, String id) {
@@ -93,9 +125,10 @@ class CollectionStateNotifier
     };
     ref.read(requestSequenceProvider.notifier).state = [newId];
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    ref
-        .read(collectionsStateNotifierProvider.notifier)
-        .syncRequestIds(collectionId, [newId]);
+    ref.read(collectionsStateNotifierProvider.notifier).syncRequests(
+          collectionId,
+          [RequestSummary.fromRequestModel(state![newId]!)],
+        );
   }
 
   void activateCollection(String collectionId) {
@@ -115,12 +148,15 @@ class CollectionStateNotifier
     if (_activeCollectionId == collectionId && state != null) {
       return;
     }
+    final collections = ref.read(collectionsStateNotifierProvider.notifier);
     final from = _activeCollectionId;
     final fromStillExists =
         ref.read(collectionsStateNotifierProvider)?.containsKey(from) ?? false;
     if (state != null && from != collectionId && fromStillExists) {
+      collections.loadCollection(from);
       await saveData(collectionId: from);
     }
+    collections.loadCollection(collectionId);
     state = {};
     ref.read(selectedCollectionIdStateProvider.notifier).state = collectionId;
     activateCollection(collectionId);
@@ -149,6 +185,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+    _syncActiveCollectionSummaries();
   }
 
   void addRequestModel(HttpRequestModel httpRequestModel, {String? name}) {
@@ -165,6 +202,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+    _syncActiveCollectionSummaries();
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -172,6 +210,7 @@ class CollectionStateNotifier
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    _syncActiveCollectionSummaries();
   }
 
   void remove({String? id}) {
@@ -196,6 +235,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map.remove(rId);
     state = map;
+    _syncActiveCollectionSummaries();
   }
 
   void clearResponse({String? id}) {
@@ -242,6 +282,7 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
+    _syncActiveCollectionSummaries();
   }
 
   void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
@@ -271,6 +312,7 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
+    _syncActiveCollectionSummaries();
   }
 
   void update({
@@ -364,6 +406,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[rId] = newModel;
     state = map;
+    _syncActiveCollectionSummaries();
   }
 
   Future<void> sendRequest() async {
@@ -646,10 +689,10 @@ class CollectionStateNotifier
     final targetId = collectionId ?? _activeCollectionId;
     final saveResponse = ref.read(settingsProvider).saveResponses;
     final ids = ref.read(requestSequenceProvider);
-    await workspaceStorage.setIds(targetId, ids);
+    final summaries = summariesForSequence(targetId, ids);
     ref
         .read(collectionsStateNotifierProvider.notifier)
-        .syncRequestIds(targetId, ids);
+        .syncRequests(targetId, summaries);
     for (final requestId in ids) {
       final inMemory = state?[requestId];
       Map<String, dynamic>? json;
