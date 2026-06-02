@@ -10,7 +10,6 @@ Future<bool> activateWorkspace(
   String? preferredName,
   bool createIfMissing = true,
 }) async {
-  ref.read(autoSaveNotifierProvider.notifier).cancelPending();
   final opened = await initWorkspaceStorage(
     kIsDesktop,
     path,
@@ -18,6 +17,12 @@ Future<bool> activateWorkspace(
   );
   if (!opened) {
     return false;
+  }
+
+  try {
+    ref.read(autoSaveNotifierProvider.notifier).cancelPending();
+  } catch (_) {
+    // ignore
   }
   final name = await ensureAndReadWorkspaceName(
     path,
