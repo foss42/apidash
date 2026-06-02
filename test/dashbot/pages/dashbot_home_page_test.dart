@@ -3,6 +3,7 @@ import 'package:apidash/dashbot/pages/pages.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/routes/routes.dart';
 import 'package:apidash/dashbot/widgets/widgets.dart';
+import 'package:apidash/models/protocol_model.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -284,8 +285,10 @@ void main() {
     );
     final requestModel = RequestModel(
       id: 'req-1',
-      httpRequestModel: const HttpRequestModel(),
-      httpResponseModel: responseModel,
+      protocolModel: ProtocolModel.rest(
+        httpRequestModel: const HttpRequestModel(),
+        httpResponseModel: responseModel,
+      ),
     );
 
     final notifier = await _pumpHomePage(

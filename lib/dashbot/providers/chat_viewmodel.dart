@@ -126,7 +126,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final currentReq = _currentRequest;
     final substitutedReq = (currentReq?.httpRequestModel != null)
         ? currentReq!.copyWith(
-            httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith(),
+            protocolModel: currentReq.protocolModel.mapOrNull(
+              rest: (p) => p.copyWith(httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith()),
+              graphql: (p) => p.copyWith(httpRequestModel: _currentSubstitutedHttpRequestModel?.copyWith()),
+              ai: (p) => p,
+            ) ?? const ProtocolModel.rest(),
           )
         : currentReq;
     String systemPrompt;

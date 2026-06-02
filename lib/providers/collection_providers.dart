@@ -80,7 +80,7 @@ class CollectionStateNotifier
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
-      httpRequestModel: const HttpRequestModel(),
+      protocolModel: const ProtocolModel.rest(httpRequestModel: HttpRequestModel()),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -97,7 +97,7 @@ class CollectionStateNotifier
     final newRequestModel = RequestModel(
       id: id,
       name: name ?? "",
-      httpRequestModel: httpRequestModel,
+      protocolModel: ProtocolModel.rest(httpRequestModel: httpRequestModel),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -149,7 +149,11 @@ class CollectionStateNotifier
     final newModel = currentModel.copyWith(
       responseStatus: null,
       message: null,
-      httpResponseModel: null,
+      protocolModel: currentModel.protocolModel.mapOrNull(
+        rest: (p) => p.copyWith(httpResponseModel: null),
+        graphql: (p) => p.copyWith(httpResponseModel: null),
+        ai: (p) => p,
+      ) ?? const ProtocolModel.rest(),
       isWorking: false,
       sendingTime: null,
     );
@@ -172,9 +176,16 @@ class CollectionStateNotifier
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
-      httpRequestModel: currentModel.httpRequestModel?.copyWith(),
-      aiRequestModel: currentModel.aiRequestModel?.copyWith(),
-      httpResponseModel: null,
+      protocolModel: currentModel.protocolModel.mapOrNull(
+        rest: (p) => p.copyWith(
+            httpRequestModel: p.httpRequestModel?.copyWith(),
+            httpResponseModel: null),
+        graphql: (p) => p.copyWith(
+            httpRequestModel: p.httpRequestModel?.copyWith(),
+            httpResponseModel: null),
+        ai: (p) => p.copyWith(
+            aiRequestModel: p.aiRequestModel?.copyWith()),
+      ) ?? const ProtocolModel.rest(),
       isWorking: false,
       sendingTime: null,
     );
@@ -199,12 +210,22 @@ class CollectionStateNotifier
       apiType: currentModel.metaData.apiType,
       id: newId,
       name: "${currentModel.metaData.name} (history)",
-      aiRequestModel: currentModel.aiRequestModel?.copyWith(),
-      httpRequestModel:
-          currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
+      protocolModel: switch (currentModel.metaData.apiType) {
+        APIType.ai => ProtocolModel.ai(
+            aiRequestModel: currentModel.aiRequestModel?.copyWith()),
+        APIType.graphql => ProtocolModel.graphql(
+            httpRequestModel: currentModel.httpRequestModel?.copyWith() ??
+                const HttpRequestModel(),
+            httpResponseModel: currentModel.httpResponseModel,
+          ),
+        _ => ProtocolModel.rest(
+            httpRequestModel: currentModel.httpRequestModel?.copyWith() ??
+                const HttpRequestModel(),
+            httpResponseModel: currentModel.httpResponseModel,
+          ),
+      },
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
-      httpResponseModel: currentModel.httpResponseModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -261,49 +282,70 @@ class CollectionStateNotifier
           requestTabIndex: 0,
           name: name ?? currentModel.name,
           description: description ?? currentModel.description,
-          httpRequestModel: const HttpRequestModel(),
-          aiRequestModel: null,
+          protocolModel: apiType == APIType.rest 
+              ? const ProtocolModel.rest(httpRequestModel: HttpRequestModel())
+              : const ProtocolModel.graphql(httpRequestModel: HttpRequestModel()),
         ),
         APIType.ai => currentModel.copyWith(
           apiType: apiType,
           requestTabIndex: 0,
           name: name ?? currentModel.name,
           description: description ?? currentModel.description,
-          httpRequestModel: null,
-          aiRequestModel: defaultModel == null
-              ? const AIRequestModel()
-              : AIRequestModel.fromJson(defaultModel),
+          protocolModel: ProtocolModel.ai(
+            aiRequestModel: defaultModel == null
+                ? const AIRequestModel()
+                : AIRequestModel.fromJson(defaultModel),
+          ),
         ),
       };
     } else {
+      var protocolModel = currentModel.protocolModel;
+      if (apiType == APIType.rest || apiType == APIType.graphql || (apiType == null && currentModel.apiType != APIType.ai)) {
+          var updatedHttpRequestModel = currentHttpRequestModel?.copyWith(
+            method: method ?? currentHttpRequestModel.method,
+            url: url ?? currentHttpRequestModel.url,
+            headers: headers ?? currentHttpRequestModel.headers,
+            params: params ?? currentHttpRequestModel.params,
+            authModel: authModel ?? currentHttpRequestModel.authModel,
+            isHeaderEnabledList:
+                isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
+            isParamEnabledList:
+                isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+            bodyContentType:
+                bodyContentType ?? currentHttpRequestModel.bodyContentType,
+            body: body ?? currentHttpRequestModel.body,
+            query: query ?? currentHttpRequestModel.query,
+            formData: formData ?? currentHttpRequestModel.formData,
+          );
+          
+          protocolModel = currentModel.protocolModel.mapOrNull(
+            rest: (p) => p.copyWith(
+                httpRequestModel: updatedHttpRequestModel,
+                httpResponseModel: httpResponseModel ?? p.httpResponseModel),
+            graphql: (p) => p.copyWith(
+                httpRequestModel: updatedHttpRequestModel,
+                httpResponseModel: httpResponseModel ?? p.httpResponseModel),
+            ai: (p) => p,
+          ) ?? protocolModel;
+      } else if (apiType == APIType.ai || (apiType == null && currentModel.apiType == APIType.ai)) {
+          protocolModel = currentModel.protocolModel.mapOrNull(
+            rest: (p) => p,
+            graphql: (p) => p,
+            ai: (p) => p.copyWith(
+                aiRequestModel: aiRequestModel ?? p.aiRequestModel),
+          ) ?? protocolModel;
+      }
+
       newModel = currentModel.copyWith(
         apiType: apiType ?? currentModel.apiType,
         name: name ?? currentModel.name,
         description: description ?? currentModel.description,
         requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-        httpRequestModel: currentHttpRequestModel?.copyWith(
-          method: method ?? currentHttpRequestModel.method,
-          url: url ?? currentHttpRequestModel.url,
-          headers: headers ?? currentHttpRequestModel.headers,
-          params: params ?? currentHttpRequestModel.params,
-          authModel: authModel ?? currentHttpRequestModel.authModel,
-          isHeaderEnabledList:
-              isHeaderEnabledList ??
-              currentHttpRequestModel.isHeaderEnabledList,
-          isParamEnabledList:
-              isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
-          bodyContentType:
-              bodyContentType ?? currentHttpRequestModel.bodyContentType,
-          body: body ?? currentHttpRequestModel.body,
-          query: query ?? currentHttpRequestModel.query,
-          formData: formData ?? currentHttpRequestModel.formData,
-        ),
+        protocolModel: protocolModel,
         responseStatus: responseStatus ?? currentModel.responseStatus,
         message: message ?? currentModel.message,
-        httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
         preRequestScript: preRequestScript ?? currentModel.preRequestScript,
         postRequestScript: postRequestScript ?? currentModel.postRequestScript,
-        aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
       );
     }
 
@@ -435,7 +477,11 @@ class CollectionStateNotifier
           );
 
           newRequestModel = newRequestModel.copyWith(
-            httpResponseModel: httpResponseModel,
+            protocolModel: newRequestModel.protocolModel.mapOrNull(
+                rest: (p) => p.copyWith(httpResponseModel: httpResponseModel),
+                graphql: (p) => p.copyWith(httpResponseModel: httpResponseModel),
+                ai: (p) => p,
+            ) ?? const ProtocolModel.rest(),
             isStreaming: true,
           );
           state = {...state!, requestId: newRequestModel};
@@ -515,7 +561,11 @@ class CollectionStateNotifier
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: httpResponseModel,
+        protocolModel: newRequestModel.protocolModel.mapOrNull(
+                rest: (p) => p.copyWith(httpResponseModel: httpResponseModel),
+                graphql: (p) => p.copyWith(httpResponseModel: httpResponseModel),
+                ai: (p) => p,
+            ) ?? const ProtocolModel.rest(),
         isWorking: false,
       );
 
@@ -600,7 +650,7 @@ class CollectionStateNotifier
       state = {
         newId: RequestModel(
           id: newId,
-          httpRequestModel: const HttpRequestModel(),
+          protocolModel: const ProtocolModel.rest(httpRequestModel: HttpRequestModel()),
         ),
       };
       return true;
@@ -610,10 +660,33 @@ class CollectionStateNotifier
         var jsonModel = hiveHandler.getRequestModel(id);
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
+          
+          if (!jsonMap.containsKey('protocolModel')) {
+            final apiType = jsonMap['apiType'] as String? ?? 'rest';
+            if (apiType == 'rest') {
+              jsonMap['protocolModel'] = {
+                'type': 'rest',
+                'httpRequestModel': jsonMap['httpRequestModel'],
+                'httpResponseModel': jsonMap['httpResponseModel'],
+              };
+            } else if (apiType == 'graphql') {
+              jsonMap['protocolModel'] = {
+                'type': 'graphql',
+                'httpRequestModel': jsonMap['httpRequestModel'],
+                'httpResponseModel': jsonMap['httpResponseModel'],
+              };
+            } else if (apiType == 'ai') {
+              jsonMap['protocolModel'] = {
+                'type': 'ai',
+                'aiRequestModel': jsonMap['aiRequestModel'],
+              };
+            }
+          }
+
           var requestModel = RequestModel.fromJson(jsonMap);
-          if (requestModel.httpRequestModel == null) {
+          if (requestModel.httpRequestModel == null && requestModel.apiType == APIType.rest) {
             requestModel = requestModel.copyWith(
-              httpRequestModel: const HttpRequestModel(),
+              protocolModel: const ProtocolModel.rest(httpRequestModel: HttpRequestModel()),
             );
           }
           data[id] = requestModel;
@@ -634,7 +707,11 @@ class CollectionStateNotifier
         id,
         saveResponse
             ? (state?[id])?.toJson()
-            : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
+            : (state?[id]?.copyWith(protocolModel: state?[id]?.protocolModel.mapOrNull(
+                rest: (p) => p.copyWith(httpResponseModel: null),
+                graphql: (p) => p.copyWith(httpResponseModel: null),
+                ai: (p) => p,
+              ) ?? const ProtocolModel.rest()))?.toJson(),
       );
     }
 

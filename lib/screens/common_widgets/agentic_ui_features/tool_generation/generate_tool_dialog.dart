@@ -1,3 +1,4 @@
+import "package:apidash/models/models.dart";
 import 'package:apidash/consts.dart';
 import 'package:apidash/apitoolgen/request_consolidator.dart';
 import 'package:apidash/providers/collection_providers.dart';

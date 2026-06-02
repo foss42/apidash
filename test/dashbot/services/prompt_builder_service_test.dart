@@ -1,7 +1,7 @@
 import 'package:apidash/dashbot/constants.dart';
 import 'package:apidash/dashbot/models/models.dart';
 import 'package:apidash/dashbot/services/services.dart';
-import 'package:apidash/models/request_model.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 
@@ -27,8 +27,10 @@ void main() {
       request = RequestModel(
         id: 'r1',
         name: 'Get Users',
-        httpRequestModel: http,
-        httpResponseModel: resp,
+        protocolModel: ProtocolModel.rest(
+          httpRequestModel: http,
+          httpResponseModel: resp,
+        ),
         responseStatus: 200,
       );
     });

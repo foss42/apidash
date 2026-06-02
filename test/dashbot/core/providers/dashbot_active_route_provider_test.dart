@@ -25,10 +25,10 @@ void main() {
       const request = RequestModel(
         id: '1',
         name: 'Test Request',
-        httpRequestModel: HttpRequestModel(
+        protocolModel: ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://api.example.com/test',
-        ),
+        )),
       );
 
       final container = createContainer(
@@ -45,14 +45,16 @@ void main() {
       const request = RequestModel(
         id: '1',
         name: 'Test Request',
-        httpRequestModel: HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.example.com/test',
-        ),
-        httpResponseModel: HttpResponseModel(
-          statusCode: 200,
-          headers: {},
-          body: 'OK',
+        protocolModel: ProtocolModel.rest(
+          httpRequestModel: HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.example.com/test',
+          ),
+          httpResponseModel: HttpResponseModel(
+            statusCode: 200,
+            headers: {},
+            body: 'OK',
+          ),
         ),
       );
 
@@ -114,23 +116,25 @@ void main() {
       const requestWithoutResponse = RequestModel(
         id: '1',
         name: 'Test Request',
-        httpRequestModel: HttpRequestModel(
+        protocolModel: ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://api.example.com/test',
-        ),
+        )),
       );
 
       const requestWithResponse = RequestModel(
         id: '2',
         name: 'Test Request 2',
-        httpRequestModel: HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.example.com/test2',
-        ),
-        httpResponseModel: HttpResponseModel(
-          statusCode: 200,
-          headers: {},
-          body: 'OK',
+        protocolModel: ProtocolModel.rest(
+          httpRequestModel: HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.example.com/test2',
+          ),
+          httpResponseModel: HttpResponseModel(
+            statusCode: 200,
+            headers: {},
+            body: 'OK',
+          ),
         ),
       );
 
@@ -174,14 +178,16 @@ void main() {
         const requestWithResponse = RequestModel(
           id: '1',
           name: 'Test Request',
-          httpRequestModel: HttpRequestModel(
-            method: HTTPVerb.get,
-            url: 'https://api.example.com/test',
-          ),
-          httpResponseModel: HttpResponseModel(
-            statusCode: 200,
-            headers: {},
-            body: 'OK',
+          protocolModel: ProtocolModel.rest(
+            httpRequestModel: HttpRequestModel(
+              method: HTTPVerb.get,
+              url: 'https://api.example.com/test',
+            ),
+            httpResponseModel: HttpResponseModel(
+              statusCode: 200,
+              headers: {},
+              body: 'OK',
+            ),
           ),
         );
 
@@ -298,23 +304,25 @@ void main() {
       const requestWithoutResponse = RequestModel(
         id: '1',
         name: 'Test Request',
-        httpRequestModel: HttpRequestModel(
+        protocolModel: ProtocolModel.rest(httpRequestModel: HttpRequestModel(
           method: HTTPVerb.get,
           url: 'https://api.example.com/test',
-        ),
+        )),
       );
 
       const requestWithResponse = RequestModel(
         id: '2',
         name: 'Test Request 2',
-        httpRequestModel: HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.example.com/test2',
-        ),
-        httpResponseModel: HttpResponseModel(
-          statusCode: 200,
-          headers: {},
-          body: 'OK',
+        protocolModel: ProtocolModel.rest(
+          httpRequestModel: HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.example.com/test2',
+          ),
+          httpResponseModel: HttpResponseModel(
+            statusCode: 200,
+            headers: {},
+            body: 'OK',
+          ),
         ),
       );
 

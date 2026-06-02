@@ -291,7 +291,11 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       requestId: requestModel.id,
     );
     final newRequestModel = requestModel.copyWith(
-      httpRequestModel: scriptResult.updatedRequest,
+      protocolModel: requestModel.protocolModel.mapOrNull(
+        rest: (p) => p.copyWith(httpRequestModel: scriptResult.updatedRequest),
+        graphql: (p) => p.copyWith(httpRequestModel: scriptResult.updatedRequest),
+        ai: (p) => p,
+      ) ?? const ProtocolModel.rest(),
     );
     if (originalEnvironmentModel != null) {
       final updatedEnvironmentMap = scriptResult.updatedEnvironment;
@@ -353,7 +357,11 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       requestId: requestModel.id,
     );
     final newRequestModel = requestModel.copyWith(
-      httpResponseModel: scriptResult.updatedResponse,
+      protocolModel: requestModel.protocolModel.mapOrNull(
+        rest: (p) => p.copyWith(httpResponseModel: scriptResult.updatedResponse),
+        graphql: (p) => p.copyWith(httpResponseModel: scriptResult.updatedResponse),
+        ai: (p) => p,
+      ) ?? const ProtocolModel.rest(),
     );
     if (originalEnvironmentModel != null) {
       final updatedEnvironmentMap = scriptResult.updatedEnvironment;
