@@ -1,7 +1,9 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/auth/auth_page.dart';
 
 /// Editor pane shown when `APIType.websocket` is selected.
 ///
@@ -193,7 +195,7 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
     if (wsModel == null) return kSizedBoxEmpty;
 
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Column(
         children: [
           TabBar(
@@ -202,6 +204,7 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                 Theme.of(context).colorScheme.onSurfaceVariant,
             tabs: const [
               Tab(text: "Message"),
+              Tab(text: "Auth"),
               Tab(text: "Headers"),
               Tab(text: "Settings"),
             ],
@@ -259,6 +262,28 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                       ),
                     ],
                   ),
+                ),
+                // ── Auth Tab ─────────────────────────────────────
+                AuthPage(
+                  authModel: wsModel.auth,
+                  onChangedAuthType: (newType) {
+                    if (newType == null) return;
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .update(
+                          wsRequestModel: wsModel.copyWith(
+                            auth: wsModel.auth?.copyWith(type: newType) ??
+                                AuthModel(type: newType),
+                          ),
+                        );
+                  },
+                  updateAuthData: (authModel) {
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .update(
+                          wsRequestModel: wsModel.copyWith(auth: authModel),
+                        );
+                  },
                 ),
                 // ── Headers Tab ──────────────────────────────────
                 Padding(

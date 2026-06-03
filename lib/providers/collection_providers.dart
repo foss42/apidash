@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -425,13 +426,24 @@ class CollectionStateNotifier
       ),
     };
 
+    Map<String, String>? headers = wsModel.customHeaders.isNotEmpty 
+        ? Map.from(wsModel.customHeaders) 
+        : null;
+
+    if (wsModel.auth?.type == APIAuthType.basic && wsModel.auth?.basic != null) {
+      headers ??= {};
+      final basicAuth = wsModel.auth!.basic!;
+      final encoded = base64Encode(
+        utf8.encode('${basicAuth.username}:${basicAuth.password}'),
+      );
+      headers['Authorization'] = 'Basic $encoded';
+    }
+
     try {
       final channel = await ConnectionManager.instance.connect(
         requestId,
         wsModel.url,
-        headers: wsModel.customHeaders.isNotEmpty
-            ? wsModel.customHeaders
-            : null,
+        headers: headers,
         pingInterval: wsModel.enableHeartbeat ? const Duration(seconds: 30) : null,
       );
 
