@@ -18,14 +18,170 @@ class EditWSRequestPane extends ConsumerStatefulWidget {
   @override
   ConsumerState<EditWSRequestPane> createState() => _EditWSRequestPaneState();
 }
-
+// templates are temporary for now. They should be stored in database.
 class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
   final TextEditingController _controller = TextEditingController();
+  final List<Map<String, String>> _templates = [
+    {"name": "Ping Message", "data": '{\n  "type": "ping",\n  "timestamp": 12345\n}'},
+    {"name": "Auth Message", "data": '{\n  "type": "auth",\n  "token": "Bearer YOUR_TOKEN_HERE"\n}'}
+  ];
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _showTemplatesModal(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return AlertDialog(
+              title: const Text("Templates"),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _templates.length,
+                  itemBuilder: (context, index) {
+                    final template = _templates[index];
+                    return ListTile(
+                      title: Text(template["name"] ?? ""),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove_red_eye, size: 18),
+                            tooltip: "Preview JSON",
+                            onPressed: () {
+                              _showJsonPreview(context, template["data"] ?? "");
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit, size: 18),
+                            tooltip: "Edit Template",
+                            onPressed: () {
+                              _showEditTemplateDialog(context, index, setModalState);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, size: 18),
+                            tooltip: "Delete Template",
+                            onPressed: () {
+                              setModalState(() {
+                                _templates.removeAt(index);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        _controller.text = template["data"] ?? "";
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton.icon(
+                  icon: const Icon(Icons.add, size: 18),
+                  onPressed: () {
+                    _showEditTemplateDialog(context, null, setModalState);
+                  },
+                  label: const Text("Create"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Close"),
+                ),
+              ],
+            );
+          }
+        );
+      },
+    );
+  }
+
+  void _showJsonPreview(BuildContext context, String json) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Preview"),
+          content: SingleChildScrollView(
+            child: SelectableText(json, style: kCodeStyle),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+  void _showEditTemplateDialog(BuildContext context, int? index, StateSetter setModalState) {
+    final isEditing = index != null;
+    final nameController = TextEditingController(text: isEditing ? _templates[index]["name"] : "");
+    final dataController = TextEditingController(text: isEditing ? _templates[index]["data"] : "");
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(isEditing ? "Edit Template" : "New Template"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: "Template Name"),
+              ),
+              kVSpacer10,
+              TextField(
+                controller: dataController,
+                maxLines: 5,
+                style: kCodeStyle,
+                decoration: const InputDecoration(
+                  labelText: "JSON Payload",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                setModalState(() {
+                  if (isEditing) {
+                    _templates[index] = {
+                      "name": nameController.text,
+                      "data": dataController.text,
+                    };
+                  } else {
+                    _templates.add({
+                      "name": nameController.text,
+                      "data": dataController.text,
+                    });
+                  }
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      }
+    );
   }
 
   @override
@@ -92,6 +248,12 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                                 _controller.clear();
                               }
                             },
+                          ),
+                          kHSpacer10,
+                          OutlinedButton.icon(
+                            icon: const Icon(Icons.list_alt, size: 16),
+                            label: const Text("Templates"),
+                            onPressed: () => _showTemplatesModal(context),
                           ),
                         ],
                       ),
