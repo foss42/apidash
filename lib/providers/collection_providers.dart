@@ -65,6 +65,40 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  final Map<String, Timer> _heartbeatTimers = {};
+
+  void _stopHeartbeat(String requestId) {
+    _heartbeatTimers.remove(requestId)?.cancel();
+  }
+
+  void _startHeartbeat(String requestId) {
+    _stopHeartbeat(requestId);
+    final currentRequest = state?[requestId];
+    final wsModel = currentRequest?.wsRequestModel;
+    if (wsModel == null || !wsModel.enableHeartbeat) return;
+
+    _heartbeatTimers[requestId] = Timer.periodic(const Duration(seconds: 30), (timer) {
+      final req = state?[requestId];
+      final ws = req?.wsRequestModel;
+      if (req == null || ws == null || !req.isStreaming) {
+        timer.cancel();
+        _heartbeatTimers.remove(requestId);
+        return;
+      }
+      final heartbeatMsg = WebSocketMessage(
+        payload: "Heartbeat ping",
+        timestamp: DateTime.now(),
+        outgoing: true,
+        messageType: WebSocketMessageType.sent,
+      );
+      update(
+        id: requestId,
+        wsRequestModel: ws.copyWith(
+          messageHistory: [...ws.messageHistory, heartbeatMsg],
+        ),
+      );
+    });
+  }
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -119,17 +153,26 @@ class CollectionStateNotifier
 
   void remove({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null) return;
     var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(rId!);
+    int idx = itemIds.indexOf(rId);
+
+    // Cleanup active connections
+    ConnectionManager.instance.disconnect(rId);
     cancelHttpRequest(rId);
+
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
     String? newId;
-    if (idx == 0 && itemIds.isNotEmpty) {
-      newId = itemIds[0];
-    } else if (itemIds.length > 1) {
-      newId = itemIds[idx - 1];
+    if (itemIds.isNotEmpty) {
+      if (idx == 0) {
+        newId = itemIds[0];
+      } else if (idx < itemIds.length) {
+        newId = itemIds[idx];
+      } else {
+        newId = itemIds.last;
+      }
     } else {
       newId = null;
     }
@@ -242,6 +285,9 @@ class CollectionStateNotifier
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? wsRequestModel,
+    bool? isStreaming,
+    bool? isWorking,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -263,6 +309,7 @@ class CollectionStateNotifier
           description: description ?? currentModel.description,
           httpRequestModel: const HttpRequestModel(),
           aiRequestModel: null,
+          wsRequestModel: null,
         ),
         APIType.ai => currentModel.copyWith(
           apiType: apiType,
@@ -273,6 +320,16 @@ class CollectionStateNotifier
           aiRequestModel: defaultModel == null
               ? const AIRequestModel()
               : AIRequestModel.fromJson(defaultModel),
+          wsRequestModel: null,
+        ),
+        APIType.websocket => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          wsRequestModel: const WebSocketRequestModel(),
         ),
       };
     } else {
@@ -304,6 +361,9 @@ class CollectionStateNotifier
         preRequestScript: preRequestScript ?? currentModel.preRequestScript,
         postRequestScript: postRequestScript ?? currentModel.postRequestScript,
         aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+        wsRequestModel: wsRequestModel ?? currentModel.wsRequestModel,
+        isStreaming: isStreaming ?? currentModel.isStreaming,
+        isWorking: isWorking ?? currentModel.isWorking,
       );
     }
 
@@ -311,6 +371,201 @@ class CollectionStateNotifier
     map[rId] = newModel;
     state = map;
     unsave();
+  }
+
+  /// Send a text message over an active WebSocket connection.
+  void sendWebSocketMessage(String requestId, String message) {
+    final currentRequest = state?[requestId];
+    if (currentRequest == null || currentRequest.apiType != APIType.websocket)
+      return;
+    final wsModel = currentRequest.wsRequestModel;
+    if (wsModel == null) return;
+
+    try {
+      ConnectionManager.instance.send(requestId, message);
+
+      final newMessage = WebSocketMessage(
+        payload: message,
+        timestamp: DateTime.now(),
+        outgoing: true,
+        messageType: WebSocketMessageType.sent,
+      );
+
+      update(
+        id: requestId,
+        wsRequestModel: wsModel.copyWith(
+          messageHistory: [...wsModel.messageHistory, newMessage],
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error sending WS message: $e");
+    }
+  }
+
+  Future<void> _connectWebSocket(
+    String requestId,
+    RequestModel requestModel,
+    WebSocketRequestModel wsModel,
+  ) async {
+    final connMsg1 = WebSocketMessage(
+      payload: "Attempting to connect to ${wsModel.url}",
+      timestamp: DateTime.now(),
+      outgoing: false,
+      messageType: WebSocketMessageType.connected,
+    );
+
+    state = {
+      ...state!,
+      requestId: requestModel.copyWith(
+        isWorking: true,
+        sendingTime: DateTime.now(),
+        wsRequestModel: wsModel.copyWith(
+          messageHistory: [...wsModel.messageHistory, connMsg1],
+        ),
+      ),
+    };
+
+    try {
+      final channel = await ConnectionManager.instance.connect(
+        requestId,
+        wsModel.url,
+        headers: wsModel.customHeaders.isNotEmpty
+            ? wsModel.customHeaders
+            : null,
+        pingInterval: wsModel.enableHeartbeat ? const Duration(seconds: 30) : null,
+      );
+
+      // Await socket handshake validation to catch handshake errors cleanly
+      await channel.ready;
+
+      final connMsg2 = WebSocketMessage(
+        payload: "Connected to ${wsModel.url}",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final latestRequest = state?[requestId];
+      final currentWs = latestRequest?.wsRequestModel ?? wsModel;
+
+      state = {
+        ...state!,
+        requestId: (latestRequest ?? requestModel).copyWith(
+          isWorking: false,
+          isStreaming: true,
+          wsRequestModel: currentWs.copyWith(
+            messageHistory: [...currentWs.messageHistory, connMsg2],
+          ),
+        ),
+      };
+
+      _startHeartbeat(requestId);
+
+      channel.stream.listen(
+        (data) {
+          final currentRequest = state?[requestId];
+          if (currentRequest != null) {
+            final currentWs = currentRequest.wsRequestModel;
+            if (currentWs != null) {
+              final newMessage = WebSocketMessage(
+                payload: data.toString(),
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.received,
+              );
+              update(
+                id: requestId,
+                wsRequestModel: currentWs.copyWith(
+                  messageHistory: [...currentWs.messageHistory, newMessage],
+                ),
+              );
+            }
+          }
+        },
+        onError: (e) {
+          _stopHeartbeat(requestId);
+          final currentRequest = state?[requestId];
+          final ws = currentRequest?.wsRequestModel;
+          if (ws != null) {
+            final errMsg = WebSocketMessage(
+              payload: "Connection error: $e",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.error,
+            );
+            update(
+              id: requestId,
+              wsRequestModel: ws.copyWith(
+                messageHistory: [...ws.messageHistory, errMsg],
+              ),
+            );
+          }
+        },
+        onDone: () async {
+          _stopHeartbeat(requestId);
+          final currentRequest = state?[requestId];
+          if (currentRequest == null) return;
+          final ws = currentRequest.wsRequestModel;
+          if (ws == null) return;
+
+          if (ws.autoReconnect && currentRequest.isStreaming) {
+            final reconnMsg = WebSocketMessage(
+              payload: "Connection closed. Reconnecting...",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.disconnected,
+            );
+            final updatedWs = ws.copyWith(
+              messageHistory: [...ws.messageHistory, reconnMsg],
+            );
+            final latestReq = state?[requestId];
+            if (latestReq != null) {
+              _connectWebSocket(requestId, latestReq, updatedWs);
+            }
+          } else {
+            final discMsg = WebSocketMessage(
+              payload: "Connection closed",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.disconnected,
+            );
+            update(
+              id: requestId,
+              isStreaming: false,
+              wsRequestModel: ws.copyWith(
+                messageHistory: [...ws.messageHistory, discMsg],
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      _stopHeartbeat(requestId);
+      final currentRequest = state?[requestId];
+      final ws = currentRequest?.wsRequestModel ?? wsModel;
+      final errMsg = WebSocketMessage(
+        payload: "Connection error: $e",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.error,
+      );
+      final discMsg = WebSocketMessage(
+        payload: "Connection failed",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.disconnected,
+      );
+      state = {
+        ...state!,
+        requestId: (currentRequest ?? requestModel).copyWith(
+          isWorking: false,
+          isStreaming: false,
+          wsRequestModel: ws.copyWith(
+            messageHistory: [...ws.messageHistory, errMsg, discMsg],
+          ),
+        ),
+      };
+    }
   }
 
   Future<void> sendRequest() async {
@@ -323,7 +578,19 @@ class CollectionStateNotifier
 
     RequestModel? requestModel = state![requestId];
     if (requestModel?.httpRequestModel == null &&
-        requestModel?.aiRequestModel == null) {
+        requestModel?.aiRequestModel == null &&
+        requestModel?.wsRequestModel == null) {
+      return;
+    }
+
+    // ── WebSocket: connect (not HTTP send) ────────────────────────
+    if (requestModel!.apiType == APIType.websocket) {
+      final wsModel = requestModel.wsRequestModel;
+      if (wsModel != null) {
+        await _connectWebSocket(requestId, requestModel, wsModel);
+      } else {
+        update(id: requestId, message: "Invalid WebSocket model");
+      }
       return;
     }
 
@@ -579,7 +846,33 @@ class CollectionStateNotifier
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
-    cancelHttpRequest(id);
+    if (id == null) return;
+    final requestModel = state?[id];
+    if (requestModel?.apiType == APIType.websocket) {
+      _stopHeartbeat(id);
+      final ws = requestModel?.wsRequestModel;
+      if (ws != null) {
+        final discMsg = WebSocketMessage(
+          payload: "Disconnected by user",
+          timestamp: DateTime.now(),
+          outgoing: false,
+          messageType: WebSocketMessageType.disconnected,
+        );
+        update(
+          id: id,
+          isStreaming: false,
+          isWorking: false,
+          wsRequestModel: ws.copyWith(
+            messageHistory: [...ws.messageHistory, discMsg],
+          ),
+        );
+      } else {
+        update(id: id, isStreaming: false, isWorking: false);
+      }
+      ConnectionManager.instance.disconnect(id);
+    } else {
+      cancelHttpRequest(id);
+    }
     unsave();
   }
 
