@@ -69,6 +69,7 @@ dependencies:
   vector_graphics_compiler: ^1.2.0
   video_player: ^2.11.0
   video_player_platform_interface: ^6.6.0
+  web_socket_channel: ^3.0.2
   window_manager: ^0.5.1
   window_size:
     git:
