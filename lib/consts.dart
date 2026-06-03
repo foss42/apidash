@@ -430,6 +430,7 @@ const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
+const kHintTextWsCard = "Enter WebSocket endpoint like wss://echo.websocket.org";
 const kLabelPlusNew = "+ New";
 const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
