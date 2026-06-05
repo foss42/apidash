@@ -678,7 +678,11 @@ class CollectionStateNotifier
     ref.read(autoSaveNotifierProvider.notifier).cancelPending();
     ref.read(clearDataStateProvider.notifier).state = true;
     ref.read(selectedIdStateProvider.notifier).state = null;
+    await environmentSecretsStorage.deleteAllForWorkspace(
+      workspaceStorage.rootPath,
+    );
     await workspaceStorage.clear();
+    await ref.read(environmentsStateNotifierProvider.notifier).loadEnvironments();
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};

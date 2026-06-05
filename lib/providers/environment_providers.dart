@@ -4,7 +4,8 @@ import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import '../services/services.dart' show workspaceStorage, WorkspaceStorage;
+import '../services/services.dart'
+    show environmentSecretsStorage, workspaceStorage, WorkspaceStorage;
 
 final selectedEnvironmentIdStateProvider = StateProvider<String?>(
   (ref) => null,
@@ -63,8 +64,8 @@ environmentsStateNotifierProvider = StateNotifierProvider(
 class EnvironmentsStateNotifier
     extends StateNotifier<Map<String, EnvironmentModel>?> {
   EnvironmentsStateNotifier(this.ref, this.workspaceStorage) : super(null) {
-    var status = loadEnvironments();
-    Future.microtask(() {
+    Future.microtask(() async {
+      final status = await loadEnvironments();
       if (status) {
         ref.read(environmentSequenceProvider.notifier).state = [...state!.keys];
       }
@@ -76,7 +77,99 @@ class EnvironmentsStateNotifier
   final Ref ref;
   final WorkspaceStorage workspaceStorage;
 
-  bool loadEnvironments() {
+  String get _workspacePath => workspaceStorage.rootPath;
+
+  Future<List<EnvironmentVariableModel>> _hydrateSecretValues(
+    String environmentId,
+    List<EnvironmentVariableModel> values,
+  ) async {
+    final hydrated = <EnvironmentVariableModel>[];
+    for (final variable in values) {
+      if (variable.type != EnvironmentVariableType.secret ||
+          variable.key.isEmpty) {
+        hydrated.add(variable);
+        continue;
+      }
+
+      final storedValue = await environmentSecretsStorage.readSecret(
+        _workspacePath,
+        environmentId,
+        variable.key,
+      );
+
+      hydrated.add(variable.copyWith(value: storedValue ?? ''));
+    }
+    return hydrated;
+  }
+
+  Future<void> persistSecretValue(
+    String environmentId,
+    String variableKey,
+    String value,
+  ) {
+    return environmentSecretsStorage.writeSecret(
+      _workspacePath,
+      environmentId,
+      variableKey,
+      value,
+    );
+  }
+
+  Future<void> removeSecretValue(
+    String environmentId,
+    String variableKey,
+  ) {
+    return environmentSecretsStorage.deleteSecret(
+      _workspacePath,
+      environmentId,
+      variableKey,
+    );
+  }
+
+  Future<void> _cleanupRemovedSecrets(
+    String environmentId,
+    EnvironmentModel environment,
+  ) async {
+    final oldJson = workspaceStorage.getEnvironment(environmentId);
+    if (oldJson == null) {
+      return;
+    }
+    final oldEnvironment = EnvironmentModel.fromJson(
+      Map<String, Object?>.from(oldJson),
+    );
+    final currentSecretKeys = environment.values
+        .where(
+          (v) =>
+              v.type == EnvironmentVariableType.secret && v.key.isNotEmpty,
+        )
+        .map((v) => v.key)
+        .toSet();
+    for (final oldVariable in oldEnvironment.values) {
+      if (oldVariable.type == EnvironmentVariableType.secret &&
+          oldVariable.key.isNotEmpty &&
+          !currentSecretKeys.contains(oldVariable.key)) {
+        await environmentSecretsStorage.deleteSecret(
+          _workspacePath,
+          environmentId,
+          oldVariable.key,
+        );
+      }
+    }
+  }
+
+  EnvironmentModel _stripSecretsForDisk(EnvironmentModel environment) {
+    return environment.copyWith(
+      values: environment.values
+          .map(
+            (variable) => variable.type == EnvironmentVariableType.secret
+                ? variable.copyWith(value: '')
+                : variable,
+          )
+          .toList(),
+    );
+  }
+
+  Future<bool> loadEnvironments() async {
     List<String>? environmentIds = workspaceStorage.getEnvironmentIds();
     if (environmentIds == null || environmentIds.isEmpty) {
       const globalEnvironment = EnvironmentModel(
@@ -93,11 +186,15 @@ class EnvironmentsStateNotifier
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var environmentModelFromJson = EnvironmentModel.fromJson(jsonMap);
+          final hydratedValues = await _hydrateSecretValues(
+            environmentId,
+            environmentModelFromJson.values,
+          );
 
           EnvironmentModel environmentModel = EnvironmentModel(
             id: environmentModelFromJson.id,
             name: environmentModelFromJson.name,
-            values: environmentModelFromJson.values,
+            values: hydratedValues,
           );
           environmentsMap[environmentId] = environmentModel;
         }
@@ -150,9 +247,33 @@ class EnvironmentsStateNotifier
         .read(environmentSequenceProvider.notifier)
         .update((state) => [...environmentIds]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
+
+    Future.microtask(() async {
+      for (final variable in newEnvironment.values) {
+        if (variable.type == EnvironmentVariableType.secret &&
+            variable.key.isNotEmpty) {
+          await environmentSecretsStorage.writeSecret(
+            _workspacePath,
+            newId,
+            variable.key,
+            variable.value,
+          );
+        }
+      }
+    });
   }
 
   void removeEnvironment(String id) {
+    final environment = state![id];
+    final secretKeys = environment?.values
+            .where(
+              (v) =>
+                  v.type == EnvironmentVariableType.secret && v.key.isNotEmpty,
+            )
+            .map((v) => v.key)
+            .toList() ??
+        [];
+
     final environmentIds = ref.read(environmentSequenceProvider);
     final idx = environmentIds.indexOf(id);
     environmentIds.remove(id);
@@ -171,6 +292,13 @@ class EnvironmentsStateNotifier
 
     state = {...state!}..remove(id);
 
+    Future.microtask(() {
+      environmentSecretsStorage.deleteAllForEnvironment(
+        _workspacePath,
+        id,
+        secretKeys,
+      );
+    });
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -186,7 +314,22 @@ class EnvironmentsStateNotifier
     await workspaceStorage.setEnvironmentIds(environmentIds);
     for (var environmentId in environmentIds) {
       var environment = state![environmentId]!;
-      await workspaceStorage.setEnvironment(environmentId, environment.toJson());
+      for (final variable in environment.values) {
+        if (variable.type == EnvironmentVariableType.secret &&
+            variable.key.isNotEmpty) {
+          await environmentSecretsStorage.writeSecret(
+            _workspacePath,
+            environmentId,
+            variable.key,
+            variable.value,
+          );
+        }
+      }
+      await _cleanupRemovedSecrets(environmentId, environment);
+      await workspaceStorage.setEnvironment(
+        environmentId,
+        _stripSecretsForDisk(environment).toJson(),
+      );
     }
     final collectionId = ref.read(selectedCollectionIdStateProvider);
     await workspaceStorage.removeUnused(collectionId);

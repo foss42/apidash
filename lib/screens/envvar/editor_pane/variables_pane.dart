@@ -41,14 +41,27 @@ class EditEnvironmentVariablesState
   }
 
   void _toggleSecret(String selectedId, int index) {
-    setState(() {
-      final current = variableRows[index];
-      variableRows[index] = current.copyWith(
-        type: current.type == EnvironmentVariableType.secret
-            ? EnvironmentVariableType.variable
-            : EnvironmentVariableType.secret,
-      );
-    });
+    final current = variableRows[index];
+    final notifier = ref.read(environmentsStateNotifierProvider.notifier);
+    if (current.type == EnvironmentVariableType.variable) {
+      if (current.key.isNotEmpty && current.value.isNotEmpty) {
+        notifier.persistSecretValue(selectedId, current.key, current.value);
+      }
+      setState(() {
+        variableRows[index] = current.copyWith(
+          type: EnvironmentVariableType.secret,
+        );
+      });
+    } else {
+      if (current.key.isNotEmpty) {
+        notifier.removeSecretValue(selectedId, current.key);
+      }
+      setState(() {
+        variableRows[index] = current.copyWith(
+          type: EnvironmentVariableType.variable,
+        );
+      });
+    }
     _onFieldChange(selectedId);
   }
 

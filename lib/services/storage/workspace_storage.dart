@@ -161,6 +161,8 @@ final workspaceStorage = WorkspaceStorage();
 class WorkspaceStorage {
   WorkspaceStorage();
 
+  String get rootPath => _root.path;
+
   Directory get _root {
     if (_workspaceRoot == null) {
       throw StateError(
