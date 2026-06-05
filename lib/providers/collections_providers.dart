@@ -96,8 +96,8 @@ class CollectionsStateNotifier
   }
 
   Future<void> addCollection() async {
-    final id = getNewUuid();
     final name = 'Collection ${state!.length + 1}';
+    final id = makeStorageId(name);
     final model = CollectionModel(id: id, name: name);
     collectionSequence = [...collectionSequence, id];
     _loadedCollectionIds.add(id);
@@ -112,13 +112,46 @@ class CollectionsStateNotifier
         .ensureActive(id);
   }
 
-  void renameCollection(String id, String name) {
+  Future<void> renameCollection(String id, String name) async {
     final trimmed = name.trim();
     if (trimmed.isEmpty || state == null) {
       return;
     }
-    state = {...state!, id: state![id]!.copyWith(name: trimmed)};
-    unawaited(_persistIndex());
+    final newId = renameStorageId(id, trimmed);
+    if (newId == id) {
+      state = {...state!, id: state![id]!.copyWith(name: trimmed)};
+      await _persistIndex();
+      return;
+    }
+
+    await workspaceStorage.renameCollection(id, newId);
+
+    final model = CollectionModel(
+      id: newId,
+      name: trimmed,
+      requests: state![id]!.requests,
+    );
+    final seqIdx = collectionSequence.indexOf(id);
+    collectionSequence = [...collectionSequence];
+    collectionSequence[seqIdx] = newId;
+    _loadedCollectionIds.remove(id);
+    _loadedCollectionIds.add(newId);
+
+    state = {...state!}..remove(id);
+    state![newId] = model;
+
+    if (ref.read(selectedCollectionIdStateProvider) == id) {
+      ref.read(selectedCollectionIdStateProvider.notifier).state = newId;
+    }
+    ref.read(expandedCollectionIdsProvider.notifier).update((expanded) {
+      final next = {...expanded};
+      if (next.remove(id)) {
+        next.add(newId);
+      }
+      return next;
+    });
+
+    await _persistIndex();
   }
 
   Future<void> deleteCollection(String id) async {

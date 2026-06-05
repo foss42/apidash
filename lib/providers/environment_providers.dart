@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
@@ -205,7 +207,7 @@ class EnvironmentsStateNotifier
   }
 
   void addEnvironment() {
-    final id = getNewUuid();
+    final id = makeStorageId('');
     final newEnvironmentModel = EnvironmentModel(id: id, values: []);
     state = {...state!, id: newEnvironmentModel};
     ref
@@ -225,16 +227,72 @@ class EnvironmentsStateNotifier
       name: name ?? environment.name,
       values: values ?? environment.values,
     );
+    final newId = renameStorageId(id, updatedEnvironment.name);
+    if (newId != id) {
+      _rekeyEnvironment(id, newId, updatedEnvironment.copyWith(id: newId));
+      return;
+    }
     state = {...state!, id: updatedEnvironment};
   }
 
+  void _rekeyEnvironment(
+    String oldId,
+    String newId,
+    EnvironmentModel environment,
+  ) {
+    final environmentIds = [...ref.read(environmentSequenceProvider)];
+    final idx = environmentIds.indexOf(oldId);
+    if (idx >= 0) {
+      environmentIds[idx] = newId;
+      ref.read(environmentSequenceProvider.notifier).state = environmentIds;
+    }
+
+    state = {...state!}..remove(oldId);
+    state![newId] = environment;
+
+    if (ref.read(selectedEnvironmentIdStateProvider) == oldId) {
+      ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
+    }
+    if (ref.read(activeEnvironmentIdStateProvider) == oldId) {
+      ref.read(activeEnvironmentIdStateProvider.notifier).state = newId;
+      ref.read(settingsProvider.notifier).update(activeEnvironmentId: newId);
+    }
+
+    unawaited(_persistEnvironmentRename(oldId, newId, environment));
+  }
+
+  Future<void> _persistEnvironmentRename(
+    String oldId,
+    String newId,
+    EnvironmentModel environment,
+  ) async {
+    await workspaceStorage.renameEnvironment(oldId, newId);
+    for (final variable in environment.values) {
+      if (variable.type == EnvironmentVariableType.secret &&
+          variable.key.isNotEmpty) {
+        await environmentSecretsStorage.writeSecret(
+          _workspacePath,
+          newId,
+          variable.key,
+          variable.value,
+        );
+        await environmentSecretsStorage.deleteSecret(
+          _workspacePath,
+          oldId,
+          variable.key,
+        );
+      }
+    }
+  }
+
   void duplicateEnvironment(String id) {
-    final newId = getNewUuid();
     final environment = state![id]!;
+    final copyName = "${environment.name} Copy";
+    final newId = makeStorageId(copyName);
 
     final newEnvironment = environment.copyWith(
       id: newId,
-      name: "${environment.name} Copy",
+      name: copyName,
     );
 
     var environmentIds = ref.read(environmentSequenceProvider);

@@ -360,7 +360,7 @@ class _CollectionSectionHeader extends ConsumerWidget {
                       return;
                     }
                     if (result != null && result.trim().isNotEmpty) {
-                      ref
+                      await ref
                           .read(collectionsStateNotifierProvider.notifier)
                           .renameCollection(collectionId, result);
                     }

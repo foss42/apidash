@@ -115,8 +115,28 @@ class CollectionStateNotifier
     state = {...state ?? {}, id: model};
   }
 
+  void _rekeyRequest(String oldId, String newId, RequestModel model) {
+    if (oldId == newId) {
+      return;
+    }
+    final map = {...state!}..remove(oldId);
+    map[newId] = model.copyWith(id: newId);
+    state = map;
+
+    final sequence = ref.read(requestSequenceProvider);
+    ref.read(requestSequenceProvider.notifier).state = [
+      for (final id in sequence) id == oldId ? newId : id,
+    ];
+    if (ref.read(selectedIdStateProvider) == oldId) {
+      ref.read(selectedIdStateProvider.notifier).state = newId;
+    }
+    unawaited(
+      workspaceStorage.renameRequest(_activeCollectionId, oldId, newId),
+    );
+  }
+
   void _seedDefaultRequest(String collectionId) {
-    final newId = getNewUuid();
+    final newId = makeStorageId('');
     state = {
       newId: RequestModel(
         id: newId,
@@ -173,7 +193,7 @@ class CollectionStateNotifier
   }
 
   void add() {
-    final id = getNewUuid();
+    final id = makeStorageId('');
     final newRequestModel = RequestModel(
       id: id,
       httpRequestModel: const HttpRequestModel(),
@@ -189,7 +209,7 @@ class CollectionStateNotifier
   }
 
   void addRequestModel(HttpRequestModel httpRequestModel, {String? name}) {
-    final id = getNewUuid();
+    final id = makeStorageId(name ?? '');
     final newRequestModel = RequestModel(
       id: id,
       name: name ?? "",
@@ -257,14 +277,14 @@ class CollectionStateNotifier
   void duplicate({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     loadRequest(rId!);
-    final newId = getNewUuid();
-
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId);
     var currentModel = state![rId]!;
+    final copyName = "${currentModel.name} (copy)";
+    final newId = makeStorageId(copyName);
     final newModel = currentModel.copyWith(
       id: newId,
-      name: "${currentModel.name} (copy)",
+      name: copyName,
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
@@ -286,15 +306,15 @@ class CollectionStateNotifier
   }
 
   void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
-    final newId = getNewUuid();
-
     var itemIds = ref.read(requestSequenceProvider);
     var currentModel = historyRequestModel;
+    final historyName = "${currentModel.metaData.name} (history)";
+    final newId = makeStorageId(historyName);
 
     final newModel = RequestModel(
       apiType: currentModel.metaData.apiType,
       id: newId,
-      name: "${currentModel.metaData.name} (history)",
+      name: historyName,
       aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
@@ -403,9 +423,14 @@ class CollectionStateNotifier
       );
     }
 
-    var map = {...state!};
-    map[rId] = newModel;
-    state = map;
+    final newId = renameStorageId(rId, newModel.name);
+    if (newId != rId) {
+      _rekeyRequest(rId, newId, newModel.copyWith(id: newId));
+    } else {
+      var map = {...state!};
+      map[rId] = newModel;
+      state = map;
+    }
     _syncActiveCollectionSummaries();
   }
 
@@ -621,7 +646,10 @@ class CollectionStateNotifier
         duration: duration,
       );
 
-      String newHistoryId = getNewUuid();
+      final historyName = requestModel.name.isEmpty
+          ? substitutedHttpRequestModel.method.name
+          : requestModel.name;
+      String newHistoryId = makeStorageId(historyName);
       historyModel = HistoryRequestModel(
         historyId: newHistoryId,
         metaData: HistoryMetaModel(

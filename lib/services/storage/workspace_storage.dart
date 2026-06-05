@@ -256,6 +256,21 @@ class WorkspaceStorage {
     }
   }
 
+  Future<void> renameCollection(String oldId, String newId) async {
+    if (oldId == newId) {
+      return;
+    }
+    final oldDir = Directory(_path(_collectionDir(oldId)));
+    if (!await oldDir.exists()) {
+      return;
+    }
+    oldDir.renameSync(_path(_collectionDir(newId)));
+    final json = getCollection(newId);
+    if (json != null) {
+      json[kWorkspaceCollectionIdKey] = newId;
+      await setCollection(newId, json);
+    }
+  }
 
   List<String> getIds(String collectionId) {
     final json = _readJsonSync(_collectionFilePath(collectionId));
@@ -340,6 +355,35 @@ class WorkspaceStorage {
     }
   }
 
+  Future<void> renameRequest(
+    String collectionId,
+    String oldId,
+    String newId,
+  ) async {
+    if (oldId == newId) {
+      return;
+    }
+    final oldDir = Directory(_path(_requestDirRelative(collectionId, oldId)));
+    if (!await oldDir.exists()) {
+      return;
+    }
+    final newDirPath = _path(_requestDirRelative(collectionId, newId));
+    oldDir.renameSync(newDirPath);
+    final requestFile = File(p.join(newDirPath, kWorkspaceRequestFile));
+    if (await requestFile.exists()) {
+      final json = _readJsonSync(
+        p.join(
+          _requestDirRelative(collectionId, newId),
+          kWorkspaceRequestFile,
+        ),
+      );
+      if (json != null) {
+        json['id'] = newId;
+        await writeJsonAtomic(requestFile.path, Map<String, Object?>.from(json));
+      }
+    }
+  }
+
   // --- Environments ---
 
   List<String>? getEnvironmentIds() {
@@ -393,6 +437,28 @@ class WorkspaceStorage {
     );
     if (await file.exists()) {
       await file.delete();
+    }
+  }
+
+  Future<void> renameEnvironment(String oldId, String newId) async {
+    if (oldId == newId) {
+      return;
+    }
+    final oldPath = _path(
+      p.join(kWorkspaceEnvironmentsDir, _environmentFileName(oldId)),
+    );
+    final newPath = _path(
+      p.join(kWorkspaceEnvironmentsDir, _environmentFileName(newId)),
+    );
+    final oldFile = File(oldPath);
+    if (!await oldFile.exists()) {
+      return;
+    }
+    oldFile.renameSync(newPath);
+    final json = getEnvironment(newId);
+    if (json != null) {
+      json['id'] = newId;
+      await setEnvironment(newId, json);
     }
   }
 

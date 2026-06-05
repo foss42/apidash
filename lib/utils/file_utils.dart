@@ -12,6 +12,42 @@ String getNewUuid() {
   return uuid.v1();
 }
 
+final _storageIdSuffixPattern = RegExp(r'_[0-9a-f]{8}$');
+
+String _slugifyStorageName(String name) {
+  final trimmed = name.trim().toLowerCase();
+  if (trimmed.isEmpty) {
+    return 'untitled';
+  }
+  final slug = trimmed
+      .replaceAll(RegExp(r'[/\\:*?"<>|]'), '')
+      .replaceAll(RegExp(r'\s+'), '-')
+      .replaceAll(RegExp(r'-+'), '-')
+      .replaceAll(RegExp(r'^-|-$'), '');
+  return slug.isEmpty ? 'untitled' : slug;
+}
+
+String makeStorageId(String name, {String? suffix}) {
+  final stableSuffix =
+      suffix ?? getNewUuid().replaceAll('-', '').substring(0, 8);
+  return '${_slugifyStorageName(name)}_$stableSuffix';
+}
+
+String? storageIdSuffix(String id) {
+  if (!_storageIdSuffixPattern.hasMatch(id)) {
+    return null;
+  }
+  return id.substring(id.length - 8);
+}
+
+String renameStorageId(String oldId, String newName) {
+  final suffix = storageIdSuffix(oldId);
+  if (suffix == null) {
+    return oldId;
+  }
+  return makeStorageId(newName, suffix: suffix);
+}
+
 String? getFileExtension(String? mimeType) {
   if (mimeType == null) {
     return null;
