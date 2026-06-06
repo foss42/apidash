@@ -43,13 +43,25 @@ abstract class WebSocketRequestModel with _$WebSocketRequestModel {
     @JsonKey(includeToJson: false) @Default([]) List<WebSocketMessage> messageHistory,
 
     /// Custom headers to send during the WebSocket handshake.
-    @Default({}) Map<String, String> customHeaders,
+    List<NameValueModel>? headers,
+
+    /// Header enabled list
+    List<bool>? isHeaderEnabledList,
+
+    /// URL parameters
+    List<NameValueModel>? params,
+
+    /// URL parameters enabled list
+    List<bool>? isParamEnabledList,
 
     /// Whether to automatically re-establish the connection on close.
     @Default(false) bool autoReconnect,
 
     /// Whether to send periodic keep-alive pings.
     @Default(false) bool enableHeartbeat,
+
+    /// Ping interval for heartbeat in seconds
+    @Default(30) int heartbeatInterval,
   }) = _WebSocketRequestModel;
 
   factory WebSocketRequestModel.fromJson(Map<String, dynamic> json) =>

@@ -1,11 +1,12 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'ws_request_model.dart';
 
 part 'request_model.freezed.dart';
 
 part 'request_model.g.dart';
 
 @freezed
-class RequestModel with _$RequestModel {
+ class RequestModel with _$RequestModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -26,6 +27,7 @@ class RequestModel with _$RequestModel {
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? wsRequestModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>
