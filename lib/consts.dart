@@ -72,6 +72,40 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
+const kAutoSaveDebounceDuration = Duration(seconds: 1);
+
+const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
+
+const kWorkspaceMetaFile = 'workspace.json';
+const kWorkspaceMetaNameKey = 'name';
+const kMaxSavedWorkspaces = 10;
+
+const kDefaultCollectionId = 'collection-1';
+const kDefaultCollectionName = 'Collection 1';
+const kWorkspaceCollectionsDir = 'collections';
+const kWorkspaceCollectionsIndexFile = 'index.json';
+const kWorkspaceRequestsSubdir = 'requests';
+const kWorkspaceRequestFile = 'request.json';
+const kWorkspaceResponseFile = 'response.json';
+const kWorkspaceCollectionFile = 'collection.json';
+const kWorkspaceCollectionsIndexKey = 'collections';
+const kWorkspaceCollectionIdKey = 'id';
+const kWorkspaceCollectionNameKey = 'name';
+const kWorkspaceEnvironmentsDir = 'environments';
+const kWorkspaceEnvironmentIndexFile = 'index.json';
+const kWorkspaceHistoryDir = 'history';
+const kWorkspaceHistoryMetasFile = 'historyMeta.json';
+const kJsonFileExtension = '.json';
+
+const kWorkspaceRequestsKey = 'requests';
+const kWorkspaceEnvironmentIdsKey = 'environmentIds';
+const kWorkspaceHistoryMetasKey = 'historyMeta';
+const kWorkspaceActiveEnvironmentIdKey = 'activeEnvironmentId';
+const kWorkspaceSaveResponsesKey = 'saveResponses';
+const kWorkspaceHistoryRetentionPeriodKey = 'historyRetentionPeriod';
+
+const kGlobalEnvironmentName = 'Global Variables';
+
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),
@@ -431,6 +465,10 @@ const kRaiseIssue =
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
+const kLabelNewCollection = "New collection";
+const kLabelRenameCollection = "Rename collection";
+const kLabelDeleteCollection = "Delete collection";
+const kLabelCollectionName = "Collection name";
 const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
@@ -497,6 +535,9 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+const kLabelSelectWorkspace = "Select workspace";
+const kLabelOpenWorkspaceMenu = "Open workspace…";
+const kMsgWorkspaceOpenFailed = 'Could not open that workspace folder.';
 // History Page
 const kTitleClearHistory = 'Clear History';
 const kMsgClearHistory =

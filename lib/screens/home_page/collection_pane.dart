@@ -13,6 +13,8 @@ class CollectionPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(autoSaveNotifierProvider);
+    ref.watch(collectionsStateNotifierProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
     var sm = ScaffoldMessenger.of(context);
     if (collection == null) {
@@ -27,7 +29,7 @@ class CollectionPane extends ConsumerWidget {
         children: [
           SidebarHeader(
             onAddNew: () {
-              ref.read(collectionStateNotifierProvider.notifier).add();
+              ref.read(collectionsStateNotifierProvider.notifier).addCollection();
             },
             onImport: () {
               importToCollectionPane(context, ref, sm);
@@ -45,7 +47,7 @@ class CollectionPane extends ConsumerWidget {
             },
           ),
           kVSpacer10,
-          const Expanded(child: RequestList()),
+          const Expanded(child: CollectionRequestList()),
           kVSpacer5,
         ],
       ),
@@ -53,20 +55,28 @@ class CollectionPane extends ConsumerWidget {
   }
 }
 
-class RequestList extends ConsumerStatefulWidget {
-  const RequestList({super.key});
+class CollectionRequestList extends ConsumerStatefulWidget {
+  const CollectionRequestList({super.key});
 
   @override
-  ConsumerState<RequestList> createState() => _RequestListState();
+  ConsumerState<CollectionRequestList> createState() =>
+      _CollectionRequestListState();
 }
 
-class _RequestListState extends ConsumerState<RequestList> {
+class _CollectionRequestListState extends ConsumerState<CollectionRequestList> {
   late final ScrollController controller;
 
   @override
   void initState() {
     super.initState();
     controller = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selected = ref.read(selectedCollectionIdStateProvider);
+      final expanded = ref.read(expandedCollectionIdsProvider);
+      if (expanded.isEmpty) {
+        ref.read(expandedCollectionIdsProvider.notifier).state = {selected};
+      }
+    });
   }
 
   @override
@@ -77,122 +87,345 @@ class _RequestListState extends ConsumerState<RequestList> {
 
   @override
   Widget build(BuildContext context) {
-    final requestSequence = ref.watch(requestSequenceProvider);
-    final requestItems = ref.watch(collectionStateNotifierProvider)!;
-    final alwaysShowCollectionPaneScrollbar = ref.watch(
+    final collectionSequence = ref.watch(collectionSequenceProvider);
+    final collections = ref.watch(collectionsStateNotifierProvider)!;
+    final expandedIds = ref.watch(expandedCollectionIdsProvider);
+    final selectedCollectionId = ref.watch(selectedCollectionIdStateProvider);
+    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
+    final alwaysShowScrollbar = ref.watch(
       settingsProvider.select(
         (value) => value.alwaysShowCollectionPaneScrollbar,
       ),
     );
-    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
 
     return Scrollbar(
       controller: controller,
-      thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
+      thumbVisibility: alwaysShowScrollbar ? true : null,
       radius: const Radius.circular(12),
-      child: filterQuery.isEmpty
-          ? ReorderableListView.builder(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              scrollController: controller,
-              buildDefaultDragHandles: false,
-              itemCount: requestSequence.length,
-              onReorder: (int oldIndex, int newIndex) {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                if (oldIndex != newIndex) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .reorder(oldIndex, newIndex);
-                }
-              },
-              itemBuilder: (context, index) {
-                var id = requestSequence[index];
-                if (kIsMobile) {
-                  return ReorderableDelayedDragStartListener(
-                    key: ValueKey(id),
-                    index: index,
-                    child: Padding(
-                      padding: kP1,
-                      child: RequestItem(
-                        id: id,
-                        requestModel: requestItems[id]!,
-                      ),
-                    ),
-                  );
-                }
-                return ReorderableDragStartListener(
-                  key: ValueKey(id),
-                  index: index,
-                  child: Padding(
-                    padding: kP1,
-                    child: RequestItem(id: id, requestModel: requestItems[id]!),
-                  ),
-                );
-              },
-            )
-          : ListView(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              controller: controller,
-              children: requestSequence.map((id) {
-                var item = requestItems[id]!;
-                if (item.httpRequestModel!.url.toLowerCase().contains(
-                      filterQuery,
-                    ) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
-                  return Padding(
-                    padding: kP1,
-                    child: RequestItem(id: id, requestModel: item),
-                  );
-                }
-                return kSizedBoxEmpty;
-              }).toList(),
+      child: ListView(
+        padding: context.isMediumWindow
+            ? EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom,
+                right: 8,
+              )
+            : kPe8,
+        controller: controller,
+        children: [
+          for (final collectionId in collectionSequence)
+            _CollectionSection(
+              collectionId: collectionId,
+              collection: collections[collectionId]!,
+              isExpanded: expandedIds.contains(collectionId),
+              isActive: collectionId == selectedCollectionId,
+              filterQuery: filterQuery,
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CollectionSection extends ConsumerWidget {
+  const _CollectionSection({
+    required this.collectionId,
+    required this.collection,
+    required this.isExpanded,
+    required this.isActive,
+    required this.filterQuery,
+  });
+
+  final String collectionId;
+  final CollectionModel collection;
+  final bool isExpanded;
+  final bool isActive;
+  final String filterQuery;
+
+  List<RequestSummary> _requestSummaries(WidgetRef ref) {
+    if (!isActive) {
+      return collection.requests;
+    }
+    ref.watch(collectionStateNotifierProvider);
+    final sequence = ref.watch(requestSequenceProvider);
+    return ref
+        .read(collectionStateNotifierProvider.notifier)
+        .summariesForSequence(collectionId, sequence);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (isExpanded) {
+      ref.read(collectionsStateNotifierProvider.notifier).loadCollection(
+            collectionId,
+          );
+    }
+    final summaries = _requestSummaries(ref);
+    final visibleSummaries = filterQuery.isEmpty
+        ? summaries
+        : summaries.where((summary) {
+            return summary.url.toLowerCase().contains(filterQuery) ||
+                summary.name.toLowerCase().contains(filterQuery);
+          }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _CollectionSectionHeader(
+          collectionId: collectionId,
+          name: collection.name,
+          isExpanded: isExpanded,
+          isActive: isActive,
+        ),
+        if (isExpanded)
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Column(
+              children: [
+                for (final summary in visibleSummaries)
+                  Padding(
+                    padding: kP1,
+                    child: RequestItem(
+                      summary: summary,
+                      collectionId: collectionId,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _CollectionSectionHeader extends ConsumerWidget {
+  const _CollectionSectionHeader({
+    required this.collectionId,
+    required this.name,
+    required this.isExpanded,
+    required this.isActive,
+  });
+
+  final String collectionId;
+  final String name;
+  final bool isExpanded;
+  final bool isActive;
+
+  Future<String?> _showRenameDialog(BuildContext context) async {
+    final controller = TextEditingController(text: name);
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text(kLabelRenameCollection),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(labelText: kLabelCollectionName),
+            onSubmitted: (value) => Navigator.of(context).pop(value),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(kLabelCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(controller.text),
+              child: const Text(kLabelOk),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      controller.dispose();
+    }
+  }
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(kLabelDeleteCollection),
+        content: Text('Delete "$name" and all its requests?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text(kLabelCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(ItemMenuOption.delete.label),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref
+          .read(collectionsStateNotifierProvider.notifier)
+          .deleteCollection(collectionId);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Material(
+      color: isActive ? colorScheme.surfaceContainerHighest : Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () async {
+          if (!isActive) {
+            await ref
+                .read(collectionStateNotifierProvider.notifier)
+                .ensureActive(collectionId);
+          }
+          ref.read(expandedCollectionIdsProvider.notifier).update(
+                (ids) => {...ids, collectionId},
+              );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+          child: Row(
+            children: [
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                iconSize: 18,
+                onPressed: () {
+                  final expanding =
+                      !ref.read(expandedCollectionIdsProvider).contains(
+                            collectionId,
+                          );
+                  if (expanding) {
+                    ref
+                        .read(collectionsStateNotifierProvider.notifier)
+                        .loadCollection(collectionId);
+                  }
+                  ref.read(expandedCollectionIdsProvider.notifier).update(
+                        (ids) {
+                          final next = {...ids};
+                          if (next.contains(collectionId)) {
+                            next.remove(collectionId);
+                          } else {
+                            next.add(collectionId);
+                          }
+                          return next;
+                        },
+                      );
+                },
+                icon: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_down
+                      : Icons.keyboard_arrow_right,
+                ),
+              ),
+              Icon(
+                Icons.folder_outlined,
+                size: 18,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              kHSpacer4,
+              Expanded(
+                child: Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              IconButton(
+                tooltip: kLabelPlusNew,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                iconSize: 18,
+                onPressed: () async {
+                  await ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .ensureActive(collectionId);
+                  ref.read(collectionStateNotifierProvider.notifier).add();
+                  ref.read(expandedCollectionIdsProvider.notifier).update(
+                        (ids) => {...ids, collectionId},
+                      );
+                },
+                icon: const Icon(Icons.add),
+              ),
+              PopupMenuButton<ItemMenuOption>(
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.more_horiz, size: 18),
+                splashRadius: 18,
+                onSelected: (option) async {
+                  if (option == ItemMenuOption.edit) {
+                    final result = await _showRenameDialog(context);
+                    if (!context.mounted) {
+                      return;
+                    }
+                    if (result != null && result.trim().isNotEmpty) {
+                      await ref
+                          .read(collectionsStateNotifierProvider.notifier)
+                          .renameCollection(collectionId, result);
+                    }
+                  }
+                  if (option == ItemMenuOption.delete) {
+                    if (!context.mounted) {
+                      return;
+                    }
+                    await _confirmDelete(context, ref);
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: ItemMenuOption.edit,
+                    child: Text(kLabelRenameCollection),
+                  ),
+                  PopupMenuItem(
+                    value: ItemMenuOption.delete,
+                    child: Text(ItemMenuOption.delete.label),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
 
 class RequestItem extends ConsumerWidget {
-  const RequestItem({super.key, required this.id, required this.requestModel});
+  const RequestItem({
+    super.key,
+    required this.summary,
+    required this.collectionId,
+  });
 
-  final String id;
-  final RequestModel requestModel;
+  final RequestSummary summary;
+  final String collectionId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
+    final id = summary.id;
 
     return SidebarRequestCard(
       id: id,
-      apiType: requestModel.apiType,
-      method: requestModel.httpRequestModel?.method,
-      name: requestModel.name,
-      url: requestModel.httpRequestModel?.url,
+      apiType: summary.apiType,
+      method: summary.method,
+      name: summary.name,
+      url: summary.url,
       selectedId: selectedId,
       editRequestId: editRequestId,
-      onTap: () {
+      onTap: () async {
+        await ref
+            .read(collectionStateNotifierProvider.notifier)
+            .ensureActive(collectionId);
+        ref.read(collectionStateNotifierProvider.notifier).loadRequest(id);
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
       onSecondaryTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
       },
-      // onDoubleTap: () {
-      //   ref.read(selectedIdStateProvider.notifier).state = id;
-      //   ref.read(selectedIdEditStateProvider.notifier).state = id;
-      // },
-      // controller: ref.watch(nameTextFieldControllerProvider),
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),
       onChangedNameEditor: (value) {
         value = value.trim();
@@ -205,12 +438,6 @@ class RequestItem extends ConsumerWidget {
       },
       onMenuSelected: (ItemMenuOption item) {
         if (item == ItemMenuOption.edit) {
-          // var controller =
-          //     ref.read(nameTextFieldControllerProvider.notifier).state;
-          // controller.text = requestModel.name;
-          // controller.selection = TextSelection.fromPosition(
-          //   TextPosition(offset: controller.text.length),
-          // );
           ref.read(selectedIdEditStateProvider.notifier).state = id;
           Future.delayed(
             const Duration(milliseconds: 150),

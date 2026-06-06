@@ -232,7 +232,6 @@ class SettingsPage extends ConsumerWidget {
                                             .notifier,
                                       )
                                       .clearData();
-
                                   sm.hideCurrentSnackBar();
                                   sm.showSnackBar(
                                     getSnackBar(kMsgRequestsDataCleared),

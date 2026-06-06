@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler;
+import '../services/services.dart'
+    show environmentSecretsStorage, workspaceStorage, WorkspaceStorage;
 
 final selectedEnvironmentIdStateProvider = StateProvider<String?>(
   (ref) => null,
@@ -48,7 +51,7 @@ final availableEnvironmentVariablesStateProvider =
     });
 
 final environmentSequenceProvider = StateProvider<List<String>>((ref) {
-  var ids = hiveHandler.getEnvironmentIds();
+  var ids = workspaceStorage.getEnvironmentIds();
   return ids ?? [kGlobalEnvironmentId];
 });
 
@@ -57,14 +60,14 @@ final StateNotifierProvider<
   Map<String, EnvironmentModel>?
 >
 environmentsStateNotifierProvider = StateNotifierProvider(
-  (ref) => EnvironmentsStateNotifier(ref, hiveHandler),
+  (ref) => EnvironmentsStateNotifier(ref, workspaceStorage),
 );
 
 class EnvironmentsStateNotifier
     extends StateNotifier<Map<String, EnvironmentModel>?> {
-  EnvironmentsStateNotifier(this.ref, this.hiveHandler) : super(null) {
-    var status = loadEnvironments();
-    Future.microtask(() {
+  EnvironmentsStateNotifier(this.ref, this.workspaceStorage) : super(null) {
+    Future.microtask(() async {
+      final status = await loadEnvironments();
       if (status) {
         ref.read(environmentSequenceProvider.notifier).state = [...state!.keys];
       }
@@ -74,10 +77,102 @@ class EnvironmentsStateNotifier
   }
 
   final Ref ref;
-  final HiveHandler hiveHandler;
+  final WorkspaceStorage workspaceStorage;
 
-  bool loadEnvironments() {
-    List<String>? environmentIds = hiveHandler.getEnvironmentIds();
+  String get _workspacePath => workspaceStorage.rootPath;
+
+  Future<List<EnvironmentVariableModel>> _hydrateSecretValues(
+    String environmentId,
+    List<EnvironmentVariableModel> values,
+  ) async {
+    final hydrated = <EnvironmentVariableModel>[];
+    for (final variable in values) {
+      if (variable.type != EnvironmentVariableType.secret ||
+          variable.key.isEmpty) {
+        hydrated.add(variable);
+        continue;
+      }
+
+      final storedValue = await environmentSecretsStorage.readSecret(
+        _workspacePath,
+        environmentId,
+        variable.key,
+      );
+
+      hydrated.add(variable.copyWith(value: storedValue ?? ''));
+    }
+    return hydrated;
+  }
+
+  Future<void> persistSecretValue(
+    String environmentId,
+    String variableKey,
+    String value,
+  ) {
+    return environmentSecretsStorage.writeSecret(
+      _workspacePath,
+      environmentId,
+      variableKey,
+      value,
+    );
+  }
+
+  Future<void> removeSecretValue(
+    String environmentId,
+    String variableKey,
+  ) {
+    return environmentSecretsStorage.deleteSecret(
+      _workspacePath,
+      environmentId,
+      variableKey,
+    );
+  }
+
+  Future<void> _cleanupRemovedSecrets(
+    String environmentId,
+    EnvironmentModel environment,
+  ) async {
+    final oldJson = workspaceStorage.getEnvironment(environmentId);
+    if (oldJson == null) {
+      return;
+    }
+    final oldEnvironment = EnvironmentModel.fromJson(
+      Map<String, Object?>.from(oldJson),
+    );
+    final currentSecretKeys = environment.values
+        .where(
+          (v) =>
+              v.type == EnvironmentVariableType.secret && v.key.isNotEmpty,
+        )
+        .map((v) => v.key)
+        .toSet();
+    for (final oldVariable in oldEnvironment.values) {
+      if (oldVariable.type == EnvironmentVariableType.secret &&
+          oldVariable.key.isNotEmpty &&
+          !currentSecretKeys.contains(oldVariable.key)) {
+        await environmentSecretsStorage.deleteSecret(
+          _workspacePath,
+          environmentId,
+          oldVariable.key,
+        );
+      }
+    }
+  }
+
+  EnvironmentModel _stripSecretsForDisk(EnvironmentModel environment) {
+    return environment.copyWith(
+      values: environment.values
+          .map(
+            (variable) => variable.type == EnvironmentVariableType.secret
+                ? variable.copyWith(value: '')
+                : variable,
+          )
+          .toList(),
+    );
+  }
+
+  Future<bool> loadEnvironments() async {
+    List<String>? environmentIds = workspaceStorage.getEnvironmentIds();
     if (environmentIds == null || environmentIds.isEmpty) {
       const globalEnvironment = EnvironmentModel(
         id: kGlobalEnvironmentId,
@@ -89,15 +184,19 @@ class EnvironmentsStateNotifier
     } else {
       Map<String, EnvironmentModel> environmentsMap = {};
       for (var environmentId in environmentIds) {
-        var jsonModel = hiveHandler.getEnvironment(environmentId);
+        var jsonModel = workspaceStorage.getEnvironment(environmentId);
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var environmentModelFromJson = EnvironmentModel.fromJson(jsonMap);
+          final hydratedValues = await _hydrateSecretValues(
+            environmentId,
+            environmentModelFromJson.values,
+          );
 
           EnvironmentModel environmentModel = EnvironmentModel(
             id: environmentModelFromJson.id,
             name: environmentModelFromJson.name,
-            values: environmentModelFromJson.values,
+            values: hydratedValues,
           );
           environmentsMap[environmentId] = environmentModel;
         }
@@ -108,7 +207,7 @@ class EnvironmentsStateNotifier
   }
 
   void addEnvironment() {
-    final id = getNewUuid();
+    final id = makeStorageId('');
     final newEnvironmentModel = EnvironmentModel(id: id, values: []);
     state = {...state!, id: newEnvironmentModel};
     ref
@@ -116,7 +215,6 @@ class EnvironmentsStateNotifier
         .update((state) => [...state, id]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state =
         newEnvironmentModel.id;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void updateEnvironment(
@@ -129,17 +227,72 @@ class EnvironmentsStateNotifier
       name: name ?? environment.name,
       values: values ?? environment.values,
     );
+    final newId = renameStorageId(id, updatedEnvironment.name);
+    if (newId != id) {
+      _rekeyEnvironment(id, newId, updatedEnvironment.copyWith(id: newId));
+      return;
+    }
     state = {...state!, id: updatedEnvironment};
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+  }
+
+  void _rekeyEnvironment(
+    String oldId,
+    String newId,
+    EnvironmentModel environment,
+  ) {
+    final environmentIds = [...ref.read(environmentSequenceProvider)];
+    final idx = environmentIds.indexOf(oldId);
+    if (idx >= 0) {
+      environmentIds[idx] = newId;
+      ref.read(environmentSequenceProvider.notifier).state = environmentIds;
+    }
+
+    state = {...state!}..remove(oldId);
+    state![newId] = environment;
+
+    if (ref.read(selectedEnvironmentIdStateProvider) == oldId) {
+      ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
+    }
+    if (ref.read(activeEnvironmentIdStateProvider) == oldId) {
+      ref.read(activeEnvironmentIdStateProvider.notifier).state = newId;
+      ref.read(settingsProvider.notifier).update(activeEnvironmentId: newId);
+    }
+
+    unawaited(_persistEnvironmentRename(oldId, newId, environment));
+  }
+
+  Future<void> _persistEnvironmentRename(
+    String oldId,
+    String newId,
+    EnvironmentModel environment,
+  ) async {
+    await workspaceStorage.renameEnvironment(oldId, newId);
+    for (final variable in environment.values) {
+      if (variable.type == EnvironmentVariableType.secret &&
+          variable.key.isNotEmpty) {
+        await environmentSecretsStorage.writeSecret(
+          _workspacePath,
+          newId,
+          variable.key,
+          variable.value,
+        );
+        await environmentSecretsStorage.deleteSecret(
+          _workspacePath,
+          oldId,
+          variable.key,
+        );
+      }
+    }
   }
 
   void duplicateEnvironment(String id) {
-    final newId = getNewUuid();
     final environment = state![id]!;
+    final copyName = "${environment.name} Copy";
+    final newId = makeStorageId(copyName);
 
     final newEnvironment = environment.copyWith(
       id: newId,
-      name: "${environment.name} Copy",
+      name: copyName,
     );
 
     var environmentIds = ref.read(environmentSequenceProvider);
@@ -152,10 +305,33 @@ class EnvironmentsStateNotifier
         .read(environmentSequenceProvider.notifier)
         .update((state) => [...environmentIds]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+
+    Future.microtask(() async {
+      for (final variable in newEnvironment.values) {
+        if (variable.type == EnvironmentVariableType.secret &&
+            variable.key.isNotEmpty) {
+          await environmentSecretsStorage.writeSecret(
+            _workspacePath,
+            newId,
+            variable.key,
+            variable.value,
+          );
+        }
+      }
+    });
   }
 
   void removeEnvironment(String id) {
+    final environment = state![id];
+    final secretKeys = environment?.values
+            .where(
+              (v) =>
+                  v.type == EnvironmentVariableType.secret && v.key.isNotEmpty,
+            )
+            .map((v) => v.key)
+            .toList() ??
+        [];
+
     final environmentIds = ref.read(environmentSequenceProvider);
     final idx = environmentIds.indexOf(id);
     environmentIds.remove(id);
@@ -174,7 +350,13 @@ class EnvironmentsStateNotifier
 
     state = {...state!}..remove(id);
 
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    Future.microtask(() {
+      environmentSecretsStorage.deleteAllForEnvironment(
+        _workspacePath,
+        id,
+        secretKeys,
+      );
+    });
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -182,18 +364,33 @@ class EnvironmentsStateNotifier
     final id = environmentIds.removeAt(oldIdx);
     environmentIds.insert(newIdx, id);
     ref.read(environmentSequenceProvider.notifier).state = [...environmentIds];
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   Future<void> saveEnvironments() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final environmentIds = ref.read(environmentSequenceProvider);
-    await hiveHandler.setEnvironmentIds(environmentIds);
+    await workspaceStorage.setEnvironmentIds(environmentIds);
     for (var environmentId in environmentIds) {
       var environment = state![environmentId]!;
-      await hiveHandler.setEnvironment(environmentId, environment.toJson());
+      for (final variable in environment.values) {
+        if (variable.type == EnvironmentVariableType.secret &&
+            variable.key.isNotEmpty) {
+          await environmentSecretsStorage.writeSecret(
+            _workspacePath,
+            environmentId,
+            variable.key,
+            variable.value,
+          );
+        }
+      }
+      await _cleanupRemovedSecrets(environmentId, environment);
+      await workspaceStorage.setEnvironment(
+        environmentId,
+        _stripSecretsForDisk(environment).toJson(),
+      );
     }
-    await hiveHandler.removeUnused();
+    final collectionId = ref.read(selectedCollectionIdStateProvider);
+    await workspaceStorage.removeUnused(collectionId);
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

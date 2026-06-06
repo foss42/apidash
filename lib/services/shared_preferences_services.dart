@@ -23,8 +23,9 @@ Future<void> setSettingsToSharedPrefs(SettingsModel settingsModel) async {
   await prefs.setString(kSharedPrefSettingsKey, settingsModel.toString());
 }
 
-Future<void> setOnboardingStatusToSharedPrefs(
-    {required bool isOnboardingComplete}) async {
+Future<void> setOnboardingStatusToSharedPrefs({
+  required bool isOnboardingComplete,
+}) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setBool(kSharedPrefOnboardingKey, isOnboardingComplete);
 }
