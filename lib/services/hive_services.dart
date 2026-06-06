@@ -13,6 +13,8 @@ const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
 
+const String kKeyWsTemplatesBox = "wsTemplates";
+
 const String kDashBotBox = "apidash-dashbot-data";
 const String kKeyDashBotBoxIds = 'messages';
 
@@ -114,6 +116,10 @@ class HiveHandler {
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
+
+  dynamic getWsTemplates() => dataBox.get(kKeyWsTemplatesBox);
+  Future<void> setWsTemplates(List<dynamic>? templates) =>
+      dataBox.put(kKeyWsTemplatesBox, templates);
 
   dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(

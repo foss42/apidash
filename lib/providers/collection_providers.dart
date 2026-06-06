@@ -72,32 +72,44 @@ class CollectionStateNotifier
     _heartbeatTimers.remove(requestId)?.cancel();
   }
 
+  void _sendHeartbeatPing(String requestId) {
+    final req = state?[requestId];
+    final ws = req?.wsRequestModel;
+    if (req == null || ws == null || !req.isStreaming) {
+      _stopHeartbeat(requestId);
+      return;
+    }
+    final heartbeatMsg = WebSocketMessage(
+      payload: "Heartbeat ping",
+      timestamp: DateTime.now(),
+      outgoing: true,
+      messageType: WebSocketMessageType.sent,
+    );
+    ConnectionManager.instance.send(requestId, heartbeatMsg.payload);
+    update(
+      id: requestId,
+      wsRequestModel: ws.copyWith(
+        messageHistory: [...ws.messageHistory, heartbeatMsg],
+      ),
+    );
+  }
+
   void _startHeartbeat(String requestId) {
     _stopHeartbeat(requestId);
     final currentRequest = state?[requestId];
     final wsModel = currentRequest?.wsRequestModel;
     if (wsModel == null || !wsModel.enableHeartbeat) return;
 
-    _heartbeatTimers[requestId] = Timer.periodic(const Duration(seconds: 30), (timer) {
-      final req = state?[requestId];
-      final ws = req?.wsRequestModel;
-      if (req == null || ws == null || !req.isStreaming) {
-        timer.cancel();
-        _heartbeatTimers.remove(requestId);
-        return;
-      }
-      final heartbeatMsg = WebSocketMessage(
-        payload: "Heartbeat ping",
-        timestamp: DateTime.now(),
-        outgoing: true,
-        messageType: WebSocketMessageType.sent,
-      );
-      update(
-        id: requestId,
-        wsRequestModel: ws.copyWith(
-          messageHistory: [...ws.messageHistory, heartbeatMsg],
-        ),
-      );
+    final interval = Duration(
+        seconds: wsModel.heartbeatInterval > 0
+            ? wsModel.heartbeatInterval
+            : 30);
+
+    // Fire immediately upon starting
+    _sendHeartbeatPing(requestId);
+
+    _heartbeatTimers[requestId] = Timer.periodic(interval, (timer) {
+      _sendHeartbeatPing(requestId);
     });
   }
 
@@ -362,7 +374,18 @@ class CollectionStateNotifier
         preRequestScript: preRequestScript ?? currentModel.preRequestScript,
         postRequestScript: postRequestScript ?? currentModel.postRequestScript,
         aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
-        wsRequestModel: wsRequestModel ?? currentModel.wsRequestModel,
+        wsRequestModel: currentModel.apiType == APIType.websocket
+            ? (wsRequestModel ?? currentModel.wsRequestModel)?.copyWith(
+                headers: headers ?? currentModel.wsRequestModel?.headers,
+                isHeaderEnabledList:
+                    isHeaderEnabledList ??
+                    currentModel.wsRequestModel?.isHeaderEnabledList,
+                params: params ?? currentModel.wsRequestModel?.params,
+                isParamEnabledList:
+                    isParamEnabledList ??
+                    currentModel.wsRequestModel?.isParamEnabledList,
+              )
+            : (wsRequestModel ?? currentModel.wsRequestModel),
         isStreaming: isStreaming ?? currentModel.isStreaming,
         isWorking: isWorking ?? currentModel.isWorking,
       );
@@ -372,6 +395,21 @@ class CollectionStateNotifier
     map[rId] = newModel;
     state = map;
     unsave();
+
+    if (wsRequestModel != null &&
+        currentModel.apiType == APIType.websocket &&
+        newModel.isStreaming) {
+      if (wsRequestModel.enableHeartbeat !=
+              currentModel.wsRequestModel?.enableHeartbeat ||
+          wsRequestModel.heartbeatInterval !=
+              currentModel.wsRequestModel?.heartbeatInterval) {
+        if (wsRequestModel.enableHeartbeat) {
+          _startHeartbeat(rId);
+        } else {
+          _stopHeartbeat(rId);
+        }
+      }
+    }
   }
 
   /// Send a text message over an active WebSocket connection.
@@ -408,12 +446,46 @@ class CollectionStateNotifier
     RequestModel requestModel,
     WebSocketRequestModel wsModel,
   ) async {
-    final connMsg1 = WebSocketMessage(
-      payload: "Attempting to connect to ${wsModel.url}",
-      timestamp: DateTime.now(),
-      outgoing: false,
-      messageType: WebSocketMessageType.connected,
-    );
+    final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+    final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+
+    final Map<String, String> combinedEnvVarMap = {};
+    for (var variable in (envMap[kGlobalEnvironmentId] ?? [])) {
+      combinedEnvVarMap[variable.key] = variable.value;
+    }
+    for (var variable in (envMap[activeEnvId] ?? [])) {
+      combinedEnvVarMap[variable.key] = variable.value;
+    }
+
+    final substitutedUrl =
+        substituteVariables(wsModel.url, combinedEnvVarMap) ?? wsModel.url;
+
+    String finalUrl = substitutedUrl;
+    if (wsModel.params != null && wsModel.isParamEnabledList != null) {
+      try {
+        final uri = Uri.parse(substitutedUrl);
+        final queryParams = Map<String, dynamic>.from(uri.queryParameters);
+        for (int i = 0; i < wsModel.params!.length; i++) {
+          if (wsModel.isParamEnabledList![i]) {
+            final param = wsModel.params![i];
+            if (param.name.isNotEmpty) {
+              final subKey =
+                  substituteVariables(param.name, combinedEnvVarMap) ??
+                  param.name;
+              final subVal =
+                  substituteVariables(param.value, combinedEnvVarMap) ??
+                  param.value;
+              queryParams[subKey] = subVal;
+            }
+          }
+        }
+        if (queryParams.isNotEmpty) {
+          finalUrl = uri.replace(queryParameters: queryParams).toString();
+        }
+      } catch (e) {
+        debugPrint("Error parsing WebSocket URL parameters: $e");
+      }
+    }
 
     state = {
       ...state!,
@@ -421,44 +493,56 @@ class CollectionStateNotifier
         isWorking: true,
         sendingTime: DateTime.now(),
         wsRequestModel: wsModel.copyWith(
-          messageHistory: [...wsModel.messageHistory, connMsg1],
+          messageHistory: wsModel.messageHistory,
         ),
       ),
     };
 
-    Map<String, String>? headers = wsModel.customHeaders.isNotEmpty 
-        ? Map.from(wsModel.customHeaders) 
-        : null;
-
-    if (wsModel.auth?.type == APIAuthType.basic && wsModel.auth?.basic != null) {
-      headers ??= {};
-      final basicAuth = wsModel.auth!.basic!;
-      final encoded = base64Encode(
-        utf8.encode('${basicAuth.username}:${basicAuth.password}'),
-      );
-      headers['Authorization'] = 'Basic $encoded';
+    Map<String, String>? headers = {};
+    if (wsModel.headers != null && wsModel.isHeaderEnabledList != null) {
+      for (int i = 0; i < wsModel.headers!.length; i++) {
+        if (wsModel.isHeaderEnabledList![i]) {
+          final header = wsModel.headers![i];
+          if (header.name.isNotEmpty) {
+            final subKey =
+                substituteVariables(header.name, combinedEnvVarMap) ??
+                header.name;
+            final subVal =
+                substituteVariables(header.value, combinedEnvVarMap) ??
+                header.value;
+            headers[subKey] = subVal;
+          }
+        }
+      }
     }
+
+    if (headers.isEmpty) headers = null;
 
     try {
       final channel = await ConnectionManager.instance.connect(
         requestId,
-        wsModel.url,
+        finalUrl,
         headers: headers,
-        pingInterval: wsModel.enableHeartbeat ? const Duration(seconds: 30) : null,
+        pingInterval: wsModel.enableHeartbeat
+            ? Duration(
+                seconds: wsModel.heartbeatInterval > 0
+                    ? wsModel.heartbeatInterval
+                    : 30,
+              )
+            : null,
       );
 
-      // Await socket handshake validation to catch handshake errors cleanly
       await channel.ready;
 
-      final connMsg2 = WebSocketMessage(
-        payload: "Connected to ${wsModel.url}",
+      final latestRequest = state?[requestId];
+      final currentWs = latestRequest?.wsRequestModel ?? wsModel;
+
+      final connectedMessage = WebSocketMessage(
+        payload: "Connected to $finalUrl",
         timestamp: DateTime.now(),
         outgoing: false,
         messageType: WebSocketMessageType.connected,
       );
-
-      final latestRequest = state?[requestId];
-      final currentWs = latestRequest?.wsRequestModel ?? wsModel;
 
       state = {
         ...state!,
@@ -466,7 +550,7 @@ class CollectionStateNotifier
           isWorking: false,
           isStreaming: true,
           wsRequestModel: currentWs.copyWith(
-            messageHistory: [...currentWs.messageHistory, connMsg2],
+            messageHistory: [...currentWs.messageHistory, connectedMessage],
           ),
         ),
       };
@@ -595,7 +679,6 @@ class CollectionStateNotifier
       return;
     }
 
-    // ── WebSocket: connect (not HTTP send) ────────────────────────
     if (requestModel!.apiType == APIType.websocket) {
       final wsModel = requestModel.wsRequestModel;
       if (wsModel != null) {
@@ -611,7 +694,7 @@ class CollectionStateNotifier
       activeEnvironmentModelProvider,
     );
 
-    RequestModel executionRequestModel = requestModel!.copyWith();
+    RequestModel executionRequestModel = requestModel.copyWith();
 
     if (!requestModel.preRequestScript.isNullOrEmpty()) {
       executionRequestModel = await ref
@@ -645,7 +728,6 @@ class CollectionStateNotifier
       );
     }
 
-    // Terminal
     final terminal = ref.read(terminalStateProvider.notifier);
 
     var valRes = getValidationResult(substitutedHttpRequestModel);
@@ -658,7 +740,6 @@ class CollectionStateNotifier
       ref.read(showTerminalBadgeProvider.notifier).state = true;
     }
 
-    // Terminal: start network log
     final logId = terminal.startNetwork(
       apiType: executionRequestModel.apiType,
       method: substitutedHttpRequestModel.method,
@@ -669,7 +750,6 @@ class CollectionStateNotifier
       isStreaming: true,
     );
 
-    // Set model to working and streaming
     state = {
       ...state!,
       requestId: requestModel.copyWith(
@@ -677,7 +757,7 @@ class CollectionStateNotifier
         sendingTime: DateTime.now(),
       ),
     };
-    bool streamingMode = true; //Default: Streaming First
+    bool streamingMode = true;
 
     final stream = await streamHttpRequest(
       requestId,
@@ -718,7 +798,6 @@ class CollectionStateNotifier
             isStreaming: true,
           );
           state = {...state!, requestId: newRequestModel};
-          // Terminal: append chunk preview
           if (response != null && response.body.isNotEmpty) {
             terminal.addNetworkChunk(
               logId,
@@ -781,7 +860,6 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
-      //AI-FORMATTING for Non Streaming Variant
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
@@ -850,9 +928,7 @@ class CollectionStateNotifier
       }
     }
 
-    // Final state update
     state = {...state!, requestId: newRequestModel};
-
     unsave();
   }
 
@@ -951,9 +1027,6 @@ class CollectionStateNotifier
   Future<Map<String, dynamic>> exportDataToHAR() async {
     var result = await collectionToHAR(state?.values.toList());
     return result;
-    // return {
-    //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
-    // };
   }
 
   HttpRequestModel getSubstitutedHttpRequestModel(
@@ -961,7 +1034,6 @@ class CollectionStateNotifier
   ) {
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
-
     return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
   }
 }

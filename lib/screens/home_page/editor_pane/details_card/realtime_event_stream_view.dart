@@ -9,31 +9,84 @@ import 'package:apidash/models/ws_request_model.dart';
 ///
 /// Each entry shows direction (sent / received), a timestamp, and the
 /// payload. Tapping an entry copies the payload to the clipboard.
-class RealtimeEventStreamView extends ConsumerWidget {
+class RealtimeEventStreamView extends ConsumerStatefulWidget {
   const RealtimeEventStreamView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RealtimeEventStreamView> createState() => _RealtimeEventStreamViewState();
+}
+
+class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamView> {
+  final TextEditingController _filterController = TextEditingController();
+  String _filterQuery = "";
+
+  @override
+  void dispose() {
+    _filterController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final requestModel = ref.watch(selectedRequestModelProvider);
     final wsModel = requestModel?.wsRequestModel;
     final history = wsModel?.messageHistory ?? [];
 
+    final filteredHistory = _filterQuery.isEmpty
+        ? history
+        : history.where((msg) => msg.payload.toLowerCase().contains(_filterQuery.toLowerCase())).toList();
+
     return Column(
       children: [
-        // Header bar: connection status + clear button
-        _StreamStatusBar(
-          title: "WebSocket Connection",
-          isConnected: requestModel?.isStreaming ?? false,
-          hasMessages: history.isNotEmpty,
-          onClear: () {
-            if (wsModel != null) {
-              ref.read(collectionStateNotifierProvider.notifier).update(
-                    wsRequestModel:
-                        wsModel.copyWith(messageHistory: []),
-                  );
-            }
-          },
-        ),
+        if (history.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+              controller: _filterController,
+              decoration: InputDecoration(
+                hintText: "Filter messages...",
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                prefixIcon: const Icon(Icons.filter_list, size: 18),
+                suffixIcon: _filterQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, size: 16),
+                        onPressed: () {
+                          _filterController.clear();
+                          setState(() {
+                            _filterQuery = "";
+                          });
+                        },
+                      )
+                    : null,
+              ),
+              onChanged: (val) {
+                setState(() {
+                  _filterQuery = val;
+                });
+              },
+            ),
+          ),
+          kHSpacer5,
+          IconButton(
+            icon: const Icon(Icons.delete_outline, size: 18),
+            tooltip: "Clear messages",
+            onPressed: () {
+              if (wsModel != null) {
+                ref.read(collectionStateNotifierProvider.notifier).update(
+                      wsRequestModel:
+                          wsModel.copyWith(messageHistory: []),
+                    );
+              }
+            },
+          ),
+        ],
+      ),
+    ),
         const Divider(height: 1),
         // Log content
         Expanded(
@@ -44,7 +97,7 @@ class RealtimeEventStreamView extends ConsumerWidget {
                     style: TextStyle(color: Colors.grey),
                   ),
                 )
-              : _buildLogView(context, history),
+              : _buildLogView(context, filteredHistory),
         ),
       ],
     );
@@ -63,61 +116,25 @@ class RealtimeEventStreamView extends ConsumerWidget {
   }
 }
 
-class _StreamStatusBar extends StatelessWidget {
-  const _StreamStatusBar({
-    required this.title,
-    required this.isConnected,
-    required this.hasMessages,
-    required this.onClear,
-  });
-  final String title;
-  final bool isConnected;
-  final bool hasMessages;
-  final VoidCallback onClear;
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: Row(
-        children: [
-          Icon(
-            Icons.circle,
-            size: 8,
-            color: isConnected
-                ? Colors.green.shade400
-                : Colors.grey.shade400,
-          ),
-          kHSpacer5,
-          Text(
-            isConnected ? "$title — Connected" : "$title — Disconnected",
-            style: kCodeStyle.copyWith(
-              fontSize: 13,
-              color: isConnected
-                  ? Colors.green.shade400
-                  : Colors.grey.shade400,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const Spacer(),
-          if (hasMessages)
-            IconButton(
-              icon: const Icon(Icons.delete_outline, size: 18),
-              tooltip: "Clear messages",
-              onPressed: onClear,
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LogEntry extends StatelessWidget {
+class _LogEntry extends StatefulWidget {
   const _LogEntry({required this.msg});
   final WebSocketMessage msg;
 
   @override
+  State<_LogEntry> createState() => _LogEntryState();
+}
+
+class _LogEntryState extends State<_LogEntry> {
+  bool _isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
+    final msg = widget.msg;
+    final isLongMessage = msg.payload.length > 300;
+    final displayPayload = (_isExpanded || !isLongMessage)
+        ? msg.payload
+        : "${msg.payload.substring(0, 300)}...";
     final time = msg.timestamp != null
         ? "${msg.timestamp!.hour.toString().padLeft(2, '0')}:"
           "${msg.timestamp!.minute.toString().padLeft(2, '0')}:"
@@ -153,7 +170,7 @@ class _LogEntry extends StatelessWidget {
       ),
     };
 
-    return InkWell(
+    final logContent = InkWell(
       onTap: () {
         Clipboard.setData(ClipboardData(text: msg.payload));
         ScaffoldMessenger.of(context).showSnackBar(
@@ -178,22 +195,38 @@ class _LogEntry extends StatelessWidget {
                 style: kCodeStyle.copyWith(
                     fontSize: 12, color: Colors.grey),
               ),
+              const TextSpan(text: " - "),
               TextSpan(
-                text: "[$labelText] - ",
-                style: kCodeStyle.copyWith(
-                  fontSize: 12,
-                  color: labelColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextSpan(
-                text: msg.payload,
+                text: displayPayload,
                 style: kCodeStyle.copyWith(fontSize: 12),
               ),
             ],
           ),
         ),
       ),
+    );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: logContent),
+        if (isLongMessage)
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0, right: 12.0),
+            child: IconButton(
+              icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more, size: 18),
+              onPressed: () {
+                setState(() {
+                  _isExpanded = !_isExpanded;
+                });
+              },
+              tooltip: _isExpanded ? "Collapse" : "Expand",
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              splashRadius: 16,
+            ),
+          ),
+      ],
     );
   }
 }

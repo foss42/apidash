@@ -67,42 +67,13 @@ class ResponsePane extends ConsumerWidget {
   }
 }
 
-/// Two-tab panel showing the WS event log and any response headers.
+/// Panel showing the WS event log.
 class _WsResponsePanel extends ConsumerWidget {
   const _WsResponsePanel();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TabBar(
-            labelColor: Theme.of(context).colorScheme.primary,
-            unselectedLabelColor:
-                Theme.of(context).colorScheme.onSurfaceVariant,
-            tabs: const [
-              Tab(text: "Response Body"),
-              Tab(text: "Headers"),
-            ],
-          ),
-          const Expanded(
-            child: TabBarView(
-              children: [
-                RealtimeEventStreamView(),
-                Center(
-                  child: Text(
-                    "WebSocket headers are only available at handshake time.",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    return const RealtimeEventStreamView();
   }
 }
 
