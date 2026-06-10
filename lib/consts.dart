@@ -533,6 +533,8 @@ const kLabelShowSaveAlert = "Show Save Alert on App Close";
 const kLabelShowSaveAlertSubtitle =
     "Show a confirmation dialog to save workspace when the user closes the app";
 const kLabelHistoryRetention = "History Retention Period";
+const kLabelMaxWebSocketEvents = "Max Log Messages";
+const kLabelMaxWebSocketEventsSubtitle = "Maximum number of messages to keep in the connection log";
 const kLabelExportData = "Export Data";
 const kLabelExportDataSubtitle =
     "Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.";
