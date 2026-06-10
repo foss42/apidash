@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -415,8 +414,9 @@ class CollectionStateNotifier
   /// Send a text message over an active WebSocket connection.
   void sendWebSocketMessage(String requestId, String message) {
     final currentRequest = state?[requestId];
-    if (currentRequest == null || currentRequest.apiType != APIType.websocket)
+    if (currentRequest == null || currentRequest.apiType != APIType.websocket) {
       return;
+    }
     final wsModel = currentRequest.wsRequestModel;
     if (wsModel == null) return;
 
@@ -445,6 +445,7 @@ class CollectionStateNotifier
     String requestId,
     RequestModel requestModel,
     WebSocketRequestModel wsModel,
+    {String? historyId}
   ) async {
     final envMap = ref.read(availableEnvironmentVariablesStateProvider);
     final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
@@ -595,6 +596,11 @@ class CollectionStateNotifier
                 messageHistory: [...ws.messageHistory, errMsg],
               ),
             );
+            if (historyId != null) {
+              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
+                messageHistory: [...ws.messageHistory, errMsg],
+              ));
+            }
           }
         },
         onDone: () async {
@@ -616,7 +622,7 @@ class CollectionStateNotifier
             );
             final latestReq = state?[requestId];
             if (latestReq != null) {
-              _connectWebSocket(requestId, latestReq, updatedWs);
+              _connectWebSocket(requestId, latestReq, updatedWs, historyId: historyId);
             }
           } else {
             final discMsg = WebSocketMessage(
@@ -632,6 +638,11 @@ class CollectionStateNotifier
                 messageHistory: [...ws.messageHistory, discMsg],
               ),
             );
+            if (historyId != null) {
+              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
+                messageHistory: [...ws.messageHistory, discMsg],
+              ));
+            }
           }
         },
       );
@@ -661,6 +672,24 @@ class CollectionStateNotifier
           ),
         ),
       };
+      if (historyId != null) {
+        _updateWebSocketHistoryRecord(historyId, ws.copyWith(
+          messageHistory: [...ws.messageHistory, errMsg, discMsg],
+        ));
+      }
+    }
+  }
+
+  void _updateWebSocketHistoryRecord(String historyId, WebSocketRequestModel wsRequestModel) {
+    final historyMap = ref.read(historyMetaStateNotifier);
+    if (historyMap != null && historyMap.containsKey(historyId)) {
+      final historyMeta = historyMap[historyId]!;
+      final historyModel = HistoryRequestModel(
+        historyId: historyId,
+        metaData: historyMeta,
+        wsRequestModel: wsRequestModel,
+      );
+      ref.read(historyMetaStateNotifier.notifier).editHistoryRequest(historyModel);
     }
   }
 
@@ -682,7 +711,30 @@ class CollectionStateNotifier
     if (requestModel!.apiType == APIType.websocket) {
       final wsModel = requestModel.wsRequestModel;
       if (wsModel != null) {
-        await _connectWebSocket(requestId, requestModel, wsModel);
+        // Save history for WebSocket connection attempt first
+        String newHistoryId = getNewUuid();
+        final historyModel = HistoryRequestModel(
+          historyId: newHistoryId,
+          metaData: HistoryMetaModel(
+            historyId: newHistoryId,
+            requestId: requestId,
+            apiType: APIType.websocket,
+            name: requestModel.name,
+            url: wsModel.url,
+            method: HTTPVerb.get, // WebSockets initiate via HTTP GET
+            responseStatus: 0,
+            timeStamp: DateTime.now(),
+          ),
+          wsRequestModel: wsModel.copyWith(messageHistory: []),
+          preRequestScript: requestModel.preRequestScript,
+          postRequestScript: requestModel.postRequestScript,
+        );
+
+        ref
+            .read(historyMetaStateNotifier.notifier)
+            .addHistoryRequest(historyModel);
+
+        await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
       } else {
         update(id: requestId, message: "Invalid WebSocket model");
       }

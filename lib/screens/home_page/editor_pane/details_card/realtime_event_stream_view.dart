@@ -4,13 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/ws_request_model.dart';
-/// TODO : this should also be used by another protocols
 /// A real-time, log-style view of WebSocket messages.
 ///
 /// Each entry shows direction (sent / received), a timestamp, and the
 /// payload. Tapping an entry copies the payload to the clipboard.
 class RealtimeEventStreamView extends ConsumerStatefulWidget {
-  const RealtimeEventStreamView({super.key});
+  const RealtimeEventStreamView({super.key, this.historyMessages});
+
+  final List<WebSocketMessage>? historyMessages;
 
   @override
   ConsumerState<RealtimeEventStreamView> createState() => _RealtimeEventStreamViewState();
@@ -28,13 +29,21 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
 
   @override
   Widget build(BuildContext context) {
-    final requestModel = ref.watch(selectedRequestModelProvider);
+    final requestModel = widget.historyMessages == null ? ref.watch(selectedRequestModelProvider) : null;
     final wsModel = requestModel?.wsRequestModel;
-    final history = wsModel?.messageHistory ?? [];
+    final history = widget.historyMessages ?? wsModel?.messageHistory ?? [];
+
+    final settings = ref.watch(settingsProvider);
+    final maxEvents = settings.maxWebSocketEvents;
 
     final filteredHistory = _filterQuery.isEmpty
         ? history
         : history.where((msg) => msg.payload.toLowerCase().contains(_filterQuery.toLowerCase())).toList();
+
+    var displayHistory = filteredHistory;
+    if (displayHistory.length > maxEvents) {
+      displayHistory = displayHistory.sublist(displayHistory.length - maxEvents);
+    }
 
     return Column(
       children: [
@@ -71,19 +80,21 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
               },
             ),
           ),
-          kHSpacer5,
-          IconButton(
-            icon: const Icon(Icons.delete_outline, size: 18),
-            tooltip: "Clear messages",
-            onPressed: () {
-              if (wsModel != null) {
-                ref.read(collectionStateNotifierProvider.notifier).update(
-                      wsRequestModel:
-                          wsModel.copyWith(messageHistory: []),
-                    );
-              }
-            },
-          ),
+          if (widget.historyMessages == null) ...[
+            kHSpacer5,
+            IconButton(
+              icon: const Icon(Icons.delete_outline, size: 18),
+              tooltip: "Clear messages",
+              onPressed: () {
+                if (wsModel != null) {
+                  ref.read(collectionStateNotifierProvider.notifier).update(
+                        wsRequestModel:
+                            wsModel.copyWith(messageHistory: []),
+                      );
+                }
+              },
+            ),
+          ],
         ],
       ),
     ),
@@ -97,7 +108,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                     style: TextStyle(color: Colors.grey),
                   ),
                 )
-              : _buildLogView(context, filteredHistory),
+              : _buildLogView(context, displayHistory),
         ),
       ],
     );
@@ -109,7 +120,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
       itemCount: history.length,
       padding: const EdgeInsets.symmetric(vertical: 4),
       itemBuilder: (context, index) {
-        final msg = history[index];
+        final msg = history[history.length - 1 - index];
         return _LogEntry(msg: msg);
       },
     );

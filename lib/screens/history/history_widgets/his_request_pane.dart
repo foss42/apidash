@@ -28,7 +28,17 @@ class HistoryRequestPane extends ConsumerWidget {
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.httpRequestModel!.headersMap;
+            if (apiType == APIType.websocket) {
+              final headers = value?.wsRequestModel?.headers ?? [];
+              final map = <String, String>{};
+              for (final header in headers) {
+                if (header.name.isNotEmpty) {
+                  map[header.name] = header.value;
+                }
+              }
+              return map;
+            }
+            return value?.httpRequestModel?.headersMap;
           }),
         ) ??
         {};
@@ -38,7 +48,17 @@ class HistoryRequestPane extends ConsumerWidget {
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.httpRequestModel!.paramsMap;
+            if (apiType == APIType.websocket) {
+              final params = value?.wsRequestModel?.params ?? [];
+              final map = <String, String>{};
+              for (final param in params) {
+                if (param.name.isNotEmpty) {
+                  map[param.name] = param.value;
+                }
+              }
+              return map;
+            }
+            return value?.httpRequestModel?.paramsMap;
           }),
         ) ??
         {};
@@ -47,8 +67,8 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasBody =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai) return false;
-            return value?.httpRequestModel!.hasBody;
+            if (apiType == APIType.ai || apiType == APIType.websocket) return false;
+            return value?.httpRequestModel?.hasBody;
           }),
         ) ??
         false;
@@ -56,8 +76,8 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai) return false;
-            return value?.httpRequestModel!.hasQuery;
+            if (apiType == APIType.ai || apiType == APIType.websocket) return false;
+            return value?.httpRequestModel?.hasQuery;
           }),
         ) ??
         false;
@@ -164,6 +184,28 @@ class HistoryRequestPane extends ConsumerWidget {
           const HisAIRequestPromptSection(),
           const HisAIRequestAuthorizationSection(),
           const HisAIRequestConfigSection(),
+        ],
+      ),
+      APIType.websocket => RequestPane(
+        key: const Key("history-request-pane-websocket"),
+        selectedId: selectedId,
+        codePaneVisible: codePaneVisible,
+        onPressedCodeButton: () {
+          ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+              !codePaneVisible;
+        },
+        showViewCodeButton: !isCompact,
+        showIndicators: [
+          paramLength > 0,
+          headerLength > 0,
+        ],
+        tabLabels: const [
+          kLabelURLParams,
+          kLabelHeaders,
+        ],
+        children: [
+          RequestDataTable(rows: paramsMap, keyName: kNameURLParam),
+          RequestDataTable(rows: headersMap, keyName: kNameHeader),
         ],
       ),
       _ => kSizedBoxEmpty,

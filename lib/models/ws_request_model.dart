@@ -40,7 +40,7 @@ abstract class WebSocketRequestModel with _$WebSocketRequestModel {
     @Default("") String url,
 
     /// Full message history for the event-stream view.
-    @JsonKey(includeToJson: false) @Default([]) List<WebSocketMessage> messageHistory,
+    @Default([]) List<WebSocketMessage> messageHistory,
 
     /// Custom headers to send during the WebSocket handshake.
     List<NameValueModel>? headers,

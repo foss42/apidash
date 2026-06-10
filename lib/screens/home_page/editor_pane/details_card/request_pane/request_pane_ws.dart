@@ -161,8 +161,11 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          MenuAnchor(
-                            menuChildren: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              MenuAnchor(
+                                menuChildren: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                                 child: SizedBox(
@@ -188,70 +191,78 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                                   ),
                                 ),
                               ),
-                              ..._templates.asMap().entries
-                                  .where((e) => (e.value["name"] ?? "").toLowerCase().contains(_dropdownController.text.toLowerCase()))
-                                  .map((e) {
-                                final index = e.key;
-                                final t = e.value;
-                                return MouseRegion(
-                                  onEnter: (_) {
-                                    setState(() {
-                                      _hoveredPreviewData = t["data"];
-                                    });
-                                  },
-                                  onExit: (_) {
-                                    setState(() {
-                                      _hoveredPreviewData = null;
-                                    });
-                                  },
-                                  child: MenuItemButton(
-                                    onPressed: () {
-                                      _controller.text = t["data"] ?? "";
-                                      _dropdownController.clear();
-                                    },
-                                    child: SizedBox(
-                                      width: 300,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              t["name"] ?? "",
-                                              style: kCodeStyle.copyWith(fontSize: 12),
-                                              overflow: TextOverflow.ellipsis,
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(maxHeight: 200),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: _templates.asMap().entries
+                                        .where((e) => (e.value["name"] ?? "").toLowerCase().contains(_dropdownController.text.toLowerCase()))
+                                        .map((e) {
+                                      final index = e.key;
+                                      final t = e.value;
+                                      return MouseRegion(
+                                        onEnter: (_) {
+                                          setState(() {
+                                            _hoveredPreviewData = t["data"];
+                                          });
+                                        },
+                                        onExit: (_) {
+                                          setState(() {
+                                            _hoveredPreviewData = null;
+                                          });
+                                        },
+                                        child: MenuItemButton(
+                                          onPressed: () {
+                                            _controller.text = t["data"] ?? "";
+                                            _dropdownController.clear();
+                                          },
+                                          child: SizedBox(
+                                            width: 300,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    t["name"] ?? "",
+                                                    style: kCodeStyle.copyWith(fontSize: 12),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(Icons.edit, size: 14),
+                                                      tooltip: "Edit Template",
+                                                      constraints: const BoxConstraints(),
+                                                      onPressed: () {
+                                                        _showEditTemplateDialog(context, index, setState);
+                                                      },
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Icon(Icons.delete, size: 14),
+                                                      tooltip: "Delete Template",
+                                                      constraints: const BoxConstraints(),
+                                                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _templates.removeAt(index);
+                                                          _saveTemplates();
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                icon: const Icon(Icons.edit, size: 14),
-                                                tooltip: "Edit Template",
-                                                constraints: const BoxConstraints(),
-                                                onPressed: () {
-                                                  _showEditTemplateDialog(context, index, setState);
-                                                },
-                                              ),
-                                              IconButton(
-                                                icon: const Icon(Icons.delete, size: 14),
-                                                tooltip: "Delete Template",
-                                                constraints: const BoxConstraints(),
-                                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _templates.removeAt(index);
-                                                    _saveTemplates();
-                                                  });
-                                                },
-                                              ),
-                                            ],
                                         ),
-                                      ],
-                                    ),
+                                      );
+                                    }).toList(),
                                   ),
-                                )
-                              );
-                              }),
+                                ),
+                              ),
                               const Divider(height: 1),
                               MenuItemButton(
                                                 leadingIcon: const Icon(Icons.add, size: 16),
@@ -295,7 +306,33 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                               );
                             },
                           ),
-                          OutlinedButton.icon(
+                          kHSpacer5,
+                          IconButton(
+                            icon: const Icon(Icons.save_outlined, size: 20),
+                            tooltip: "Save as template",
+                            onPressed: () {
+                              final payload = _controller.text.trim();
+                              if (payload.isNotEmpty) {
+                                setState(() {
+                                  _templates.add({
+                                    "name": "Template ${_templates.length + 1}",
+                                    "data": payload,
+                                  });
+                                  _saveTemplates();
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Saved to Templates"), duration: Duration(milliseconds: 1000)),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Message is empty"), duration: Duration(milliseconds: 1000)),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      OutlinedButton.icon(
                             icon: const Icon(Icons.send, size: 16),
                             label: const Text("Send"),
                             onPressed: () {
@@ -377,15 +414,63 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        if (title != null) ...[
-                                          Text(
-                                            title,
-                                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 8),
-                                        ],
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: title != null
+                                                ? Padding(
+                                                    padding: const EdgeInsets.only(top: 2.0),
+                                                    child: Text(
+                                                      title,
+                                                      style: const TextStyle(
+                                                        fontWeight: FontWeight.bold, 
+                                                        fontSize: 13, 
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  )
+                                                : SizedBox(
+                                                    height: 24,
+                                                    child: TextField(
+                                                      style: const TextStyle(fontSize: 12),
+                                                      decoration: InputDecoration(
+                                                        hintText: "Name & Enter to save",
+                                                        hintStyle: const TextStyle(fontSize: 11, color: Colors.grey),
+                                                        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+                                                        isDense: true,
+                                                        border: UnderlineInputBorder(
+                                                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 0.3),
+                                                        ),
+                                                        enabledBorder: UnderlineInputBorder(
+                                                          borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 0.3),
+                                                        ),
+                                                        focusedBorder: UnderlineInputBorder(
+                                                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 0.5),
+                                                        ),
+                                                      ),
+                                                      onSubmitted: (val) {
+                                                        if (val.trim().isNotEmpty) {
+                                                          setState(() {
+                                                            _templates.add({
+                                                              "name": val.trim(),
+                                                              "data": payload,
+                                                            });
+                                                            _saveTemplates();
+                                                          });
+                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                            const SnackBar(content: Text("Saved to Templates"), duration: Duration(milliseconds: 1000)),
+                                                          );
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
                                         Expanded(
                                           child: Text(
                                             payload,

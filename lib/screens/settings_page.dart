@@ -174,6 +174,33 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
+                title: const Text(kLabelMaxWebSocketEvents),
+                subtitle: const Text(kLabelMaxWebSocketEventsSubtitle),
+                trailing: SizedBox(
+                  width: 100,
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    controller: TextEditingController(
+                      text: settings.maxWebSocketEvents.toString(),
+                    ),
+                    onSubmitted: (val) {
+                      final parsed = int.tryParse(val);
+                      if (parsed != null && parsed > 0) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(maxWebSocketEvents: parsed);
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                  ),
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
                 title: const Text(kLabelExportData),
                 subtitle: const Text(kLabelExportDataSubtitle),
                 trailing: FilledButton.icon(
