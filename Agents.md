@@ -2,14 +2,14 @@
 
 This is the operating guide for agents working in the API Dash repository. Treat it as a working contract, not a static note. If you change behavior, architecture, commands, generated models, storage, package boundaries, or test strategy, update this file and `architecture.md` in the same change.
 
-Scope note: this guide describes the `main` branch architecture. If you are on a feature branch, verify whether the feature is merged before documenting it here. Do not describe branch-only WebSocket, MQTT, or gRPC work as mainline behavior.
+Scope note: this guide describes the `main` branch architecture. If you are on a feature branch, verify whether the feature is merged before documenting it here. Do not describe branch-only work as mainline behavior.
 
 ## First Rules
 
 1. Preserve user work. Check `git status --short` before edits and do not revert unrelated modified or untracked files.
 2. Read before changing. Inspect the touched source, nearby tests, root docs, and relevant developer docs before implementing.
 3. Prefer the existing architecture. API Dash is a Flutter/Melos monorepo using Riverpod, Hive, Freezed/json_serializable, Jinja templates, and modular packages. Do not introduce another state, storage, routing, networking, or codegen pattern unless the task explicitly requires it.
-4. Keep root docs current. Working agents must update `Agents.md` and `architecture.md` whenever their changes alter how future agents should understand, test, or extend the system.
+4. Keep root docs current. Working agents must update `AGENTS.md` and `architecture.md` whenever their changes alter how future agents should understand, test, or extend the system.
 5. Keep mainline docs honest. GSoC proposals, local branch files, and unmerged experiments are useful references, but they are not source-of-truth architecture for these root docs.
 6. Generated Dart files are build outputs. Edit source model files, then run generation. Do not manually patch `.freezed.dart` or `.g.dart` as the primary fix.
 7. Tests should be focused and offline by default. Use in-memory mocks and provider overrides unless the production component specifically requires a scoped loopback server, such as OAuth callback handling.
@@ -28,9 +28,8 @@ The current `main` branch supports:
 | cURL, Postman, Insomnia, HAR import | Supported |
 | OpenAPI-assisted import | Supported through Dashbot services |
 | Code generation | Supported for cURL, HAR, C, C#, Dart, Go, JS, Java, Julia, Kotlin, PHP, Python, Ruby, Rust, Swift |
-| WebSocket | Not mainline; issue/proposal/branch work only |
-| MQTT | Not mainline; issue/proposal/branch work only |
-| gRPC | Not mainline; issue/proposal/branch work only |
+| Environment Variables | Supported |
+| Request History | Supported |
 
 ## Repository Map
 
@@ -86,9 +85,10 @@ melos pub-get
 flutter pub get
 ```
 
-Analyze:
+Format and Analyze:
 
 ```bash
+dart format .
 melos analyze
 ```
 
@@ -138,7 +138,7 @@ Start every task with this sequence:
 4. Find existing tests for the same layer before adding new test patterns.
 5. Make the narrowest code/doc change that solves the request.
 6. Run the smallest meaningful verification first; broaden when the blast radius is shared or architectural.
-7. Update `Agents.md` and `architecture.md` if the change affects agent guidance or architecture.
+7. Update `AGENTS.md` and `architecture.md` if the change affects agent guidance or architecture.
 8. Report what changed and which verification ran.
 
 Use `main` as a reference when requested:
@@ -149,6 +149,15 @@ git ls-tree -r --name-only main
 git grep -n "pattern" main -- lib packages test
 ```
 
+## Git and PR Workflow
+
+When creating branches or opening pull requests on behalf of the user, follow these project conventions based on `CONTRIBUTING.md`:
+
+- **Branch Naming**: Use `add-feature-<name>`, `resolve-issue-<name>`, or `add-test-<name>`.
+- **PR Scope**: Prefer precise changes (e.g., adding a single test or resolving one issue) over massive PRs with many unrelated file changes.
+- **PR Description**: Include a clear title and description, and reference the corresponding issue (e.g., `#issue-number`).
+- **AI Policy**: Mention in the PR description if the contribution is AI-assisted, especially for large or complex changes.
+
 ## Local Agent Notes and Subagent Logs
 
 Root docs must stay concise enough to guide future work. They should describe current mainline architecture, commands, decisions that affect many files, and rules agents must follow.
@@ -156,7 +165,7 @@ Root docs must stay concise enough to guide future work. They should describe cu
 Detailed implementation diaries are allowed, but keep them separate from the root docs:
 
 - Use local task notes for line-by-line reasoning, rejected approaches, subagent findings, temporary hypotheses, command transcripts, and detailed decision trails.
-- Prefer a task-scoped path such as `doc/agent_notes/<topic>.md`, `.agents/<topic>.md`, or another user-specified local note path.
+- Prefer a task-scoped path such as `doc/agent_notes/<topic>.md` or another user-specified local note path.
 - Mark local notes with branch, date, author/agent, scope, and whether the notes are mainline, branch-only, or scratch.
 - Do not cite local notes as source-of-truth architecture unless their content has been promoted into `architecture.md` or relevant developer docs.
 - Do not put every line-level change in `architecture.md`; summarize the stable design impact there and put granular logs in local notes.
@@ -350,7 +359,7 @@ Dashbot and AI tests:
 
 Every working agent must update docs when a change affects future work. Use this checklist before finishing:
 
-- Did command usage change? Update `Agents.md`.
+- Did command usage change? Update `AGENTS.md`.
 - Did source layout, package responsibility, data flow, model ownership, persistence, or app lifecycle change? Update `architecture.md`.
 - Did a feature move from proposal/branch-only to mainline? Update both docs and remove any "not mainline" note that is no longer true.
 - Did a generated model add/remove fields? Update architecture model and storage notes if it affects persisted JSON or request flow.
@@ -379,6 +388,6 @@ Before handing work back:
 2. Only intended files changed.
 3. Generated files updated when source models changed.
 4. Relevant tests/analyze run, or a clear reason recorded.
-5. `Agents.md` and `architecture.md` updated when architecture or agent workflow changed.
+5. `AGENTS.md` and `architecture.md` updated when architecture or agent workflow changed.
 6. Mainline docs do not include branch-only implementation details.
 7. Detailed local decision logs, if created, are clearly labeled as local notes and are not presented as mainline architecture.
