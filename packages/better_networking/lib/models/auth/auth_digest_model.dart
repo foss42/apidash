@@ -4,7 +4,7 @@ part 'auth_digest_model.g.dart';
 part 'auth_digest_model.freezed.dart';
 
 @freezed
-class AuthDigestModel with _$AuthDigestModel {
+abstract class AuthDigestModel with _$AuthDigestModel {
   const factory AuthDigestModel({
     required String username,
     required String password,

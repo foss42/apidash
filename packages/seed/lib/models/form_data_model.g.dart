@@ -6,14 +6,14 @@ part of 'form_data_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$FormDataModelImpl _$$FormDataModelImplFromJson(Map<String, dynamic> json) =>
-    _$FormDataModelImpl(
+_FormDataModel _$FormDataModelFromJson(Map<String, dynamic> json) =>
+    _FormDataModel(
       name: json['name'] as String,
       value: json['value'] as String,
       type: $enumDecode(_$FormDataTypeEnumMap, json['type']),
     );
 
-Map<String, dynamic> _$$FormDataModelImplToJson(_$FormDataModelImpl instance) =>
+Map<String, dynamic> _$FormDataModelToJson(_FormDataModel instance) =>
     <String, dynamic>{
       'name': instance.name,
       'value': instance.value,

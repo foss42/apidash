@@ -6,10 +6,8 @@ part of 'auth_bearer_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AuthBearerModelImpl _$$AuthBearerModelImplFromJson(
-  Map<String, dynamic> json,
-) => _$AuthBearerModelImpl(token: json['token'] as String);
+_AuthBearerModel _$AuthBearerModelFromJson(Map<String, dynamic> json) =>
+    _AuthBearerModel(token: json['token'] as String);
 
-Map<String, dynamic> _$$AuthBearerModelImplToJson(
-  _$AuthBearerModelImpl instance,
-) => <String, dynamic>{'token': instance.token};
+Map<String, dynamic> _$AuthBearerModelToJson(_AuthBearerModel instance) =>
+    <String, dynamic>{'token': instance.token};
