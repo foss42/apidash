@@ -229,8 +229,8 @@ return $default(_that.method,_that.uri,_that.headers,_that.data,_that.cookie,_th
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _Curl extends Curl {
   const _Curl({required this.method, @UriJsonConverter() required this.uri, final  Map<String, String>? headers, this.data, this.cookie, this.user, this.referer, this.userAgent, this.form = false, final  List<FormDataModel>? formData, this.insecure = false, this.location = false}): _headers = headers,_formData = formData,super._();
   factory _Curl.fromJson(Map<String, dynamic> json) => _$CurlFromJson(json);

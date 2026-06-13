@@ -35,7 +35,7 @@ Map<String, dynamic> _$CurlToJson(_Curl instance) => <String, dynamic>{
   'referer': instance.referer,
   'userAgent': instance.userAgent,
   'form': instance.form,
-  'formData': instance.formData,
+  'formData': instance.formData?.map((e) => e.toJson()).toList(),
   'insecure': instance.insecure,
   'location': instance.location,
 };

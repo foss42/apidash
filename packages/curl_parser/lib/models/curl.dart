@@ -32,6 +32,7 @@ abstract class Curl with _$Curl {
   ///
   /// The [method] and [uri] parameters are required, while the remaining
   /// parameters are optional.
+  @JsonSerializable(explicitToJson: true)
   const factory Curl({
     /// Specifies the HTTP request method (e.g., GET, POST, PUT, DELETE).
     required String method,
