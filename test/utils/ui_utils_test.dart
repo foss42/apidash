@@ -138,6 +138,16 @@ void main() {
           ),
           colMethodDeleteDarkModeExpected);
     });
+
+    test('Test getAPIColor for GraphQL', () {
+      expect(getAPIColor(APIType.graphql), kColorGQL);
+      expect(getAPIColor(APIType.graphql, brightness: dark), kColorGQL.toDark);
+    });
+
+    test('Test getAPIColor for AI', () {
+      expect(getAPIColor(APIType.ai), Colors.amber);
+      expect(getAPIColor(APIType.ai, brightness: dark), Colors.amber.toDark);
+    });
   });
 
   group("Testing getHTTPMethodColor function", () {
@@ -171,6 +181,14 @@ void main() {
     test('Test getHTTPMethodColor for DELETE Method', () {
       expect(getHTTPMethodColor(methodDelete), kColorHttpMethodDelete);
     });
+
+    test('Test getHTTPMethodColor for OPTIONS Method', () {
+      expect(getHTTPMethodColor(HTTPVerb.options), kColorHttpMethodOptions);
+    });
+
+    test('Test getHTTPMethodColor for null Method', () {
+      expect(getHTTPMethodColor(null), kColorHttpMethodGet);
+    });
   });
 
   group('Testing getScaffoldKey function', () {
@@ -185,6 +203,22 @@ void main() {
     test('Returns kHomeScaffoldKey for railIdx other than 1 or 2', () {
       expect(getScaffoldKey(0), kHomeScaffoldKey);
       expect(getScaffoldKey(3), kHomeScaffoldKey);
+    });
+  });
+
+  group('Testing getJsonPreviewerMaxRootNodeWidth function', () {
+    test('w < 300 returns 150', () {
+      expect(getJsonPreviewerMaxRootNodeWidth(250), 150);
+    });
+
+    test('300 <= w < 400 returns 200', () {
+      expect(getJsonPreviewerMaxRootNodeWidth(350), 200);
+      expect(getJsonPreviewerMaxRootNodeWidth(300), 200);
+    });
+
+    test('w >= 400 returns w - 150', () {
+      expect(getJsonPreviewerMaxRootNodeWidth(400), 250);
+      expect(getJsonPreviewerMaxRootNodeWidth(500), 350);
     });
   });
 }

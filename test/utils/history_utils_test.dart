@@ -1,10 +1,28 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/utils/history_utils.dart';
 
 import '../models/history_models.dart';
 
 void main() {
+  group('Testing getRequestModelFromHistoryModel function', () {
+    test('returns correct RequestModel', () {
+      final model = HistoryRequestModel(
+        historyId: 'h1',
+        metaData: historyMetaModel1,
+        httpRequestModel: const HttpRequestModel(),
+        httpResponseModel: const HttpResponseModel(statusCode: 200),
+      );
+      final result = getRequestModelFromHistoryModel(model);
+      expect(result.id, 'h1');
+      expect(result.apiType, APIType.rest);
+      expect(result.responseStatus, 200);
+      expect(result.message, kResponseCodeReasons[200]);
+    });
+  });
+
   group('Testing getHistoryRequestName function', () {
     test('returns name when name is not empty', () {
       final model = historyMetaModel1.copyWith(name: 'Social');
@@ -35,6 +53,24 @@ void main() {
     });
   });
 
+  group('Testing getLatestRequestId function', () {
+    test('returns null when temporalGroups is empty', () {
+      final result = getLatestRequestId({});
+      expect(result, isNull);
+    });
+
+    test('returns correct historyId for latest group', () {
+      final d1 = DateTime(2024, 1, 1);
+      final d2 = DateTime(2024, 1, 2);
+      final groups = {
+        d1: [historyMetaModel1],
+        d2: [historyMetaModel2],
+      };
+      final result = getLatestRequestId(groups);
+      expect(result, historyMetaModel2.historyId);
+    });
+  });
+
   group('Testing getDateTimeKey function', () {
     test('returns currentKey when keys is empty', () {
       final now = DateTime.now();
@@ -58,6 +94,37 @@ void main() {
 
       final result = getDateTimeKey(keys, currentKey);
       expect(result, currentKey);
+    });
+  });
+
+  group('Testing getTemporalGroups function', () {
+    test('returns empty map when models is null', () {
+      final result = getTemporalGroups(null);
+      expect(result, isEmpty);
+    });
+
+    test('returns empty map when models is empty', () {
+      final result = getTemporalGroups([]);
+      expect(result, isEmpty);
+    });
+
+    test('groups models correctly', () {
+      final t1 = DateTime(2024, 1, 1, 10);
+      final t2 = DateTime(2024, 1, 1, 12);
+      final t3 = DateTime(2024, 1, 2, 10);
+
+      final m1 = historyMetaModel1.copyWith(timeStamp: t1);
+      final m2 = historyMetaModel1.copyWith(timeStamp: t2);
+      final m3 = historyMetaModel1.copyWith(timeStamp: t3);
+
+      final result = getTemporalGroups([m1, m2, m3]);
+      expect(result.length, 2);
+      expect(result[DateTime(2024, 1, 1)]!.length, 2);
+      expect(result[DateTime(2024, 1, 2)]!.length, 1);
+      
+      // Should be sorted descending by timestamp
+      expect(result[DateTime(2024, 1, 1)]![0], m2);
+      expect(result[DateTime(2024, 1, 1)]![1], m1);
     });
   });
 

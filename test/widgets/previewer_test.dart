@@ -309,4 +309,23 @@ void main() {
     expect(find.text('John Doe'), findsOneWidget);
     expect(find.text('41'), findsOneWidget);
   });
+
+  testWidgets('Testing sniffing when application/octet-stream', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Previewer',
+        home: Scaffold(
+          body: Previewer(
+            type: 'application',
+            subtype: 'octet-stream',
+            bytes: kBodyBytesJpeg,
+            body: "",
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.byType(Image), findsOneWidget);
+  });
 }

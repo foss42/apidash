@@ -77,4 +77,35 @@ void main() {
       expect(find.text(option.label), findsOneWidget);
     }
   });
+
+  testWidgets('showItemCardMenu triggers onSelected',
+      (WidgetTester tester) async {
+    ItemMenuOption? selectedOption;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTapUp: (details) {
+                  showItemCardMenu(context, details, (ItemMenuOption option) {
+                    selectedOption = option;
+                  });
+                },
+                child: const Text('Show Menu'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show Menu'));
+    await tester.pumpAndSettle();
+    
+    await tester.tap(find.text(ItemMenuOption.delete.label));
+    await tester.pumpAndSettle();
+    
+    expect(selectedOption, ItemMenuOption.delete);
+  });
 }

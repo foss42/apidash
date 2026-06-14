@@ -80,5 +80,39 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle();
     expect(changedValue, 'entering 123 for testing content body  ');
+
+    // Test onTapOutside
+    await tester.tapAt(const Offset(10, 10)); // Tap somewhere outside the editor if possible
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('Testing Editor onTapOutside', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              const SizedBox(
+                height: 100,
+                width: 100,
+                child: TextFieldEditor(fieldKey: 'editor_key'),
+              ),
+              GestureDetector(
+                key: const Key('outside'),
+                onTap: () {},
+                child: const SizedBox(height: 100, width: 100, child: Text('Outside')),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('editor_key')));
+    await tester.pumpAndSettle();
+
+    // Tap outside to trigger onTapOutside
+    await tester.tap(find.byKey(const Key('outside')));
+    await tester.pumpAndSettle();
   });
 }

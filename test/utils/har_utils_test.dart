@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/utils/har_utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/models/models.dart';
 import '../models/request_models.dart';
 
 void main() {
@@ -250,6 +252,25 @@ void main() {
             expectedResult);
       });
 
+      test('Test requestModelToHARJsonRequest with form data null boundary', () {
+        final req = const HttpRequestModel(
+          method: HTTPVerb.post,
+          url: "https://api.foss42.com/submit",
+          bodyContentType: ContentType.formdata,
+          formData: [
+            FormDataModel(name: "field1", value: "value1", type: FormDataType.text),
+          ],
+        );
+        final result = requestModelToHARJsonRequest(req);
+        
+        expect(result['method'], 'POST');
+        expect(result['url'], 'https://api.foss42.com/submit');
+        expect(result['postData']['mimeType'], startsWith('multipart/form-data; boundary='));
+        expect(result['postData']['params'].length, 1);
+        expect(result['postData']['params'][0]['name'], 'field1');
+        expect(result['postData']['params'][0]['value'], 'value1');
+      });
+
       test('Test requestModelToHARJsonRequest exportMode=true', () {
         Map<String, dynamic> expectedResult = {
           'method': 'POST',
@@ -324,6 +345,37 @@ void main() {
               useEnabled: true,
             ),
             expectedResult);
+      });
+      test('Test entryToHAR with null httpRequestModel', () {
+        final requestModel = RequestModel(id: '1', name: 'Test', apiType: APIType.rest);
+        final result = entryToHAR(requestModel);
+        expect(result['request'], {});
+      });
+
+      test('Test requestModelToHARJsonRequest with URL ending in ?', () {
+        final requestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://example.com?',
+        );
+        final result = requestModelToHARJsonRequest(requestModel);
+        expect(result['url'], 'https://example.com');
+      });
+
+      test('Test requestModelToHARJsonRequest with form data and exportMode', () {
+        final requestModel = HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://example.com',
+          bodyContentType: ContentType.formdata,
+          formData: [
+            FormDataModel(name: 'field', value: 'value', type: FormDataType.text),
+            FormDataModel(name: 'file', value: '/tmp/file.txt', type: FormDataType.file),
+          ],
+        );
+        final result = requestModelToHARJsonRequest(requestModel, exportMode: true, boundary: 'test-boundary');
+        expect(result['postData']['comment'], '');
+        expect(result['postData']['mimeType'], 'multipart/form-data; boundary=test-boundary');
+        expect(result['postData']['params'][0]['comment'], '');
+        expect(result['postData']['params'][1]['fileName'], 'file.txt');
       });
     },
   );
