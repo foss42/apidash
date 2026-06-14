@@ -6,6 +6,8 @@ part 'request_model.g.dart';
 
 @freezed
 abstract class RequestModel with _$RequestModel {
+  const RequestModel._();
+
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,

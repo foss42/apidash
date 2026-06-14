@@ -258,8 +258,8 @@ return $default(_that.id,_that.apiType,_that.name,_that.description,_that.reques
 /// @nodoc
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
-class _RequestModel implements RequestModel {
-  const _RequestModel({required this.id, this.apiType = APIType.rest, this.name = "", this.description = "", @JsonKey(includeToJson: false) this.requestTabIndex = 0, this.httpRequestModel, this.responseStatus, this.message, this.httpResponseModel, @JsonKey(includeToJson: false) this.isWorking = false, @JsonKey(includeToJson: false) this.sendingTime, @JsonKey(includeToJson: false) this.isStreaming = false, this.preRequestScript, this.postRequestScript, this.aiRequestModel});
+class _RequestModel extends RequestModel {
+  const _RequestModel({required this.id, this.apiType = APIType.rest, this.name = "", this.description = "", @JsonKey(includeToJson: false) this.requestTabIndex = 0, this.httpRequestModel, this.responseStatus, this.message, this.httpResponseModel, @JsonKey(includeToJson: false) this.isWorking = false, @JsonKey(includeToJson: false) this.sendingTime, @JsonKey(includeToJson: false) this.isStreaming = false, this.preRequestScript, this.postRequestScript, this.aiRequestModel}): super._();
   factory _RequestModel.fromJson(Map<String, dynamic> json) => _$RequestModelFromJson(json);
 
 @override final  String id;
