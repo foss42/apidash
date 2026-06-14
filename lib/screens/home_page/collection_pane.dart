@@ -84,7 +84,10 @@ class _RequestListState extends ConsumerState<RequestList> {
         (value) => value.alwaysShowCollectionPaneScrollbar,
       ),
     );
-    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
+    final filterQuery = ref
+        .watch<String>(collectionSearchQueryProvider)
+        .trim()
+        .toLowerCase();
 
     return Scrollbar(
       controller: controller,
@@ -146,9 +149,7 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (item.httpRequestModel!.url.toLowerCase().contains(
-                      filterQuery,
-                    ) ||
+                if ((item.getUrl() ?? "").toLowerCase().contains(filterQuery) ||
                     item.name.toLowerCase().contains(filterQuery)) {
                   return Padding(
                     padding: kP1,
@@ -178,7 +179,7 @@ class RequestItem extends ConsumerWidget {
       apiType: requestModel.apiType,
       method: requestModel.httpRequestModel?.method,
       name: requestModel.name,
-      url: requestModel.httpRequestModel?.url,
+      url: requestModel.getUrl(),
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
