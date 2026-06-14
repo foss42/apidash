@@ -54,6 +54,34 @@ void main() {
     expect(delTextWithColor, findsOneWidget);
   });
 
+  testWidgets('Testing when APIType is graphql', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SidebarRequestCardTextBox(
+            apiType: APIType.graphql,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('GQL'), findsOneWidget);
+  });
+
+  testWidgets('Testing when APIType is ai', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SidebarRequestCardTextBox(
+            apiType: APIType.ai,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('AI'), findsOneWidget);
+  });
+
   testWidgets('Testing StatusCode', (WidgetTester tester) async {
     const int testStatusCode = 200;
     const TextStyle testStyle = TextStyle(fontSize: 20);
