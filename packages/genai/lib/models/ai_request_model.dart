@@ -5,7 +5,7 @@ part 'ai_request_model.freezed.dart';
 part 'ai_request_model.g.dart';
 
 @freezed
-class AIRequestModel with _$AIRequestModel {
+abstract class AIRequestModel with _$AIRequestModel {
   const AIRequestModel._();
 
   @JsonSerializable(explicitToJson: true, anyMap: true)
