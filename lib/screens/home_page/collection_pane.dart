@@ -1,4 +1,3 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +5,6 @@ import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
@@ -86,7 +84,10 @@ class _RequestListState extends ConsumerState<RequestList> {
         (value) => value.alwaysShowCollectionPaneScrollbar,
       ),
     );
-    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
+    final filterQuery = ref
+        .watch<String>(collectionSearchQueryProvider)
+        .trim()
+        .toLowerCase();
 
     return Scrollbar(
       controller: controller,
@@ -181,11 +182,7 @@ class RequestItem extends ConsumerWidget {
       apiType: requestModel.apiType,
       method: requestModel.httpRequestModel?.method,
       name: requestModel.name,
-      url: switch (requestModel.apiType) {
-        APIType.rest => requestModel.httpRequestModel?.url,
-        APIType.ai => requestModel.aiRequestModel?.url,
-        APIType.graphql => requestModel.httpRequestModel?.url,
-      },
+      url: requestModel.getUrl(),
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
