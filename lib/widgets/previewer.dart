@@ -6,6 +6,7 @@ import 'package:jinja/jinja.dart' as jj;
 import 'package:printing/printing.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+import 'package:mime/mime.dart';
 import 'error_message.dart';
 import 'previewer_csv.dart';
 import 'previewer_json.dart';
@@ -13,7 +14,6 @@ import 'previewer_video.dart';
 import 'uint8_audio_player.dart';
 import '../consts.dart';
 import '../utils/file_utils.dart';
-import 'package:mime/mime.dart';
 
 /// Sniffs the first bytes of [bytes] using the `mime` package's built-in
 /// magic-number database. Returns a (type, subtype) pair, or null if unknown.
@@ -146,9 +146,7 @@ class _PreviewerState extends State<Previewer> {
       try {
         var preview = VideoPreviewer(
           videoBytes: widget.bytes,
-          videoFileExtension: getFileExtension(
-            '$type/$subtype',
-          ),
+          videoFileExtension: getFileExtension('$type/$subtype'),
         );
         return preview;
       } catch (e) {
