@@ -148,7 +148,7 @@ Trying to implement SSE Support into the application. Using a special provider f
 
 The apiType uses the Http Client Manager itself but generates a streamed reponse and listens into it.Inorder to get the actual request headers send by the client i had to use the http_interceptopr package(https://pub.dev/packages/http_interceptor). 
 
-My approach was tested on a https://sse.dev/test
+My approach was tested on a https://postman-echo.com/server-events/5
 
 Architecture is as shown below:
 ```

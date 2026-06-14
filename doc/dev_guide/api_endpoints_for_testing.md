@@ -54,7 +54,7 @@ A List of API endpoints that can be used for testing API Dash
 
 ## SSE
 
-- https://sse.dev
+- https://postman-echo.com/server-events/5
 
 ## Auth
 
