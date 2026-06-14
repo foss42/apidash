@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -180,7 +181,11 @@ class RequestItem extends ConsumerWidget {
       apiType: requestModel.apiType,
       method: requestModel.httpRequestModel?.method,
       name: requestModel.name,
-      url: requestModel.httpRequestModel?.url,
+      url: switch (requestModel.apiType) {
+        APIType.rest => requestModel.httpRequestModel?.url,
+        APIType.ai => requestModel.aiRequestModel?.url,
+        APIType.graphql => requestModel.httpRequestModel?.url,
+      },
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
