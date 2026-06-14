@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RequestModel {
 
- String get id; APIType get apiType; String get name; String get description;@JsonKey(includeToJson: false) dynamic get requestTabIndex; HttpRequestModel? get httpRequestModel; int? get responseStatus; String? get message; HttpResponseModel? get httpResponseModel;@JsonKey(includeToJson: false) bool get isWorking;@JsonKey(includeToJson: false) DateTime? get sendingTime;@JsonKey(includeToJson: false) bool get isStreaming; String? get preRequestScript; String? get postRequestScript; AIRequestModel? get aiRequestModel;
+ String get id; APIType get apiType; String get name; String get description;@JsonKey(includeToJson: false) dynamic get requestTabIndex; HttpRequestModel? get httpRequestModel; int? get responseStatus; String? get message; HttpResponseModel? get httpResponseModel;@JsonKey(includeToJson: false) bool get isWorking;@JsonKey(includeToJson: false) DateTime? get sendingTime;@JsonKey(includeToJson: false) bool get isStreaming; String? get preRequestScript; String? get postRequestScript; AIRequestModel? get aiRequestModel; WebSocketRequestModel? get wsRequestModel;
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $RequestModelCopyWith<RequestModel> get copyWith => _$RequestModelCopyWithImpl<R
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel)&&(identical(other.wsRequestModel, wsRequestModel) || other.wsRequestModel == wsRequestModel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,responseStatus,message,httpResponseModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,aiRequestModel);
+int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,responseStatus,message,httpResponseModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,aiRequestModel,wsRequestModel);
 
 @override
 String toString() {
-  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel)';
+  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel, wsRequestModel: $wsRequestModel)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $RequestModelCopyWith<$Res>  {
   factory $RequestModelCopyWith(RequestModel value, $Res Function(RequestModel) _then) = _$RequestModelCopyWithImpl;
 @useResult
 $Res call({
- String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, int? responseStatus, String? message, HttpResponseModel? httpResponseModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, AIRequestModel? aiRequestModel
+ String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, int? responseStatus, String? message, HttpResponseModel? httpResponseModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, AIRequestModel? aiRequestModel, WebSocketRequestModel? wsRequestModel
 });
 
 
-$HttpRequestModelCopyWith<$Res>? get httpRequestModel;$HttpResponseModelCopyWith<$Res>? get httpResponseModel;$AIRequestModelCopyWith<$Res>? get aiRequestModel;
+$HttpRequestModelCopyWith<$Res>? get httpRequestModel;$HttpResponseModelCopyWith<$Res>? get httpResponseModel;$AIRequestModelCopyWith<$Res>? get aiRequestModel;$WebSocketRequestModelCopyWith<$Res>? get wsRequestModel;
 
 }
 /// @nodoc
@@ -65,7 +65,7 @@ class _$RequestModelCopyWithImpl<$Res>
 
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? responseStatus = freezed,Object? message = freezed,Object? httpResponseModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? aiRequestModel = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? responseStatus = freezed,Object? message = freezed,Object? httpResponseModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? aiRequestModel = freezed,Object? wsRequestModel = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,apiType: null == apiType ? _self.apiType : apiType // ignore: cast_nullable_to_non_nullable
@@ -82,7 +82,8 @@ as DateTime?,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming 
 as bool,preRequestScript: freezed == preRequestScript ? _self.preRequestScript : preRequestScript // ignore: cast_nullable_to_non_nullable
 as String?,postRequestScript: freezed == postRequestScript ? _self.postRequestScript : postRequestScript // ignore: cast_nullable_to_non_nullable
 as String?,aiRequestModel: freezed == aiRequestModel ? _self.aiRequestModel : aiRequestModel // ignore: cast_nullable_to_non_nullable
-as AIRequestModel?,
+as AIRequestModel?,wsRequestModel: freezed == wsRequestModel ? _self.wsRequestModel : wsRequestModel // ignore: cast_nullable_to_non_nullable
+as WebSocketRequestModel?,
   ));
 }
 /// Create a copy of RequestModel
@@ -120,6 +121,18 @@ $AIRequestModelCopyWith<$Res>? get aiRequestModel {
 
   return $AIRequestModelCopyWith<$Res>(_self.aiRequestModel!, (value) {
     return _then(_self.copyWith(aiRequestModel: value));
+  });
+}/// Create a copy of RequestModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$WebSocketRequestModelCopyWith<$Res>? get wsRequestModel {
+    if (_self.wsRequestModel == null) {
+    return null;
+  }
+
+  return $WebSocketRequestModelCopyWith<$Res>(_self.wsRequestModel!, (value) {
+    return _then(_self.copyWith(wsRequestModel: value));
   });
 }
 }
@@ -203,10 +216,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RequestModel() when $default != null:
-return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel);case _:
+return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel,_that.wsRequestModel);case _:
   return orElse();
 
 }
@@ -224,10 +237,10 @@ return $default(_that.id,_that.apiType,_that.name,_that.description,_that.reques
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel)  $default,) {final _that = this;
 switch (_that) {
 case _RequestModel():
-return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel);case _:
+return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel,_that.wsRequestModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -244,10 +257,10 @@ return $default(_that.id,_that.apiType,_that.name,_that.description,_that.reques
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel)?  $default,) {final _that = this;
 switch (_that) {
 case _RequestModel() when $default != null:
-return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel);case _:
+return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel,_that.wsRequestModel);case _:
   return null;
 
 }
@@ -259,7 +272,7 @@ return $default(_that.id,_that.apiType,_that.name,_that.description,_that.reques
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _RequestModel implements RequestModel {
-  const _RequestModel({required this.id, this.apiType = APIType.rest, this.name = "", this.description = "", @JsonKey(includeToJson: false) this.requestTabIndex = 0, this.httpRequestModel, this.responseStatus, this.message, this.httpResponseModel, @JsonKey(includeToJson: false) this.isWorking = false, @JsonKey(includeToJson: false) this.sendingTime, @JsonKey(includeToJson: false) this.isStreaming = false, this.preRequestScript, this.postRequestScript, this.aiRequestModel});
+  const _RequestModel({required this.id, this.apiType = APIType.rest, this.name = "", this.description = "", @JsonKey(includeToJson: false) this.requestTabIndex = 0, this.httpRequestModel, this.responseStatus, this.message, this.httpResponseModel, @JsonKey(includeToJson: false) this.isWorking = false, @JsonKey(includeToJson: false) this.sendingTime, @JsonKey(includeToJson: false) this.isStreaming = false, this.preRequestScript, this.postRequestScript, this.aiRequestModel, this.wsRequestModel});
   factory _RequestModel.fromJson(Map<String, dynamic> json) => _$RequestModelFromJson(json);
 
 @override final  String id;
@@ -277,6 +290,7 @@ class _RequestModel implements RequestModel {
 @override final  String? preRequestScript;
 @override final  String? postRequestScript;
 @override final  AIRequestModel? aiRequestModel;
+@override final  WebSocketRequestModel? wsRequestModel;
 
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
@@ -291,16 +305,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel)&&(identical(other.wsRequestModel, wsRequestModel) || other.wsRequestModel == wsRequestModel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,responseStatus,message,httpResponseModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,aiRequestModel);
+int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,responseStatus,message,httpResponseModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,aiRequestModel,wsRequestModel);
 
 @override
 String toString() {
-  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel)';
+  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel, wsRequestModel: $wsRequestModel)';
 }
 
 
@@ -311,11 +325,11 @@ abstract mixin class _$RequestModelCopyWith<$Res> implements $RequestModelCopyWi
   factory _$RequestModelCopyWith(_RequestModel value, $Res Function(_RequestModel) _then) = __$RequestModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, int? responseStatus, String? message, HttpResponseModel? httpResponseModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, AIRequestModel? aiRequestModel
+ String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, int? responseStatus, String? message, HttpResponseModel? httpResponseModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, AIRequestModel? aiRequestModel, WebSocketRequestModel? wsRequestModel
 });
 
 
-@override $HttpRequestModelCopyWith<$Res>? get httpRequestModel;@override $HttpResponseModelCopyWith<$Res>? get httpResponseModel;@override $AIRequestModelCopyWith<$Res>? get aiRequestModel;
+@override $HttpRequestModelCopyWith<$Res>? get httpRequestModel;@override $HttpResponseModelCopyWith<$Res>? get httpResponseModel;@override $AIRequestModelCopyWith<$Res>? get aiRequestModel;@override $WebSocketRequestModelCopyWith<$Res>? get wsRequestModel;
 
 }
 /// @nodoc
@@ -328,7 +342,7 @@ class __$RequestModelCopyWithImpl<$Res>
 
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? responseStatus = freezed,Object? message = freezed,Object? httpResponseModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? aiRequestModel = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? responseStatus = freezed,Object? message = freezed,Object? httpResponseModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? aiRequestModel = freezed,Object? wsRequestModel = freezed,}) {
   return _then(_RequestModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,apiType: null == apiType ? _self.apiType : apiType // ignore: cast_nullable_to_non_nullable
@@ -345,7 +359,8 @@ as DateTime?,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming 
 as bool,preRequestScript: freezed == preRequestScript ? _self.preRequestScript : preRequestScript // ignore: cast_nullable_to_non_nullable
 as String?,postRequestScript: freezed == postRequestScript ? _self.postRequestScript : postRequestScript // ignore: cast_nullable_to_non_nullable
 as String?,aiRequestModel: freezed == aiRequestModel ? _self.aiRequestModel : aiRequestModel // ignore: cast_nullable_to_non_nullable
-as AIRequestModel?,
+as AIRequestModel?,wsRequestModel: freezed == wsRequestModel ? _self.wsRequestModel : wsRequestModel // ignore: cast_nullable_to_non_nullable
+as WebSocketRequestModel?,
   ));
 }
 
@@ -384,6 +399,18 @@ $AIRequestModelCopyWith<$Res>? get aiRequestModel {
 
   return $AIRequestModelCopyWith<$Res>(_self.aiRequestModel!, (value) {
     return _then(_self.copyWith(aiRequestModel: value));
+  });
+}/// Create a copy of RequestModel
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$WebSocketRequestModelCopyWith<$Res>? get wsRequestModel {
+    if (_self.wsRequestModel == null) {
+    return null;
+  }
+
+  return $WebSocketRequestModelCopyWith<$Res>(_self.wsRequestModel!, (value) {
+    return _then(_self.copyWith(wsRequestModel: value));
   });
 }
 }
