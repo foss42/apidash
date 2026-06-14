@@ -149,7 +149,7 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (item.httpRequestModel!.url.toLowerCase().contains(
+                if (item.getUrl().toLowerCase().contains(
                       filterQuery,
                     ) ||
                     item.name.toLowerCase().contains(filterQuery)) {

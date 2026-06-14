@@ -6,10 +6,7 @@ part 'request_model.g.dart';
 
 @freezed
 class RequestModel with _$RequestModel {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true)
   const factory RequestModel({
     required String id,
     @Default(APIType.rest) APIType apiType,
@@ -30,4 +27,12 @@ class RequestModel with _$RequestModel {
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>
       _$RequestModelFromJson(json);
+
+  String? getUrl() {
+    return switch (apiType) {
+      APIType.rest => httpRequestModel?.url,
+      APIType.graphql => httpRequestModel?.url,
+      APIType.ai => aiRequestModel?.url,
+    };
+  }
 }
