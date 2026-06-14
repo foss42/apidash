@@ -149,11 +149,10 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (matchesNameOrUrlFilter(
-                  query: filterQuery,
-                  name: item.name,
-                  url: item.httpRequestModel?.url,
-                )) {
+                if (item.httpRequestModel!.url.toLowerCase().contains(
+                      filterQuery,
+                    ) ||
+                    item.name.toLowerCase().contains(filterQuery)) {
                   return Padding(
                     padding: kP1,
                     child: RequestItem(id: id, requestModel: item),
