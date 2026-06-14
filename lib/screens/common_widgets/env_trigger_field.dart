@@ -20,9 +20,9 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.readOnly = false,
     this.obscureText = false,
   }) : assert(
-          !(controller != null && initialValue != null),
-          'controller and initialValue cannot be simultaneously defined.',
-        );
+         !(controller != null && initialValue != null),
+         'controller and initialValue cannot be simultaneously defined.',
+       );
 
   final String keyId;
   final String? initialValue;
@@ -50,17 +50,21 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   void initState() {
     super.initState();
     final initialText = widget.initialValue ?? '';
-    controller = widget.controller ??
-        TextEditingController.fromValue(TextEditingValue(
+    controller =
+        widget.controller ??
+        TextEditingController.fromValue(
+          TextEditingValue(
             text: initialText,
-            selection: TextSelection.collapsed(offset: initialText.length)));
+            selection: TextSelection.collapsed(offset: initialText.length),
+          ),
+        );
     _focusNode = widget.focusNode ?? FocusNode();
   }
 
   @override
   void dispose() {
-    controller.dispose();
-    _focusNode.dispose();
+    if (widget.controller == null) controller.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
     super.dispose();
   }
 
@@ -68,11 +72,16 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.keyId != widget.keyId) {
-      controller = widget.controller ??
-          TextEditingController.fromValue(TextEditingValue(
+      controller =
+          widget.controller ??
+          TextEditingController.fromValue(
+            TextEditingValue(
               text: widget.initialValue!,
               selection: TextSelection.collapsed(
-                  offset: widget.initialValue!.length)));
+                offset: widget.initialValue!.length,
+              ),
+            ),
+          );
     } else if (widget.controller == null &&
         oldWidget.initialValue != widget.initialValue &&
         widget.initialValue != null &&
@@ -98,35 +107,37 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       autocompleteTriggers: [
         if (widget.autocompleteNoTrigger != null) widget.autocompleteNoTrigger!,
         AutocompleteTrigger(
-            trigger: '{',
-            triggerEnd: "}}",
-            triggerOnlyAfterSpace: false,
-            optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentTriggerOptions(
-                  query: autocompleteQuery.query,
-                  onSuggestionTap: (suggestion) {
-                    final autocomplete = MultiTriggerAutocomplete.of(context);
-                    autocomplete.acceptAutocompleteOption(
-                      '{${suggestion.variable.key}',
-                    );
-                    widget.onChanged?.call(controller.text);
-                  });
-            }),
+          trigger: '{',
+          triggerEnd: "}}",
+          triggerOnlyAfterSpace: false,
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+            return EnvironmentTriggerOptions(
+              query: autocompleteQuery.query,
+              onSuggestionTap: (suggestion) {
+                final autocomplete = MultiTriggerAutocomplete.of(context);
+                autocomplete.acceptAutocompleteOption(
+                  '{${suggestion.variable.key}',
+                );
+                widget.onChanged?.call(controller.text);
+              },
+            );
+          },
+        ),
         AutocompleteTrigger(
-            trigger: '{{',
-            triggerEnd: "}}",
-            triggerOnlyAfterSpace: false,
-            optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentTriggerOptions(
-                  query: autocompleteQuery.query,
-                  onSuggestionTap: (suggestion) {
-                    final autocomplete = MultiTriggerAutocomplete.of(context);
-                    autocomplete.acceptAutocompleteOption(
-                      suggestion.variable.key,
-                    );
-                    widget.onChanged?.call(controller.text);
-                  });
-            }),
+          trigger: '{{',
+          triggerEnd: "}}",
+          triggerOnlyAfterSpace: false,
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+            return EnvironmentTriggerOptions(
+              query: autocompleteQuery.query,
+              onSuggestionTap: (suggestion) {
+                final autocomplete = MultiTriggerAutocomplete.of(context);
+                autocomplete.acceptAutocompleteOption(suggestion.variable.key);
+                widget.onChanged?.call(controller.text);
+              },
+            );
+          },
+        ),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
         return ExtendedTextField(

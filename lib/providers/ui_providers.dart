@@ -1,9 +1,10 @@
 import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
-final mobileScaffoldKeyStateProvider =
-    StateProvider<GlobalKey<ScaffoldState>>((ref) => kHomeScaffoldKey);
+final mobileScaffoldKeyStateProvider = StateProvider<GlobalKey<ScaffoldState>>(
+  (ref) => kHomeScaffoldKey,
+);
 final leftDrawerStateProvider = StateProvider<bool>((ref) => false);
 final navRailIndexStateProvider = StateProvider<int>((ref) => 0);
 final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);
@@ -24,8 +25,9 @@ final showTerminalBadgeProvider = StateProvider<bool>((ref) => false);
 //   return controller;
 // });
 
-final nameTextFieldFocusNodeProvider =
-    StateProvider.autoDispose<FocusNode>((ref) {
+final nameTextFieldFocusNodeProvider = StateProvider.autoDispose<FocusNode>((
+  ref,
+) {
   FocusNode focusNode = FocusNode();
   ref.onDispose(() {
     focusNode.dispose();
@@ -35,8 +37,9 @@ final nameTextFieldFocusNodeProvider =
 
 final collectionSearchQueryProvider = StateProvider<String>((ref) => '');
 final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
-final importFormatStateProvider =
-    StateProvider<ImportFormat>((ref) => ImportFormat.curl);
+final importFormatStateProvider = StateProvider<ImportFormat>(
+  (ref) => ImportFormat.curl,
+);
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
 
 final dashbotShowMobileProvider = StateProvider<bool>((ref) => false);

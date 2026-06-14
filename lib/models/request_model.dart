@@ -5,8 +5,11 @@ part 'request_model.freezed.dart';
 part 'request_model.g.dart';
 
 @freezed
-class RequestModel with _$RequestModel {
-  @JsonSerializable(explicitToJson: true, anyMap: true)
+abstract class RequestModel with _$RequestModel {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory RequestModel({
     required String id,
     @Default(APIType.rest) APIType apiType,

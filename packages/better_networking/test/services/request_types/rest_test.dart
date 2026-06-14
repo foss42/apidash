@@ -192,31 +192,70 @@ void main() {
     });
   });
 
-  group('Testing overrideContentType functionality', () {
-    test('overrideContentType is true', () async {
+  group('Testing http v1.6.0 breaking changes', () {
+    test(
+        'overrideContentType functionality not required for json due to http v1.6.0 breaking change',
+        () async {
       final request = prepareHttpRequest(
         url: Uri.parse('https://www.example.com'),
         method: 'POST',
         body: 'Hello',
         headers: {'content-type': 'application/json'},
-        overrideContentType: true,
       );
       expect(request.headers['content-type'], 'application/json');
     });
 
-    test('overrideContentType is false', () async {
+    test('; charset=utf-8 is not appended due to http v1.6.0 breaking change',
+        () async {
       final request = prepareHttpRequest(
         url: Uri.parse('https://www.example.com'),
         method: 'POST',
         body: 'Hello',
         headers: {'content-type': 'application/json'},
-        overrideContentType: false,
       );
-      expect(request.headers['content-type'], isNot('application/json'));
+      expect(request.headers['content-type'], 'application/json');
       expect(
         request.headers['content-type'],
-        'application/json; charset=utf-8',
+        isNot('application/json; charset=utf-8'),
       );
+    });
+
+    test(
+        '; charset=utf-8 is appended for text due to http v1.6.0 breaking change',
+        () async {
+      final request = prepareHttpRequest(
+        url: Uri.parse('https://www.example.com'),
+        method: 'POST',
+        body: 'Hello',
+        headers: {'content-type': 'text/xml'},
+      );
+      expect(request.headers['content-type'], 'text/xml; charset=utf-8');
+      expect(request.headers['content-type'], isNot('text/xml'));
+    });
+
+    test(
+        '; charset=utf-8 is appended by default due to http v1.6.0 breaking change',
+        () async {
+      final request = prepareHttpRequest(
+        url: Uri.parse('https://www.example.com'),
+        method: 'POST',
+        body: 'Hello',
+        headers: {'content-type': 'application/xml'},
+      );
+      expect(request.headers['content-type'], isNot('application/xml'));
+      expect(request.headers['content-type'], 'application/xml; charset=utf-8');
+    });
+
+    test('do not append ; charset=utf-8 for xml', () async {
+      final request = prepareHttpRequest(
+          url: Uri.parse('https://www.example.com'),
+          method: 'POST',
+          body: 'Hello',
+          headers: {'content-type': 'application/xml'},
+          overrideContentType: true);
+      expect(request.headers['content-type'], 'application/xml');
+      expect(request.headers['content-type'],
+          isNot('application/xml; charset=utf-8'));
     });
   });
 }

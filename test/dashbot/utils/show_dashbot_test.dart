@@ -4,6 +4,7 @@ import 'package:apidash/dashbot/dashbot_dashboard.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -15,22 +16,26 @@ void main() {
   }) async {
     late BuildContext ctx;
     late WidgetRef wRef;
-    await tester.pumpWidget(ProviderScope(
-      overrides: [
-        // Empty current request (StateProvider override supplies initial value).
-        selectedRequestModelProvider.overrideWith((ref) => null),
-        if (overrides != null) ...overrides,
-      ],
-      child: MaterialApp(
-        home: Scaffold(
-          body: Consumer(builder: (c, ref, _) {
-            ctx = c;
-            wRef = ref;
-            return const SizedBox();
-          }),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          // Empty current request (StateProvider override supplies initial value).
+          selectedRequestModelProvider.overrideWith((ref) => null),
+          if (overrides != null) ...overrides,
+        ],
+        child: MaterialApp(
+          home: Scaffold(
+            body: Consumer(
+              builder: (c, ref, _) {
+                ctx = c;
+                wRef = ref;
+                return const SizedBox();
+              },
+            ),
+          ),
         ),
       ),
-    ));
+    );
     // Enlarge window width to avoid Row overflow in header (actions + title)
     final notifier = wRef.read(dashbotWindowNotifierProvider.notifier);
     notifier.state = notifier.state.copyWith(width: 650);
@@ -38,8 +43,9 @@ void main() {
   }
 
   group('showDashbotWindow', () {
-    testWidgets('activates & inserts overlay when inactive & popped',
-        (tester) async {
+    testWidgets('activates & inserts overlay when inactive & popped', (
+      tester,
+    ) async {
       final (ctx, ref) = await pumpHarness(tester);
       expect(ref.read(dashbotWindowNotifierProvider).isActive, isFalse);
       showDashbotWindow(ctx, ref);
@@ -75,8 +81,9 @@ void main() {
       expect(find.byType(DashbotWindow), findsNothing);
     });
 
-    testWidgets('pressing close button removes overlay & deactivates',
-        (tester) async {
+    testWidgets('pressing close button removes overlay & deactivates', (
+      tester,
+    ) async {
       final (ctx, ref) = await pumpHarness(tester);
       showDashbotWindow(ctx, ref);
       await tester.pump();
