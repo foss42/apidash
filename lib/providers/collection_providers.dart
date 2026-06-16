@@ -65,52 +65,6 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
-  final Map<String, Timer> _heartbeatTimers = {};
-
-  void _stopHeartbeat(String requestId) {
-    _heartbeatTimers.remove(requestId)?.cancel();
-  }
-
-  void _sendHeartbeatPing(String requestId) {
-    final req = state?[requestId];
-    final ws = req?.wsRequestModel;
-    if (req == null || ws == null || !req.isStreaming) {
-      _stopHeartbeat(requestId);
-      return;
-    }
-    final heartbeatMsg = WebSocketMessage(
-      payload: "Heartbeat ping",
-      timestamp: DateTime.now(),
-      outgoing: true,
-      messageType: WebSocketMessageType.sent,
-    );
-    ConnectionManager.instance.send(requestId, heartbeatMsg.payload);
-    update(
-      id: requestId,
-      wsRequestModel: ws.copyWith(
-        messageHistory: [...ws.messageHistory, heartbeatMsg],
-      ),
-    );
-  }
-
-  void _startHeartbeat(String requestId) {
-    _stopHeartbeat(requestId);
-    final currentRequest = state?[requestId];
-    final wsModel = currentRequest?.wsRequestModel;
-    if (wsModel == null || !wsModel.enableHeartbeat) return;
-
-    final interval = Duration(
-        seconds: wsModel.heartbeatInterval > 0
-            ? wsModel.heartbeatInterval
-            : 30);
-
-    // Fire immediately upon starting
-    _sendHeartbeatPing(requestId);
-
-    _heartbeatTimers[requestId] = Timer.periodic(interval, (timer) {
-      _sendHeartbeatPing(requestId);
-    });
-  }
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -375,13 +329,28 @@ class CollectionStateNotifier
         aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
         wsRequestModel: currentModel.apiType == APIType.websocket
             ? (wsRequestModel ?? currentModel.wsRequestModel)?.copyWith(
-                headers: headers ?? currentModel.wsRequestModel?.headers,
-                isHeaderEnabledList:
-                    isHeaderEnabledList ??
+                // Resolution order matters. The top-level headers/params args
+                // are an optional MERGE onto the model being written. A freshly
+                // passed `wsRequestModel` may already carry its own
+                // headers/params; those must NOT be clobbered when the merge
+                // args are null. Falling straight back to
+                // `currentModel.wsRequestModel?.x` (which is null for a brand
+                // new ws model) would pass `null` explicitly to freezed
+                // copyWith and overwrite the passed model's fields. So prefer:
+                //   1. the explicit top-level arg (caller-supplied merge),
+                //   2. the just-passed wsRequestModel's own field,
+                //   3. the existing model's field.
+                headers: headers ??
+                    wsRequestModel?.headers ??
+                    currentModel.wsRequestModel?.headers,
+                isHeaderEnabledList: isHeaderEnabledList ??
+                    wsRequestModel?.isHeaderEnabledList ??
                     currentModel.wsRequestModel?.isHeaderEnabledList,
-                params: params ?? currentModel.wsRequestModel?.params,
-                isParamEnabledList:
-                    isParamEnabledList ??
+                params: params ??
+                    wsRequestModel?.params ??
+                    currentModel.wsRequestModel?.params,
+                isParamEnabledList: isParamEnabledList ??
+                    wsRequestModel?.isParamEnabledList ??
                     currentModel.wsRequestModel?.isParamEnabledList,
               )
             : (wsRequestModel ?? currentModel.wsRequestModel),
@@ -394,21 +363,6 @@ class CollectionStateNotifier
     map[rId] = newModel;
     state = map;
     unsave();
-
-    if (wsRequestModel != null &&
-        currentModel.apiType == APIType.websocket &&
-        newModel.isStreaming) {
-      if (wsRequestModel.enableHeartbeat !=
-              currentModel.wsRequestModel?.enableHeartbeat ||
-          wsRequestModel.heartbeatInterval !=
-              currentModel.wsRequestModel?.heartbeatInterval) {
-        if (wsRequestModel.enableHeartbeat) {
-          _startHeartbeat(rId);
-        } else {
-          _stopHeartbeat(rId);
-        }
-      }
-    }
   }
 
   /// Send a text message over an active WebSocket connection.
@@ -535,6 +489,10 @@ class CollectionStateNotifier
 
       await channel.ready;
 
+      // Guard: the notifier may have been disposed while awaiting the
+      // handshake; the `state` reads/writes below would throw otherwise.
+      if (!mounted) return;
+
       final latestRequest = state?[requestId];
       final currentWs = latestRequest?.wsRequestModel ?? wsModel;
 
@@ -556,10 +514,11 @@ class CollectionStateNotifier
         ),
       };
 
-      _startHeartbeat(requestId);
-
       channel.stream.listen(
         (data) {
+          // Guard: stream events can arrive after the notifier is disposed
+          // (free-floating subscription); touching `state` then throws.
+          if (!mounted) return;
           final currentRequest = state?[requestId];
           if (currentRequest != null) {
             final currentWs = currentRequest.wsRequestModel;
@@ -580,7 +539,9 @@ class CollectionStateNotifier
           }
         },
         onError: (e) {
-          _stopHeartbeat(requestId);
+          // Guard: onError can fire after dispose (connection closing while the
+          // tab is torn down); touching `state` then throws "used after dispose".
+          if (!mounted) return;
           final currentRequest = state?[requestId];
           final ws = currentRequest?.wsRequestModel;
           if (ws != null) {
@@ -604,7 +565,9 @@ class CollectionStateNotifier
           }
         },
         onDone: () async {
-          _stopHeartbeat(requestId);
+          // Guard: onDone fires asynchronously after the channel closes and may
+          // run after the notifier is disposed; touching `state` then throws.
+          if (!mounted) return;
           final currentRequest = state?[requestId];
           if (currentRequest == null) return;
           final ws = currentRequest.wsRequestModel;
@@ -647,7 +610,9 @@ class CollectionStateNotifier
         },
       );
     } catch (e) {
-      _stopHeartbeat(requestId);
+      // Guard: the connect future can complete (throw) after the notifier is
+      // disposed; touching `state` below would throw "used after dispose".
+      if (!mounted) return;
       final currentRequest = state?[requestId];
       final ws = currentRequest?.wsRequestModel ?? wsModel;
       final errMsg = WebSocketMessage(
@@ -989,7 +954,6 @@ class CollectionStateNotifier
     if (id == null) return;
     final requestModel = state?[id];
     if (requestModel?.apiType == APIType.websocket) {
-      _stopHeartbeat(id);
       final ws = requestModel?.wsRequestModel;
       if (ws != null) {
         final discMsg = WebSocketMessage(
