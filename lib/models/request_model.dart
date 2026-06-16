@@ -7,6 +7,9 @@ part 'request_model.g.dart';
 
 @freezed
 abstract class RequestModel with _$RequestModel {
+  // Required by freezed so custom methods (e.g. getUrl) are mixed into the
+  // generated _RequestModel. Looks "unused" to the linter but removing it
+  // breaks codegen (_RequestModel stops implementing getUrl) — do not delete.
   const RequestModel._();
 
   @JsonSerializable(
@@ -40,6 +43,7 @@ abstract class RequestModel with _$RequestModel {
       APIType.rest => httpRequestModel?.url,
       APIType.graphql => httpRequestModel?.url,
       APIType.ai => aiRequestModel?.url,
+      APIType.websocket => wsRequestModel?.url
     };
   }
 }
