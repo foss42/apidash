@@ -11,7 +11,7 @@ topics:
   - graphql
 
 environment:
-  sdk: ">=3.6.0 <4.0.0"
+  sdk: ">=3.11.0 <4.0.0"
 
 resolution: workspace
 
@@ -23,7 +23,7 @@ dependencies:
   http: ^1.6.0
   http_parser: ^4.1.2
   json5: ^0.8.2
-  json_annotation: ^4.9.0
+  json_annotation: ^4.11.0
   seed: any
   xml: ^6.3.0
   oauth1: ^2.1.0

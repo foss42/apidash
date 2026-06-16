@@ -6,9 +6,8 @@ part of 'history_meta_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$HistoryMetaModelImpl _$$HistoryMetaModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$HistoryMetaModelImpl(
+_HistoryMetaModel _$HistoryMetaModelFromJson(Map<String, dynamic> json) =>
+    _HistoryMetaModel(
       historyId: json['historyId'] as String,
       requestId: json['requestId'] as String,
       apiType: $enumDecode(_$APITypeEnumMap, json['apiType']),
@@ -19,8 +18,7 @@ _$HistoryMetaModelImpl _$$HistoryMetaModelImplFromJson(
       timeStamp: DateTime.parse(json['timeStamp'] as String),
     );
 
-Map<String, dynamic> _$$HistoryMetaModelImplToJson(
-        _$HistoryMetaModelImpl instance) =>
+Map<String, dynamic> _$HistoryMetaModelToJson(_HistoryMetaModel instance) =>
     <String, dynamic>{
       'historyId': instance.historyId,
       'requestId': instance.requestId,
