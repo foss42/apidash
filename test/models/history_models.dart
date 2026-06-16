@@ -1,5 +1,5 @@
 import 'package:apidash/models/models.dart'
-    show HistoryMetaModel, HistoryRequestModel;
+    show HistoryMetaModel, HistoryRequestModel, WebSocketRequestModel;
 import 'package:apidash_core/apidash_core.dart';
 
 import 'http_request_models.dart';
@@ -34,6 +34,38 @@ final historyMetaModel2 = HistoryMetaModel(
   responseStatus: 200,
 );
 
+/// WebSocket History Meta model
+final historyMetaModelWs = HistoryMetaModel(
+  historyId: 'historyIdWs',
+  requestId: 'requestIdWs',
+  apiType: APIType.websocket,
+  url: 'wss://echo.websocket.org',
+  method: HTTPVerb.get,
+  timeStamp: DateTime(2024, 1, 1),
+  responseStatus: 0,
+);
+
+/// WebSocket request model fixture for history (default/empty messageHistory so
+/// the toJson -> fromJson round-trip is unambiguous).
+const historyWsRequestModel = WebSocketRequestModel(
+  url: 'wss://echo.websocket.org',
+  headers: [NameValueModel(name: 'Auth', value: 'Bearer 123')],
+  isHeaderEnabledList: [true],
+  params: [NameValueModel(name: 'id', value: '1')],
+  isParamEnabledList: [true],
+  autoReconnect: true,
+  enableHeartbeat: true,
+  heartbeatInterval: 15,
+);
+
+/// WebSocket History Request model carrying a non-null wsRequestModel.
+final historyRequestModelWs = HistoryRequestModel(
+  historyId: 'historyIdWs',
+  metaData: historyMetaModelWs,
+  wsRequestModel: historyWsRequestModel,
+  authModel: AuthModel(type: APIAuthType.none),
+);
+
 final historyRequestModel2 = HistoryRequestModel(
     historyId: 'historyId2',
     metaData: historyMetaModel2,
@@ -58,6 +90,7 @@ final Map<String, dynamic> historyRequestModelJson1 = {
   "metaData": historyMetaModelJson1,
   "httpRequestModel": httpRequestModelGet4Json,
   'aiRequestModel': null,
+  'wsRequestModel': null,
   "httpResponseModel": responseModelJson,
   'preRequestScript': null,
   'postRequestScript': null,
@@ -82,6 +115,59 @@ final Map<String, dynamic> historyMetaModelJson2 = {
   "method": "post",
   "timeStamp": '2024-01-01T00:00:00.000',
   "responseStatus": 200,
+};
+
+/// WebSocket History Meta JSON
+final Map<String, dynamic> historyMetaModelWsJson = {
+  "historyId": "historyIdWs",
+  "requestId": "requestIdWs",
+  "apiType": "websocket",
+  "name": "",
+  "url": "wss://echo.websocket.org",
+  "method": "get",
+  "timeStamp": '2024-01-01T00:00:00.000',
+  "responseStatus": 0,
+};
+
+/// Expected JSON for the WS wsRequestModel fixture.
+/// Note: `messageHistory` IS persisted to JSON (serialized as a list), so the
+/// default empty history shows up here as an empty list.
+final Map<String, dynamic> historyWsRequestModelJson = {
+  'url': 'wss://echo.websocket.org',
+  'messageHistory': [],
+  'headers': [
+    {'name': 'Auth', 'value': 'Bearer 123'}
+  ],
+  'isHeaderEnabledList': [true],
+  'params': [
+    {'name': 'id', 'value': '1'}
+  ],
+  'isParamEnabledList': [true],
+  'autoReconnect': true,
+  'enableHeartbeat': true,
+  'heartbeatInterval': 15,
+};
+
+/// Expected JSON for the WS HistoryRequestModel fixture.
+final Map<String, dynamic> historyRequestModelWsJson = {
+  "historyId": "historyIdWs",
+  "metaData": historyMetaModelWsJson,
+  'httpRequestModel': null,
+  'aiRequestModel': null,
+  'wsRequestModel': historyWsRequestModelJson,
+  "httpResponseModel": null,
+  'preRequestScript': null,
+  'postRequestScript': null,
+  'authModel': {
+    'type': 'none',
+    'apikey': null,
+    'bearer': null,
+    'basic': null,
+    'jwt': null,
+    'digest': null,
+    'oauth1': null,
+    'oauth2': null
+  }
 };
 
 final Map<String, dynamic> historyRequestModelJson2 = {
