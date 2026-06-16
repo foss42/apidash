@@ -116,14 +116,14 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                         if (model != null) {
                           requestName = model.name.isNotEmpty
                               ? model.name
-                              : kLabelUntitled;
+                              : kUntitled;
                         }
                       } else if (e.requestId != null) {
                         final model = collection?[e.requestId];
                         if (model != null) {
                           requestName = model.name.isNotEmpty
                               ? model.name
-                              : kLabelUntitled;
+                              : kUntitled;
                         }
                       }
                       switch (e.source) {
