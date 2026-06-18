@@ -18,29 +18,30 @@ void main() {
 
       final m1 = ChatMessage(
         id: 'm1',
-        content: 'Hello',
+        explanation: 'Hello', // Updated from content
         role: MessageRole.user,
         timestamp: ts,
         messageType: ChatMessageType.general,
-        actions: const [action],
+        actions: const [action], // Now required and non-nullable
       );
 
-      final m2 = m1.copyWith(content: 'Hi', role: MessageRole.system);
+      final m2 = m1.copyWith(explanation: 'Hi', role: MessageRole.system);
       expect(m2.id, 'm1');
-      expect(m2.content, 'Hi');
+      expect(m2.explanation, 'Hi'); // Updated check
       expect(m2.role, MessageRole.system);
       expect(m2.timestamp, ts);
       expect(m2.messageType, ChatMessageType.general);
-      expect(m2.actions, isNotNull);
-      expect(m2.actions!.length, 1);
+      expect(m2.actions, isNotEmpty);
+      expect(m2.actions.length, 1); // Removed ! as it's non-nullable now
     });
 
     test('ChatState copyWith', () {
       final msg = ChatMessage(
         id: '1',
-        content: 'c',
+        explanation: 'c',
         role: MessageRole.user,
         timestamp: DateTime.fromMillisecondsSinceEpoch(0),
+        actions: const [], // Provided required empty list
       );
       const failure = ChatFailure('net down', code: '500');
       const state = ChatState();
@@ -66,8 +67,10 @@ void main() {
     });
 
     test('ChatResponse copyWith', () {
+      // Assuming ChatResponse still uses 'content' or has been updated to 'explanation'
+      // If you refactored ChatResponse too, change 'content' to 'explanation' below.
       const r1 =
-          ChatResponse(content: 'Hello', messageType: ChatMessageType.general);
+      ChatResponse(content: 'Hello', messageType: ChatMessageType.general);
       final r2 = r1.copyWith(content: 'Hi again');
       expect(r2.content, 'Hi again');
       expect(r2.messageType, ChatMessageType.general);
