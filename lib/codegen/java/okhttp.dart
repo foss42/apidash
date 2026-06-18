@@ -36,16 +36,16 @@ import okhttp3.MultipartBody;""";
 
 ''';
 
-  final String kTemplateUrlQuery = '''
+final String kTemplateUrlQuery = '''
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("{{url}}").newBuilder();
+        {% for name, value in queryParams %}{% for v in value %} 
+        urlBuilder.addQueryParameter("{{ name }}", "{{ v }}");{% endfor %}{% endfor %}  
+        HttpUrl url = urlBuilder.build();      
+        ''';
 
-        HttpUrl url = HttpUrl.parse("{{url}}").newBuilder()
-            {{params}}
-            .build();
-
-''';
 
   String kTemplateRequestBody = '''
-
+        
         MediaType mediaType = MediaType.parse("{{contentType}}");
 
         RequestBody body = RequestBody.create({{body}}, mediaType);
@@ -107,12 +107,12 @@ import okhttp3.MultipartBody;""";
         String url = stripUriParams(uri);
 
         if (uri.hasQuery) {
-          var params = uri.queryParameters;
+          var params = requestModel.enabledParamsMap;
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
             result += templateParams
-                .render({"url": url, "params": getQueryParams(params)});
+                .render({"url": url, "queryParams": params});
           }
         }
         if (!hasQuery) {
@@ -172,12 +172,6 @@ import okhttp3.MultipartBody;""";
     }
   }
 
-  String getQueryParams(Map<String, String> params) {
-    final paramStrings = params.entries
-        .map((entry) => '.addQueryParameter("${entry.key}", "${entry.value}")')
-        .toList();
-    return paramStrings.join('\n            ');
-  }
 
   String getHeaders(Map<String, String> headers) {
     String result = "";

@@ -11,8 +11,7 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev';
-
+const url = new URL('https://api.apidash.dev'); 
 const options = {
   method: 'GET'
 };
@@ -41,8 +40,8 @@ fetch(url, options)
     test('GET 2', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/country/data?code=US';
-
+const url = new URL('https://api.apidash.dev/country/data'); 
+url.searchParams.append('code', 'US');
 const options = {
   method: 'GET'
 };
@@ -71,8 +70,9 @@ fetch(url, options)
     test('GET 3', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/country/data?code=IND';
-
+const url = new URL('https://api.apidash.dev/country/data'); 
+url.searchParams.append('code', 'IND');
+url.searchParams.append('code', 'US');
 const options = {
   method: 'GET'
 };
@@ -101,8 +101,12 @@ fetch(url, options)
     test('GET 4', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true';
-
+const url = new URL('https://api.apidash.dev/humanize/social'); 
+url.searchParams.append('num', '8700000');
+url.searchParams.append('digits', '3');
+url.searchParams.append('system', 'SS');
+url.searchParams.append('add_space', 'true');
+url.searchParams.append('trailing_zeros', 'true');
 const options = {
   method: 'GET'
 };
@@ -131,8 +135,7 @@ fetch(url, options)
     test('GET 5', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.github.com/repos/foss42/apidash';
-
+const url = new URL('https://api.github.com/repos/foss42/apidash'); 
 const options = {
   method: 'GET',
   headers: {
@@ -164,8 +167,8 @@ fetch(url, options)
     test('GET 6', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.github.com/repos/foss42/apidash?raw=true';
-
+const url = new URL('https://api.github.com/repos/foss42/apidash'); 
+url.searchParams.append('raw', 'true');
 const options = {
   method: 'GET',
   headers: {
@@ -197,8 +200,7 @@ fetch(url, options)
     test('GET 7', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev';
-
+const url = new URL('https://api.apidash.dev'); 
 const options = {
   method: 'GET'
 };
@@ -227,8 +229,8 @@ fetch(url, options)
     test('GET 8', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.github.com/repos/foss42/apidash?raw=true';
-
+const url = new URL('https://api.github.com/repos/foss42/apidash'); 
+url.searchParams.append('raw', 'true');
 const options = {
   method: 'GET',
   headers: {
@@ -260,8 +262,9 @@ fetch(url, options)
     test('GET 9', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/humanize/social?num=8700000&add_space=true';
-
+const url = new URL('https://api.apidash.dev/humanize/social'); 
+url.searchParams.append('num', '8700000');
+url.searchParams.append('add_space', 'true');
 const options = {
   method: 'GET'
 };
@@ -290,8 +293,7 @@ fetch(url, options)
     test('GET 10', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/humanize/social';
-
+const url = new URL('https://api.apidash.dev/humanize/social'); 
 const options = {
   method: 'GET',
   headers: {
@@ -323,8 +325,9 @@ fetch(url, options)
     test('GET 11', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3';
-
+const url = new URL('https://api.apidash.dev/humanize/social'); 
+url.searchParams.append('num', '8700000');
+url.searchParams.append('digits', '3');
 const options = {
   method: 'GET',
   headers: {
@@ -356,8 +359,7 @@ fetch(url, options)
     test('GET 12', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/humanize/social';
-
+const url = new URL('https://api.apidash.dev/humanize/social'); 
 const options = {
   method: 'GET'
 };
@@ -388,8 +390,7 @@ fetch(url, options)
     test('HEAD 1', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev';
-
+const url = new URL('https://api.apidash.dev'); 
 const options = {
   method: 'HEAD'
 };
@@ -418,8 +419,7 @@ fetch(url, options)
     test('HEAD 2', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'http://api.apidash.dev';
-
+const url = new URL('http://api.apidash.dev'); 
 const options = {
   method: 'HEAD'
 };
@@ -450,8 +450,7 @@ fetch(url, options)
     test('POST 1', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/case/lower';
-
+const url = new URL('https://api.apidash.dev/case/lower'); 
 const options = {
   method: 'POST',
   headers: {
@@ -484,8 +483,7 @@ fetch(url, options)
     test('POST 2', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/case/lower';
-
+const url = new URL('https://api.apidash.dev/case/lower'); 
 const options = {
   method: 'POST',
   headers: {
@@ -518,8 +516,7 @@ fetch(url, options)
     test('POST 3', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://api.apidash.dev/case/lower';
-
+const url = new URL('https://api.apidash.dev/case/lower'); 
 const options = {
   method: 'POST',
   headers: {
@@ -558,8 +555,7 @@ payload.append("text", "API")
 payload.append("sep", "|")
 payload.append("times", "3")
 
-const url = 'https://api.apidash.dev/io/form';
-
+const url = new URL('https://api.apidash.dev/io/form'); 
 const options = {
   method: 'POST',
   body: payload
@@ -593,8 +589,7 @@ payload.append("text", "API")
 payload.append("sep", "|")
 payload.append("times", "3")
 
-const url = 'https://api.apidash.dev/io/form';
-
+const url = new URL('https://api.apidash.dev/io/form'); 
 const options = {
   method: 'POST',
   headers: {
@@ -629,8 +624,7 @@ const payload = new FormData();
 payload.append("token", "xyz")
 payload.append("imfile", fileFromSync("/Documents/up/1.png"))
 
-const url = 'https://api.apidash.dev/io/img';
-
+const url = new URL('https://api.apidash.dev/io/img'); 
 const options = {
   method: 'POST',
   body: payload
@@ -662,8 +656,7 @@ const payload = new FormData();
 payload.append("token", "xyz")
 payload.append("imfile", fileFromSync("/Documents/up/1.png"))
 
-const url = 'https://api.apidash.dev/io/img';
-
+const url = new URL('https://api.apidash.dev/io/img'); 
 const options = {
   method: 'POST',
   body: payload
@@ -696,8 +689,9 @@ payload.append("text", "API")
 payload.append("sep", "|")
 payload.append("times", "3")
 
-const url = 'https://api.apidash.dev/io/form?size=2&len=3';
-
+const url = new URL('https://api.apidash.dev/io/form'); 
+url.searchParams.append('size', '2');
+url.searchParams.append('len', '3');
 const options = {
   method: 'POST',
   body: payload
@@ -729,8 +723,9 @@ const payload = new FormData();
 payload.append("token", "xyz")
 payload.append("imfile", fileFromSync("/Documents/up/1.png"))
 
-const url = 'https://api.apidash.dev/io/img?size=2&len=3';
-
+const url = new URL('https://api.apidash.dev/io/img'); 
+url.searchParams.append('size', '2');
+url.searchParams.append('len', '3');
 const options = {
   method: 'POST',
   headers: {
@@ -764,12 +759,12 @@ fetch(url, options)
     test('PUT 1', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://reqres.in/api/users/2';
-
+const url = new URL('https://reqres.in/api/users/2'); 
 const options = {
   method: 'PUT',
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "x-api-key": "reqres-free-v1"
   },
   body: "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
 };
@@ -800,12 +795,12 @@ fetch(url, options)
     test('PATCH 1', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://reqres.in/api/users/2';
-
+const url = new URL('https://reqres.in/api/users/2'); 
 const options = {
   method: 'PATCH',
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "x-api-key": "reqres-free-v1"
   },
   body: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };
@@ -836,10 +831,12 @@ fetch(url, options)
     test('DELETE 1', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://reqres.in/api/users/2';
-
+const url = new URL('https://reqres.in/api/users/2'); 
 const options = {
-  method: 'DELETE'
+  method: 'DELETE',
+  headers: {
+    "x-api-key": "reqres-free-v1"
+  }
 };
 
 fetch(url, options)
@@ -866,12 +863,12 @@ fetch(url, options)
     test('DELETE 2', () {
       const expectedCode = r"""import fetch from 'node-fetch'
 
-const url = 'https://reqres.in/api/users/2';
-
+const url = new URL('https://reqres.in/api/users/2'); 
 const options = {
   method: 'DELETE',
   headers: {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "x-api-key": "reqres-free-v1"
   },
   body: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };

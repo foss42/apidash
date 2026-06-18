@@ -39,11 +39,10 @@ public class Main {
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("{{ method|upper }}", url);\n
 ''';
 
-  final String kTemplateUrlQueryParam = '''
-            requestBuilder{% for name, value in queryParams %}
-                .addQueryParam("{{ name }}", "{{ value }}"){% endfor %};\n
+  final String kTemplateUrlQueryParam = ''' 
+          {% for name, value in queryParams %} {% for v in value %}
+            requestBuilder.addQueryParam("{{ name }}", "{{ v }}"); {% endfor %}{% endfor %}\n
 ''';
-
   final String kTemplateRequestHeader = '''
             requestBuilder{% for name, value in headers %}
                 .addHeader("{{ name }}", "{{ value }}"){% endfor %};\n
@@ -158,7 +157,7 @@ public class Main {
       result += templateRequestCreation.render({"method": method.name});
 
       // setting up query parameters
-      var params = uri.queryParameters;
+      var params = requestModel.enabledParamsMap;
       if (params.isNotEmpty) {
         var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
         result += templateUrlQueryParam.render({"queryParams": params});

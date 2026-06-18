@@ -19,7 +19,9 @@ request = Net::HTTP::Get.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -34,14 +36,21 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.apidash.dev/country/data?code=US")
+url = URI("https://api.apidash.dev/country/data")
+
+params = {
+ "code" => ["US"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -56,14 +65,21 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.apidash.dev/country/data?code=IND")
+url = URI("https://api.apidash.dev/country/data")
+
+params = {
+ "code" => ["IND", "US"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -78,14 +94,25 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true")
+url = URI("https://api.apidash.dev/humanize/social")
+
+params = {
+ "num" => ["8700000"],
+ "digits" => ["3"],
+ "system" => ["SS"],
+ "add_space" => ["true"],
+ "trailing_zeros" => ["true"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -105,10 +132,13 @@ https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 request["User-Agent"] = "Test Agent"
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -123,15 +153,23 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.github.com/repos/foss42/apidash?raw=true")
+url = URI("https://api.github.com/repos/foss42/apidash")
+
+params = {
+ "raw" => ["true"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 request["User-Agent"] = "Test Agent"
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -153,7 +191,9 @@ request = Net::HTTP::Get.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -168,15 +208,23 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.github.com/repos/foss42/apidash?raw=true")
+url = URI("https://api.github.com/repos/foss42/apidash")
+
+params = {
+ "raw" => ["true"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 request["User-Agent"] = "Test Agent"
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -191,14 +239,22 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.apidash.dev/humanize/social?num=8700000&add_space=true")
+url = URI("https://api.apidash.dev/humanize/social")
+
+params = {
+ "num" => ["8700000"],
+ "add_space" => ["true"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -218,10 +274,13 @@ https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 request["User-Agent"] = "Test Agent"
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -236,15 +295,24 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.apidash.dev/humanize/social?num=8700000&digits=3")
+url = URI("https://api.apidash.dev/humanize/social")
+
+params = {
+ "num" => ["8700000"],
+ "digits" => ["3"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
 request["User-Agent"] = "Test Agent"
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -266,7 +334,9 @@ request = Net::HTTP::Get.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -290,7 +360,9 @@ request = Net::HTTP::Head.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
-puts "Response Body: #{response.to_hash}"
+
+puts "Response Headers: #{response.to_hash}"
+
 """;
       expect(
           codeGen.getCode(
@@ -312,7 +384,9 @@ request = Net::HTTP::Head.new(url)
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
-puts "Response Body: #{response.to_hash}"
+
+puts "Response Headers: #{response.to_hash}"
+
 """;
       expect(
           codeGen.getCode(
@@ -334,6 +408,7 @@ https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 request["Content-Type"] = "text/plain"
+
 request.body = <<HEREDOC
 {
 "text": "I LOVE Flutter"
@@ -343,7 +418,9 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -363,6 +440,7 @@ https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 request["Content-Type"] = "application/json"
+
 request.body = <<HEREDOC
 {
 "text": "I LOVE Flutter",
@@ -377,7 +455,9 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -397,7 +477,9 @@ https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 request["User-Agent"] = "Test Agent"
+
 request["Content-Type"] = "application/json"
+
 request.body = <<HEREDOC
 {
 "text": "I LOVE Flutter"
@@ -407,7 +489,9 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -425,12 +509,15 @@ url = URI("https://api.apidash.dev/io/form")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-form_data = [["text", "API"],["sep", "|"],["times", "3"]]
+form_data = [["text", "API"], ["sep", "|"], ["times", "3"]]
 request.set_form form_data, 'multipart/form-data'
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -450,12 +537,16 @@ https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 request["User-Agent"] = "Test Agent"
-form_data = [["text", "API"],["sep", "|"],["times", "3"]]
+
+form_data = [["text", "API"], ["sep", "|"], ["times", "3"]]
 request.set_form form_data, 'multipart/form-data'
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -473,12 +564,15 @@ url = URI("https://api.apidash.dev/io/img")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-form_data = [["token", "xyz"],["imfile", File.open("/Documents/up/1.png")]]
+form_data = [["token", "xyz"], ["imfile", File.open("/Documents/up/1.png")]]
 request.set_form form_data, 'multipart/form-data'
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -496,12 +590,15 @@ url = URI("https://api.apidash.dev/io/img")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-form_data = [["token", "xyz"],["imfile", File.open("/Documents/up/1.png")]]
+form_data = [["token", "xyz"], ["imfile", File.open("/Documents/up/1.png")]]
 request.set_form form_data, 'multipart/form-data'
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -515,16 +612,25 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.apidash.dev/io/form?size=2&len=3")
+url = URI("https://api.apidash.dev/io/form")
+
+params = {
+ "size" => ["2"],
+ "len" => ["3"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-form_data = [["text", "API"],["sep", "|"],["times", "3"]]
+form_data = [["text", "API"], ["sep", "|"], ["times", "3"]]
 request.set_form form_data, 'multipart/form-data'
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -538,18 +644,29 @@ puts "Response Body: #{response.body}"
       const expectedCode = r"""require "uri"
 require "net/http"
 
-url = URI("https://api.apidash.dev/io/img?size=2&len=3")
+url = URI("https://api.apidash.dev/io/img")
+
+params = {
+ "size" => ["2"],
+ "len" => ["3"],
+}
+url.query = URI.encode_www_form(params)
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 request["User-Agent"] = "Test Agent"
+
 request["Keep-Alive"] = "true"
-form_data = [["token", "xyz"],["imfile", File.open("/Documents/up/1.png")]]
+
+form_data = [["token", "xyz"], ["imfile", File.open("/Documents/up/1.png")]]
 request.set_form form_data, 'multipart/form-data'
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -570,7 +687,10 @@ url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Put.new(url)
+request["x-api-key"] = "reqres-free-v1"
+
 request["Content-Type"] = "application/json"
+
 request.body = <<HEREDOC
 {
 "name": "morpheus",
@@ -581,7 +701,9 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -602,7 +724,10 @@ url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Patch.new(url)
+request["x-api-key"] = "reqres-free-v1"
+
 request["Content-Type"] = "application/json"
+
 request.body = <<HEREDOC
 {
 "name": "marfeus",
@@ -613,7 +738,9 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -634,10 +761,14 @@ url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Delete.new(url)
+request["x-api-key"] = "reqres-free-v1"
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(
@@ -656,7 +787,10 @@ url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Delete.new(url)
+request["x-api-key"] = "reqres-free-v1"
+
 request["Content-Type"] = "application/json"
+
 request.body = <<HEREDOC
 {
 "name": "marfeus",
@@ -667,7 +801,9 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
+
 puts "Response Body: #{response.body}"
+
 """;
       expect(
           codeGen.getCode(

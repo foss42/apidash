@@ -156,7 +156,7 @@ void main() {
         actionType: ChatActionType.updateField,
         targetType: ChatActionTarget.httpRequestModel,
       ));
-      expect(http.paramsMap['limit'], '5');
+      expect(http.paramsMap['limit'], ['5']);
     });
 
     test('applyCurl dispatches to requestApply', () async {

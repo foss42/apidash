@@ -147,7 +147,7 @@ int main() {
   CURLcode res;
   curl = curl_easy_init();
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data?code=IND");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data?code=US&code=IND");
     struct ResponseData response_data = {0};
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
@@ -1461,6 +1461,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
     curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");  
     struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"x-api-key: reqres-free-v1");
     headers = curl_slist_append(headers,"Content-Type: application/json");
   
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);    
@@ -1527,6 +1528,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
     curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");  
     struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"x-api-key: reqres-free-v1");
     headers = curl_slist_append(headers,"Content-Type: application/json");
   
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);    
@@ -1591,7 +1593,11 @@ int main() {
   curl = curl_easy_init();
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-    curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");  
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"x-api-key: reqres-free-v1");
+  
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     struct ResponseData response_data = {0};
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
@@ -1601,6 +1607,7 @@ int main() {
     printf("Response code: %ld\n", response_code);
     printf("Response body: %s\n", response_data.data);
     free(response_data.data);
+    curl_slist_free_all(headers);
   }
   curl_easy_cleanup(curl);
   return 0;
@@ -1648,6 +1655,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
     curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");  
     struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"x-api-key: reqres-free-v1");
     headers = curl_slist_append(headers,"Content-Type: application/json");
   
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);    
