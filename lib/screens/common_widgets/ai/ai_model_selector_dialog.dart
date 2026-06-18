@@ -1,4 +1,5 @@
 // import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/ai/dialog_add_ai_model.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -6,9 +7,34 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+AvailableModels addModelToProviderData(
+  AvailableModels data,
+  ModelAPIProvider providerId,
+  Model newModel,
+) {
+  final updatedProviders = data.modelProviders.map((provider) {
+    if (provider.providerId != providerId) {
+      return provider;
+    }
+
+    final existingModels = provider.models ?? <Model>[];
+    return provider.copyWith(
+      models: [...existingModels, newModel],
+    );
+  }).toList();
+
+  return data.copyWith(modelProviders: updatedProviders);
+}
+
 class AIModelSelectorDialog extends ConsumerStatefulWidget {
   final AIRequestModel? aiRequestModel;
-  const AIModelSelectorDialog({super.key, this.aiRequestModel});
+  final Future<AvailableModels>? availableModelsFuture;
+
+  const AIModelSelectorDialog({
+    super.key,
+    this.aiRequestModel,
+    this.availableModelsFuture,
+  });
 
   @override
   ConsumerState<AIModelSelectorDialog> createState() =>
@@ -17,6 +43,7 @@ class AIModelSelectorDialog extends ConsumerStatefulWidget {
 
 class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
+  AvailableModels? availableModels;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
 
@@ -27,21 +54,43 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     if (selectedProvider != null && widget.aiRequestModel?.model != null) {
       newAIRequestModel = widget.aiRequestModel?.copyWith();
     }
-    aM = ModelManager.fetchAvailableModels();
+    aM = widget.availableModelsFuture ?? ModelManager.fetchAvailableModels();
+  }
+
+  Future<void> _handleAddModel(AIModelProvider aiModelProvider) async {
+    final newModel = await addNewModel(context);
+    if (newModel == null) return;
+
+    final currentData = availableModels ?? await aM;
+    final updatedData = addModelToProviderData(
+      currentData,
+      aiModelProvider.providerId!,
+      newModel,
+    );
+
+    final baseRequestModel =
+        newAIRequestModel ?? aiModelProvider.toAiRequestModel();
+
+    setState(() {
+      availableModels = updatedData;
+      newAIRequestModel = baseRequestModel?.copyWith(
+        model: newModel.id,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // ref.watch(aiApiCredentialProvider);
     final width = MediaQuery.of(context).size.width * 0.8;
-    return FutureBuilder(
+    return FutureBuilder<AvailableModels>(
       future: aM,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData &&
             snapshot.data != null) {
-          final data = snapshot.data!;
+          final data = availableModels ?? snapshot.data!;
           final mappedData = data.map;
+
           if (context.isMediumWindow) {
             return Container(
               padding: kP20,
@@ -51,11 +100,6 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                 children: [
                   ElevatedButton(
                     onPressed: null,
-                    // TODO: Add update model logic
-                    //() async {
-                    // await LLMManager.fetchAvailableLLMs();
-                    // setState(() {});
-                    //},
                     child: Text(kLabelUpdateModels),
                   ),
                   kVSpacer10,
@@ -81,7 +125,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                     ],
                   ),
                   kVSpacer10,
-                  _buildModelSelector(mappedData[selectedProvider]),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: _buildModelSelector(mappedData[selectedProvider]),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -101,11 +149,6 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
                       children: [
                         ElevatedButton(
                           onPressed: null,
-                          // TODO: Add update model logic
-                          //() async {
-                          // await LLMManager.fetchAvailableLLMs();
-                          // setState(() {});
-                          //},
                           child: Text(kLabelUpdateModels),
                         ),
                         SizedBox(height: 20),
@@ -140,17 +183,17 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
             ),
           );
         }
+
         return Center(child: CircularProgressIndicator());
       },
     );
   }
 
-  _buildModelSelector(AIModelProvider? aiModelProvider) {
+  Widget _buildModelSelector(AIModelProvider? aiModelProvider) {
     if (aiModelProvider == null) {
       return Center(child: Text(kLabelSelectAIProvider));
     }
-    // final currentCredential =
-    //     ref.watch(aiApiCredentialProvider)[aiModelProvider.providerId!] ?? "";
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
@@ -165,16 +208,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           kVSpacer8,
           BoundedTextField(
             onChanged: (x) {
-              // ref.read(aiApiCredentialProvider.notifier).state = {
-              //   ...ref.read(aiApiCredentialProvider),
-              //   aiModelProvider.providerId!: x
-              // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
-            // value: currentCredential,
           ),
           kVSpacer10,
         ],
@@ -194,8 +232,11 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(kLabelModels),
-            // IconButton(
-            //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
+            IconButton(
+              onPressed: () => _handleAddModel(aiModelProvider),
+              icon: const Icon(Icons.add),
+              tooltip: kLabelAddModel,
+            ),
           ],
         ),
         kVSpacer8,
