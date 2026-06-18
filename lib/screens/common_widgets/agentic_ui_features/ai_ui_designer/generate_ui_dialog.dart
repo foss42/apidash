@@ -40,74 +40,64 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
   String generatedSDUI = '{}';
 
   Future<String?> generateSDUICode(String apiResponse) async {
-    try {
-      setState(() {
-        index = 1; //Induce Loading
-      });
-      final res = await generateSDUICodeFromResponse(
-        ref: ref,
-        apiResponse: apiResponse,
-      );
-      if (res == null) {
+    setState(() {
+      index = 1; //Induce Loading
+    });
+    final result = await generateSDUICodeFromResponse(
+      ref: ref,
+      apiResponse: apiResponse,
+    );
+    return result.when(
+      success: (code) => code,
+      failure: (exception) {
         setState(() {
           index = 0;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              kMsgPreviewGenerationFailed,
+              exception.message,
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.redAccent,
           ),
         );
         return null;
-      }
-      return res;
-    } catch (e) {
-      String errMsg = kMsgUnexpectedError;
-      if (e.toString().contains('NO_DEFAULT_LLM')) {
-        errMsg = kMsgSelectDefaultAIModel;
-      }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errMsg, style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-      Navigator.pop(context);
-      return null;
-    }
+      },
+    );
   }
 
   Future<void> modifySDUICode(String modificationRequest) async {
     setState(() {
       index = 1; //Induce Loading
     });
-    final res = await modifySDUICodeUsingPrompt(
+    final result = await modifySDUICodeUsingPrompt(
       generatedSDUI: generatedSDUI,
       ref: ref,
       modificationRequest: modificationRequest,
     );
-    if (res == null) {
-      setState(() {
-        index = 2;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            kMsgModificationRequestFailed,
-            style: TextStyle(color: Colors.white),
+    result.when(
+      success: (code) {
+        setState(() {
+          generatedSDUI = code;
+          index = 2;
+        });
+      },
+      failure: (exception) {
+        setState(() {
+          index = 2;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              exception.message,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.redAccent,
           ),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-      return;
-    }
-    setState(() {
-      generatedSDUI = res;
-      index = 2;
-    });
+        );
+      },
+    );
   }
 
   @override
