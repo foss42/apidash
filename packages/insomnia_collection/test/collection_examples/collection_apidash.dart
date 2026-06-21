@@ -100,7 +100,15 @@ var collectionApiDashJsonStr = r'''{
       "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"text\": \"Grass is green\"\n}"
+        "text": "{\n  \"text\": \"Grass is green\"\n}",
+        "params": [
+          {
+            "name": "f1",
+            "value": "v1",
+            "type": "text",
+            "fileName": "file.txt"
+          }
+        ]
       },
       "preRequestScript": "",
       "parameters": [],
@@ -165,6 +173,15 @@ var collectionApiDashJsonStr = r'''{
       "isPrivate": false,
       "data": {},
       "environmentType": "kv",
+      "kvPairData": [
+        {
+          "id": "kv1",
+          "name": "api_url",
+          "value": "https://api.apidash.dev",
+          "type": "string",
+          "enabled": true
+        }
+      ],
       "_type": "environment"
     },
     {
@@ -173,7 +190,21 @@ var collectionApiDashJsonStr = r'''{
       "modified": 1736082095688,
       "created": 1736082095688,
       "name": "Default Jar",
-      "cookies": [],
+      "cookies": [
+        {
+          "key": "session",
+          "value": "123",
+          "domain": "apidash.dev",
+          "path": "/",
+          "secure": true,
+          "httpOnly": true,
+          "hostOnly": false,
+          "creation": "2025-01-01T00:00:00.000Z",
+          "lastAccessed": "2025-01-02T00:00:00.000Z",
+          "sameSite": "Lax",
+          "id": "c1"
+        }
+      ],
       "_type": "cookie_jar"
     }
   ]
@@ -278,7 +309,15 @@ var collectionApiDashJson = {
       "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"text\": \"Grass is green\"\n}"
+        "text": "{\n  \"text\": \"Grass is green\"\n}",
+        "params": [
+          {
+            "name": "f1",
+            "value": "v1",
+            "type": "text",
+            "fileName": "file.txt"
+          }
+        ]
       },
       "preRequestScript": "",
       "parameters": [],
@@ -338,7 +377,16 @@ var collectionApiDashJson = {
       "isPrivate": false,
       "data": {},
       "environmentType": "kv",
-      "_type": "environment"
+      "_type": "environment",
+      "kvPairData": [
+        {
+          "id": "kv1",
+          "name": "api_url",
+          "value": "https://api.apidash.dev",
+          "type": "string",
+          "enabled": true
+        }
+      ]
     },
     {
       "_id": "jar_9d818b2866dffc9831640d91a516ea3986e16bda",
@@ -346,7 +394,21 @@ var collectionApiDashJson = {
       "modified": 1736082095688,
       "created": 1736082095688,
       "name": "Default Jar",
-      "cookies": [],
+      "cookies": [
+        {
+          "key": "session",
+          "value": "123",
+          "domain": "apidash.dev",
+          "path": "/",
+          "secure": true,
+          "httpOnly": true,
+          "hostOnly": false,
+          "creation": "2025-01-01T00:00:00.000Z",
+          "lastAccessed": "2025-01-02T00:00:00.000Z",
+          "sameSite": "Lax",
+          "id": "c1"
+        }
+      ],
       "_type": "cookie_jar"
     }
   ]

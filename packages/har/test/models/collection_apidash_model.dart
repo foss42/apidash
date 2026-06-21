@@ -25,7 +25,7 @@ var collectionApiDashModel = HarLog(
           httpVersion: null,
           cookies: null,
           headers: [],
-          content: null,
+          content: Content(size: 100, mimeType: "text/plain"),
           redirectURL: null,
           headersSize: null,
           bodySize: 0,

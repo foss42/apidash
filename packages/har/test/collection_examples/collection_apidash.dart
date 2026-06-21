@@ -21,6 +21,10 @@ var collectionJsonStr = r'''
           "status": 200,
           "statusText": "OK",
           "headers": [],
+          "content": {
+            "size": 100,
+            "mimeType": "text/plain"
+          },
           "bodySize": 0
         }
       },
@@ -202,6 +206,10 @@ var collectionJson = {
           "status": 200,
           "statusText": "OK",
           "headers": [],
+          "content": {
+            "size": 100,
+            "mimeType": "text/plain"
+          },
           "bodySize": 0
         }
       },

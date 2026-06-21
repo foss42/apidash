@@ -106,6 +106,9 @@ var collectionApiDashModel = InsomniaCollection(
         body: Body(
           mimeType: "application/json",
           text: "{\n  \"text\": \"Grass is green\"\n}",
+          params: [
+            Formdatum(name: "f1", value: "v1", type: "text", src: "file.txt")
+          ],
         ),
         parameters: [],
         headers: [
@@ -173,6 +176,15 @@ var collectionApiDashModel = InsomniaCollection(
         metaSortKey: 1736082095630,
         environmentType: "kv",
         type: "environment",
+        kvPairData: [
+          KVPairDatum(
+            id: "kv1",
+            name: "api_url",
+            value: "https://api.apidash.dev",
+            type: "string",
+            enabled: true,
+          )
+        ],
       ),
       Resource(
         id: "jar_9d818b2866dffc9831640d91a516ea3986e16bda",
@@ -180,7 +192,21 @@ var collectionApiDashModel = InsomniaCollection(
         modified: 1736082095688,
         created: 1736082095688,
         name: "Default Jar",
-        cookies: [],
+        cookies: [
+          Cookie(
+            key: "session",
+            value: "123",
+            domain: "apidash.dev",
+            path: "/",
+            secure: true,
+            httpOnly: true,
+            hostOnly: false,
+            creation: DateTime.utc(2025, 1, 1),
+            lastAccessed: DateTime.utc(2025, 1, 2),
+            sameSite: "Lax",
+            id: "c1",
+          )
+        ],
         type: "cookie_jar",
       ),
     ]);
