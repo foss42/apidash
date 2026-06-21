@@ -3,6 +3,7 @@ import 'package:apidash/widgets/response_body_success.dart';
 import 'package:apidash/widgets/response_headers.dart';
 import 'package:apidash/widgets/response_pane_header.dart';
 import 'package:apidash/widgets/response_tab_view.dart';
+import 'package:apidash/widgets/sse_display.dart';
 import 'package:apidash/widgets/widget_not_sent.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -465,5 +466,75 @@ void main() async {
     await tester.tap(find.text('Raw'));
     await tester.pumpAndSettle();
     expect(find.text('Raw Hello from API Dash'), findsOneWidget);
+  });
+
+  testWidgets('Testing Body Success for ResponseBodyView.answer', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Body Success',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ResponseBodySuccess(
+            body: 'Answer Body',
+            mediaType: MediaType("text", "plain"),
+            options: const [
+              ResponseBodyView.answer,
+            ],
+            bytes: Uint8List.fromList([]),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.text('Answer Body'), findsOneWidget);
+  });
+
+  testWidgets('Testing Body Success for ResponseBodyView.sse', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Body Success',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ResponseBodySuccess(
+            body: 'SSE Body',
+            mediaType: MediaType("text", "event-stream"),
+            options: const [
+              ResponseBodyView.sse,
+            ],
+            bytes: Uint8List.fromList([]),
+            sseOutput: const ['event 1', 'event 2'],
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.byType(SSEDisplay), findsOneWidget);
+  });
+
+  testWidgets('Testing Body Success for ResponseBodyView.raw with isAIResponse', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Body Success',
+        theme: kThemeDataDark,
+        home: Scaffold(
+          body: ResponseBodySuccess(
+            body: 'AI Body',
+            formattedBody: 'Formatted AI Body',
+            mediaType: MediaType("application", "json"),
+            options: const [
+              ResponseBodyView.raw,
+            ],
+            bytes: Uint8List.fromList([]),
+            isAIResponse: true,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.text('AI Body'), findsOneWidget);
+    expect(find.text('Formatted AI Body'), findsNothing);
   });
 }

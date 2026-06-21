@@ -1,7 +1,8 @@
 import 'package:apidash/widgets/button_share.dart';
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 void main() {
   testWidgets('ShareButton renders correctly', (WidgetTester tester) async {
     await tester.pumpWidget(
@@ -26,8 +27,32 @@ void main() {
     );
 
     // Tap the button. We just want to ensure it doesn't crash when pressed.
-    // Testing actual Share plugin might require mocking, but triggering the tap covers the basic async onPressed flow.
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/share'),
+      (MethodCall methodCall) async {
+        return null; // Simulate success
+      },
+    );
+
     await tester.tap(find.byType(ShareButton));
-    await tester.pump();
+    await tester.pumpAndSettle();
+
+    // Now test the error case
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/share'),
+      (MethodCall methodCall) async {
+        throw Exception('Simulated share error');
+      },
+    );
+
+    await tester.tap(find.byType(ShareButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text(kMsgShareError), findsOneWidget);
+
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/share'),
+      null,
+    );
   });
 }

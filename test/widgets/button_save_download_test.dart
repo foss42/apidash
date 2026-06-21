@@ -51,5 +51,8 @@ void main() {
     button = find.byType(IconButton);
     expect(button, findsOneWidget);
     expect(tester.widget<IconButton>(button).onPressed == null, isFalse);
+
+    await tester.tap(button);
+    await tester.pumpAndSettle();
   });
 }

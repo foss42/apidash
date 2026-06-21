@@ -57,5 +57,45 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(ListTile), findsNothing);
     });
+
+    testWidgets('HeaderSuggestions triggers didUpdateWidget on query change',
+        (tester) async {
+      final key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              return HeaderSuggestions(
+                key: key,
+                query: "first",
+                suggestionsCallback: (query) async => [query],
+                onSuggestionTap: (suggestion) {},
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      expect(find.text("first"), findsOneWidget);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: StatefulBuilder(
+            builder: (context, setState) {
+              return HeaderSuggestions(
+                key: key,
+                query: "second",
+                suggestionsCallback: (query) async => [query],
+                onSuggestionTap: (suggestion) {},
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      expect(find.text("second"), findsOneWidget);
+    });
   });
 }

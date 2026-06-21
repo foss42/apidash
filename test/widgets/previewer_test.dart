@@ -7,6 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 import 'package:apidash/widgets/previewer.dart';
 import 'package:apidash/widgets/previewer_video.dart';
 import 'package:apidash/widgets/uint8_audio_player.dart';
+import 'package:apidash/widgets/error_message.dart';
+import 'package:apidash/widgets/previewer_json.dart';
 import '../test_consts.dart';
 
 void main() {
@@ -327,5 +329,76 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.byType(Image), findsOneWidget);
+  });
+
+  testWidgets('Testing sniffing when application/octet-stream unknown', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Previewer',
+        home: Scaffold(
+          body: Previewer(
+            type: 'application',
+            subtype: 'octet-stream',
+            bytes: Uint8List.fromList([1, 2, 3]),
+            body: "",
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(ErrorMessage), findsOneWidget);
+  });
+
+  testWidgets('Testing when type/subtype is application/json', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Previewer',
+        home: Scaffold(
+          body: Previewer(
+            type: 'application',
+            subtype: 'json',
+            bytes: Uint8List.fromList([]),
+            body: '{"test": 1}',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(JsonPreviewer), findsOneWidget);
+  });
+
+  testWidgets('Testing when type/subtype is application/json corrupted', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Previewer',
+        home: Scaffold(
+          body: Previewer(
+            type: 'application',
+            subtype: 'json',
+            bytes: Uint8List.fromList([]),
+            body: '{corrupted',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(ErrorMessage), findsOneWidget);
+  });
+
+  testWidgets('Testing when type/subtype is text/csv empty', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Previewer(
+            type: kTypeText,
+            subtype: kSubTypeCsv,
+            bytes: Uint8List.fromList([]),
+            body: "",
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(ErrorMessage), findsOneWidget);
   });
 }

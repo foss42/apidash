@@ -142,4 +142,40 @@ void main() {
     // check if value was updated
     expect(wasSubmitCalled, true);
   });
+
+  testWidgets('URL Field unfocuses on tap outside', (tester) async {
+    final FocusNode focusNode = FocusNode();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              Focus(
+                focusNode: focusNode,
+                child: const URLField(selectedId: '2'),
+              ),
+              const Text('Outside'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Focus the URL field
+    var txtForm = find.byKey(const Key("url-2"));
+    await tester.tap(txtForm);
+    await tester.pump();
+    expect(focusNode.hasFocus, true);
+
+    // Tap outside
+    await tester.tap(find.text('Outside'));
+    await tester.pump();
+    
+    // Tap outside using PointerDownEvent to specifically trigger onTapOutside logic
+    final gesture = await tester.createGesture();
+    await gesture.down(tester.getCenter(find.text('Outside')));
+    await tester.pump();
+
+    expect(focusNode.hasFocus, false);
+  });
 }

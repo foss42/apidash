@@ -140,4 +140,20 @@ void main() {
 
     expect(selectedEnvironment, environment);
   });
+
+  testWidgets('EnvironmentPopupMenu displays "Select Env." when value is null',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: EnvironmentPopupMenu(
+            value: null,
+            options: [],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Select Env.'), findsOneWidget);
+  });
 }

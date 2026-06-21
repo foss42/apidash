@@ -308,4 +308,36 @@ void main() {
     expect(notifier.hideCalls, 1);
     expect(notifier.showCalls, 1);
   });
+
+  testWidgets('Generate UI uses sseOutput if available',
+      (tester) async {
+    final responseModel = const HttpResponseModel(
+      sseOutput: ['event1', 'event2'],
+    );
+    final requestModel = RequestModel(
+      id: 'req-2',
+      httpRequestModel: const HttpRequestModel(),
+      httpResponseModel: responseModel,
+    );
+
+    final notifier = await _pumpHomePage(
+      tester,
+      selectedModel: requestModel,
+      onRoute: (_, __) {},
+    );
+
+    await tester.tap(find.text('📱 Generate UI'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Dialog), findsOneWidget);
+
+    final dialogElement = find.byType(Dialog);
+    if (dialogElement.evaluate().isNotEmpty) {
+      Navigator.of(dialogElement.evaluate().first).pop();
+      await tester.pumpAndSettle();
+    }
+
+    expect(notifier.hideCalls, 1);
+    expect(notifier.showCalls, 1);
+  });
 }
