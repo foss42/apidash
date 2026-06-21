@@ -148,7 +148,7 @@ If you're dealing with server-sent events (SSE) or other streaming data, use the
 
 ```dart
 const model = HttpRequestModel(
-  url: 'https://sse.dev/test',
+  url: 'https://api.apidash.dev/sse/events/5',
   method: HTTPVerb.get,
 );
 

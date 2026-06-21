@@ -9,7 +9,7 @@ void main() {
       'SSE Stream - Should receive at least two events in 4 seconds',
       () async {
         const model = HttpRequestModel(
-          url: 'https://sse.dev/test',
+          url: 'https://api.apidash.dev/sse/events/5',
           method: HTTPVerb.get,
         );
 
@@ -35,7 +35,7 @@ void main() {
       'SSE Stream - Cancellation should work',
       () async {
         const model = HttpRequestModel(
-          url: 'https://sse.dev/test',
+          url: 'https://api.apidash.dev/sse/events/5',
           method: HTTPVerb.get,
         );
 
