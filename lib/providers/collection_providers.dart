@@ -104,6 +104,50 @@ class CollectionStateNotifier
     return requestModel;
   }
 
+  Future<void> _hydrateAiApiKey(String collectionId, String id) async {
+    final apiKey = await aiRequestSecretsStorage.readApiKey(
+      workspaceStorage.rootPath,
+      collectionId,
+      id,
+    );
+    if (apiKey == null || apiKey.isEmpty) {
+      return;
+    }
+    final current = state?[id];
+    if (current?.aiRequestModel == null) {
+      return;
+    }
+    state = {
+      ...state!,
+      id: current!.copyWith(
+        aiRequestModel: current.aiRequestModel?.copyWith(apiKey: apiKey),
+      ),
+    };
+  }
+
+  Future<Map<String, dynamic>> _prepareRequestJsonForDisk(
+    String collectionId,
+    String requestId,
+    Map<String, dynamic> json,
+  ) async {
+    final apiKey = AiRequestSecretsStorage.apiKeyFromJson(json);
+    if (apiKey != null && apiKey.isNotEmpty) {
+      await aiRequestSecretsStorage.writeApiKey(
+        workspaceStorage.rootPath,
+        collectionId,
+        requestId,
+        apiKey,
+      );
+    } else {
+      await aiRequestSecretsStorage.deleteApiKey(
+        workspaceStorage.rootPath,
+        collectionId,
+        requestId,
+      );
+    }
+    return AiRequestSecretsStorage.stripApiKeyFromJson(json);
+  }
+
   void loadRequest(String id) {
     if (state?[id] != null) {
       return;
@@ -113,6 +157,9 @@ class CollectionStateNotifier
       return;
     }
     state = {...state ?? {}, id: model};
+    if (model.aiRequestModel != null) {
+      unawaited(_hydrateAiApiKey(_activeCollectionId, id));
+    }
   }
 
   void _rekeyRequest(String oldId, String newId, RequestModel model) {
@@ -132,6 +179,14 @@ class CollectionStateNotifier
     }
     unawaited(
       workspaceStorage.renameRequest(_activeCollectionId, oldId, newId),
+    );
+    unawaited(
+      aiRequestSecretsStorage.rekeyApiKey(
+        workspaceStorage.rootPath,
+        _activeCollectionId,
+        oldId,
+        newId,
+      ),
     );
   }
 
@@ -708,6 +763,9 @@ class CollectionStateNotifier
     await environmentSecretsStorage.deleteAllForWorkspace(
       workspaceStorage.rootPath,
     );
+    await aiRequestSecretsStorage.deleteAllForWorkspace(
+      workspaceStorage.rootPath,
+    );
     await workspaceStorage.clear();
     await ref.read(environmentsStateNotifierProvider.notifier).loadEnvironments();
     ref.read(clearDataStateProvider.notifier).state = false;
@@ -731,6 +789,7 @@ class CollectionStateNotifier
         json = saveResponse
             ? inMemory.toJson()
             : inMemory.copyWith(httpResponseModel: null).toJson();
+        json = await _prepareRequestJsonForDisk(targetId, requestId, json);
       } else {
         final diskJson = workspaceStorage.getRequestModel(targetId, requestId);
         if (diskJson == null) {
@@ -749,6 +808,11 @@ class CollectionStateNotifier
     }
 
     await workspaceStorage.removeUnused(targetId);
+    await aiRequestSecretsStorage.deleteOrphansForCollection(
+      workspaceStorage.rootPath,
+      targetId,
+      ids.toSet(),
+    );
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

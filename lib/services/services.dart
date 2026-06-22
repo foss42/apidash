@@ -1,4 +1,4 @@
-export 'environment_secrets_storage.dart';
+export 'secure_storage.dart';
 export 'storage/workspace_storage.dart';
 export 'workspace_service.dart';
 export 'history_service.dart';
