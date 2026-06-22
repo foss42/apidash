@@ -19,9 +19,10 @@ class URLField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      key: Key("url-$selectedId"),
-      initialValue: initialValue,
-      style: kCodeStyle,
+  key: Key("url-$selectedId"),
+  initialValue: initialValue,
+  style: kCodeStyle,
+  autofocus: initialValue?.isEmpty ?? true, // 🔥 ADD THIS
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
