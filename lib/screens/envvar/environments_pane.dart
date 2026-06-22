@@ -50,7 +50,10 @@ class EnvironmentsList extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final environmentSequence = ref.watch(environmentSequenceProvider);
-    final environmentItems = ref.watch(environmentsStateNotifierProvider)!;
+    final environmentItems = ref.watch(environmentsStateNotifierProvider);
+    if (environmentItems == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     final alwaysShowEnvironmentsPaneScrollbar = ref.watch(
       settingsProvider.select(
         (value) => value.alwaysShowCollectionPaneScrollbar,

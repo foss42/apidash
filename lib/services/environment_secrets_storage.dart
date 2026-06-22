@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'storage/workspace_storage.dart';
+
 const _storageKeyPrefix = 'apidash_env_secret';
 
 class EnvironmentSecretsStorage {
@@ -63,13 +65,52 @@ class EnvironmentSecretsStorage {
   }
 
   Future<void> deleteAllForWorkspace(String workspacePath) async {
-    final prefix = '$_storageKeyPrefix/${_workspaceId(workspacePath)}/';
-    final all = await _storage.readAll();
-    for (final key in all.keys) {
-      if (key.startsWith(prefix)) {
-        await _storage.delete(key: key);
+    try {
+      final prefix = '$_storageKeyPrefix/${_workspaceId(workspacePath)}/';
+      final all = await _storage.readAll();
+      for (final key in all.keys) {
+        if (key.startsWith(prefix)) {
+          await _storage.delete(key: key);
+        }
+      }
+    } catch (_) {
+      for (final entry in _secretKeysByEnvironmentFromWorkspace().entries) {
+        await deleteAllForEnvironment(
+          workspacePath,
+          entry.key,
+          entry.value,
+        );
       }
     }
+  }
+
+  Map<String, List<String>> _secretKeysByEnvironmentFromWorkspace() {
+    final byEnvironment = <String, List<String>>{};
+    for (final environmentId
+        in workspaceStorage.getEnvironmentIds() ?? const []) {
+      final json = workspaceStorage.getEnvironment(environmentId);
+      if (json == null) {
+        continue;
+      }
+      final values = json['values'];
+      if (values is! List) {
+        continue;
+      }
+      for (final value in values) {
+        if (value is! Map) {
+          continue;
+        }
+        if (value['type'] != 'secret') {
+          continue;
+        }
+        final variableKey = value['key'] as String?;
+        if (variableKey == null || variableKey.isEmpty) {
+          continue;
+        }
+        byEnvironment.putIfAbsent(environmentId, () => []).add(variableKey);
+      }
+    }
+    return byEnvironment;
   }
 }
 

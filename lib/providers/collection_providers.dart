@@ -703,7 +703,6 @@ class CollectionStateNotifier
   }
 
   Future<void> clearData() async {
-    ref.read(autoSaveNotifierProvider.notifier).cancelPending();
     ref.read(clearDataStateProvider.notifier).state = true;
     ref.read(selectedIdStateProvider.notifier).state = null;
     await environmentSecretsStorage.deleteAllForWorkspace(
