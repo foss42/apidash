@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/models/proxy_settings_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -20,6 +21,8 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.proxyUriPrefix,
+    this.networkProxy,
   });
 
   final bool isDark;
@@ -36,6 +39,8 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
+  final String? proxyUriPrefix;
+  final ProxySettings? networkProxy;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -52,6 +57,8 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    String? proxyUriPrefix,
+    ProxySettings? networkProxy,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -70,6 +77,8 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+      proxyUriPrefix: proxyUriPrefix ?? this.proxyUriPrefix,
+      networkProxy: networkProxy ?? this.networkProxy,
     );
   }
 
@@ -149,6 +158,10 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+    final proxyUriPrefix = data["proxyUriPrefix"] as String?;
+    final networkProxy = data["networkProxy"] == null
+        ? null
+        : ProxySettings.fromJson(Map<String, dynamic>.from(data["networkProxy"]));
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -167,6 +180,8 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      proxyUriPrefix: proxyUriPrefix,
+      networkProxy: networkProxy,
     );
   }
 
@@ -188,6 +203,8 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "proxyUriPrefix": proxyUriPrefix,
+      "networkProxy": networkProxy?.toJson(),
     };
   }
 
@@ -214,7 +231,9 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
-        mapEquals(other.defaultAIModel, defaultAIModel);
+        mapEquals(other.defaultAIModel, defaultAIModel) &&
+        other.proxyUriPrefix == proxyUriPrefix &&
+        other.networkProxy == networkProxy;
   }
 
   @override
@@ -235,6 +254,8 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      proxyUriPrefix,
+      networkProxy,
     );
   }
 }
