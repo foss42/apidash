@@ -197,6 +197,26 @@ void main() {
         [kvRow1, kvRow3],
       );
     });
+    test(
+      'duplicate rows map to their own enabled flag (indexOf would break)',
+      () {
+        const dup = NameValueModel(name: 'same', value: 'same');
+        expect(
+          getEnabledRows(
+            [dup, dup],
+            [true, false],
+          ),
+          [dup],
+        );
+        expect(
+          getEnabledRows(
+            [dup, dup],
+            [false, true],
+          ),
+          [dup],
+        );
+      },
+    );
   });
 
   group('Testing getRequestBody', () {
