@@ -56,9 +56,9 @@ class CollectionStateNotifier
       if (status) {
         ref.read(requestSequenceProvider.notifier).state = [state!.keys.first];
       }
-      ref.read(selectedIdStateProvider.notifier).state = ref.read(
-        requestSequenceProvider,
-      )[0];
+      final ids = ref.read(requestSequenceProvider);
+      ref.read(selectedIdStateProvider.notifier).state =
+          ids.isNotEmpty ? ids[0] : null;
     });
   }
 
