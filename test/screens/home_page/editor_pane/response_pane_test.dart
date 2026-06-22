@@ -12,26 +12,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_utils.dart';
 
 void main() {
-  testWidgets('Testing ResponsePane with null HttpResponseModel', (tester) async {
+  testWidgets('Testing ResponsePane with null HttpResponseModel', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id')
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(id: 'test_id'),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
-        child: const MaterialApp(
-          home: Scaffold(
-            body: ResponsePane(),
-          ),
-        ),
+        child: const MaterialApp(home: Scaffold(body: ResponsePane())),
       ),
     );
 
@@ -44,23 +49,23 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(
-                  id: 'test_id',
-                  isWorking: true,
-                )
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(id: 'test_id', isWorking: true),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
-        child: const MaterialApp(
-          home: Scaffold(
-            body: ResponsePane(),
-          ),
-        ),
+        child: const MaterialApp(home: Scaffold(body: ResponsePane())),
       ),
     );
 
@@ -73,20 +78,27 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', responseStatus: -1, message: 'Error')
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                responseStatus: -1,
+                message: 'Error',
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
-        child: const MaterialApp(
-          home: Scaffold(
-            body: ResponsePane(),
-          ),
-        ),
+        child: const MaterialApp(home: Scaffold(body: ResponsePane())),
       ),
     );
 
@@ -99,31 +111,44 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': RequestModel(
-                  id: 'test_id',
-                  responseStatus: 200,
-                  httpResponseModel: HttpResponseModel(
-                    statusCode: 200,
-                    body: 'Test body',
-                    bodyBytes: Uint8List.fromList([84, 101, 115, 116, 32, 98, 111, 100, 121]),
-                    headers: const {'test': 'header'},
-                    requestHeaders: const {'req': 'header'},
-                    time: const Duration(milliseconds: 100),
-                  ),
-                )
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': RequestModel(
+                id: 'test_id',
+                responseStatus: 200,
+                httpResponseModel: HttpResponseModel(
+                  statusCode: 200,
+                  body: 'Test body',
+                  bodyBytes: Uint8List.fromList([
+                    84,
+                    101,
+                    115,
+                    116,
+                    32,
+                    98,
+                    111,
+                    100,
+                    121,
+                  ]),
+                  headers: const {'test': 'header'},
+                  requestHeaders: const {'req': 'header'},
+                  time: const Duration(milliseconds: 100),
+                ),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
-        child: const MaterialApp(
-          home: Scaffold(
-            body: ResponsePane(),
-          ),
-        ),
+        child: const MaterialApp(home: Scaffold(body: ResponsePane())),
       ),
     );
 

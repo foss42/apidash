@@ -11,9 +11,7 @@ void main() {
       MaterialApp(
         title: 'Discord button',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: DiscordButton(),
-        ),
+        home: const Scaffold(body: DiscordButton()),
       ),
     );
 
@@ -30,7 +28,7 @@ void main() {
 
     await tester.tap(find.text("Discord Server"));
     await tester.pumpAndSettle();
-    
+
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
       const MethodChannel('plugins.flutter.io/url_launcher'),
       null,

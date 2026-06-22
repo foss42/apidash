@@ -232,11 +232,11 @@ var collectionApiDashJson = {
           "name": "user_id",
           "value": "34",
           "description": "",
-          "disabled": false
-        }
+          "disabled": false,
+        },
       ],
       "headers": [
-        {"name": "User-Agent", "value": "insomnia/10.3.0"}
+        {"name": "User-Agent", "value": "insomnia/10.3.0"},
       ],
       "authentication": {},
       "metaSortKey": -1736111908438,
@@ -248,7 +248,7 @@ var collectionApiDashJson = {
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
-      "_type": "request"
+      "_type": "request",
     },
     {
       "_id": "fld_a2e9704c49034e36a05cdb3a233f6ebd",
@@ -262,7 +262,7 @@ var collectionApiDashJson = {
       "isPrivate": false,
       "afterResponseScript": "",
       "environment": {},
-      "_type": "request_group"
+      "_type": "request_group",
     },
     {
       "_id": "wrk_fde7dcc4f5064b74b0fd749cbf8f684a",
@@ -271,7 +271,7 @@ var collectionApiDashJson = {
       "name": "APIDash-APItests",
       "description": "",
       "scope": "collection",
-      "_type": "workspace"
+      "_type": "workspace",
     },
     {
       "_id": "req_db3c393084f14369bb409afe857e390c",
@@ -296,7 +296,7 @@ var collectionApiDashJson = {
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
-      "_type": "request"
+      "_type": "request",
     },
     {
       "_id": "req_ba718bbacd094e95a30ef3f07baa4e42",
@@ -311,18 +311,13 @@ var collectionApiDashJson = {
         "mimeType": "application/json",
         "text": "{\n  \"text\": \"Grass is green\"\n}",
         "params": [
-          {
-            "name": "f1",
-            "value": "v1",
-            "type": "text",
-            "fileName": "file.txt"
-          }
-        ]
+          {"name": "f1", "value": "v1", "type": "text", "fileName": "file.txt"},
+        ],
       },
       "preRequestScript": "",
       "parameters": [],
       "headers": [
-        {"name": "Content-Type", "value": "application/json"}
+        {"name": "Content-Type", "value": "application/json"},
       ],
       "authentication": {},
       "metaSortKey": -1736082080557,
@@ -334,7 +329,7 @@ var collectionApiDashJson = {
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
-      "_type": "request"
+      "_type": "request",
     },
     {
       "_id": "req_24cff90fc3c74e71a567f61d3f8e8cc1",
@@ -348,12 +343,12 @@ var collectionApiDashJson = {
       "body": {
         "mimeType": "application/json",
         "text":
-            "{\n    \"name\": \"morpheus\",\n    \"job\": \"zion resident\"\n}"
+            "{\n    \"name\": \"morpheus\",\n    \"job\": \"zion resident\"\n}",
       },
       "preRequestScript": "",
       "parameters": [],
       "headers": [
-        {"name": "Content-Type", "value": "application/json"}
+        {"name": "Content-Type", "value": "application/json"},
       ],
       "authentication": {},
       "metaSortKey": -1736082080556,
@@ -365,7 +360,7 @@ var collectionApiDashJson = {
       "settingEncodeUrl": true,
       "settingRebuildPath": true,
       "settingFollowRedirects": "global",
-      "_type": "request"
+      "_type": "request",
     },
     {
       "_id": "env_9d818b2866dffc9831640d91a516ea3986e16bda",
@@ -384,9 +379,9 @@ var collectionApiDashJson = {
           "name": "api_url",
           "value": "https://api.apidash.dev",
           "type": "string",
-          "enabled": true
-        }
-      ]
+          "enabled": true,
+        },
+      ],
     },
     {
       "_id": "jar_9d818b2866dffc9831640d91a516ea3986e16bda",
@@ -406,10 +401,10 @@ var collectionApiDashJson = {
           "creation": "2025-01-01T00:00:00.000Z",
           "lastAccessed": "2025-01-02T00:00:00.000Z",
           "sameSite": "Lax",
-          "id": "c1"
-        }
+          "id": "c1",
+        },
       ],
-      "_type": "cookie_jar"
-    }
-  ]
+      "_type": "cookie_jar",
+    },
+  ],
 };

@@ -6,46 +6,36 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Testing SSEDisplay with no output', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: SSEDisplay(
-            sseOutput: null,
-          ),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: SSEDisplay(sseOutput: null))),
     );
     expect(find.text('No content'), findsOneWidget);
 
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: SSEDisplay(
-            sseOutput: [],
-          ),
-        ),
+        home: Scaffold(body: SSEDisplay(sseOutput: [])),
       ),
     );
     expect(find.text('No content'), findsOneWidget);
   });
 
-  testWidgets('Testing SSEDisplay with string and JSON chunks (No AI Request)', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: SSEDisplay(
-            sseOutput: [
-              'Just a normal string',
-              '{"key": "value"}',
-            ],
+  testWidgets(
+    'Testing SSEDisplay with string and JSON chunks (No AI Request)',
+    (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SSEDisplay(
+              sseOutput: ['Just a normal string', '{"key": "value"}'],
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(find.text('Just a normal string'), findsOneWidget);
-    expect(find.text('key: '), findsOneWidget);
-    expect(find.text('value'), findsOneWidget);
-  });
+      expect(find.text('Just a normal string'), findsOneWidget);
+      expect(find.text('key: '), findsOneWidget);
+      expect(find.text('value'), findsOneWidget);
+    },
+  );
 
   testWidgets('Testing SSEDisplay with AI Request Model', (tester) async {
     final aiRequestModel = AIRequestModel(
@@ -53,7 +43,7 @@ void main() {
       model: "TestModel",
       userPrompt: "prompt",
     );
-    
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -65,7 +55,7 @@ void main() {
               '{"output": "AI "}  ',
               '{"output": "Text"}  ',
               'malformed json',
-              '{"output": " Text"}  '
+              '{"output": " Text"}  ',
             ],
             aiRequestModel: aiRequestModel,
           ),
@@ -74,7 +64,7 @@ void main() {
     );
 
     // AIRequestModel.getFormattedStreamOutput just stringifies or pulls out fields based on model.
-    // By default it extracts output/text fields depending on the action. 
+    // By default it extracts output/text fields depending on the action.
     // Wait, let's just see if "Some " is present or if it catches JSONDEC.
     // In our sse_display: "out += z ?? '<?>';"
     expect(find.byType(SingleChildScrollView), findsOneWidget);

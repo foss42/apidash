@@ -7,15 +7,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MockHistoryMetaStateNotifier extends StateNotifier<Map<String, HistoryMetaModel>?> implements HistoryMetaStateNotifier {
-  MockHistoryMetaStateNotifier([Map<String, HistoryMetaModel>? state]) : super(state);
+class MockHistoryMetaStateNotifier
+    extends StateNotifier<Map<String, HistoryMetaModel>?>
+    implements HistoryMetaStateNotifier {
+  MockHistoryMetaStateNotifier([Map<String, HistoryMetaModel>? state])
+    : super(state);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class MockCollectionStateNotifier extends StateNotifier<Map<String, RequestModel>?> implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state]) : super(state);
+class MockCollectionStateNotifier
+    extends StateNotifier<Map<String, RequestModel>?>
+    implements CollectionStateNotifier {
+  MockCollectionStateNotifier([Map<String, RequestModel>? state])
+    : super(state);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -35,13 +41,13 @@ void main() {
   final historyModel = HistoryRequestModel(
     historyId: '1',
     metaData: historyMeta,
-    httpResponseModel: HttpResponseModel(
-      statusCode: 200,
-    ),
+    httpResponseModel: HttpResponseModel(statusCode: 200),
   );
 
   group('HistoryPageBottombar Tests', () {
-    testWidgets('renders HistoryPageBottombar properly in large window', (tester) async {
+    testWidgets('renders HistoryPageBottombar properly in large window', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1000, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -50,15 +56,17 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModel),
-            historyMetaStateNotifier.overrideWith((ref) => MockHistoryMetaStateNotifier({'1': historyMeta})),
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: HistoryPageBottombar(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModel,
             ),
-          ),
+            historyMetaStateNotifier.overrideWith(
+              (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
+            ),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
+          ],
+          child: MaterialApp(home: Scaffold(body: HistoryPageBottombar())),
         ),
       );
 
@@ -67,7 +75,9 @@ void main() {
       expect(find.byType(HistoryPageBottombar), findsOneWidget);
     });
 
-    testWidgets('renders HistoryPageBottombar properly in medium window', (tester) async {
+    testWidgets('renders HistoryPageBottombar properly in medium window', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(700, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -76,15 +86,17 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModel),
-            historyMetaStateNotifier.overrideWith((ref) => MockHistoryMetaStateNotifier({'1': historyMeta})),
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: HistoryPageBottombar(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModel,
             ),
-          ),
+            historyMetaStateNotifier.overrideWith(
+              (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
+            ),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
+          ],
+          child: MaterialApp(home: Scaffold(body: HistoryPageBottombar())),
         ),
       );
 
@@ -97,14 +109,18 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModel),
-            historyMetaStateNotifier.overrideWith((ref) => MockHistoryMetaStateNotifier({'1': historyMeta})),
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModel,
+            ),
+            historyMetaStateNotifier.overrideWith(
+              (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
+            ),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: HistorySheetButton(requestCount: 2),
-            ),
+            home: Scaffold(body: HistorySheetButton(requestCount: 2)),
           ),
         ),
       );
@@ -122,18 +138,24 @@ void main() {
       expect(find.byType(BottomSheet), findsOneWidget);
     });
 
-    testWidgets('renders HistorySheetButton properly when requestCount > 9', (tester) async {
+    testWidgets('renders HistorySheetButton properly when requestCount > 9', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModel),
-            historyMetaStateNotifier.overrideWith((ref) => MockHistoryMetaStateNotifier({'1': historyMeta})),
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModel,
+            ),
+            historyMetaStateNotifier.overrideWith(
+              (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
+            ),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: HistorySheetButton(requestCount: 15),
-            ),
+            home: Scaffold(body: HistorySheetButton(requestCount: 15)),
           ),
         ),
       );
@@ -153,14 +175,18 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModel),
-            historyMetaStateNotifier.overrideWith((ref) => MockHistoryMetaStateNotifier({'1': historyMeta})),
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModel,
+            ),
+            historyMetaStateNotifier.overrideWith(
+              (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
+            ),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: HistorySheetButton(requestCount: 2),
-            ),
+            home: Scaffold(body: HistorySheetButton(requestCount: 2)),
           ),
         ),
       );

@@ -30,9 +30,7 @@ void main() {
       body: '{"test": 1}',
       bodyContentType: ContentType.json,
     ),
-    httpResponseModel: HttpResponseModel(
-      statusCode: 200,
-    ),
+    httpResponseModel: HttpResponseModel(statusCode: 200),
   );
 
   final graphqlHistoryModel = HistoryRequestModel(
@@ -51,9 +49,7 @@ void main() {
       method: HTTPVerb.post,
       query: 'query { user { id } }',
     ),
-    httpResponseModel: HttpResponseModel(
-      statusCode: 200,
-    ),
+    httpResponseModel: HttpResponseModel(statusCode: 200),
   );
 
   final aiHistoryModel = HistoryRequestModel(
@@ -67,29 +63,24 @@ void main() {
       apiType: APIType.ai,
       responseStatus: 200,
     ),
-    aiRequestModel: AIRequestModel(
-      systemPrompt: 'system',
-      userPrompt: 'hi',
-    ),
-    httpResponseModel: HttpResponseModel(
-      statusCode: 200,
-    ),
+    aiRequestModel: AIRequestModel(systemPrompt: 'system', userPrompt: 'hi'),
+    httpResponseModel: HttpResponseModel(statusCode: 200),
   );
 
   group('HistoryRequestPane Tests', () {
-    testWidgets('renders HistoryRequestPane for REST API correctly', (tester) async {
+    testWidgets('renders HistoryRequestPane for REST API correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             selectedHistoryIdStateProvider.overrideWith((ref) => '1'),
             historyCodePaneVisibleStateProvider.overrideWith((ref) => false),
-            selectedHistoryRequestModelProvider.overrideWith((ref) => restHistoryModel),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              body: HistoryRequestPane(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => restHistoryModel,
             ),
-          ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HistoryRequestPane())),
         ),
       );
 
@@ -101,19 +92,19 @@ void main() {
       expect(find.text(kLabelBody), findsOneWidget);
     });
 
-    testWidgets('renders HistoryRequestPane for GraphQL API correctly', (tester) async {
+    testWidgets('renders HistoryRequestPane for GraphQL API correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             selectedHistoryIdStateProvider.overrideWith((ref) => '2'),
             historyCodePaneVisibleStateProvider.overrideWith((ref) => false),
-            selectedHistoryRequestModelProvider.overrideWith((ref) => graphqlHistoryModel),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              body: HistoryRequestPane(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => graphqlHistoryModel,
             ),
-          ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HistoryRequestPane())),
         ),
       );
 
@@ -123,19 +114,19 @@ void main() {
       expect(find.text(kLabelQuery), findsOneWidget);
     });
 
-    testWidgets('renders HistoryRequestPane for AI API correctly', (tester) async {
+    testWidgets('renders HistoryRequestPane for AI API correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             selectedHistoryIdStateProvider.overrideWith((ref) => '3'),
             historyCodePaneVisibleStateProvider.overrideWith((ref) => false),
-            selectedHistoryRequestModelProvider.overrideWith((ref) => aiHistoryModel),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              body: HistoryRequestPane(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => aiHistoryModel,
             ),
-          ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HistoryRequestPane())),
         ),
       );
 
@@ -147,17 +138,17 @@ void main() {
   });
 
   group('HisRequestBody Tests', () {
-    testWidgets('renders HisRequestBody for REST (json) correctly', (tester) async {
+    testWidgets('renders HisRequestBody for REST (json) correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => restHistoryModel),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              body: HisRequestBody(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => restHistoryModel,
             ),
-          ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HisRequestBody())),
         ),
       );
 
@@ -167,17 +158,17 @@ void main() {
       expect(find.byType(JsonTextFieldEditor), findsOneWidget);
     });
 
-    testWidgets('renders HisRequestBody for GraphQL (query) correctly', (tester) async {
+    testWidgets('renders HisRequestBody for GraphQL (query) correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => graphqlHistoryModel),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              body: HisRequestBody(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => graphqlHistoryModel,
             ),
-          ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HisRequestBody())),
         ),
       );
 
@@ -186,7 +177,9 @@ void main() {
       expect(find.byType(TextFieldEditor), findsOneWidget);
     });
 
-    testWidgets('renders HisRequestBody for REST (formdata) correctly', (tester) async {
+    testWidgets('renders HisRequestBody for REST (formdata) correctly', (
+      tester,
+    ) async {
       final formdataModel = HistoryRequestModel(
         historyId: '4',
         metaData: HistoryMetaModel(
@@ -202,23 +195,21 @@ void main() {
           url: 'https://example.com',
           method: HTTPVerb.post,
           bodyContentType: ContentType.formdata,
-          formData: [FormDataModel(name: 'a', value: 'b', type: FormDataType.text)],
+          formData: [
+            FormDataModel(name: 'a', value: 'b', type: FormDataType.text),
+          ],
         ),
-        httpResponseModel: HttpResponseModel(
-          statusCode: 200,
-        ),
+        httpResponseModel: HttpResponseModel(statusCode: 200),
       );
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => formdataModel),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              body: HisRequestBody(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => formdataModel,
             ),
-          ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HisRequestBody())),
         ),
       );
 

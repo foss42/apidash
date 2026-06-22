@@ -18,18 +18,20 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => null),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: RequestEditorPane(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: RequestEditorPane())),
         ),
       ),
     );
@@ -43,21 +45,27 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', httpRequestModel: HttpRequestModel())
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                httpRequestModel: HttpRequestModel(),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: RequestEditorPane(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: RequestEditorPane())),
         ),
       ),
     );

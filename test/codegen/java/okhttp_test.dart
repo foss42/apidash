@@ -21,9 +21,7 @@ void main() {
       final req = HttpRequestModel(
         method: HTTPVerb.get,
         url: 'https://api.test.com',
-        params: [
-          const NameValueModel(name: 'q', value: 'test'),
-        ],
+        params: [const NameValueModel(name: 'q', value: 'test')],
       );
       final result = generator.getCode(req);
       expect(result, contains('.addQueryParameter("q", "test")'));
@@ -70,7 +68,11 @@ void main() {
         url: 'https://api.test.com',
         bodyContentType: ContentType.formdata,
         formData: [
-          const FormDataModel(name: 'field', value: 'value', type: FormDataType.text),
+          const FormDataModel(
+            name: 'field',
+            value: 'value',
+            type: FormDataType.text,
+          ),
         ],
       );
       final result = generator.getCode(req);

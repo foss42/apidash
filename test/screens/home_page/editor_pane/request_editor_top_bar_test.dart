@@ -18,21 +18,27 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', name: 'Test Request Name')
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                name: 'Test Request Name',
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: RequestEditorTopBar(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: RequestEditorTopBar())),
         ),
       ),
     );

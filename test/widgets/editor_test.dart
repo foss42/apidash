@@ -13,16 +13,18 @@ void main() {
         title: 'Editor',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: Column(children: [
-            Expanded(
-              child: TextFieldEditor(
-                fieldKey: '2',
-                onChanged: (value) {
-                  changedValue = value;
-                },
+          body: Column(
+            children: [
+              Expanded(
+                child: TextFieldEditor(
+                  fieldKey: '2',
+                  onChanged: (value) {
+                    changedValue = value;
+                  },
+                ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );
@@ -50,17 +52,19 @@ void main() {
         title: 'Editor Dark',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: Column(children: [
-            Expanded(
-              child: TextFieldEditor(
-                fieldKey: '2',
-                onChanged: (value) {
-                  changedValue = value;
-                },
-                initialValue: 'initial',
+          body: Column(
+            children: [
+              Expanded(
+                child: TextFieldEditor(
+                  fieldKey: '2',
+                  onChanged: (value) {
+                    changedValue = value;
+                  },
+                  initialValue: 'initial',
+                ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );
@@ -82,7 +86,9 @@ void main() {
     expect(changedValue, 'entering 123 for testing content body  ');
 
     // Test onTapOutside
-    await tester.tapAt(const Offset(10, 10)); // Tap somewhere outside the editor if possible
+    await tester.tapAt(
+      const Offset(10, 10),
+    ); // Tap somewhere outside the editor if possible
     await tester.pumpAndSettle();
   });
 
@@ -100,7 +106,11 @@ void main() {
               GestureDetector(
                 key: const Key('outside'),
                 onTap: () {},
-                child: const SizedBox(height: 100, width: 100, child: Text('Outside')),
+                child: const SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: Text('Outside'),
+                ),
               ),
             ],
           ),

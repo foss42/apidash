@@ -26,21 +26,29 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', httpRequestModel: HttpRequestModel(url: 'https://api.apidash.dev'))
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                httpRequestModel: HttpRequestModel(
+                  url: 'https://api.apidash.dev',
+                ),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditorPaneRequestURLCard(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditorPaneRequestURLCard())),
         ),
       ),
     );

@@ -8,8 +8,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MockCollectionStateNotifier extends StateNotifier<Map<String, RequestModel>?> implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state]) : super(state);
+class MockCollectionStateNotifier
+    extends StateNotifier<Map<String, RequestModel>?>
+    implements CollectionStateNotifier {
+  MockCollectionStateNotifier([Map<String, RequestModel>? state])
+    : super(state);
 
   @override
   void duplicateFromHistory(HistoryRequestModel historyModel) {}
@@ -30,13 +33,13 @@ void main() {
       apiType: APIType.rest,
       responseStatus: 200,
     ),
-    httpResponseModel: HttpResponseModel(
-      statusCode: 200,
-    ),
+    httpResponseModel: HttpResponseModel(statusCode: 200),
   );
 
   group('HistoryActionButtons Tests', () {
-    testWidgets('renders action buttons and handles state properly', (tester) async {
+    testWidgets('renders action buttons and handles state properly', (
+      tester,
+    ) async {
       final mockStateNotifier = MockCollectionStateNotifier({
         'req-1': RequestModel(
           id: 'req-1',
@@ -50,13 +53,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith((ref) => mockStateNotifier),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => mockStateNotifier,
+            ),
           ],
           child: MaterialApp(
             home: Scaffold(
-              body: HistoryActionButtons(
-                historyRequestModel: historyModel,
-              ),
+              body: HistoryActionButtons(historyRequestModel: historyModel),
             ),
           ),
         ),
@@ -77,19 +80,21 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('renders action buttons with missing request properly', (tester) async {
+    testWidgets('renders action buttons with missing request properly', (
+      tester,
+    ) async {
       final mockStateNotifier = MockCollectionStateNotifier({});
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith((ref) => mockStateNotifier),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => mockStateNotifier,
+            ),
           ],
           child: MaterialApp(
             home: Scaffold(
-              body: HistoryActionButtons(
-                historyRequestModel: historyModel,
-              ),
+              body: HistoryActionButtons(historyRequestModel: historyModel),
             ),
           ),
         ),
@@ -98,39 +103,42 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(FilledButtonGroup), findsOneWidget);
-      
+
       // Tap Request (should be disabled)
       await tester.tap(find.text('Request'), warnIfMissed: false);
       await tester.pumpAndSettle();
     });
 
-    testWidgets('renders action buttons with null historyRequestModel properly', (tester) async {
-      final mockStateNotifier = MockCollectionStateNotifier({});
+    testWidgets(
+      'renders action buttons with null historyRequestModel properly',
+      (tester) async {
+        final mockStateNotifier = MockCollectionStateNotifier({});
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            collectionStateNotifierProvider.overrideWith((ref) => mockStateNotifier),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: HistoryActionButtons(
-                historyRequestModel: null,
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              collectionStateNotifierProvider.overrideWith(
+                (ref) => mockStateNotifier,
+              ),
+            ],
+            child: MaterialApp(
+              home: Scaffold(
+                body: HistoryActionButtons(historyRequestModel: null),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(find.byType(FilledButtonGroup), findsOneWidget);
-      
-      // Tap Request (should be disabled)
-      await tester.tap(find.text('Request'), warnIfMissed: false);
-      // Tap Duplicate (should be disabled)
-      await tester.tap(find.text('Duplicate'), warnIfMissed: false);
-      await tester.pumpAndSettle();
-    });
+        expect(find.byType(FilledButtonGroup), findsOneWidget);
+
+        // Tap Request (should be disabled)
+        await tester.tap(find.text('Request'), warnIfMissed: false);
+        // Tap Duplicate (should be disabled)
+        await tester.tap(find.text('Duplicate'), warnIfMissed: false);
+        await tester.pumpAndSettle();
+      },
+    );
   });
 }

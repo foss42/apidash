@@ -6,7 +6,7 @@ class TestModelProvider extends ModelProvider {}
 void main() {
   test('ModelProvider throws UnimplementedError by default', () {
     final provider = TestModelProvider();
-    
+
     expect(() => provider.defaultAIRequestModel, throwsUnimplementedError);
     expect(() => provider.createRequest(null), throwsUnimplementedError);
     expect(() => provider.outputFormatter({}), throwsUnimplementedError);

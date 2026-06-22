@@ -36,12 +36,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET2', () {
       const expectedCode = r"""
@@ -72,12 +73,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET3', () {
@@ -109,12 +111,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET4', () {
@@ -146,12 +149,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET5', () {
@@ -185,12 +189,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET6', () {
@@ -224,12 +229,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET7', () {
@@ -261,12 +267,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET8', () {
@@ -300,12 +307,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET9', () {
       const expectedCode = r"""
@@ -336,12 +344,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET10', () {
@@ -375,12 +384,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET11', () {
@@ -414,12 +424,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET12', () {
@@ -451,12 +462,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -490,12 +502,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('HEAD2', () {
@@ -527,12 +540,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -567,12 +581,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST2', () {
       const expectedCode = r"""
@@ -610,12 +625,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST3', () {
       const expectedCode = r"""
@@ -650,12 +666,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST4', () {
       const expectedCode = r"""
@@ -694,12 +711,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST5', () {
       const expectedCode = r"""
@@ -740,12 +758,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST6', () {
       const expectedCode = r"""
@@ -783,12 +802,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST7', () {
       const expectedCode = r"""
@@ -826,12 +846,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST8', () {
       const expectedCode = r"""
@@ -870,12 +891,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST9', () {
       const expectedCode = r"""
@@ -917,12 +939,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPost9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -959,12 +982,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1001,12 +1025,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1040,12 +1065,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('DELETE2', () {
       const expectedCode = r"""
@@ -1079,12 +1105,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.rustHyper,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

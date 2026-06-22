@@ -10,8 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/providers/providers.dart';
 
-class MockCollectionStateNotifier extends StateNotifier<Map<String, RequestModel>?> implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state]) : super(state);
+class MockCollectionStateNotifier
+    extends StateNotifier<Map<String, RequestModel>?>
+    implements CollectionStateNotifier {
+  MockCollectionStateNotifier([Map<String, RequestModel>? state])
+    : super(state);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -43,9 +46,11 @@ void main() {
       );
 
       expect(
-          find.text(
-              historyRequestModel.httpRequestModel!.method.name.toUpperCase()),
-          findsOneWidget);
+        find.text(
+          historyRequestModel.httpRequestModel!.method.name.toUpperCase(),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Testing if displays correct URL', (tester) async {
@@ -58,7 +63,9 @@ void main() {
       );
 
       expect(
-          find.text(historyRequestModel.httpRequestModel!.url), findsOneWidget);
+        find.text(historyRequestModel.httpRequestModel!.url),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Testing HistoryURLCard for AI API correctly', (tester) async {
@@ -77,15 +84,15 @@ void main() {
           systemPrompt: 'system',
           userPrompt: 'hi',
         ),
-        httpResponseModel: HttpResponseModel(
-          statusCode: 200,
-        ),
+        httpResponseModel: HttpResponseModel(statusCode: 200),
       );
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
           ],
           child: MaterialApp(
             home: Scaffold(
@@ -100,7 +107,9 @@ void main() {
       expect(find.byType(AIModelSelector), findsOneWidget);
     });
 
-    testWidgets('Testing HistoryURLCard in compact mode correctly', (tester) async {
+    testWidgets('Testing HistoryURLCard in compact mode correctly', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(300, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -109,7 +118,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
           ],
           child: MaterialApp(
             home: Scaffold(
@@ -124,16 +135,18 @@ void main() {
       expect(find.byType(HistoryURLCard), findsOneWidget);
     });
 
-    testWidgets('Testing HistoryURLCard with null historyRequestModel', (tester) async {
+    testWidgets('Testing HistoryURLCard with null historyRequestModel', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: HistoryURLCard(historyRequestModel: null),
-            ),
+            home: Scaffold(body: HistoryURLCard(historyRequestModel: null)),
           ),
         ),
       );
@@ -152,7 +165,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith((ref) => MockCollectionStateNotifier({})),
+            collectionStateNotifierProvider.overrideWith(
+              (ref) => MockCollectionStateNotifier({}),
+            ),
           ],
           child: MaterialApp(
             home: Scaffold(

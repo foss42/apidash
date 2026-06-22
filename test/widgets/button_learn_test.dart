@@ -6,11 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Testing LearnButton default label', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: LearnButton(),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: LearnButton())),
     );
 
     expect(find.byType(ADFilledButton), findsOneWidget);
@@ -21,10 +17,7 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
-          body: LearnButton(
-            label: 'Custom Learn',
-            url: 'https://apidash.dev',
-          ),
+          body: LearnButton(label: 'Custom Learn', url: 'https://apidash.dev'),
         ),
       ),
     );

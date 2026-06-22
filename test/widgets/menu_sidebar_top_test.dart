@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('SidebarTopMenu renders and handles selection', (WidgetTester tester) async {
+  testWidgets('SidebarTopMenu renders and handles selection', (
+    WidgetTester tester,
+  ) async {
     SidebarMenuOption? selectedOption;
 
     await tester.pumpWidget(

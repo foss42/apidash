@@ -20,17 +20,19 @@ void main() {
         request.response
           ..statusCode = HttpStatus.ok
           ..headers.contentType = ContentType.json
-          ..write(jsonEncode({
-            "candidates": [
-              {
-                "content": {
-                  "parts": [
-                    {"text": "mock response"}
-                  ]
-                }
-              }
-            ]
-          }))
+          ..write(
+            jsonEncode({
+              "candidates": [
+                {
+                  "content": {
+                    "parts": [
+                      {"text": "mock response"},
+                    ],
+                  },
+                },
+              ],
+            }),
+          )
           ..close();
       } else if (path.contains('error') && !path.contains('stream')) {
         request.response
@@ -47,8 +49,12 @@ void main() {
         request.response
           ..statusCode = HttpStatus.ok
           ..headers.contentType = ContentType('text', 'event-stream')
-          ..write('data: {"candidates":[{"content":{"parts":[{"text":"mock "}]}}]}\n\n')
-          ..write('data: {"candidates":[{"content":{"parts":[{"text":"stream"}]}}]}\n\n')
+          ..write(
+            'data: {"candidates":[{"content":{"parts":[{"text":"mock "}]}}]}\n\n',
+          )
+          ..write(
+            'data: {"candidates":[{"content":{"parts":[{"text":"stream"}]}}]}\n\n',
+          )
           ..write('data: [DONE]\n\n')
           ..close();
       } else {
@@ -64,18 +70,21 @@ void main() {
   });
 
   group('ai_request_utils', () {
-    test('executeGenAIRequest should return formatted output on success', () async {
-      var model = AIRequestModel(
-        modelApiProvider: ModelAPIProvider.gemini,
-        model: 'gemini-2.0-flash',
-        url: '$serverUrl/success',
-        userPrompt: 'Convert the Given Number into Binary',
-        systemPrompt: '1',
-        apiKey: 'fake_key',
-      );
-      final result = await executeGenAIRequest(model);
-      expect(result, 'mock response');
-    });
+    test(
+      'executeGenAIRequest should return formatted output on success',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          model: 'gemini-2.0-flash',
+          url: '$serverUrl/success',
+          userPrompt: 'Convert the Given Number into Binary',
+          systemPrompt: '1',
+          apiKey: 'fake_key',
+        );
+        final result = await executeGenAIRequest(model);
+        expect(result, 'mock response');
+      },
+    );
 
     test('executeGenAIRequest returns null on error', () async {
       var model = AIRequestModel(
@@ -153,21 +162,17 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 100));
       expect(answers, ['mock ', 'stream ']);
     });
-    
+
     test('processGenAIStreamOutput handles words correctly', () async {
       final controller = StreamController<String?>();
       List<String> words = [];
-      processGenAIStreamOutput(
-        controller.stream, 
-        (w) => words.add(w), 
-        (e) {}
-      );
-      
+      processGenAIStreamOutput(controller.stream, (w) => words.add(w), (e) {});
+
       controller.add("hello ");
       controller.add("world ");
       controller.add("this is a test");
       await controller.close();
-      
+
       await Future.delayed(const Duration(milliseconds: 50));
       expect(words, ['hello', 'world', 'this', 'is', 'a', 'test']);
     });
@@ -175,12 +180,10 @@ void main() {
     test('processGenAIStreamOutput handles errors', () async {
       final controller = StreamController<String?>();
       bool hasError = false;
-      processGenAIStreamOutput(
-        controller.stream, 
-        (w) {}, 
-        (e) { hasError = true; }
-      );
-      
+      processGenAIStreamOutput(controller.stream, (w) {}, (e) {
+        hasError = true;
+      });
+
       controller.addError(Exception("stream error"));
       await Future.delayed(const Duration(milliseconds: 50));
       expect(hasError, isTrue);
@@ -197,7 +200,9 @@ void main() {
       await callGenerativeModel(
         model,
         onAnswer: (val) {},
-        onError: (e) { hasError = true; },
+        onError: (e) {
+          hasError = true;
+        },
       );
       expect(hasError, isTrue);
     });

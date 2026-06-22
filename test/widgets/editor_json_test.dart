@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Testing JsonTextFieldEditor initialization and format button', (tester) async {
+  testWidgets('Testing JsonTextFieldEditor initialization and format button', (
+    tester,
+  ) async {
     String changedValue = '';
-    
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -31,7 +33,7 @@ void main() {
 
   testWidgets('Testing JsonTextFieldEditor insertTab', (tester) async {
     String changedValue = '';
-    
+
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -46,7 +48,7 @@ void main() {
 
     await tester.tap(find.byType(JsonTextFieldEditor));
     await tester.pump();
-    
+
     // Simulate tab key press
     await tester.sendKeyEvent(LogicalKeyboardKey.tab);
     await tester.pumpAndSettle();
@@ -91,7 +93,7 @@ void main() {
 
     isDarkNotifier.value = true;
     await tester.pumpAndSettle();
-    
+
     fieldKeyNotifier.value = 'key2';
     await tester.pumpAndSettle();
   });
@@ -99,11 +101,7 @@ void main() {
   testWidgets('Testing JsonTextFieldEditor onTapOutside', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: JsonTextFieldEditor(
-            fieldKey: 'test_key_focus',
-          ),
-        ),
+        home: Scaffold(body: JsonTextFieldEditor(fieldKey: 'test_key_focus')),
       ),
     );
 

@@ -5,7 +5,10 @@ void main() {
   group('Insomnia Utils tests', () {
     test('getRequestsFromInsomniaCollection handles null/empty', () {
       expect(getRequestsFromInsomniaCollection(null), isEmpty);
-      expect(getRequestsFromInsomniaCollection(InsomniaCollection(resources: [])), isEmpty);
+      expect(
+        getRequestsFromInsomniaCollection(InsomniaCollection(resources: [])),
+        isEmpty,
+      );
     });
 
     test('getRequestsFromInsomniaCollection returns requests', () {

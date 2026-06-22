@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('SimpleText renders title, subtitle, and icon', (WidgetTester tester) async {
+  testWidgets('SimpleText renders title, subtitle, and icon', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
@@ -21,13 +23,11 @@ void main() {
     expect(find.byIcon(Icons.abc), findsOneWidget);
   });
 
-  testWidgets('SimpleText renders without title, subtitle, and icon', (WidgetTester tester) async {
+  testWidgets('SimpleText renders without title, subtitle, and icon', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: SimpleText(),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: SimpleText())),
     );
 
     expect(find.byType(Column), findsOneWidget);

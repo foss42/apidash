@@ -48,7 +48,9 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing); // Dialog dismissed
   });
 
-  testWidgets('Testing showOkCancelDialog custom labels and Cancel', (tester) async {
+  testWidgets('Testing showOkCancelDialog custom labels and Cancel', (
+    tester,
+  ) async {
     bool cancelClicked = false;
 
     await tester.pumpWidget(

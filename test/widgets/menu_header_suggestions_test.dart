@@ -4,8 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('HeaderSuggestions Widget Tests', () {
-    testWidgets('HeaderSuggestions displays suggestions correctly',
-        (tester) async {
+    testWidgets('HeaderSuggestions displays suggestions correctly', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: HeaderSuggestions(
@@ -24,8 +25,9 @@ void main() {
       expect(find.text("header2"), findsOneWidget);
     });
 
-    testWidgets('HeaderSuggestions calls onSuggestionTap when tapped',
-        (tester) async {
+    testWidgets('HeaderSuggestions calls onSuggestionTap when tapped', (
+      tester,
+    ) async {
       String? selectedSuggestion;
       await tester.pumpWidget(
         MaterialApp(
@@ -42,8 +44,9 @@ void main() {
       expect(selectedSuggestion, "header1");
     });
 
-    testWidgets('HeaderSuggestions shows no suggestions when list is empty',
-        (tester) async {
+    testWidgets('HeaderSuggestions shows no suggestions when list is empty', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: HeaderSuggestions(
@@ -58,8 +61,9 @@ void main() {
       expect(find.byType(ListTile), findsNothing);
     });
 
-    testWidgets('HeaderSuggestions triggers didUpdateWidget on query change',
-        (tester) async {
+    testWidgets('HeaderSuggestions triggers didUpdateWidget on query change', (
+      tester,
+    ) async {
       final key = GlobalKey();
       await tester.pumpWidget(
         MaterialApp(

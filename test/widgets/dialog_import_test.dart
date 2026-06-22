@@ -9,7 +9,7 @@ import 'package:file_selector/file_selector.dart';
 void main() {
   testWidgets('Testing showImportDialog', (tester) async {
     ImportFormat? selectedFormat;
-    
+
     await tester.pumpWidget(
       MaterialApp(
         home: Builder(
@@ -43,7 +43,7 @@ void main() {
     // Change format
     await tester.tap(find.text('cURL'));
     await tester.pumpAndSettle();
-    
+
     await tester.tap(find.byType(DropdownMenuItem<ImportFormat>).last);
     await tester.pumpAndSettle();
 

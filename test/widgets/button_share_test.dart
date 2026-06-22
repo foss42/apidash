@@ -3,13 +3,12 @@ import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 void main() {
   testWidgets('ShareButton renders correctly', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: ShareButton(toShare: 'test content'),
-        ),
+        home: Scaffold(body: ShareButton(toShare: 'test content')),
       ),
     );
 
@@ -17,12 +16,12 @@ void main() {
     expect(find.byIcon(Icons.share), findsOneWidget);
   });
 
-  testWidgets('ShareButton tap triggers onPressed logic', (WidgetTester tester) async {
+  testWidgets('ShareButton tap triggers onPressed logic', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: ShareButton(toShare: 'test content'),
-        ),
+        home: Scaffold(body: ShareButton(toShare: 'test content')),
       ),
     );
 

@@ -8,11 +8,9 @@ import '../models/request_models.dart';
 void main() {
   final codeGen = Codegen();
 
-  group(
-    'HTTPVerb.get',
-    () {
-      test('GET 1', () {
-        const expectedCode = r"""
+  group('HTTPVerb.get', () {
+    test('GET 1', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
@@ -40,17 +38,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet1,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 2', () {
-        const expectedCode = r"""
+    test('GET 2', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev/country/data?code=US")!)
@@ -78,17 +77,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet2,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 3', () {
-        const expectedCode = r"""
+    test('GET 3', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev/country/data?code=IND")!)
@@ -116,17 +116,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet3,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 4', () {
-        const expectedCode = r"""
+    test('GET 4', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true")!)
@@ -154,17 +155,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet4,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 5', () {
-        const expectedCode = r"""
+    test('GET 5', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash")!)
@@ -195,17 +197,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet5,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 6', () {
-        const expectedCode = r"""
+    test('GET 6', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash?raw=true")!)
@@ -236,17 +239,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet6,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 7', () {
-        const expectedCode = r"""
+    test('GET 7', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
@@ -274,17 +278,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet7,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 8', () {
-        const expectedCode = r"""
+    test('GET 8', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash?raw=true")!)
@@ -315,17 +320,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet8,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 9', () {
-        const expectedCode = r"""
+    test('GET 9', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&add_space=true")!)
@@ -353,17 +359,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet9,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 10', () {
-        const expectedCode = r"""
+    test('GET 10', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social")!)
@@ -394,17 +401,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet10,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 11', () {
-        const expectedCode = r"""
+    test('GET 11', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&digits=3")!)
@@ -435,17 +443,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet11,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('GET 12', () {
-        const expectedCode = r"""
+    test('GET 12', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social")!)
@@ -473,22 +482,20 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelGet12,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-    },
-  );
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 
-  group(
-    'HTTPVerb.head',
-    () {
-      test('HEAD 1', () {
-        const expectedCode = r"""
+  group('HTTPVerb.head', () {
+    test('HEAD 1', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
@@ -516,17 +523,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelHead1,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('HEAD 2', () {
-        const expectedCode = r"""
+    test('HEAD 2', () {
+      const expectedCode = r"""
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
@@ -554,22 +562,20 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelHead2,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-    },
-  );
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelHead2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 
-  group(
-    "HTTPVerb.post",
-    () {
-      test('POST 1', () {
-        const expectedCode = r'''
+  group("HTTPVerb.post", () {
+    test('POST 1', () {
+      const expectedCode = r'''
 import Foundation
 
 let postData = """
@@ -607,16 +613,17 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost1,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-      test('POST 2', () {
-        const expectedCode = r'''
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+    test('POST 2', () {
+      const expectedCode = r'''
 import Foundation
 
 let postData = """
@@ -659,17 +666,18 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost2,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('POST 3', () {
-        const expectedCode = r'''
+    test('POST 3', () {
+      const expectedCode = r'''
 import Foundation
 
 let postData = """
@@ -709,17 +717,18 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost3,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('POST 4', () {
-        const expectedCode = r"""
+    test('POST 4', () {
+      const expectedCode = r"""
 import Foundation
 
 import MultipartFormData
@@ -781,17 +790,18 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost4,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('POST 5', () {
-        const expectedCode = r"""
+    test('POST 5', () {
+      const expectedCode = r"""
 import Foundation
 
 import MultipartFormData
@@ -855,16 +865,17 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost5,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-      test('POST 6', () {
-        const expectedCode = r'''
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+    test('POST 6', () {
+      const expectedCode = r'''
 import Foundation
 
 import MultipartFormData
@@ -919,16 +930,17 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost6,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-      test('POST 7', () {
-        const expectedCode = r"""
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+    test('POST 7', () {
+      const expectedCode = r"""
 import Foundation
 
 import MultipartFormData
@@ -983,16 +995,17 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost7,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-      test('POST 8', () {
-        const expectedCode = r"""
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+    test('POST 8', () {
+      const expectedCode = r"""
 import Foundation
 
 import MultipartFormData
@@ -1054,16 +1067,17 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost8,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-      test('POST 9', () {
-        const expectedCode = r"""
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+    test('POST 9', () {
+      const expectedCode = r"""
 import Foundation
 
 import MultipartFormData
@@ -1122,16 +1136,17 @@ task.resume()
 semaphore.wait()
 """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost9,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-      test('POST 10', () {
-        const expectedCode = r'''
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+    test('POST 10', () {
+      const expectedCode = r'''
 import Foundation
 
 let postData = """
@@ -1169,22 +1184,20 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPost10,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-    },
-  );
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPost10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 
-  group(
-    'HTTPVerb.put',
-    () {
-      test('PUT 1', () {
-        const expectedCode = r'''
+  group('HTTPVerb.put', () {
+    test('PUT 1', () {
+      const expectedCode = r'''
 import Foundation
 
 let postData = """
@@ -1223,22 +1236,20 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPut1,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-    },
-  );
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 
-  group(
-    'HTTPVerb.patch',
-    () {
-      test('PATCH 1', () {
-        const expectedCode = r'''
+  group('HTTPVerb.patch', () {
+    test('PATCH 1', () {
+      const expectedCode = r'''
 import Foundation
 
 let postData = """
@@ -1277,22 +1288,20 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelPatch1,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-    },
-  );
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 
-  group(
-    'HTTPVerb.delete',
-    () {
-      test('DELETE 1', () {
-        const expectedCode = r'''
+  group('HTTPVerb.delete', () {
+    test('DELETE 1', () {
+      const expectedCode = r'''
 import Foundation
 
 var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!)
@@ -1320,17 +1329,18 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelDelete1,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
 
-      test('DELETE 2', () {
-        const expectedCode = r'''
+    test('DELETE 2', () {
+      const expectedCode = r'''
 import Foundation
 
 let postData = """
@@ -1369,14 +1379,14 @@ task.resume()
 semaphore.wait()
 ''';
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftUrlSession,
-              requestModelDelete2,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
-    },
-  );
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

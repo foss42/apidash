@@ -59,7 +59,11 @@ void main() {
         url: 'https://api.test.com',
         bodyContentType: ContentType.formdata,
         formData: [
-          const FormDataModel(name: 'field', value: 'value', type: FormDataType.text),
+          const FormDataModel(
+            name: 'field',
+            value: 'value',
+            type: FormDataType.text,
+          ),
         ],
       );
       final result = generator.getCode(req, boundary: 'test_boundary');

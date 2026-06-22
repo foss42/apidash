@@ -5,8 +5,16 @@ void main() {
   group('Postman Utils tests', () {
     test('getRequestsFromPostmanCollection handles null/empty', () {
       expect(getRequestsFromPostmanCollection(null), isEmpty);
-      expect(getRequestsFromPostmanCollection(PostmanCollection(info: Info())), isEmpty);
-      expect(getRequestsFromPostmanCollection(PostmanCollection(info: Info(), item: [])), isEmpty);
+      expect(
+        getRequestsFromPostmanCollection(PostmanCollection(info: Info())),
+        isEmpty,
+      );
+      expect(
+        getRequestsFromPostmanCollection(
+          PostmanCollection(info: Info(), item: []),
+        ),
+        isEmpty,
+      );
     });
 
     test('getRequestsFromPostmanCollection returns requests', () {
@@ -23,10 +31,10 @@ void main() {
               Item(
                 name: 'req2',
                 request: Request(url: Url(raw: 'https://example.com/2')),
-              )
-            ]
-          )
-        ]
+              ),
+            ],
+          ),
+        ],
       );
 
       final requests = getRequestsFromPostmanCollection(collection);

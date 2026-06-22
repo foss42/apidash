@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Testing BoundedTextField initialization and input', (tester) async {
+  testWidgets('Testing BoundedTextField initialization and input', (
+    tester,
+  ) async {
     String changedValue = '';
     await tester.pumpWidget(
       MaterialApp(
@@ -24,7 +26,9 @@ void main() {
     expect(changedValue, 'New Value');
   });
 
-  testWidgets('Testing BoundedTextField didUpdateWidget resets on empty string', (tester) async {
+  testWidgets('Testing BoundedTextField didUpdateWidget resets on empty string', (
+    tester,
+  ) async {
     final ValueNotifier<String> valueNotifier = ValueNotifier('Initial');
 
     await tester.pumpWidget(
@@ -33,10 +37,7 @@ void main() {
           body: ValueListenableBuilder<String>(
             valueListenable: valueNotifier,
             builder: (context, value, child) {
-              return BoundedTextField(
-                value: value,
-                onChanged: (_) {},
-              );
+              return BoundedTextField(value: value, onChanged: (_) {});
             },
           ),
         ),
@@ -57,11 +58,11 @@ void main() {
 
     // Controller should have been reset to empty string
     expect(find.text('Typed Value'), findsNothing);
-    
+
     // Now test a non-empty string update
     valueNotifier.value = 'Not Empty';
     await tester.pumpAndSettle();
-    
+
     // Controller is NOT updated to 'Not Empty' because the logic in didUpdateWidget is:
     // if (widget.value == '') { controller.text = widget.value; }
     // So it should still be empty string.

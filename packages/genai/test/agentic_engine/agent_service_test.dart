@@ -20,7 +20,8 @@ class MockAIAgent implements AIAgent {
   String getSystemPrompt() => 'Prompt with {{VAR}}';
 
   @override
-  Future<dynamic> outputFormatter(String rawResponse) async => rawResponse.trim();
+  Future<dynamic> outputFormatter(String rawResponse) async =>
+      rawResponse.trim();
 
   @override
   Future<bool> validator(String response) async {
@@ -42,17 +43,19 @@ void main() {
         request.response
           ..statusCode = HttpStatus.ok
           ..headers.contentType = ContentType.json
-          ..write(jsonEncode({
-            "candidates": [
-              {
-                "content": {
-                  "parts": [
-                    {"text": "mock response "}
-                  ]
-                }
-              }
-            ]
-          }))
+          ..write(
+            jsonEncode({
+              "candidates": [
+                {
+                  "content": {
+                    "parts": [
+                      {"text": "mock response "},
+                    ],
+                  },
+                },
+              ],
+            }),
+          )
           ..close();
       } else {
         request.response
@@ -106,7 +109,7 @@ void main() {
 
       expect(result, isNull);
     });
-    
+
     test('callAgent retries when exception occurs', () async {
       var agent = MockAIAgent(throwException: true);
       var baseObject = AIRequestModel(

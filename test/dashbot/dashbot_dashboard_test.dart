@@ -9,7 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('DashbotWindow Tests', () {
-    testWidgets('renders DashbotWindow and responds to drag and close', (WidgetTester tester) async {
+    testWidgets('renders DashbotWindow and responds to drag and close', (
+      WidgetTester tester,
+    ) async {
       tester.view.physicalSize = const Size(2000, 2000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -19,9 +21,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            selectedRequestModelProvider.overrideWith((ref) => null),
-          ],
+          overrides: [selectedRequestModelProvider.overrideWith((ref) => null)],
           child: MaterialApp(
             home: Scaffold(
               body: DashbotWindow(
@@ -47,31 +47,30 @@ void main() {
       await tester.pumpAndSettle();
 
       // Resize window (drag indicator)
-      await tester.drag(find.byIcon(Icons.drag_indicator_rounded), const Offset(-10, -10));
+      await tester.drag(
+        find.byIcon(Icons.drag_indicator_rounded),
+        const Offset(-10, -10),
+      );
       await tester.pumpAndSettle();
     });
 
-    testWidgets('DashbotWindow handles model selection and toggle popped', (WidgetTester tester) async {
+    testWidgets('DashbotWindow handles model selection and toggle popped', (
+      WidgetTester tester,
+    ) async {
       tester.view.physicalSize = const Size(2000, 2000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
       final ProviderContainer container = ProviderContainer(
-        overrides: [
-          selectedRequestModelProvider.overrideWith((ref) => null),
-        ],
+        overrides: [selectedRequestModelProvider.overrideWith((ref) => null)],
       );
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
           child: MaterialApp(
-            home: Scaffold(
-              body: DashbotWindow(
-                onClose: () {},
-              ),
-            ),
+            home: Scaffold(body: DashbotWindow(onClose: () {})),
           ),
         ),
       );
@@ -90,7 +89,8 @@ void main() {
       await tester.pump();
 
       // Ensure that setting a different active route changes navigation
-      container.read(dashbotActiveRouteProvider.notifier).state = DashbotRoutes.dashbotChat;
+      container.read(dashbotActiveRouteProvider.notifier).state =
+          DashbotRoutes.dashbotChat;
       await tester.pump();
     });
   });

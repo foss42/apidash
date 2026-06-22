@@ -14,16 +14,17 @@ void main() {
       final result = generator.getCode(req);
       expect(result, isNotNull);
       expect(result, contains('Unirest\n                .get(requestURL)'));
-      expect(result, contains('final String requestURL = "https://api.test.com";'));
+      expect(
+        result,
+        contains('final String requestURL = "https://api.test.com";'),
+      );
     });
 
     test('getCode handles query params', () {
       final req = HttpRequestModel(
         method: HTTPVerb.get,
         url: 'https://api.test.com',
-        params: [
-          const NameValueModel(name: 'q', value: 'test'),
-        ],
+        params: [const NameValueModel(name: 'q', value: 'test')],
       );
       final result = generator.getCode(req);
       expect(result, contains('.queryString("q", "test")'));
@@ -49,7 +50,10 @@ void main() {
         body: 'Hello World',
       );
       final result = generator.getCode(req);
-      expect(result, contains('final String requestBody = """\nHello World""";'));
+      expect(
+        result,
+        contains('final String requestBody = """\nHello World""";'),
+      );
       expect(result, contains('.body(requestBody)'));
     });
 
@@ -70,7 +74,11 @@ void main() {
         url: 'https://api.test.com',
         bodyContentType: ContentType.formdata,
         formData: [
-          const FormDataModel(name: 'field', value: 'value', type: FormDataType.text),
+          const FormDataModel(
+            name: 'field',
+            value: 'value',
+            type: FormDataType.text,
+          ),
         ],
       );
       final result = generator.getCode(req);

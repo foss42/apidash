@@ -41,7 +41,10 @@ void main() {
         form: true,
         formData: [
           FormDataModel(
-              name: 'file', value: '/path/to/file', type: FormDataType.file),
+            name: 'file',
+            value: '/path/to/file',
+            type: FormDataType.file,
+          ),
           FormDataModel(name: 'field', value: 'hello', type: FormDataType.text),
         ],
       );
@@ -51,10 +54,7 @@ void main() {
     });
 
     test('null optional fields serialize as null in toJson', () {
-      final curl = Curl(
-        method: 'GET',
-        uri: Uri.parse('https://example.com'),
-      );
+      final curl = Curl(method: 'GET', uri: Uri.parse('https://example.com'));
       final json = curl.toJson();
       expect(json['headers'], isNull);
       expect(json['data'], isNull);
@@ -66,10 +66,7 @@ void main() {
     });
 
     test('fromJson uses defaults for missing boolean fields', () {
-      final json = {
-        'method': 'GET',
-        'uri': 'https://example.com',
-      };
+      final json = {'method': 'GET', 'uri': 'https://example.com'};
       final curl = Curl.fromJson(json);
       expect(curl.form, isFalse);
       expect(curl.insecure, isFalse);
@@ -85,9 +82,15 @@ void main() {
         form: true,
         formData: [
           FormDataModel(
-              name: "username", value: "john", type: FormDataType.text),
+            name: "username",
+            value: "john",
+            type: FormDataType.text,
+          ),
           FormDataModel(
-              name: "password", value: "password", type: FormDataType.text),
+            name: "password",
+            value: "password",
+            type: FormDataType.text,
+          ),
         ],
       ),
       returnsNormally,

@@ -14,29 +14,39 @@ import 'package:apidash/models/models.dart';
 import 'test_utils.dart';
 
 void main() {
-  testWidgets('Testing EditorPaneRequestDetailsCard with dashbot not popped', (tester) async {
+  testWidgets('Testing EditorPaneRequestDetailsCard with dashbot not popped', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()..togglePopped()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier()..togglePopped(),
+          ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', httpRequestModel: HttpRequestModel())
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                httpRequestModel: HttpRequestModel(),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditorPaneRequestDetailsCard(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditorPaneRequestDetailsCard())),
         ),
       ),
     );
@@ -45,7 +55,9 @@ void main() {
     expect(find.byType(DashbotTab), findsOneWidget);
   });
 
-  testWidgets('Testing EditorPaneRequestDetailsCard with code pane visible', (tester) async {
+  testWidgets('Testing EditorPaneRequestDetailsCard with code pane visible', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -57,25 +69,33 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier(),
+          ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           codePaneVisibleStateProvider.overrideWith((ref) => true),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', httpRequestModel: HttpRequestModel())
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                httpRequestModel: HttpRequestModel(),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditorPaneRequestDetailsCard(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditorPaneRequestDetailsCard())),
         ),
       ),
     );
@@ -84,7 +104,9 @@ void main() {
     expect(find.byType(CodePane), findsOneWidget);
   });
 
-  testWidgets('Testing EditorPaneRequestDetailsCard with response pane', (tester) async {
+  testWidgets('Testing EditorPaneRequestDetailsCard with response pane', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -96,25 +118,33 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier(),
+          ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           codePaneVisibleStateProvider.overrideWith((ref) => false),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', httpRequestModel: HttpRequestModel())
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                httpRequestModel: HttpRequestModel(),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditorPaneRequestDetailsCard(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditorPaneRequestDetailsCard())),
         ),
       ),
     );

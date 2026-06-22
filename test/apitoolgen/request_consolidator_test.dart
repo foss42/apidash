@@ -51,7 +51,10 @@ void main() {
       final req = APIDashRequestDescription(
         endpoint: 'https://api.test.com',
         method: 'POST',
-        bodyJSON: {'key': 'value', 'nested': {'inner': 1}},
+        bodyJSON: {
+          'key': 'value',
+          'nested': {'inner': 1},
+        },
       );
       final result = req.generateREQDATA;
       expect(result, contains('BODY_TYPE: JSON'));
@@ -64,7 +67,9 @@ void main() {
       final req = APIDashRequestDescription(
         endpoint: 'https://api.test.com',
         method: 'POST',
-        formData: [{'name': 'file', 'type': 'file', 'value': 'path'}],
+        formData: [
+          {'name': 'file', 'type': 'file', 'value': 'path'},
+        ],
       );
       final result = req.generateREQDATA;
       expect(result, contains('BODY_TYPE: FORM-DATA'));

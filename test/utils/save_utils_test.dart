@@ -25,7 +25,7 @@ class FakePathProviderPlatform extends Fake
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   late Directory tempDir;
 
   setUpAll(() {
@@ -42,18 +42,20 @@ void main() {
   group('Save Utils', () {
     testWidgets('saveCollection executes without throwing', (tester) async {
       final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
-      await tester.pumpWidget(MaterialApp(
-        scaffoldMessengerKey: scaffoldKey,
-        home: Scaffold(body: Container()),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          scaffoldMessengerKey: scaffoldKey,
+          home: Scaffold(body: Container()),
+        ),
+      );
 
       final sm = scaffoldKey.currentState!;
-      
+
       // I/O operations must be wrapped in runAsync to avoid hanging in testWidgets
       await tester.runAsync(() async {
         await saveCollection({'key': 'value'}, sm);
       });
-      
+
       // Wait for snackbar to appear
       await tester.pump();
       expect(find.byType(SnackBar), findsOneWidget);
@@ -61,64 +63,85 @@ void main() {
 
     testWidgets('saveToDownloads executes without throwing', (tester) async {
       final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
-      await tester.pumpWidget(MaterialApp(
-        scaffoldMessengerKey: scaffoldKey,
-        home: Scaffold(body: Container()),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          scaffoldMessengerKey: scaffoldKey,
+          home: Scaffold(body: Container()),
+        ),
+      );
 
       final sm = scaffoldKey.currentState!;
-      
+
       await tester.runAsync(() async {
-        await saveToDownloads(sm, content: Uint8List.fromList([1, 2, 3]), mimeType: 'text/plain');
+        await saveToDownloads(
+          sm,
+          content: Uint8List.fromList([1, 2, 3]),
+          mimeType: 'text/plain',
+        );
       });
-      
+
       // Wait for snackbar to appear
       await tester.pump();
       expect(find.byType(SnackBar), findsOneWidget);
     });
 
-    testWidgets('saveToDownloads catches exception and shows error snackbar', (tester) async {
+    testWidgets('saveToDownloads catches exception and shows error snackbar', (
+      tester,
+    ) async {
       final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
-      await tester.pumpWidget(MaterialApp(
-        scaffoldMessengerKey: scaffoldKey,
-        home: Scaffold(body: Container()),
-      ));
+      await tester.pumpWidget(
+        MaterialApp(
+          scaffoldMessengerKey: scaffoldKey,
+          home: Scaffold(body: Container()),
+        ),
+      );
 
       final sm = scaffoldKey.currentState!;
-      
+
       // Temporarily change the path provider to return a path that is actually a file
       // to force a FileSystemException when saveToDownloads tries to write a file there.
       final badPathFile = File('${tempDir.path}/bad_dir');
       badPathFile.createSync();
-      PathProviderPlatform.instance = FakePathProviderPlatform(badPathFile.path);
-      
+      PathProviderPlatform.instance = FakePathProviderPlatform(
+        badPathFile.path,
+      );
+
       await tester.runAsync(() async {
-        await saveToDownloads(sm, content: Uint8List.fromList([1, 2, 3]), mimeType: 'text/plain');
+        await saveToDownloads(
+          sm,
+          content: Uint8List.fromList([1, 2, 3]),
+          mimeType: 'text/plain',
+        );
       });
-      
+
       // Restore path provider
       PathProviderPlatform.instance = FakePathProviderPlatform(tempDir.path);
       badPathFile.deleteSync();
-      
+
       // Wait for snackbar to appear
       await tester.pump();
       expect(find.byType(SnackBar), findsOneWidget);
     });
 
     testWidgets('saveAndShowDialog executes', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(body: Builder(builder: (context) => Container())),
-      ));
-      
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: Builder(builder: (context) => Container())),
+        ),
+      );
+
       final context = tester.element(find.byType(Container));
       bool called = false;
-      
+
       await tester.runAsync(() async {
-        await saveAndShowDialog(context, onSave: () async {
-          called = true;
-        });
+        await saveAndShowDialog(
+          context,
+          onSave: () async {
+            called = true;
+          },
+        );
       });
-      
+
       expect(called, isTrue);
     });
   });

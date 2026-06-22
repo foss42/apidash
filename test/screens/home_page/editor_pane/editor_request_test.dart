@@ -29,21 +29,27 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', httpRequestModel: HttpRequestModel())
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                httpRequestModel: HttpRequestModel(),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: RequestEditor(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: RequestEditor())),
         ),
       ),
     );
@@ -64,25 +70,33 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier(),
+          ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           codePaneVisibleStateProvider.overrideWith((ref) => true),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', httpRequestModel: HttpRequestModel())
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                httpRequestModel: HttpRequestModel(),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: RequestEditor(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: RequestEditor())),
         ),
       ),
     );

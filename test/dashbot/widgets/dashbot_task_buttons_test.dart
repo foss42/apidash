@@ -13,8 +13,9 @@ import '../pages/test_utils.dart';
 import 'action_buttons/test_utils.dart';
 
 void main() {
-  testWidgets('DashbotTaskButtons quick actions dispatch expected commands',
-      (tester) async {
+  testWidgets('DashbotTaskButtons quick actions dispatch expected commands', (
+    tester,
+  ) async {
     late SpyChatViewmodel spy;
     await tester.pumpWidget(
       ProviderScope(
@@ -24,13 +25,12 @@ void main() {
             spy.setState(const ChatState());
             return spy;
           }),
-          dashbotWindowNotifierProvider
-              .overrideWith((ref) => RecordingDashbotWindowNotifier()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => RecordingDashbotWindowNotifier(),
+          ),
           selectedRequestModelProvider.overrideWith((ref) => null),
         ],
-        child: const MaterialApp(
-          home: Scaffold(body: DashbotTaskButtons()),
-        ),
+        child: const MaterialApp(home: Scaffold(body: DashbotTaskButtons())),
       ),
     );
 
@@ -49,15 +49,19 @@ void main() {
       await tester.tap(find.text(entry.key));
       await tester.pump();
 
-      expect(spy.sendMessageCalls.length, 1,
-          reason: 'Expected a call for ${entry.key}');
+      expect(
+        spy.sendMessageCalls.length,
+        1,
+        reason: 'Expected a call for ${entry.key}',
+      );
       expect(spy.sendMessageCalls.single.type, entry.value);
       expect(spy.sendMessageCalls.single.countAsUser, isFalse);
     }
   });
 
-  testWidgets('DashbotTaskButtons generate tool toggles window visibility',
-      (tester) async {
+  testWidgets('DashbotTaskButtons generate tool toggles window visibility', (
+    tester,
+  ) async {
     late SpyChatViewmodel spy;
     final windowNotifier = RecordingDashbotWindowNotifier();
 
@@ -72,9 +76,7 @@ void main() {
           dashbotWindowNotifierProvider.overrideWith((ref) => windowNotifier),
           selectedRequestModelProvider.overrideWith((ref) => null),
         ],
-        child: const MaterialApp(
-          home: Scaffold(body: DashbotTaskButtons()),
-        ),
+        child: const MaterialApp(home: Scaffold(body: DashbotTaskButtons())),
       ),
     );
 
@@ -86,46 +88,46 @@ void main() {
     expect(spy.sendMessageCalls, isEmpty);
   });
 
-  testWidgets('DashbotTaskButtons generate UI opens dialog and restores window',
-      (tester) async {
-    late SpyChatViewmodel spy;
-    final windowNotifier = RecordingDashbotWindowNotifier();
-    final requestModel = RequestModel(
-      id: 'req-2',
-      httpRequestModel: const HttpRequestModel(),
-      httpResponseModel: const HttpResponseModel(body: 'response body'),
-    );
+  testWidgets(
+    'DashbotTaskButtons generate UI opens dialog and restores window',
+    (tester) async {
+      late SpyChatViewmodel spy;
+      final windowNotifier = RecordingDashbotWindowNotifier();
+      final requestModel = RequestModel(
+        id: 'req-2',
+        httpRequestModel: const HttpRequestModel(),
+        httpResponseModel: const HttpResponseModel(body: 'response body'),
+      );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          chatViewmodelProvider.overrideWith((ref) {
-            spy = SpyChatViewmodel(ref);
-            spy.setState(const ChatState());
-            return spy;
-          }),
-          dashbotWindowNotifierProvider.overrideWith((ref) => windowNotifier),
-          selectedRequestModelProvider.overrideWith((ref) => requestModel),
-        ],
-        child: const MaterialApp(
-          home: Scaffold(body: DashbotTaskButtons()),
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            chatViewmodelProvider.overrideWith((ref) {
+              spy = SpyChatViewmodel(ref);
+              spy.setState(const ChatState());
+              return spy;
+            }),
+            dashbotWindowNotifierProvider.overrideWith((ref) => windowNotifier),
+            selectedRequestModelProvider.overrideWith((ref) => requestModel),
+          ],
+          child: const MaterialApp(home: Scaffold(body: DashbotTaskButtons())),
         ),
-      ),
-    );
+      );
 
-    await tester.tap(find.text('📱 Generate UI'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(Dialog), findsOneWidget);
-
-    final dialogElement = find.byType(Dialog);
-    if (dialogElement.evaluate().isNotEmpty) {
-      Navigator.of(dialogElement.evaluate().first).pop();
+      await tester.tap(find.text('📱 Generate UI'));
       await tester.pumpAndSettle();
-    }
 
-    expect(windowNotifier.hideCalls, 1);
-    expect(windowNotifier.showCalls, 1);
-    expect(spy.sendMessageCalls, isEmpty);
-  });
+      expect(find.byType(Dialog), findsOneWidget);
+
+      final dialogElement = find.byType(Dialog);
+      if (dialogElement.evaluate().isNotEmpty) {
+        Navigator.of(dialogElement.evaluate().first).pop();
+        await tester.pumpAndSettle();
+      }
+
+      expect(windowNotifier.hideCalls, 1);
+      expect(windowNotifier.showCalls, 1);
+      expect(spy.sendMessageCalls, isEmpty);
+    },
+  );
 }

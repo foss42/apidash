@@ -21,16 +21,16 @@ void main() {
           ..headers.set('Content-Type', 'text/event-stream')
           ..headers.set('Cache-Control', 'no-cache')
           ..headers.set('Connection', 'keep-alive');
-        
+
         request.response.write(': ' + ' ' * 10000 + '\n');
         request.response.write('data: msg1\n\n');
         await request.response.flush();
         await Future.delayed(const Duration(milliseconds: 500));
-        
+
         request.response.write(': ' + ' ' * 10000 + '\n');
         request.response.write('data: msg2\n\n');
         await request.response.flush();
-        
+
         // Wait so we don't close before client cancels
         await Future.delayed(const Duration(seconds: 10));
         await request.response.close();

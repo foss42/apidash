@@ -40,9 +40,7 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         title: 'Window caption',
-        home: Scaffold(
-          body: WindowCaption(),
-        ),
+        home: Scaffold(body: WindowCaption()),
       ),
     );
     await tester.pumpAndSettle();
@@ -62,14 +60,10 @@ void main() {
     // Test unmaximize by simulating windowManager maximize state changing
     isMaximized = true;
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: WindowCaption(),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: WindowCaption())),
     );
     await tester.pumpAndSettle();
-    
+
     // Test unmaximize click
     await tester.tap(find.byType(WindowCaptionButton).at(1));
     await tester.pumpAndSettle();

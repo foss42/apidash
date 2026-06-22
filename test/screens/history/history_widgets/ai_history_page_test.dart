@@ -19,9 +19,7 @@ void main() {
       apiType: APIType.rest,
       responseStatus: 200,
     ),
-    httpResponseModel: HttpResponseModel(
-      statusCode: 200,
-    ),
+    httpResponseModel: HttpResponseModel(statusCode: 200),
     aiRequestModel: null,
   );
 
@@ -36,9 +34,7 @@ void main() {
       apiType: APIType.ai,
       responseStatus: 200,
     ),
-    httpResponseModel: HttpResponseModel(
-      statusCode: 200,
-    ),
+    httpResponseModel: HttpResponseModel(statusCode: 200),
     aiRequestModel: AIRequestModel(
       apiKey: 'test-api-key',
       systemPrompt: 'You are a helpful assistant.',
@@ -81,13 +77,11 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModelNullAI),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: HisAIRequestPromptSection(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModelNullAI,
             ),
-          ),
+          ],
+          child: MaterialApp(home: Scaffold(body: HisAIRequestPromptSection())),
         ),
       );
 
@@ -98,13 +92,11 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModelWithAI),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: HisAIRequestPromptSection(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModelWithAI,
             ),
-          ),
+          ],
+          child: MaterialApp(home: Scaffold(body: HisAIRequestPromptSection())),
         ),
       );
 
@@ -119,12 +111,12 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModelNullAI),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModelNullAI,
+            ),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: HisAIRequestAuthorizationSection(),
-            ),
+            home: Scaffold(body: HisAIRequestAuthorizationSection()),
           ),
         ),
       );
@@ -136,12 +128,12 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModelWithAI),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModelWithAI,
+            ),
           ],
           child: MaterialApp(
-            home: Scaffold(
-              body: HisAIRequestAuthorizationSection(),
-            ),
+            home: Scaffold(body: HisAIRequestAuthorizationSection()),
           ),
         ),
       );
@@ -155,13 +147,11 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModelNullAI),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: HisAIRequestConfigSection(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModelNullAI,
             ),
-          ),
+          ],
+          child: MaterialApp(home: Scaffold(body: HisAIRequestConfigSection())),
         ),
       );
 
@@ -172,13 +162,11 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            selectedHistoryRequestModelProvider.overrideWith((ref) => historyModelWithAI),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: HisAIRequestConfigSection(),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => historyModelWithAI,
             ),
-          ),
+          ],
+          child: MaterialApp(home: Scaffold(body: HisAIRequestConfigSection())),
         ),
       );
 

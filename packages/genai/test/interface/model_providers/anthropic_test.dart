@@ -38,13 +38,19 @@ void main() {
       final body = jsonDecode(req!.body.toString());
       expect(body['messages'][0]['content'], 'Generate');
     });
-    
+
     test('streamOutputFormatter', () {
-      expect(AnthropicModel.instance.streamOutputFormatter({'text': 'hello'}), 'hello');
+      expect(
+        AnthropicModel.instance.streamOutputFormatter({'text': 'hello'}),
+        'hello',
+      );
     });
 
     test('defaultAIRequestModel', () {
-      expect(AnthropicModel.instance.defaultAIRequestModel.modelApiProvider, ModelAPIProvider.anthropic);
+      expect(
+        AnthropicModel.instance.defaultAIRequestModel.modelApiProvider,
+        ModelAPIProvider.anthropic,
+      );
     });
 
     test('createRequest with null', () {
@@ -52,11 +58,14 @@ void main() {
     });
 
     test('outputFormatter', () {
-      expect(AnthropicModel.instance.outputFormatter({
-        'content': [
-          {'text': 'output'}
-        ]
-      }), 'output');
+      expect(
+        AnthropicModel.instance.outputFormatter({
+          'content': [
+            {'text': 'output'},
+          ],
+        }),
+        'output',
+      );
     });
   });
 }

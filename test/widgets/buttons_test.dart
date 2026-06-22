@@ -14,9 +14,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: ClearResponseButton(
-            onPressed: () => pressed = true,
-          ),
+          body: ClearResponseButton(onPressed: () => pressed = true),
         ),
       ),
     );
@@ -26,11 +24,7 @@ void main() {
 
   testWidgets('Testing DiscordButton', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: DiscordButton(),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: DiscordButton())),
     );
     expect(find.byType(ADFilledButton), findsOneWidget);
     // Tap it to cover the launchUrl branch
@@ -43,9 +37,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: FormDataFileButton(
-            onPressed: () => pressed = true,
-          ),
+          body: FormDataFileButton(onPressed: () => pressed = true),
         ),
       ),
     );
@@ -57,11 +49,7 @@ void main() {
   testWidgets('Testing RepoButton', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: RepoButton(
-            icon: Icons.star,
-          ),
-        ),
+        home: Scaffold(body: RepoButton(icon: Icons.star)),
       ),
     );
     expect(find.byType(ADFilledButton), findsOneWidget);
@@ -102,9 +90,7 @@ void main() {
   testWidgets('Testing ShareButton', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: ShareButton(toShare: "test"),
-        ),
+        home: Scaffold(body: ShareButton(toShare: "test")),
       ),
     );
     expect(find.byType(ADIconButton), findsOneWidget);

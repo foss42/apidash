@@ -6,11 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('NotSentWidget renders correctly', (WidgetTester tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: NotSentWidget(),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: NotSentWidget())),
     );
 
     expect(find.byType(NotSentWidget), findsOneWidget);
@@ -18,13 +14,13 @@ void main() {
     expect(find.text(kLabelNotSent), findsOneWidget);
   });
 
-  testWidgets('NotSentWidget renders correctly in dark mode', (WidgetTester tester) async {
+  testWidgets('NotSentWidget renders correctly in dark mode', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData.dark(),
-        home: const Scaffold(
-          body: NotSentWidget(),
-        ),
+        home: const Scaffold(body: NotSentWidget()),
       ),
     );
 

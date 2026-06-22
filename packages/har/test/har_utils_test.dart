@@ -18,9 +18,7 @@ void main() {
               startedDateTime: '2023-01-01T00:00:00Z',
               request: Request(url: 'https://example.com/1'),
             ),
-            Entry(
-              request: Request(url: 'https://example.com/2'),
-            ),
+            Entry(request: Request(url: 'https://example.com/2')),
             Entry(), // No request
           ],
         ),

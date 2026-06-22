@@ -14,16 +14,18 @@ void main() {
         type: ConfigType.boolean,
         value: ConfigBooleanValue(value: false),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: AIConfigBool(
-            configuration: config,
-            onConfigUpdated: (c) {
-              updated = true;
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigBool(
+              configuration: config,
+              onConfigUpdated: (c) {
+                updated = true;
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       expect(find.byType(Switch), findsOneWidget);
       await tester.tap(find.byType(Switch));
@@ -40,17 +42,19 @@ void main() {
         type: ConfigType.boolean,
         value: ConfigBooleanValue(value: false),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: AIConfigBool(
-            configuration: config,
-            readonly: true,
-            onConfigUpdated: (c) {
-              updated = true;
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigBool(
+              configuration: config,
+              readonly: true,
+              onConfigUpdated: (c) {
+                updated = true;
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Switch));
       await tester.pumpAndSettle();
@@ -68,16 +72,18 @@ void main() {
         type: ConfigType.text,
         value: ConfigTextValue(value: 'initial'),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: AIConfigField(
-            configuration: config,
-            onConfigUpdated: (c) {
-              updated = true;
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigField(
+              configuration: config,
+              onConfigUpdated: (c) {
+                updated = true;
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       expect(find.byType(TextFormField), findsOneWidget);
       await tester.enterText(find.byType(TextFormField), 'new text');
@@ -95,23 +101,25 @@ void main() {
         type: ConfigType.numeric,
         value: ConfigNumericValue(value: 1),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: AIConfigField(
-            configuration: config,
-            numeric: true,
-            onConfigUpdated: (c) {
-              updated = true;
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigField(
+              configuration: config,
+              numeric: true,
+              onConfigUpdated: (c) {
+                updated = true;
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       await tester.enterText(find.byType(TextFormField), '5');
       await tester.pumpAndSettle();
       expect(updated, isTrue);
       expect(config.value.value, 5);
-      
+
       // Test empty
       updated = false;
       await tester.enterText(find.byType(TextFormField), '');
@@ -135,17 +143,19 @@ void main() {
         type: ConfigType.text,
         value: ConfigTextValue(value: 'initial'),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: AIConfigField(
-            configuration: config,
-            readonly: true,
-            onConfigUpdated: (c) {
-              updated = true;
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigField(
+              configuration: config,
+              readonly: true,
+              onConfigUpdated: (c) {
+                updated = true;
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       await tester.enterText(find.byType(TextFormField), 'new');
       await tester.pumpAndSettle();
@@ -163,16 +173,18 @@ void main() {
         type: ConfigType.slider,
         value: ConfigSliderValue(value: (0.0, 5.0, 10.0)),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: AIConfigSlider(
-            configuration: config,
-            onSliderUpdated: (c) {
-              updated = true;
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigSlider(
+              configuration: config,
+              onSliderUpdated: (c) {
+                updated = true;
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       expect(find.byType(Slider), findsOneWidget);
       // Drag the slider to change its value
@@ -190,17 +202,19 @@ void main() {
         type: ConfigType.slider,
         value: ConfigSliderValue(value: (0.0, 5.0, 10.0)),
       );
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: AIConfigSlider(
-            configuration: config,
-            readonly: true,
-            onSliderUpdated: (c) {
-              updated = true;
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigSlider(
+              configuration: config,
+              readonly: true,
+              onSliderUpdated: (c) {
+                updated = true;
+              },
+            ),
           ),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Slider));
       await tester.pumpAndSettle();

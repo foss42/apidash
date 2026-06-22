@@ -20,9 +20,7 @@ void main() {
 
   group('Testing getUrl', () {
     test('when apiType is rest and httpRequestModel has url', () {
-      final requestModel = testRequestModel.copyWith(
-        apiType: APIType.rest,
-      );
+      final requestModel = testRequestModel.copyWith(apiType: APIType.rest);
       expect(requestModel.getUrl(), 'https://api.apidash.dev/case/lower');
     });
 
@@ -35,9 +33,7 @@ void main() {
     });
 
     test('when apiType is graphql and httpRequestModel has url', () {
-      final requestModel = testRequestModel.copyWith(
-        apiType: APIType.graphql,
-      );
+      final requestModel = testRequestModel.copyWith(apiType: APIType.graphql);
       expect(requestModel.getUrl(), 'https://api.apidash.dev/case/lower');
     });
 

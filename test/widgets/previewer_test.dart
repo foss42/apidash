@@ -331,7 +331,9 @@ void main() {
     expect(find.byType(Image), findsOneWidget);
   });
 
-  testWidgets('Testing sniffing when application/octet-stream unknown', (tester) async {
+  testWidgets('Testing sniffing when application/octet-stream unknown', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Previewer',
@@ -367,7 +369,9 @@ void main() {
     expect(find.byType(JsonPreviewer), findsOneWidget);
   });
 
-  testWidgets('Testing when type/subtype is application/json corrupted', (tester) async {
+  testWidgets('Testing when type/subtype is application/json corrupted', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Previewer',

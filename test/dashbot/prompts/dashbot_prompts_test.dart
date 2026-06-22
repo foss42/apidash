@@ -72,17 +72,13 @@ void main() {
     });
 
     test('openApiInsightsPrompt returns non-empty string', () {
-      final prompt = prompts.openApiInsightsPrompt(
-        specSummary: 'Test Summary',
-      );
+      final prompt = prompts.openApiInsightsPrompt(specSummary: 'Test Summary');
       expect(prompt, isNotEmpty);
       expect(prompt.contains('Test Summary'), isTrue);
     });
 
     test('curlInsightsPrompt returns non-empty string', () {
-      final prompt = prompts.curlInsightsPrompt(
-        diff: 'Test Diff',
-      );
+      final prompt = prompts.curlInsightsPrompt(diff: 'Test Diff');
       expect(prompt, isNotEmpty);
       expect(prompt.contains('Test Diff'), isTrue);
     });

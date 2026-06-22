@@ -17,28 +17,38 @@ import '../../test_utils.dart';
 import 'package:apidash/models/models.dart';
 
 void main() {
-  testWidgets('Testing EditRequestPane with Dashbot popped and REST API', (tester) async {
+  testWidgets('Testing EditRequestPane with Dashbot popped and REST API', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier(),
+          ),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', apiType: APIType.rest)
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                apiType: APIType.rest,
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditRequestPane(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditRequestPane())),
         ),
       ),
     );
@@ -46,28 +56,38 @@ void main() {
     expect(find.byType(EditRestRequestPane), findsOneWidget);
   });
 
-  testWidgets('Testing EditRequestPane with Dashbot popped and GraphQL API', (tester) async {
+  testWidgets('Testing EditRequestPane with Dashbot popped and GraphQL API', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier(),
+          ),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', apiType: APIType.graphql)
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                apiType: APIType.graphql,
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditRequestPane(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditRequestPane())),
         ),
       ),
     );
@@ -75,28 +95,35 @@ void main() {
     expect(find.byType(EditGraphQLRequestPane), findsOneWidget);
   });
 
-  testWidgets('Testing EditRequestPane with Dashbot popped and AI API', (tester) async {
+  testWidgets('Testing EditRequestPane with Dashbot popped and AI API', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier(),
+          ),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', apiType: APIType.ai)
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(id: 'test_id', apiType: APIType.ai),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditRequestPane(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditRequestPane())),
         ),
       ),
     );
@@ -104,7 +131,9 @@ void main() {
     expect(find.byType(EditAIRequestPane), findsOneWidget);
   });
 
-  testWidgets('Testing EditRequestPane with Dashbot NOT popped', (tester) async {
+  testWidgets('Testing EditRequestPane with Dashbot NOT popped', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() {
@@ -116,30 +145,39 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          dashbotWindowNotifierProvider.overrideWith((ref) => DashbotWindowNotifier()..togglePopped()),
+          dashbotWindowNotifierProvider.overrideWith(
+            (ref) => DashbotWindowNotifier()..togglePopped(),
+          ),
           collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({
-                'test_id': const RequestModel(id: 'test_id', apiType: APIType.rest, httpRequestModel: HttpRequestModel())
-              })),
-          environmentsStateNotifierProvider.overrideWith((ref) => MockEnvironmentsStateNotifier({
-            'global': const EnvironmentModel(id: 'global', name: 'Global', values: [])
-          })),
+            (ref) => MockCollectionStateNotifier({
+              'test_id': const RequestModel(
+                id: 'test_id',
+                apiType: APIType.rest,
+                httpRequestModel: HttpRequestModel(),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
           environmentSequenceProvider.overrideWith((ref) => ['global']),
           activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
         ],
         child: const MaterialApp(
-          home: Portal(
-            child: Scaffold(
-              body: EditRequestPane(),
-            ),
-          ),
+          home: Portal(child: Scaffold(body: EditRequestPane())),
         ),
       ),
     );
 
     await tester.pumpAndSettle();
     expect(find.byType(EditRestRequestPane), findsOneWidget);
-    
+
     // Tap Response
     await tester.tap(find.text('Response'));
     await tester.pumpAndSettle();
