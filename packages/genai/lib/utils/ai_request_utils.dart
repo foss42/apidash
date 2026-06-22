@@ -33,6 +33,7 @@ Future<Stream<String?>> streamGenAIRequest(
   final streamController = StreamController<String?>();
   if (httpRequestModel == null) {
     debugPrint("streamGenAIRequest -> httpRequestModel is null");
+    streamController.close();
   } else {
     final httpStream = await streamHttpRequest(
       nanoid(),
@@ -105,6 +106,9 @@ Future<void> callGenerativeModel(
         }, onError);
       } else {
         final answer = await executeGenAIRequest(aiRequestModel);
+        if (answer == null) {
+          throw Exception("Generative AI request failed");
+        }
         onAnswer(answer);
       }
     } catch (e) {

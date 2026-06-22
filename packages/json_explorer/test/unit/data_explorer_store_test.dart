@@ -247,75 +247,92 @@ void main() {
       verifyNever(listener.call);
     });
 
-    test("expand and collapse won't change collapse state of children nodes",
-        () {
-      final store = JsonExplorerStore();
-      store.buildNodes(json.decode(testJson));
-      expect(store.displayNodes, hasLength(48));
-
-      final listener = MockCallbackFunction();
-      store.addListener(listener);
-
-      // Just make sure the this element is our expected inner class.
-      expect(store.displayNodes.elementAt(4).key, 'firstClass.firstClassField');
-
-      store.collapseNode(store.displayNodes.elementAt(4));
-      expect(store.displayNodes, hasLength(41));
-
-      // Now collapse the parent class node.
-      store.collapseNode(store.displayNodes.elementAt(0));
-      expect(store.displayNodes, hasLength(25));
-      expect(store.displayNodes.elementAt(0).key, 'firstClass');
-      expect(store.displayNodes.elementAt(1).key, 'secondClass');
-
-      // Expand again and check if firstClass.firstClassField node still
-      // collapsed and firstClass.secondClassField still expanded.
-      store.expandNode(store.displayNodes.elementAt(0));
-      expect(store.displayNodes, hasLength(41));
-      expect(store.displayNodes.elementAt(4).key, 'firstClass.firstClassField');
-      expect(store.displayNodes.elementAt(4).isCollapsed, isTrue);
-      expect(
-        store.displayNodes.elementAt(5).key,
-        'firstClass.secondClassField',
-      );
-      expect(store.displayNodes.elementAt(5).isCollapsed, isFalse);
-
-      verify(listener.call).called(3);
-    });
-
-    group('areAllCollapsed', () {
-      test('works properly when nodes are built with areAllCollapsed as false',
-          () {
+    test(
+      "expand and collapse won't change collapse state of children nodes",
+      () {
         final store = JsonExplorerStore();
         store.buildNodes(json.decode(testJson));
+        expect(store.displayNodes, hasLength(48));
 
-        expect(store.areAllCollapsed(), isFalse);
-      });
+        final listener = MockCallbackFunction();
+        store.addListener(listener);
 
-      test('works properly when nodes are built with areAllCollapsed as true',
-          () {
-        final store = JsonExplorerStore();
-        store.buildNodes(json.decode(testJson), areAllCollapsed: true);
+        // Just make sure the this element is our expected inner class.
+        expect(
+          store.displayNodes.elementAt(4).key,
+          'firstClass.firstClassField',
+        );
 
-        expect(store.areAllCollapsed(), isTrue);
-      });
+        store.collapseNode(store.displayNodes.elementAt(4));
+        expect(store.displayNodes, hasLength(41));
 
-      test('''works properly when collapsing a root class child that has 
-      inner classes that are not collapsed''', () {
-        final store = JsonExplorerStore();
-        store.buildNodes(json.decode(testJson), areAllCollapsed: true);
+        // Now collapse the parent class node.
+        store.collapseNode(store.displayNodes.elementAt(0));
+        expect(store.displayNodes, hasLength(25));
+        expect(store.displayNodes.elementAt(0).key, 'firstClass');
+        expect(store.displayNodes.elementAt(1).key, 'secondClass');
 
-        store.expandNode(store.getNodeByKey('firstClass'));
-        store.expandNode(store.getNodeByKey('firstClass.firstClassField'));
-        store.expandNode(store.getNodeByKey('firstClassField.innerClassField'));
-        store.collapseNode(store.getNodeByKey('firstClass.firstClassField'));
+        // Expand again and check if firstClass.firstClassField node still
+        // collapsed and firstClass.secondClassField still expanded.
+        store.expandNode(store.displayNodes.elementAt(0));
+        expect(store.displayNodes, hasLength(41));
+        expect(
+          store.displayNodes.elementAt(4).key,
+          'firstClass.firstClassField',
+        );
+        expect(store.displayNodes.elementAt(4).isCollapsed, isTrue);
+        expect(
+          store.displayNodes.elementAt(5).key,
+          'firstClass.secondClassField',
+        );
+        expect(store.displayNodes.elementAt(5).isCollapsed, isFalse);
 
-        expect(store.areAllCollapsed(), isFalse);
+        verify(listener.call).called(3);
+      },
+    );
 
-        store.collapseNode(store.getNodeByKey('firstClass'));
+    group('areAllCollapsed', () {
+      test(
+        'works properly when nodes are built with areAllCollapsed as false',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson));
 
-        expect(store.areAllCollapsed(), isTrue);
-      });
+          expect(store.areAllCollapsed(), isFalse);
+        },
+      );
+
+      test(
+        'works properly when nodes are built with areAllCollapsed as true',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson), areAllCollapsed: true);
+
+          expect(store.areAllCollapsed(), isTrue);
+        },
+      );
+
+      test(
+        '''works properly when collapsing a root class child that has 
+      inner classes that are not collapsed''',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson), areAllCollapsed: true);
+
+          store.expandNode(store.getNodeByKey('firstClass'));
+          store.expandNode(store.getNodeByKey('firstClass.firstClassField'));
+          store.expandNode(
+            store.getNodeByKey('firstClassField.innerClassField'),
+          );
+          store.collapseNode(store.getNodeByKey('firstClass.firstClassField'));
+
+          expect(store.areAllCollapsed(), isFalse);
+
+          store.collapseNode(store.getNodeByKey('firstClass'));
+
+          expect(store.areAllCollapsed(), isTrue);
+        },
+      );
 
       test('works properly when collapsing each node individually', () {
         final store = JsonExplorerStore();
@@ -361,21 +378,25 @@ void main() {
     });
 
     group('areAllExpanded', () {
-      test('works properly when nodes are built with areAllCollapsed as false',
-          () {
-        final store = JsonExplorerStore();
-        store.buildNodes(json.decode(testJson));
+      test(
+        'works properly when nodes are built with areAllCollapsed as false',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson));
 
-        expect(store.areAllExpanded(), isTrue);
-      });
+          expect(store.areAllExpanded(), isTrue);
+        },
+      );
 
-      test('works properly when nodes are built with areAllCollapsed as true',
-          () {
-        final store = JsonExplorerStore();
-        store.buildNodes(json.decode(testJson), areAllCollapsed: true);
+      test(
+        'works properly when nodes are built with areAllCollapsed as true',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson), areAllCollapsed: true);
 
-        expect(store.areAllExpanded(), isFalse);
-      });
+          expect(store.areAllExpanded(), isFalse);
+        },
+      );
 
       test('works properly when expanding each node individually', () {
         final store = JsonExplorerStore();
@@ -525,40 +546,43 @@ void main() {
         verifyNever(listener.call);
       });
 
-      test('focus next result does nothing when the last result is focused',
-          () {
-        final store = JsonExplorerStore();
-        store.buildNodes(json.decode(testJson));
+      test(
+        'focus next result does nothing when the last result is focused',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson));
 
-        store.search('firstClass.firstClassField');
-        expect(store.searchResults, hasLength(1));
-        expect(store.focusedSearchResultIndex, 0);
+          store.search('firstClass.firstClassField');
+          expect(store.searchResults, hasLength(1));
+          expect(store.focusedSearchResultIndex, 0);
 
-        final listener = MockCallbackFunction();
-        store.addListener(listener);
-        store.focusNextSearchResult();
+          final listener = MockCallbackFunction();
+          store.addListener(listener);
+          store.focusNextSearchResult();
 
-        expect(store.focusedSearchResultIndex, 0);
-        verifyNever(listener.call);
-      });
+          expect(store.focusedSearchResultIndex, 0);
+          verifyNever(listener.call);
+        },
+      );
 
       test(
-          'focus previous result does nothing when the first result is focused',
-          () {
-        final store = JsonExplorerStore();
-        store.buildNodes(json.decode(testJson));
+        'focus previous result does nothing when the first result is focused',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson));
 
-        store.search('firstField');
-        expect(store.searchResults, hasLength(20));
-        expect(store.focusedSearchResultIndex, 0);
+          store.search('firstField');
+          expect(store.searchResults, hasLength(20));
+          expect(store.focusedSearchResultIndex, 0);
 
-        final listener = MockCallbackFunction();
-        store.addListener(listener);
-        store.focusPreviousSearchResult();
+          final listener = MockCallbackFunction();
+          store.addListener(listener);
+          store.focusPreviousSearchResult();
 
-        expect(store.focusedSearchResultIndex, 0);
-        verifyNever(listener.call);
-      });
+          expect(store.focusedSearchResultIndex, 0);
+          verifyNever(listener.call);
+        },
+      );
 
       test('search matches are correct', () {
         final store = JsonExplorerStore();
@@ -676,23 +700,25 @@ void main() {
     });
 
     test(
-        '''focus last result when first result is focused, loop is true and user 
-        goes to previous search result''', () {
-      final store = JsonExplorerStore();
-      store.buildNodes(json.decode(testJson));
+      '''focus last result when first result is focused, loop is true and user 
+        goes to previous search result''',
+      () {
+        final store = JsonExplorerStore();
+        store.buildNodes(json.decode(testJson));
 
-      store.search('firstClassField.innerClassField');
-      expect(store.focusedSearchResultIndex, 0);
-      expect(store.focusedSearchResult, store.searchResults.first);
+        store.search('firstClassField.innerClassField');
+        expect(store.focusedSearchResultIndex, 0);
+        expect(store.focusedSearchResult, store.searchResults.first);
 
-      store.focusPreviousSearchResult();
-      expect(store.focusedSearchResultIndex, 0);
-      expect(store.focusedSearchResult, store.searchResults.first);
+        store.focusPreviousSearchResult();
+        expect(store.focusedSearchResultIndex, 0);
+        expect(store.focusedSearchResult, store.searchResults.first);
 
-      store.focusPreviousSearchResult(loop: true);
-      expect(store.focusedSearchResultIndex, 1);
-      expect(store.focusedSearchResult, store.searchResults.elementAt(1));
-    });
+        store.focusPreviousSearchResult(loop: true);
+        expect(store.focusedSearchResultIndex, 1);
+        expect(store.focusedSearchResult, store.searchResults.elementAt(1));
+      },
+    );
 
     test('parent node of each node is correct', () {
       final store = JsonExplorerStore();
@@ -738,9 +764,6 @@ extension on JsonExplorerStore {
     required String parentKey,
     bool lastWhere = false,
   }) {
-    expect(
-      getNodeByKey(childKey, lastWhere: lastWhere).parent?.key,
-      parentKey,
-    );
+    expect(getNodeByKey(childKey, lastWhere: lastWhere).parent?.key, parentKey);
   }
 }
