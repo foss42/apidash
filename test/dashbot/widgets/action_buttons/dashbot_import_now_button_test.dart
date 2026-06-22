@@ -29,8 +29,9 @@ void main() {
 ''';
 
   group('DashbotImportNowButton', () {
-    testWidgets('hides dashbot window, shows picker, applies selected ops',
-        (tester) async {
+    testWidgets('hides dashbot window, shows picker, applies selected ops', (
+      tester,
+    ) async {
       const action = ChatAction(
         action: 'import_now_openapi',
         target: 'httpRequestModel',
@@ -62,9 +63,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotImportNowButton(action: action),
-            ),
+            home: Scaffold(body: DashbotImportNowButton(action: action)),
           ),
         ),
       );

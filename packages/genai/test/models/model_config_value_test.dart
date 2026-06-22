@@ -67,6 +67,11 @@ void main() {
       final deserialized = ConfigTextValue.deserialize('world');
       expect(deserialized.value, 'world');
     });
+
+    test('deserilizeValue with ConfigType.text works', () {
+      final deserialized = deserilizeValue(ConfigType.text, 'test');
+      expect(deserialized.value, 'test');
+    });
   });
 
   group('checkTypeValue', () {

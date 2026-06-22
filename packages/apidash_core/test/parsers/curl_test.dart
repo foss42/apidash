@@ -14,15 +14,17 @@ void main() {
       final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
-          result?[0],
-          const HttpRequestModel(
-              method: HTTPVerb.get,
-              url: 'https://api.apidash.dev/users',
-              headers: [],
-              params: [],
-              body: '',
-              bodyContentType: ContentType.text,
-              formData: []));
+        result?[0],
+        const HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+          headers: [],
+          params: [],
+          body: '',
+          bodyContentType: ContentType.text,
+          formData: [],
+        ),
+      );
     });
 
     test('should parse POST request with JSON body and headers', () {
@@ -52,8 +54,7 @@ void main() {
       );
     });
 
-    test(
-        'should parse form data request and file set to '
+    test('should parse form data request and file set to '
         ' so that user can select it.', () {
       const curl = '''
         curl -X POST https://api.apidash.dev/upload 
@@ -64,24 +65,26 @@ void main() {
       final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
-          result?[0],
-          const HttpRequestModel(
-            method: HTTPVerb.post,
-            url: 'https://api.apidash.dev/upload',
-            headers: [
-              NameValueModel(name: "Content-Type", value: "multipart/form-data")
-            ],
-            params: [],
-            body: '',
-            bodyContentType: ContentType.formdata,
-            formData: [
-              FormDataModel(name: 'file', value: '', type: FormDataType.file),
-              FormDataModel(
-                  name: 'description',
-                  value: 'My Photo',
-                  type: FormDataType.text),
-            ],
-          ));
+        result?[0],
+        const HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.apidash.dev/upload',
+          headers: [
+            NameValueModel(name: "Content-Type", value: "multipart/form-data"),
+          ],
+          params: [],
+          body: '',
+          bodyContentType: ContentType.formdata,
+          formData: [
+            FormDataModel(name: 'file', value: '', type: FormDataType.file),
+            FormDataModel(
+              name: 'description',
+              value: 'My Photo',
+              type: FormDataType.text,
+            ),
+          ],
+        ),
+      );
     });
 
     test('should return null for invalid curl command', () {

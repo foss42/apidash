@@ -21,6 +21,10 @@ var collectionJsonStr = r'''
           "status": 200,
           "statusText": "OK",
           "headers": [],
+          "content": {
+            "size": 100,
+            "mimeType": "text/plain"
+          },
           "bodySize": 0
         }
       },
@@ -196,14 +200,15 @@ var collectionJson = {
           "url": "https://api.apidash.dev",
           "headers": [],
           "queryString": [],
-          "bodySize": 0
+          "bodySize": 0,
         },
         "response": {
           "status": 200,
           "statusText": "OK",
           "headers": [],
-          "bodySize": 0
-        }
+          "content": {"size": 100, "mimeType": "text/plain"},
+          "bodySize": 0,
+        },
       },
       {
         "startedDateTime": "2025-03-25T12:01:00.000Z",
@@ -213,16 +218,16 @@ var collectionJson = {
           "url": "https://api.apidash.dev/country/data?code=US",
           "headers": [],
           "queryString": [
-            {"name": "code", "value": "US"}
+            {"name": "code", "value": "US"},
           ],
-          "bodySize": 0
+          "bodySize": 0,
         },
         "response": {
           "status": 200,
           "statusText": "OK",
           "headers": [],
-          "bodySize": 0
-        }
+          "bodySize": 0,
+        },
       },
       {
         "startedDateTime": "2025-03-25T12:02:00.000Z",
@@ -237,16 +242,16 @@ var collectionJson = {
             {"name": "digits", "value": "3"},
             {"name": "system", "value": "SS"},
             {"name": "add_space", "value": "true"},
-            {"name": "trailing_zeros", "value": "true"}
+            {"name": "trailing_zeros", "value": "true"},
           ],
-          "bodySize": 0
+          "bodySize": 0,
         },
         "response": {
           "status": 200,
           "statusText": "OK",
           "headers": [],
-          "bodySize": 0
-        }
+          "bodySize": 0,
+        },
       },
       {
         "startedDateTime": "2025-03-25T12:03:00.000Z",
@@ -259,15 +264,15 @@ var collectionJson = {
           "bodySize": 50,
           "postData": {
             "mimeType": "application/json",
-            "text": "{ \"text\": \"I LOVE Flutter\" }"
-          }
+            "text": "{ \"text\": \"I LOVE Flutter\" }",
+          },
         },
         "response": {
           "status": 200,
           "statusText": "OK",
           "headers": [],
-          "bodySize": 0
-        }
+          "bodySize": 0,
+        },
       },
       {
         "startedDateTime": "2025-03-25T12:04:00.000Z",
@@ -276,7 +281,7 @@ var collectionJson = {
           "method": "POST",
           "url": "https://api.apidash.dev/io/form",
           "headers": [
-            {"name": "User-Agent", "value": "Test Agent"}
+            {"name": "User-Agent", "value": "Test Agent"},
           ],
           "queryString": [],
           "bodySize": 100,
@@ -285,16 +290,16 @@ var collectionJson = {
             "params": [
               {"name": "text", "value": "API", "contentType": "text/plain"},
               {"name": "sep", "value": "|", "contentType": "text/plain"},
-              {"name": "times", "value": "3", "contentType": "text/plain"}
-            ]
-          }
+              {"name": "times", "value": "3", "contentType": "text/plain"},
+            ],
+          },
         },
         "response": {
           "status": 200,
           "statusText": "OK",
           "headers": [],
-          "bodySize": 0
-        }
+          "bodySize": 0,
+        },
       },
       {
         "startedDateTime": "2025-03-25T12:05:00.000Z",
@@ -312,18 +317,18 @@ var collectionJson = {
               {
                 "name": "imfile",
                 "fileName": "hire AI.jpeg",
-                "contentType": "image/jpeg"
-              }
-            ]
-          }
+                "contentType": "image/jpeg",
+              },
+            ],
+          },
         },
         "response": {
           "status": 200,
           "statusText": "OK",
           "headers": [],
-          "bodySize": 0
-        }
-      }
-    ]
-  }
+          "bodySize": 0,
+        },
+      },
+    ],
+  },
 };

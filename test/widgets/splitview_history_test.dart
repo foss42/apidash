@@ -6,12 +6,12 @@ import 'package:apidash/widgets/widgets.dart';
 void main() {
   testWidgets('Testing for History Splitview', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         title: 'History Splitview',
         home: Scaffold(
           body: HistorySplitView(
-            sidebarWidget: Column(children: [Text("Pane")]),
-            mainWidget: Column(children: [Text("Viewer")]),
+            sidebarWidget: Column(children: const [Text("Pane")]),
+            mainWidget: Column(children: const [Text("Viewer")]),
           ),
         ),
       ),
