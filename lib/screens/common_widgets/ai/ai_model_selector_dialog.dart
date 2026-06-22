@@ -19,6 +19,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  String? _apiKeyError;
+  String? _endpointError;
 
   @override
   void initState() {
@@ -181,11 +183,22 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               // };
               setState(() {
                 newAIRequestModel = newAIRequestModel?.copyWith(apiKey: x);
+                if (x.isNotEmpty) _apiKeyError = null;
               });
             },
             value: newAIRequestModel?.apiKey ?? "",
             // value: currentCredential,
           ),
+          if (_apiKeyError != null) ...[
+            kVSpacer5,
+            Text(
+              _apiKeyError!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontSize: 12,
+              ),
+            ),
+          ],
           kVSpacer10,
         ],
         Text(kLabelEndpoint),
@@ -195,10 +208,21 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           onChanged: (x) {
             setState(() {
               newAIRequestModel = newAIRequestModel?.copyWith(url: x);
+              if (x.isNotEmpty) _endpointError = null;
             });
           },
           value: newAIRequestModel?.url ?? "",
         ),
+        if (_endpointError != null) ...[
+          kVSpacer5,
+          Text(
+            _endpointError!,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.error,
+              fontSize: 12,
+            ),
+          ),
+        ],
         kVSpacer20,
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -253,6 +277,26 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           alignment: Alignment.centerRight,
           child: ElevatedButton(
             onPressed: () {
+              final isOllama =
+                  newAIRequestModel?.modelApiProvider ==
+                  ModelAPIProvider.ollama;
+              final apiKey = newAIRequestModel?.apiKey ?? "";
+              final endpoint = newAIRequestModel?.url ?? "";
+              String? apiKeyErr;
+              String? endpointErr;
+              if (!isOllama && apiKey.trim().isEmpty) {
+                apiKeyErr = kValidationApiKeyRequired;
+              }
+              if (endpoint.trim().isEmpty) {
+                endpointErr = kValidationEndpointRequired;
+              }
+              if (apiKeyErr != null || endpointErr != null) {
+                setState(() {
+                  _apiKeyError = apiKeyErr;
+                  _endpointError = endpointErr;
+                });
+                return;
+              }
               Navigator.of(context).pop(newAIRequestModel);
             },
             child: Text(kLabelSave),
