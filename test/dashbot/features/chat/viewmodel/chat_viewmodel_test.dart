@@ -29,7 +29,7 @@ void main() {
   late MockChatRemoteRepository mockRepo;
 
   setUp(() async {
-    await testSetUpTempDirForHive();
+    await testSetUpWorkspaceStorage();
     mockRepo = MockChatRemoteRepository();
 
     container = createContainer(
@@ -38,6 +38,7 @@ void main() {
         selectedRequestModelProvider.overrideWith((ref) => null),
       ],
     );
+    await ensureCollectionReady(container);
   });
 
   group('ChatViewmodel Basic Tests', () {

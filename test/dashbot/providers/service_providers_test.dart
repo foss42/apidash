@@ -428,10 +428,10 @@ void main() {
       late ProviderContainer realContainer;
 
       setUpAll(() async {
-        await testSetUpForHive();
+        await testSetUpWorkspaceStorage();
       });
 
-      setUp(() {
+      setUp(() async {
         realContainer = createContainer(
           overrides: [
             selectedRequestModelProvider.overrideWith((ref) {
@@ -449,6 +449,7 @@ void main() {
             ),
           ],
         );
+        await ensureCollectionReady(realContainer);
       });
 
       tearDown(() {

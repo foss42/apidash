@@ -55,7 +55,7 @@ void main() {
   late _PromptCaptureBuilder promptCapture;
 
   setUp(() async {
-    await testSetUpTempDirForHive();
+    await testSetUpWorkspaceStorage();
   });
 
   // Helper to obtain a default PromptBuilder by reading the real provider in a temp container
