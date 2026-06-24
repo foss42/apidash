@@ -16,7 +16,7 @@ void main() {
       method: HTTPVerb.get,
       timeStamp: DateTime.now(),
       responseStatus: 200,
-    )
+    ),
   ];
   testWidgets('Testing Sidebar History Card', (tester) async {
     dynamic changedValue;
@@ -46,10 +46,14 @@ void main() {
     expect(find.byType(InkWell), findsOneWidget);
 
     expect(find.text('https://api.apidash.dev'), findsOneWidget);
-    expect(find.widgetWithText(SizedBox, 'https://api.apidash.dev'),
-        findsOneWidget);
     expect(
-        find.widgetWithText(Card, 'https://api.apidash.dev'), findsOneWidget);
+      find.widgetWithText(SizedBox, 'https://api.apidash.dev'),
+      findsOneWidget,
+    );
+    expect(
+      find.widgetWithText(Card, 'https://api.apidash.dev'),
+      findsOneWidget,
+    );
     await tester.pumpAndSettle();
     var tappable = find.widgetWithText(Card, 'https://api.apidash.dev');
     await tester.tap(tappable);
@@ -86,15 +90,69 @@ void main() {
     expect(find.byType(InkWell), findsOneWidget);
 
     expect(find.text('https://api.apidash.dev'), findsOneWidget);
-    expect(find.widgetWithText(SizedBox, 'https://api.apidash.dev'),
-        findsOneWidget);
     expect(
-        find.widgetWithText(Card, 'https://api.apidash.dev'), findsOneWidget);
+      find.widgetWithText(SizedBox, 'https://api.apidash.dev'),
+      findsOneWidget,
+    );
+    expect(
+      find.widgetWithText(Card, 'https://api.apidash.dev'),
+      findsOneWidget,
+    );
     await tester.pumpAndSettle();
     var tappable = find.widgetWithText(Card, 'https://api.apidash.dev');
     await tester.tap(tappable);
     await tester.pumpAndSettle(const Duration(seconds: 2));
     expect(changedValue, 'Tapped');
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('Testing Sidebar History Card with group size > 9', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Sidebar History Card',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ListView(
+            children: [
+              SidebarHistoryCard(
+                id: '1',
+                models: sampleModels,
+                apiType: APIType.rest,
+                method: HTTPVerb.get,
+                requestGroupSize: 10,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    expect(find.text('9+'), findsOneWidget);
+  });
+
+  testWidgets('Testing Sidebar History Card with group size > 1 and <= 9', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Sidebar History Card',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ListView(
+            children: [
+              SidebarHistoryCard(
+                id: '1',
+                models: sampleModels,
+                apiType: APIType.rest,
+                method: HTTPVerb.get,
+                requestGroupSize: 5,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    expect(find.text('5'), findsOneWidget);
   });
 }

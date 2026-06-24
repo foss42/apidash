@@ -6,10 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   dataTableShowLogs = false;
   testWidgets('Testing RequestDataTable', (WidgetTester tester) async {
-    final Map<String, String> sampleData = {
-      'Key1': 'Value1',
-      'Key2': 'Value2',
-    };
+    final Map<String, String> sampleData = {'Key1': 'Value1', 'Key2': 'Value2'};
 
     await tester.pumpWidget(
       MaterialApp(

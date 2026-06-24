@@ -38,15 +38,14 @@ void main() {
         ProviderScope(
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotDownloadDocButton(action: action),
-            ),
+            home: Scaffold(body: DashbotDownloadDocButton(action: action)),
           ),
         ),
       );
 
-      final buttonFinder =
-          find.byWidgetPredicate((widget) => widget is ButtonStyleButton);
+      final buttonFinder = find.byWidgetPredicate(
+        (widget) => widget is ButtonStyleButton,
+      );
       final button = tester.widget<ButtonStyleButton>(buttonFinder);
       expect(button.onPressed, isNull);
     });

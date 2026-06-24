@@ -23,8 +23,10 @@ void main() {
     });
 
     test('throws FormatException on invalid JSON with no braces slice', () {
-      expect(() => MessageJson.safeParse('totally invalid'),
-          throwsFormatException);
+      expect(
+        () => MessageJson.safeParse('totally invalid'),
+        throwsFormatException,
+      );
     });
 
     test('falls back to slice between first { and last }', () {

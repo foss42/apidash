@@ -31,9 +31,10 @@ void main() {
     expect(find.byIcon(Icons.unfold_more_rounded), findsOneWidget);
     expect(find.byType(DropdownButton<HTTPVerb>), findsOneWidget);
     expect(
-        (tester.widget(find.byType(DropdownButton<HTTPVerb>)) as DropdownButton)
-            .value,
-        equals(HTTPVerb.post));
+      (tester.widget(find.byType(DropdownButton<HTTPVerb>)) as DropdownButton)
+          .value,
+      equals(HTTPVerb.post),
+    );
 
     await tester.tap(find.text('POST'));
     await tester.pump();

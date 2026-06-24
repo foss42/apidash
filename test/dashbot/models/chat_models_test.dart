@@ -46,7 +46,7 @@ void main() {
       const state = ChatState();
       final updated = state.copyWith(
         chatSessions: {
-          'req1': [msg]
+          'req1': [msg],
         },
         isGenerating: true,
         currentStreamingResponse: 'streaming..',
@@ -66,8 +66,10 @@ void main() {
     });
 
     test('ChatResponse copyWith', () {
-      const r1 =
-          ChatResponse(content: 'Hello', messageType: ChatMessageType.general);
+      const r1 = ChatResponse(
+        content: 'Hello',
+        messageType: ChatMessageType.general,
+      );
       final r2 = r1.copyWith(content: 'Hi again');
       expect(r2.content, 'Hi again');
       expect(r2.messageType, ChatMessageType.general);

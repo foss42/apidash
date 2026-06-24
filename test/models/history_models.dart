@@ -18,11 +18,12 @@ final historyMetaModel1 = HistoryMetaModel(
 
 /// Basic History Request model 1
 final historyRequestModel1 = HistoryRequestModel(
-    historyId: 'historyId1',
-    metaData: historyMetaModel1,
-    httpRequestModel: httpRequestModelGet4,
-    httpResponseModel: responseModel,
-    authModel: AuthModel(type: APIAuthType.none));
+  historyId: 'historyId1',
+  metaData: historyMetaModel1,
+  httpRequestModel: httpRequestModelGet4,
+  httpResponseModel: responseModel,
+  authModel: AuthModel(type: APIAuthType.none),
+);
 
 final historyMetaModel2 = HistoryMetaModel(
   historyId: 'historyId2',
@@ -67,11 +68,12 @@ final historyRequestModelWs = HistoryRequestModel(
 );
 
 final historyRequestModel2 = HistoryRequestModel(
-    historyId: 'historyId2',
-    metaData: historyMetaModel2,
-    httpRequestModel: httpRequestModelPost10,
-    httpResponseModel: responseModel,
-    authModel: AuthModel(type: APIAuthType.none));
+  historyId: 'historyId2',
+  metaData: historyMetaModel2,
+  httpRequestModel: httpRequestModelPost10,
+  httpResponseModel: responseModel,
+  authModel: AuthModel(type: APIAuthType.none),
+);
 
 /// JSONs
 final Map<String, dynamic> historyMetaModelJson1 = {
@@ -102,8 +104,8 @@ final Map<String, dynamic> historyRequestModelJson1 = {
     'jwt': null,
     'digest': null,
     'oauth1': null,
-    'oauth2': null
-  }
+    'oauth2': null,
+  },
 };
 
 final Map<String, dynamic> historyMetaModelJson2 = {
