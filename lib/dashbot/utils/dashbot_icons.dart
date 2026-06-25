@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 class DashbotIcons {
-  DashbotIcons._();
+  DashbotIcons._(); // coverage:ignore-line
   static String get dashbotIcon1 => 'assets/dashbot/dashbot_icon_1.png';
   static String get dashbotIcon2 => 'assets/dashbot/dashbot_icon_2.png';
 

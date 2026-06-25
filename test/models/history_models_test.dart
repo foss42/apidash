@@ -12,8 +12,10 @@ void main() {
       final historyMetaModelcopyWith = historyMetaModel.copyWith(
         url: 'https://api.apidash.dev/humanize/social',
       );
-      expect(historyMetaModelcopyWith.url,
-          'https://api.apidash.dev/humanize/social');
+      expect(
+        historyMetaModelcopyWith.url,
+        'https://api.apidash.dev/humanize/social',
+      );
       // original model unchanged
       expect(historyMetaModel.url, 'https://api.apidash.dev/humanize/social');
     });
@@ -60,8 +62,9 @@ void main() {
 
     test("Testing HistoryRequestModel fromJson", () {
       var historyRequestModel = historyRequestModel1;
-      final modelFromJson =
-          HistoryRequestModel.fromJson(historyRequestModelJson1);
+      final modelFromJson = HistoryRequestModel.fromJson(
+        historyRequestModelJson1,
+      );
       expect(modelFromJson, historyRequestModel);
       expect(modelFromJson.metaData, historyMetaModel1);
       expect(modelFromJson.httpRequestModel, httpRequestModelGet4);

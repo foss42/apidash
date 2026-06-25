@@ -8,7 +8,7 @@ void main() {
     "day2": "Monday",
     "day3": "Tuesday",
     "day4": "Wednesday",
-    "day5": "thursday"
+    "day5": "thursday",
   };
   List<String> colNames = ["dayNo.", "day"];
 
@@ -17,10 +17,7 @@ void main() {
       MaterialApp(
         title: 'tables',
         home: Scaffold(
-          body: MapTable(
-            colNames: colNames,
-            map: mapInput,
-          ),
+          body: MapTable(colNames: colNames, map: mapInput),
         ),
       ),
     );
@@ -31,8 +28,9 @@ void main() {
     expect(find.text('dayNo.'), findsOneWidget);
   });
 
-  testWidgets('Testing tables with firstColumnHeaderCase is true',
-      (tester) async {
+  testWidgets('Testing tables with firstColumnHeaderCase is true', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'tables',

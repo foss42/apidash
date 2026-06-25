@@ -20,12 +20,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 2', () {
@@ -46,12 +47,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 3', () {
@@ -72,12 +74,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 4', () {
@@ -102,12 +105,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 5', () {
@@ -127,12 +131,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 6', () {
@@ -158,12 +163,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 7', () {
@@ -178,12 +184,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 8', () {
@@ -209,12 +216,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 9', () {
@@ -236,12 +244,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 10', () {
@@ -261,12 +270,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 11', () {
@@ -293,12 +303,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 12', () {
@@ -313,12 +324,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -335,12 +347,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('HEAD 2', () {
@@ -355,12 +368,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -387,12 +401,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 2', () {
@@ -422,12 +437,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 3', () {
@@ -453,12 +469,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 4', () {
@@ -504,10 +521,14 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost4,
-              SupportedUriSchemes.https,
-              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+          boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 5', () {
@@ -554,10 +575,14 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost5,
-              SupportedUriSchemes.https,
-              boundary: "929dc910-7714-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+          boundary: "929dc910-7714-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 6', () {
@@ -603,10 +628,14 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost6,
-              SupportedUriSchemes.https,
-              boundary: "9b1374c0-76e0-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+          boundary: "9b1374c0-76e0-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 7', () {
@@ -652,10 +681,14 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost7,
-              SupportedUriSchemes.https,
-              boundary: "defdf240-76b4-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+          boundary: "defdf240-76b4-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 8', () {
@@ -708,10 +741,14 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost8,
-              SupportedUriSchemes.https,
-              boundary: "a990b150-7683-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+          boundary: "a990b150-7683-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 9', () {
@@ -766,10 +803,14 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost9,
-              SupportedUriSchemes.https,
-              boundary: "79088e00-75ec-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+          boundary: "79088e00-75ec-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -797,12 +838,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -830,12 +872,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -852,12 +895,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('DELETE 2', () {
@@ -883,12 +927,13 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.pythonHttpClient,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }
