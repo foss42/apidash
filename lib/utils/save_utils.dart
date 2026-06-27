@@ -31,18 +31,19 @@ Future<void> saveToDownloads(
   String? name,
 }) async {
   var message = "";
-  var path = await getFileDownloadpath(
-    name,
-    ext ?? getFileExtension(mimeType),
-  );
+  var path = await getFileDownloadpath(name, ext ?? getFileExtension(mimeType));
   if (path != null) {
-    try {
-      await saveFile(path, content!);
-      var sp = getShortPath(path);
-      message = 'Saved to $sp';
-    } catch (e) {
-      debugPrint("$e");
-      message = "An error occurred while saving file.";
+    if (content == null) {
+      message = "No content available to save.";
+    } else {
+      try {
+        await saveFile(path, content);
+        var sp = getShortPath(path);
+        message = 'Saved to $sp';
+      } catch (e) {
+        debugPrint("$e");
+        message = "An error occurred while saving file.";
+      }
     }
   } else {
     message = "Unable to determine the download path.";

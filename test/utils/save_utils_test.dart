@@ -123,6 +123,28 @@ void main() {
       expect(find.byType(SnackBar), findsOneWidget);
     });
 
+    testWidgets('saveToDownloads handles null content without crashing', (
+      tester,
+    ) async {
+      final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          scaffoldMessengerKey: scaffoldKey,
+          home: Scaffold(body: Container()),
+        ),
+      );
+
+      final sm = scaffoldKey.currentState!;
+
+      await tester.runAsync(() async {
+        await saveToDownloads(sm, content: null, mimeType: 'text/plain');
+      });
+
+      // Wait for snackbar to appear
+      await tester.pump();
+      expect(find.byType(SnackBar), findsOneWidget);
+    });
+
     testWidgets('saveAndShowDialog executes', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
