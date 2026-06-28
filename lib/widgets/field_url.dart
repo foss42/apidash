@@ -21,6 +21,7 @@ class URLField extends StatelessWidget {
     return TextFormField(
       key: Key("url-$selectedId"),
       initialValue: initialValue,
+      maxLines: null,
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
