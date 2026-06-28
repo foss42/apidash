@@ -83,16 +83,46 @@ class EditRequestBody extends ConsumerWidget {
           APIType.graphql => Expanded(
             child: Padding(
               padding: kPt5o10,
-              child: TextFieldEditor(
-                key: Key("$selectedId-query"),
-                fieldKey: "$selectedId-query-editor",
-                initialValue: requestModel?.httpRequestModel?.query,
-                onChanged: (String value) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .update(query: value);
-                },
-                hintText: kHintQuery,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(kLabelQuery),
+                  kVSpacer5,
+                  Expanded(
+                    flex: 2,
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-query"),
+                      fieldKey: "$selectedId-query-editor",
+                      initialValue: requestModel?.httpRequestModel?.query,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(query: value);
+                      },
+                      hintText: kHintQuery,
+                    ),
+                  ),
+                  kVSpacer10,
+                  const Text(kLabelVariables),
+                  kVSpacer5,
+                  Expanded(
+                    flex: 1,
+                    child: JsonTextFieldEditor(
+                      key: Key("$selectedId-graphql-variables"),
+                      fieldKey:
+                          "$selectedId-graphql-variables-editor-$darkMode",
+                      isDark: darkMode,
+                      initialValue:
+                          requestModel?.httpRequestModel?.variables,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(variables: value);
+                      },
+                      hintText: kHintVariables,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

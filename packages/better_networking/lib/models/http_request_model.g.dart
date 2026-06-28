@@ -30,6 +30,7 @@ _HttpRequestModel _$HttpRequestModelFromJson(Map json) => _HttpRequestModel(
       ContentType.json,
   body: json['body'] as String?,
   query: json['query'] as String?,
+  variables: json['variables'] as String?,
   formData: (json['formData'] as List<dynamic>?)
       ?.map((e) => FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
       .toList(),
@@ -47,6 +48,7 @@ Map<String, dynamic> _$HttpRequestModelToJson(_HttpRequestModel instance) =>
       'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
       'body': instance.body,
       'query': instance.query,
+      'variables': instance.variables,
       'formData': instance.formData?.map((e) => e.toJson()).toList(),
     };
 
