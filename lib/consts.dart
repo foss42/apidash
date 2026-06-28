@@ -516,6 +516,8 @@ const kLabelHistory = "History";
 const kLabelLogs = "Logs";
 const kLabelAbout = "About";
 const kLabelSettings = "Settings";
+const kLabelUpdateAvailable = "Update Available";
+const kLabelSkipUpdate = "Skip this version";
 
 // Settings Page
 const kLabelSwitchThemeMode = "Switch Theme Mode";

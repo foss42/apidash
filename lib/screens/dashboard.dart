@@ -130,6 +130,9 @@ class Dashboard extends ConsumerWidget {
                           label: kLabelSettings,
                           showLabel: false,
                           isCompact: true,
+                          showBadge: ref.watch(
+                            updateProvider.select((s) => s.showBadge),
+                          ),
                         ),
                       ),
                     ],

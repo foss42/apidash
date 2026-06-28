@@ -13,6 +13,7 @@ class NavbarButton extends ConsumerWidget {
     required this.label,
     this.showLabel = true,
     this.isCompact = false,
+    this.showBadge = false,
     this.onTap,
   });
   final int railIdx;
@@ -23,6 +24,7 @@ class NavbarButton extends ConsumerWidget {
   final bool showLabel;
   final Function()? onTap;
   final bool isCompact;
+  final bool showBadge;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,9 +60,12 @@ class NavbarButton extends ConsumerWidget {
                       : null,
                 ),
                 onPressed: onPress,
-                child: Icon(
-                  isSelected ? selectedIcon : icon,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                child: Badge(
+                  isLabelVisible: showBadge,
+                  child: Icon(
+                    isSelected ? selectedIcon : icon,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
