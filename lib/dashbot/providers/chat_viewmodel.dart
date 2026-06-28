@@ -14,6 +14,7 @@ import '../services/services.dart';
 import '../utils/utils.dart';
 import 'dashbot_active_route_provider.dart';
 import 'service_providers.dart';
+import 'package:apidash/services/oauth_services.dart';
 
 final chatViewmodelProvider = StateNotifierProvider<ChatViewmodel, ChatState>((
   ref,
@@ -617,6 +618,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         getNewUuid(),
         APIType.rest,
         httpModel,
+        customCallbackHandler: flutterOAuth2CallbackHandler,
       );
 
       if (err != null) {

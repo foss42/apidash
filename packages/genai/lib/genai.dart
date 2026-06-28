@@ -5,4 +5,4 @@ export 'widgets/widgets.dart';
 export 'agentic_engine/agentic_engine.dart';
 
 // Export 3rd party
-export 'package:better_networking/better_networking.dart';
+export 'package:better_networking/better_networking.dart' hide isThisWeb;
