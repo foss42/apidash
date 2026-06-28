@@ -73,6 +73,9 @@ class BottomNavBar extends ConsumerWidget {
                     selectedIcon: Icons.settings,
                     icon: Icons.settings_outlined,
                     label: 'Settings',
+                    showBadge: ref.watch(
+                      updateProvider.select((s) => s.showBadge),
+                    ),
                   ),
                 ),
               ],

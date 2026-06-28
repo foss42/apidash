@@ -4,6 +4,7 @@ import '../models/models.dart';
 
 const String kSharedPrefSettingsKey = 'apidash-settings';
 const String kSharedPrefOnboardingKey = 'apidash-onboarding-status';
+const String kSharedPrefSkippedUpdateKey = 'apidash-skipped-update-version';
 
 Future<SettingsModel?> getSettingsFromSharedPrefs() async {
   final prefs = await SharedPreferences.getInstance();
@@ -33,6 +34,16 @@ Future<bool> getOnboardingStatusFromSharedPrefs() async {
   final prefs = await SharedPreferences.getInstance();
   final onboardingStatus = prefs.getBool(kSharedPrefOnboardingKey) ?? false;
   return onboardingStatus;
+}
+
+Future<void> setSkippedUpdateVersionToSharedPrefs(String version) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(kSharedPrefSkippedUpdateKey, version);
+}
+
+Future<String?> getSkippedUpdateVersionFromSharedPrefs() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(kSharedPrefSkippedUpdateKey);
 }
 
 Future<void> clearSharedPrefs() async {
