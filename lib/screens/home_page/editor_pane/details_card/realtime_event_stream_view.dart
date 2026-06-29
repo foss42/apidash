@@ -1,13 +1,16 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/ws_request_model.dart';
+import 'package:apidash/widgets/button_copy.dart';
 /// A real-time, log-style view of WebSocket messages.
 ///
-/// Each entry shows direction (sent / received), a timestamp, and the
-/// payload. Tapping an entry copies the payload to the clipboard.
+/// Each entry shows direction (sent / received), a timestamp, a label, and
+/// the payload. An always-visible "Copy" button copies the full payload to
+/// the clipboard. Long messages are truncated; tapping a collapsed message
+/// expands it (works with mouse and touch), and once expanded the text is
+/// selectable so part of it can be copied. "Show less" collapses it again.
 class RealtimeEventStreamView extends ConsumerStatefulWidget {
   const RealtimeEventStreamView({super.key, this.historyMessages});
 
@@ -181,63 +184,97 @@ class _LogEntryState extends State<_LogEntry> {
       ),
     };
 
-    final logContent = InkWell(
-      onTap: () {
-        Clipboard.setData(ClipboardData(text: msg.payload));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Copied to clipboard"),
-            duration: Duration(milliseconds: 600),
-          ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-        child: SelectableText.rich(
-          TextSpan(
+    final theme = Theme.of(context);
+
+    // Payload section — works for both desktop (mouse) and Android (touch):
+    //  • Collapsed long message: non-selectable Text inside an InkWell, so a
+    //    tap/click expands it (ripple feedback on touch, hover on desktop).
+    //    No SelectableText here means tap-to-expand never fights selection.
+    //  • Short message OR expanded long message: SelectableText, so users can
+    //    drag-select (desktop) or long-press-select (Android) to copy part of
+    //    it. Collapsing uses the explicit "Show less" button so the selection
+    //    gesture is never hijacked.
+    final Widget payloadSection;
+    if (isLongMessage && !_isExpanded) {
+      payloadSection = InkWell(
+        onTap: () => setState(() => _isExpanded = true),
+        borderRadius: BorderRadius.circular(4),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: Icon(dirIcon, size: 14, color: labelColor),
-              ),
-              const TextSpan(text: " "),
-              TextSpan(
-                text: "[$time] ",
-                style: kCodeStyle.copyWith(
-                    fontSize: 12, color: Colors.grey),
-              ),
-              const TextSpan(text: " - "),
-              TextSpan(
-                text: displayPayload,
+              Text(
+                displayPayload,
                 style: kCodeStyle.copyWith(fontSize: 12),
+              ),
+              kVSpacer3,
+              Text(
+                "Show more",
+                style: kCodeStyle.copyWith(
+                  fontSize: 12,
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
         ),
-      ),
-    );
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: logContent),
-        if (isLongMessage)
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0, right: 12.0),
-            child: IconButton(
-              icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more, size: 18),
-              onPressed: () {
-                setState(() {
-                  _isExpanded = !_isExpanded;
-                });
-              },
-              tooltip: _isExpanded ? "Collapse" : "Expand",
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              splashRadius: 16,
-            ),
+      );
+    } else {
+      payloadSection = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SelectableText(
+            displayPayload,
+            style: kCodeStyle.copyWith(fontSize: 12),
           ),
-      ],
+          if (isLongMessage)
+            TextButton(
+              onPressed: () => setState(() => _isExpanded = false),
+              style: TextButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                minimumSize: const Size(0, 0),
+                // 48dp min tap target so it's comfortable on touch screens.
+                tapTargetSize: MaterialTapTargetSize.padded,
+                visualDensity: VisualDensity.compact,
+              ),
+              child: const Text("Show less"),
+            ),
+        ],
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header: direction icon, [time], label, and an always-visible
+          // Copy button. The Copy button copies the FULL payload, never the
+          // truncated preview, regardless of expand state.
+          Row(
+            children: [
+              Icon(dirIcon, size: 14, color: labelColor),
+              kHSpacer5,
+              Text(
+                "[$time]",
+                style: kCodeStyle.copyWith(fontSize: 12, color: Colors.grey),
+              ),
+              kHSpacer5,
+              Text(
+                labelText,
+                style: kCodeStyle.copyWith(fontSize: 12, color: labelColor),
+              ),
+              const Spacer(),
+              CopyButton(toCopy: msg.payload, showLabel: false),
+            ],
+          ),
+          kVSpacer3,
+          payloadSection,
+        ],
+      ),
     );
   }
 }

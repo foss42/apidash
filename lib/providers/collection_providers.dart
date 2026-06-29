@@ -363,7 +363,31 @@ class CollectionStateNotifier
     map[rId] = newModel;
     state = map;
     unsave();
+
+    // Apply heartbeat changes to a LIVE WebSocket connection immediately.
+    // dart:io's WebSocket.pingInterval is mutable, so toggling heartbeat or
+    // changing the interval while connected takes effect without a reconnect.
+    // Previously these edits only applied on the next connect.
+    if (newModel.apiType == APIType.websocket &&
+        ConnectionManager.instance.hasConnection(rId)) {
+      final oldWs = currentModel.wsRequestModel;
+      final newWs = newModel.wsRequestModel;
+      if (newWs != null &&
+          (oldWs?.enableHeartbeat != newWs.enableHeartbeat ||
+              oldWs?.heartbeatInterval != newWs.heartbeatInterval)) {
+        ConnectionManager.instance
+            .updatePingInterval(rId, _wsPingInterval(newWs));
+      }
+    }
   }
+
+  /// Heartbeat ping interval for [ws], or `null` when heartbeats are disabled.
+  /// Falls back to 30s when the interval is non-positive (mirrors connect()).
+  Duration? _wsPingInterval(WebSocketRequestModel ws) => ws.enableHeartbeat
+      ? Duration(
+          seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30,
+        )
+      : null;
 
   /// Send a text message over an active WebSocket connection.
   void sendWebSocketMessage(String requestId, String message) {
@@ -478,13 +502,7 @@ class CollectionStateNotifier
         requestId,
         finalUrl,
         headers: headers,
-        pingInterval: wsModel.enableHeartbeat
-            ? Duration(
-                seconds: wsModel.heartbeatInterval > 0
-                    ? wsModel.heartbeatInterval
-                    : 30,
-              )
-            : null,
+        pingInterval: _wsPingInterval(wsModel),
       );
 
       await channel.ready;
