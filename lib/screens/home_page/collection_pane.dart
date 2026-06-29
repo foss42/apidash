@@ -5,6 +5,7 @@ import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
@@ -14,8 +15,8 @@ class CollectionPane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(autoSaveNotifierProvider);
-    ref.watch(collectionsStateNotifierProvider);
-    final collection = ref.watch(collectionStateNotifierProvider);
+    ref.watch(collectionCatalogProvider);
+    final collection = ref.watch(activeCollectionProvider);
     var sm = ScaffoldMessenger.of(context);
     if (collection == null) {
       return const Center(child: CircularProgressIndicator());
@@ -29,7 +30,7 @@ class CollectionPane extends ConsumerWidget {
         children: [
           SidebarHeader(
             onAddNew: () {
-              ref.read(collectionsStateNotifierProvider.notifier).addCollection();
+              ref.read(collectionCatalogProvider.notifier).addCollection();
             },
             onImport: () {
               importToCollectionPane(context, ref, sm);
@@ -73,7 +74,7 @@ class _CollectionRequestListState extends ConsumerState<CollectionRequestList> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final selected = ref.read(selectedCollectionIdStateProvider);
       final expanded = ref.read(expandedCollectionIdsProvider);
-      if (expanded.isEmpty) {
+      if (selected != null && expanded.isEmpty) {
         ref.read(expandedCollectionIdsProvider.notifier).state = {selected};
       }
     });
@@ -88,7 +89,7 @@ class _CollectionRequestListState extends ConsumerState<CollectionRequestList> {
   @override
   Widget build(BuildContext context) {
     final collectionSequence = ref.watch(collectionSequenceProvider);
-    final collections = ref.watch(collectionsStateNotifierProvider)!;
+    final collections = ref.watch(collectionCatalogProvider)!;
     final expandedIds = ref.watch(expandedCollectionIdsProvider);
     final selectedCollectionId = ref.watch(selectedCollectionIdStateProvider);
     final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
@@ -97,6 +98,14 @@ class _CollectionRequestListState extends ConsumerState<CollectionRequestList> {
         (value) => value.alwaysShowCollectionPaneScrollbar,
       ),
     );
+
+    if (collectionSequence.isEmpty) {
+      return _EmptyCollections(
+        onCreate: () => ref
+            .read(collectionCatalogProvider.notifier)
+            .addCollection(),
+      );
+    }
 
     return Scrollbar(
       controller: controller,
@@ -125,6 +134,46 @@ class _CollectionRequestListState extends ConsumerState<CollectionRequestList> {
   }
 }
 
+class _EmptyCollections extends StatelessWidget {
+  const _EmptyCollections({required this.onCreate});
+
+  final VoidCallback onCreate;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Padding(
+        padding: kP20,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.folder_off_outlined,
+              size: 36,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            kVSpacer10,
+            Text(
+              kMsgNoCollections,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            kVSpacer16,
+            FilledButton.icon(
+              onPressed: onCreate,
+              icon: const Icon(Icons.add),
+              label: const Text(kLabelCreateCollection),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _CollectionSection extends ConsumerWidget {
   const _CollectionSection({
     required this.collectionId,
@@ -144,17 +193,17 @@ class _CollectionSection extends ConsumerWidget {
     if (!isActive) {
       return collection.requests;
     }
-    ref.watch(collectionStateNotifierProvider);
+    ref.watch(activeCollectionProvider);
     final sequence = ref.watch(requestSequenceProvider);
     return ref
-        .read(collectionStateNotifierProvider.notifier)
+        .read(activeCollectionProvider.notifier)
         .summariesForSequence(collectionId, sequence);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (isExpanded) {
-      ref.read(collectionsStateNotifierProvider.notifier).loadCollection(
+      ref.read(collectionCatalogProvider.notifier).loadCollection(
             collectionId,
           );
     }
@@ -209,29 +258,66 @@ class _CollectionSectionHeader extends ConsumerWidget {
   final bool isExpanded;
   final bool isActive;
 
-  Future<String?> _showRenameDialog(BuildContext context) async {
+  Future<String?> _showRenameDialog(
+    BuildContext context,
+    Set<String> takenIds,
+  ) async {
     final controller = TextEditingController(text: name);
+
+    String? errorFor(String value) {
+      final trimmed = value.trim();
+      if (trimmed.isEmpty) {
+        return null;
+      }
+      if (collectionNameHasIllegalChars(trimmed)) {
+        return kMsgCollectionNameInvalidChars;
+      }
+      final candidate = makeCollectionId(trimmed).toLowerCase();
+      if (takenIds.any((t) => t.toLowerCase() == candidate)) {
+        return kMsgCollectionNameInUse;
+      }
+      return null;
+    }
+
     try {
       return await showDialog<String>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text(kLabelRenameCollection),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            decoration: const InputDecoration(labelText: kLabelCollectionName),
-            onSubmitted: (value) => Navigator.of(context).pop(value),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(kLabelCancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(controller.text),
-              child: const Text(kLabelOk),
-            ),
-          ],
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) {
+            final error = errorFor(controller.text);
+            final canSubmit =
+                controller.text.trim().isNotEmpty && error == null;
+
+            void submit() {
+              if (canSubmit) {
+                Navigator.of(context).pop(controller.text);
+              }
+            }
+
+            return AlertDialog(
+              title: const Text(kLabelRenameCollection),
+              content: TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  labelText: kLabelCollectionName,
+                  errorText: error,
+                ),
+                onChanged: (_) => setState(() {}),
+                onSubmitted: (_) => submit(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text(kLabelCancel),
+                ),
+                FilledButton(
+                  onPressed: canSubmit ? submit : null,
+                  child: const Text(kLabelOk),
+                ),
+              ],
+            );
+          },
         ),
       );
     } finally {
@@ -259,7 +345,7 @@ class _CollectionSectionHeader extends ConsumerWidget {
     );
     if (confirmed == true) {
       await ref
-          .read(collectionsStateNotifierProvider.notifier)
+          .read(collectionCatalogProvider.notifier)
           .deleteCollection(collectionId);
     }
   }
@@ -276,7 +362,7 @@ class _CollectionSectionHeader extends ConsumerWidget {
         onTap: () async {
           if (!isActive) {
             await ref
-                .read(collectionStateNotifierProvider.notifier)
+                .read(activeCollectionProvider.notifier)
                 .ensureActive(collectionId);
           }
           ref.read(expandedCollectionIdsProvider.notifier).update(
@@ -298,7 +384,7 @@ class _CollectionSectionHeader extends ConsumerWidget {
                           );
                   if (expanding) {
                     ref
-                        .read(collectionsStateNotifierProvider.notifier)
+                        .read(collectionCatalogProvider.notifier)
                         .loadCollection(collectionId);
                   }
                   ref.read(expandedCollectionIdsProvider.notifier).update(
@@ -340,9 +426,9 @@ class _CollectionSectionHeader extends ConsumerWidget {
                 iconSize: 18,
                 onPressed: () async {
                   await ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .ensureActive(collectionId);
-                  ref.read(collectionStateNotifierProvider.notifier).add();
+                  ref.read(activeCollectionProvider.notifier).add();
                   ref.read(expandedCollectionIdsProvider.notifier).update(
                         (ids) => {...ids, collectionId},
                       );
@@ -355,14 +441,25 @@ class _CollectionSectionHeader extends ConsumerWidget {
                 splashRadius: 18,
                 onSelected: (option) async {
                   if (option == ItemMenuOption.edit) {
-                    final result = await _showRenameDialog(context);
+                    final takenIds = {
+                      ...?ref.read(collectionCatalogProvider)?.keys,
+                    }..remove(collectionId);
+                    final messenger = ScaffoldMessenger.of(context);
+                    final result = await _showRenameDialog(context, takenIds);
                     if (!context.mounted) {
                       return;
                     }
                     if (result != null && result.trim().isNotEmpty) {
-                      await ref
-                          .read(collectionsStateNotifierProvider.notifier)
+                      final ok = await ref
+                          .read(collectionCatalogProvider.notifier)
                           .renameCollection(collectionId, result);
+                      if (!ok) {
+                        messenger.showSnackBar(
+                          const SnackBar(
+                            content: Text(kMsgCollectionNameInUse),
+                          ),
+                        );
+                      }
                     }
                   }
                   if (option == ItemMenuOption.delete) {
@@ -417,9 +514,9 @@ class RequestItem extends ConsumerWidget {
       editRequestId: editRequestId,
       onTap: () async {
         await ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .ensureActive(collectionId);
-        ref.read(collectionStateNotifierProvider.notifier).loadRequest(id);
+        ref.read(activeCollectionProvider.notifier).loadRequest(id);
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
@@ -430,7 +527,7 @@ class RequestItem extends ConsumerWidget {
       onChangedNameEditor: (value) {
         value = value.trim();
         ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .update(id: editRequestId!, name: value);
       },
       onTapOutsideNameEditor: () {
@@ -448,10 +545,10 @@ class RequestItem extends ConsumerWidget {
           );
         }
         if (item == ItemMenuOption.delete) {
-          ref.read(collectionStateNotifierProvider.notifier).remove(id: id);
+          ref.read(activeCollectionProvider.notifier).remove(id: id);
         }
         if (item == ItemMenuOption.duplicate) {
-          ref.read(collectionStateNotifierProvider.notifier).duplicate(id: id);
+          ref.read(activeCollectionProvider.notifier).duplicate(id: id);
         }
       },
     );

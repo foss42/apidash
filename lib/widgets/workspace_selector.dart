@@ -12,10 +12,7 @@ class WorkspaceSelector extends HookWidget {
     this.onCancel,
   });
 
-  final Future<void> Function(
-    String path, {
-    String? workspaceDisplayName,
-  })? onContinue;
+  final Future<void> Function(String path)? onContinue;
   final Future<void> Function()? onCancel;
 
   @override
@@ -103,15 +100,7 @@ class WorkspaceSelector extends HookWidget {
                               finalPath =
                                   p.join(finalPath, workspaceName.value);
                             }
-                            final displayName = workspaceName.value
-                                ?.trim();
-                            await onContinue?.call(
-                              finalPath,
-                              workspaceDisplayName:
-                                  (displayName != null && displayName.isNotEmpty)
-                                      ? displayName
-                                      : null,
-                            );
+                            await onContinue?.call(finalPath);
                           },
                     child: const Text(kLabelContinue),
                   ),

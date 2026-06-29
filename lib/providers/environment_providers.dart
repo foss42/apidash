@@ -390,7 +390,9 @@ class EnvironmentsStateNotifier
       );
     }
     final collectionId = ref.read(selectedCollectionIdStateProvider);
-    await workspaceStorage.removeUnused(collectionId);
+    if (collectionId != null) {
+      await workspaceStorage.removeUnused(collectionId);
+    }
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }

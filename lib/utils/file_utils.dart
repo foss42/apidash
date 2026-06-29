@@ -33,6 +33,16 @@ String makeStorageId(String name, {String? suffix}) {
   return '${_slugifyStorageName(name)}_$stableSuffix';
 }
 
+String makeCollectionId(String name) {
+  final cleaned = name.trim();
+  return cleaned.isEmpty ? 'untitled' : cleaned;
+}
+
+final _illegalFileNameChars = RegExp(r'[/\\:*?"<>|]');
+
+bool collectionNameHasIllegalChars(String name) =>
+    _illegalFileNameChars.hasMatch(name);
+
 String? storageIdSuffix(String id) {
   if (!_storageIdSuffixPattern.hasMatch(id)) {
     return null;

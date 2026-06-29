@@ -14,7 +14,7 @@ class EditRequestBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
+        .read(activeCollectionProvider.notifier)
         .getRequestModel(selectedId!);
     final contentType = ref.watch(
       selectedRequestModelProvider.select(
@@ -58,7 +58,7 @@ class EditRequestBody extends ConsumerWidget {
                   initialValue: requestModel?.httpRequestModel?.body,
                   onChanged: (String value) {
                     ref
-                        .read(collectionStateNotifierProvider.notifier)
+                        .read(activeCollectionProvider.notifier)
                         .update(body: value);
                   },
                   hintText: kHintJson,
@@ -72,7 +72,7 @@ class EditRequestBody extends ConsumerWidget {
                   initialValue: requestModel?.httpRequestModel?.body,
                   onChanged: (String value) {
                     ref
-                        .read(collectionStateNotifierProvider.notifier)
+                        .read(activeCollectionProvider.notifier)
                         .update(body: value);
                   },
                   hintText: kHintText,
@@ -89,7 +89,7 @@ class EditRequestBody extends ConsumerWidget {
                 initialValue: requestModel?.httpRequestModel?.query,
                 onChanged: (String value) {
                   ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .update(query: value);
                 },
                 hintText: kHintQuery,
@@ -118,7 +118,7 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
       contentType: requestBodyContentType,
       onChanged: (ContentType? value) {
         ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .update(bodyContentType: value);
       },
     );

@@ -33,8 +33,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       return;
     }
     Future.microtask(() async {
-      final name = await ensureAndReadWorkspaceName(path);
-      await rememberWorkspace(path: path, name: name);
+      await rememberWorkspace(path: path, name: p.basename(path));
     });
   }
 

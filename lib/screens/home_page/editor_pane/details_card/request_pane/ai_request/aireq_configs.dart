@@ -13,7 +13,7 @@ class AIRequestConfigSection extends ConsumerWidget {
     final modelConfigs = ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.modelConfigs));
     final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
+        .read(activeCollectionProvider.notifier)
         .getRequestModel(selectedId!);
     final aiReqM = requestModel?.aiRequestModel;
     if (aiReqM == null || modelConfigs == null) {
@@ -22,14 +22,14 @@ class AIRequestConfigSection extends ConsumerWidget {
 
     updateRequestModel(ModelConfig modelConfig) {
       final aiRequestModel = ref
-          .read(collectionStateNotifierProvider.notifier)
+          .read(activeCollectionProvider.notifier)
           .getRequestModel(selectedId)
           ?.aiRequestModel;
       final idx = aiRequestModel?.getModelConfigIdx(modelConfig.id);
       if (idx != null && aiRequestModel != null) {
         var l = [...aiRequestModel.modelConfigs];
         l[idx] = modelConfig;
-        ref.read(collectionStateNotifierProvider.notifier).update(
+        ref.read(activeCollectionProvider.notifier).update(
               aiRequestModel: aiRequestModel.copyWith(modelConfigs: l),
             );
       }

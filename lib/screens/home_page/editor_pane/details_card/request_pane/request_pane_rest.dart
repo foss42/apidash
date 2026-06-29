@@ -55,7 +55,7 @@ class EditRestRequestPane extends ConsumerWidget {
       },
       onTapTabBar: (index) {
         ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .update(requestTabIndex: index);
       },
       showIndicators: [

@@ -179,7 +179,7 @@ class SettingsPage extends ConsumerWidget {
                 trailing: FilledButton.icon(
                   onPressed: () async {
                     var data = await ref
-                        .read(collectionStateNotifierProvider.notifier)
+                        .read(activeCollectionProvider.notifier)
                         .exportDataToHAR();
                     await saveCollection(data, sm);
                   },
@@ -228,7 +228,7 @@ class SettingsPage extends ConsumerWidget {
                                   await clearSharedPrefs();
                                   await ref
                                       .read(
-                                        collectionStateNotifierProvider
+                                        activeCollectionProvider
                                             .notifier,
                                       )
                                       .clearData();

@@ -30,7 +30,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   void _onFieldChange() {
-    ref.read(collectionStateNotifierProvider.notifier).update(
+    ref.read(activeCollectionProvider.notifier).update(
           params: paramRows.sublist(0, paramRows.length - 1),
           isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
         );

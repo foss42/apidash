@@ -82,7 +82,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
                 onPressed: () async {
                   ref.read(autoSaveNotifierProvider.notifier).cancelPending();
                   await ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .saveData();
                   Navigator.of(context).pop();
                   await windowManager.setPreventClose(false);
@@ -125,12 +125,8 @@ class DashApp extends ConsumerWidget {
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         home: showWorkspaceSelector
             ? WorkspaceSelector(
-                onContinue: (path, {workspaceDisplayName}) async {
-                  await activateWorkspace(
-                    ref,
-                    path,
-                    preferredName: workspaceDisplayName,
-                  );
+                onContinue: (path) async {
+                  await activateWorkspace(ref, path);
                 },
                 onCancel: () async {
                   try {

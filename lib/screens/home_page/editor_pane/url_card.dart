@@ -87,7 +87,7 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
       method: method,
       onChanged: (HTTPVerb? value) {
         ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .update(method: value);
       },
     );
@@ -114,15 +114,15 @@ class URLTextField extends ConsumerWidget {
       },
       onChanged: (value) {
         if (requestModel.apiType == APIType.ai) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
+          ref.read(activeCollectionProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
         } else {
-          ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+          ref.read(activeCollectionProvider.notifier).update(url: value);
         }
       },
       onFieldSubmitted: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        ref.read(activeCollectionProvider.notifier).sendRequest();
       },
     );
   }
@@ -148,10 +148,10 @@ class SendRequestButton extends ConsumerWidget {
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        ref.read(activeCollectionProvider.notifier).sendRequest();
       },
       onCancel: () {
-        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+        ref.read(activeCollectionProvider.notifier).cancelRequest();
       },
     );
   }

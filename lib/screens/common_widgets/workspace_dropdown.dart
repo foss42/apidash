@@ -50,12 +50,8 @@ class WorkspaceDropdown extends ConsumerWidget {
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (selectorContext) => WorkspaceSelector(
-          onContinue: (path, {String? workspaceDisplayName}) async {
-            final ok = await activateWorkspace(
-              ref,
-              path,
-              preferredName: workspaceDisplayName,
-            );
+          onContinue: (path) async {
+            final ok = await activateWorkspace(ref, path);
             if (ok && selectorContext.mounted) {
               Navigator.of(selectorContext).pop();
             }

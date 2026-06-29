@@ -339,7 +339,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   }
 
   Future<void> _applyOpenApi(ChatAction action) async {
-    final collection = _ref.read(collectionStateNotifierProvider.notifier);
+    final collection = _ref.read(activeCollectionProvider.notifier);
     final payload = action.value is Map<String, dynamic>
         ? (action.value as Map<String, dynamic>)
         : <String, dynamic>{};
@@ -452,7 +452,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     if (requestId == null) return;
 
     final collectionNotifier = _ref.read(
-      collectionStateNotifierProvider.notifier,
+      activeCollectionProvider.notifier,
     );
     final testCode = action.value is String ? action.value as String : '';
     final currentPostScript = _currentRequest?.postRequestScript ?? '';
@@ -813,7 +813,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       if (action.field == 'apply_to_selected') {
         if (requestId == null) return;
         _ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .update(
               method: httpRequestModel.method,
               url: withEnvUrl,
@@ -839,7 +839,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       } else if (action.field == 'apply_to_new') {
         final model = httpRequestModel.copyWith(url: withEnvUrl);
         _ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .addRequestModel(model, name: 'Imported cURL');
         _appendSystem(
           'Created a new request from the cURL.',

@@ -14,7 +14,7 @@ final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
-  final collection = ref.watch(collectionStateNotifierProvider);
+  final collection = ref.watch(activeCollectionProvider);
   if (selectedId == null || collection == null) {
     return null;
   } else {
@@ -38,14 +38,14 @@ final selectedSubstitutedHttpRequestModelProvider =
       }
     });
 
-final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
-collectionStateNotifierProvider = StateNotifierProvider(
-  (ref) => CollectionStateNotifier(ref, workspaceStorage),
+final StateNotifierProvider<ActiveCollectionNotifier, Map<String, RequestModel>?>
+activeCollectionProvider = StateNotifierProvider(
+  (ref) => ActiveCollectionNotifier(ref, workspaceStorage),
 );
 
-class CollectionStateNotifier
+class ActiveCollectionNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.workspaceStorage) : super(null) {
+  ActiveCollectionNotifier(this.ref, this.workspaceStorage) : super(null) {
     Future.microtask(() {
       activateCollection(ref.read(selectedCollectionIdStateProvider));
     });
@@ -53,7 +53,7 @@ class CollectionStateNotifier
 
   List<String> _catalogRequestIds(String collectionId) {
     return ref
-            .read(collectionsStateNotifierProvider)?[collectionId]
+            .read(collectionCatalogProvider)?[collectionId]
             ?.requestIds ??
         const [];
   }
@@ -64,7 +64,7 @@ class CollectionStateNotifier
   ) {
     final byId = {
       for (final summary
-          in ref.read(collectionsStateNotifierProvider)?[collectionId]
+          in ref.read(collectionCatalogProvider)?[collectionId]
                   ?.requests ??
               const <RequestSummary>[])
         summary.id: summary,
@@ -79,10 +79,14 @@ class CollectionStateNotifier
   }
 
   void _syncActiveCollectionSummaries() {
-    ref.read(collectionsStateNotifierProvider.notifier).syncRequests(
-          _activeCollectionId,
+    final active = _activeCollectionId;
+    if (active == null) {
+      return;
+    }
+    ref.read(collectionCatalogProvider.notifier).syncRequests(
+          active,
           summariesForSequence(
-            _activeCollectionId,
+            active,
             ref.read(requestSequenceProvider),
           ),
         );
@@ -152,13 +156,17 @@ class CollectionStateNotifier
     if (state?[id] != null) {
       return;
     }
-    final model = _requestModelFromDisk(_activeCollectionId, id);
+    final active = _activeCollectionId;
+    if (active == null) {
+      return;
+    }
+    final model = _requestModelFromDisk(active, id);
     if (model == null) {
       return;
     }
     state = {...state ?? {}, id: model};
     if (model.aiRequestModel != null) {
-      unawaited(_hydrateAiApiKey(_activeCollectionId, id));
+      unawaited(_hydrateAiApiKey(active, id));
     }
   }
 
@@ -177,13 +185,17 @@ class CollectionStateNotifier
     if (ref.read(selectedIdStateProvider) == oldId) {
       ref.read(selectedIdStateProvider.notifier).state = newId;
     }
+    final active = _activeCollectionId;
+    if (active == null) {
+      return;
+    }
     unawaited(
-      workspaceStorage.renameRequest(_activeCollectionId, oldId, newId),
+      workspaceStorage.renameRequest(active, oldId, newId),
     );
     unawaited(
       aiRequestSecretsStorage.rekeyApiKey(
         workspaceStorage.rootPath,
-        _activeCollectionId,
+        active,
         oldId,
         newId,
       ),
@@ -200,13 +212,19 @@ class CollectionStateNotifier
     };
     ref.read(requestSequenceProvider.notifier).state = [newId];
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    ref.read(collectionsStateNotifierProvider.notifier).syncRequests(
+    ref.read(collectionCatalogProvider.notifier).syncRequests(
           collectionId,
           [RequestSummary.fromRequestModel(state![newId]!)],
         );
   }
 
-  void activateCollection(String collectionId) {
+  void activateCollection(String? collectionId) {
+    if (collectionId == null) {
+      state = {};
+      ref.read(requestSequenceProvider.notifier).state = [];
+      ref.read(selectedIdStateProvider.notifier).state = null;
+      return;
+    }
     final ids = _catalogRequestIds(collectionId);
     if (ids.isEmpty) {
       _seedDefaultRequest(collectionId);
@@ -217,21 +235,24 @@ class CollectionStateNotifier
     ref.read(selectedIdStateProvider.notifier).state = null;
   }
 
-  String get _activeCollectionId => ref.read(selectedCollectionIdStateProvider);
+  String? get _activeCollectionId =>
+      ref.read(selectedCollectionIdStateProvider);
 
-  Future<void> ensureActive(String collectionId) async {
+  Future<void> ensureActive(String? collectionId) async {
     if (_activeCollectionId == collectionId && state != null) {
       return;
     }
-    final collections = ref.read(collectionsStateNotifierProvider.notifier);
+    final collections = ref.read(collectionCatalogProvider.notifier);
     final from = _activeCollectionId;
-    final fromStillExists =
-        ref.read(collectionsStateNotifierProvider)?.containsKey(from) ?? false;
+    final fromStillExists = from != null &&
+        (ref.read(collectionCatalogProvider)?.containsKey(from) ?? false);
     if (state != null && from != collectionId && fromStillExists) {
       collections.loadCollection(from);
       await saveData(collectionId: from);
     }
-    collections.loadCollection(collectionId);
+    if (collectionId != null) {
+      collections.loadCollection(collectionId);
+    }
     state = {};
     ref.read(selectedCollectionIdStateProvider.notifier).state = collectionId;
     activateCollection(collectionId);
@@ -774,13 +795,16 @@ class CollectionStateNotifier
   }
 
   Future<void> saveData({String? collectionId}) async {
-    ref.read(saveDataStateProvider.notifier).state = true;
     final targetId = collectionId ?? _activeCollectionId;
+    if (targetId == null) {
+      return;
+    }
+    ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
     final ids = ref.read(requestSequenceProvider);
     final summaries = summariesForSequence(targetId, ids);
     ref
-        .read(collectionsStateNotifierProvider.notifier)
+        .read(collectionCatalogProvider.notifier)
         .syncRequests(targetId, summaries);
     for (final requestId in ids) {
       final inMemory = state?[requestId];
@@ -819,6 +843,9 @@ class CollectionStateNotifier
 
   Future<Map<String, dynamic>> exportDataToHAR() async {
     final collectionId = _activeCollectionId;
+    if (collectionId == null) {
+      return <String, dynamic>{};
+    }
     final models = <RequestModel>[];
     for (final id in ref.read(requestSequenceProvider)) {
       final model =

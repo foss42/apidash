@@ -35,14 +35,14 @@ class RequestEditorTopBar extends ConsumerWidget {
             onRenamePressed: () {
               showRenameDialog(context, kLabelRenameRequest, name, (val) {
                 ref
-                    .read(collectionStateNotifierProvider.notifier)
+                    .read(activeCollectionProvider.notifier)
                     .update(name: val);
               });
             },
             onDuplicatePressed: () =>
-                ref.read(collectionStateNotifierProvider.notifier).duplicate(),
+                ref.read(activeCollectionProvider.notifier).duplicate(),
             onDeletePressed: () =>
-                ref.read(collectionStateNotifierProvider.notifier).remove(),
+                ref.read(activeCollectionProvider.notifier).remove(),
           ),
           kHSpacer10,
           const EnvironmentDropdown(),
