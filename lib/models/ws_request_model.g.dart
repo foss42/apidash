@@ -64,6 +64,10 @@ _WebSocketRequestModel _$WebSocketRequestModelFromJson(
   autoReconnect: json['autoReconnect'] as bool? ?? false,
   enableHeartbeat: json['enableHeartbeat'] as bool? ?? false,
   heartbeatInterval: (json['heartbeatInterval'] as num?)?.toInt() ?? 30,
+  enableMessageHeartbeat: json['enableMessageHeartbeat'] as bool? ?? false,
+  messageHeartbeatInterval:
+      (json['messageHeartbeatInterval'] as num?)?.toInt() ?? 30,
+  messageHeartbeatPayload: json['messageHeartbeatPayload'] as String? ?? "ping",
 );
 
 Map<String, dynamic> _$WebSocketRequestModelToJson(
@@ -78,4 +82,7 @@ Map<String, dynamic> _$WebSocketRequestModelToJson(
   'autoReconnect': instance.autoReconnect,
   'enableHeartbeat': instance.enableHeartbeat,
   'heartbeatInterval': instance.heartbeatInterval,
+  'enableMessageHeartbeat': instance.enableMessageHeartbeat,
+  'messageHeartbeatInterval': instance.messageHeartbeatInterval,
+  'messageHeartbeatPayload': instance.messageHeartbeatPayload,
 };

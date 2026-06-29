@@ -512,9 +512,11 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                               );
                         },
                       ),
+                      // ── Group A: Automatic ping ─────────────────
                       SwitchListTile(
-                        title: const Text("WebSocket Heartbeat"),
-                        subtitle: const Text("Send periodic keep-alive pings"),
+                        title: const Text("Send automatic pings"),
+                        subtitle: const Text(
+                            "Low-level keep-alive most servers understand. You won't see these in the messages."),
                         value: wsModel.enableHeartbeat,
                         onChanged: (val) {
                           ref
@@ -525,14 +527,14 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                               );
                         },
                       ),
-                      Padding(
+                      if (wsModel.enableHeartbeat)
+                        Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: TextFormField(
-                          enabled: wsModel.enableHeartbeat,
                           initialValue: wsModel.heartbeatInterval.toString(),
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
-                            labelText: "Ping Interval (seconds)",
+                            labelText: "Ping every (seconds)",
                           ),
                           onChanged: (val) {
                             final parsed = int.tryParse(val);
@@ -547,6 +549,83 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                           },
                         ),
                       ),
+                      kVSpacer10,
+                      const Divider(),
+                      kVSpacer10,
+                      // ── Group B: Repeating message ──────────────
+                      SwitchListTile(
+                        title: const Text("Send a repeating message"),
+                        subtitle: const Text(
+                            "Send your own text/JSON on a schedule. Some servers need this instead of pings."),
+                        value: wsModel.enableMessageHeartbeat,
+                        onChanged: (val) {
+                          ref
+                              .read(collectionStateNotifierProvider.notifier)
+                              .update(
+                                wsRequestModel: wsModel.copyWith(
+                                    enableMessageHeartbeat: val),
+                              );
+                        },
+                      ),
+                      if (wsModel.enableMessageHeartbeat) ...[
+                      kVSpacer10,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: TextFormField(
+                          initialValue: wsModel.messageHeartbeatPayload,
+                          maxLines: 3,
+                          style: kCodeStyle,
+                          decoration: const InputDecoration(
+                            labelText: "Message",
+                            hintText: "ping",
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (val) {
+                            ref
+                                .read(collectionStateNotifierProvider.notifier)
+                                .update(
+                                  wsRequestModel: wsModel.copyWith(
+                                      messageHeartbeatPayload: val),
+                                );
+                          },
+                        ),
+                      ),
+                      kVSpacer10,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: TextFormField(
+                          initialValue:
+                              wsModel.messageHeartbeatInterval.toString(),
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: "Send every (seconds)",
+                          ),
+                          onChanged: (val) {
+                            final parsed = int.tryParse(val);
+                            if (parsed != null) {
+                              ref
+                                  .read(collectionStateNotifierProvider.notifier)
+                                  .update(
+                                    wsRequestModel: wsModel.copyWith(
+                                        messageHeartbeatInterval: parsed),
+                                  );
+                            }
+                          },
+                        ),
+                      ),
+                      kVSpacer10,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "These appear in the messages as Sent.",
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ),
+                      ),
+                      ],
                     ],
                   ),
                 ),

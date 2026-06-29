@@ -62,6 +62,15 @@ abstract class WebSocketRequestModel with _$WebSocketRequestModel {
 
     /// Ping interval for heartbeat in seconds
     @Default(30) int heartbeatInterval,
+
+    /// Whether to periodically send a user-defined message (app-level heartbeat).
+    @Default(false) bool enableMessageHeartbeat,
+
+    /// Interval in seconds between repeated heartbeat messages.
+    @Default(30) int messageHeartbeatInterval,
+
+    /// The message body sent on each heartbeat tick. Supports {{vars}}.
+    @Default("ping") String messageHeartbeatPayload,
   }) = _WebSocketRequestModel;
 
   factory WebSocketRequestModel.fromJson(Map<String, dynamic> json) =>
