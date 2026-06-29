@@ -40,6 +40,7 @@ void main() {
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
       "defaultAIModel": {"model": "llama"},
+      "maxWebSocketEvents": 1000
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -112,7 +113,8 @@ void main() {
   "isDashBotEnabled": true,
   "defaultAIModel": {
     "model": "llama"
-  }
+  },
+  "maxWebSocketEvents": 1000
 }''';
     expect(sm.toString(), expectedResult);
   });

@@ -3,6 +3,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
 
@@ -36,6 +37,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -53,6 +55,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
+                    APIType.websocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -98,28 +101,58 @@ class URLTextField extends ConsumerWidget {
   const URLTextField({
     super.key,
   });
-
+//TODO : A better way to use hintText for each protocol 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final apiType = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.apiType));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.url));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.wsRequestModel?.url));
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
+
+    String? urlValue;
+    switch (requestModel.apiType) {
+      case APIType.ai:
+        urlValue = requestModel.aiRequestModel?.url;
+        break;
+      case APIType.websocket:
+        urlValue = requestModel.wsRequestModel?.url;
+        break;
+      default:
+        urlValue = requestModel.httpRequestModel?.url;
+    }
+
     return EnvURLField(
+      // ValueKey encodes both the selected request and its protocol type.
+      // This forces Flutter to discard the old widget and create a fresh one
+      // whenever the user switches between requests or between protocol types,
+      // ensuring that `initialValue` is re-applied correctly instead of being
+      // stuck on the value from the previous protocol's form state.
+      key: ValueKey('${selectedId}_${apiType?.name}'),
       selectedId: selectedId,
-      initialValue: switch (requestModel.apiType) {
-        APIType.ai => requestModel.aiRequestModel?.url,
-        _ => requestModel.httpRequestModel?.url,
+      initialValue: urlValue,
+      hintText: switch (requestModel.apiType) {
+        APIType.websocket => kHintTextWsCard,
+        _ => kHintTextUrlCard,
       },
       onChanged: (value) {
         if (requestModel.apiType == APIType.ai) {
           ref.read(collectionStateNotifierProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
+        } else if (requestModel.apiType == APIType.websocket) {
+          final wsModel = requestModel.wsRequestModel;
+          if (wsModel != null) {
+            ref.read(collectionStateNotifierProvider.notifier).update(
+                wsRequestModel: wsModel.copyWith(url: value));
+          }
         } else {
           ref.read(collectionStateNotifierProvider.notifier).update(url: value);
         }
@@ -146,9 +179,14 @@ class SendRequestButton extends ConsumerWidget {
     final isStreaming = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isStreaming));
 
+    final apiType = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.apiType));
+
     return SendButton(
       isStreaming: isStreaming ?? false,
       isWorking: isWorking ?? false,
+      sendLabel: apiType == APIType.websocket ? "Connect" : kLabelSend,
+      activeLabel: apiType == APIType.websocket ? "Disconnect" : null,
       onTap: () {
         onTap?.call();
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();

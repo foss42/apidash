@@ -4,14 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-
+import 'realtime_event_stream_view.dart';
+//TODO : A better way to handle the logic for showing different panes
 class ResponsePane extends ConsumerWidget {
   const ResponsePane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final apiType = ref.watch(
+            selectedRequestModelProvider.select((value) => value?.apiType));
     final isWorking = ref.watch(
             selectedRequestModelProvider.select((value) => value?.isWorking)) ??
+        false;
+    final isStreaming = ref.watch(
+            selectedRequestModelProvider.select((value) => value?.isStreaming)) ??
         false;
     final startSendingTime = ref.watch(
         selectedRequestModelProvider.select((value) => value?.sendingTime));
@@ -20,6 +26,24 @@ class ResponsePane extends ConsumerWidget {
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
 
+    // ── WebSocket response: event-stream view ────────────────────────
+    if (apiType == APIType.websocket) {
+      if (isWorking) {
+        return SendingWidget(startSendingTime: startSendingTime);
+      }
+
+      final wsModel = ref.watch(selectedRequestModelProvider
+          .select((value) => value?.wsRequestModel));
+      final hasMessages = (wsModel?.messageHistory.isNotEmpty) ?? false;
+
+      if (isStreaming || hasMessages) {
+        return const _WsResponsePanel();
+      }
+
+      return const NotSentWidget();
+    }
+
+    // ── HTTP / GraphQL / AI response ─────────────────────────────────
     if (isWorking) {
       return SendingWidget(
         startSendingTime: startSendingTime,
@@ -40,6 +64,16 @@ class ResponsePane extends ConsumerWidget {
             );
     }
     return const ResponseDetails();
+  }
+}
+
+/// Panel showing the WS event log.
+class _WsResponsePanel extends ConsumerWidget {
+  const _WsResponsePanel();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return const RealtimeEventStreamView();
   }
 }
 

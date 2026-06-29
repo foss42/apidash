@@ -65,6 +65,16 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  final Map<String, Timer> _appHeartbeatTimers = {};
+
+  @override
+  void dispose() {
+    for (final timer in _appHeartbeatTimers.values) {
+      timer.cancel();
+    }
+    _appHeartbeatTimers.clear();
+    super.dispose();
+  }
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -119,17 +129,27 @@ class CollectionStateNotifier
 
   void remove({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null) return;
     var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(rId!);
+    int idx = itemIds.indexOf(rId);
+
+    // Cleanup active connections
+    _stopMessageHeartbeat(rId);
+    ConnectionManager.instance.disconnect(rId);
     cancelHttpRequest(rId);
+
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
     String? newId;
-    if (idx == 0 && itemIds.isNotEmpty) {
-      newId = itemIds[0];
-    } else if (itemIds.length > 1) {
-      newId = itemIds[idx - 1];
+    if (itemIds.isNotEmpty) {
+      if (idx == 0) {
+        newId = itemIds[0];
+      } else if (idx < itemIds.length) {
+        newId = itemIds[idx];
+      } else {
+        newId = itemIds.last;
+      }
     } else {
       newId = null;
     }
@@ -242,6 +262,9 @@ class CollectionStateNotifier
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? wsRequestModel,
+    bool? isStreaming,
+    bool? isWorking,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -263,6 +286,7 @@ class CollectionStateNotifier
           description: description ?? currentModel.description,
           httpRequestModel: const HttpRequestModel(),
           aiRequestModel: null,
+          wsRequestModel: null,
         ),
         APIType.ai => currentModel.copyWith(
           apiType: apiType,
@@ -273,6 +297,16 @@ class CollectionStateNotifier
           aiRequestModel: defaultModel == null
               ? const AIRequestModel()
               : AIRequestModel.fromJson(defaultModel),
+          wsRequestModel: null,
+        ),
+        APIType.websocket => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          wsRequestModel: const WebSocketRequestModel(),
         ),
       };
     } else {
@@ -304,6 +338,35 @@ class CollectionStateNotifier
         preRequestScript: preRequestScript ?? currentModel.preRequestScript,
         postRequestScript: postRequestScript ?? currentModel.postRequestScript,
         aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+        wsRequestModel: currentModel.apiType == APIType.websocket
+            ? (wsRequestModel ?? currentModel.wsRequestModel)?.copyWith(
+                // Resolution order matters. The top-level headers/params args
+                // are an optional MERGE onto the model being written. A freshly
+                // passed `wsRequestModel` may already carry its own
+                // headers/params; those must NOT be clobbered when the merge
+                // args are null. Falling straight back to
+                // `currentModel.wsRequestModel?.x` (which is null for a brand
+                // new ws model) would pass `null` explicitly to freezed
+                // copyWith and overwrite the passed model's fields. So prefer:
+                //   1. the explicit top-level arg (caller-supplied merge),
+                //   2. the just-passed wsRequestModel's own field,
+                //   3. the existing model's field.
+                headers: headers ??
+                    wsRequestModel?.headers ??
+                    currentModel.wsRequestModel?.headers,
+                isHeaderEnabledList: isHeaderEnabledList ??
+                    wsRequestModel?.isHeaderEnabledList ??
+                    currentModel.wsRequestModel?.isHeaderEnabledList,
+                params: params ??
+                    wsRequestModel?.params ??
+                    currentModel.wsRequestModel?.params,
+                isParamEnabledList: isParamEnabledList ??
+                    wsRequestModel?.isParamEnabledList ??
+                    currentModel.wsRequestModel?.isParamEnabledList,
+              )
+            : (wsRequestModel ?? currentModel.wsRequestModel),
+        isStreaming: isStreaming ?? currentModel.isStreaming,
+        isWorking: isWorking ?? currentModel.isWorking,
       );
     }
 
@@ -311,6 +374,374 @@ class CollectionStateNotifier
     map[rId] = newModel;
     state = map;
     unsave();
+
+    // Apply heartbeat changes to a LIVE WebSocket connection immediately.
+    // dart:io's WebSocket.pingInterval is mutable, so toggling heartbeat or
+    // changing the interval while connected takes effect without a reconnect.
+    // Previously these edits only applied on the next connect.
+    if (newModel.apiType == APIType.websocket &&
+        ConnectionManager.instance.hasConnection(rId)) {
+      final oldWs = currentModel.wsRequestModel;
+      final newWs = newModel.wsRequestModel;
+      if (newWs != null) {
+        // Protocol-level ping interval (mutable on a live connection).
+        if (oldWs?.enableHeartbeat != newWs.enableHeartbeat ||
+            oldWs?.heartbeatInterval != newWs.heartbeatInterval) {
+          ConnectionManager.instance
+              .updatePingInterval(rId, _wsPingInterval(newWs));
+        }
+        // App-level repeating-message heartbeat (restart timer on any change,
+        // without reconnecting). Fires independently of the ping change above.
+        if (oldWs?.enableMessageHeartbeat != newWs.enableMessageHeartbeat ||
+            oldWs?.messageHeartbeatInterval != newWs.messageHeartbeatInterval ||
+            oldWs?.messageHeartbeatPayload != newWs.messageHeartbeatPayload) {
+          _stopMessageHeartbeat(rId);
+          _startMessageHeartbeat(rId, newWs);
+        }
+      }
+    }
+  }
+
+  /// Heartbeat ping interval for [ws], or `null` when heartbeats are disabled.
+  /// Falls back to 30s when the interval is non-positive (mirrors connect()).
+  Duration? _wsPingInterval(WebSocketRequestModel ws) => ws.enableHeartbeat
+      ? Duration(
+          seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30,
+        )
+      : null;
+
+  /// Builds the combined env-var map (global env overlaid by active env),
+  /// matching the order used when connecting a WebSocket.
+  Map<String, String> _buildCombinedEnvVarMap() {
+    final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+    final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+    final Map<String, String> combined = {};
+    for (var variable in (envMap[kGlobalEnvironmentId] ?? [])) {
+      combined[variable.key] = variable.value;
+    }
+    for (var variable in (envMap[activeEnvId] ?? [])) {
+      combined[variable.key] = variable.value;
+    }
+    return combined;
+  }
+
+  /// Stop and remove the app-level (repeating-message) heartbeat for [requestId].
+  void _stopMessageHeartbeat(String requestId) {
+    _appHeartbeatTimers.remove(requestId)?.cancel();
+  }
+
+  /// Start (or restart) the app-level (repeating-message) heartbeat for
+  /// [requestId]. Sends [WebSocketRequestModel.messageHeartbeatPayload]
+  /// (with {{vars}} substituted) as a normal Sent message on each tick.
+  void _startMessageHeartbeat(String requestId, WebSocketRequestModel ws) {
+    _stopMessageHeartbeat(requestId);
+    if (ws.enableMessageHeartbeat && ws.messageHeartbeatInterval > 0) {
+      _appHeartbeatTimers[requestId] = Timer.periodic(
+        Duration(seconds: ws.messageHeartbeatInterval),
+        (_) {
+          if (!mounted ||
+              !ConnectionManager.instance.hasConnection(requestId)) {
+            return;
+          }
+          final combined = _buildCombinedEnvVarMap();
+          final substituted =
+              substituteVariables(ws.messageHeartbeatPayload, combined) ??
+                  ws.messageHeartbeatPayload;
+          sendWebSocketMessage(requestId, substituted);
+        },
+      );
+    }
+  }
+
+  /// Send a text message over an active WebSocket connection.
+  void sendWebSocketMessage(String requestId, String message) {
+    final currentRequest = state?[requestId];
+    if (currentRequest == null || currentRequest.apiType != APIType.websocket) {
+      return;
+    }
+    final wsModel = currentRequest.wsRequestModel;
+    if (wsModel == null) return;
+
+    // Guard: bail if the connection isn't actually open (avoids appending a
+    // Sent message when the channel is closed/closing).
+    if (!ConnectionManager.instance.hasConnection(requestId)) {
+      return;
+    }
+
+    try {
+      ConnectionManager.instance.send(requestId, message);
+
+      final newMessage = WebSocketMessage(
+        payload: message,
+        timestamp: DateTime.now(),
+        outgoing: true,
+        messageType: WebSocketMessageType.sent,
+      );
+
+      update(
+        id: requestId,
+        wsRequestModel: wsModel.copyWith(
+          messageHistory: [...wsModel.messageHistory, newMessage],
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error sending WS message: $e");
+    }
+  }
+
+  Future<void> _connectWebSocket(
+    String requestId,
+    RequestModel requestModel,
+    WebSocketRequestModel wsModel,
+    {String? historyId}
+  ) async {
+    final Map<String, String> combinedEnvVarMap = _buildCombinedEnvVarMap();
+
+    final substitutedUrl =
+        substituteVariables(wsModel.url, combinedEnvVarMap) ?? wsModel.url;
+
+    String finalUrl = substitutedUrl;
+    if (wsModel.params != null && wsModel.isParamEnabledList != null) {
+      try {
+        final uri = Uri.parse(substitutedUrl);
+        final queryParams = Map<String, dynamic>.from(uri.queryParameters);
+        for (int i = 0; i < wsModel.params!.length; i++) {
+          if (wsModel.isParamEnabledList![i]) {
+            final param = wsModel.params![i];
+            if (param.name.isNotEmpty) {
+              final subKey =
+                  substituteVariables(param.name, combinedEnvVarMap) ??
+                  param.name;
+              final subVal =
+                  substituteVariables(param.value, combinedEnvVarMap) ??
+                  param.value;
+              queryParams[subKey] = subVal;
+            }
+          }
+        }
+        if (queryParams.isNotEmpty) {
+          finalUrl = uri.replace(queryParameters: queryParams).toString();
+        }
+      } catch (e) {
+        debugPrint("Error parsing WebSocket URL parameters: $e");
+      }
+    }
+
+    state = {
+      ...state!,
+      requestId: requestModel.copyWith(
+        isWorking: true,
+        sendingTime: DateTime.now(),
+        wsRequestModel: wsModel.copyWith(
+          messageHistory: wsModel.messageHistory,
+        ),
+      ),
+    };
+
+    Map<String, String>? headers = {};
+    if (wsModel.headers != null && wsModel.isHeaderEnabledList != null) {
+      for (int i = 0; i < wsModel.headers!.length; i++) {
+        if (wsModel.isHeaderEnabledList![i]) {
+          final header = wsModel.headers![i];
+          if (header.name.isNotEmpty) {
+            final subKey =
+                substituteVariables(header.name, combinedEnvVarMap) ??
+                header.name;
+            final subVal =
+                substituteVariables(header.value, combinedEnvVarMap) ??
+                header.value;
+            headers[subKey] = subVal;
+          }
+        }
+      }
+    }
+
+    if (headers.isEmpty) headers = null;
+
+    try {
+      final channel = await ConnectionManager.instance.connect(
+        requestId,
+        finalUrl,
+        headers: headers,
+        pingInterval: _wsPingInterval(wsModel),
+      );
+
+      await channel.ready;
+
+      // Guard: the notifier may have been disposed while awaiting the
+      // handshake; the `state` reads/writes below would throw otherwise.
+      if (!mounted) return;
+
+      final latestRequest = state?[requestId];
+      final currentWs = latestRequest?.wsRequestModel ?? wsModel;
+
+      final connectedMessage = WebSocketMessage(
+        payload: "Connected to $finalUrl",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      state = {
+        ...state!,
+        requestId: (latestRequest ?? requestModel).copyWith(
+          isWorking: false,
+          isStreaming: true,
+          wsRequestModel: currentWs.copyWith(
+            messageHistory: [...currentWs.messageHistory, connectedMessage],
+          ),
+        ),
+      };
+
+      _startMessageHeartbeat(requestId, currentWs);
+
+      channel.stream.listen(
+        (data) {
+          // Guard: stream events can arrive after the notifier is disposed
+          // (free-floating subscription); touching `state` then throws.
+          if (!mounted) return;
+          final currentRequest = state?[requestId];
+          if (currentRequest != null) {
+            final currentWs = currentRequest.wsRequestModel;
+            if (currentWs != null) {
+              final newMessage = WebSocketMessage(
+                payload: data.toString(),
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.received,
+              );
+              update(
+                id: requestId,
+                wsRequestModel: currentWs.copyWith(
+                  messageHistory: [...currentWs.messageHistory, newMessage],
+                ),
+              );
+            }
+          }
+        },
+        onError: (e) {
+          // Guard: onError can fire after dispose (connection closing while the
+          // tab is torn down); touching `state` then throws "used after dispose".
+          if (!mounted) return;
+          _stopMessageHeartbeat(requestId);
+          final currentRequest = state?[requestId];
+          final ws = currentRequest?.wsRequestModel;
+          if (ws != null) {
+            final errMsg = WebSocketMessage(
+              payload: "Connection error: $e",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.error,
+            );
+            update(
+              id: requestId,
+              wsRequestModel: ws.copyWith(
+                messageHistory: [...ws.messageHistory, errMsg],
+              ),
+            );
+            if (historyId != null) {
+              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
+                messageHistory: [...ws.messageHistory, errMsg],
+              ));
+            }
+          }
+        },
+        onDone: () async {
+          // Guard: onDone fires asynchronously after the channel closes and may
+          // run after the notifier is disposed; touching `state` then throws.
+          if (!mounted) return;
+          final currentRequest = state?[requestId];
+          if (currentRequest == null) return;
+          final ws = currentRequest.wsRequestModel;
+          if (ws == null) return;
+          // Stop the app-level heartbeat on close. It restarts on the next
+          // successful connect (auto-reconnect calls _connectWebSocket again).
+          _stopMessageHeartbeat(requestId);
+
+          if (ws.autoReconnect && currentRequest.isStreaming) {
+            final reconnMsg = WebSocketMessage(
+              payload: "Connection closed. Reconnecting...",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.disconnected,
+            );
+            final updatedWs = ws.copyWith(
+              messageHistory: [...ws.messageHistory, reconnMsg],
+            );
+            final latestReq = state?[requestId];
+            if (latestReq != null) {
+              _connectWebSocket(requestId, latestReq, updatedWs, historyId: historyId);
+            }
+          } else {
+            final discMsg = WebSocketMessage(
+              payload: "Connection closed",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.disconnected,
+            );
+            update(
+              id: requestId,
+              isStreaming: false,
+              wsRequestModel: ws.copyWith(
+                messageHistory: [...ws.messageHistory, discMsg],
+              ),
+            );
+            if (historyId != null) {
+              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
+                messageHistory: [...ws.messageHistory, discMsg],
+              ));
+            }
+          }
+        },
+      );
+    } catch (e) {
+      // Guard: the connect future can complete (throw) after the notifier is
+      // disposed; touching `state` below would throw "used after dispose".
+      if (!mounted) return;
+      _stopMessageHeartbeat(requestId);
+      final currentRequest = state?[requestId];
+      final ws = currentRequest?.wsRequestModel ?? wsModel;
+      final errMsg = WebSocketMessage(
+        payload: "Connection error: $e",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.error,
+      );
+      final discMsg = WebSocketMessage(
+        payload: "Connection failed",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.disconnected,
+      );
+      state = {
+        ...state!,
+        requestId: (currentRequest ?? requestModel).copyWith(
+          isWorking: false,
+          isStreaming: false,
+          wsRequestModel: ws.copyWith(
+            messageHistory: [...ws.messageHistory, errMsg, discMsg],
+          ),
+        ),
+      };
+      if (historyId != null) {
+        _updateWebSocketHistoryRecord(historyId, ws.copyWith(
+          messageHistory: [...ws.messageHistory, errMsg, discMsg],
+        ));
+      }
+    }
+  }
+
+  void _updateWebSocketHistoryRecord(String historyId, WebSocketRequestModel wsRequestModel) {
+    final historyMap = ref.read(historyMetaStateNotifier);
+    if (historyMap != null && historyMap.containsKey(historyId)) {
+      final historyMeta = historyMap[historyId]!;
+      final historyModel = HistoryRequestModel(
+        historyId: historyId,
+        metaData: historyMeta,
+        wsRequestModel: wsRequestModel,
+      );
+      ref.read(historyMetaStateNotifier.notifier).editHistoryRequest(historyModel);
+    }
   }
 
   Future<void> sendRequest() async {
@@ -323,7 +754,41 @@ class CollectionStateNotifier
 
     RequestModel? requestModel = state![requestId];
     if (requestModel?.httpRequestModel == null &&
-        requestModel?.aiRequestModel == null) {
+        requestModel?.aiRequestModel == null &&
+        requestModel?.wsRequestModel == null) {
+      return;
+    }
+
+    if (requestModel!.apiType == APIType.websocket) {
+      final wsModel = requestModel.wsRequestModel;
+      if (wsModel != null) {
+        // Save history for WebSocket connection attempt first
+        String newHistoryId = getNewUuid();
+        final historyModel = HistoryRequestModel(
+          historyId: newHistoryId,
+          metaData: HistoryMetaModel(
+            historyId: newHistoryId,
+            requestId: requestId,
+            apiType: APIType.websocket,
+            name: requestModel.name,
+            url: wsModel.url,
+            method: HTTPVerb.get, // WebSockets initiate via HTTP GET
+            responseStatus: 0,
+            timeStamp: DateTime.now(),
+          ),
+          wsRequestModel: wsModel.copyWith(messageHistory: []),
+          preRequestScript: requestModel.preRequestScript,
+          postRequestScript: requestModel.postRequestScript,
+        );
+
+        ref
+            .read(historyMetaStateNotifier.notifier)
+            .addHistoryRequest(historyModel);
+
+        await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
+      } else {
+        update(id: requestId, message: "Invalid WebSocket model");
+      }
       return;
     }
 
@@ -332,7 +797,7 @@ class CollectionStateNotifier
       activeEnvironmentModelProvider,
     );
 
-    RequestModel executionRequestModel = requestModel!.copyWith();
+    RequestModel executionRequestModel = requestModel.copyWith();
 
     if (!requestModel.preRequestScript.isNullOrEmpty()) {
       executionRequestModel = await ref
@@ -366,7 +831,6 @@ class CollectionStateNotifier
       );
     }
 
-    // Terminal
     final terminal = ref.read(terminalStateProvider.notifier);
 
     var valRes = getValidationResult(substitutedHttpRequestModel);
@@ -379,7 +843,6 @@ class CollectionStateNotifier
       ref.read(showTerminalBadgeProvider.notifier).state = true;
     }
 
-    // Terminal: start network log
     final logId = terminal.startNetwork(
       apiType: executionRequestModel.apiType,
       method: substitutedHttpRequestModel.method,
@@ -390,7 +853,6 @@ class CollectionStateNotifier
       isStreaming: true,
     );
 
-    // Set model to working and streaming
     state = {
       ...state!,
       requestId: requestModel.copyWith(
@@ -398,7 +860,7 @@ class CollectionStateNotifier
         sendingTime: DateTime.now(),
       ),
     };
-    bool streamingMode = true; //Default: Streaming First
+    bool streamingMode = true;
 
     final stream = await streamHttpRequest(
       requestId,
@@ -439,7 +901,6 @@ class CollectionStateNotifier
             isStreaming: true,
           );
           state = {...state!, requestId: newRequestModel};
-          // Terminal: append chunk preview
           if (response != null && response.body.isNotEmpty) {
             terminal.addNetworkChunk(
               logId,
@@ -502,7 +963,6 @@ class CollectionStateNotifier
         isStreamingResponse: isStreamingResponse,
       );
 
-      //AI-FORMATTING for Non Streaming Variant
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
@@ -571,15 +1031,39 @@ class CollectionStateNotifier
       }
     }
 
-    // Final state update
     state = {...state!, requestId: newRequestModel};
-
     unsave();
   }
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
-    cancelHttpRequest(id);
+    if (id == null) return;
+    final requestModel = state?[id];
+    if (requestModel?.apiType == APIType.websocket) {
+      final ws = requestModel?.wsRequestModel;
+      if (ws != null) {
+        final discMsg = WebSocketMessage(
+          payload: "Disconnected by user",
+          timestamp: DateTime.now(),
+          outgoing: false,
+          messageType: WebSocketMessageType.disconnected,
+        );
+        update(
+          id: id,
+          isStreaming: false,
+          isWorking: false,
+          wsRequestModel: ws.copyWith(
+            messageHistory: [...ws.messageHistory, discMsg],
+          ),
+        );
+      } else {
+        update(id: id, isStreaming: false, isWorking: false);
+      }
+      _stopMessageHeartbeat(id);
+      ConnectionManager.instance.disconnect(id);
+    } else {
+      cancelHttpRequest(id);
+    }
     unsave();
   }
 
@@ -646,9 +1130,6 @@ class CollectionStateNotifier
   Future<Map<String, dynamic>> exportDataToHAR() async {
     var result = await collectionToHAR(state?.values.toList());
     return result;
-    // return {
-    //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
-    // };
   }
 
   HttpRequestModel getSubstitutedHttpRequestModel(
@@ -656,7 +1137,6 @@ class CollectionStateNotifier
   ) {
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
-
     return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
   }
 }

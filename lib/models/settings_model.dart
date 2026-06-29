@@ -20,6 +20,7 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.maxWebSocketEvents = 1000,
   });
 
   final bool isDark;
@@ -36,6 +37,7 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
+  final int maxWebSocketEvents;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -52,6 +54,7 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    int? maxWebSocketEvents,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -70,6 +73,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+      maxWebSocketEvents: maxWebSocketEvents ?? this.maxWebSocketEvents,
     );
   }
 
@@ -91,6 +95,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      maxWebSocketEvents: maxWebSocketEvents,
     );
   }
 
@@ -149,6 +154,7 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+    final maxWebSocketEvents = data["maxWebSocketEvents"] as int?;
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -167,6 +173,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      maxWebSocketEvents: maxWebSocketEvents ?? 1000,
     );
   }
 
@@ -188,6 +195,7 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "maxWebSocketEvents": maxWebSocketEvents,
     };
   }
 
@@ -214,7 +222,8 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
-        mapEquals(other.defaultAIModel, defaultAIModel);
+        mapEquals(other.defaultAIModel, defaultAIModel) &&
+        other.maxWebSocketEvents == maxWebSocketEvents;
   }
 
   @override
@@ -235,6 +244,7 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      maxWebSocketEvents,
     );
   }
 }
