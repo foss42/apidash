@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:mime_dart/mime_dart.dart';
 import 'package:uuid/uuid.dart';
@@ -31,6 +32,29 @@ String makeStorageId(String name, {String? suffix}) {
   final stableSuffix =
       suffix ?? getNewUuid().replaceAll('-', '').substring(0, 8);
   return '${_slugifyStorageName(name)}_$stableSuffix';
+}
+
+/// Keeps a request/display name human-readable for use in a filename:
+/// preserves the original casing and spaces, only replacing characters that
+/// are illegal in filesystem paths.
+String _sanitizeForFileName(String name) {
+  final cleaned = name
+      .trim()
+      .replaceAll(RegExp(r'[/\\:*?"<>|]'), '-')
+      .replaceAll(RegExp(r'-+'), '-')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .replaceAll(RegExp(r'^-+|-+$'), '')
+      .trim();
+  return cleaned.isEmpty ? 'request' : cleaned;
+}
+
+String makeHistoryId({
+  required DateTime timeStamp,
+  required String name,
+}) {
+  final label = _sanitizeForFileName(name);
+  final stamp = DateFormat('yyyy-MM-dd hh.mm.ss a').format(timeStamp);
+  return '$label $stamp';
 }
 
 String makeCollectionId(String name) {

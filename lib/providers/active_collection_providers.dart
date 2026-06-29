@@ -722,10 +722,14 @@ class ActiveCollectionNotifier
         duration: duration,
       );
 
-      final historyName = requestModel.name.isEmpty
-          ? substitutedHttpRequestModel.method.name
-          : requestModel.name;
-      String newHistoryId = makeStorageId(historyName);
+      final historyName = requestModel.name.isNotEmpty
+          ? requestModel.name
+          : substitutedHttpRequestModel.url;
+      final historyTimeStamp = DateTime.now();
+      String newHistoryId = makeHistoryId(
+        timeStamp: historyTimeStamp,
+        name: historyName,
+      );
       historyModel = HistoryRequestModel(
         historyId: newHistoryId,
         metaData: HistoryMetaModel(
@@ -736,7 +740,7 @@ class ActiveCollectionNotifier
           url: substitutedHttpRequestModel.url,
           method: substitutedHttpRequestModel.method,
           responseStatus: statusCode,
-          timeStamp: DateTime.now(),
+          timeStamp: historyTimeStamp,
         ),
         httpRequestModel: substitutedHttpRequestModel,
         aiRequestModel: executionRequestModel.aiRequestModel,
