@@ -9,37 +9,36 @@ import 'package:hive_ce_flutter/adapters.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:stac/stac.dart';
+import 'mcp/mcp_server.dart';
 import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
 import 'consts.dart';
 import 'app.dart';
 import 'dart:io';
-import 'mcp/mcp_service.dart';
 
 void main(List<String> args) async {
   // Check if external client is calling us in headless mode
   if (args.contains('--mcp-engine')) {
+
+    // Route all rogue Flutter print() calls to stderr
+    debugPrint = (String? message, {int? wrapWidth}) {
+      if (message != null) stderr.writeln(message);
+    };
+
     WidgetsFlutterBinding.ensureInitialized();
 
-    // 1. Get the standard app directory
     final docDir = await getApplicationDocumentsDirectory();
-
-    // 2. Create a dedicated folder just for the AI Agent
     final agentPath = p.join(docDir.path, 'apidash', 'agent_workspace');
+
     final agentDir = Directory(agentPath);
-    if (!await agentDir.exists()) {
-      await agentDir.create(recursive: true);
-    }
+    if (!await agentDir.exists()) await agentDir.create(recursive: true);
 
-    // 3. Initialize Hive in this isolated folder
     Hive.init(agentPath);
-
-    // 4. Open a custom history box for the agent
     await Hive.openBox('agent_history');
 
-    // 5. Start the engine safely
-    await mcpService.startHeadless();
+    // Boot the official SDK server:
+    await ApiDashMcpServer.start();
     return;
   }
 

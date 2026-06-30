@@ -64,15 +64,16 @@ String getHistoryAppHtml() {
             const rawRes = await executeMcpTool("apidash_list_history", { _cache_buster: Date.now().toString() });
             document.getElementById('loading').style.display = 'none';
             
+            // ⚡ INDESTRUCTIBLE UNPACKER:
             let historyArray = [];
-            if (rawRes) {
-                if (Array.isArray(rawRes)) {
-                    historyArray = rawRes;
-                } else if (Array.isArray(rawRes.structuredContent)) {
-                    historyArray = rawRes.structuredContent;
-                } else if (rawRes.result && Array.isArray(rawRes.result.structuredContent)) {
-                    historyArray = rawRes.result.structuredContent;
-                }
+            const raw = rawRes?.structuredContent || rawRes?.result?.structuredContent || rawRes?.meta?.structuredContent || rawRes;
+
+            if (Array.isArray(raw)) {
+                historyArray = raw;
+            } else if (raw && Array.isArray(raw.history)) {
+                historyArray = raw.history;
+            } else if (raw && raw.result && Array.isArray(raw.result)) {
+                historyArray = raw.result;
             }
 
             renderHistory(historyArray);
@@ -167,7 +168,6 @@ String getApiDashWorkbenchHtml() {
       --font-mono: var(--vscode-editor-font-family, "JetBrains Mono", Consolas, monospace);
     }
 
-    /* 1. SCROLL LIBERATOR: Unbounded downward flow */
     body, html {
       margin: 0; padding: 0; width: 100%; min-height: 100vh; height: auto;
       background-color: var(--bg-canvas);
@@ -176,7 +176,6 @@ String getApiDashWorkbenchHtml() {
       display: flex; flex-direction: column; box-sizing: border-box;
     }
 
-    /* Sticky Roof Tabs */
     .ad-nav-viewport {
       container-type: inline-size; container-name: topnav;
       width: 100%; border-bottom: 1px solid var(--border-divider);
@@ -200,7 +199,6 @@ String getApiDashWorkbenchHtml() {
     .ad-tab svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
     .ad-tab.active svg { fill: var(--border-active-tab); }
 
-    /* Main SPA Canvas */
     .ad-workbench-viewport {
       container-type: inline-size; container-name: reqbar;
       width: 100%; max-width: 740px; margin: 12px auto 0 auto;
@@ -211,7 +209,6 @@ String getApiDashWorkbenchHtml() {
     .ad-pane { display: none; width: 100%; flex-direction: column; gap: 10px; flex: 1; height: auto; overflow: visible; }
     .ad-pane.active { display: flex; }
 
-    /* STUDIO CONTROLS */
     .ad-row-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; flex-shrink: 0; }
     .ad-meta-cluster { display: flex; align-items: center; gap: 8px; }
 
@@ -231,7 +228,6 @@ String getApiDashWorkbenchHtml() {
     .ad-icon-bar button:hover { background: var(--bg-surface-hover); color: var(--text-main); }
     .ad-icon-bar button svg { width: 14px; height: 14px; fill: currentColor; }
 
-    /* PINNED REQUEST BAR (Always Visible) */
     .ad-row-url {
       position: relative; display: flex; align-items: center; width: 100%; flex-shrink: 0;
       background: var(--bg-input); border: 1px solid var(--border-color);
@@ -261,7 +257,6 @@ String getApiDashWorkbenchHtml() {
     .ad-send-btn:hover { background: var(--btn-send-hover); }
     .ad-send-btn svg { width: 12px; height: 12px; fill: currentColor; }
 
-    /* --- SIBLING DYNAMIC CONTAINERS (Untrapped height) --- */
     .req-builder-card, .res-analyzer-card {
       display: flex; flex-direction: column; width: 100%; margin-top: 4px;
       background: var(--bg-surface); border: 1px solid var(--border-color);
@@ -299,7 +294,6 @@ String getApiDashWorkbenchHtml() {
     .req-sub-pane { display: none; flex-direction: column; gap: 10px; flex: 1; }
     .req-sub-pane.active { display: flex; }
 
-    /* Sub: KV Tables */
     .kv-rows { display: flex; flex-direction: column; gap: 8px; }
     .kv-row { display: flex; align-items: center; gap: 8px; width: 100%; }
     .kv-chk { accent-color: var(--border-hover); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
@@ -319,7 +313,6 @@ String getApiDashWorkbenchHtml() {
     }
     .btn-add-row:hover { background: #222c3e; color: #fff; border-color: #3b82f6; }
 
-    /* Sub: Auth & Toolbars */
     .sub-label { font-size: 11px; font-weight: 700; color: var(--text-label); text-transform: uppercase; letter-spacing: 0.5px; }
     .sub-select {
       background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-main);
@@ -344,7 +337,6 @@ String getApiDashWorkbenchHtml() {
     }
     .code-surface:focus { border-color: var(--border-hover); }
 
-    /* --- VIEW B: RESULTS FULL CARD (Replaces Builder Canvas) --- */
     .res-top-bar { display: flex; align-items: center; justify-content: space-between; background: #090d14; padding: 10px 14px; border-bottom: 1px solid var(--border-color); border-top-left-radius: 8px; border-top-right-radius: 8px; font-family: var(--font-mono); }
     .res-badge-cluster { display: flex; align-items: center; gap: 12px; }
     
@@ -363,7 +355,6 @@ String getApiDashWorkbenchHtml() {
     .res-content-box { background: #05070a; padding: 14px; color: #e2e8f0; font-family: var(--font-mono); font-size: 12px; flex: 1; min-height: 250px; height: auto; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
     .res-payload-pre { white-space: pre-wrap; word-break: break-all; margin: 0; font-family: inherit; }
 
-    /* HISTORY LEDGER */
     .ad-hist-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 4px; }
     .ad-hist-title { font-size: 14px; font-weight: 600; color: var(--text-label); }
     .ad-history-list { display: flex; flex-direction: column; gap: 8px; height: auto; overflow: visible; flex: 1; }
@@ -672,9 +663,8 @@ String getApiDashWorkbenchHtml() {
       if (isChecked && key) headers[key] = val;
     });
 
-    renderHydratedResults({ status_code: 0, time_ms: 0, response_body: "Executing HTTP request directly over socket..." });
+    renderHydratedResults({ status_code: 0, time_ms: 0, response_body: "Dispatching request over MCP pipe..." });
 
-    // ⚡ BYPASS AI PERMISSION SLIP. Hit the execution tool directly:
     const res = await executeDartTool("apidash_execute_request", {
       url, 
       method, 
@@ -682,7 +672,8 @@ String getApiDashWorkbenchHtml() {
       body: body ? body : undefined
     });
 
-    const payload = res?.structuredContent || res?.result?.structuredContent;
+    // ⚡ UPGRADED UNPACKER:
+    const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
     if (payload && payload.execution_id) {
       trackedExecutionId = payload.execution_id;
       renderHydratedResults(payload);
@@ -737,7 +728,7 @@ String getApiDashWorkbenchHtml() {
     }
   };
 
-  // --- 6. HISTORY TELEPORTER (Listens for clicks from the History iframe) ---
+  // --- 6. HISTORY TELEPORTER ---
   window.addEventListener('message', async (event) => {
     const msg = event.data;
     if (msg && msg.type === 'HYDRATE_HISTORIC_RUN') {
@@ -745,7 +736,8 @@ String getApiDashWorkbenchHtml() {
       renderHydratedResults({ status_code: 0, time_ms: 0, response_body: "Querying Hive DB for historical run..." });
 
       const res = await executeDartTool("apidash_get_results", { execution_id: msg.id });
-      const payload = res?.structuredContent || res?.result?.structuredContent;
+      // ⚡ UPGRADED UNPACKER:
+      const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
 
       if (payload) {
         if (payload.url) document.getElementById('reqUrlInput').value = payload.url;
@@ -758,14 +750,14 @@ String getApiDashWorkbenchHtml() {
     }
   });
 
-  // Internal History clicker (for pane-history inside the studio itself)
   window.openHistoryResult = async function(id) {
     openNamedRoofTab('pane-studio');
     renderHydratedResults({ status_code: 0, time_ms: 0, response_body: "Loading execution record from Hive..." });
     
     try {
       const res = await executeDartTool("apidash_get_results", { execution_id: id });
-      const payload = res?.structuredContent || res?.result?.structuredContent;
+      // ⚡ UPGRADED UNPACKER:
+      const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
       if (payload) {
         if (payload.url) document.getElementById('reqUrlInput').value = payload.url;
         if (payload.method) {
@@ -777,14 +769,14 @@ String getApiDashWorkbenchHtml() {
     } catch(e) {}
   };
 
-  // Autonomous background poller protected by mutex
   let isPolling = false;
   setInterval(async () => {
     if (isPolling) return;
     isPolling = true;
     try {
       const res = await executeDartTool("apidash_get_results", { _cache_buster: Date.now().toString() });
-      const payload = res?.structuredContent || res?.result?.structuredContent;
+      // ⚡ UPGRADED UNPACKER:
+      const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
       if (payload && payload.execution_id && payload.execution_id !== trackedExecutionId) {
         trackedExecutionId = payload.execution_id;
         if (payload.url) document.getElementById('reqUrlInput').value = payload.url;
@@ -807,11 +799,16 @@ String getApiDashWorkbenchHtml() {
       const payload = await executeDartTool("apidash_list_history", { _cache_buster: Date.now().toString() });
       spinner.style.display = 'none';
 
+      // ⚡ INDESTRUCTIBLE UNPACKER:
       let data = [];
-      if (payload) {
-        if (Array.isArray(payload)) data = payload;
-        else if (Array.isArray(payload.structuredContent)) data = payload.structuredContent;
-        else if (Array.isArray(payload.result?.structuredContent)) data = payload.result.structuredContent;
+      const raw = payload?.structuredContent || payload?.result?.structuredContent || payload?.meta?.structuredContent || payload;
+
+      if (Array.isArray(raw)) {
+        data = raw;
+      } else if (raw && Array.isArray(raw.history)) {
+        data = raw.history;
+      } else if (raw && raw.result && Array.isArray(raw.result)) {
+        data = raw.result;
       }
 
       if (data.length === 0) { feed.innerHTML = '<div class="ad-empty-notice">No requests executed yet.</div>'; return; }
