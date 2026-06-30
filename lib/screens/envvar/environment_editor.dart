@@ -36,20 +36,23 @@ class EnvironmentEditor extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
                     EditorTitleActions(
-                      onRenamePressed: () {
-                        showRenameDialog(
-                          context,
-                          kLabelRenameEnvironment,
-                          name,
-                          (val) {
-                            ref
-                                .read(
-                                  environmentsStateNotifierProvider.notifier,
-                                )
-                                .updateEnvironment(id!, name: val);
-                          },
-                        );
-                      },
+                      onRenamePressed: id == kGlobalEnvironmentId
+                          ? null
+                          : () {
+                              showRenameDialog(
+                                context,
+                                kLabelRenameEnvironment,
+                                name,
+                                (val) {
+                                  ref
+                                      .read(
+                                        environmentsStateNotifierProvider
+                                            .notifier,
+                                      )
+                                      .updateEnvironment(id!, name: val);
+                                },
+                              );
+                            },
                       onDuplicatePressed: () => ref
                           .read(environmentsStateNotifierProvider.notifier)
                           .duplicateEnvironment(id!),

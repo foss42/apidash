@@ -77,9 +77,9 @@ class SidebarEnvironmentCard extends StatelessWidget {
                   showItemCardMenu(context, details, onMenuSelected);
                 },
           child: Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 6,
-              right: isSelected ? 6 : 10,
+              right: 6,
               top: 5,
               bottom: 5,
             ),
@@ -89,7 +89,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
                 children: [
                   kHSpacer4,
                   Expanded(
-                    child: inEditMode
+                    child: (inEditMode && !isGlobal)
                         ? TextFormField(
                             key: ValueKey("$id-name"),
                             initialValue: name,

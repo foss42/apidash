@@ -8,6 +8,13 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
+List<ItemMenuOption> _envMenuOptions(String id) {
+  if (id == kGlobalEnvironmentId) {
+    return const [ItemMenuOption.duplicate];
+  }
+  return ItemMenuOption.values;
+}
+
 class EnvironmentsPane extends ConsumerWidget {
   const EnvironmentsPane({super.key});
 
