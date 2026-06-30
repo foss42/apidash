@@ -170,6 +170,14 @@ class ActiveCollectionNotifier
     }
   }
 
+  String _storageLabelFor(RequestModel model) {
+    if (model.name.trim().isNotEmpty) {
+      return model.name;
+    }
+    final url = model.httpRequestModel?.url ?? model.aiRequestModel?.url;
+    return getRequestTitleFromUrl(url);
+  }
+
   void _rekeyRequest(String oldId, String newId, RequestModel model) {
     if (oldId == newId) {
       return;
@@ -189,9 +197,7 @@ class ActiveCollectionNotifier
     if (active == null) {
       return;
     }
-    unawaited(
-      workspaceStorage.renameRequest(active, oldId, newId),
-    );
+    workspaceStorage.renameRequestSync(active, oldId, newId);
     unawaited(
       aiRequestSecretsStorage.rekeyApiKey(
         workspaceStorage.rootPath,
@@ -499,7 +505,8 @@ class ActiveCollectionNotifier
       );
     }
 
-    final newId = renameStorageId(rId, newModel.name);
+    final storageLabel = _storageLabelFor(newModel);
+    final newId = renameStorageId(rId, storageLabel);
     if (newId != rId) {
       _rekeyRequest(rId, newId, newModel.copyWith(id: newId));
     } else {
@@ -835,7 +842,7 @@ class ActiveCollectionNotifier
       await workspaceStorage.setRequestModel(targetId, requestId, json);
     }
 
-    await workspaceStorage.removeUnused(targetId);
+    await workspaceStorage.removeUnused(targetId, requestIds: ids.toSet());
     await aiRequestSecretsStorage.deleteOrphansForCollection(
       workspaceStorage.rootPath,
       targetId,

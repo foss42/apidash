@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -346,28 +347,36 @@ class WorkspaceStorage {
     String oldId,
     String newId,
   ) async {
+    renameRequestSync(collectionId, oldId, newId);
+  }
+
+  void renameRequestSync(String collectionId, String oldId, String newId) {
     if (oldId == newId) {
       return;
     }
     final oldDir = Directory(_path(_requestDirRelative(collectionId, oldId)));
-    if (!await oldDir.exists()) {
+    if (!oldDir.existsSync()) {
       return;
     }
     final newDirPath = _path(_requestDirRelative(collectionId, newId));
     oldDir.renameSync(newDirPath);
     final requestFile = File(p.join(newDirPath, kWorkspaceRequestFile));
-    if (await requestFile.exists()) {
-      final json = _readJsonSync(
-        p.join(
-          _requestDirRelative(collectionId, newId),
-          kWorkspaceRequestFile,
-        ),
-      );
-      if (json != null) {
-        json['id'] = newId;
-        await writeJsonAtomic(requestFile.path, Map<String, Object?>.from(json));
-      }
+    if (!requestFile.existsSync()) {
+      return;
     }
+    final json = _readJsonSync(
+      p.join(
+        _requestDirRelative(collectionId, newId),
+        kWorkspaceRequestFile,
+      ),
+    );
+    if (json == null) {
+      return;
+    }
+    json['id'] = newId;
+    unawaited(
+      writeJsonAtomic(requestFile.path, Map<String, Object?>.from(json)),
+    );
   }
 
   // --- Environments ---
@@ -427,6 +436,10 @@ class WorkspaceStorage {
   }
 
   Future<void> renameEnvironment(String oldId, String newId) async {
+    renameEnvironmentSync(oldId, newId);
+  }
+
+  void renameEnvironmentSync(String oldId, String newId) {
     if (oldId == newId) {
       return;
     }
@@ -437,14 +450,16 @@ class WorkspaceStorage {
       p.join(kWorkspaceEnvironmentsDir, _environmentFileName(newId)),
     );
     final oldFile = File(oldPath);
-    if (!await oldFile.exists()) {
+    if (!oldFile.existsSync()) {
       return;
     }
     oldFile.renameSync(newPath);
     final json = getEnvironment(newId);
     if (json != null) {
       json['id'] = newId;
-      await setEnvironment(newId, json);
+      unawaited(
+        writeJsonAtomic(newPath, Map<String, Object?>.from(json)),
+      );
     }
   }
 
@@ -607,8 +622,11 @@ class WorkspaceStorage {
     await clearAllHistory();
   }
 
-  Future<void> removeUnused(String collectionId) async {
-    final ids = getIds(collectionId).toSet();
+  Future<void> removeUnused(
+    String collectionId, {
+    Set<String>? requestIds,
+  }) async {
+    final ids = requestIds ?? getIds(collectionId).toSet();
     final collectionDir = Directory(_path(_collectionDir(collectionId)));
     if (await collectionDir.exists()) {
       await for (final entity in collectionDir.list()) {

@@ -34,9 +34,6 @@ String makeStorageId(String name, {String? suffix}) {
   return '${_slugifyStorageName(name)}_$stableSuffix';
 }
 
-/// Keeps a request/display name human-readable for use in a filename:
-/// preserves the original casing and spaces, only replacing characters that
-/// are illegal in filesystem paths.
 String _sanitizeForFileName(String name) {
   final cleaned = name
       .trim()
@@ -80,6 +77,18 @@ String renameStorageId(String oldId, String newName) {
     return oldId;
   }
   return makeStorageId(newName, suffix: suffix);
+}
+
+String renameEnvironmentStorageId(String currentId, String name) {
+  final renamed = renameStorageId(currentId, name);
+  if (renamed != currentId) {
+    return renamed;
+  }
+  if (storageIdSuffix(currentId) != null) {
+    return currentId;
+  }
+  final trimmed = name.trim();
+  return trimmed.isEmpty ? currentId : makeStorageId(trimmed);
 }
 
 String? getFileExtension(String? mimeType) {
