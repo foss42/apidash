@@ -493,8 +493,8 @@ void main() {
         expect(capturedValues, isNotNull);
         expect(
           capturedValues!.length,
-          greaterThanOrEqualTo(2),
-        ); // At least the enabled variables
+          equals(3),
+        ); // All 3 variables preserved
 
         final apiUrlVar = capturedValues!.firstWhere((v) => v.key == 'apiUrl');
         expect(apiUrlVar.value, equals('https://api.apidash.dev'));
@@ -503,6 +503,10 @@ void main() {
         final apiKeyVar = capturedValues!.firstWhere((v) => v.key == 'apiKey');
         expect(apiKeyVar.value, equals('test-api-key'));
         expect(apiKeyVar.enabled, isTrue);
+
+        final disabledVar = capturedValues!.firstWhere((v) => v.key == 'disabledVar');
+        expect(disabledVar.value, equals('disabled-value'));
+        expect(disabledVar.enabled, isFalse);
       },
     );
 
@@ -646,6 +650,12 @@ void main() {
             value: 'old-jwt-token',
             enabled: true,
             type: EnvironmentVariableType.secret,
+          ),
+          EnvironmentVariableModel(
+            key: 'disabledVar',
+            value: 'disabled-value',
+            enabled: false,
+            type: EnvironmentVariableType.variable,
           ),
         ],
       );
@@ -819,11 +829,15 @@ void main() {
 
       // Assert
       expect(capturedValues, isNotNull);
-      expect(capturedValues!.length, greaterThanOrEqualTo(2));
+      expect(capturedValues!.length, equals(3)); // All 3 variables preserved
 
       final baseUrlVar = capturedValues!.firstWhere((v) => v.key == 'baseUrl');
       expect(baseUrlVar.value, equals('https://api.apidash.dev'));
       expect(baseUrlVar.enabled, isTrue);
+
+      final disabledVar = capturedValues!.firstWhere((v) => v.key == 'disabledVar');
+      expect(disabledVar.value, equals('disabled-value'));
+      expect(disabledVar.enabled, isFalse);
     });
 
     test(

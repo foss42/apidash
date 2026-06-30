@@ -309,6 +309,8 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
             ),
           );
           mutableUpdatedEnv.remove(originalVariable.key);
+        } else if (!originalVariable.enabled) {
+          newValues.add(originalVariable);
         }
       }
       for (final entry in mutableUpdatedEnv.entries) {
@@ -371,6 +373,8 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
             ),
           );
           mutableUpdatedEnv.remove(originalVariable.key);
+        } else if (!originalVariable.enabled) {
+          newValues.add(originalVariable);
         }
       }
       for (final entry in mutableUpdatedEnv.entries) {
