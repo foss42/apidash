@@ -1331,4 +1331,87 @@ void main() async {
       container.dispose();
     });
   });
+
+  group('CollectionStateNotifier remove() selection', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+
+    setUp(() async {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+      // Let the notifier's constructor microtask (which initialises the
+      // sequence/selection) settle before we build a known state.
+      await Future.microtask(() {});
+
+      // Build a deterministic two-item collection, independent of whatever the
+      // test Hive seeds. addRequestModel prepends, so after these two adds the
+      // first two ids in the sequence are the ones we just created.
+      notifier.addRequestModel(
+        const HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/one',
+        ),
+        name: 'one',
+      );
+      notifier.addRequestModel(
+        const HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/two',
+        ),
+        name: 'two',
+      );
+      final ids = container.read(requestSequenceProvider).take(2).toList();
+      container.read(requestSequenceProvider.notifier).state = ids;
+      container.read(selectedIdStateProvider.notifier).state = ids[0];
+    });
+
+    test(
+      'should keep a remaining item selected when deleting the second of two requests',
+      () {
+        final sequence = container.read(requestSequenceProvider);
+        expect(sequence.length, 2);
+        final firstId = sequence[0];
+        final secondId = sequence[1];
+
+        notifier.remove(id: secondId);
+
+        // One request still remains, so selection must fall back to it
+        // (regression: previously fell through to null for a 1-item remainder).
+        expect(container.read(requestSequenceProvider).length, 1);
+        expect(container.read(selectedIdStateProvider), isNotNull);
+        expect(container.read(selectedIdStateProvider), firstId);
+      },
+    );
+
+    test(
+      'should select the next item when deleting the first of two requests',
+      () {
+        final sequence = container.read(requestSequenceProvider);
+        final firstId = sequence[0];
+        final secondId = sequence[1];
+
+        notifier.remove(id: firstId);
+
+        expect(container.read(requestSequenceProvider).length, 1);
+        expect(container.read(selectedIdStateProvider), secondId);
+      },
+    );
+
+    test('should set selection to null when deleting the only request', () {
+      // Remove the second so a single request remains, then remove that too.
+      final sequence = container.read(requestSequenceProvider);
+      notifier.remove(id: sequence[1]);
+      final remaining = container.read(requestSequenceProvider);
+      expect(remaining.length, 1);
+
+      notifier.remove(id: remaining[0]);
+
+      expect(container.read(requestSequenceProvider), isEmpty);
+      expect(container.read(selectedIdStateProvider), isNull);
+    });
+
+    tearDown(() {
+      container.dispose();
+    });
+  });
 }
