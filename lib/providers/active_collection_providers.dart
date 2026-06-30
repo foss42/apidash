@@ -811,7 +811,9 @@ class ActiveCollectionNotifier
       return;
     }
     ref.read(saveDataStateProvider.notifier).state = true;
-    final saveResponse = ref.read(settingsProvider).saveResponses;
+    final settings = ref.read(settingsProvider);
+    final saveResponse = settings.saveResponses;
+    final saveMediaAsFiles = settings.saveMediaResponsesAsFiles;
     final ids = ref.read(requestSequenceProvider);
     final summaries = summariesForSequence(targetId, ids);
     ref
@@ -839,7 +841,12 @@ class ActiveCollectionNotifier
           json = diskModel.copyWith(httpResponseModel: null).toJson();
         }
       }
-      await workspaceStorage.setRequestModel(targetId, requestId, json);
+      await workspaceStorage.setRequestModel(
+        targetId,
+        requestId,
+        json,
+        saveMediaAsFiles: saveMediaAsFiles,
+      );
     }
 
     await workspaceStorage.removeUnused(targetId, requestIds: ids.toSet());

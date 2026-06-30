@@ -148,6 +148,18 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               CheckboxListTile(
+                title: const Text(kLabelSaveMediaResponsesAsFiles),
+                subtitle: const Text(kLabelSaveMediaResponsesAsFilesSubtitle),
+                value: settings.saveMediaResponsesAsFiles,
+                onChanged: settings.saveResponses
+                    ? (value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(saveMediaResponsesAsFiles: value);
+                      }
+                    : null,
+              ),
+              CheckboxListTile(
                 title: const Text(kLabelShowSaveAlert),
                 subtitle: const Text(kLabelShowSaveAlertSubtitle),
                 value: settings.promptBeforeClosing,

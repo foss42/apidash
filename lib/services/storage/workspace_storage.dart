@@ -38,6 +38,56 @@ String _responseJsonRelative(String collectionId, String requestId) => p.join(
       kWorkspaceResponseFile,
     );
 
+const Set<String> _kMediaFileTypes = {'image', 'audio', 'video'};
+
+String? _contentTypeFromResponseMap(Map<String, Object?> response) {
+  final headers = response['headers'];
+  if (headers is! Map) {
+    return null;
+  }
+  for (final entry in headers.entries) {
+    if (entry.key.toString().toLowerCase() == 'content-type') {
+      return entry.value?.toString();
+    }
+  }
+  return null;
+}
+
+bool _isBinaryMediaContentType(String? contentType) {
+  if (contentType == null) {
+    return false;
+  }
+  final value = contentType.split(';').first.trim().toLowerCase();
+  final parts = value.split('/');
+  if (parts.length != 2 || parts[0].isEmpty || parts[1].isEmpty) {
+    return false;
+  }
+  final type = parts[0];
+  final subtype = parts[1];
+  if (_kMediaFileTypes.contains(type)) {
+    return true;
+  }
+  if (type == 'application') {
+    return subtype == 'pdf' || subtype == 'octet-stream';
+  }
+  return false;
+}
+
+String _responseBodyFileName(String? contentType) {
+  final mimeType = contentType?.split(';').first.trim();
+  final ext = getFileExtension(mimeType) ?? 'bin';
+  return '$kWorkspaceResponseBodyFilePrefix.$ext';
+}
+
+Uint8List? _bytesFromJsonList(Object? value) {
+  if (value is! List) {
+    return null;
+  }
+  return Uint8List.fromList(
+    value.map((e) => (e as num).toInt()).toList(growable: false),
+  );
+}
+
 Future<bool> initWorkspaceStorage(
   bool initializeUsingPath,
   String? workspaceFolderPath, {
@@ -292,7 +342,9 @@ class WorkspaceStorage {
     final merged = Map<String, Object?>.from(requestJson);
     final responseJson = _readJsonSync(_responseJsonRelative(collectionId, id));
     if (responseJson != null) {
-      merged['httpResponseModel'] = responseJson;
+      final requestDirPath = _path(_requestDirRelative(collectionId, id));
+      merged['httpResponseModel'] =
+          _inlineResponseBodyFile(requestDirPath, responseJson);
     }
     return Map<String, dynamic>.from(_fixBodyBytesForFromJson(merged));
   }
@@ -300,8 +352,9 @@ class WorkspaceStorage {
   Future<void> setRequestModel(
     String collectionId,
     String id,
-    Map<String, dynamic>? requestModelJson,
-  ) async {
+    Map<String, dynamic>? requestModelJson, {
+    bool saveMediaAsFiles = false,
+  }) async {
     if (requestModelJson == null) {
       await _deleteRequestStorage(collectionId, id);
       return;
@@ -323,16 +376,90 @@ class WorkspaceStorage {
 
     final responsePath = p.join(requestDirPath, kWorkspaceResponseFile);
     if (response is Map) {
-      await writeJsonAtomic(
+      await _writeResponseStorage(
+        requestDirPath,
         responsePath,
         Map<String, Object?>.from(response),
+        saveMediaAsFiles,
       );
     } else {
-      final responseFile = File(responsePath);
-      if (await responseFile.exists()) {
-        await responseFile.delete();
+      await _deleteResponseStorage(requestDirPath, responsePath);
+    }
+  }
+
+  Future<void> _writeResponseStorage(
+    String requestDirPath,
+    String responsePath,
+    Map<String, Object?> response,
+    bool saveMediaAsFiles,
+  ) async {
+    await _deleteExistingResponseBodyFile(requestDirPath, responsePath);
+
+    final contentType = _contentTypeFromResponseMap(response);
+    final bytes = _bytesFromJsonList(response['bodyBytes']);
+    final shouldExtract = saveMediaAsFiles &&
+        bytes != null &&
+        bytes.isNotEmpty &&
+        _isBinaryMediaContentType(contentType);
+
+    if (shouldExtract) {
+      final fileName = _responseBodyFileName(contentType);
+      await saveFile(p.join(requestDirPath, fileName), bytes);
+      response.remove('bodyBytes');
+      response[kWorkspaceResponseBodyFileKey] = fileName;
+    } else {
+      response.remove(kWorkspaceResponseBodyFileKey);
+    }
+
+    await writeJsonAtomic(responsePath, response);
+  }
+
+  Future<void> _deleteResponseStorage(
+    String requestDirPath,
+    String responsePath,
+  ) async {
+    await _deleteExistingResponseBodyFile(requestDirPath, responsePath);
+    final responseFile = File(responsePath);
+    if (await responseFile.exists()) {
+      await responseFile.delete();
+    }
+  }
+
+  Future<void> _deleteExistingResponseBodyFile(
+    String requestDirPath,
+    String responsePath,
+  ) async {
+    final existing = _readJsonFileSync(responsePath);
+    final fileName = existing?[kWorkspaceResponseBodyFileKey];
+    if (fileName is String && fileName.isNotEmpty) {
+      final bodyFile = File(p.join(requestDirPath, fileName));
+      if (await bodyFile.exists()) {
+        await bodyFile.delete();
       }
     }
+  }
+
+  /// If [responseJson] points to a separate body file, reads it back into
+  /// `bodyBytes` so the in-memory model is identical to an inlined response.
+  Map<String, Object?> _inlineResponseBodyFile(
+    String requestDirPath,
+    Map<String, Object?> responseJson,
+  ) {
+    final fileName = responseJson[kWorkspaceResponseBodyFileKey];
+    if (fileName is! String || fileName.isEmpty) {
+      return responseJson;
+    }
+    final result = Map<String, Object?>.from(responseJson);
+    result.remove(kWorkspaceResponseBodyFileKey);
+    try {
+      final bodyFile = File(p.join(requestDirPath, fileName));
+      if (bodyFile.existsSync()) {
+        result['bodyBytes'] = bodyFile.readAsBytesSync();
+      }
+    } catch (e) {
+      debugPrint('Failed to read response body file $fileName: $e');
+    }
+    return result;
   }
 
   Future<void> _deleteRequestStorage(String collectionId, String id) async {
@@ -675,7 +802,11 @@ class WorkspaceStorage {
   }
 
   Map<String, Object?>? _readJsonSync(String relativePath) {
-    final file = File(_path(relativePath));
+    return _readJsonFileSync(_path(relativePath));
+  }
+
+  Map<String, Object?>? _readJsonFileSync(String absolutePath) {
+    final file = File(absolutePath);
     if (!file.existsSync()) {
       return null;
     }
@@ -690,7 +821,7 @@ class WorkspaceStorage {
       }
       return Map<String, Object?>.from(decoded);
     } catch (e) {
-      debugPrint('_readJsonSync failed for $relativePath: $e');
+      debugPrint('_readJsonFileSync failed for $absolutePath: $e');
       return null;
     }
   }

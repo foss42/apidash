@@ -14,6 +14,7 @@ class SettingsModel {
     this.defaultUriScheme = kDefaultUriScheme,
     this.defaultCodeGenLang = CodegenLanguage.curl,
     this.saveResponses = true,
+    this.saveMediaResponsesAsFiles = false,
     this.promptBeforeClosing = true,
     this.activeEnvironmentId,
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
@@ -31,6 +32,7 @@ class SettingsModel {
   final SupportedUriSchemes defaultUriScheme;
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
+  final bool saveMediaResponsesAsFiles;
   final bool promptBeforeClosing;
   final String? activeEnvironmentId;
   final HistoryRetentionPeriod historyRetentionPeriod;
@@ -48,6 +50,7 @@ class SettingsModel {
     SupportedUriSchemes? defaultUriScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
+    bool? saveMediaResponsesAsFiles,
     bool? promptBeforeClosing,
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
@@ -66,6 +69,8 @@ class SettingsModel {
       defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
+      saveMediaResponsesAsFiles:
+          saveMediaResponsesAsFiles ?? this.saveMediaResponsesAsFiles,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
       historyRetentionPeriod:
@@ -89,6 +94,7 @@ class SettingsModel {
       defaultCodeGenLang: defaultCodeGenLang,
       offset: offset,
       saveResponses: saveResponses,
+      saveMediaResponsesAsFiles: saveMediaResponsesAsFiles,
       promptBeforeClosing: promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
@@ -137,6 +143,8 @@ class SettingsModel {
       }
     }
     final saveResponses = data["saveResponses"] as bool?;
+    final saveMediaResponsesAsFiles =
+        data["saveMediaResponsesAsFiles"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
     final activeEnvironmentId = data["activeEnvironmentId"] as String?;
     final historyRetentionPeriodStr = data["historyRetentionPeriod"] as String?;
@@ -176,6 +184,7 @@ class SettingsModel {
       defaultUriScheme: defaultUriScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
+      saveMediaResponsesAsFiles: saveMediaResponsesAsFiles,
       promptBeforeClosing: promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod:
@@ -199,6 +208,7 @@ class SettingsModel {
       "defaultUriScheme": defaultUriScheme.name,
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
+      "saveMediaResponsesAsFiles": saveMediaResponsesAsFiles,
       "promptBeforeClosing": promptBeforeClosing,
       "activeEnvironmentId": activeEnvironmentId,
       "historyRetentionPeriod": historyRetentionPeriod.name,
@@ -227,6 +237,7 @@ class SettingsModel {
         other.defaultUriScheme == defaultUriScheme &&
         other.defaultCodeGenLang == defaultCodeGenLang &&
         other.saveResponses == saveResponses &&
+        other.saveMediaResponsesAsFiles == saveMediaResponsesAsFiles &&
         other.promptBeforeClosing == promptBeforeClosing &&
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
@@ -248,6 +259,7 @@ class SettingsModel {
       defaultUriScheme,
       defaultCodeGenLang,
       saveResponses,
+      saveMediaResponsesAsFiles,
       promptBeforeClosing,
       activeEnvironmentId,
       historyRetentionPeriod,

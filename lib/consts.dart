@@ -83,6 +83,8 @@ const kWorkspaceCollectionsDir = 'collections';
 const kWorkspaceCollectionsIndexFile = 'collectionIndex.json';
 const kWorkspaceRequestFile = 'request.json';
 const kWorkspaceResponseFile = 'response.json';
+const kWorkspaceResponseBodyFilePrefix = 'response_body';
+const kWorkspaceResponseBodyFileKey = 'bodyFile';
 const kWorkspaceRequestIndexFile = 'requestIndex.json';
 const kWorkspaceCollectionsIndexKey = 'collections';
 const kWorkspaceCollectionIdKey = 'id';
@@ -570,6 +572,9 @@ const kLabelDefaultLLM = "Default Large Language Model (LLM)";
 const kLabelSaveResponses = "Save Responses";
 const kLabelSaveResponsesSubtitle =
     "Save disk space by not storing API responses";
+const kLabelSaveMediaResponsesAsFiles = "Save Media Responses as Files";
+const kLabelSaveMediaResponsesAsFilesSubtitle =
+    "Store image, audio, video & binary responses as standalone files ";
 const kLabelShowSaveAlert = "Show Save Alert on App Close";
 const kLabelShowSaveAlertSubtitle =
     "Show a confirmation dialog to save workspace when the user closes the app";
