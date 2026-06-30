@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:apidash/providers/settings_providers.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/active_collection_providers.dart';
 import 'package:apidash/models/models.dart';
 
 void main() {

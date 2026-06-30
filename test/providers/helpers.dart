@@ -85,16 +85,16 @@ Future<void> ensureCollectionReady(
     await Future<void>.delayed(Duration.zero);
   }
   for (var i = 0; i < 100; i++) {
-    final state = container.read(collectionStateNotifierProvider);
+    final state = container.read(activeCollectionProvider);
     if (state != null) {
       if (state.isEmpty) {
         final ids = container.read(requestSequenceProvider);
-        final notifier = container.read(collectionStateNotifierProvider.notifier);
+        final notifier = container.read(activeCollectionProvider.notifier);
         for (final id in ids) {
           notifier.loadRequest(id);
         }
       }
-      if (container.read(collectionStateNotifierProvider)!.isNotEmpty ||
+      if (container.read(activeCollectionProvider)!.isNotEmpty ||
           container.read(requestSequenceProvider).isEmpty) {
         return;
       }
@@ -105,5 +105,5 @@ Future<void> ensureCollectionReady(
       await Future<void>.delayed(const Duration(milliseconds: 10));
     }
   }
-  throw StateError('collectionStateNotifierProvider did not initialize');
+  throw StateError('activeCollectionProvider did not initialize');
 }

@@ -5,7 +5,7 @@ import 'package:apidash/screens/terminal/terminal_page.dart';
 import 'package:apidash/providers/terminal_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/request_model.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/active_collection_providers.dart';
 import 'package:apidash/terminal/terminal.dart';
 import '../../providers/helpers.dart';
 
@@ -125,7 +125,7 @@ void main() {
     final container = createContainer();
     await ensureCollectionReady(container, tester);
 
-    container.read(collectionStateNotifierProvider.notifier).state = {
+    container.read(activeCollectionProvider.notifier).state = {
       reqId: RequestModel(id: reqId, name: ''),
     };
 

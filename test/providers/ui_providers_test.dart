@@ -37,7 +37,7 @@ Future<ProviderContainer> pumpCollectionPane(
     tester.element(find.byType(CollectionPane)),
   );
   await ensureCollectionReady(container, tester);
-  final collectionId = container.read(selectedCollectionIdStateProvider);
+  final collectionId = container.read(selectedCollectionIdStateProvider)!;
   container.read(expandedCollectionIdsProvider.notifier).state = {collectionId};
   await tester.pump();
   return container;

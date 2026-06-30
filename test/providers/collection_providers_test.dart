@@ -20,7 +20,7 @@ void main() async {
     (WidgetTester tester) async {
       // Set up the test environment
       final container = createContainer();
-      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      final notifier = container.read(activeCollectionProvider.notifier);
 
       // Ensure the initial request is a GET request with no body
       final id = notifier.state!.entries.first.key;
@@ -61,7 +61,7 @@ void main() async {
 
     final container = createContainer();
     await ensureCollectionReady(container);
-    final notifier = container.read(collectionStateNotifierProvider.notifier);
+    final notifier = container.read(activeCollectionProvider.notifier);
 
     const model = HttpRequestModel(
       url: 'https://sse-demo.netlify.app/sse',
@@ -120,14 +120,14 @@ void main() async {
     });
   });
 
-  group('CollectionStateNotifier Auth Tests', () {
+  group('ActiveCollectionNotifier Auth Tests', () {
     late ProviderContainer container;
-    late CollectionStateNotifier notifier;
+    late ActiveCollectionNotifier notifier;
 
     setUp(() async {
       container = createContainer();
       await ensureCollectionReady(container);
-      notifier = container.read(collectionStateNotifierProvider.notifier);
+      notifier = container.read(activeCollectionProvider.notifier);
     });
 
     test('should update request with basic authentication', () {
@@ -435,7 +435,7 @@ void main() async {
     });
 
     test('should save and load auth data correctly', () async {
-      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      final notifier = container.read(activeCollectionProvider.notifier);
 
       final id = notifier.state!.entries.first.key;
       const jwtAuth = AuthJwtModel(
@@ -455,14 +455,14 @@ void main() async {
         notifier.getRequestModel(id)?.httpRequestModel?.authModel?.type,
         APIAuthType.jwt,
       );
-      final collectionId = container.read(selectedCollectionIdStateProvider);
+      final collectionId = container.read(selectedCollectionIdStateProvider)!;
       final ids = container.read(requestSequenceProvider);
-      container.read(collectionsStateNotifierProvider.notifier).syncRequests(
+      container.read(collectionCatalogProvider.notifier).syncRequests(
             collectionId,
             notifier.summariesForSequence(collectionId, ids),
           );
       await container
-          .read(collectionsStateNotifierProvider.notifier)
+          .read(collectionCatalogProvider.notifier)
           .saveCollections();
       await notifier.saveData();
 
@@ -473,7 +473,7 @@ void main() async {
         await ensureCollectionReady(newContainer);
 
         final newNotifier = newContainer.read(
-          collectionStateNotifierProvider.notifier,
+          activeCollectionProvider.notifier,
         );
         newNotifier.loadRequest(id);
 
@@ -765,14 +765,14 @@ void main() async {
     });
   });
 
-  group('CollectionStateNotifier Scripting Tests', () {
+  group('ActiveCollectionNotifier Scripting Tests', () {
     late ProviderContainer container;
-    late CollectionStateNotifier notifier;
+    late ActiveCollectionNotifier notifier;
 
     setUp(() async {
       container = createContainer();
       await ensureCollectionReady(container);
-      notifier = container.read(collectionStateNotifierProvider.notifier);
+      notifier = container.read(activeCollectionProvider.notifier);
     });
 
     test('should update request with pre-request script', () {
@@ -958,14 +958,14 @@ void main() async {
         preRequestScript: preRequestScript,
         postRequestScript: postResponseScript,
       );
-      final collectionId = container.read(selectedCollectionIdStateProvider);
+      final collectionId = container.read(selectedCollectionIdStateProvider)!;
       final ids = container.read(requestSequenceProvider);
-      container.read(collectionsStateNotifierProvider.notifier).syncRequests(
+      container.read(collectionCatalogProvider.notifier).syncRequests(
             collectionId,
             notifier.summariesForSequence(collectionId, ids),
           );
       await container
-          .read(collectionsStateNotifierProvider.notifier)
+          .read(collectionCatalogProvider.notifier)
           .saveCollections();
       await notifier.saveData();
 
@@ -975,7 +975,7 @@ void main() async {
         newContainer = ProviderContainer();
         await ensureCollectionReady(newContainer);
         final newNotifier = newContainer.read(
-          collectionStateNotifierProvider.notifier,
+          activeCollectionProvider.notifier,
         );
         newNotifier.loadRequest(id);
 

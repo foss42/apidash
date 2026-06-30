@@ -59,8 +59,8 @@ void main() {
             builder: (BuildContext context) {
               return GestureDetector(
                 onTapUp: (details) {
-                  showItemCardMenu(
-                      context, details, (ItemMenuOption option) {});
+                  showItemCardMenu(context, details, ItemMenuOption.values,
+                      (ItemMenuOption option) {});
                 },
                 child: const Text('Show Menu'),
               );

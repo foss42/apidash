@@ -1,5 +1,5 @@
 import 'package:apidash/providers/settings_providers.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/active_collection_providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/screens/common_widgets/auth/oauth2_field.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
