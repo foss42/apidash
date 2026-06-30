@@ -8,13 +8,6 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
-List<ItemMenuOption> _envMenuOptions(String id) {
-  if (id == kGlobalEnvironmentId) {
-    return const [ItemMenuOption.duplicate];
-  }
-  return ItemMenuOption.values;
-}
-
 class EnvironmentsPane extends ConsumerWidget {
   const EnvironmentsPane({super.key});
 
@@ -23,7 +16,7 @@ class EnvironmentsPane extends ConsumerWidget {
     return Padding(
       padding:
           (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
-          (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
+                (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -203,23 +196,27 @@ class EnvironmentItem extends ConsumerWidget {
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),
       onChangedNameEditor: (value) {
         value = value.trim();
-        ref
-            .read(environmentsStateNotifierProvider.notifier)
-            .updateEnvironment(editRequestId!, name: value);
+        if (id != kGlobalEnvironmentId) {
+          ref
+              .read(environmentsStateNotifierProvider.notifier)
+              .updateEnvironment(editRequestId!, name: value);
+        }
       },
       onTapOutsideNameEditor: () {
         ref.read(selectedIdEditStateProvider.notifier).state = null;
       },
       onMenuSelected: (ItemMenuOption item) {
         if (item == ItemMenuOption.edit) {
-          ref.read(selectedIdEditStateProvider.notifier).state = id;
-          Future.delayed(
-            const Duration(milliseconds: 150),
-            () => ref
-                .read(nameTextFieldFocusNodeProvider.notifier)
-                .state
-                .requestFocus(),
-          );
+          if (id != kGlobalEnvironmentId) {
+            ref.read(selectedIdEditStateProvider.notifier).state = id;
+            Future.delayed(
+              const Duration(milliseconds: 150),
+              () => ref
+                  .read(nameTextFieldFocusNodeProvider.notifier)
+                  .state
+                  .requestFocus(),
+            );
+          }
         }
         if (item == ItemMenuOption.delete) {
           ref

@@ -295,7 +295,7 @@ class EnvironmentsStateNotifier
       name: copyName,
     );
 
-    var environmentIds = ref.read(environmentSequenceProvider);
+    var environmentIds = [...ref.read(environmentSequenceProvider)];
     final idx = environmentIds.indexOf(id);
     environmentIds.insert(idx + 1, newId);
 

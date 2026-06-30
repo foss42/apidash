@@ -36,9 +36,8 @@ class EnvironmentEditor extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
                     EditorTitleActions(
-                      onRenamePressed: id == kGlobalEnvironmentId
-                          ? null
-                          : () {
+                      onRenamePressed: id != kGlobalEnvironmentId
+                          ? () {
                               showRenameDialog(
                                 context,
                                 kLabelRenameEnvironment,
@@ -52,7 +51,8 @@ class EnvironmentEditor extends ConsumerWidget {
                                       .updateEnvironment(id!, name: val);
                                 },
                               );
-                            },
+                            }
+                          : null,
                       onDuplicatePressed: () => ref
                           .read(environmentsStateNotifierProvider.notifier)
                           .duplicateEnvironment(id!),
@@ -89,24 +89,49 @@ class EnvironmentEditor extends ConsumerWidget {
                         borderRadius: kBorderRadius12,
                       ),
                 elevation: 0,
-                child: const Padding(
+                child: Padding(
                   padding: kPv6,
                   child: Column(
                     children: [
                       kHSpacer40,
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(width: 30),
-                          Text(kLabelVariable),
-                          SizedBox(width: 30),
-                          Text(kLabelValue),
-                          SizedBox(width: 40),
+                          const SizedBox(width: 50),
+                           Expanded(
+                            flex: 4,
+                            child: Text(
+                              kLabelVariable,
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(width: 35),
+                          Expanded(
+                            flex: 4,
+                            child: Text(
+                              kLabelValue,
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              "Secret",
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(width: 50),
                         ],
                       ),
                       kHSpacer40,
-                      Divider(),
-                      Expanded(child: EditEnvironmentVariables()),
+                      const Divider(),
+                      const Expanded(child: EditEnvironmentVariables()),
                     ],
                   ),
                 ),

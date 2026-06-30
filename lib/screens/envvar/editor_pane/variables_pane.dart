@@ -79,10 +79,11 @@ class EditEnvironmentVariablesState
 
     List<DataColumn> columns = const [
       DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
-      DataColumn2(label: Text(kLabelVariableName)),
+      DataColumn2(label: Text(kLabelVariableName), size: ColumnSize.M),
       DataColumn2(label: Text('='), fixedWidth: 30),
-      DataColumn2(label: Text(kLabelVariableValue)),
-      DataColumn2(label: Text(''), fixedWidth: 72),
+      DataColumn2(label: Text(kLabelVariableValue), size: ColumnSize.M),
+      DataColumn2(label: Text('Secret'), size: ColumnSize.S),
+      DataColumn2(label: Text(''), fixedWidth: 40),
     ];
 
     List<DataRow> dataRows = List<DataRow>.generate(variableRows.length, (
@@ -181,41 +182,52 @@ class EditEnvironmentVariablesState
                   ),
           ),
           DataCell(
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: isLast
-                      ? null
-                      : () => _toggleSecret(selectedId!, index),
-                  child: Icon(
-                    variableRows[index].type == EnvironmentVariableType.secret
-                        ? Icons.lock
-                        : Icons.lock_open,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                InkWell(
-                  onTap: isLast
-                      ? null
-                      : () {
-                          seed = random.nextInt(kRandMax);
-                          if (variableRows.length == 2) {
-                            setState(() {
-                              variableRows = [kEnvironmentVariableEmptyModel];
-                            });
-                          } else {
-                            variableRows.removeAt(index);
+            isLast
+                ? const SizedBox.shrink()
+                : Container(
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Center(
+                      child: ADCheckBox(
+                        keyId: "$selectedId-$index-variables-secret-c-$seed",
+                        value: variableRows[index].type == EnvironmentVariableType.secret,
+                        onChanged: (value) {
+                          if (value != null) {
+                            _toggleSecret(selectedId!, index);
                           }
-                          _onFieldChange(selectedId!);
                         },
-                  child: Theme.of(context).brightness == Brightness.dark
-                      ? kIconRemoveDark
-                      : kIconRemoveLight,
-                ),
-              ],
+                        colorScheme: Theme.of(context).colorScheme,
+                      ),
+                    ),
+                  ),
+          ),
+          DataCell(
+            Align(
+              alignment: Alignment.centerRight,
+              child: isLast
+                  ? const SizedBox.shrink()
+                  : InkWell(
+                      onTap: () {
+                        seed = random.nextInt(kRandMax);
+                        if (variableRows.length == 2) {
+                          setState(() {
+                            variableRows = [kEnvironmentVariableEmptyModel];
+                          });
+                        } else {
+                          variableRows.removeAt(index);
+                        }
+                        _onFieldChange(selectedId!);
+                      },
+                      child: Theme.of(context).brightness == Brightness.dark
+                          ? kIconRemoveDark
+                          : kIconRemoveLight,
+                    ),
             ),
           ),
         ],
@@ -246,6 +258,7 @@ class EditEnvironmentVariablesState
                     dataRowHeight: kDataTableRowHeight,
                     bottomMargin: kDataTableBottomPadding,
                     isVerticalScrollBarVisible: true,
+                    smRatio: 0.25,
                     columns: columns,
                     rows: dataRows,
                   ),
