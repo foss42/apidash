@@ -80,19 +80,19 @@ const kMaxSavedWorkspaces = 10;
 
 const kDefaultCollectionName = 'Collection 1';
 const kWorkspaceCollectionsDir = 'collections';
-const kWorkspaceCollectionsIndexFile = 'collectionIndex.json';
+const kWorkspaceCollectionsIndexFile = 'collection_index.json';
 const kWorkspaceRequestFile = 'request.json';
 const kWorkspaceResponseFile = 'response.json';
 const kWorkspaceResponseBodyFilePrefix = 'response_body';
 const kWorkspaceResponseBodyFileKey = 'bodyFile';
-const kWorkspaceRequestIndexFile = 'requestIndex.json';
+const kWorkspaceRequestIndexFile = 'request_index.json';
 const kWorkspaceCollectionsIndexKey = 'collections';
 const kWorkspaceCollectionIdKey = 'id';
 const kWorkspaceCollectionNameKey = 'name';
 const kWorkspaceEnvironmentsDir = 'environments';
 const kWorkspaceEnvironmentIndexFile = 'environmentIndex.json';
 const kWorkspaceHistoryDir = 'history';
-const kWorkspaceHistoryIndexFile = 'historyIndex.json';
+const kWorkspaceHistoryIndexFile = 'history_index.json';
 const kJsonFileExtension = '.json';
 
 const kWorkspaceRequestsKey = 'requests';
