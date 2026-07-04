@@ -35,17 +35,12 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
     super.initState();
     _loadTemplates();
   }
-// some inbuilt templates
   void _loadTemplates() {
     final stored = hiveHandler.getWsTemplates();
     if (stored != null && stored is List) {
       _templates = stored.map((e) => Map<String, String>.from(e)).toList();
     } else {
-      _templates = [
-        {"name": "Ping Message", "data": '{\n  "type": "ping",\n  "timestamp": 12345\n}'},
-        {"name": "Auth Message", "data": '{\n  "type": "auth",\n  "token": "Bearer YOUR_TOKEN_HERE"\n}'},
-        {"name": "Binance BTC", "data": '{\n  "method": "SUBSCRIBE",\n  "params": ["btcusdt@ticker"],\n  "id": 1\n}'}
-      ];
+      _templates = [];
     }
   }
 
@@ -494,7 +489,7 @@ class _EditWSRequestPaneState extends ConsumerState<EditWSRequestPane> {
                 // ── Headers Tab ──────────────────────────────────
                 const EditRequestHeaders(),
                 // ── Settings Tab ─────────────────────────────────
-                Padding(
+                SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
