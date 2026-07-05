@@ -143,18 +143,22 @@ class URLTextField extends ConsumerWidget {
         _ => kHintTextUrlCard,
       },
       onChanged: (value) {
-        if (requestModel.apiType == APIType.ai) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
-              aiRequestModel:
-                  requestModel.aiRequestModel?.copyWith(url: value));
-        } else if (requestModel.apiType == APIType.websocket) {
-          final wsModel = requestModel.wsRequestModel;
+        // Re-read the latest model here: the build-time `requestModel` goes
+        // stale when non-watched fields change (e.g. a live WS appending to
+        // messageHistory), and writing a stale sub-model back clobbers them.
+        final notifier = ref.read(collectionStateNotifierProvider.notifier);
+        final latestModel = ref.read(selectedRequestModelProvider);
+        if (latestModel == null) return;
+        if (latestModel.apiType == APIType.ai) {
+          notifier.update(
+              aiRequestModel: latestModel.aiRequestModel?.copyWith(url: value));
+        } else if (latestModel.apiType == APIType.websocket) {
+          final wsModel = latestModel.wsRequestModel;
           if (wsModel != null) {
-            ref.read(collectionStateNotifierProvider.notifier).update(
-                wsRequestModel: wsModel.copyWith(url: value));
+            notifier.update(wsRequestModel: wsModel.copyWith(url: value));
           }
         } else {
-          ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+          notifier.update(url: value);
         }
       },
       onFieldSubmitted: (value) {

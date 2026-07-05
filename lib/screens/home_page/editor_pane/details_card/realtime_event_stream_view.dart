@@ -119,12 +119,27 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
 
   Widget _buildLogView(
       BuildContext context, List<WebSocketMessage> history) {
+    // Key by message identity so _LogEntry expand state follows its message,
+    // not its list slot (the list is rendered newest-first).
+    Key keyFor(WebSocketMessage m) =>
+        ValueKey((m.timestamp, m.messageType, m.payload));
+
     return ListView.builder(
       itemCount: history.length,
       padding: const EdgeInsets.symmetric(vertical: 4),
+      // Appends shift every newest-first slot by one; map keys back to
+      // indices so keyed children keep their State instead of being
+      // rebuilt by position.
+      findChildIndexCallback: (key) {
+        final valueKey = key as ValueKey;
+        for (var i = 0; i < history.length; i++) {
+          if (keyFor(history[history.length - 1 - i]) == valueKey) return i;
+        }
+        return null;
+      },
       itemBuilder: (context, index) {
         final msg = history[history.length - 1 - index];
-        return _LogEntry(msg: msg);
+        return _LogEntry(key: keyFor(msg), msg: msg);
       },
     );
   }
@@ -132,7 +147,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
 
 
 class _LogEntry extends StatefulWidget {
-  const _LogEntry({required this.msg});
+  const _LogEntry({super.key, required this.msg});
   final WebSocketMessage msg;
 
   @override

@@ -25,6 +25,8 @@ class HistoryResponsePane extends ConsumerWidget {
       if (apiType == APIType.websocket) {
         final wsModel = selectedHistoryRequest.wsRequestModel;
         return RealtimeEventStreamView(
+          // Fresh event-stream State per history entry (mirrors ResponseTabView).
+          key: ValueKey(selectedId),
           historyMessages: wsModel?.messageHistory ?? [],
         );
       }
