@@ -156,6 +156,8 @@ class URLTextField extends ConsumerWidget {
         .select((value) => value?.httpRequestModel?.url));
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.wsRequestModel?.url));
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.mqttRequestModel?.brokerUrl));
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
@@ -204,8 +206,8 @@ class URLTextField extends ConsumerWidget {
           if (wsModel != null) {
             notifier.update(wsRequestModel: wsModel.copyWith(url: value));
           }
-        } else if (requestModel.apiType == APIType.mqtt) {
-          final mqttModel = requestModel.mqttRequestModel;
+        } else if (latestModel.apiType == APIType.mqtt) {
+          final mqttModel = latestModel.mqttRequestModel;
           if (mqttModel != null) {
             String brokerUrl = value;
             int port = mqttModel.port;

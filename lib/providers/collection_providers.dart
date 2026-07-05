@@ -896,8 +896,19 @@ class CollectionStateNotifier
     }
 
     if (requestModel.apiType == APIType.mqtt) {
-      final mqttModel = requestModel.mqttRequestModel;
+      var mqttModel = requestModel.mqttRequestModel;
       if (mqttModel != null) {
+        // Generate a default Client ID ONCE per request and persist it to the
+        // model. A fresh id per connect would present a new identity to the
+        // broker every time, so persistent sessions (offline QoS 1/2 message
+        // queueing) could never be resumed. Persisting also makes the id
+        // visible/editable in Settings > Client ID.
+        if (mqttModel.clientId == null || mqttModel.clientId!.trim().isEmpty) {
+          mqttModel = mqttModel.copyWith(
+            clientId: 'apidash_${DateTime.now().millisecondsSinceEpoch}',
+          );
+          unsave();
+        }
         state = {
           ...state!,
           requestId: requestModel.copyWith(
@@ -905,6 +916,7 @@ class CollectionStateNotifier
             isStreaming: false,
             sendingTime: DateTime.now(),
             message: null,
+            mqttRequestModel: mqttModel,
           ),
         };
         

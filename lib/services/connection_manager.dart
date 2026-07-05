@@ -133,10 +133,17 @@ class ConnectionManager {
   /// The TLS / port-defaulting / WebSocket handling (the TLS-agent fix) is
   /// applied identically in both code paths.
   ///
-  /// MQTT v5 extras ([userProperties], [sessionExpiryInterval]) are only used
-  /// on the v5 path; they are ignored for v3. [onInfo] surfaces human-readable
-  /// diagnostics (CONNACK reason code, SUBACK granted QoS / reason, …) so the
-  /// caller can log them to the message history — a key v5 debugging win.
+  /// Session persistence — ONE knob ([sessionExpiryInterval]) serves both
+  /// protocol versions:
+  ///   * `0`  → clean session/start: the broker discards state on disconnect.
+  ///   * `>0` → persistent session: v3 connects with cleanSession=false; v5
+  ///     connects with cleanStart=false + this expiry interval (seconds).
+  ///     Reconnecting with the SAME client id resumes the session, so QoS 1/2
+  ///     messages queued while offline are delivered.
+  ///
+  /// [userProperties] is v5-only (ignored for v3). [onInfo] surfaces
+  /// human-readable diagnostics (CONNACK reason code, SUBACK granted QoS /
+  /// reason, …) so the caller can log them to the message history.
   Future<void> connectMqtt(
     String requestId,
     String brokerUrl,
@@ -206,6 +213,9 @@ class ConnectionManager {
         useTLS: useTLS,
         useWebSocket: useWebSocket,
         allowInvalidCertificates: allowInvalidCertificates,
+        // v3 has no expiry interval — the single model field maps to the
+        // binary clean-session flag (0 = clean, >0 = persistent).
+        cleanSession: sessionExpiryInterval == 0,
         keepAlivePeriod: keepAlivePeriod,
         willTopic: willTopic,
         willMessage: willMessage,
@@ -253,6 +263,11 @@ class ConnectionManager {
     return server;
   }
 
+  /// Last-resort fallback only: a fresh timestamped id is a NEW identity to
+  /// the broker, so persistent sessions can't be resumed with it. The app
+  /// layer (CollectionStateNotifier.sendRequest) generates a default Client
+  /// ID once per request and persists it to the model, so this branch should
+  /// not be hit from the UI.
   String _resolveClientId(String? clientId) => clientId?.isNotEmpty == true
       ? clientId!
       : 'apidash_${DateTime.now().millisecondsSinceEpoch}';
@@ -268,6 +283,7 @@ class ConnectionManager {
     bool useTLS = false,
     bool useWebSocket = false,
     bool allowInvalidCertificates = false,
+    bool cleanSession = true,
     int keepAlivePeriod = 60,
     String? willTopic,
     String? willMessage,
@@ -286,21 +302,30 @@ class ConnectionManager {
     client.logging(on: false);
     client.keepAlivePeriod = keepAlivePeriod;
 
+    // Always supply an explicit CONNECT message: mqtt_client's built-in
+    // default (used when none is set) calls startClean(), which silently
+    // discards any persistent session. For cleanSession=false we leave the
+    // package's cleanStart=false default in place so the broker RESUMES the
+    // session — including QoS 1/2 messages queued while this client id was
+    // offline. Username/password are applied by client.connect(); keepAlive
+    // is copied from client.keepAlivePeriod by the package.
+    final connMessage = MqttConnectMessage().withClientIdentifier(finalClientId);
+    if (cleanSession) {
+      connMessage.startClean();
+    }
     if (willTopic != null && willMessage != null) {
       final mqos = MqttQos.values.length > willQos
           ? MqttQos.values[willQos]
           : MqttQos.atMostOnce;
-      final builder = MqttClientPayloadBuilder();
-      builder.addString(willMessage);
-      client.connectionMessage = MqttConnectMessage()
-          .withClientIdentifier(finalClientId)
+      connMessage
           .withWillTopic(willTopic)
           .withWillMessage(willMessage)
           .withWillQos(mqos);
       if (willRetain) {
-        client.connectionMessage!.withWillRetain();
+        connMessage.withWillRetain();
       }
     }
+    client.connectionMessage = connMessage;
 
     // TLS / transport configuration (see TLS-fix notes). `secure` and
     // `useWebSocket` are mutually exclusive in mqtt_client.
@@ -444,14 +469,18 @@ class ConnectionManager {
       onInfo?.call('SUBACK FAILED "$topic": ${sub.reasonCode?.name ?? 'unknown'}');
     };
 
-    // In v5, sessionExpiryInterval handles clean sessions vs. persistent
-    // state (0 = clean start, otherwise persist for N seconds).
+    // v5 session handling: sessionExpiryInterval == 0 → clean start (session
+    // ends at disconnect). > 0 → persistent: startSession() sets
+    // cleanStart=false — so an existing session for this client id (including
+    // QoS 1/2 messages queued while offline) is RESUMED — and the expiry
+    // interval tells the broker how long to retain the session after
+    // disconnect. Calling startClean() with an expiry interval (the old code)
+    // discarded on every reconnect exactly the state the broker had kept.
     final connMessage = mqtt5.MqttConnectMessage()
         .withClientIdentifier(finalClientId);
 
     if (sessionExpiryInterval > 0) {
-      connMessage.withSessionExpiryInterval(sessionExpiryInterval);
-      connMessage.startClean(); // In v5, clean start = true, but expiry allows state preservation
+      connMessage.startSession(sessionExpiryInterval: sessionExpiryInterval);
     } else {
       connMessage.startClean();
     }

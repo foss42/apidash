@@ -26,6 +26,19 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
     super.dispose();
   }
 
+  /// Reads the LATEST mqttRequestModel inside the callback before writing.
+  /// Never write a build-time-captured sub-model back to the notifier: it
+  /// goes stale when non-watched fields change (e.g. a live broker appending
+  /// to messageHistory) and would clobber them. Same convention as
+  /// _WsConnectionSettings._updateWsModel in request_pane_ws.dart.
+  void _updateMqttModel(MQTTRequestModel Function(MQTTRequestModel) updater) {
+    final mqttModel = ref.read(selectedRequestModelProvider)?.mqttRequestModel;
+    if (mqttModel == null) return;
+    ref
+        .read(collectionStateNotifierProvider.notifier)
+        .update(mqttRequestModel: updater(mqttModel));
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
@@ -35,8 +48,10 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
     if (mqttModel == null) return kSizedBoxEmpty;
 
     // Progressive disclosure: the v5-only surfaces (User Properties tab,
-    // Request/Response + Message Expiry on publish, Session Expiry) appear ONLY
-    // when MQTT 5.0 is selected, so v3 users never see the extra clutter.
+    // Request/Response + Message Expiry on publish, Session Expiry seconds)
+    // appear ONLY when MQTT 5.0 is selected, so v3 users never see the extra
+    // clutter. The clean-session/persistent switch shows for BOTH versions
+    // (one model field: v3 cleanSession = (sessionExpiryInterval == 0)).
     final isV5 = mqttModel.version == MQTTVersion.v5;
 
     // Sync controllers if model changes from outside (e.g. selection)
@@ -56,8 +71,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
       _buildMessageTab(context, selectedId, requestModel, mqttModel, isV5),
       const EditMQTTTopics(),
       if (isV5) const EditMQTTUserProperties(),
-      _buildAuthTab(mqttModel),
-      _buildSettingsTab(mqttModel, isV5),
+      _buildAuthTab(selectedId, mqttModel),
+      _buildSettingsTab(selectedId, mqttModel, isV5),
     ];
 
     return DefaultTabController(
@@ -89,6 +104,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
     bool isV5,
   ) {
     return Padding(
+      // Keyed per request so text fields re-seed from the selected request's
+      // model on tab switch instead of showing the previous request's values.
+      key: ValueKey("$selectedId-mqtt-message"),
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
@@ -111,13 +129,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   );
             },
             onSelected: (String selection) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(
-                    mqttRequestModel: mqttModel.copyWith(
-                      publishTopic: selection,
-                    ),
-                  );
+              _updateMqttModel((m) => m.copyWith(publishTopic: selection));
             },
             fieldViewBuilder:
                 (context, controller, focusNode, onFieldSubmitted) {
@@ -133,13 +145,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       border: UnderlineInputBorder(),
                     ),
                     onChanged: (val) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .update(
-                            mqttRequestModel: mqttModel.copyWith(
-                              publishTopic: val,
-                            ),
-                          );
+                      _updateMqttModel((m) => m.copyWith(publishTopic: val));
                     },
                   );
                 },
@@ -160,9 +166,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 ),
               ),
               onChanged: (val) {
-                ref
-                    .read(collectionStateNotifierProvider.notifier)
-                    .update(mqttRequestModel: mqttModel.copyWith(message: val));
+                _updateMqttModel((m) => m.copyWith(message: val));
               },
             ),
           ),
@@ -176,13 +180,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
               Switch(
                 value: mqttModel.retainMessage,
                 onChanged: (val) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .update(
-                        mqttRequestModel: mqttModel.copyWith(
-                          retainMessage: val,
-                        ),
-                      );
+                  _updateMqttModel((m) => m.copyWith(retainMessage: val));
                 },
               ),
               const SizedBox(width: 16),
@@ -230,11 +228,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "Topic the responder should reply to",
             title: "Response Topic",
             onChanged: (val) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(
-                    mqttRequestModel: mqttModel.copyWith(responseTopic: val),
-                  );
+              _updateMqttModel((m) => m.copyWith(responseTopic: val));
             },
           ),
           kVSpacer8,
@@ -243,11 +237,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "Opaque token to match request ↔ response",
             title: "Correlation Data",
             onChanged: (val) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(
-                    mqttRequestModel: mqttModel.copyWith(correlationData: val),
-                  );
+              _updateMqttModel((m) => m.copyWith(correlationData: val));
             },
           ),
           kVSpacer8,
@@ -259,13 +249,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             title: "Message Expiry Interval (seconds)",
             onChanged: (val) {
               final parsed = int.tryParse(val) ?? 0;
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(
-                    mqttRequestModel: mqttModel.copyWith(
-                      messageExpiryInterval: parsed,
-                    ),
-                  );
+              _updateMqttModel(
+                (m) => m.copyWith(messageExpiryInterval: parsed),
+              );
             },
           ),
         ],
@@ -273,8 +259,13 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
     );
   }
 
-  Widget _buildAuthTab(MQTTRequestModel mqttModel) {
+  Widget _buildAuthTab(String? selectedId, MQTTRequestModel mqttModel) {
     return Padding(
+      // Keyed per request: EnvAuthField only seeds its text in initState (and
+      // won't re-sync when the new request's value is null), so without a
+      // fresh subtree per request the previous request's username/password
+      // would keep showing after a tab switch.
+      key: ValueKey("$selectedId-mqtt-auth"),
       padding: const EdgeInsets.all(16),
       child: ListView(
         children: [
@@ -283,9 +274,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "Username",
             title: "Username",
             onChanged: (val) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(mqttRequestModel: mqttModel.copyWith(username: val));
+              _updateMqttModel((m) => m.copyWith(username: val));
             },
           ),
           EnvAuthField(
@@ -294,9 +283,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "Password",
             title: "Password",
             onChanged: (val) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(mqttRequestModel: mqttModel.copyWith(password: val));
+              _updateMqttModel((m) => m.copyWith(password: val));
             },
           ),
         ],
@@ -304,8 +291,17 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
     );
   }
 
-  Widget _buildSettingsTab(MQTTRequestModel mqttModel, bool isV5) {
+  Widget _buildSettingsTab(
+    String? selectedId,
+    MQTTRequestModel mqttModel,
+    bool isV5,
+  ) {
     return Padding(
+      // Keyed per request: EnvAuthField only seeds its text in initState (and
+      // won't re-sync when the new request's value is null), so without a
+      // fresh subtree per request the previous request's Client ID would keep
+      // showing after a tab switch.
+      key: ValueKey("$selectedId-mqtt-settings"),
       padding: const EdgeInsets.all(16),
       child: ListView(
         children: [
@@ -320,11 +316,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   hintText: "Client ID",
                   title: "Client ID",
                   onChanged: (val) {
-                    ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .update(
-                          mqttRequestModel: mqttModel.copyWith(clientId: val),
-                        );
+                    _updateMqttModel((m) => m.copyWith(clientId: val));
                   },
                 ),
               ),
@@ -337,11 +329,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   title: "Port",
                   onChanged: (val) {
                     final port = int.tryParse(val) ?? 1883;
-                    ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .update(
-                          mqttRequestModel: mqttModel.copyWith(port: port),
-                        );
+                    _updateMqttModel((m) => m.copyWith(port: port));
                   },
                 ),
               ),
@@ -359,13 +347,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   title: "Keep Alive (s)",
                   onChanged: (val) {
                     final parsed = int.tryParse(val) ?? 60;
-                    ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .update(
-                          mqttRequestModel: mqttModel.copyWith(
-                            keepAlivePeriod: parsed,
-                          ),
-                        );
+                    _updateMqttModel(
+                      (m) => m.copyWith(keepAlivePeriod: parsed),
+                    );
                   },
                 ),
               ),
@@ -382,11 +366,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       .toList(),
                   onChanged: (val) {
                     if (val != null) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .update(
-                            mqttRequestModel: mqttModel.copyWith(qos: val),
-                          );
+                      _updateMqttModel((m) => m.copyWith(qos: val));
                     }
                   },
                 ),
@@ -394,53 +374,46 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             ],
           ),
           kVSpacer16,
-          // Row 3: Session Expiry (only v5)
-          if (isV5) ...[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+          // Row 3: Session persistence. ONE model field serves both versions:
+          // v3 connects with cleanSession == (sessionExpiryInterval == 0);
+          // v5 additionally sends the interval as the broker-side session
+          // retention time (the seconds field is v5-only).
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(isV5 ? "Clean Start" : "Clean Session"),
+                  subtitle: const Text("Session ends on disconnect"),
+                  value: mqttModel.sessionExpiryInterval == 0,
+                  onChanged: (val) {
+                    _updateMqttModel(
+                      (m) => m.copyWith(sessionExpiryInterval: val ? 0 : 3600),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              if (isV5 && mqttModel.sessionExpiryInterval > 0)
                 Expanded(
-                  child: SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text("Clean Start"),
-                    subtitle: const Text("Session ends on disconnect"),
-                    value: mqttModel.sessionExpiryInterval == 0,
+                  child: EnvAuthField(
+                    initialValue: mqttModel.sessionExpiryInterval.toString(),
+                    hintText: "3600",
+                    title: "Session Expiry (s)",
                     onChanged: (val) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .update(
-                            mqttRequestModel: mqttModel.copyWith(
-                              sessionExpiryInterval: val ? 0 : 3600,
-                            ),
-                          );
+                      final parsed = int.tryParse(val) ?? 0;
+                      _updateMqttModel(
+                        (m) => m.copyWith(sessionExpiryInterval: parsed),
+                      );
                     },
                   ),
-                ),
-                const SizedBox(width: 16),
-                if (mqttModel.sessionExpiryInterval > 0)
-                  Expanded(
-                    child: EnvAuthField(
-                      initialValue: mqttModel.sessionExpiryInterval.toString(),
-                      hintText: "3600",
-                      title: "Session Expiry (s)",
-                      onChanged: (val) {
-                        final parsed = int.tryParse(val) ?? 0;
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(
-                              mqttRequestModel: mqttModel.copyWith(
-                                sessionExpiryInterval: parsed,
-                              ),
-                            );
-                      },
-                    ),
-                  )
-                else
-                  const Spacer(),
-              ],
-            ),
-            kVSpacer16,
-          ],
+                )
+              else
+                const Spacer(),
+            ],
+          ),
+          kVSpacer16,
 
           // Security / Transport Options
           ExpansionTile(
@@ -454,19 +427,23 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 subtitle: const Text("Encrypt the connection (TLS/SSL)"),
                 value: mqttModel.useTLS,
                 onChanged: (val) {
-                  int newPort = mqttModel.port;
-                  if (val) {
-                    if (newPort == 1883) newPort = 8883;
-                    else if (newPort == 8083) newPort = 8084;
-                  } else {
-                    if (newPort == 8883) newPort = 1883;
-                    else if (newPort == 8084) newPort = 8083;
-                  }
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .update(
-                        mqttRequestModel: mqttModel.copyWith(useTLS: val, port: newPort),
-                      );
+                  _updateMqttModel((m) {
+                    int newPort = m.port;
+                    if (val) {
+                      if (newPort == 1883) {
+                        newPort = 8883;
+                      } else if (newPort == 8083) {
+                        newPort = 8084;
+                      }
+                    } else {
+                      if (newPort == 8883) {
+                        newPort = 1883;
+                      } else if (newPort == 8084) {
+                        newPort = 8083;
+                      }
+                    }
+                    return m.copyWith(useTLS: val, port: newPort);
+                  });
                 },
               ),
               if (mqttModel.useTLS)
@@ -476,13 +453,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   subtitle: const Text("Accept self-signed / untrusted certs"),
                   value: mqttModel.allowInvalidCertificates,
                   onChanged: (val) {
-                    ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .update(
-                          mqttRequestModel: mqttModel.copyWith(
-                            allowInvalidCertificates: val,
-                          ),
-                        );
+                    _updateMqttModel(
+                      (m) => m.copyWith(allowInvalidCertificates: val),
+                    );
                   },
                 ),
               SwitchListTile(
@@ -491,19 +464,23 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 subtitle: const Text("Tunnel MQTT over a WebSocket transport"),
                 value: mqttModel.useWebSocket,
                 onChanged: (val) {
-                  int newPort = mqttModel.port;
-                  if (val) {
-                    if (newPort == 1883) newPort = 8083;
-                    else if (newPort == 8883) newPort = 8084;
-                  } else {
-                    if (newPort == 8083) newPort = 1883;
-                    else if (newPort == 8084) newPort = 8883;
-                  }
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .update(
-                        mqttRequestModel: mqttModel.copyWith(useWebSocket: val, port: newPort),
-                      );
+                  _updateMqttModel((m) {
+                    int newPort = m.port;
+                    if (val) {
+                      if (newPort == 1883) {
+                        newPort = 8083;
+                      } else if (newPort == 8883) {
+                        newPort = 8084;
+                      }
+                    } else {
+                      if (newPort == 8083) {
+                        newPort = 1883;
+                      } else if (newPort == 8084) {
+                        newPort = 8883;
+                      }
+                    }
+                    return m.copyWith(useWebSocket: val, port: newPort);
+                  });
                 },
               ),
               kVSpacer8,
@@ -525,13 +502,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       hintText: "Will Topic",
                       title: "Will Topic",
                       onChanged: (val) {
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(
-                              mqttRequestModel: mqttModel.copyWith(
-                                willTopic: val,
-                              ),
-                            );
+                        _updateMqttModel((m) => m.copyWith(willTopic: val));
                       },
                     ),
                   ),
@@ -542,13 +513,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       hintText: "Will Message",
                       title: "Will Message",
                       onChanged: (val) {
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(
-                              mqttRequestModel: mqttModel.copyWith(
-                                willMessage: val,
-                              ),
-                            );
+                        _updateMqttModel((m) => m.copyWith(willMessage: val));
                       },
                     ),
                   ),
@@ -572,13 +537,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
-                          ref
-                              .read(collectionStateNotifierProvider.notifier)
-                              .update(
-                                mqttRequestModel: mqttModel.copyWith(
-                                  willQos: val,
-                                ),
-                              );
+                          _updateMqttModel((m) => m.copyWith(willQos: val));
                         }
                       },
                     ),
@@ -590,13 +549,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       title: const Text("Retain Will"),
                       value: mqttModel.willRetain,
                       onChanged: (val) {
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(
-                              mqttRequestModel: mqttModel.copyWith(
-                                willRetain: val,
-                              ),
-                            );
+                        _updateMqttModel((m) => m.copyWith(willRetain: val));
                       },
                     ),
                   ),

@@ -128,7 +128,9 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                       child: Autocomplete<String>(
                         optionsBuilder: (TextEditingValue textEditingValue) {
                           if (textEditingValue.text.isEmpty) {
-                            return const Iterable<String>.empty();
+                            // Empty field: offer every known topic so users
+                            // can browse and pick one instead of typing it.
+                            return availableTopics;
                           }
                           return availableTopics.where((String option) {
                             return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
@@ -153,8 +155,8 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                             controller: controller,
                             focusNode: focusNode,
                             decoration: InputDecoration(
-                              hintText: requestModel?.apiType == APIType.mqtt 
-                                  ? "Press Enter to filter by topic..."
+                              hintText: requestModel?.apiType == APIType.mqtt
+                                  ? "Select a topic to filter..."
                                   : "Filter messages...",
                               isDense: true,
                               contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -174,10 +176,29 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                                   : null,
                             ),
                             onSubmitted: (val) {
-                              if (val.trim().isNotEmpty && requestModel?.apiType == APIType.mqtt) {
+                              final topic = val.trim();
+                              if (topic.isNotEmpty && requestModel?.apiType == APIType.mqtt) {
+                                // Only apply the filter when the text matches a
+                                // topic actually seen in this request's message
+                                // history (exact, or an MQTT +/# wildcard that
+                                // matches at least one known topic). A mistyped
+                                // Enter must not silently filter everything out.
+                                final isKnownTopic = availableTopics
+                                    .any((actual) => _isTopicMatch(topic, actual));
+                                if (!isKnownTopic) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("No such topic"),
+                                      duration: Duration(milliseconds: 1000),
+                                    ),
+                                  );
+                                  // Keep the text and focus so the user can fix it.
+                                  focusNode.requestFocus();
+                                  return;
+                                }
                                 setState(() {
-                                  if (!_selectedTopics.contains(val.trim())) {
-                                    _selectedTopics.add(val.trim());
+                                  if (!_selectedTopics.contains(topic)) {
+                                    _selectedTopics.add(topic);
                                   }
                                   controller.clear();
                                   _filterQuery = "";
