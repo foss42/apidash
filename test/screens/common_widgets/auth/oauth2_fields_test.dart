@@ -24,8 +24,9 @@ void main() {
       };
     });
 
-    testWidgets('renders with default values when authData is null',
-        (WidgetTester tester) async {
+    testWidgets('renders with default values when authData is null', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = null;
 
       await tester.pumpWidget(
@@ -60,8 +61,9 @@ void main() {
       // Note: ADTextButton might not be visible in all configurations
     });
 
-    testWidgets('renders with existing OAuth2 auth data',
-        (WidgetTester tester) async {
+    testWidgets('renders with existing OAuth2 auth data', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -84,11 +86,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -109,8 +113,9 @@ void main() {
       expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
-    testWidgets('updates auth data when grant type changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when grant type changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -126,11 +131,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -162,8 +169,9 @@ void main() {
       expect(lastUpdate?.type, APIAuthType.oauth2);
     });
 
-    testWidgets('updates auth data when authorization URL changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when authorization URL changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -179,11 +187,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -213,13 +223,16 @@ void main() {
       // Verify that updateAuth was called
       expect(capturedAuthUpdates.length, greaterThan(0));
       final lastUpdate = capturedAuthUpdates.last;
-      expect(lastUpdate?.oauth2?.authorizationUrl,
-          'https://new.auth.apidash.dev/authorize');
+      expect(
+        lastUpdate?.oauth2?.authorizationUrl,
+        'https://new.auth.apidash.dev/authorize',
+      );
       expect(lastUpdate?.type, APIAuthType.oauth2);
     });
 
-    testWidgets('updates auth data when access token URL changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when access token URL changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -235,11 +248,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -269,13 +284,16 @@ void main() {
       // Verify that updateAuth was called
       expect(capturedAuthUpdates.length, greaterThan(0));
       final lastUpdate = capturedAuthUpdates.last;
-      expect(lastUpdate?.oauth2?.accessTokenUrl,
-          'https://new.auth.apidash.dev/token');
+      expect(
+        lastUpdate?.oauth2?.accessTokenUrl,
+        'https://new.auth.apidash.dev/token',
+      );
       expect(lastUpdate?.type, APIAuthType.oauth2);
     });
 
-    testWidgets('updates auth data when client ID changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when client ID changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -291,11 +309,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -329,8 +349,9 @@ void main() {
       expect(lastUpdate?.type, APIAuthType.oauth2);
     });
 
-    testWidgets('updates auth data when client secret changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when client secret changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -346,11 +367,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -400,11 +423,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -429,8 +454,9 @@ void main() {
       // This is verified by the widget structure itself
     });
 
-    testWidgets('handles empty auth data gracefully',
-        (WidgetTester tester) async {
+    testWidgets('handles empty auth data gracefully', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -446,11 +472,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -471,50 +499,53 @@ void main() {
     });
 
     testWidgets(
-        'creates proper AuthModel on field changes when authData is null',
-        (WidgetTester tester) async {
-      mockAuthData = null;
+      'creates proper AuthModel on field changes when authData is null',
+      (WidgetTester tester) async {
+        mockAuthData = null;
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              settingsProvider.overrideWith(
+                (ref) => ThemeStateNotifier(
                   settingsModel: const SettingsModel(
                     workspaceFolderPath: '/test/workspace',
                   ),
-                )),
-            selectedRequestModelProvider.overrideWith((ref) => null),
-          ],
-          child: MaterialApp(
-            home: Portal(
-              child: Scaffold(
-                body: OAuth2Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+                ),
+              ),
+              selectedRequestModelProvider.overrideWith((ref) => null),
+            ],
+            child: MaterialApp(
+              home: Portal(
+                child: Scaffold(
+                  body: OAuth2Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Enter client ID using find.descendant
-      expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
+        // Enter client ID using find.descendant
+        expect(find.byType(EnvAuthField), findsAtLeastNWidgets(5));
 
-      final clientIdField = find.descendant(
-        of: find.byType(EnvAuthField).at(2),
-        matching: find.byType(ExtendedTextField),
-      );
-      await tester.tap(clientIdField);
-      tester.testTextInput.enterText('test_client_id');
-      await tester.pumpAndSettle();
+        final clientIdField = find.descendant(
+          of: find.byType(EnvAuthField).at(2),
+          matching: find.byType(ExtendedTextField),
+        );
+        await tester.tap(clientIdField);
+        tester.testTextInput.enterText('test_client_id');
+        await tester.pumpAndSettle();
 
-      // Verify that updateAuth was called with correct structure
-      expect(capturedAuthUpdates.length, greaterThan(0));
-      final lastUpdate = capturedAuthUpdates.last;
-      expect(lastUpdate?.type, APIAuthType.oauth2);
-      expect(lastUpdate?.oauth2?.clientId, 'test_client_id');
-    });
+        // Verify that updateAuth was called with correct structure
+        expect(capturedAuthUpdates.length, greaterThan(0));
+        final lastUpdate = capturedAuthUpdates.last;
+        expect(lastUpdate?.type, APIAuthType.oauth2);
+        expect(lastUpdate?.oauth2?.clientId, 'test_client_id');
+      },
+    );
 
     testWidgets('displays correct hint texts', (WidgetTester tester) async {
       mockAuthData = null;
@@ -522,11 +553,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: MaterialApp(
@@ -547,8 +580,9 @@ void main() {
       expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
-    testWidgets('shows different fields based on grant type',
-        (WidgetTester tester) async {
+    testWidgets('shows different fields based on grant type', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -566,11 +600,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -590,8 +626,9 @@ void main() {
       expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
-    testWidgets('updates auth data when username changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when username changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -609,11 +646,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -647,8 +686,9 @@ void main() {
       expect(lastUpdate?.type, APIAuthType.oauth2);
     });
 
-    testWidgets('updates auth data when scope changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when scope changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -665,11 +705,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -703,12 +745,15 @@ void main() {
       // Verify that updateAuth was called
       expect(capturedAuthUpdates.length, greaterThan(0));
       final lastUpdate = capturedAuthUpdates.last;
-      expect(lastUpdate?.oauth2?.scope,
-          isNotEmpty); // Just verify scope was updated
+      expect(
+        lastUpdate?.oauth2?.scope,
+        isNotEmpty,
+      ); // Just verify scope was updated
       expect(lastUpdate?.type, APIAuthType.oauth2);
     });
-    testWidgets('tests code challenge method dropdown',
-        (WidgetTester tester) async {
+    testWidgets('tests code challenge method dropdown', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -724,11 +769,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -747,7 +794,8 @@ void main() {
       // First verify we can find String popup menus
       final stringPopupMenus = find.byType(ADPopupMenu<String>);
       debugPrint(
-          'Found ${stringPopupMenus.evaluate().length} String popup menus');
+        'Found ${stringPopupMenus.evaluate().length} String popup menus',
+      );
 
       if (stringPopupMenus.evaluate().isNotEmpty) {
         // Find the code challenge method dropdown
@@ -768,8 +816,9 @@ void main() {
       }
     });
 
-    testWidgets('tests client credentials grant type shows fewer fields',
-        (WidgetTester tester) async {
+    testWidgets('tests client credentials grant type shows fewer fields', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -784,11 +833,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -812,8 +863,9 @@ void main() {
       expect(find.byType(ADPopupMenu<String>), findsNothing);
     });
 
-    testWidgets('tests clear credentials button functionality',
-        (WidgetTester tester) async {
+    testWidgets('tests clear credentials button functionality', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -831,11 +883,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -862,7 +916,8 @@ void main() {
       // Look for the specific text content
       final clearText = find.text('Clear OAuth2 Session');
       debugPrint(
-          'Found ${clearText.evaluate().length} widgets with Clear OAuth2 Session text');
+        'Found ${clearText.evaluate().length} widgets with Clear OAuth2 Session text',
+      );
 
       // If we can find the clear button text, tap it
       if (clearText.evaluate().isNotEmpty) {
@@ -874,18 +929,21 @@ void main() {
       expect(find.byType(OAuth2Fields), findsOneWidget);
     });
 
-    testWidgets('tests null workspace folder path scenario',
-        (WidgetTester tester) async {
+    testWidgets('tests null workspace folder path scenario', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = null;
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: null, // null workspace path
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: null, // null workspace path
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -933,11 +991,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -962,8 +1022,9 @@ void main() {
       expect(find.byType(OAuth2Fields), findsNothing);
     });
 
-    testWidgets('tests code challenge method dropdown changes',
-        (WidgetTester tester) async {
+    testWidgets('tests code challenge method dropdown changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -979,11 +1040,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1020,8 +1083,9 @@ void main() {
       }
     });
 
-    testWidgets('tests password field updates for resource owner grant',
-        (WidgetTester tester) async {
+    testWidgets('tests password field updates for resource owner grant', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1038,11 +1102,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1076,8 +1142,9 @@ void main() {
       expect(lastUpdate?.type, APIAuthType.oauth2);
     });
 
-    testWidgets('tests HTTP response listener and credential reloading',
-        (WidgetTester tester) async {
+    testWidgets('tests HTTP response listener and credential reloading', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1093,11 +1160,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1118,8 +1187,9 @@ void main() {
       expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
-    testWidgets('tests state and redirect URL field updates',
-        (WidgetTester tester) async {
+    testWidgets('tests state and redirect URL field updates', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1136,11 +1206,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1192,11 +1264,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1259,8 +1333,9 @@ void main() {
       expect(capturedAuthUpdates.length, greaterThan(2));
     });
 
-    testWidgets('tests clear OAuth2 session button',
-        (WidgetTester tester) async {
+    testWidgets('tests clear OAuth2 session button', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1279,11 +1354,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1316,8 +1393,9 @@ void main() {
       expect(find.byType(OAuth2Fields), findsOneWidget);
     });
 
-    testWidgets('tests empty credentials file handling',
-        (WidgetTester tester) async {
+    testWidgets('tests empty credentials file handling', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1333,11 +1411,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1358,8 +1438,9 @@ void main() {
       expect(find.byType(ExtendedTextField), findsAtLeastNWidgets(5));
     });
 
-    testWidgets('tests clear credentials with null or empty file path',
-        (WidgetTester tester) async {
+    testWidgets('tests clear credentials with null or empty file path', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1378,11 +1459,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1409,8 +1492,9 @@ void main() {
       expect(find.byType(OAuth2Fields), findsOneWidget);
     });
 
-    testWidgets('tests credential file loading with empty credentials',
-        (WidgetTester tester) async {
+    testWidgets('tests credential file loading with empty credentials', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1426,11 +1510,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(
@@ -1452,50 +1538,54 @@ void main() {
     });
 
     testWidgets(
-        'tests _getExpirationText with different token expiration states',
-        (WidgetTester tester) async {
-      // Test with no token expiration
-      mockAuthData = const AuthModel(
-        type: APIAuthType.oauth2,
-        oauth2: AuthOAuth2Model(
-          grantType: OAuth2GrantType.authorizationCode,
-          authorizationUrl: 'https://auth.apidash.dev/authorize',
-          accessTokenUrl: 'https://auth.apidash.dev/token',
-          clientId: 'client_id',
-          clientSecret: 'client_secret',
-          accessToken: 'test_token',
-        ),
-      );
+      'tests _getExpirationText with different token expiration states',
+      (WidgetTester tester) async {
+        // Test with no token expiration
+        mockAuthData = const AuthModel(
+          type: APIAuthType.oauth2,
+          oauth2: AuthOAuth2Model(
+            grantType: OAuth2GrantType.authorizationCode,
+            authorizationUrl: 'https://auth.apidash.dev/authorize',
+            accessTokenUrl: 'https://auth.apidash.dev/token',
+            clientId: 'client_id',
+            clientSecret: 'client_secret',
+            accessToken: 'test_token',
+          ),
+        );
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              settingsProvider.overrideWith(
+                (ref) => ThemeStateNotifier(
                   settingsModel: const SettingsModel(
                     workspaceFolderPath: '/test/workspace',
                   ),
-                )),
-            selectedRequestModelProvider.overrideWith((ref) => null),
-          ],
-          child: Portal(
-            child: MaterialApp(
-              home: Scaffold(
-                body: OAuth2Fields(
-                  authData: mockAuthData,
-                  updateAuth: mockUpdateAuth,
+                ),
+              ),
+              selectedRequestModelProvider.overrideWith((ref) => null),
+            ],
+            child: Portal(
+              child: MaterialApp(
+                home: Scaffold(
+                  body: OAuth2Fields(
+                    authData: mockAuthData,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Widget should render without showing expiration text
-      expect(find.byType(OAuth2Fields), findsOneWidget);
-    });
+        // Widget should render without showing expiration text
+        expect(find.byType(OAuth2Fields), findsOneWidget);
+      },
+    );
 
-    testWidgets('tests code challenge method with plaintext selection',
-        (WidgetTester tester) async {
+    testWidgets('tests code challenge method with plaintext selection', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.oauth2,
         oauth2: AuthOAuth2Model(
@@ -1511,11 +1601,13 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            settingsProvider.overrideWith((ref) => ThemeStateNotifier(
-                  settingsModel: const SettingsModel(
-                    workspaceFolderPath: '/test/workspace',
-                  ),
-                )),
+            settingsProvider.overrideWith(
+              (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel(
+                  workspaceFolderPath: '/test/workspace',
+                ),
+              ),
+            ),
             selectedRequestModelProvider.overrideWith((ref) => null),
           ],
           child: Portal(

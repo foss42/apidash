@@ -4,18 +4,21 @@ import 'package:apidash/terminal/enums.dart';
 import 'package:apidash/terminal/widgets/terminal_level_filter_menu.dart';
 
 void main() {
-  testWidgets('TerminalLevelFilterMenu toggles and bulk selects via dialog',
-      (tester) async {
+  testWidgets('TerminalLevelFilterMenu toggles and bulk selects via dialog', (
+    tester,
+  ) async {
     Set<TerminalLevel> selected = TerminalLevel.values.toSet();
     late Set<TerminalLevel> last;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: TerminalLevelFilterMenu(
-          selected: selected,
-          onChanged: (s) => last = s,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: TerminalLevelFilterMenu(
+            selected: selected,
+            onChanged: (s) => last = s,
+          ),
         ),
       ),
-    ));
+    );
 
     // Open dialog
     await tester.tap(find.byIcon(Icons.filter_alt));
@@ -50,14 +53,16 @@ void main() {
   testWidgets('Cancel does not apply changes', (tester) async {
     Set<TerminalLevel> selected = TerminalLevel.values.toSet();
     bool called = false;
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: TerminalLevelFilterMenu(
-          selected: selected,
-          onChanged: (_) => called = true,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: TerminalLevelFilterMenu(
+            selected: selected,
+            onChanged: (_) => called = true,
+          ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.byIcon(Icons.filter_alt));
     await tester.pumpAndSettle();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/widgets.dart'
     show SidebarEnvironmentCard, ItemCardMenu;
@@ -18,6 +19,7 @@ Future<void> pumpSidebarEnvironmentCard(
   Function(String)? onChangedNameEditor,
   Function()? onTapOutsideNameEditor,
   Function(dynamic)? onMenuSelected,
+  Function()? onSecondaryTap,
 }) async {
   await tester.pumpWidget(
     MaterialApp(
@@ -34,6 +36,7 @@ Future<void> pumpSidebarEnvironmentCard(
               name: name,
               onTap: onTap,
               onDoubleTap: onDoubleTap,
+              onSecondaryTap: onSecondaryTap,
               onChangedNameEditor: onChangedNameEditor,
               onTapOutsideNameEditor: onTapOutsideNameEditor,
               onMenuSelected: onMenuSelected,
@@ -136,59 +139,94 @@ void main() {
     expect(changedValue, "Tapped Outside");
   });
 
+  testWidgets('Testing Sidebar Environment Card onSecondaryTapUp', (
+    tester,
+  ) async {
+    bool onSecondaryTapCalled = false;
+
+    await pumpSidebarEnvironmentCard(
+      tester,
+      theme: kThemeDataLight,
+      id: '23',
+      selectedId: '23',
+      name: 'Production',
+      onSecondaryTap: () {
+        onSecondaryTapCalled = true;
+      },
+      onMenuSelected: (value) {},
+    );
+
+    var card = find.widgetWithText(Card, 'Production');
+
+    // Perform secondary tap (right click)
+    final gesture = await tester.startGesture(
+      tester.getCenter(card),
+      buttons: kSecondaryButton,
+    );
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(onSecondaryTapCalled, true);
+  });
+
   group("Testing Sidebar Environment Card Item Card Menu visibility", () {
     testWidgets(
-        'Environment ItemCardMenu should be visible when not in edit mode',
-        (tester) async {
-      await pumpSidebarEnvironmentCard(
-        tester,
-        theme: kThemeDataLight,
-        id: '23',
-        selectedId: '23',
-        isGlobal: false,
-        name: 'Production',
-        onMenuSelected: (value) {},
-      );
+      'Environment ItemCardMenu should be visible when not in edit mode',
+      (tester) async {
+        await pumpSidebarEnvironmentCard(
+          tester,
+          theme: kThemeDataLight,
+          id: '23',
+          selectedId: '23',
+          isGlobal: false,
+          name: 'Production',
+          onMenuSelected: (value) {},
+        );
 
-      expect(find.byType(ItemCardMenu), findsOneWidget);
-    });
-
-    testWidgets(
-        'Environment ItemCardMenu should not be visible when in edit mode',
-        (tester) async {
-      await pumpSidebarEnvironmentCard(
-        tester,
-        theme: kThemeDataLight,
-        id: '23',
-        selectedId: '23',
-        editRequestId: '23',
-        isGlobal: false,
-        name: 'Production',
-        onMenuSelected: (value) {},
-      );
-
-      expect(find.byType(ItemCardMenu), findsNothing);
-    });
+        expect(find.byType(ItemCardMenu), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'Environment ItemCardMenu should not be visible when not selected',
-        (tester) async {
-      await pumpSidebarEnvironmentCard(
-        tester,
-        theme: kThemeDataLight,
-        id: '23',
-        selectedId: '24',
-        editRequestId: '24',
-        isGlobal: false,
-        name: 'Production',
-        onMenuSelected: (value) {},
-      );
+      'Environment ItemCardMenu should not be visible when in edit mode',
+      (tester) async {
+        await pumpSidebarEnvironmentCard(
+          tester,
+          theme: kThemeDataLight,
+          id: '23',
+          selectedId: '23',
+          editRequestId: '23',
+          isGlobal: false,
+          name: 'Production',
+          onMenuSelected: (value) {},
+        );
 
-      expect(find.byType(ItemCardMenu), findsNothing);
-    });
+        expect(find.byType(ItemCardMenu), findsNothing);
+      },
+    );
 
-    testWidgets('Environment ItemCardMenu should not be visible if isGlobal',
-        (tester) async {
+    testWidgets(
+      'Environment ItemCardMenu should not be visible when not selected',
+      (tester) async {
+        await pumpSidebarEnvironmentCard(
+          tester,
+          theme: kThemeDataLight,
+          id: '23',
+          selectedId: '24',
+          editRequestId: '24',
+          isGlobal: false,
+          name: 'Production',
+          onMenuSelected: (value) {},
+        );
+
+        expect(find.byType(ItemCardMenu), findsNothing);
+      },
+    );
+
+    testWidgets('Environment ItemCardMenu should not be visible if isGlobal', (
+      tester,
+    ) async {
       await pumpSidebarEnvironmentCard(
         tester,
         theme: kThemeDataLight,

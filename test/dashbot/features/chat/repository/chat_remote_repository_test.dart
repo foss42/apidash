@@ -24,20 +24,22 @@ void main() {
     });
 
     group('sendChat', () {
-      test('returns result when executeGenAIRequest returns non-empty string',
-          () async {
-        // Create a real AIRequestModel for testing (this will likely return null due to missing config)
-        final request = AIRequestModel(
-          url: 'https://api.apidash.dev/test',
-          userPrompt: 'test prompt',
-        );
+      test(
+        'returns result when executeGenAIRequest returns non-empty string',
+        () async {
+          // Create a real AIRequestModel for testing (this will likely return null due to missing config)
+          final request = AIRequestModel(
+            url: 'https://api.apidash.dev/test',
+            userPrompt: 'test prompt',
+          );
 
-        final result = await repository.sendChat(request: request);
+          final result = await repository.sendChat(request: request);
 
-        // Since we don't have proper API configuration, result will be null
-        // This tests the null/empty check logic
-        expect(result, isNull);
-      });
+          // Since we don't have proper API configuration, result will be null
+          // This tests the null/empty check logic
+          expect(result, isNull);
+        },
+      );
 
       test('handles null result from executeGenAIRequest', () async {
         final request = AIRequestModel(
@@ -144,7 +146,9 @@ void main() {
       final implementation = TestChatRemoteRepository();
       final testRequest = AIRequestModel(url: 'test', userPrompt: 'test');
       expect(
-          () => implementation.sendChat(request: testRequest), returnsNormally);
+        () => implementation.sendChat(request: testRequest),
+        returnsNormally,
+      );
     });
   });
 }

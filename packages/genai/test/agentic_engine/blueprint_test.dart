@@ -6,12 +6,10 @@ class MockAgent extends AIAgent {
   String get agentName => 'MockAgent';
 
   @override
-  String getSystemPrompt() =>
-      'You are a :role: agent. Your task is :task:.';
+  String getSystemPrompt() => 'You are a :role: agent. Your task is :task:.';
 
   @override
-  Future<bool> validator(String aiResponse) async =>
-      aiResponse.isNotEmpty;
+  Future<bool> validator(String aiResponse) async => aiResponse.isNotEmpty;
 
   @override
   Future<dynamic> outputFormatter(String validatedResponse) async =>
@@ -80,11 +78,14 @@ void main() {
       expect(result, 'prefix  suffix');
     });
 
-    test('substitutePromptVariable returns unchanged if variable not found', () {
-      const template = 'no variables here';
-      final result = template.substitutePromptVariable('missing', 'value');
-      expect(result, 'no variables here');
-    });
+    test(
+      'substitutePromptVariable returns unchanged if variable not found',
+      () {
+        const template = 'no variables here';
+        final result = template.substitutePromptVariable('missing', 'value');
+        expect(result, 'no variables here');
+      },
+    );
 
     test('chained substitutions replace all variables', () {
       const template = 'I am :name:, a :role: agent.';

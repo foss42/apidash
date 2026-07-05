@@ -50,8 +50,9 @@ void main() {
     expect(changedValue, ItemMenuOption.duplicate);
   });
 
-  testWidgets('showItemCardMenu shows the menu at the right position',
-      (WidgetTester tester) async {
+  testWidgets('showItemCardMenu shows the menu at the right position', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -60,7 +61,10 @@ void main() {
               return GestureDetector(
                 onTapUp: (details) {
                   showItemCardMenu(
-                      context, details, (ItemMenuOption option) {});
+                    context,
+                    details,
+                    (ItemMenuOption option) {},
+                  );
                 },
                 child: const Text('Show Menu'),
               );
@@ -76,5 +80,37 @@ void main() {
     for (var option in ItemMenuOption.values) {
       expect(find.text(option.label), findsOneWidget);
     }
+  });
+
+  testWidgets('showItemCardMenu triggers onSelected', (
+    WidgetTester tester,
+  ) async {
+    ItemMenuOption? selectedOption;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTapUp: (details) {
+                  showItemCardMenu(context, details, (ItemMenuOption option) {
+                    selectedOption = option;
+                  });
+                },
+                child: const Text('Show Menu'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show Menu'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(ItemMenuOption.delete.label));
+    await tester.pumpAndSettle();
+
+    expect(selectedOption, ItemMenuOption.delete);
   });
 }

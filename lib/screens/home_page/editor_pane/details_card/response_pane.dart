@@ -32,9 +32,14 @@ class ResponsePane extends ConsumerWidget {
         return SendingWidget(startSendingTime: startSendingTime);
       }
 
-      final hasMessages = apiType == APIType.websocket
-          ? (ref.watch(selectedRequestModelProvider.select((value) => value?.wsRequestModel?.messageHistory))?.isNotEmpty ?? false)
-          : (ref.watch(selectedRequestModelProvider.select((value) => value?.mqttRequestModel?.messageHistory))?.isNotEmpty ?? false);
+      // Watch only this boolean so URL keystrokes (which replace the
+      // protocol sub-model) don't rebuild the pane.
+      final hasMessages = (apiType == APIType.websocket
+              ? ref.watch(selectedRequestModelProvider.select((value) =>
+                  value?.wsRequestModel?.messageHistory.isNotEmpty))
+              : ref.watch(selectedRequestModelProvider.select((value) =>
+                  value?.mqttRequestModel?.messageHistory.isNotEmpty))) ??
+          false;
 
       if (isStreaming || hasMessages) {
         return const _WsResponsePanel();
@@ -73,7 +78,10 @@ class _WsResponsePanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const RealtimeEventStreamView();
+    // Keyed by request id (stable across URL edits) so each request keeps its
+    // own event-stream State; mirrors ResponseTabView on the HTTP side.
+    final selectedId = ref.watch(selectedIdStateProvider);
+    return RealtimeEventStreamView(key: ValueKey(selectedId));
   }
 }
 

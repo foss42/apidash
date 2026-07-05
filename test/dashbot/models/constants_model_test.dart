@@ -42,8 +42,10 @@ void main() {
         expect(chatActionTargetFromString(strVal), enumVal);
       });
       // unknown maps to default httpRequestModel
-      expect(chatActionTargetFromString('weird'),
-          ChatActionTarget.httpRequestModel);
+      expect(
+        chatActionTargetFromString('weird'),
+        ChatActionTarget.httpRequestModel,
+      );
     });
   });
 }

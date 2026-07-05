@@ -126,7 +126,7 @@ void main() {
         49,
         34,
         10,
-        125
+        125,
       ];
       expect(jsonMapToBytes(value1), result1Expected);
     });
@@ -153,8 +153,10 @@ Easily manipulate and play around with request inputs like headers, query parame
           '''          Using API Dash, you can draft API requests via an easy to use GUI which allows you to:
           Create different types of HTTP requests (GET, HEAD, POST, PATCH, PUT and DELETE)
           Easily manipulate and play around with request inputs like headers, query parameters and body.''';
-      expect(padMultilineString(text1, 10, firstLinePadded: true),
-          text1FirstLinePaddedExpected);
+      expect(
+        padMultilineString(text1, 10, firstLinePadded: true),
+        text1FirstLinePaddedExpected,
+      );
     });
     test('Testing when firstLinePadded is false ', () {
       String text1FirstLineNotPaddedExpected =

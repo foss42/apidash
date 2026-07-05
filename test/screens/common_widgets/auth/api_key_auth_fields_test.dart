@@ -19,8 +19,9 @@ void main() {
       };
     });
 
-    testWidgets('renders with default values when authData is null',
-        (WidgetTester tester) async {
+    testWidgets('renders with default values when authData is null', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = null;
 
       await tester.pumpWidget(
@@ -45,55 +46,57 @@ void main() {
     });
 
     testWidgets(
-        'updates auth data when authData is null and API key value is changed',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        Portal(
-          child: MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: ApiKeyAuthFields(
-                  authData: null,
-                  updateAuth: mockUpdateAuth,
+      'updates auth data when authData is null and API key value is changed',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: ApiKeyAuthFields(
+                    authData: null,
+                    updateAuth: mockUpdateAuth,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Wait for the widget to settle
-      await tester.pumpAndSettle();
+        // Wait for the widget to settle
+        await tester.pumpAndSettle();
 
-      // Find EnvAuthField widgets
-      final authFields = find.byType(EnvAuthField);
-      expect(authFields, findsNWidgets(2));
+        // Find EnvAuthField widgets
+        final authFields = find.byType(EnvAuthField);
+        expect(authFields, findsNWidgets(2));
 
-      // Find the last EnvAuthField (API key value field)
-      final lastAuthField = authFields.last;
+        // Find the last EnvAuthField (API key value field)
+        final lastAuthField = authFields.last;
 
-      // Find ExtendedTextField within the last EnvAuthField using find.descendant
-      final lastField = find.descendant(
-        of: lastAuthField,
-        matching: find.byType(ExtendedTextField),
-      );
-      expect(lastField, findsOneWidget);
+        // Find ExtendedTextField within the last EnvAuthField using find.descendant
+        final lastField = find.descendant(
+          of: lastAuthField,
+          matching: find.byType(ExtendedTextField),
+        );
+        expect(lastField, findsOneWidget);
 
-      await tester.tap(lastField);
-      await tester.pumpAndSettle();
+        await tester.tap(lastField);
+        await tester.pumpAndSettle();
 
-      // Use tester.testTextInput to enter text directly
-      tester.testTextInput.enterText('new-api-key');
-      await tester.pumpAndSettle();
+        // Use tester.testTextInput to enter text directly
+        tester.testTextInput.enterText('new-api-key');
+        await tester.pumpAndSettle();
 
-      // Verify that updateAuth was called
-      expect(capturedAuthUpdates.length, greaterThan(0));
-      final lastUpdate = capturedAuthUpdates.last;
-      expect(lastUpdate?.apikey?.key, 'new-api-key');
-    });
+        // Verify that updateAuth was called
+        expect(capturedAuthUpdates.length, greaterThan(0));
+        final lastUpdate = capturedAuthUpdates.last;
+        expect(lastUpdate?.apikey?.key, 'new-api-key');
+      },
+    );
 
-    testWidgets('renders with existing API key auth data',
-        (WidgetTester tester) async {
+    testWidgets('renders with existing API key auth data', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.apiKey,
         apikey: AuthApiKeyModel(
@@ -123,8 +126,9 @@ void main() {
       expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
 
-    testWidgets('renders with query params location',
-        (WidgetTester tester) async {
+    testWidgets('renders with query params location', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.apiKey,
         apikey: AuthApiKeyModel(
@@ -153,8 +157,9 @@ void main() {
       expect(find.text('Query Params'), findsOneWidget);
     });
 
-    testWidgets('updates auth data when location dropdown changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when location dropdown changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.apiKey,
         apikey: AuthApiKeyModel(
@@ -193,8 +198,9 @@ void main() {
       expect(lastUpdate?.apikey?.location, 'query');
     });
 
-    testWidgets('updates auth data when API key name changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when API key name changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.apiKey,
         apikey: AuthApiKeyModel(
@@ -250,8 +256,9 @@ void main() {
       expect(lastUpdate?.apikey?.name, 'Authorization');
     });
 
-    testWidgets('updates auth data when API key value changes',
-        (WidgetTester tester) async {
+    testWidgets('updates auth data when API key value changes', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = const AuthModel(
         type: APIAuthType.apiKey,
         apikey: AuthApiKeyModel(
@@ -362,8 +369,9 @@ void main() {
       // Check for the existence of the auth text fields
       expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
-    testWidgets('initializes with correct default values',
-        (WidgetTester tester) async {
+    testWidgets('initializes with correct default values', (
+      WidgetTester tester,
+    ) async {
       mockAuthData = null;
 
       await tester.pumpWidget(

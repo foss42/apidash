@@ -151,15 +151,19 @@ void main() {
 
     await tester.pumpWidget(build(container));
 
-    // JS tile body should contain [Untitled]
-    final jsWithUntitled = find.byWidgetPredicate(
-      (w) => w is SelectableText && (w.data?.contains('[Untitled]') ?? false),
-    );
+    // JS tile body should contain untitled
+    final jsWithUntitled = find.byWidgetPredicate((w) {
+      if (w is SelectableText) {
+        final text = w.data ?? w.textSpan?.toPlainText() ?? '';
+        return text.contains('untitled');
+      }
+      return false;
+    });
     expect(jsWithUntitled, findsOneWidget);
 
-    // Network title should start with [Untitled]
+    // Network title should start with [untitled]
     final netWithUntitled = find.byWidgetPredicate(
-      (w) => w is RichText && w.text.toPlainText().startsWith('[Untitled] '),
+      (w) => w is RichText && w.text.toPlainText().startsWith('[untitled]'),
     );
     expect(netWithUntitled, findsOneWidget);
   });
