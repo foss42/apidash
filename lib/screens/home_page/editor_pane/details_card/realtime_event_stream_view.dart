@@ -27,6 +27,12 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
   String _filterQuery = "";
   final List<String> _selectedTopics = [];
 
+  /// Set by [Autocomplete.onSelected] so the field's submit handler can tell
+  /// whether Enter was consumed by selecting the highlighted dropdown option
+  /// (via RawAutocomplete's onFieldSubmitted, which selects the highlighted
+  /// entry iff the options view is showing and is a no-op otherwise).
+  bool _submitHandledBySelection = false;
+
   @override
   void dispose() {
     _filterController.dispose();
@@ -137,6 +143,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                           });
                         },
                         onSelected: (String selection) {
+                          _submitHandledBySelection = true;
                           setState(() {
                             if (!_selectedTopics.contains(selection)) {
                               _selectedTopics.add(selection);
@@ -176,8 +183,32 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                                   : null,
                             ),
                             onSubmitted: (val) {
+                              if (requestModel?.apiType != APIType.mqtt) {
+                                return;
+                              }
+                              // Dropdown open: Enter picks the highlighted
+                              // option — exactly like tapping it. The
+                              // RawAutocomplete-provided onFieldSubmitted
+                              // selects the highlighted entry only while the
+                              // options view is showing (no-op otherwise);
+                              // onSelected sets the flag when it runs. This
+                              // works because the done action's unfocus is
+                              // applied asynchronously by the FocusManager,
+                              // so the options view is still "showing" here.
+                              _submitHandledBySelection = false;
+                              onFieldSubmitted();
+                              if (_submitHandledBySelection) {
+                                // Undo the pending unfocus so the dropdown
+                                // re-opens after the post-frame clear and the
+                                // user can keep picking topics — same flow as
+                                // tap-selection.
+                                focusNode.requestFocus();
+                                return;
+                              }
+                              // No visible options: fall back to validated
+                              // Enter on the typed text.
                               final topic = val.trim();
-                              if (topic.isNotEmpty && requestModel?.apiType == APIType.mqtt) {
+                              if (topic.isNotEmpty) {
                                 // Only apply the filter when the text matches a
                                 // topic actually seen in this request's message
                                 // history (exact, or an MQTT +/# wildcard that
