@@ -12,6 +12,7 @@ class AutoFixService {
     required this.readCurrentRequestId,
     required this.ensureBaseUrl,
     required this.readCurrentRequest,
+    this.updateWsUrl,
   });
 
   final RequestApplyService requestApply;
@@ -20,6 +21,12 @@ class AutoFixService {
   final String? Function() readCurrentRequestId;
   final Future<String> Function(String baseUrl) ensureBaseUrl;
   final RequestModel? Function() readCurrentRequest;
+
+  /// Updates the URL of a WebSocket request. Must read the LATEST
+  /// wsRequestModel inside the callback (never a captured/stale one).
+  final void Function({required String id, required String url})? updateWsUrl;
+
+  bool get _isWsRequest => readCurrentRequest()?.apiType == APIType.websocket;
 
   Future<String?> apply(ChatAction action) async {
     final requestId = readCurrentRequestId();
@@ -102,12 +109,10 @@ class AutoFixService {
         break;
       case 'params':
         if (action.value is Map<String, dynamic>) {
-          final params = (action.value as Map<String, dynamic>)
-              .entries
-              .map((e) => NameValueModel(
-                    name: e.key,
-                    value: e.value.toString(),
-                  ))
+          final params = (action.value as Map<String, dynamic>).entries
+              .map(
+                (e) => NameValueModel(name: e.key, value: e.value.toString()),
+              )
               .toList();
           final enabled = List<bool>.filled(params.length, true);
           updateSelected(
@@ -120,24 +125,40 @@ class AutoFixService {
     }
   }
 
-  Future<void> _applyHeaderUpdate(ChatAction action,
-      {required bool isAdd, String? requestId}) async {
+  Future<void> _applyHeaderUpdate(
+    ChatAction action, {
+    required bool isAdd,
+    String? requestId,
+  }) async {
     if (requestId == null || action.path == null) return;
     final current = readCurrentRequest();
-    final http = current?.httpRequestModel;
-    if (http == null) return;
+    // For WebSocket requests headers live on wsRequestModel. The write side
+    // (CollectionStateNotifier.update) already merges top-level headers into
+    // wsRequestModel when apiType == websocket, so only the read differs.
+    final List<NameValueModel>? currentHeaders;
+    if (current?.apiType == APIType.websocket) {
+      final ws = current?.wsRequestModel;
+      if (ws == null) return;
+      currentHeaders = ws.headers;
+    } else {
+      final http = current?.httpRequestModel;
+      if (http == null) return;
+      currentHeaders = http.headers;
+    }
 
-    final headers = List<NameValueModel>.from(http.headers ?? const []);
+    final headers = List<NameValueModel>.from(currentHeaders ?? const []);
     if (isAdd) {
       headers.add(
-          NameValueModel(name: action.path!, value: action.value as String));
+        NameValueModel(name: action.path!, value: action.value as String),
+      );
     } else {
       final index = headers.indexWhere((h) => h.name == action.path);
       if (index != -1) {
         headers[index] = headers[index].copyWith(value: action.value as String);
       } else {
         headers.add(
-            NameValueModel(name: action.path!, value: action.value as String));
+          NameValueModel(name: action.path!, value: action.value as String),
+        );
       }
     }
 
@@ -151,10 +172,18 @@ class AutoFixService {
   Future<void> _applyHeaderDelete(ChatAction action, String? requestId) async {
     if (requestId == null || action.path == null) return;
     final current = readCurrentRequest();
-    final http = current?.httpRequestModel;
-    if (http == null) return;
+    final List<NameValueModel>? currentHeaders;
+    if (current?.apiType == APIType.websocket) {
+      final ws = current?.wsRequestModel;
+      if (ws == null) return;
+      currentHeaders = ws.headers;
+    } else {
+      final http = current?.httpRequestModel;
+      if (http == null) return;
+      currentHeaders = http.headers;
+    }
 
-    final headers = List<NameValueModel>.from(http.headers ?? const []);
+    final headers = List<NameValueModel>.from(currentHeaders ?? const []);
     headers.removeWhere((h) => h.name == action.path);
     updateSelected(
       id: requestId,
@@ -170,6 +199,10 @@ class AutoFixService {
 
   Future<void> _applyUrlUpdate(ChatAction action, String? requestId) async {
     if (requestId == null) return;
+    if (_isWsRequest) {
+      updateWsUrl?.call(id: requestId, url: action.value as String);
+      return;
+    }
     updateSelected(id: requestId, url: action.value as String);
   }
 
