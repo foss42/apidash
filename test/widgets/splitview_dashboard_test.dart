@@ -6,12 +6,12 @@ import 'package:apidash/widgets/widgets.dart';
 void main() {
   testWidgets('Testing for Dashboard Splitview', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         title: 'Dashboard Splitview',
         home: Scaffold(
           body: DashboardSplitView(
-            sidebarWidget: Column(children: [Text("Hello")]),
-            mainWidget: Column(children: [Text("World")]),
+            sidebarWidget: Column(children: const [Text("Hello")]),
+            mainWidget: Column(children: const [Text("World")]),
           ),
         ),
       ),

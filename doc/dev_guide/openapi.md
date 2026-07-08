@@ -93,7 +93,7 @@ void main(List<String> args) async {
 ### How to run
 
 - Create a new dart project, put the openapi spec file and this script there.
-- Add the depndency, `dart pub add openapi_spec: ^0.15.0`
+- Add the dependency, `dart pub add openapi_spec: ^0.15.0`
 - Run:
   - `dart run path/to/this/file`
 

@@ -4,6 +4,13 @@ APIDash allows you to write JavaScript code that runs either **before** a reques
 
 The primary way to interact with APIDash data and functionality within these scripts is through the global `ad` object. This object provides structured access to request data, response data, environment variables, and logging utilities.
 
+> [!NOTE]
+> When you first open the **Pre-request** or **Post-response** script tabs, the editor might appear completely empty without any placeholder or hint text (this is a known UI limitation). To get started quickly, you can use the following example to verify it's working:
+> ```javascript
+> // Use JavaScript to modify this request dynamically
+> ad.console.log("Hello from APIDash Scripting!");
+> ```
+
 
 ## `ad.request` (Available in Pre-request Scripts Only)
 
@@ -543,3 +550,42 @@ if (data && data.user && data.user.id) {
     ad.console.log(`User ID ${data.user.id} saved to environment.`);
 }
 ```
+
+### Example 3: Cookie Management (Login & Session)
+
+APIDash does not have a separate "Cookies" tab. However, you can easily manage cookies using scripts by extracting them from a response and passing them to subsequent requests via environment variables.
+
+**Post-response Script (e.g., on a Login request):**
+
+```javascript
+// 1. Extract the Set-Cookie header from the response
+// The lookup is case-insensitive
+const setCookieHeader = ad.response.getHeader("Set-Cookie");
+
+if (setCookieHeader) {
+  // 2. Save the cookie to an environment variable
+  // Note: Depending on the server, you might need to parse this string
+  // if you only want a specific cookie (e.g., "session_id=123; HttpOnly" -> "session_id=123")
+  ad.environment.set("session_cookie", setCookieHeader.split(';')[0]);
+  ad.console.log("Session cookie saved to environment:", ad.environment.get("session_cookie"));
+} else {
+  ad.console.warn("No Set-Cookie header found in the response.");
+}
+```
+
+**Pre-request Script (for subsequent authenticated requests):**
+
+```javascript
+// 1. Retrieve the saved cookie from the environment
+const sessionCookie = ad.environment.get("session_cookie");
+
+if (sessionCookie) {
+  // 2. Set it as the Cookie header for the outgoing request
+  ad.request.headers.set("Cookie", sessionCookie);
+  ad.console.log("Cookie header set for request.");
+} else {
+  ad.console.warn("No session cookie found in environment.");
+}
+```
+
+*Tip: Instead of a pre-request script, you can also simply add a header in the UI with the name `Cookie` and the value `{{session_cookie}}` to achieve the same result.*

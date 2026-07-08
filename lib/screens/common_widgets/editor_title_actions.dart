@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 
 class EditorTitleActions extends StatelessWidget {
@@ -36,20 +37,20 @@ class EditorTitleActions extends StatelessWidget {
               child: Row(
                 children: [
                   iconButton(
-                    "Rename",
+                    kTooltipRename,
                     Icons.edit_rounded,
                     onRenamePressed,
                     padding: const EdgeInsets.only(left: 4),
                   ),
                   verticalDivider,
                   iconButton(
-                    "Delete",
+                    kTooltipDelete,
                     Icons.delete_rounded,
                     onDeletePressed,
                   ),
                   verticalDivider,
                   iconButton(
-                    "Duplicate",
+                    kTooltipDuplicate,
                     Icons.copy_rounded,
                     onDuplicatePressed,
                     padding: const EdgeInsets.only(right: 4),
@@ -64,8 +65,11 @@ class EditorTitleActions extends StatelessWidget {
   }
 
   Widget iconButton(
-      String tooltip, IconData iconData, void Function()? onPressed,
-      {EdgeInsets padding = const EdgeInsets.all(0)}) {
+    String tooltip,
+    IconData iconData,
+    void Function()? onPressed, {
+    EdgeInsets padding = const EdgeInsets.all(0),
+  }) {
     return Tooltip(
       message: tooltip,
       child: IconButton(
@@ -74,10 +78,7 @@ class EditorTitleActions extends StatelessWidget {
           shape: WidgetStateProperty.all(const ContinuousRectangleBorder()),
         ),
         onPressed: onPressed,
-        icon: Icon(
-          iconData,
-          size: 16,
-        ),
+        icon: Icon(iconData, size: 16),
       ),
     );
   }

@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:apidash/providers/providers.dart';
-import 'requests_page/requests_page.dart';
 import '../envvar/environment_page.dart';
 import '../history/history_page.dart';
 import '../settings_page.dart';
 import '../terminal/terminal_page.dart';
+import 'requests_page/request_response_page.dart';
 import 'widgets/page_base.dart';
 import 'navbar.dart';
 

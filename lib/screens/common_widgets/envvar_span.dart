@@ -8,10 +8,7 @@ import 'package:apidash/utils/utils.dart';
 import 'envvar_popover.dart';
 
 class EnvVarSpan extends HookConsumerWidget {
-  const EnvVarSpan({
-    super.key,
-    required this.variableKey,
-  });
+  const EnvVarSpan({super.key, required this.variableKey});
 
   final String variableKey;
 
@@ -21,22 +18,26 @@ class EnvVarSpan extends HookConsumerWidget {
     final envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     final activeEnvironmentId = ref.watch(activeEnvironmentIdStateProvider);
 
-    final suggestion =
-        getVariableStatus(variableKey, envMap, activeEnvironmentId);
+    final suggestion = getVariableStatus(
+      variableKey,
+      envMap,
+      activeEnvironmentId,
+    );
 
     final showPopover = useState(false);
 
     final isMissingVariable = suggestion.isUnknown;
     final String scope = isMissingVariable
-        ? 'unknown'
+        ? kLabelUnknown
         : getEnvironmentTitle(environments?[suggestion.environmentId]?.name);
     final colorScheme = Theme.of(context).colorScheme;
 
     var text = Text(
       '{{${suggestion.variable.key}}}',
       style: TextStyle(
-          color: isMissingVariable ? colorScheme.error : colorScheme.primary,
-          fontWeight: FontWeight.w600),
+        color: isMissingVariable ? colorScheme.error : colorScheme.primary,
+        fontWeight: FontWeight.w600,
+      ),
     );
 
     return PortalTarget(

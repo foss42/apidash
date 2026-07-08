@@ -58,6 +58,47 @@ void main() {
     expect(find.text('entering 123 for cell field'), findsOneWidget);
   });
 
+  testWidgets('Cell Field refreshes when initialValue changes', (tester) async {
+    // Build widget with initial value "first value"
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'CellField',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: Column(
+            children: [
+              CellField(keyId: "test-field", initialValue: "first value"),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Verify initial value is displayed
+    expect(find.text("first value"), findsOneWidget);
+
+    // Rebuild widget with new initialValue "second value"
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'CellField',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: Column(
+            children: [
+              CellField(keyId: "test-field", initialValue: "second value"),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Verify the widget refreshed and displays the new value
+    expect(find.text("second value"), findsOneWidget);
+    expect(find.text("first value"), findsNothing);
+  });
+
   testWidgets('URL Field sends request on enter keystroke', (tester) async {
     bool wasSubmitCalled = false;
 
@@ -70,12 +111,9 @@ void main() {
         title: 'URL Field',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: Column(children: [
-            URLField(
-              selectedId: '2',
-              onFieldSubmitted: testSubmit,
-            )
-          ]),
+          body: Column(
+            children: [URLField(selectedId: '2', onFieldSubmitted: testSubmit)],
+          ),
         ),
       ),
     );
@@ -93,5 +131,41 @@ void main() {
 
     // check if value was updated
     expect(wasSubmitCalled, true);
+  });
+
+  testWidgets('URL Field unfocuses on tap outside', (tester) async {
+    final FocusNode focusNode = FocusNode();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              Focus(
+                focusNode: focusNode,
+                child: const URLField(selectedId: '2'),
+              ),
+              const Text('Outside'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Focus the URL field
+    var txtForm = find.byKey(const Key("url-2"));
+    await tester.tap(txtForm);
+    await tester.pump();
+    expect(focusNode.hasFocus, true);
+
+    // Tap outside
+    await tester.tap(find.text('Outside'));
+    await tester.pump();
+
+    // Tap outside using PointerDownEvent to specifically trigger onTapOutside logic
+    final gesture = await tester.createGesture();
+    await gesture.down(tester.getCenter(find.text('Outside')));
+    await tester.pump();
+
+    expect(focusNode.hasFocus, false);
   });
 }

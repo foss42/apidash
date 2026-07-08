@@ -66,7 +66,7 @@ void main() {
         expect(mapEx.getKeyContentType(), "content-type");
       });
 
-      test('Multiple occurence should return first', () {
+      test('Multiple occurrence should return first', () {
         Map mapEx = {1: "Test", "content-Type": "y", "content-type": "x"};
         expect(mapEx.getKeyContentType(), "content-Type");
       });
@@ -104,7 +104,7 @@ void main() {
       expect(mapEx.getValueContentType(), "x");
     });
 
-    test('Multiple occurence should return first', () {
+    test('Multiple occurrence should return first', () {
       Map mapEx = {1: "Test", "content-Type": "y", "content-type": "x"};
       expect(mapEx.getValueContentType(), "y");
     });

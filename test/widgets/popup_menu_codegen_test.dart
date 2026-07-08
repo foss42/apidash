@@ -4,35 +4,29 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/popup_menu_codegen.dart';
 
 void main() {
-  testWidgets('CodegenPopupMenu displays initial value',
-      (WidgetTester tester) async {
+  testWidgets('CodegenPopupMenu displays initial value', (
+    WidgetTester tester,
+  ) async {
     const codegenLanguage = CodegenLanguage.dartDio;
 
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: CodegenPopupMenu(
-            value: codegenLanguage,
-          ),
-        ),
+        home: Scaffold(body: CodegenPopupMenu(value: codegenLanguage)),
       ),
     );
 
     expect(find.text(codegenLanguage.label), findsOneWidget);
   });
 
-  testWidgets('CodegenPopupMenu displays popup menu items',
-      (WidgetTester tester) async {
+  testWidgets('CodegenPopupMenu displays popup menu items', (
+    WidgetTester tester,
+  ) async {
     const codegenLanguage1 = CodegenLanguage.dartDio;
     const codegenLanguage2 = CodegenLanguage.pythonRequests;
 
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: CodegenPopupMenu(
-            value: codegenLanguage1,
-          ),
-        ),
+        home: Scaffold(body: CodegenPopupMenu(value: codegenLanguage1)),
       ),
     );
 
@@ -43,8 +37,9 @@ void main() {
     expect(find.text(codegenLanguage2.label), findsOneWidget);
   });
 
-  testWidgets('CodegenPopupMenu calls onChanged when an item is selected',
-      (WidgetTester tester) async {
+  testWidgets('CodegenPopupMenu calls onChanged when an item is selected', (
+    WidgetTester tester,
+  ) async {
     const codegenLanguage1 = CodegenLanguage.dartDio;
     const codegenLanguage2 = CodegenLanguage.cCurlCodeGen;
     CodegenLanguage? selectedLanguage;

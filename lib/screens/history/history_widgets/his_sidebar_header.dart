@@ -17,15 +17,12 @@ class HistorySidebarHeader extends ConsumerWidget {
       child: Row(
         children: [
           kHSpacer10,
-          Text(
-            "History",
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Text(kLabelHistory, style: Theme.of(context).textTheme.titleMedium),
           const Spacer(),
           ADIconButton(
             icon: Icons.delete_forever,
             iconSize: kButtonIconSizeLarge,
-            tooltip: "Clear History",
+            tooltip: kTooltipClearHistory,
             color: Theme.of(context).brightness == Brightness.dark
                 ? kColorDarkDanger
                 : kColorLightDanger,
@@ -40,15 +37,12 @@ class HistorySidebarHeader extends ConsumerWidget {
                     await ref
                         .read(historyMetaStateNotifier.notifier)
                         .clearAllHistory();
-                    sm.showSnackBar(getSnackBar(
-                      kMsgClearHistorySuccess,
-                    ));
+                    sm.showSnackBar(getSnackBar(kMsgClearHistorySuccess));
                   } catch (e) {
                     debugPrint("Clear History Stack: $e");
-                    sm.showSnackBar(getSnackBar(
-                      kMsgClearHistoryError,
-                      color: kColorRed,
-                    ));
+                    sm.showSnackBar(
+                      getSnackBar(kMsgClearHistoryError, color: kColorRed),
+                    );
                   }
                 },
               );
@@ -57,16 +51,21 @@ class HistorySidebarHeader extends ConsumerWidget {
           ADIconButton(
             icon: Icons.manage_history_rounded,
             iconSize: kButtonIconSizeLarge,
-            tooltip: "Manage History",
+            tooltip: kTooltipManageHistory,
             onPressed: () {
               showHistoryRetentionDialog(
-                  context,
-                  ref.read(settingsProvider.select(
-                      (value) => value.historyRetentionPeriod)), (value) {
-                ref.read(settingsProvider.notifier).update(
-                      historyRetentionPeriod: value,
-                    );
-              });
+                context,
+                ref.read(
+                  settingsProvider.select(
+                    (value) => value.historyRetentionPeriod,
+                  ),
+                ),
+                (value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(historyRetentionPeriod: value);
+                },
+              );
             },
           ),
           context.width <= kMinWindowSize.width

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/button_copy.dart';
 
@@ -9,9 +10,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Copy Button',
-        home: Scaffold(
-          body: CopyButton(toCopy: copyText, showLabel: true),
-        ),
+        home: Scaffold(body: CopyButton(toCopy: copyText, showLabel: true)),
       ),
     );
 
@@ -19,8 +18,9 @@ void main() {
     expect(icon, findsOneWidget);
 
     final button = find.ancestor(
-        of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is TextButton));
+      of: icon,
+      matching: find.byWidgetPredicate((widget) => widget is TextButton),
+    );
     expect(button, findsOneWidget);
 
     await tester.tap(button);
@@ -35,9 +35,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Copy Button',
-        home: Scaffold(
-          body: CopyButton(toCopy: copyText, showLabel: false),
-        ),
+        home: Scaffold(body: CopyButton(toCopy: copyText, showLabel: false)),
       ),
     );
 
@@ -49,5 +47,38 @@ void main() {
 
     await tester.tap(button);
     await tester.pump();
+  });
+
+  testWidgets('Testing for copy button error handling', (tester) async {
+    // Intercept the platform channel for clipboard and throw an error
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'Clipboard.setData') {
+          throw Exception('Simulated clipboard error');
+        }
+        return null;
+      },
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Copy Button',
+        home: Scaffold(body: CopyButton(toCopy: copyText, showLabel: true)),
+      ),
+    );
+
+    final button = find.byType(TextButton);
+    await tester.tap(button);
+    await tester.pumpAndSettle();
+
+    // Verify the SnackBar shows the error message
+    expect(find.text('An error occurred'), findsOneWidget);
+
+    // Clear the mock handler
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      null,
+    );
   });
 }

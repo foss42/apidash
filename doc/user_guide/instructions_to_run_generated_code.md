@@ -503,80 +503,90 @@ Navigate to network tab and refresh the page to see the requests and network act
 
 ## node.js (JavaScript, axios)
 
-### 1.Install Node.js:
-Ensure Node.js and npm are installed. Verify by running:
+### 1. Verify Node.js Installation
+
+Check if Node.js and npm are already installed:
 
 ```bash
 node --version
 npm --version
 ```
 
-If not, download from Node.js **[Official Website]((https://nodejs.org/en))**.
+If Node.js is not installed, download and install it from the official website:
 
-Initialize a new Node.js project:
+https://nodejs.org/en
 
-```bash
-npm init -y
-```
-
-Install Axios:
+Verify installation:
 
 ```bash
-npm install axios
+node --version
+npm --version
 ```
 
-### 2.Set Up a New Project:
-Create a new project directory:
+### 2. Create a New Project:
+
+Create and navigate to a new project folder:
 
 ```bash
 mkdir node-axios-example
 cd node-axios-example
 ```
 
-Initialize the project:
+Initialize a Node.js project:
 
 ```bash
 npm init -y
 ```
 
-### 3.Create and Run the Code:
+### 3. Install Axios:
 
-Save the generated code in a file(e.g., `app.js`).
+Install Axios using npm:
 
-Run the code:
+```bash
+npm install axios
+```
+### 4. Add the Generated Code
+
+1. Create a new file (e.g., `app.js`).
+2. Copy the generated code from API Dash.
+3. Paste it into `app.js`.
+4. Save the file.
+
+### 5. Run the code
+
+Execute the file using:
 
 ```bash
 node app.js
 ```
 
+The API response will be displayed in the terminal.
+
 ## node.js (JavaScript, fetch)
 
-### 1. Install Node.js:
-Ensure Node.js and npm are installed. Verify by running:
+### 1. Verify Node.js Installation
+
+Check if Node.js and npm are already installed:
 
 ```bash
 node --version
 npm --version
 ```
 
-If not, download from Node.js **[Official Website]((https://nodejs.org/en))**.
+If Node.js is not installed, download and install it from the official website:
 
-Initialize a new Node.js project:
+https://nodejs.org/en
 
-```bash
-npm init -y
-```
-
-If using Node.js 18 or newer, the Fetch API is already built-in.
-
-For older versions, install the `node-fetch` package:
+Verify installation:
 
 ```bash
-npm install node-fetch
+node --version
+npm --version
 ```
 
-### 2. Set Up a New Project:
-Create a project directory:
+### 2. Create a New Project:
+
+Create and navigate to a  project directory:
 
 ```bash
 mkdir node-fetch-example
@@ -589,19 +599,38 @@ Initialize the project:
 npm init -y
 ```
 
-### 3.Create and Run the Code:
-Save the generated code in a file( e.g., `app.js`).
-If using `node-fetch`, add the following line to the top of the file:
+### 3. Fetch API Support:
+
+Check your Node.js version:
+
+```bash
+node --version
+```
+
+If you are using Node.js 18 or later, the Fetch API is built-in.
+
+If you are using Node.js 17 or earlier, install node-fetch:
+
+```bash
+npm install node-fetch
+```
+
+If using node-fetch, add this line at the top of your file:
 
 ```javascript
 const fetch = require('node-fetch');
 ```
 
-Run the file:
+### 4. Run the Generated Code
+
+1. Save the generated code in a file (e.g., `app.js`).
+2. Run the file:
 
 ```bash
 node app.js
 ```
+
+The API response will be displayed in the terminal.
 
 ## Java (asynchttpclient)
 
@@ -1230,6 +1259,33 @@ Open Command Prompt (or PowerShell) and type the following command to install th
 ```bash
 pip install requests
 ```
+  
+💡 **[Optional] Recommended: Use a Virtual Environment**
+
+It is recommended to run API Dash generated Python code inside a virtual environment 
+to avoid dependency conflicts with other Python projects.
+
+#### Create and activate a virtual environment:
+
+**macOS / Linux**
+
+```bash
+python3 -m venv myenv
+source myenv/bin/activate
+```
+
+**Windows**
+
+```bash
+python -m venv myenv
+myenv\Scripts\activate
+```
+
+After activation, install dependencies:
+
+```bash
+pip install requests
+```
 
 ### 3. Execute the generated code:
 Once you have Python and `requests` installed, follow these steps to execute the generated code:
@@ -1714,132 +1770,102 @@ cargo run
 - For more information, refer to the [Actix Web Client documentation](https://docs.rs/awc/).
 
 ## Swift (URLSession)
+Here are the detailed instructions for running the generated API Dash code in **Swift (using `URLSession`)** for macOS and Linux:
+### 1. Set Up the Environment
 
-###  Set Up the Environment
-#### MacBook (macOS)
+#### macOS
 
-Verify Swift :  
-```
+Verify Swift is installed:
+```bash
 swift --version
 ```
 
-
-#### Linux(Multipartformdata is not supported)
-
-Download Swift for Linux (e.g., Ubuntu) from Swift.org.
-
-```
-tar xzf filename
-export PATH=$PWD/filename/usr/bin:$PATH
-
-```
-Verify: 
-```
-swift --version
+If Swift is not installed, download and install Xcode from the [Mac App Store](https://apps.apple.com/us/app/xcode/id497799835) or install the Command Line Tools:
+```bash
+xcode-select --install
 ```
 
+#### Linux
 
-
-
-
-Install Dependencies:
+1. Download the Swift toolchain for your Linux distribution from [Swift.org](https://swift.org/download/).
+2. Extract the archive (replace `swift-x.x.x-RELEASE-ubuntu22.04` with your downloaded filename):
+```bash
+   tar xzf swift-x.x.x-RELEASE-ubuntu22.04.tar.gz
+   export PATH=$PWD/swift-x.x.x-RELEASE-ubuntu22.04/usr/bin:$PATH
 ```
-sudo apt-get update
-sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+3. Install required dependencies:
+```bash
+   sudo apt-get update
+   sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+```
+4. Verify installation:
+```bash
+   swift --version
 ```
 
+ **Note:** Multipart form data is not supported on Linux.
 
-### Create a Project:
-```
+### 2. Create a Project
+```bash
 mkdir URLSessionDemo
 cd URLSessionDemo
 swift package init --type executable
 ```
 
+### 3. Run the Generated Code
 
-
-
-### Run the Code
-Ensure main.swift is in Sources/URLSessionDemo.
-
-
-Run:
-```
-swift run
+1. Copy the generated code from API Dash.
+2. Paste it into `Sources/URLSessionDemo/main.swift`.
+3. Run the project:
+```bash
+   swift run
 ```
 
 ## Swift (Alamofire)
+Here are the detailed instructions for running the generated API Dash code in **Swift (using `Alamofire`)** for macOS and Linux:
 
-###  Set Up the Environment
-#### MacBook (macOS)
+### 1. Set Up the Environment
 
-Verify Swift :  
-```
+Follow the instructions from the [Swift (URLSession)](#swift-urlsession) section above to install Swift for your operating system.
+
+Verify installation:
+```bash
 swift --version
 ```
 
+**Note:** Multipart form data is not supported on Linux.
 
-#### Linux (Multipartformdata is not supported)
-
-Download Swift for Linux (e.g., Ubuntu) from Swift.org.
-
-```
-tar xzf filename
-export PATH=$PWD/filename/usr/bin:$PATH
-
-```
-Verify: 
-```
-swift --version
-```
-
-
-
-
-
- Install Dependencies for swift:
-```
-sudo apt-get update
-sudo apt-get install clang libicu-dev libcurl4-openssl-dev
-```
-
-
-### Create a Project:
-```
-mkdir URLSessionDemo
-cd URLSessionDemo
+### 2. Create a Project
+```bash
+mkdir AlamofireDemo
+cd AlamofireDemo
 swift package init --type executable
 ```
 
+### 3. Add Alamofire Dependency
 
-### Adding alamofire
- open `package.swift` and add following dependencies and target(replace `project-name` with your project name)
-```
- dependencies: [
-        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.6.4")
-    ],
- targets: [
-        .executableTarget(
-            name: "project-name",
-            dependencies: [
-                "Alamofire" 
-            ]
-        )
-    ]
-
-
+Open `Package.swift` and update it to include Alamofire (replace `project-name` with your project name):
+```swift
+dependencies: [
+    .package(url: "https://github.com/Alamofire/Alamofire", from: "5.6.4")
+],
+targets: [
+    .executableTarget(
+        name: "project-name",
+        dependencies: [
+            "Alamofire"
+        ]
+    )
+]
 ```
 
+### 4. Run the Generated Code
 
-
-### Run the Code
-Ensure main.swift is in Sources/URLSessionDemo.
-
-
-Run:
+1. Copy the generated code from API Dash.
+2. Paste it into `Sources/AlamofireDemo/main.swift`.
+3. Run the project:
+```bash
+   swift run
 ```
-swift run
-```
-
 
 
