@@ -6,44 +6,40 @@ part of 'available_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AvailableModelsImpl _$$AvailableModelsImplFromJson(
-  Map<String, dynamic> json,
-) => _$AvailableModelsImpl(
-  version: (json['version'] as num).toDouble(),
-  modelProviders: (json['model_providers'] as List<dynamic>)
-      .map((e) => AIModelProvider.fromJson(e as Map<String, dynamic>))
-      .toList(),
-);
+_AvailableModels _$AvailableModelsFromJson(Map<String, dynamic> json) =>
+    _AvailableModels(
+      version: (json['version'] as num).toDouble(),
+      modelProviders: (json['model_providers'] as List<dynamic>)
+          .map((e) => AIModelProvider.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
-Map<String, dynamic> _$$AvailableModelsImplToJson(
-  _$AvailableModelsImpl instance,
-) => <String, dynamic>{
-  'version': instance.version,
-  'model_providers': instance.modelProviders,
-};
+Map<String, dynamic> _$AvailableModelsToJson(_AvailableModels instance) =>
+    <String, dynamic>{
+      'version': instance.version,
+      'model_providers': instance.modelProviders,
+    };
 
-_$AIModelProviderImpl _$$AIModelProviderImplFromJson(
-  Map<String, dynamic> json,
-) => _$AIModelProviderImpl(
-  providerId: $enumDecodeNullable(
-    _$ModelAPIProviderEnumMap,
-    json['provider_id'],
-  ),
-  providerName: json['provider_name'] as String?,
-  sourceUrl: json['source_url'] as String?,
-  models: (json['models'] as List<dynamic>?)
-      ?.map((e) => Model.fromJson(e as Map<String, dynamic>))
-      .toList(),
-);
+_AIModelProvider _$AIModelProviderFromJson(Map<String, dynamic> json) =>
+    _AIModelProvider(
+      providerId: $enumDecodeNullable(
+        _$ModelAPIProviderEnumMap,
+        json['provider_id'],
+      ),
+      providerName: json['provider_name'] as String?,
+      sourceUrl: json['source_url'] as String?,
+      models: (json['models'] as List<dynamic>?)
+          ?.map((e) => Model.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
-Map<String, dynamic> _$$AIModelProviderImplToJson(
-  _$AIModelProviderImpl instance,
-) => <String, dynamic>{
-  'provider_id': _$ModelAPIProviderEnumMap[instance.providerId],
-  'provider_name': instance.providerName,
-  'source_url': instance.sourceUrl,
-  'models': instance.models,
-};
+Map<String, dynamic> _$AIModelProviderToJson(_AIModelProvider instance) =>
+    <String, dynamic>{
+      'provider_id': _$ModelAPIProviderEnumMap[instance.providerId],
+      'provider_name': instance.providerName,
+      'source_url': instance.sourceUrl,
+      'models': instance.models,
+    };
 
 const _$ModelAPIProviderEnumMap = {
   ModelAPIProvider.openai: 'openai',
@@ -53,8 +49,10 @@ const _$ModelAPIProviderEnumMap = {
   ModelAPIProvider.ollama: 'ollama',
 };
 
-_$ModelImpl _$$ModelImplFromJson(Map<String, dynamic> json) =>
-    _$ModelImpl(id: json['id'] as String?, name: json['name'] as String?);
+_Model _$ModelFromJson(Map<String, dynamic> json) =>
+    _Model(id: json['id'] as String?, name: json['name'] as String?);
 
-Map<String, dynamic> _$$ModelImplToJson(_$ModelImpl instance) =>
-    <String, dynamic>{'id': instance.id, 'name': instance.name};
+Map<String, dynamic> _$ModelToJson(_Model instance) => <String, dynamic>{
+  'id': instance.id,
+  'name': instance.name,
+};

@@ -33,146 +33,132 @@ class EditEnvironmentSecretsState
   void _onFieldChange(String selectedId) {
     final environment = ref.read(selectedEnvironmentModelProvider);
     final variables = getEnvironmentVariables(environment);
-    ref.read(environmentsStateNotifierProvider.notifier).updateEnvironment(
-      selectedId,
-      values: [...variables, ...secretRows.sublist(0, secretRows.length - 1)],
-    );
+    ref
+        .read(environmentsStateNotifierProvider.notifier)
+        .updateEnvironment(
+          selectedId,
+          values: [
+            ...variables,
+            ...secretRows.sublist(0, secretRows.length - 1),
+          ],
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
-    ref.watch(selectedEnvironmentModelProvider
-        .select((environment) => getEnvironmentSecrets(environment).length));
-    var rows =
-        getEnvironmentSecrets(ref.read(selectedEnvironmentModelProvider));
+    ref.watch(
+      selectedEnvironmentModelProvider.select(
+        (environment) => getEnvironmentSecrets(environment).length,
+      ),
+    );
+    var rows = getEnvironmentSecrets(
+      ref.read(selectedEnvironmentModelProvider),
+    );
     secretRows = rows.isEmpty
-        ? [
-            kEnvironmentSecretEmptyModel,
-          ]
+        ? [kEnvironmentSecretEmptyModel]
         : rows + [kEnvironmentSecretEmptyModel];
     isAddingRow = false;
 
     List<DataColumn> columns = const [
-      DataColumn2(
-        label: Text(kNameCheckbox),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text("Variable name"),
-      ),
-      DataColumn2(
-        label: Text('='),
-        fixedWidth: 30,
-      ),
-      DataColumn2(
-        label: Text("Secret value"),
-      ),
-      DataColumn2(
-        label: Text(''),
-        fixedWidth: 32,
-      ),
+      DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
+      DataColumn2(label: Text(kLabelVariableName)),
+      DataColumn2(label: Text('='), fixedWidth: 30),
+      DataColumn2(label: Text(kLabelSecretValue)),
+      DataColumn2(label: Text(''), fixedWidth: 32),
     ];
 
-    List<DataRow> dataRows = List<DataRow>.generate(
-      secretRows.length,
-      (index) {
-        bool isLast = index + 1 == secretRows.length;
-        return DataRow(
-          key: ValueKey("$selectedId-$index-secrets-row-$seed"),
-          cells: <DataCell>[
-            DataCell(
-              ADCheckBox(
-                keyId: "$selectedId-$index-secrets-c-$seed",
-                value: secretRows[index].enabled,
-                onChanged: isLast
-                    ? null
-                    : (value) {
-                        if (value != null) {
-                          setState(() {
-                            secretRows[index] =
-                                secretRows[index].copyWith(enabled: value);
-                          });
-                        }
-                        _onFieldChange(selectedId!);
-                      },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+    List<DataRow> dataRows = List<DataRow>.generate(secretRows.length, (index) {
+      bool isLast = index + 1 == secretRows.length;
+      return DataRow(
+        key: ValueKey("$selectedId-$index-secrets-row-$seed"),
+        cells: <DataCell>[
+          DataCell(
+            ADCheckBox(
+              keyId: "$selectedId-$index-secrets-c-$seed",
+              value: secretRows[index].enabled,
+              onChanged: isLast
+                  ? null
+                  : (value) {
+                      if (value != null) {
+                        setState(() {
+                          secretRows[index] = secretRows[index].copyWith(
+                            enabled: value,
+                          );
+                        });
+                      }
+                      _onFieldChange(selectedId!);
+                    },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              CellField(
-                keyId: "$selectedId-$index-secrets-k-$seed",
-                initialValue: secretRows[index].key,
-                hintText: "Add Variable",
-                onChanged: (value) {
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    secretRows[index] =
-                        secretRows[index].copyWith(key: value, enabled: true);
-                    secretRows.add(kEnvironmentSecretEmptyModel);
-                  } else {
-                    secretRows[index] = secretRows[index].copyWith(key: value);
-                  }
-                  _onFieldChange(selectedId!);
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+          ),
+          DataCell(
+            CellField(
+              keyId: "$selectedId-$index-secrets-k-$seed",
+              initialValue: secretRows[index].key,
+              hintText: kHintAddVariable,
+              onChanged: (value) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  secretRows[index] = secretRows[index].copyWith(
+                    key: value,
+                    enabled: true,
+                  );
+                  secretRows.add(kEnvironmentSecretEmptyModel);
+                } else {
+                  secretRows[index] = secretRows[index].copyWith(key: value);
+                }
+                _onFieldChange(selectedId!);
+              },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              Center(
-                child: Text(
-                  "=",
-                  style: kCodeStyle,
-                ),
-              ),
+          ),
+          DataCell(Center(child: Text("=", style: kCodeStyle))),
+          DataCell(
+            ObscurableCellField(
+              keyId: "$selectedId-$index-secrets-v-$seed",
+              initialValue: secretRows[index].value,
+              hintText: kHintAddSecretValue,
+              onChanged: (value) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  secretRows[index] = secretRows[index].copyWith(
+                    value: value,
+                    enabled: true,
+                  );
+                  secretRows.add(kEnvironmentSecretEmptyModel);
+                } else {
+                  secretRows[index] = secretRows[index].copyWith(value: value);
+                }
+                _onFieldChange(selectedId!);
+              },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              ObscurableCellField(
-                keyId: "$selectedId-$index-secrets-v-$seed",
-                initialValue: secretRows[index].value,
-                hintText: "Add Secret Value",
-                onChanged: (value) {
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    secretRows[index] =
-                        secretRows[index].copyWith(value: value, enabled: true);
-                    secretRows.add(kEnvironmentSecretEmptyModel);
-                  } else {
-                    secretRows[index] =
-                        secretRows[index].copyWith(value: value);
-                  }
-                  _onFieldChange(selectedId!);
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+          ),
+          DataCell(
+            InkWell(
+              onTap: isLast
+                  ? null
+                  : () {
+                      seed = random.nextInt(kRandMax);
+                      if (secretRows.length == 2) {
+                        setState(() {
+                          secretRows = [kEnvironmentSecretEmptyModel];
+                        });
+                      } else {
+                        secretRows.removeAt(index);
+                      }
+                      _onFieldChange(selectedId!);
+                    },
+              child: Theme.of(context).brightness == Brightness.dark
+                  ? kIconRemoveDark
+                  : kIconRemoveLight,
             ),
-            DataCell(
-              InkWell(
-                onTap: isLast
-                    ? null
-                    : () {
-                        seed = random.nextInt(kRandMax);
-                        if (secretRows.length == 2) {
-                          setState(() {
-                            secretRows = [
-                              kEnvironmentSecretEmptyModel,
-                            ];
-                          });
-                        } else {
-                          secretRows.removeAt(index);
-                        }
-                        _onFieldChange(selectedId!);
-                      },
-                child: Theme.of(context).brightness == Brightness.dark
-                    ? kIconRemoveDark
-                    : kIconRemoveLight,
-              ),
-            ),
-          ],
-        );
-      },
-    );
+          ),
+        ],
+      );
+    });
 
     return Stack(
       children: [
@@ -187,8 +173,9 @@ class EditEnvironmentSecretsState
             children: [
               Expanded(
                 child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(scrollbarTheme: kDataTableScrollbarTheme),
                   child: DataTable2(
                     columnSpacing: 12,
                     dividerThickness: 0,
@@ -216,10 +203,7 @@ class EditEnvironmentSecretsState
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Secret",
-                style: kTextStyleButton,
-              ),
+              label: const Text(kLabelAddSecret, style: kTextStyleButton),
             ),
           ),
         ),

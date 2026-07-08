@@ -5,6 +5,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'history_empty.dart';
 import 'history_sidebar.dart';
 import 'history_viewer.dart';
 
@@ -19,10 +20,13 @@ class HistoryPage extends ConsumerWidget {
     final title = historyModel != null
         ? getHistoryRequestName(historyModel.metaData)
         : 'History';
+    final hasHistoryKeys =
+        (ref.watch(historySequenceProvider)?.keys.toList() ?? []).isNotEmpty;
     if (context.isMediumWindow) {
       return DrawerSplitView(
         scaffoldKey: kHisScaffoldKey,
-        mainContent: const HistoryViewer(),
+        mainContent:
+            hasHistoryKeys ? const HistoryViewer() : const HistoryEmpty(),
         title: Text(title),
         leftDrawerContent: const HistoryPane(),
         actions: const [SizedBox(width: 16)],
@@ -30,12 +34,13 @@ class HistoryPage extends ConsumerWidget {
             ref.read(leftDrawerStateProvider.notifier).state = value,
       );
     }
-    return const Column(
+    return Column(
       children: [
         Expanded(
           child: DashboardSplitView(
-            sidebarWidget: HistoryPane(),
-            mainWidget: HistoryViewer(),
+            sidebarWidget: const HistoryPane(),
+            mainWidget:
+                hasHistoryKeys ? const HistoryViewer() : const HistoryEmpty(),
           ),
         ),
       ],

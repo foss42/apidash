@@ -170,14 +170,12 @@ class DashbotPrompts {
 
   // Provide insights after parsing a cURL command
   String curlInsightsPrompt({
-    required String curlSummary,
-    Map<String, dynamic>? diff,
-    Map<String, dynamic>? current,
+    String? diff,
+    Map<String, dynamic>? newReq,
   }) {
     return buildCurlInsightsPrompt(
-      curlSummary: curlSummary,
       diff: diff,
-      current: current,
+      newReq: newReq,
     );
   }
 }

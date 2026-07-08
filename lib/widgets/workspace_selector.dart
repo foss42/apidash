@@ -70,10 +70,12 @@ class WorkspaceSelector extends HookWidget {
               kVSpacer10,
               Row(
                 children: [
-                  Text(
-                    "WORKSPACE NAME [OPTIONAL]\n(FOLDER WILL BE CREATED IN THE SELECTED DIRECTORY)",
-                    style: kCodeStyle.copyWith(
-                      fontSize: 12,
+                  Expanded(
+                    child: Text(
+                      "WORKSPACE NAME [OPTIONAL]\n(FOLDER WILL BE CREATED IN THE SELECTED DIRECTORY)",
+                      style: kCodeStyle.copyWith(
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ],

@@ -34,14 +34,11 @@ void main() {
   });
 
   group('Testing navRailIndexStateProvider', () {
-    testWidgets('Dashboard should display correct initial page',
-        (tester) async {
+    testWidgets('Dashboard should display correct initial page', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: Dashboard(),
-          ),
-        ),
+        const ProviderScope(child: MaterialApp(home: Dashboard())),
       );
 
       // Verify that the HomePage is displayed initially
@@ -53,261 +50,221 @@ void main() {
     });
 
     testWidgets(
-        "Dashboard should display EnvironmentPage when navRailIndexStateProvider is 1",
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 1),
-          ],
-          child: const MaterialApp(
-            home: Dashboard(),
+      "Dashboard should display EnvironmentPage when navRailIndexStateProvider is 1",
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [navRailIndexStateProvider.overrideWith((ref) => 1)],
+            child: const MaterialApp(home: Dashboard()),
           ),
-        ),
-      );
+        );
 
-      // Verify that the EnvironmentPage is displayed
-      expect(find.byType(HomePage), findsNothing);
-      expect(find.byType(EnvironmentPage), findsOneWidget);
-      expect(find.byType(HistoryPage), findsNothing);
-      expect(find.byType(TerminalPage), findsNothing);
-      expect(find.byType(SettingsPage), findsNothing);
-    });
+        // Verify that the EnvironmentPage is displayed
+        expect(find.byType(HomePage), findsNothing);
+        expect(find.byType(EnvironmentPage), findsOneWidget);
+        expect(find.byType(HistoryPage), findsNothing);
+        expect(find.byType(TerminalPage), findsNothing);
+        expect(find.byType(SettingsPage), findsNothing);
+      },
+    );
 
     testWidgets(
-        "Dashboard should display HistorPage when navRailIndexStateProvider is 2",
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 2),
-          ],
-          child: const Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+      "Dashboard should display HistorPage when navRailIndexStateProvider is 2",
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [navRailIndexStateProvider.overrideWith((ref) => 2)],
+            child: const Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Verify that the SettingsPage is displayed
-      expect(find.byType(HomePage), findsNothing);
-      expect(find.byType(EnvironmentPage), findsNothing);
-      expect(find.byType(HistoryPage), findsOneWidget);
-      expect(find.byType(TerminalPage), findsNothing);
-      expect(find.byType(SettingsPage), findsNothing);
-    });
+        // Verify that the SettingsPage is displayed
+        expect(find.byType(HomePage), findsNothing);
+        expect(find.byType(EnvironmentPage), findsNothing);
+        expect(find.byType(HistoryPage), findsOneWidget);
+        expect(find.byType(TerminalPage), findsNothing);
+        expect(find.byType(SettingsPage), findsNothing);
+      },
+    );
     testWidgets(
-        "Dashboard should display TerminalPage when navRailIndexStateProvider is 3",
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 3),
-          ],
-          child: const Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+      "Dashboard should display TerminalPage when navRailIndexStateProvider is 3",
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [navRailIndexStateProvider.overrideWith((ref) => 3)],
+            child: const Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Verify that the SettingsPage is displayed
-      expect(find.byType(HomePage), findsNothing);
-      expect(find.byType(EnvironmentPage), findsNothing);
-      expect(find.byType(HistoryPage), findsNothing);
-      expect(find.byType(TerminalPage), findsOneWidget);
-      expect(find.byType(SettingsPage), findsNothing);
-    });
+        // Verify that the SettingsPage is displayed
+        expect(find.byType(HomePage), findsNothing);
+        expect(find.byType(EnvironmentPage), findsNothing);
+        expect(find.byType(HistoryPage), findsNothing);
+        expect(find.byType(TerminalPage), findsOneWidget);
+        expect(find.byType(SettingsPage), findsNothing);
+      },
+    );
 
     testWidgets(
-        "Dashboard should display SettingsPage when navRailIndexStateProvider is 4",
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 4),
-          ],
-          child: const Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+      "Dashboard should display SettingsPage when navRailIndexStateProvider is 4",
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [navRailIndexStateProvider.overrideWith((ref) => 4)],
+            child: const Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Verify that the SettingsPage is displayed
-      expect(find.byType(HomePage), findsNothing);
-      expect(find.byType(EnvironmentPage), findsNothing);
-      expect(find.byType(HistoryPage), findsNothing);
-      expect(find.byType(TerminalPage), findsNothing);
-      expect(find.byType(SettingsPage), findsOneWidget);
-    });
+        // Verify that the SettingsPage is displayed
+        expect(find.byType(HomePage), findsNothing);
+        expect(find.byType(EnvironmentPage), findsNothing);
+        expect(find.byType(HistoryPage), findsNothing);
+        expect(find.byType(TerminalPage), findsNothing);
+        expect(find.byType(SettingsPage), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'navRailIndexStateProvider should update when icon button is pressed',
-        (tester) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+      'navRailIndexStateProvider should update when icon button is pressed',
+      (tester) async {
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Tap on the Settings icon
-      await tester.tap(find.byIcon(Icons.settings_outlined));
-      await tester.pump();
+        // Tap on the Settings icon
+        await tester.tap(find.byIcon(Icons.settings_outlined));
+        await tester.pump();
 
-      // Verify that the navRailIndexStateProvider is updated
-      final dashboard = tester.element(find.byType(Dashboard));
-      final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 4);
-    });
+        // Verify that the navRailIndexStateProvider is updated
+        final dashboard = tester.element(find.byType(Dashboard));
+        final container = ProviderScope.containerOf(dashboard);
+        expect(container.read(navRailIndexStateProvider), 4);
+      },
+    );
 
     testWidgets(
-        'navRailIndexStateProvider should persist across widget rebuilds',
-        (tester) async {
-      // Pump the initial widget tree
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+      'navRailIndexStateProvider should persist across widget rebuilds',
+      (tester) async {
+        // Pump the initial widget tree
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Tap on the Settings icon to change the index to 4
-      await tester.tap(find.byIcon(Icons.settings_outlined));
-      await tester.pump();
+        // Tap on the Settings icon to change the index to 4
+        await tester.tap(find.byIcon(Icons.settings_outlined));
+        await tester.pump();
 
-      // Rebuild the widget tree with the same ProviderScope
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+        // Rebuild the widget tree with the same ProviderScope
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Verify that the navRailIndexStateProvider still has the updated value
-      final dashboard = tester.element(find.byType(Dashboard));
-      final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 4);
+        // Verify that the navRailIndexStateProvider still has the updated value
+        final dashboard = tester.element(find.byType(Dashboard));
+        final container = ProviderScope.containerOf(dashboard);
+        expect(container.read(navRailIndexStateProvider), 4);
 
-      // Verify that the SettingsPage is still displayed after the rebuild
-      expect(find.byType(SettingsPage), findsOneWidget);
-      expect(find.byType(HomePage), findsNothing);
-      expect(find.byType(EnvironmentPage), findsNothing);
-      expect(find.byType(TerminalPage), findsNothing);
-    });
+        // Verify that the SettingsPage is still displayed after the rebuild
+        expect(find.byType(SettingsPage), findsOneWidget);
+        expect(find.byType(HomePage), findsNothing);
+        expect(find.byType(EnvironmentPage), findsNothing);
+        expect(find.byType(TerminalPage), findsNothing);
+      },
+    );
 
     testWidgets(
-        'UI should update correctly when navRailIndexStateProvider changes',
-        (tester) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+      'UI should update correctly when navRailIndexStateProvider changes',
+      (tester) async {
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Grab the Dashboard widget and its ProviderContainer
-      final dashboard = tester.element(find.byType(Dashboard));
-      final container = ProviderScope.containerOf(dashboard);
+        // Grab the Dashboard widget and its ProviderContainer
+        final dashboard = tester.element(find.byType(Dashboard));
+        final container = ProviderScope.containerOf(dashboard);
 
-      // Go to EnvironmentPage
-      container.read(navRailIndexStateProvider.notifier).state = 1;
-      await tester.pump();
+        // Go to EnvironmentPage
+        container.read(navRailIndexStateProvider.notifier).state = 1;
+        await tester.pump();
 
-      // Verify that the EnvironmentPage is displayed
-      expect(find.byType(EnvironmentPage), findsOneWidget);
-      // Verify that the selected icon is the filled version (selectedIcon)
-      expect(find.byIcon(Icons.laptop_windows), findsOneWidget);
+        // Verify that the EnvironmentPage is displayed
+        expect(find.byType(EnvironmentPage), findsOneWidget);
+        // Verify that the selected icon is the filled version (selectedIcon)
+        expect(find.byIcon(Icons.laptop_windows), findsOneWidget);
 
-      // Go to HistoryPage
-      container.read(navRailIndexStateProvider.notifier).state = 2;
-      await tester.pump();
+        // Go to HistoryPage
+        container.read(navRailIndexStateProvider.notifier).state = 2;
+        await tester.pump();
 
-      // Verify that the HistoryPage is displayed
-      expect(find.byType(HistoryPage), findsOneWidget);
-      // Verify that the selected icon is the filled version (selectedIcon)
-      expect(find.byIcon(Icons.history_rounded), findsOneWidget);
+        // Verify that the HistoryPage is displayed
+        expect(find.byType(HistoryPage), findsOneWidget);
+        // Verify that the selected icon is the filled version (selectedIcon)
+        expect(find.byIcon(Icons.history_rounded), findsOneWidget);
 
-      // Go to TerminalPage
-      container.read(navRailIndexStateProvider.notifier).state = 3;
-      await tester.pump();
+        // Go to TerminalPage
+        container.read(navRailIndexStateProvider.notifier).state = 3;
+        await tester.pump();
 
-      // Verify that the TerminalPage is displayed
-      expect(find.byType(TerminalPage), findsOneWidget);
-      // Verify that the selected icon is the filled version (selectedIcon)
-      expect(find.byIcon(Icons.terminal), findsOneWidget);
+        // Verify that the TerminalPage is displayed
+        expect(find.byType(TerminalPage), findsOneWidget);
+        // Verify that the selected icon is the filled version (selectedIcon)
+        expect(find.byIcon(Icons.terminal), findsOneWidget);
 
-      // Go to SettingsPage
-      container.read(navRailIndexStateProvider.notifier).state = 4;
-      await tester.pump();
+        // Go to SettingsPage
+        container.read(navRailIndexStateProvider.notifier).state = 4;
+        await tester.pump();
 
-      // Verify that the SettingsPage is displayed
-      expect(find.byType(SettingsPage), findsOneWidget);
-      // Verify that the selected icon is the filled version (selectedIcon)
-      expect(find.byIcon(Icons.settings), findsOneWidget);
-    });
+        // Verify that the SettingsPage is displayed
+        expect(find.byType(SettingsPage), findsOneWidget);
+        // Verify that the selected icon is the filled version (selectedIcon)
+        expect(find.byIcon(Icons.settings), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'navRailIndexStateProvider should be disposed when Dashboard is removed',
-        (tester) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(
-              home: Dashboard(),
-            ),
+      'navRailIndexStateProvider should be disposed when Dashboard is removed',
+      (tester) async {
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: Portal(child: MaterialApp(home: Dashboard())),
           ),
-        ),
-      );
+        );
 
-      // Grab the Dashboard widget and its ProviderContainer
-      final dashboard = tester.element(find.byType(Dashboard));
-      final container = ProviderScope.containerOf(dashboard);
+        // Grab the Dashboard widget and its ProviderContainer
+        final dashboard = tester.element(find.byType(Dashboard));
+        final container = ProviderScope.containerOf(dashboard);
 
-      // Pumping a different widget to remove the Dashboard from the widget tree
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: Text('Different Widget')),
-        ),
-      );
+        // Pumping a different widget to remove the Dashboard from the widget tree
+        await tester.pumpWidget(
+          const MaterialApp(home: Scaffold(body: Text('Different Widget'))),
+        );
 
-      // Verify that the ProviderContainer has been disposed
-      // by trying to read from disposed container
-      bool isDisposed = false;
-      try {
-        container.read(navRailIndexStateProvider);
-      } catch (e) {
-        isDisposed = true;
-      }
-      expect(isDisposed, true);
-    });
+        // Verify that the ProviderContainer has been disposed
+        // by trying to read from disposed container
+        bool isDisposed = false;
+        try {
+          container.read(navRailIndexStateProvider);
+        } catch (e) {
+          isDisposed = true;
+        }
+        expect(isDisposed, true);
+      },
+    );
   });
 
   group("Testing selectedIdEditStateProvider", () {
     testWidgets('It should have an initial value of null', (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: CollectionPane(),
-            ),
-          ),
+          child: MaterialApp(home: Scaffold(body: CollectionPane())),
         ),
       );
 
@@ -318,101 +275,91 @@ void main() {
     });
 
     testWidgets(
-        'selectedIdEditStateProvider should not be null after Duplicate button has been tapped',
-        (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          child: MaterialApp(
-            theme: ThemeData(
-              fontFamily: 'OpenSans',
-            ),
-            home: const Scaffold(
-              body: CollectionPane(),
+      'selectedIdEditStateProvider should not be null after Duplicate button has been tapped',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            child: MaterialApp(
+              theme: ThemeData(fontFamily: 'OpenSans'),
+              home: const Scaffold(body: CollectionPane()),
             ),
           ),
-        ),
-      );
+        );
 
-      final collectionPane = tester.element(find.byType(CollectionPane));
-      final container = ProviderScope.containerOf(collectionPane);
-      var orig = container.read(selectedIdStateProvider);
-      expect(orig, isNotNull);
+        final collectionPane = tester.element(find.byType(CollectionPane));
+        final container = ProviderScope.containerOf(collectionPane);
+        var orig = container.read(selectedIdStateProvider);
+        expect(orig, isNotNull);
 
-      // Tap on the three dots to open the request card menu
-      await tester.tap(find.byType(RequestList));
-      await tester.pump();
-      await tester.tap(find.byType(RequestItem));
-      await tester.pump();
-      //await tester.tap(find.byIcon(Icons.more_vert).at(1));
-      await tester.tap(
-        find.byType(RequestItem),
-        buttons: kSecondaryButton,
-      );
-      await tester.pumpAndSettle();
+        // Tap on the three dots to open the request card menu
+        await tester.tap(find.byType(RequestList));
+        await tester.pump();
+        await tester.tap(find.byType(RequestItem));
+        await tester.pump();
+        //await tester.tap(find.byIcon(Icons.more_vert).at(1));
+        await tester.tap(find.byType(RequestItem), buttons: kSecondaryButton);
+        await tester.pumpAndSettle();
 
-      // Tap on the "Duplicate" option in the menu
-      var byType = find.text('Duplicate', findRichText: true);
-      expect(byType, findsOneWidget);
+        // Tap on the "Duplicate" option in the menu
+        var byType = find.text('Duplicate', findRichText: true);
+        expect(byType, findsOneWidget);
 
-      await tester.tap(byType);
-      await tester.pumpAndSettle();
-      // INFO: Screenshot using spot
-      // await takeScreenshot();
+        await tester.tap(byType);
+        await tester.pumpAndSettle();
+        // INFO: Screenshot using spot
+        // await takeScreenshot();
 
-      var dupId = container.read(selectedIdStateProvider);
-      expect(dupId, isNotNull);
-      expect(dupId.runtimeType, String);
-      expect(dupId != orig, isTrue);
-    });
+        var dupId = container.read(selectedIdStateProvider);
+        expect(dupId, isNotNull);
+        expect(dupId.runtimeType, String);
+        expect(dupId != orig, isTrue);
+      },
+    );
 
     testWidgets(
-        'It should be set back to null when user taps outside name editor',
-        (tester) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: CollectionPane(),
-            ),
+      'It should be set back to null when user taps outside name editor',
+      (tester) async {
+        await tester.pumpWidget(
+          const ProviderScope(
+            child: MaterialApp(home: Scaffold(body: CollectionPane())),
           ),
-        ),
-      );
+        );
 
-      // Grab the CollectionPane widget and its ProviderContainer
-      final collectionPane = tester.element(find.byType(CollectionPane));
-      final container = ProviderScope.containerOf(collectionPane);
+        // Grab the CollectionPane widget and its ProviderContainer
+        final collectionPane = tester.element(find.byType(CollectionPane));
+        final container = ProviderScope.containerOf(collectionPane);
 
-      // Tap on the three dots to open the request card menu
-      await tester.tap(find.byType(RequestList));
-      await tester.pump();
-      await tester.tap(find.byType(RequestItem));
-      await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).at(1));
-      await tester.pumpAndSettle();
+        // Tap on the three dots to open the request card menu
+        await tester.tap(find.byType(RequestList));
+        await tester.pump();
+        await tester.tap(find.byType(RequestItem));
+        await tester.pump();
+        await tester.tap(find.byIcon(Icons.more_vert).at(1));
+        await tester.pumpAndSettle();
 
-      // Tap on the "Rename" option in the menu
-      await tester.tap(find.text('Rename'));
-      await tester.pumpAndSettle();
+        // Tap on the "Rename" option in the menu
+        await tester.tap(find.text('Rename'));
+        await tester.pumpAndSettle();
 
-      // Verify that the selectedIdEditStateProvider is not null
-      expect(container.read(selectedIdEditStateProvider), isNotNull);
-      expect((container.read(selectedIdEditStateProvider)).runtimeType, String);
+        // Verify that the selectedIdEditStateProvider is not null
+        expect(container.read(selectedIdEditStateProvider), isNotNull);
+        expect(
+          (container.read(selectedIdEditStateProvider)).runtimeType,
+          String,
+        );
 
-      // Tap on the screen to simulate tapping outside the name editor
-      await tester.tap(find.byType(CollectionPane));
-      await tester.pumpAndSettle();
+        // Tap on the screen to simulate tapping outside the name editor
+        await tester.tap(find.byType(CollectionPane));
+        await tester.pumpAndSettle();
 
-      // Verify that the selectedIdEditStateProvider is null
-      expect(container.read(selectedIdEditStateProvider), null);
-    });
+        // Verify that the selectedIdEditStateProvider is null
+        expect(container.read(selectedIdEditStateProvider), null);
+      },
+    );
     testWidgets("It should be properly disposed", (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: CollectionPane(),
-            ),
-          ),
+          child: MaterialApp(home: Scaffold(body: CollectionPane())),
         ),
       );
 
@@ -422,9 +369,7 @@ void main() {
 
       // Pumping a different widget to remove the CollectionPane from the widget tree
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: Text('Foo')),
-        ),
+        const MaterialApp(home: Scaffold(body: Text('Foo'))),
       );
 
       // Verify that the ProviderContainer has been disposed
@@ -440,14 +385,11 @@ void main() {
   });
 
   group('Testing codePaneVisibleStateProvider', () {
-    testWidgets("It should have have an initial value of false",
-        (tester) async {
+    testWidgets("It should have have an initial value of false", (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: RequestEditorPane(),
-          ),
-        ),
+        const ProviderScope(child: MaterialApp(home: RequestEditorPane())),
       );
 
       // Verify that the initial value is false
@@ -456,17 +398,14 @@ void main() {
       expect(container.read(codePaneVisibleStateProvider), false);
     });
 
-    testWidgets("When state is false ResponsePane should be visible",
-        (tester) async {
+    testWidgets("When state is false ResponsePane should be visible", (
+      tester,
+    ) async {
       await tester.setScreenSize(largeWidthDevice);
       await tester.pumpWidget(
         const ProviderScope(
           child: Portal(
-            child: MaterialApp(
-              home: Material(
-                child: RequestEditorPane(),
-              ),
-            ),
+            child: MaterialApp(home: Material(child: RequestEditorPane())),
           ),
         ),
       );
@@ -504,17 +443,14 @@ void main() {
       expect(find.byType(ResponsePane), findsOneWidget);
     });
 
-    testWidgets("When state is true CodePane should be visible",
-        (tester) async {
+    testWidgets("When state is true CodePane should be visible", (
+      tester,
+    ) async {
       await tester.setScreenSize(largeWidthDevice);
       await tester.pumpWidget(
         const ProviderScope(
           child: Portal(
-            child: MaterialApp(
-              home: Scaffold(
-                body: RequestEditorPane(),
-              ),
-            ),
+            child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
           ),
         ),
       );
@@ -562,11 +498,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: Portal(
-            child: MaterialApp(
-              home: Scaffold(
-                body: RequestEditorPane(),
-              ),
-            ),
+            child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
           ),
         ),
       );
@@ -623,11 +555,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: Portal(
-            child: MaterialApp(
-              home: Scaffold(
-                body: RequestEditorPane(),
-              ),
-            ),
+            child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
           ),
         ),
       );
@@ -675,11 +603,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: Portal(
-            child: MaterialApp(
-              home: Scaffold(
-                body: RequestEditorPane(),
-              ),
-            ),
+            child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
           ),
         ),
       );
@@ -693,11 +617,7 @@ void main() {
     testWidgets("That it is properly disposed", (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: RequestEditorPane(),
-            ),
-          ),
+          child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
         ),
       );
 
@@ -710,8 +630,10 @@ void main() {
       await tester.pumpWidget(const MaterialApp());
 
       // Verify that the provider was disposed
-      expect(() => container.read(codePaneVisibleStateProvider),
-          throwsA(isA<StateError>()));
+      expect(
+        () => container.read(codePaneVisibleStateProvider),
+        throwsA(isA<StateError>()),
+      );
       expect(
         () => container.read(codePaneVisibleStateProvider),
         throwsA(

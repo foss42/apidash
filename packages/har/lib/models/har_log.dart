@@ -10,7 +10,7 @@ String harLogToJsonStr(HarLog data) =>
     JsonEncoder.withIndent('  ').convert(data);
 
 @freezed
-class HarLog with _$HarLog {
+abstract class HarLog with _$HarLog {
   @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory HarLog({
     Log? log,
@@ -20,7 +20,7 @@ class HarLog with _$HarLog {
 }
 
 @freezed
-class Log with _$Log {
+abstract class Log with _$Log {
   @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Log({
     String? version,
@@ -32,7 +32,7 @@ class Log with _$Log {
 }
 
 @freezed
-class Creator with _$Creator {
+abstract class Creator with _$Creator {
   @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Creator({
     String? name,
@@ -44,7 +44,7 @@ class Creator with _$Creator {
 }
 
 @freezed
-class Entry with _$Entry {
+abstract class Entry with _$Entry {
   @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Entry({
     String? startedDateTime,
@@ -57,7 +57,7 @@ class Entry with _$Entry {
 }
 
 @freezed
-class Request with _$Request {
+abstract class Request with _$Request {
   @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Request({
     String? method,
@@ -76,7 +76,7 @@ class Request with _$Request {
 }
 
 @freezed
-class PostData with _$PostData {
+abstract class PostData with _$PostData {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -93,7 +93,7 @@ class PostData with _$PostData {
 }
 
 @freezed
-class Param with _$Param {
+abstract class Param with _$Param {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -111,7 +111,7 @@ class Param with _$Param {
 }
 
 @freezed
-class Query with _$Query {
+abstract class Query with _$Query {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -127,7 +127,7 @@ class Query with _$Query {
 }
 
 @freezed
-class Header with _$Header {
+abstract class Header with _$Header {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -143,7 +143,7 @@ class Header with _$Header {
 }
 
 @freezed
-class Response with _$Response {
+abstract class Response with _$Response {
   @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Response({
     int? status,
@@ -162,7 +162,7 @@ class Response with _$Response {
 }
 
 @freezed
-class Content with _$Content {
+abstract class Content with _$Content {
   @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Content({
     int? size,

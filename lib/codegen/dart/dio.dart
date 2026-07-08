@@ -74,7 +74,7 @@ class DartDioCodeGen {
         contentType == ContentType.formdata)) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       switch (contentType) {
-        // dio dosen't need pass `content-type` header when body is json or plain text
+        // dio doesn't need pass `content-type` header when body is json or plain text
         case ContentType.json:
           final convertImport = Directive.import('dart:convert', as: 'convert');
           sbf.writeln(convertImport.accept(emitter));

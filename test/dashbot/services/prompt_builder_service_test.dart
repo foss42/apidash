@@ -54,10 +54,7 @@ void main() {
     });
 
     test('generateCode without override uses intro prompt', () {
-      final p = builder.buildTaskPrompt(
-        request,
-        ChatMessageType.generateCode,
-      );
+      final p = builder.buildTaskPrompt(request, ChatMessageType.generateCode);
       expect(p, isNotNull);
       // Should contain URL and method.
       expect(p!, contains('https://api.apidash.dev/users'));
@@ -67,56 +64,38 @@ void main() {
     });
 
     test('debugError task prompt', () {
-      final p = builder.buildTaskPrompt(
-        request,
-        ChatMessageType.debugError,
-      );
+      final p = builder.buildTaskPrompt(request, ChatMessageType.debugError);
       expect(p, isNotNull);
       expect(p!, contains('https://api.apidash.dev/users'));
       expect(p.toUpperCase(), contains('GET'));
     });
 
     test('generateDoc task prompt', () {
-      final p = builder.buildTaskPrompt(
-        request,
-        ChatMessageType.generateDoc,
-      );
+      final p = builder.buildTaskPrompt(request, ChatMessageType.generateDoc);
       expect(p, isNotNull);
       expect(p!, contains('https://api.apidash.dev/users'));
       expect(p.toUpperCase(), contains('GET'));
     });
 
     test('generateTest task prompt', () {
-      final p = builder.buildTaskPrompt(
-        request,
-        ChatMessageType.generateTest,
-      );
+      final p = builder.buildTaskPrompt(request, ChatMessageType.generateTest);
       expect(p, isNotNull);
       expect(p!, contains('https://api.apidash.dev/users'));
       expect(p.toUpperCase(), contains('GET'));
     });
 
     test('importCurl returns null', () {
-      final p = builder.buildTaskPrompt(
-        request,
-        ChatMessageType.importCurl,
-      );
+      final p = builder.buildTaskPrompt(request, ChatMessageType.importCurl);
       expect(p, isNull);
     });
 
     test('importOpenApi returns null', () {
-      final p = builder.buildTaskPrompt(
-        request,
-        ChatMessageType.importOpenApi,
-      );
+      final p = builder.buildTaskPrompt(request, ChatMessageType.importOpenApi);
       expect(p, isNull);
     });
 
     test('general task prompt', () {
-      final p = builder.buildTaskPrompt(
-        request,
-        ChatMessageType.general,
-      );
+      final p = builder.buildTaskPrompt(request, ChatMessageType.general);
       expect(p, isNotNull);
       // General prompt likely generic; just ensure it's non-empty and does not lose context building.
       expect(p!.trim(), isNotEmpty);
@@ -195,13 +174,17 @@ void main() {
     test('detectLanguage extended heuristics', () {
       expect(builder.detectLanguage('Please show Go example'), 'Go (net/http)');
       expect(builder.detectLanguage('Some Dart snippet'), 'Dart (http)');
-      expect(builder.detectLanguage('Use fetch to call this endpoint'),
-          'JavaScript (fetch)');
+      expect(
+        builder.detectLanguage('Use fetch to call this endpoint'),
+        'JavaScript (fetch)',
+      );
     });
 
     test('detectLanguage heuristic', () {
-      expect(builder.detectLanguage('Write this in Python please'),
-          contains('Python'));
+      expect(
+        builder.detectLanguage('Write this in Python please'),
+        contains('Python'),
+      );
       expect(builder.detectLanguage('Show me curl'), 'cURL');
       expect(builder.detectLanguage('random text'), isNull);
     });

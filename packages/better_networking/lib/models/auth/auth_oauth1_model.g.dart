@@ -6,32 +6,31 @@ part of 'auth_oauth1_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AuthOAuth1ModelImpl _$$AuthOAuth1ModelImplFromJson(
-  Map<String, dynamic> json,
-) => _$AuthOAuth1ModelImpl(
-  consumerKey: json['consumerKey'] as String,
-  consumerSecret: json['consumerSecret'] as String,
-  credentialsFilePath: json['credentialsFilePath'] as String?,
-  accessToken: json['accessToken'] as String?,
-  tokenSecret: json['tokenSecret'] as String?,
-  signatureMethod:
-      $enumDecodeNullable(
-        _$OAuth1SignatureMethodEnumMap,
-        json['signatureMethod'],
-      ) ??
-      OAuth1SignatureMethod.hmacSha1,
-  parameterLocation: json['parameterLocation'] as String? ?? "header",
-  version: json['version'] as String? ?? '1.0',
-  realm: json['realm'] as String?,
-  callbackUrl: json['callbackUrl'] as String?,
-  verifier: json['verifier'] as String?,
-  nonce: json['nonce'] as String?,
-  timestamp: json['timestamp'] as String?,
-  includeBodyHash: json['includeBodyHash'] as bool? ?? false,
-);
+_AuthOAuth1Model _$AuthOAuth1ModelFromJson(Map<String, dynamic> json) =>
+    _AuthOAuth1Model(
+      consumerKey: json['consumerKey'] as String,
+      consumerSecret: json['consumerSecret'] as String,
+      credentialsFilePath: json['credentialsFilePath'] as String?,
+      accessToken: json['accessToken'] as String?,
+      tokenSecret: json['tokenSecret'] as String?,
+      signatureMethod:
+          $enumDecodeNullable(
+            _$OAuth1SignatureMethodEnumMap,
+            json['signatureMethod'],
+          ) ??
+          OAuth1SignatureMethod.hmacSha1,
+      parameterLocation: json['parameterLocation'] as String? ?? "header",
+      version: json['version'] as String? ?? '1.0',
+      realm: json['realm'] as String?,
+      callbackUrl: json['callbackUrl'] as String?,
+      verifier: json['verifier'] as String?,
+      nonce: json['nonce'] as String?,
+      timestamp: json['timestamp'] as String?,
+      includeBodyHash: json['includeBodyHash'] as bool? ?? false,
+    );
 
-Map<String, dynamic> _$$AuthOAuth1ModelImplToJson(
-  _$AuthOAuth1ModelImpl instance,
+Map<String, dynamic> _$AuthOAuth1ModelToJson(
+  _AuthOAuth1Model instance,
 ) => <String, dynamic>{
   'consumerKey': instance.consumerKey,
   'consumerSecret': instance.consumerSecret,

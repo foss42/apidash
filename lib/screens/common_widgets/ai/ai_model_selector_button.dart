@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/consts.dart';
 import 'ai_model_selector_dialog.dart';
 
 class AIModelSelectorButton extends StatelessWidget {
@@ -45,9 +46,12 @@ class AIModelSelectorButton extends StatelessWidget {
               if (newAIRequestModel == null) return;
               onModelUpdated?.call(newAIRequestModel);
             },
-      child: Text((aiRequestModel?.model?.trim().isEmpty ?? true)
-          ? 'Select Model'
-          : aiRequestModel!.model!),
+
+      child: Text(
+        aiRequestModel?.model ?? kLabelSelectModel,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 }
