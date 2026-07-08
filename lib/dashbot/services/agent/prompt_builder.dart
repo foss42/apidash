@@ -40,6 +40,9 @@ class PromptBuilder {
     if (req?.apiType == APIType.websocket) {
       return _buildWsContextBlock(req!);
     }
+    if (req?.apiType == APIType.mqtt) {
+      return _buildMqttContextBlock(req!);
+    }
     final http = req?.httpRequestModel;
     if (req == null || http == null) return null;
     final headers = http.headersMap.entries
@@ -84,6 +87,130 @@ class PromptBuilder {
 \tMessage Log:
 ${formatWsMessageLog(ws.messageHistory)}
 \t</request_context>''';
+  }
+
+  String? _buildMqttContextBlock(RequestModel req) {
+    final mqtt = req.mqttRequestModel;
+    if (mqtt == null) return null;
+    return '''<request_context>
+  Request Name: ${req.name}
+\tType: MQTT connection
+\tBroker Address: ${mqtt.brokerUrl}
+\tConnection Status: ${_deriveMqttConnectionStatus(req, mqtt)}
+\t${_mqttSettingsSummary(mqtt)}
+\tTopics: ${_mqttTopicsSummary(mqtt)}
+\t${_buildWsStatsLine(mqtt.messageHistory)}
+\tMessage Log:
+${formatWsMessageLog(mqtt.messageHistory, includeTopic: true)}
+\t</request_context>''';
+  }
+
+  /// Derives a plain-language connection status for an MQTT request. Reuses the
+  /// same lifecycle heuristic as WebSocket (the two share [WebSocketMessage]).
+  String _deriveMqttConnectionStatus(RequestModel req, MQTTRequestModel mqtt) {
+    return _deriveConnectionState(req.isStreaming, mqtt.messageHistory);
+  }
+
+  /// Maps the MQTT protocol version enum to a human-readable label.
+  String _mqttVersionLabel(MQTTVersion version) {
+    return switch (version) {
+      MQTTVersion.v3 => 'v3',
+      MQTTVersion.v3_1_1 => 'v3.1.1',
+      MQTTVersion.v5 => 'v5',
+    };
+  }
+
+  /// A single-line summary of the MQTT connection settings.
+  ///
+  /// SECRETS RULE: username/password are surfaced as PRESENCE ONLY
+  /// ("sign-in details: provided" / "none"), never their values.
+  String _mqttSettingsSummary(MQTTRequestModel mqtt) {
+    final hasSignIn =
+        (mqtt.username != null && mqtt.username!.isNotEmpty) ||
+        (mqtt.password != null && mqtt.password!.isNotEmpty);
+    final lwtPresent = mqtt.willTopic.isNotEmpty || mqtt.willMessage.isNotEmpty;
+    final parts = <String>[
+      'Port: ${mqtt.port}',
+      'Client ID: ${mqtt.clientId == null || mqtt.clientId!.isEmpty ? '(none set)' : mqtt.clientId}',
+      'MQTT Version: ${_mqttVersionLabel(mqtt.version)}',
+      'Secure (TLS): ${mqtt.useTLS ? 'on' : 'off'}',
+      'Over WebSocket: ${mqtt.useWebSocket ? 'on' : 'off'}',
+      'Delivery care (QoS): ${mqtt.qos}',
+      'Publish Topic: ${mqtt.publishTopic.isEmpty ? '(none set)' : mqtt.publishTopic}',
+      'Retain Message: ${mqtt.retainMessage ? 'on' : 'off'}',
+      'Keep-Alive: ${mqtt.keepAlivePeriod} seconds',
+      'Last Will message: ${lwtPresent ? 'set' : 'none'}',
+      'Sign-in details: ${hasSignIn ? 'provided' : 'none'}',
+    ];
+    if (mqtt.version == MQTTVersion.v5) {
+      parts.add('Session Expiry: ${mqtt.sessionExpiryInterval} seconds');
+    }
+    return 'Connection Settings: ${parts.join('; ')}';
+  }
+
+  /// A plain-language summary of subscribed topics and whether each is enabled,
+  /// reading the enabled state from [MQTTRequestModel.isTopicEnabledList].
+  String _mqttTopicsSummary(MQTTRequestModel mqtt) {
+    if (mqtt.subscribedTopics.isEmpty) return 'No topics subscribed';
+    final enabled = mqtt.isTopicEnabledList;
+    final entries = <String>[];
+    for (var i = 0; i < mqtt.subscribedTopics.length; i++) {
+      final topic = mqtt.subscribedTopics[i].name;
+      final isOn = i < enabled.length ? enabled[i] : true;
+      entries.add('"$topic" (${isOn ? 'enabled' : 'disabled'})');
+    }
+    return entries.join(', ');
+  }
+
+  /// Groups sent/received data messages by their mailbox (topic, carried in
+  /// [WebSocketMessage.metadata]) into a plain-language per-topic tally, e.g.:
+  ///
+  ///     Messages grouped by mailbox:
+  ///     - home/temp: 12 messages (first "23.5", last "24.1")
+  ///     - alerts/door: 2 messages
+  ///     - (no mailbox): 1 message
+  ///
+  /// Only sent/received messages are counted; lifecycle events
+  /// (connected/error/disconnected) are ignored. Topics are listed in the order
+  /// they are first seen and the first/last example is only shown when a mailbox
+  /// has more than one message with differing payloads. Pure and deterministic
+  /// (never reads the wall clock), so it is directly unit-testable.
+  String mqttMessagesByTopic(List<WebSocketMessage> history) {
+    bool isData(WebSocketMessage m) =>
+        m.messageType == WebSocketMessageType.sent ||
+        m.messageType == WebSocketMessageType.received;
+    final counts = <String, int>{};
+    final firsts = <String, String>{};
+    final lasts = <String, String>{};
+    for (final m in history) {
+      if (!isData(m)) continue;
+      final topic = (m.metadata == null || m.metadata!.isEmpty)
+          ? '(no mailbox)'
+          : m.metadata!;
+      counts[topic] = (counts[topic] ?? 0) + 1;
+      firsts.putIfAbsent(topic, () => m.payload);
+      lasts[topic] = m.payload;
+    }
+    if (counts.isEmpty) return 'No messages grouped by mailbox yet.';
+    String trim(String s) {
+      const maxLen = 40;
+      final oneLine = s.replaceAll('\n', ' ');
+      return oneLine.length > maxLen
+          ? '${oneLine.substring(0, maxLen)}…'
+          : oneLine;
+    }
+
+    final lines = <String>['Messages grouped by mailbox:'];
+    counts.forEach((topic, n) {
+      final noun = n == 1 ? 'message' : 'messages';
+      final first = firsts[topic]!;
+      final last = lasts[topic]!;
+      final detail = (n >= 2 && first != last)
+          ? ' (first "${trim(first)}", last "${trim(last)}")'
+          : '';
+      lines.add('- $topic: $n $noun$detail');
+    });
+    return lines.join('\n');
   }
 
   String _wsHeartbeatSummary(WebSocketRequestModel ws) {
@@ -309,10 +436,17 @@ ${formatWsMessageLog(ws.messageHistory)}
   /// the last [maxMessages] sent/received messages. Payloads longer than
   /// [maxPayloadChars] are truncated with a suffix noting the original size.
   /// Protocol-agnostic: MQTT reuses [WebSocketMessage] so this works there too.
+  ///
+  /// When [includeTopic] is true, data lines surface the per-message topic
+  /// carried in [WebSocketMessage.metadata] (used by MQTT), rendering as
+  /// `[ts] RECEIVED on <topic>: <payload>`. When false (the default) the
+  /// output is byte-identical to the WebSocket path — a regression test locks
+  /// this — so the metadata is never read.
   String formatWsMessageLog(
     List<WebSocketMessage> history, {
     int maxMessages = 20,
     int maxPayloadChars = 300,
+    bool includeTopic = false,
   }) {
     if (history.isEmpty) return '(no messages yet)';
     bool isData(WebSocketMessage m) =>
@@ -350,7 +484,14 @@ ${formatWsMessageLog(ws.messageHistory)}
             '${payload.substring(0, maxPayloadChars)}'
             '… [truncated, ${m.payload.length} chars total]';
       }
-      lines.add('[$ts] $label: $payload');
+      final topicSuffix =
+          includeTopic &&
+              isData(m) &&
+              m.metadata != null &&
+              m.metadata!.isNotEmpty
+          ? ' on ${m.metadata}'
+          : '';
+      lines.add('[$ts] $label$topicSuffix: $payload');
     }
     return lines.join('\n');
   }
@@ -522,6 +663,164 @@ ${formatWsMessageLog(ws.messageHistory)}
               ? null
               : formatWsMessageLog(wsHealth.messageHistory),
         );
+      case ChatMessageType.explainMqttConnection:
+        final mqtt = req.mqttRequestModel;
+        return prompts.explainMqttConnectionPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(mqtt.messageHistory, includeTopic: true),
+        );
+      case ChatMessageType.debugMqttConnection:
+        final mqtt = req.mqttRequestModel;
+        return prompts.debugMqttConnectionPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(mqtt.messageHistory, includeTopic: true),
+        );
+      case ChatMessageType.whyNoMqttMessages:
+        final mqtt = req.mqttRequestModel;
+        return prompts.whyNoMqttMessagesPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          // Diagnosing "nothing arrives" needs breadth: raise the message cap
+          // so the model can look further back, shorten payloads to compensate.
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(
+                  mqtt.messageHistory,
+                  maxMessages: 100,
+                  maxPayloadChars: 150,
+                  includeTopic: true,
+                ),
+        );
+      case ChatMessageType.summarizeMqttMessages:
+        final mqtt = req.mqttRequestModel;
+        return prompts.summarizeMqttMessagesPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          // Prepend the pre-grouped per-mailbox tally, then the full log so the
+          // model can quote real examples. Look further back than the default.
+          messageLog: mqtt == null
+              ? null
+              : '${mqttMessagesByTopic(mqtt.messageHistory)}\n\nFull log:\n'
+                    '${formatWsMessageLog(mqtt.messageHistory, maxMessages: 100, maxPayloadChars: 150, includeTopic: true)}',
+        );
+      case ChatMessageType.explainMqttTopics:
+        final mqtt = req.mqttRequestModel;
+        return prompts.explainMqttTopicsPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(mqtt.messageHistory, includeTopic: true),
+        );
+      case ChatMessageType.mqttSessionAdvisor:
+        final mqtt = req.mqttRequestModel;
+        return prompts.mqttSessionAdvisorPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(mqtt.messageHistory, includeTopic: true),
+        );
+      case ChatMessageType.generateMqttCode:
+        final mqtt = req.mqttRequestModel;
+        if (overrideLanguage == null || overrideLanguage.isEmpty) {
+          return prompts.mqttCodeGenIntroPrompt(
+            mqtt?.brokerUrl,
+            mqtt == null ? null : _deriveMqttConnectionStatus(req, mqtt),
+            mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          );
+        }
+        return prompts.generateMqttCodePrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          // A few recent messages are enough to shape a realistic sample.
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(
+                  mqtt.messageHistory,
+                  maxMessages: 5,
+                  maxPayloadChars: 150,
+                  includeTopic: true,
+                ),
+          language: overrideLanguage,
+        );
+      case ChatMessageType.explainMqttLwt:
+        final mqtt = req.mqttRequestModel;
+        return prompts.explainMqttLwtPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(mqtt.messageHistory, includeTopic: true),
+        );
+      case ChatMessageType.explainMqttV5:
+        final mqtt = req.mqttRequestModel;
+        return prompts.explainMqttV5Prompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(mqtt.messageHistory, includeTopic: true),
+        );
+      case ChatMessageType.findInMqttMessages:
+        final mqtt = req.mqttRequestModel;
+        return prompts.findInMqttMessagesPrompt(
+          brokerUrl: mqtt?.brokerUrl,
+          connectionStatus: mqtt == null
+              ? null
+              : _deriveMqttConnectionStatus(req, mqtt),
+          settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
+          topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
+          // Search task: raise the message cap so the model can look further
+          // back, and shorten payload snippets to compensate.
+          messageLog: mqtt == null
+              ? null
+              : formatWsMessageLog(
+                  mqtt.messageHistory,
+                  maxMessages: 150,
+                  maxPayloadChars: 150,
+                  includeTopic: true,
+                ),
+        );
       case ChatMessageType.summarizeWsMessages:
         final ws = req.wsRequestModel;
         return prompts.summarizeWsMessagesPrompt(
@@ -673,6 +972,22 @@ ${formatWsMessageLog(ws.messageHistory)}
     return null;
   }
 
+  /// MQTT variant of [detectLanguage]: maps a user message to an MQTT client
+  /// library label used by the MQTT codegen prompts.
+  String? detectMqttLanguage(String text) {
+    final t = text.toLowerCase();
+    if (t.contains('python') || t.contains('paho')) return 'Python (paho-mqtt)';
+    if (t.contains('javascript') ||
+        t.contains('js') ||
+        t.contains('node') ||
+        t.contains('mqtt.js')) {
+      return 'JavaScript (mqtt.js)';
+    }
+    if (t.contains('dart') || t.contains('flutter'))
+      return 'Dart (mqtt_client)';
+    return null;
+  }
+
   /// Generates appropriate user message text for different task types
   String getUserMessageForTask(ChatMessageType type) {
     switch (type) {
@@ -710,6 +1025,26 @@ ${formatWsMessageLog(ws.messageHistory)}
         return "Can you generate tests for this connection?";
       case ChatMessageType.generateWsCode:
         return "Can you generate code for this connection?";
+      case ChatMessageType.explainMqttConnection:
+        return "Can you explain what's happening with this connection?";
+      case ChatMessageType.debugMqttConnection:
+        return "My connection isn't working. Can you help me fix it?";
+      case ChatMessageType.whyNoMqttMessages:
+        return "Why am I not receiving any messages?";
+      case ChatMessageType.summarizeMqttMessages:
+        return "What's coming in on my topics?";
+      case ChatMessageType.explainMqttTopics:
+        return "Help me pick a topic to listen on.";
+      case ChatMessageType.mqttSessionAdvisor:
+        return "Should I turn on offline message saving?";
+      case ChatMessageType.generateMqttCode:
+        return "Can you generate code for this connection?";
+      case ChatMessageType.explainMqttLwt:
+        return "What is a Last Will message?";
+      case ChatMessageType.explainMqttV5:
+        return "What extra features does version 5 give me?";
+      case ChatMessageType.findInMqttMessages:
+        return "Help me find something in my messages.";
       case ChatMessageType.general:
         return "Hello";
     }

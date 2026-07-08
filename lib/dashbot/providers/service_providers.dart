@@ -70,5 +70,25 @@ final autoFixServiceProvider = Provider<AutoFixService>((ref) {
         wsRequestModel: ws.copyWith(url: url),
       );
     },
+    updateMqttField:
+        ({required String id, required String field, required String value}) {
+          // Read the LATEST mqttRequestModel inside the callback (never a model
+          // captured earlier) so other fields are not clobbered. Only the debug
+          // whitelist fields are handled.
+          final mqtt = collection.getRequestModel(id)?.mqttRequestModel;
+          if (mqtt == null) return;
+          final updated = switch (field) {
+            'brokerUrl' => mqtt.copyWith(brokerUrl: value),
+            'useTLS' => mqtt.copyWith(useTLS: value.toLowerCase() == 'true'),
+            'clientId' => mqtt.copyWith(clientId: value),
+            'sessionExpiryInterval' => mqtt.copyWith(
+              sessionExpiryInterval:
+                  int.tryParse(value) ?? mqtt.sessionExpiryInterval,
+            ),
+            _ => null,
+          };
+          if (updated == null) return;
+          collection.update(id: id, mqttRequestModel: updated);
+        },
   );
 });
