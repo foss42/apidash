@@ -1,20 +1,31 @@
 import 'codegen_intro.dart';
 import 'curl_insights.dart';
 import 'debug_api_error.dart';
+import 'debug_mqtt_connection.dart';
 import 'debug_ws_connection.dart';
 import 'debug_ws_message.dart';
 import 'explain_api_response.dart';
+import 'explain_mqtt_connection.dart';
+import 'explain_mqtt_lwt.dart';
+import 'explain_mqtt_topics.dart';
+import 'explain_mqtt_v5.dart';
 import 'explain_ws_connection.dart';
 import 'explain_ws_message.dart';
+import 'find_in_mqtt_messages.dart';
 import 'find_in_ws_messages.dart';
+import 'why_no_mqtt_messages.dart';
 import 'general_interaction.dart';
 import 'generate_code.dart';
 import 'generate_documentation.dart';
+import 'generate_mqtt_code.dart';
 import 'generate_test_cases.dart';
 import 'generate_ws_code.dart';
 import 'generate_ws_documentation.dart';
 import 'generate_ws_tests.dart';
+import 'mqtt_codegen_intro.dart';
+import 'mqtt_session_advisor.dart';
 import 'openapi_insights.dart';
+import 'summarize_mqtt_messages.dart';
 import 'summarize_ws_messages.dart';
 import 'ws_codegen_intro.dart';
 import 'ws_connection_health.dart';
@@ -128,6 +139,189 @@ class DashbotPrompts {
       url: url,
       connectionStatus: connectionStatus,
       headersMap: headersMap,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: plain-language explanation of the connection (post-office metaphor)
+  String explainMqttConnectionPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildExplainMqttConnectionPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: lifecycle debugging with a whitelist of mqttRequestModel fixes
+  String debugMqttConnectionPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildDebugMqttConnectionPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: connected but no messages arriving (topic/wildcard/QoS diagnosis)
+  String whyNoMqttMessagesPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildWhyNoMqttMessagesPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: summarize what has arrived, grouped by mailbox (topic)
+  String summarizeMqttMessagesPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildSummarizeMqttMessagesPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: teach the "+"/"#" wildcards and propose a subscription
+  String explainMqttTopicsPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildExplainMqttTopicsPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: advise on session persistence with a single whitelisted fix
+  String mqttSessionAdvisorPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildMqttSessionAdvisorPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: ask for a language before generating client code
+  String mqttCodeGenIntroPrompt(
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+  ) {
+    return buildMqttCodeGenIntroPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+    );
+  }
+
+  // MQTT: generate client code in the requested language
+  String generateMqttCodePrompt({
+    String? brokerUrl,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+    String? language,
+  }) {
+    return buildGenerateMqttCodePrompt(
+      brokerUrl: brokerUrl,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+      language: language,
+    );
+  }
+
+  // MQTT: explain the Last Will (goodbye note) feature
+  String explainMqttLwtPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildExplainMqttLwtPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: explain the extra features MQTT v5 adds
+  String explainMqttV5Prompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildExplainMqttV5Prompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
+      messageLog: messageLog,
+    );
+  }
+
+  // MQTT: search the message log by meaning for what the user asks
+  String findInMqttMessagesPrompt({
+    String? brokerUrl,
+    String? connectionStatus,
+    String? settingsSummary,
+    String? topicsSummary,
+    String? messageLog,
+  }) {
+    return buildFindInMqttMessagesPrompt(
+      brokerUrl: brokerUrl,
+      connectionStatus: connectionStatus,
+      settingsSummary: settingsSummary,
+      topicsSummary: topicsSummary,
       messageLog: messageLog,
     );
   }
