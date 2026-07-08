@@ -16,11 +16,11 @@ class DashbotTaskButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.read(chatViewmodelProvider.notifier);
-    final isWs =
-        ref.watch(
-          selectedRequestModelProvider.select((value) => value?.apiType),
-        ) ==
-        APIType.websocket;
+    final apiType = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.apiType),
+    );
+    final isWs = apiType == APIType.websocket;
+    final isMqtt = apiType == APIType.mqtt;
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       child: Column(
@@ -110,7 +110,79 @@ class DashbotTaskButtons extends ConsumerWidget {
                   },
                 ),
               ],
-              if (!isWs) ...[
+              if (isMqtt) ...[
+                HomeScreenTaskButton(
+                  label: '🔌 Explain this connection',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.explainMqttConnection);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🛠️ Help me fix my connection',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.debugMqttConnection);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📭 Why am I not receiving messages?',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.whyNoMqttMessages);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📊 What\'s on my topics?',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.summarizeMqttMessages);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🌳 Topics & wildcards',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.explainMqttTopics);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '💾 Session & offline messages',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.mqttSessionAdvisor);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🧩 Generate Code',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.generateMqttCode);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📜 Last Will',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.explainMqttLwt);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '✨ v5 features',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.explainMqttV5);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🔍 Find in messages',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.findInMqttMessages);
+                    onTaskSelected?.call();
+                  },
+                ),
+              ],
+              if (!isWs && !isMqtt) ...[
                 HomeScreenTaskButton(
                   label: '🔎 Explain me this response',
                   onPressed: () {
@@ -173,7 +245,7 @@ class DashbotTaskButtons extends ConsumerWidget {
                   onTaskSelected?.call();
                 },
               ),
-              if (!isWs)
+              if (!isWs && !isMqtt)
                 HomeScreenTaskButton(
                   label: '📱 Generate UI',
                   onPressed: () async {
