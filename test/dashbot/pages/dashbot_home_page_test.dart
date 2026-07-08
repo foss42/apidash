@@ -4,6 +4,7 @@ import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/routes/routes.dart';
 import 'package:apidash/dashbot/widgets/widgets.dart';
 import 'package:apidash/models/request_model.dart';
+import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
@@ -333,5 +334,123 @@ void main() {
 
     expect(notifier.hideCalls, 1);
     expect(notifier.showCalls, 1);
+  });
+
+  group('DashbotHomePage WebSocket task set', () {
+    final wsRequest = RequestModel(
+      id: 'ws-1',
+      apiType: APIType.websocket,
+      wsRequestModel: const WebSocketRequestModel(
+        url: 'wss://api.apidash.dev/ws/echo',
+      ),
+    );
+
+    // Label -> chat route argument, verified against
+    // lib/dashbot/pages/dashbot_home_page.dart.
+    const wsRouteArgs = {
+      '🔌 Explain this connection': ChatMessageType.explainWsConnection,
+      '🛠️ Help me fix my connection': ChatMessageType.debugWsConnection,
+      '📡 What is the server sending?': ChatMessageType.summarizeWsMessages,
+      '🔍 Find in messages': ChatMessageType.findInWsMessages,
+      '✉️ Explain my message': ChatMessageType.explainWsMessage,
+      '❓ Why did my message fail?': ChatMessageType.debugWsMessage,
+      '❤️ Connection health': ChatMessageType.wsConnectionHealth,
+      '📄 Generate documentation': ChatMessageType.generateWsDoc,
+      '📝 Generate Tests': ChatMessageType.generateWsTest,
+      '🧩 Generate Code': ChatMessageType.generateWsCode,
+    };
+
+    void useLargeSurface(WidgetTester tester) {
+      tester.view.physicalSize = const Size(1400, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+    }
+
+    testWidgets('WS request shows all WS quick actions, no HTTP-only ones', (
+      tester,
+    ) async {
+      useLargeSurface(tester);
+      await _pumpHomePage(tester, selectedModel: wsRequest, onRoute: (_, _) {});
+
+      for (final label in wsRouteArgs.keys) {
+        expect(find.text(label), findsOneWidget, reason: label);
+      }
+      // Shared tasks stay available.
+      expect(find.text('📥 Import cURL'), findsOneWidget);
+      expect(find.text('📄 Import OpenAPI'), findsOneWidget);
+      expect(find.text('🛠️ Generate Tool'), findsOneWidget);
+      // HTTP-only tasks are hidden for WS.
+      expect(find.text('🔎 Explain me this response'), findsNothing);
+      expect(find.text('🐞 Help me debug this error'), findsNothing);
+      expect(find.text('📱 Generate UI'), findsNothing);
+    });
+
+    testWidgets('WS quick actions navigate to chat with the task argument', (
+      tester,
+    ) async {
+      useLargeSurface(tester);
+
+      for (final entry in wsRouteArgs.entries) {
+        String? capturedRoute;
+        Object? capturedArgs;
+
+        // Fresh tree per button: unmount first so the Navigator stack from
+        // the previous tap is not reused by element preservation.
+        await tester.pumpWidget(const SizedBox.shrink());
+        await _pumpHomePage(
+          tester,
+          selectedModel: wsRequest,
+          onRoute: (name, arguments) {
+            capturedRoute = name;
+            capturedArgs = arguments;
+          },
+        );
+
+        final buttonFinder = _taskButton(entry.key);
+        expect(buttonFinder, findsOneWidget, reason: entry.key);
+
+        await tester.tap(
+          find.descendant(of: buttonFinder, matching: find.byType(TextButton)),
+        );
+        await tester.pumpAndSettle();
+
+        expect(capturedRoute, DashbotRoutes.dashbotChat, reason: entry.key);
+        expect(capturedArgs, entry.value, reason: entry.key);
+      }
+    });
+
+    testWidgets('REST request keeps HTTP quick actions, no WS labels', (
+      tester,
+    ) async {
+      useLargeSurface(tester);
+      final restRequest = RequestModel(
+        id: 'rest-1',
+        httpRequestModel: const HttpRequestModel(),
+      );
+      await _pumpHomePage(
+        tester,
+        selectedModel: restRequest,
+        onRoute: (_, _) {},
+      );
+
+      expect(find.text('🔎 Explain me this response'), findsOneWidget);
+      expect(find.text('🐞 Help me debug this error'), findsOneWidget);
+      expect(find.text('📄 Generate documentation'), findsOneWidget);
+      expect(find.text('📝 Generate Tests'), findsOneWidget);
+      expect(find.text('🧩 Generate Code'), findsOneWidget);
+      expect(find.text('📱 Generate UI'), findsOneWidget);
+      for (final label in [
+        '🔌 Explain this connection',
+        '🛠️ Help me fix my connection',
+        '📡 What is the server sending?',
+        '🔍 Find in messages',
+        '✉️ Explain my message',
+        '❓ Why did my message fail?',
+        '❤️ Connection health',
+      ]) {
+        expect(find.text(label), findsNothing, reason: label);
+      }
+    });
   });
 }

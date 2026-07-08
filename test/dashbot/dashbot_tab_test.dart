@@ -2,6 +2,7 @@ import 'package:apidash/dashbot/dashbot_tab.dart';
 import 'package:apidash/dashbot/models/dashbot_window_model.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/routes/routes.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,12 +100,19 @@ void main() {
       expect(container.read(dashbotWindowNotifierProvider).isPopped, false);
     });
 
+
+
     testWidgets('navigates when route provider changes', (tester) async {
       final container = ProviderContainer(
         overrides: [
           dashbotActiveRouteProvider.overrideWith(
             () => MockDashbotActiveRouteNotifier(),
           ),
+  // the WS button-filtering added a selectedRequestModelProvider dependency to the DashBot UI;
+  // this test now has to stub that provider (as null) to avoid a real Hive lookup that would throw. 
+  // It's the same reason the codebase now has the rule "any test building DashbotHomePage/DashbotTaskButtons must override selectedRequestModelProvider".
+
+          selectedRequestModelProvider.overrideWith((ref) => null),
         ],
       );
 
