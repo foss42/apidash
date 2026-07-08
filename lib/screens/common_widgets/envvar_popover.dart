@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/consts.dart';
 import 'common_widgets.dart';
 
 class EnvVarPopover extends StatelessWidget {
@@ -47,7 +48,7 @@ class EnvVarPopover extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'VALUE',
+                    kLabelVALUE,
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   kHSpacer10,
@@ -59,7 +60,7 @@ class EnvVarPopover extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'SCOPE',
+                    kLabelSCOPE,
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   kHSpacer10,

@@ -21,9 +21,9 @@ void main() {
   test('Testing fromJson()', () {
     const resultExpected = fdmRow1;
     expect(
-        FormDataModel.fromJson(
-            {"name": "harry", "value": "23", "type": "text"}),
-        resultExpected);
+      FormDataModel.fromJson({"name": "harry", "value": "23", "type": "text"}),
+      resultExpected,
+    );
   });
 
   test('Testing copyWith()', () {
@@ -33,8 +33,9 @@ void main() {
       type: FormDataType.file,
     );
     expect(
-        fdmRow1.copyWith(name: "winter", value: "26", type: FormDataType.file),
-        resultExpected);
+      fdmRow1.copyWith(name: "winter", value: "26", type: FormDataType.file),
+      resultExpected,
+    );
   });
 
   test('Testing hashcode', () {

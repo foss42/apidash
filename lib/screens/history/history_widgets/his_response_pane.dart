@@ -11,14 +11,16 @@ class HistoryResponsePane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedHistoryIdStateProvider);
-    final selectedHistoryRequest =
-        ref.watch(selectedHistoryRequestModelProvider);
+    final selectedHistoryRequest = ref.watch(
+      selectedHistoryRequestModelProvider,
+    );
 
     final historyHttpResponseModel = selectedHistoryRequest?.httpResponseModel;
 
     if (selectedId != null) {
-      final requestModel =
-          getRequestModelFromHistoryModel(selectedHistoryRequest!);
+      final requestModel = getRequestModelFromHistoryModel(
+        selectedHistoryRequest!,
+      );
 
       final statusCode = historyHttpResponseModel?.statusCode;
 
@@ -48,6 +50,6 @@ class HistoryResponsePane extends ConsumerWidget {
         ],
       );
     }
-    return const Text("No Request Selected");
+    return const Text(kLabelNoRequestSelected);
   }
 }

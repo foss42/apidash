@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/javascript.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 
@@ -18,8 +19,9 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
   @override
   Widget build(BuildContext context) {
     final hisRequestModel = ref.read(selectedHistoryRequestModelProvider);
-    final isDarkMode =
-        ref.watch(settingsProvider.select((value) => value.isDark));
+    final isDarkMode = ref.watch(
+      settingsProvider.select((value) => value.isDark),
+    );
     final preReqCodeController = CodeController(
       text: hisRequestModel?.preRequestScript,
       language: javascript,
@@ -31,18 +33,18 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
     );
 
     preReqCodeController.addListener(() {
-      ref.read(collectionStateNotifierProvider.notifier).update(
-            preRequestScript: preReqCodeController.text,
-          );
+      ref
+          .read(collectionStateNotifierProvider.notifier)
+          .update(preRequestScript: preReqCodeController.text);
     });
 
     postResCodeController.addListener(() {
-      ref.read(collectionStateNotifierProvider.notifier).update(
-            postRequestScript: postResCodeController.text,
-          );
+      ref
+          .read(collectionStateNotifierProvider.notifier)
+          .update(postRequestScript: postResCodeController.text);
     });
 
-    final tabs = [(0, "Pre Request"), (1, "Post Response")];
+    final tabs = [(0, kLabelPreRequest), (1, kLabelPostResponse)];
     final content = [
       CodeEditor(
         controller: preReqCodeController,
@@ -75,10 +77,7 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
           ),
         ),
         Expanded(
-          child: Padding(
-            padding: kPt5o10,
-            child: content[_selectedTabIndex],
-          ),
+          child: Padding(padding: kPt5o10, child: content[_selectedTabIndex]),
         ),
       ],
     );

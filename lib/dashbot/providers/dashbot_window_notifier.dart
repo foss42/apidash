@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/models.dart';
 
 class DashbotWindowNotifier extends StateNotifier<DashbotWindowModel> {
@@ -13,10 +13,14 @@ class DashbotWindowNotifier extends StateNotifier<DashbotWindowModel> {
   }
 
   void updateSize(double dx, double dy, Size screenSize) {
-    final newWidth =
-        (state.width - dx).clamp(400, screenSize.width - state.right);
-    final newHeight =
-        (state.height - dy).clamp(515, screenSize.height - state.bottom);
+    final newWidth = (state.width - dx).clamp(
+      400,
+      screenSize.width - state.right,
+    );
+    final newHeight = (state.height - dy).clamp(
+      515,
+      screenSize.height - state.bottom,
+    );
 
     state = state.copyWith(
       width: newWidth.toDouble(),
@@ -43,5 +47,5 @@ class DashbotWindowNotifier extends StateNotifier<DashbotWindowModel> {
 
 final dashbotWindowNotifierProvider =
     StateNotifierProvider<DashbotWindowNotifier, DashbotWindowModel>((ref) {
-  return DashbotWindowNotifier();
-});
+      return DashbotWindowNotifier();
+    });

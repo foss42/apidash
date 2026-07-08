@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/apitoolgen/request_consolidator.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
@@ -11,18 +12,18 @@ import 'tool_requirements_selector.dart';
 
 class GenerateToolDialog extends ConsumerStatefulWidget {
   final APIDashRequestDescription requestDesc;
-  const GenerateToolDialog({
-    super.key,
-    required this.requestDesc,
-  });
+  const GenerateToolDialog({super.key, required this.requestDesc});
 
   static Future<T?> show<T>(BuildContext context, WidgetRef ref) {
     final aiRequestModel = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.aiRequestModel));
-    HttpRequestModel? requestModel = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel));
-    final responseModel = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpResponseModel));
+      selectedRequestModelProvider.select((value) => value?.aiRequestModel),
+    );
+    HttpRequestModel? requestModel = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.httpRequestModel),
+    );
+    final responseModel = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.httpResponseModel),
+    );
 
     if (aiRequestModel == null && requestModel == null) return Future.value();
     if (requestModel == null) return Future.value();
@@ -49,9 +50,7 @@ class GenerateToolDialog extends ConsumerStatefulWidget {
 
     return showCustomDialog<T>(
       context,
-      GenerateToolDialog(
-        requestDesc: reqDesModel,
-      ),
+      GenerateToolDialog(requestDesc: reqDesModel),
       useRootNavigator: true,
     );
   }
@@ -85,13 +84,15 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
           generatedToolCode = '';
           index = 0;
         });
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            "API Tool generation failed!",
-            style: TextStyle(color: Colors.white),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              kMsgAPIToolGenerationFailed,
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.redAccent,
           ),
-          backgroundColor: Colors.redAccent,
-        ));
+        );
         return;
       }
       setState(() {
@@ -102,36 +103,36 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       setState(() {
         index = 0;
       });
-      String errMsg = 'Unexpected Error Occured';
+      String errMsg = kMsgUnexpectedError;
       if (e.toString().contains('NO_DEFAULT_LLM')) {
-        errMsg = "Please Select Default AI Model in Settings";
+        errMsg = kMsgSelectDefaultAIModel;
       }
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          errMsg,
-          style: TextStyle(color: Colors.white),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errMsg, style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.redAccent,
         ),
-        backgroundColor: Colors.redAccent,
-      ));
+      );
       Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final dialogWidth = constraints.maxWidth;
-      final isExpandedWindow = dialogWidth > WindowWidth.expanded.value;
-      final isLargeWindow = dialogWidth > WindowWidth.large.value;
-      final isExtraLargeWindow = dialogWidth > WindowWidth.large.value;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final dialogWidth = constraints.maxWidth;
+        final isExpandedWindow = dialogWidth > WindowWidth.expanded.value;
+        final isLargeWindow = dialogWidth > WindowWidth.large.value;
+        final isExtraLargeWindow = dialogWidth > WindowWidth.large.value;
 
-      if (isExtraLargeWindow || isLargeWindow || isExpandedWindow) {
-        return SizedBox(
-          height: 600,
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: Row(
-            children: [
-              Flexible(
+        if (isExtraLargeWindow || isLargeWindow || isExpandedWindow) {
+          return SizedBox(
+            height: 600,
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Row(
+              children: [
+                Flexible(
                   flex: 2,
                   child: ToolRequirementSelectorPage(
                     onGenerateCallback: (agent, lang) {
@@ -141,43 +142,45 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
                       });
                       generateAPITool();
                     },
-                  )),
-              Expanded(
-                flex: 3,
-                child: GeneratedToolCodeCopyPage(
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: GeneratedToolCodeCopyPage(
+                    toolCode: generatedToolCode,
+                    language: selectedLanguage.trim(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          return SizedBox(
+            height: 600,
+            // width: MediaQuery.of(context).size.width * 0.8,
+            child: IndexedStack(
+              index: index,
+              children: [
+                Center(
+                  child: ToolRequirementSelectorPage(
+                    onGenerateCallback: (agent, lang) {
+                      setState(() {
+                        selectedLanguage = lang;
+                        selectedAgent = agent;
+                      });
+                      generateAPITool();
+                    },
+                  ),
+                ),
+                GeneratedToolCodeCopyPage(
                   toolCode: generatedToolCode,
                   language: selectedLanguage.trim(),
                 ),
-              ),
-            ],
-          ),
-        );
-      } else {
-        return SizedBox(
-          height: 600,
-          // width: MediaQuery.of(context).size.width * 0.8,
-          child: IndexedStack(
-            index: index,
-            children: [
-              Center(
-                child: ToolRequirementSelectorPage(
-                  onGenerateCallback: (agent, lang) {
-                    setState(() {
-                      selectedLanguage = lang;
-                      selectedAgent = agent;
-                    });
-                    generateAPITool();
-                  },
-                ),
-              ),
-              GeneratedToolCodeCopyPage(
-                toolCode: generatedToolCode,
-                language: selectedLanguage.trim(),
-              ),
-            ],
-          ),
-        );
-      }
-    });
+              ],
+            ),
+          );
+        }
+      },
+    );
   }
 }

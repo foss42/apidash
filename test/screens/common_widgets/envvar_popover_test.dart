@@ -5,8 +5,9 @@ import 'package:apidash/screens/common_widgets/envvar_indicator.dart';
 import 'package:apidash/screens/common_widgets/envvar_popover.dart';
 
 void main() {
-  testWidgets('EnvVarPopover displays correct information',
-      (WidgetTester tester) async {
+  testWidgets('EnvVarPopover displays correct information', (
+    WidgetTester tester,
+  ) async {
     const suggestion = EnvironmentVariableSuggestion(
       isUnknown: false,
       environmentId: 'someId',

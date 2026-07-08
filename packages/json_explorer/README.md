@@ -172,7 +172,7 @@ JsonExplorer(
 )
 ```
 
-Or, folowing the same principle, change how the value looks for specific
+Or, following the same principle, change how the value looks for specific
 value types:
 
 ```dart

@@ -4,7 +4,7 @@ part 'auth_bearer_model.g.dart';
 part 'auth_bearer_model.freezed.dart';
 
 @freezed
-class AuthBearerModel with _$AuthBearerModel {
+abstract class AuthBearerModel with _$AuthBearerModel {
   const factory AuthBearerModel({
     required String token,
   }) = _AuthBearerModel;

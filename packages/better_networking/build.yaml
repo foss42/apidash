@@ -1,0 +1,10 @@
+targets:
+  $default:
+    sources:
+      include:
+        - lib/**
+        - test/**
+        - pubspec.yaml
+        - pubspec.lock
+        - "lib/**/*.g.dart"
+        - "lib/**/*.freezed.dart"

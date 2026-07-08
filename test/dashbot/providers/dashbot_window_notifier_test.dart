@@ -72,7 +72,10 @@ void main() {
         final c = newContainer();
         final notifier = c.read(dashbotWindowNotifierProvider.notifier);
         notifier.updatePosition(
-            0, -2000, screen); // huge up drag (dy negative -> move up)
+          0,
+          -2000,
+          screen,
+        ); // huge up drag (dy negative -> move up)
         final s = c.read(dashbotWindowNotifierProvider);
         // bottom increases but capped: screen.height - height = 800 - 515 = 285
         expect(s.bottom, 285);

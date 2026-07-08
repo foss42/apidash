@@ -6,193 +6,176 @@ part of 'har_log.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$HarLogImpl _$$HarLogImplFromJson(Map json) => _$HarLogImpl(
-      log: json['log'] == null
-          ? null
-          : Log.fromJson(Map<String, dynamic>.from(json['log'] as Map)),
-    );
+_HarLog _$HarLogFromJson(Map json) => _HarLog(
+  log: json['log'] == null
+      ? null
+      : Log.fromJson(Map<String, dynamic>.from(json['log'] as Map)),
+);
 
-Map<String, dynamic> _$$HarLogImplToJson(_$HarLogImpl instance) =>
-    <String, dynamic>{
-      if (instance.log?.toJson() case final value?) 'log': value,
-    };
+Map<String, dynamic> _$HarLogToJson(_HarLog instance) => <String, dynamic>{
+  'log': ?instance.log?.toJson(),
+};
 
-_$LogImpl _$$LogImplFromJson(Map json) => _$LogImpl(
-      version: json['version'] as String?,
-      creator: json['creator'] == null
-          ? null
-          : Creator.fromJson(Map<String, dynamic>.from(json['creator'] as Map)),
-      entries: (json['entries'] as List<dynamic>?)
-          ?.map((e) => Entry.fromJson(Map<String, dynamic>.from(e as Map)))
-          .toList(),
-    );
+_Log _$LogFromJson(Map json) => _Log(
+  version: json['version'] as String?,
+  creator: json['creator'] == null
+      ? null
+      : Creator.fromJson(Map<String, dynamic>.from(json['creator'] as Map)),
+  entries: (json['entries'] as List<dynamic>?)
+      ?.map((e) => Entry.fromJson(Map<String, dynamic>.from(e as Map)))
+      .toList(),
+);
 
-Map<String, dynamic> _$$LogImplToJson(_$LogImpl instance) => <String, dynamic>{
-      if (instance.version case final value?) 'version': value,
-      if (instance.creator?.toJson() case final value?) 'creator': value,
-      if (instance.entries?.map((e) => e.toJson()).toList() case final value?)
-        'entries': value,
-    };
+Map<String, dynamic> _$LogToJson(_Log instance) => <String, dynamic>{
+  'version': ?instance.version,
+  'creator': ?instance.creator?.toJson(),
+  'entries': ?instance.entries?.map((e) => e.toJson()).toList(),
+};
 
-_$CreatorImpl _$$CreatorImplFromJson(Map json) => _$CreatorImpl(
-      name: json['name'] as String?,
-      version: json['version'] as String?,
-    );
+_Creator _$CreatorFromJson(Map json) => _Creator(
+  name: json['name'] as String?,
+  version: json['version'] as String?,
+);
 
-Map<String, dynamic> _$$CreatorImplToJson(_$CreatorImpl instance) =>
-    <String, dynamic>{
-      if (instance.name case final value?) 'name': value,
-      if (instance.version case final value?) 'version': value,
-    };
+Map<String, dynamic> _$CreatorToJson(_Creator instance) => <String, dynamic>{
+  'name': ?instance.name,
+  'version': ?instance.version,
+};
 
-_$EntryImpl _$$EntryImplFromJson(Map json) => _$EntryImpl(
-      startedDateTime: json['startedDateTime'] as String?,
-      time: (json['time'] as num?)?.toInt(),
-      request: json['request'] == null
-          ? null
-          : Request.fromJson(Map<String, dynamic>.from(json['request'] as Map)),
-      response: json['response'] == null
-          ? null
-          : Response.fromJson(
-              Map<String, dynamic>.from(json['response'] as Map)),
-    );
+_Entry _$EntryFromJson(Map json) => _Entry(
+  startedDateTime: json['startedDateTime'] as String?,
+  time: (json['time'] as num?)?.toInt(),
+  request: json['request'] == null
+      ? null
+      : Request.fromJson(Map<String, dynamic>.from(json['request'] as Map)),
+  response: json['response'] == null
+      ? null
+      : Response.fromJson(Map<String, dynamic>.from(json['response'] as Map)),
+);
 
-Map<String, dynamic> _$$EntryImplToJson(_$EntryImpl instance) =>
-    <String, dynamic>{
-      if (instance.startedDateTime case final value?) 'startedDateTime': value,
-      if (instance.time case final value?) 'time': value,
-      if (instance.request?.toJson() case final value?) 'request': value,
-      if (instance.response?.toJson() case final value?) 'response': value,
-    };
+Map<String, dynamic> _$EntryToJson(_Entry instance) => <String, dynamic>{
+  'startedDateTime': ?instance.startedDateTime,
+  'time': ?instance.time,
+  'request': ?instance.request?.toJson(),
+  'response': ?instance.response?.toJson(),
+};
 
-_$RequestImpl _$$RequestImplFromJson(Map json) => _$RequestImpl(
-      method: json['method'] as String?,
-      url: json['url'] as String?,
-      httpVersion: json['httpVersion'] as String?,
-      cookies: json['cookies'] as List<dynamic>?,
-      headers: (json['headers'] as List<dynamic>?)
-          ?.map((e) => Header.fromJson(Map<String, dynamic>.from(e as Map)))
-          .toList(),
-      queryString: (json['queryString'] as List<dynamic>?)
-          ?.map((e) => Query.fromJson(Map<String, dynamic>.from(e as Map)))
-          .toList(),
-      postData: json['postData'] == null
-          ? null
-          : PostData.fromJson(
-              Map<String, dynamic>.from(json['postData'] as Map)),
-      headersSize: (json['headersSize'] as num?)?.toInt(),
-      bodySize: (json['bodySize'] as num?)?.toInt(),
-    );
+_Request _$RequestFromJson(Map json) => _Request(
+  method: json['method'] as String?,
+  url: json['url'] as String?,
+  httpVersion: json['httpVersion'] as String?,
+  cookies: json['cookies'] as List<dynamic>?,
+  headers: (json['headers'] as List<dynamic>?)
+      ?.map((e) => Header.fromJson(Map<String, dynamic>.from(e as Map)))
+      .toList(),
+  queryString: (json['queryString'] as List<dynamic>?)
+      ?.map((e) => Query.fromJson(Map<String, dynamic>.from(e as Map)))
+      .toList(),
+  postData: json['postData'] == null
+      ? null
+      : PostData.fromJson(Map<String, dynamic>.from(json['postData'] as Map)),
+  headersSize: (json['headersSize'] as num?)?.toInt(),
+  bodySize: (json['bodySize'] as num?)?.toInt(),
+);
 
-Map<String, dynamic> _$$RequestImplToJson(_$RequestImpl instance) =>
-    <String, dynamic>{
-      if (instance.method case final value?) 'method': value,
-      if (instance.url case final value?) 'url': value,
-      if (instance.httpVersion case final value?) 'httpVersion': value,
-      if (instance.cookies case final value?) 'cookies': value,
-      if (instance.headers?.map((e) => e.toJson()).toList() case final value?)
-        'headers': value,
-      if (instance.queryString?.map((e) => e.toJson()).toList()
-          case final value?)
-        'queryString': value,
-      if (instance.postData?.toJson() case final value?) 'postData': value,
-      if (instance.headersSize case final value?) 'headersSize': value,
-      if (instance.bodySize case final value?) 'bodySize': value,
-    };
+Map<String, dynamic> _$RequestToJson(_Request instance) => <String, dynamic>{
+  'method': ?instance.method,
+  'url': ?instance.url,
+  'httpVersion': ?instance.httpVersion,
+  'cookies': ?instance.cookies,
+  'headers': ?instance.headers?.map((e) => e.toJson()).toList(),
+  'queryString': ?instance.queryString?.map((e) => e.toJson()).toList(),
+  'postData': ?instance.postData?.toJson(),
+  'headersSize': ?instance.headersSize,
+  'bodySize': ?instance.bodySize,
+};
 
-_$PostDataImpl _$$PostDataImplFromJson(Map json) => _$PostDataImpl(
-      mimeType: json['mimeType'] as String?,
-      text: json['text'] as String?,
-      params: (json['params'] as List<dynamic>?)
-          ?.map((e) => Param.fromJson(Map<String, dynamic>.from(e as Map)))
-          .toList(),
-    );
+_PostData _$PostDataFromJson(Map json) => _PostData(
+  mimeType: json['mimeType'] as String?,
+  text: json['text'] as String?,
+  params: (json['params'] as List<dynamic>?)
+      ?.map((e) => Param.fromJson(Map<String, dynamic>.from(e as Map)))
+      .toList(),
+);
 
-Map<String, dynamic> _$$PostDataImplToJson(_$PostDataImpl instance) =>
-    <String, dynamic>{
-      if (instance.mimeType case final value?) 'mimeType': value,
-      if (instance.text case final value?) 'text': value,
-      if (instance.params?.map((e) => e.toJson()).toList() case final value?)
-        'params': value,
-    };
+Map<String, dynamic> _$PostDataToJson(_PostData instance) => <String, dynamic>{
+  'mimeType': ?instance.mimeType,
+  'text': ?instance.text,
+  'params': ?instance.params?.map((e) => e.toJson()).toList(),
+};
 
-_$ParamImpl _$$ParamImplFromJson(Map json) => _$ParamImpl(
-      name: json['name'] as String?,
-      value: json['value'] as String?,
-      fileName: json['fileName'] as String?,
-      contentType: json['contentType'] as String?,
-      disabled: json['disabled'] as bool?,
-    );
+_Param _$ParamFromJson(Map json) => _Param(
+  name: json['name'] as String?,
+  value: json['value'] as String?,
+  fileName: json['fileName'] as String?,
+  contentType: json['contentType'] as String?,
+  disabled: json['disabled'] as bool?,
+);
 
-Map<String, dynamic> _$$ParamImplToJson(_$ParamImpl instance) =>
-    <String, dynamic>{
-      if (instance.name case final value?) 'name': value,
-      if (instance.value case final value?) 'value': value,
-      if (instance.fileName case final value?) 'fileName': value,
-      if (instance.contentType case final value?) 'contentType': value,
-      if (instance.disabled case final value?) 'disabled': value,
-    };
+Map<String, dynamic> _$ParamToJson(_Param instance) => <String, dynamic>{
+  'name': ?instance.name,
+  'value': ?instance.value,
+  'fileName': ?instance.fileName,
+  'contentType': ?instance.contentType,
+  'disabled': ?instance.disabled,
+};
 
-_$QueryImpl _$$QueryImplFromJson(Map json) => _$QueryImpl(
-      name: json['name'] as String?,
-      value: json['value'] as String?,
-      disabled: json['disabled'] as bool?,
-    );
+_Query _$QueryFromJson(Map json) => _Query(
+  name: json['name'] as String?,
+  value: json['value'] as String?,
+  disabled: json['disabled'] as bool?,
+);
 
-Map<String, dynamic> _$$QueryImplToJson(_$QueryImpl instance) =>
-    <String, dynamic>{
-      if (instance.name case final value?) 'name': value,
-      if (instance.value case final value?) 'value': value,
-      if (instance.disabled case final value?) 'disabled': value,
-    };
+Map<String, dynamic> _$QueryToJson(_Query instance) => <String, dynamic>{
+  'name': ?instance.name,
+  'value': ?instance.value,
+  'disabled': ?instance.disabled,
+};
 
-_$HeaderImpl _$$HeaderImplFromJson(Map json) => _$HeaderImpl(
-      name: json['name'] as String?,
-      value: json['value'] as String?,
-      disabled: json['disabled'] as bool?,
-    );
+_Header _$HeaderFromJson(Map json) => _Header(
+  name: json['name'] as String?,
+  value: json['value'] as String?,
+  disabled: json['disabled'] as bool?,
+);
 
-Map<String, dynamic> _$$HeaderImplToJson(_$HeaderImpl instance) =>
-    <String, dynamic>{
-      if (instance.name case final value?) 'name': value,
-      if (instance.value case final value?) 'value': value,
-      if (instance.disabled case final value?) 'disabled': value,
-    };
+Map<String, dynamic> _$HeaderToJson(_Header instance) => <String, dynamic>{
+  'name': ?instance.name,
+  'value': ?instance.value,
+  'disabled': ?instance.disabled,
+};
 
-_$ResponseImpl _$$ResponseImplFromJson(Map json) => _$ResponseImpl(
-      status: (json['status'] as num?)?.toInt(),
-      statusText: json['statusText'] as String?,
-      httpVersion: json['httpVersion'] as String?,
-      cookies: json['cookies'] as List<dynamic>?,
-      headers: json['headers'] as List<dynamic>?,
-      content: json['content'] == null
-          ? null
-          : Content.fromJson(Map<String, dynamic>.from(json['content'] as Map)),
-      redirectURL: json['redirectURL'] as String?,
-      headersSize: (json['headersSize'] as num?)?.toInt(),
-      bodySize: (json['bodySize'] as num?)?.toInt(),
-    );
+_Response _$ResponseFromJson(Map json) => _Response(
+  status: (json['status'] as num?)?.toInt(),
+  statusText: json['statusText'] as String?,
+  httpVersion: json['httpVersion'] as String?,
+  cookies: json['cookies'] as List<dynamic>?,
+  headers: json['headers'] as List<dynamic>?,
+  content: json['content'] == null
+      ? null
+      : Content.fromJson(Map<String, dynamic>.from(json['content'] as Map)),
+  redirectURL: json['redirectURL'] as String?,
+  headersSize: (json['headersSize'] as num?)?.toInt(),
+  bodySize: (json['bodySize'] as num?)?.toInt(),
+);
 
-Map<String, dynamic> _$$ResponseImplToJson(_$ResponseImpl instance) =>
-    <String, dynamic>{
-      if (instance.status case final value?) 'status': value,
-      if (instance.statusText case final value?) 'statusText': value,
-      if (instance.httpVersion case final value?) 'httpVersion': value,
-      if (instance.cookies case final value?) 'cookies': value,
-      if (instance.headers case final value?) 'headers': value,
-      if (instance.content?.toJson() case final value?) 'content': value,
-      if (instance.redirectURL case final value?) 'redirectURL': value,
-      if (instance.headersSize case final value?) 'headersSize': value,
-      if (instance.bodySize case final value?) 'bodySize': value,
-    };
+Map<String, dynamic> _$ResponseToJson(_Response instance) => <String, dynamic>{
+  'status': ?instance.status,
+  'statusText': ?instance.statusText,
+  'httpVersion': ?instance.httpVersion,
+  'cookies': ?instance.cookies,
+  'headers': ?instance.headers,
+  'content': ?instance.content?.toJson(),
+  'redirectURL': ?instance.redirectURL,
+  'headersSize': ?instance.headersSize,
+  'bodySize': ?instance.bodySize,
+};
 
-_$ContentImpl _$$ContentImplFromJson(Map json) => _$ContentImpl(
-      size: (json['size'] as num?)?.toInt(),
-      mimeType: json['mimeType'] as String?,
-    );
+_Content _$ContentFromJson(Map json) => _Content(
+  size: (json['size'] as num?)?.toInt(),
+  mimeType: json['mimeType'] as String?,
+);
 
-Map<String, dynamic> _$$ContentImplToJson(_$ContentImpl instance) =>
-    <String, dynamic>{
-      if (instance.size case final value?) 'size': value,
-      if (instance.mimeType case final value?) 'mimeType': value,
-    };
+Map<String, dynamic> _$ContentToJson(_Content instance) => <String, dynamic>{
+  'size': ?instance.size,
+  'mimeType': ?instance.mimeType,
+};

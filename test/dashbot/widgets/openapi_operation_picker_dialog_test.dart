@@ -27,8 +27,9 @@ const _sampleSpecJson = '''
 void main() {
   OpenApi _parse(String json) => OpenApi.fromString(source: json, format: null);
 
-  testWidgets('returns empty selection when spec has no operations',
-      (tester) async {
+  testWidgets('returns empty selection when spec has no operations', (
+    tester,
+  ) async {
     final spec = _parse(_emptySpecJson);
 
     List<OpenApiOperationItem>? resolved;
@@ -54,8 +55,9 @@ void main() {
     expect(resolved, isEmpty);
   });
 
-  testWidgets('allows toggling select-all and individual operations',
-      (tester) async {
+  testWidgets('allows toggling select-all and individual operations', (
+    tester,
+  ) async {
     final spec = _parse(_sampleSpecJson);
 
     late Future<List<OpenApiOperationItem>?> dialogFuture;
@@ -94,26 +96,17 @@ void main() {
     final importFinder = find.widgetWithText(FilledButton, 'Import');
 
     // Initial state: everything selected → import enabled
-    expect(
-      tester.widget<FilledButton>(importFinder).onPressed,
-      isNotNull,
-    );
+    expect(tester.widget<FilledButton>(importFinder).onPressed, isNotNull);
 
     // Toggle "Select all" off → deselect everything & disable import
     await tester.tap(selectAllFinder);
     await tester.pumpAndSettle();
-    expect(
-      tester.widget<FilledButton>(importFinder).onPressed,
-      isNull,
-    );
+    expect(tester.widget<FilledButton>(importFinder).onPressed, isNull);
 
     // Toggle "Select all" back on → reselect all and enable import
     await tester.tap(selectAllFinder);
     await tester.pumpAndSettle();
-    expect(
-      tester.widget<FilledButton>(importFinder).onPressed,
-      isNotNull,
-    );
+    expect(tester.widget<FilledButton>(importFinder).onPressed, isNotNull);
 
     final usersOpFinder = find.text('GET /users');
     expect(usersOpFinder, findsOneWidget);
@@ -121,10 +114,7 @@ void main() {
     // Uncheck a single operation → coverage for removal branch
     await tester.tap(usersOpFinder);
     await tester.pumpAndSettle();
-    expect(
-      tester.widget<FilledButton>(importFinder).onPressed,
-      isNotNull,
-    );
+    expect(tester.widget<FilledButton>(importFinder).onPressed, isNotNull);
 
     // Check it again → coverage for addition branch
     await tester.tap(usersOpFinder);

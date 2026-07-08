@@ -5,8 +5,9 @@ import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/widgets/widgets.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_utils.dart';
@@ -23,9 +24,7 @@ void main() {
         ...overrides,
       ],
       child: MaterialApp(
-        home: Scaffold(
-          body: ChatScreen(initialTask: initialTask),
-        ),
+        home: Scaffold(body: ChatScreen(initialTask: initialTask)),
       ),
     );
   }
@@ -49,8 +48,9 @@ void main() {
     expect(spy.sendMessageCalls, isEmpty);
   });
 
-  testWidgets('ChatScreen triggers initial task without user input',
-      (tester) async {
+  testWidgets('ChatScreen triggers initial task without user input', (
+    tester,
+  ) async {
     late SpyChatViewmodel spy;
     await tester.pumpWidget(
       createChatScreen(
@@ -145,8 +145,12 @@ void main() {
         overrides: [
           chatViewmodelProvider.overrideWith((ref) {
             spy = SpyChatViewmodel(ref);
-            spy.setState(const ChatState(
-                isGenerating: true, currentStreamingResponse: 'Streaming...'));
+            spy.setState(
+              const ChatState(
+                isGenerating: true,
+                currentStreamingResponse: 'Streaming...',
+              ),
+            );
             return spy;
           }),
         ],
@@ -155,8 +159,9 @@ void main() {
 
     await tester.pump();
 
-    final markdown =
-        tester.widget<MarkdownBody>(find.byType(MarkdownBody).first);
+    final markdown = tester.widget<MarkdownBody>(
+      find.byType(MarkdownBody).first,
+    );
     expect(markdown.data, 'Streaming...');
   });
 
@@ -220,8 +225,9 @@ void main() {
     expect(spy.sendMessageCalls.first.type, ChatMessageType.general);
   });
 
-  testWidgets('Task suggestions panel hides when generating starts',
-      (tester) async {
+  testWidgets('Task suggestions panel hides when generating starts', (
+    tester,
+  ) async {
     late SpyChatViewmodel spy;
     await tester.pumpWidget(
       createChatScreen(
@@ -247,18 +253,21 @@ void main() {
     expect(find.byType(DashbotTaskButtons), findsNothing);
   });
 
-  testWidgets('Scroll animation triggers on streaming response changes',
-      (tester) async {
+  testWidgets('Scroll animation triggers on streaming response changes', (
+    tester,
+  ) async {
     late SpyChatViewmodel spy;
     await tester.pumpWidget(
       createChatScreen(
         overrides: [
           chatViewmodelProvider.overrideWith((ref) {
             spy = SpyChatViewmodel(ref);
-            spy.setState(const ChatState(
-              isGenerating: true,
-              currentStreamingResponse: 'Initial...',
-            ));
+            spy.setState(
+              const ChatState(
+                isGenerating: true,
+                currentStreamingResponse: 'Initial...',
+              ),
+            );
             return spy;
           }),
         ],
@@ -268,18 +277,21 @@ void main() {
     await tester.pump();
 
     // Change the streaming response - this should trigger scroll
-    spy.setState(const ChatState(
-      isGenerating: true,
-      currentStreamingResponse: 'Updated streaming response...',
-    ));
+    spy.setState(
+      const ChatState(
+        isGenerating: true,
+        currentStreamingResponse: 'Updated streaming response...',
+      ),
+    );
     await tester.pump();
 
     // Verify scrolling behavior by checking that the new content is rendered
     expect(find.text('Updated streaming response...'), findsOneWidget);
   });
 
-  testWidgets('Scroll animation triggers when generation completes',
-      (tester) async {
+  testWidgets('Scroll animation triggers when generation completes', (
+    tester,
+  ) async {
     late SpyChatViewmodel spy;
     final messages = [
       ChatMessage(
@@ -306,10 +318,9 @@ void main() {
 
     // Complete generation - this should trigger scroll
     spy.setMessages(messages);
-    spy.setState(ChatState(
-      isGenerating: false,
-      chatSessions: {'global': messages},
-    ));
+    spy.setState(
+      ChatState(isGenerating: false, chatSessions: {'global': messages}),
+    );
     await tester.pump();
 
     expect(find.text('Generated response'), findsOneWidget);

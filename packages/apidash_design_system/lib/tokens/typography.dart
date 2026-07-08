@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final kFontFamily = GoogleFonts.openSans().fontFamily;
-final kFontFamilyFallback = !kIsWeb && (Platform.isIOS || Platform.isMacOS)
-    ? null
-    : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
+final kFontFamilyFallback =
+    !kIsWeb && (Platform.isIOS || Platform.isMacOS || Platform.isWindows)
+        ? null
+        : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
 
 final kCodeStyle = TextStyle(
   fontFamily: GoogleFonts.sourceCodePro().fontFamily,

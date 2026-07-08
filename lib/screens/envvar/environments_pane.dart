@@ -9,14 +9,13 @@ import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
 class EnvironmentsPane extends ConsumerWidget {
-  const EnvironmentsPane({
-    super.key,
-  });
+  const EnvironmentsPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
+      padding:
+          (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -30,15 +29,15 @@ class EnvironmentsPane extends ConsumerWidget {
           ),
           kVSpacer10,
           SidebarFilter(
-            filterHintText: "Filter by name",
+            filterHintText: kHintFilterByName,
             onFilterFieldChanged: (value) {
-              ref.read(environmentSearchQueryProvider.notifier).state =
-                  value.toLowerCase();
+              ref.read(environmentSearchQueryProvider.notifier).state = value
+                  .toLowerCase();
             },
           ),
           kVSpacer10,
           const Expanded(child: EnvironmentsList()),
-          kVSpacer5
+          kVSpacer5,
         ],
       ),
     );
@@ -46,16 +45,17 @@ class EnvironmentsPane extends ConsumerWidget {
 }
 
 class EnvironmentsList extends HookConsumerWidget {
-  const EnvironmentsList({
-    super.key,
-  });
+  const EnvironmentsList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final environmentSequence = ref.watch(environmentSequenceProvider);
     final environmentItems = ref.watch(environmentsStateNotifierProvider)!;
-    final alwaysShowEnvironmentsPaneScrollbar = ref.watch(settingsProvider
-        .select((value) => value.alwaysShowCollectionPaneScrollbar));
+    final alwaysShowEnvironmentsPaneScrollbar = ref.watch(
+      settingsProvider.select(
+        (value) => value.alwaysShowCollectionPaneScrollbar,
+      ),
+    );
     final filterQuery = ref.watch(environmentSearchQueryProvider).trim();
 
     ScrollController scrollController = useScrollController();
@@ -97,9 +97,7 @@ class EnvironmentsList extends HookConsumerWidget {
                     itemBuilder: (context, index) {
                       var id = environmentSequence[index];
                       if (id == kGlobalEnvironmentId) {
-                        return SizedBox.shrink(
-                          key: ValueKey(id),
-                        );
+                        return SizedBox.shrink(key: ValueKey(id));
                       }
                       if (kIsMobile) {
                         return ReorderableDelayedDragStartListener(
@@ -138,9 +136,7 @@ class EnvironmentsList extends HookConsumerWidget {
                     children: environmentSequence.map((id) {
                       var item = environmentItems[id]!;
                       if (id == kGlobalEnvironmentId) {
-                        return SizedBox.shrink(
-                          key: ValueKey(id),
-                        );
+                        return SizedBox.shrink(key: ValueKey(id));
                       }
                       if (item.name.toLowerCase().contains(filterQuery)) {
                         return Padding(

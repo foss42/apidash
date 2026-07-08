@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSoC 2026 — MCP Testing — Vinícius Melo Almeida</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  @page { size: A4; margin: 18mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; font-size: 11pt; line-height: 1.5; color: #1a1a1a; max-width: 210mm; margin: 0 auto; padding: 18mm; }
+  h1 { font-size: 18pt; font-weight: 700; margin-bottom: 16px; color: #111; }
+  h2 { font-size: 14pt; font-weight: 700; margin-top: 24px; margin-bottom: 8px; border-bottom: 1.5px solid #ddd; padding-bottom: 4px; }
+  h3 { font-size: 12pt; font-weight: 700; margin-top: 20px; margin-bottom: 6px; }
+  p { margin-bottom: 8px; }
+  strong { font-weight: 600; }
+  a { color: #2563eb; text-decoration: none; }
+  ol, ul { padding-left: 20px; margin-bottom: 8px; }
+  li { margin-bottom: 4px; }
+  hr { border: none; border-top: 1px solid #e5e7eb; margin: 20px 0; }
+  code { background: #f3f4f6; padding: 1px 4px; border-radius: 3px; font-size: 10pt; }
+  pre { background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; font-size: 8.5pt; margin: 8px 0 12px; white-space: pre-wrap; word-wrap: break-word; }
+  pre code { background: none; padding: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 10.5pt; }
+  th { text-align: left; padding: 6px 8px; background: #f9fafb; border-bottom: 2px solid #e5e7eb; font-weight: 600; }
+  td { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+  blockquote { border-left: 3px solid #d1d5db; padding-left: 12px; color: #6b7280; margin: 8px 0; }
+  img { max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0; }
+
+  /* Gantt timeline */
+  .gantt { margin: 16px 0; }
+  .gantt-row { display: flex; align-items: center; margin-bottom: 3px; }
+  .gantt-label { width: 100px; font-size: 9pt; font-weight: 600; text-align: right; padding-right: 8px; color: #374151; flex-shrink: 0; }
+  .gantt-bar-container { flex: 1; display: flex; height: 22px; position: relative; }
+  .gantt-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8pt; font-weight: 600; color: white; }
+  .gantt-spacer { height: 100%; }
+  .gantt-weeks { display: flex; margin-left: 100px; margin-bottom: 4px; }
+  .gantt-week { flex: 1; text-align: center; font-size: 8pt; color: #9ca3af; }
+  .gantt-milestone { display: flex; align-items: center; margin: 6px 0; }
+  .gantt-milestone-label { width: 100px; text-align: right; padding-right: 8px; font-size: 9pt; font-weight: 700; color: #dc2626; flex-shrink: 0; }
+  .gantt-milestone-line { flex: 1; border-top: 2px dashed #dc2626; position: relative; }
+
+  /* Scope management */
+  .scope-box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 14px; margin: 8px 0; }
+  .scope-box h4 { font-size: 10pt; margin-bottom: 4px; }
+  .scope-core { border-left: 4px solid #10b981; }
+  .scope-stretch { border-left: 4px solid #f59e0b; }
+  .scope-fallback { border-left: 4px solid #6b7280; }
+
+  /* Break control */
+  .no-break { break-inside: avoid; }
+</style>
+</head>
+<body>
+<h1>GSoC 2026 Application: MCP Testing — Protocol-First Test Harness for MCP Servers and Clients</h1>
+
+<h3>About</h3>
+<ol>
+<li><strong>Full Name:</strong> Vinícius Melo Almeida</li>
+<li><strong>Contact:</strong> <a href="mailto:vinimelo@riseup.net">vinimelo@riseup.net</a></li>
+<li><strong>Discord:</strong> vinimlo</li>
+<li><strong>Home page:</strong> —</li>
+<li><strong>Blog:</strong> —</li>
+<li><strong>GitHub:</strong> <a href="https://github.com/vinimlo">https://github.com/vinimlo</a></li>
+<li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/vinimlo/">https://www.linkedin.com/in/vinimlo/</a></li>
+<li><strong>Time zone:</strong> BRT (UTC-3)</li>
+<li><strong>Resume:</strong> <a href="https://drive.google.com/file/d/1z9fIGaFpxUeHaWfBtjNt2oPVPaDUeJkb/view?usp=sharing">PDF</a></li>
+</ol>
+
+<h3>University Info</h3>
+<ol>
+<li><strong>University:</strong> Universidade Federal da Bahia (UFBA)</li>
+<li><strong>Program:</strong> Bachelor's in Information Systems (Sistemas de Informação)</li>
+<li><strong>Year:</strong> 4th year</li>
+<li><strong>Expected graduation:</strong> December 2029</li>
+</ol>
+
+<hr>
+
+<h3>Motivation &amp; Past Experience</h3>
+
+<p><strong>1. Have you worked on or contributed to a FOSS project before?</strong></p>
+<p>Yes. I contributed to <a href="https://github.com/wokwi/wokwi-docs/pull/116">Wokwi</a> (documentation PR merged — added <code>Serial.begin</code> to the ESP32 WiFi guide) and <a href="https://gitlab.com/noosfero/noosfero">Noosfero</a> (submitted MRs for <a href="https://gitlab.com/noosfero/noosfero/-/merge_requests/1387">audio playback</a> and <a href="https://gitlab.com/noosfero/noosfero/-/merge_requests/1306">podcasting</a> functionality on GitLab).</p>
+<p>I also maintain open source projects: <a href="https://github.com/vinimlo/galaxy-profile"><strong>galaxy-profile</strong></a> (458+ stars, GPL-3.0 — GitHub profile reimagined as a galaxy with auto-generated SVG cards) and <a href="https://github.com/vinimlo/tabAla"><strong>tabAla</strong></a> (Chrome extension for tab organization, Apache 2.0).</p>
+<p>Beyond code, I coordinated the <a href="https://flisolssa.gitlab.io/"><strong>Festival Latino-Americano de Instalação de Software Livre (FLISOL)</strong></a> in Salvador 2018 — the largest free software event in Latin America — organizing workshops, talks, and install fests to promote free software adoption.</p>
+
+<p><strong>2. What is your one project/achievement that you are most proud of? Why?</strong></p>
+<p>My published paper at <a href="https://periodicos.univali.br/index.php/acotb/article/view/19528">Computer on the Beach 2023</a> — <em>"IRIS: Extração, Organização e Classificação de Conteúdos do Projeto Pedagógico de Curso do Técnico em Automação Industrial"</em> (DOI: <a href="https://doi.org/10.14210/cotb.v14.p544-549">10.14210/cotb.v14.p544-549</a>).</p>
+<p>It taught me to take a real-world problem (students struggling to navigate course content), design a solution (automated extraction and classification using web scraping and NLP), implement it, and defend it through peer review. The discipline of academic rigor — formulating hypotheses, testing systematically, documenting results — directly shapes how I approach engineering today.</p>
+
+<p><strong>3. What kind of problems or challenges motivate you the most?</strong></p>
+<p>Problems at the intersection of developer tooling and emerging protocols. When a new technology like MCP emerges but the ecosystem tooling hasn't caught up, developers waste time on manual processes that could be automated. I'm motivated by closing that gap — building the testing, validation, and debugging tools that let developers focus on building, not fighting their tools.</p>
+<p>This is why I co-founded <a href="https://github.com/vinimlo">Seu AgenteIA</a> — to bring AI agent systems to production. And it's why MCP Testing resonates: I've experienced firsthand what it's like to build MCP-based systems without proper testing infrastructure.</p>
+
+<p><strong>4. Will you be working on GSoC full-time?</strong></p>
+<p>Part-time (~20h/week). I'll be working at my company <a href="https://rumotech.com.br">Rumo Tecnologias</a> alongside GSoC. The 175-hour project scope requires ~14.6h/week over 12 weeks, which is comfortably within my availability. My work with AI systems and API integrations at Rumo keeps me close to the problems MCP Testing addresses.</p>
+
+<p><strong>5. Do you mind regularly syncing up with the project mentors?</strong></p>
+<p>Not at all — I actively prefer it. Regular check-ins help catch misalignments early and keep the project on track. I'm available for weekly syncs and responsive on Discord throughout the week.</p>
+
+<p><strong>6. What interests you the most about API Dash?</strong></p>
+<p>API Dash occupies a strategic position: it's already the tool developers use for API testing, and MCP is becoming the API layer of the AI world. Adding MCP testing capability means API Dash becomes the natural home for a developer's entire API workflow — REST, GraphQL, and now AI agent protocols.</p>
+<p>I'm also impressed by the codebase quality: the monorepo structure with Melos, Riverpod for state management, the <code>genai</code> package abstracting multiple AI providers, and the Freezed-based immutable models. These are patterns I use in my own production systems, and it shows mature engineering.</p>
+
+<p><strong>7. Can you mention some areas where the project can be improved?</strong></p>
+<ul>
+<li><strong>MCP support</strong> is the most significant gap. As AI agents become mainstream, developers need first-class tooling for testing MCP servers alongside traditional APIs.</li>
+<li><strong>CI/CD integration</strong> could be stronger — providing exportable test results in standard formats (JUnit XML, TAP) would make API Dash relevant in enterprise and automated workflows.</li>
+<li><strong>Automated regression testing</strong> — beyond one-off API calls, developers need to save test scenarios and replay them to catch regressions after server changes.</li>
+</ul>
+
+<p><strong>8. Have you interacted with and helped API Dash community?</strong></p>
+<p>Yes — I joined the <a href="https://discord.com/invite/bBeSdtJ6Ue">Discord</a> (#gsoc-foss-apidash channel), posted my introduction, submitted <a href="https://github.com/foss42/apidash/pull/1476">PR #1476</a> with my MCP Testing idea document, and <a href="https://github.com/foss42/apidash/discussions/1054#discussioncomment-16318842">commented on Discussion #1054</a> expressing interest in Idea #1.</p>
+
+<hr>
+
+<h3>Project Proposal Information</h3>
+
+<p><strong>1. Proposal Title</strong></p>
+<p>MCP Testing — Protocol-First Test Harness for MCP Servers and Clients</p>
+
+<p><strong>2. Abstract</strong></p>
+<p>The Model Context Protocol (MCP) ecosystem lacks standardized testing tooling. Developers building MCP integrations must manually craft JSON-RPC requests, cannot validate schema conformance automatically, and have no mock infrastructure for deterministic client-side testing.</p>
+<p>This project builds a <strong>protocol-first</strong> testing system designed for automation from day one. The core is a conformance engine that runs headless (CLI, CI pipelines) or interactive (web UI), delivered as <strong>three standalone packages</strong>:</p>
+<ol>
+<li><strong><code>mcp-conformance</code></strong> — Schema validator, assertion framework, 45+ conformance tests covering all six MCP primitives (Tools, Resources, Prompts, Sampling, Roots, Notifications), network recording, and CLI with JUnit XML / TAP / JSON output</li>
+<li><strong><code>mcp-mock</code></strong> — Configurable mock MCP server with replay mode and failure injection</li>
+<li><strong>MCP Testing UI</strong> — React web interface for interactive exploration, test execution, and recording inspection</li>
+</ol>
+<p>This architecture ensures every test can be automated in CI before it's ever run manually — and that the project delivers value even if the UI is the last piece to ship.</p>
+
+<p><strong>3. Detailed Description</strong></p>
+
+<h2>Problem</h2>
+<p>Developers building MCP integrations face four pain points:</p>
+<ul>
+<li><strong>No schema validation tooling.</strong> There's no way to automatically verify that an MCP server's tool definitions conform to the spec — missing required fields, malformed JSON Schema for parameters, or invalid transport configurations go undetected until runtime.</li>
+<li><strong>Manual testing workflows.</strong> Developers manually craft JSON-RPC requests, inspect responses by hand, and mentally track whether the server handles edge cases (malformed input, missing parameters, timeouts).</li>
+<li><strong>No conformance testing.</strong> There's no standard suite to verify that a server correctly implements the MCP protocol lifecycle: <code>initialize</code> handshake with capability negotiation, <code>tools/list</code> discovery, <code>tools/call</code> execution, proper JSON-RPC 2.0 error codes, and transport negotiation.</li>
+<li><strong>No client-side testing support.</strong> Applications consuming MCP servers have no mock infrastructure for deterministic testing without depending on live server availability.</li>
+</ul>
+
+<h2>Architecture: Protocol-First, Automation-First</h2>
+<p>The key architectural decision is: <strong>the engine is the product, the UI is a viewer.</strong></p>
+<p>Every test runs headless first. The CLI is the primary interface. The web UI is an interactive explorer layered on top of the same engine. This means:</p>
+<ul>
+<li>CI integration works from Week 4 (not an afterthought)</li>
+<li>The project delivers value even if UI work extends</li>
+<li>Each package is standalone and reusable beyond API Dash</li>
+</ul>
+
+<h3>Package 1: <code>mcp-conformance</code> (TypeScript / Node.js)</h3>
+<p>The core testing engine, published as an npm package.</p>
+
+<p><strong>Transport Adapters:</strong><br>
+Abstraction layer supporting stdio and Streamable HTTP. Each adapter implements a common interface: <code>connect()</code>, <code>send()</code>, <code>receive()</code>, <code>disconnect()</code>. This isolates transport concerns from testing logic.</p>
+
+<div class="no-break" style="margin: 12px 0;">
+  <div style="border: 2px solid #6b7280; border-radius: 8px; padding: 12px 16px; background: #f9fafb;">
+    <div style="text-align: center; font-weight: 700; font-size: 10pt; color: #374151; margin-bottom: 10px;">TransportAdapter</div>
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <div style="border: 2px solid #3b82f6; border-radius: 6px; padding: 8px 14px; background: #eff6ff; flex: 1; max-width: 180px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #1d4ed8;">StdioAdapter</div>
+        <div style="font-size: 8.5pt; color: #6b7280;">subprocess + readline</div>
+      </div>
+      <div style="border: 2px solid #8b5cf6; border-radius: 6px; padding: 8px 14px; background: #f5f3ff; flex: 1; max-width: 220px;">
+        <div style="font-weight: 700; font-size: 9.5pt; color: #6d28d9;">StreamableHTTPAdapter</div>
+        <div style="font-size: 8.5pt; color: #6b7280;">HTTP POST + SSE response stream</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p><strong>Schema Validator:</strong><br>
+Parses MCP server tool definitions and validates against the spec:</p>
+<ul>
+<li>Tool names, descriptions, and <code>inputSchema</code> conformance</li>
+<li>JSON Schema types for parameters are valid and complete</li>
+<li>Required vs. optional parameters are properly declared</li>
+<li>Capability declarations match actual server behavior</li>
+</ul>
+<p>Returns structured validation results with error messages and fix suggestions, consumable both programmatically and via CLI output.</p>
+
+<p><strong>Assertion Framework:</strong><br>
+Composable, protocol-based assertions inspired by testing framework patterns:</p>
+<ul>
+<li><strong>Protocol assertions:</strong> Verify JSON-RPC 2.0 compliance, correct error codes (-32700, -32600, -32601, -32602), proper capability negotiation</li>
+<li><strong>Schema assertions:</strong> Validate tool definitions, input schemas, response structures</li>
+<li><strong>Response assertions:</strong> Content matching (contains, not_contains, regex), response timing</li>
+<li><strong>Tool call assertions:</strong> Verify specific tools are called with expected parameters and return expected result shapes</li>
+</ul>
+<p>Each assertion is a standalone function that takes traces/responses and returns pass/fail with detailed error context. This makes assertions testable, composable, and extensible without modifying the runner.</p>
+
+<p><strong>Conformance Test Suite:</strong><br>
+45+ pre-built test cases covering <strong>all six MCP primitives</strong> plus transport, edge cases, and MCP Apps:</p>
+
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Tests</th>
+<th>What they verify</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transport</td>
+<td>5+</td>
+<td>stdio lifecycle, Streamable HTTP connection, graceful shutdown, reconnection</td>
+</tr>
+<tr>
+<td>Protocol</td>
+<td>8+</td>
+<td><code>initialize</code> handshake, capability negotiation, protocol version matching, JSON-RPC 2.0 compliance</td>
+</tr>
+<tr>
+<td>Tools</td>
+<td>8+</td>
+<td><code>tools/list</code> discovery, <code>tools/call</code> with valid/invalid params, error codes (-32601, -32602), schema validation</td>
+</tr>
+<tr>
+<td>Resources</td>
+<td>4+</td>
+<td><code>resources/list</code> enumeration, URI resolution, content type validation, <code>resources/subscribe</code> notification delivery</td>
+</tr>
+<tr>
+<td>Prompts</td>
+<td>3+</td>
+<td><code>prompts/list</code> discovery, argument validation (required/optional), <code>prompts/get</code> message generation with correct roles</td>
+</tr>
+<tr>
+<td>Sampling</td>
+<td>3+</td>
+<td><code>createMessage</code> request format compliance, mock LLM response handling, <code>includeContext</code> behavior, timeout handling</td>
+</tr>
+<tr>
+<td>Roots</td>
+<td>2+</td>
+<td>Root boundary enforcement, <code>roots/list_changed</code> notification on root updates</td>
+</tr>
+<tr>
+<td>Notifications</td>
+<td>3+</td>
+<td><code>tools/list_changed</code> and <code>resources/list_changed</code> delivery, <code>progress</code> token tracking, event ordering, notification format (no <code>id</code> field)</td>
+</tr>
+<tr>
+<td>Edge Cases</td>
+<td>6+</td>
+<td>malformed JSON, unknown methods, oversized payloads, concurrent requests, duplicate initialize idempotency</td>
+</tr>
+<tr>
+<td>MCP Apps</td>
+<td>4+</td>
+<td><code>ui://</code> resource registration, MIME type (<code>text/html;profile=mcp-app</code>), <code>ui/initialize</code> handshake, <code>hostContext</code> support, CSP declaration checks</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Network Recording:</strong><br>
+Captures real MCP traffic (JSON-RPC messages) and serializes to fixture files:</p>
+
+<div class="no-break" style="margin: 12px 0;">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 8px;">
+    <div style="border: 2px solid #3b82f6; border-radius: 6px; padding: 8px 16px; background: #eff6ff; text-align: center;">
+      <div style="font-weight: 700; font-size: 9.5pt; color: #1d4ed8;">Client</div>
+    </div>
+    <div style="font-size: 14pt; color: #9ca3af; padding: 0 6px;">&#x27A1;</div>
+    <div style="border: 2px solid #10b981; border-radius: 6px; padding: 8px 16px; background: #ecfdf5; text-align: center;">
+      <div style="font-weight: 700; font-size: 9.5pt; color: #047857;">Recording Proxy</div>
+    </div>
+    <div style="font-size: 14pt; color: #9ca3af; padding: 0 6px;">&#x27A1;</div>
+    <div style="border: 2px solid #8b5cf6; border-radius: 6px; padding: 8px 16px; background: #f5f3ff; text-align: center;">
+      <div style="font-weight: 700; font-size: 9.5pt; color: #6d28d9;">Server</div>
+    </div>
+  </div>
+  <div style="text-align: center; color: #9ca3af; font-size: 14pt; margin: 4px 0;">&#x25BC;</div>
+  <div style="display: flex; justify-content: center;">
+    <div style="border: 2px solid #f59e0b; border-radius: 6px; padding: 8px 16px; background: #fffbeb; text-align: center;">
+      <div style="font-weight: 700; font-size: 9.5pt; color: #b45309;">fixtures/session.jsonl</div>
+    </div>
+  </div>
+</div>
+
+<p>Each recorded session captures: request/response pairs with timestamps, transport metadata, and sequence ordering. These fixtures feed directly into <code>mcp-mock</code> for replay.</p>
+
+<p><strong>CLI Interface:</strong></p>
+<pre><code># Run conformance suite against a server
+npx mcp-conformance run --server "node my-server.js"
+
+# Run against HTTP server
+npx mcp-conformance run --url http://localhost:3000/mcp
+
+# Validate schema only (no execution)
+npx mcp-conformance validate --server "node my-server.js"
+
+# Record traffic for replay
+npx mcp-conformance record --server "node my-server.js" --output fixtures/
+
+# Output formats
+npx mcp-conformance run --server "..." --format junit   # JUnit XML
+npx mcp-conformance run --server "..." --format tap     # TAP
+npx mcp-conformance run --server "..." --format json    # JSON</code></pre>
+
+<h3>Package 2: <code>mcp-mock</code> (TypeScript / Node.js)</h3>
+<p>A configurable mock MCP server for client-side testing.</p>
+
+<p><strong>Configuration-driven:</strong></p>
+<pre><code># mock.yaml
+tools:
+  - name: get_weather
+    description: Get current weather for a city
+    inputSchema:
+      type: object
+      properties:
+        city: { type: string }
+      required: [city]
+    response:
+      content:
+        - type: text
+          text: "72°F, sunny"
+
+  - name: search_db
+    description: Search the database
+    inputSchema:
+      type: object
+      properties:
+        query: { type: string }
+    response:
+      content:
+        - type: text
+          text: '{"results": [{"id": 1}]}'</code></pre>
+
+<p><strong>Replay mode:</strong><br>
+Serve recorded fixtures from <code>mcp-conformance record</code>:</p>
+<pre><code>npx mcp-mock --replay fixtures/session.jsonl</code></pre>
+
+<p><strong>Failure injection:</strong><br>
+Configurable failure modes for resilience testing:</p>
+<pre><code>chaos:
+  latency: 2000        # Add 2s latency to all responses
+  error_rate: 0.1       # 10% of requests return errors
+  timeout_tools:        # Specific tools that timeout
+    - slow_search
+  malformed_responses:  # Return invalid JSON-RPC
+    - invalid_tool</code></pre>
+
+<p><strong>Transport support:</strong> stdio and Streamable HTTP, matching the conformance engine.</p>
+
+<h3>Package 3: MCP Testing UI (React / TypeScript)</h3>
+<p>Interactive web interface built on top of the same engine.</p>
+
+<p><strong>Server Connection Panel:</strong></p>
+<ul>
+<li>Connect to any MCP server (stdio command or HTTP URL)</li>
+<li>Auto-discover all six primitives: tools, resources, prompts, sampling capabilities, roots, and notification subscriptions</li>
+<li>Display server capabilities and protocol version</li>
+</ul>
+
+<p><strong>Tool Explorer:</strong></p>
+<ul>
+<li>Browse discovered tools with schemas rendered in readable format</li>
+<li>Auto-generate input forms from <code>inputSchema</code></li>
+<li>Execute tool calls with custom parameters</li>
+<li>Inspect structured responses with syntax highlighting</li>
+</ul>
+
+<p><strong>Test Runner:</strong></p>
+<ul>
+<li>Run full conformance suite or selected test categories</li>
+<li>Live pass/fail streaming during execution</li>
+<li>Conformance scorecard showing coverage by category</li>
+<li>Export results as JUnit XML, JSON, or HTML report</li>
+</ul>
+
+<p><strong>Recording Viewer:</strong></p>
+<ul>
+<li>Inspect captured network traffic (request/response pairs)</li>
+<li>Timeline view with sequence ordering</li>
+<li>Replay controls: step through recorded sessions</li>
+<li>Diff view: compare two recordings side by side</li>
+</ul>
+
+<h2>Architecture Overview</h2>
+<p><img src="file:///Users/viniciusmelo/workspace/research/gsoc/apidash-proposal/apidash/doc/proposals/2026/gsoc/images/vinicius_mcp_architecture.png" alt="Architecture Overview"></p>
+
+<h2>UI Vision</h2>
+<p><img src="file:///Users/viniciusmelo/workspace/research/gsoc/apidash-proposal/apidash/doc/proposals/2026/gsoc/images/vinicius_mcp_ui_mockup.png" alt="UI Vision Mockup"></p>
+<p>Proposed MCP Testing UI showing three-panel layout: server connection with capability discovery (left), JSON-RPC protocol log with message inspector (center), and conformance test runner with pass/fail results by category (right). Bottom bar shows conformance scorecard with coverage metrics. Self-contained HTML mockup available in the <a href="https://github.com/vinimlo/mcp-conformance">PoC repository</a>.</p>
+
+<h2>Why This Architecture</h2>
+<ol>
+<li><strong>Standalone packages.</strong> <code>mcp-conformance</code> and <code>mcp-mock</code> are usable without the UI — in CI pipelines, as libraries, or from the command line. This aligns with API Dash's pattern of extracting reusable packages (like <code>better_networking</code>, <code>curl_parser</code>, <code>genai</code>).</li>
+<li><strong>De-risked timeline.</strong> The engine delivers value from Week 4. If UI work takes longer, the core deliverables are already shipping and usable.</li>
+<li><strong>12 incremental PRs.</strong> Each week produces a focused, reviewable, mergeable PR — following API Dash's preference for precise, incremental contributions over monolithic changes.</li>
+<li><strong>Recording connects everything.</strong> <code>mcp-conformance</code> records traffic, <code>mcp-mock</code> replays it, the UI visualizes it. One concept ties all three packages together.</li>
+<li><strong>CI-native from day one.</strong> JUnit XML output means any CI system can consume results immediately. Not an afterthought — it's Week 4.</li>
+</ol>
+
+<h2>Risk Mitigation</h2>
+<p><strong>"What if the engine takes longer than 4 weeks?"</strong><br>
+The transport layer and JSON-RPC client are already proven in the PoC. Weeks 1-2 are expansion of working code, not greenfield. Risk is low.</p>
+<p><strong>"What if UI work extends beyond Week 12?"</strong><br>
+The engine is the core deliverable. By midterm (Week 4), <code>npx mcp-conformance run</code> works end-to-end with CI output. The project delivers value even if UI polish is deferred — this is why we chose protocol-first architecture.</p>
+<p><strong>"What if mock server complexity grows?"</strong><br>
+The YAML-based configuration and replay mode are intentionally simple. Failure injection (Week 7) is the riskiest feature — if it slips, the mock server still works for basic deterministic testing.</p>
+<p><strong>"What about part-time availability?"</strong><br>
+The 175-hour scope at ~14.6h/week over 12 weeks fits within my ~20h/week availability. Each weekly PR stands alone as a shippable increment — no big-bang delivery risk.</p>
+
+<h2>Proof of Concept</h2>
+<p>I've built a working prototype of the <code>mcp-conformance</code> engine: <a href="https://github.com/vinimlo/mcp-conformance"><strong>github.com/vinimlo/mcp-conformance</strong></a> — <a href="https://asciinema.org/a/qbQRBS3CLtxvFFXW"><strong>watch the full demo</strong></a> (40s — runs against both a test fixture and the official MCP SDK reference server)</p>
+<p>It demonstrates the core architecture — StdioTransport adapter, MCPClient, composable assertions, and CLI runner — with <strong>19 passing conformance tests</strong> across 5 categories (Protocol, Discovery, Schema, Execution, Edge Cases) against a real MCP server. The PoC runs in ~0.4s and exits with code 0/1 for CI integration:</p>
+
+<pre><code>mcp-conformance v0.1.0
+Testing: npx tsx fixtures/test-server.ts
+
+Protocol
+  ✓ initialize returns valid result (355ms)
+  ✓ server reports protocol version
+  ✓ server reports name and version
+  ✓ capabilities is an object
+
+Discovery
+  ✓ tools/list returns valid array
+
+Schema
+  ✓ all tools have name and description
+  ✓ all tools have valid inputSchema
+
+Execution
+  ✓ tools/call with valid params succeeds
+  ✓ tools/call with unknown tool returns error
+  ✓ tool result contains typed content
+  ✓ tools/call to each discovered tool succeeds
+  ✓ tool content items have text field
+
+Edge Cases
+  ✓ unknown method returns error code
+  ✓ duplicate initialize is idempotent
+  ✓ concurrent tool calls resolve independently
+  ✓ tools/call with extra params does not crash
+  ✓ tools/call with empty arguments object
+  ✓ JSON-RPC response has correct version field
+  ✓ error response includes message field
+
+19 passed (0.4s)</code></pre>
+
+<h2>Why Me</h2>
+<p>At Rumo Tecnologias and Seu AgenteIA, I build AI agent systems that rely on MCP — I've debugged JSON-RPC transport failures and capability negotiation edge cases in production. I've also designed behavior testing frameworks for AI agents (protocol-based assertions, trace collection, multi-turn state threading), which directly shaped the conformance engine architecture. The PoC's 19 passing tests against the official MCP SDK demonstrate this hands-on expertise. TypeScript, Node.js, React — the exact stack this project needs — is what I use daily.</p>
+
+<h2>MCP Apps Testing</h2>
+<p>The conformance engine extends to validate <a href="https://dev.to/ashita/a-practical-guide-to-building-mcp-apps-1bfm">MCP Apps</a> — rich HTML UI components served by MCP servers as sandboxed iframes in AI hosts. This incorporates patterns from the practical guide shared by mentors:</p>
+<ul>
+<li><strong>Resource registration:</strong> Verify <code>ui://</code> resource URIs are correctly registered via <code>resources/list</code>, with MIME type <code>text/html;profile=mcp-app</code></li>
+<li><strong>Tool-to-app linking:</strong> Validate tools expose <code>_meta.ui.resourceUri</code> pointing to the correct <code>ui://</code> resource</li>
+<li><strong>Handshake compliance:</strong> Test the <code>ui/initialize</code> → <code>hostContext</code> → <code>ui/notifications/initialized</code> lifecycle</li>
+<li><strong>Host context support:</strong> Verify the app correctly receives and applies <code>hostContext</code> CSS variables for theme adaptation</li>
+<li><strong>CSP declarations:</strong> Check that apps declaring external requests include proper <code>connectDomains</code> and <code>resourceDomains</code> in <code>_meta.ui.csp</code></li>
+</ul>
+<p>This ensures developers can validate their MCP Apps are correctly built before deploying to hosts like VS Code or Claude Desktop.</p>
+
+<h2>Future Extensions (post-GSoC)</h2>
+<p>Security profiling (tool poisoning detection, injection vulnerability checks), extended MCP Apps testing (iframe sandbox compliance, multi-host theme validation), and SSE legacy transport support.</p>
+
+<hr>
+
+<p><strong>4. Weekly Timeline (175 hours / 12 weeks)</strong></p>
+
+<!-- Visual Gantt Chart -->
+<div class="gantt" style="margin-bottom: 20px;">
+  <div class="gantt-weeks">
+    <div class="gantt-week" style="flex:1">CB</div>
+    <div class="gantt-week" style="flex:1">1</div>
+    <div class="gantt-week" style="flex:1">2</div>
+    <div class="gantt-week" style="flex:1">3</div>
+    <div class="gantt-week" style="flex:1">4</div>
+    <div class="gantt-week" style="flex:1">5</div>
+    <div class="gantt-week" style="flex:1">6</div>
+    <div class="gantt-week" style="flex:1">7</div>
+    <div class="gantt-week" style="flex:1">8</div>
+    <div class="gantt-week" style="flex:1">9</div>
+    <div class="gantt-week" style="flex:1">10</div>
+    <div class="gantt-week" style="flex:1">11</div>
+    <div class="gantt-week" style="flex:1">12</div>
+  </div>
+
+  <div class="gantt-row">
+    <div class="gantt-label">Bonding</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-bar" style="flex:1; background: #6b7280;">CB</div>
+      <div class="gantt-spacer" style="flex:12"></div>
+    </div>
+  </div>
+
+  <div class="gantt-row">
+    <div class="gantt-label">Engine Core</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-spacer" style="flex:1"></div>
+      <div class="gantt-bar" style="flex:4; background: #3b82f6;">W1–4</div>
+      <div class="gantt-spacer" style="flex:8"></div>
+    </div>
+  </div>
+
+  <div class="gantt-milestone">
+    <div class="gantt-milestone-label">Midterm</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-spacer" style="flex:5"></div>
+      <div style="border-left: 3px solid #dc2626; height: 24px;"></div>
+      <div class="gantt-spacer" style="flex:8"></div>
+    </div>
+  </div>
+
+  <div class="gantt-row">
+    <div class="gantt-label">Mock + Record</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-spacer" style="flex:5"></div>
+      <div class="gantt-bar" style="flex:3; background: #10b981;">W5–7</div>
+      <div class="gantt-spacer" style="flex:5"></div>
+    </div>
+  </div>
+
+  <div class="gantt-row">
+    <div class="gantt-label">Web UI</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-spacer" style="flex:8"></div>
+      <div class="gantt-bar" style="flex:3; background: #8b5cf6;">W8–10</div>
+      <div class="gantt-spacer" style="flex:2"></div>
+    </div>
+  </div>
+
+  <div class="gantt-row">
+    <div class="gantt-label">MCP Apps</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-spacer" style="flex:11"></div>
+      <div class="gantt-bar" style="flex:1; background: #f59e0b;">W11</div>
+      <div class="gantt-spacer" style="flex:1"></div>
+    </div>
+  </div>
+
+  <div class="gantt-row">
+    <div class="gantt-label">Final</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-spacer" style="flex:12"></div>
+      <div class="gantt-bar" style="flex:1; background: #6b7280;">W12</div>
+    </div>
+  </div>
+
+  <div class="gantt-milestone">
+    <div class="gantt-milestone-label">Final</div>
+    <div class="gantt-bar-container">
+      <div class="gantt-spacer" style="flex:12"></div>
+      <div style="border-left: 3px solid #dc2626; height: 24px;"></div>
+    </div>
+  </div>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Phase</th>
+<th>Deliverable</th>
+<th>Done when</th>
+<th>PR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CB</td>
+<td>Community Bonding</td>
+<td>Dev setup, MCP spec deep dive, API Dash codebase study, architecture discussion with mentors.</td>
+<td>Repo scaffolded with CI. Mentor-approved architecture doc.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Engine Core</td>
+<td>Transport adapters (stdio + Streamable HTTP) + JSON-RPC client. Connect to any MCP server, send <code>initialize</code>, discover tools.</td>
+<td>Both transports connect successfully. <code>initialize</code> handshake completes. Tool list returned. 5+ transport tests.</td>
+<td>#1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Engine Core</td>
+<td>Schema validator + composable assertion framework. Validate tool definitions against spec, run assertions on responses.</td>
+<td>Invalid schemas produce structured error messages. Assertions composable and independently testable. 10+ validation tests.</td>
+<td>#2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Engine Core</td>
+<td>Conformance test suite: 45+ tests covering all 6 MCP primitives (Tools, Resources, Prompts, Sampling, Roots, Notifications), edge cases, and protocol compliance.</td>
+<td>Suite runs against official MCP SDK reference server. All 6 primitives covered. 45+ tests pass.</td>
+<td>#3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Engine Core</td>
+<td>CLI interface + output formats (JUnit XML, TAP, JSON, rich terminal). <code>npx mcp-conformance run</code> works end-to-end.</td>
+<td><code>npx mcp-conformance run --server "..." --format junit</code> produces valid JUnit XML. Exit code 0/1 for CI. GitHub Actions example workflow runs green.</td>
+<td>#4</td>
+</tr>
+<tr style="background: #fef2f2;">
+<td>—</td>
+<td><strong>Midterm</strong></td>
+<td><strong>Engine runs headless against any MCP server, outputs conformance report. CI-ready. 45+ tests.</strong></td>
+<td></td>
+<td>—</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Mock + Recording</td>
+<td>Mock MCP server core: configurable tools with deterministic responses. <code>npx mcp-mock --config mock.yaml</code> serves responses.</td>
+<td>Mock server starts from YAML config. Client receives configured responses. 8+ mock tests.</td>
+<td>#5</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Mock + Recording</td>
+<td>Network recording in conformance engine + replay mode in mock. Record real traffic → replay as fixtures.</td>
+<td><code>mcp-conformance record</code> captures session to <code>.jsonl</code>. <code>mcp-mock --replay</code> serves recorded responses. Round-trip test passes. 6+ recording tests.</td>
+<td>#6</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Mock + Recording</td>
+<td>Failure injection: latency, error responses, partial results, connection drops. Chaos testing for resilience.</td>
+<td>Configurable chaos via YAML. Client receives injected failures. 6+ chaos tests.</td>
+<td>#7</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Web UI</td>
+<td>UI scaffold + server connection panel + tool explorer. Connect to server, browse tools/schemas, execute calls.</td>
+<td>React app builds. Server connection works via browser. Tool schemas render. Tool calls execute and display responses.</td>
+<td>#8</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Web UI</td>
+<td>Test runner panel + conformance scorecard. Run suite from UI, view pass/fail results by category.</td>
+<td>Tests run from UI with live streaming. Scorecard shows pass/fail by category. Export to JUnit XML works from UI.</td>
+<td>#9</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Web UI</td>
+<td>Recording viewer + replay controls. Inspect captured traffic, step through sessions, compare recordings.</td>
+<td>Timeline view renders request/response pairs. Step-through works. Side-by-side diff displays between two recordings.</td>
+<td>#10</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Web UI + MCP Apps</td>
+<td>MCP Apps conformance tests (<code>ui://</code> validation, handshake, <code>hostContext</code>), UI polish, responsive design, user guide.</td>
+<td>MCP Apps test category passes against sample app. UI responsive on mobile. User guide covers install → first test.</td>
+<td>#11</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Final</td>
+<td>Integration tests against 3+ real MCP servers, GitHub Actions CI workflow example, documentation, GSoC final report.</td>
+<td>Integration tests pass against 3+ servers. CI workflow example works. Final report submitted. PR ready for review.</td>
+<td>#12</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Scope Management</strong></p>
+<div class="scope-box scope-core">
+  <h4>Core (must deliver)</h4>
+  <p><code>mcp-conformance</code> engine + CLI + 45+ tests + CI output formats + <code>mcp-mock</code> with YAML config and replay.</p>
+</div>
+<div class="scope-box scope-stretch">
+  <h4>Stretch (if ahead of schedule)</h4>
+  <p>MCP Apps testing (W11), recording diff view (W10), failure injection (W7).</p>
+</div>
+<div class="scope-box scope-fallback">
+  <h4>If behind schedule</h4>
+  <p>Web UI deferred to post-GSoC (engine + mock deliver full value headless). Failure injection simplified to latency-only. MCP Apps tests move to post-GSoC.</p>
+</div>
+
+</body>
+</html>
