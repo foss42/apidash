@@ -12,6 +12,7 @@ class TextFieldEditor extends StatefulWidget {
     this.initialValue,
     this.readOnly = false,
     this.hintText,
+    this.expands = true,
   });
 
   final String fieldKey;
@@ -19,6 +20,7 @@ class TextFieldEditor extends StatefulWidget {
   final String? initialValue;
   final bool readOnly;
   final String? hintText;
+  final bool expands;
   @override
   State<TextFieldEditor> createState() => _TextFieldEditorState();
 }
@@ -72,7 +74,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         controller: controller,
         focusNode: editorFocusNode,
         keyboardType: TextInputType.multiline,
-        expands: true,
+        expands: widget.expands,
         maxLines: null,
         readOnly: widget.readOnly,
         style: kCodeStyle.copyWith(
