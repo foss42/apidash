@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/providers.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
@@ -16,6 +17,7 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
+    final update = ref.watch(updateProvider);
     final clearingData = ref.watch(clearDataStateProvider);
     var sm = ScaffoldMessenger.of(context);
     return Column(
@@ -258,6 +260,35 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              if (update.isUpdateAvailable && update.info != null)
+                ListTile(
+                  hoverColor: kColorTransparent,
+                  title: const Text(kLabelUpdateAvailable),
+                  subtitle: Text(
+                    'Version ${update.info!.latestVersion} is available',
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          ref
+                              .read(updateProvider.notifier)
+                              .skipCurrentVersion();
+                        },
+                        child: const Text(kLabelSkipUpdate),
+                      ),
+                      kHSpacer8,
+                      FilledButton.icon(
+                        onPressed: () {
+                          launchUrl(Uri.parse(update.info!.releaseUrl));
+                        },
+                        label: const Text(kLabelDownload),
+                        icon: const Icon(Icons.download_rounded, size: 20),
+                      ),
+                    ],
+                  ),
+                ),
               ListTile(
                 title: const Text(kLabelAbout),
                 subtitle: const Text(kLabelAboutSubtitle),
