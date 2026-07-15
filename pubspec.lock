@@ -436,10 +436,11 @@ packages:
   extended_text_field:
     dependency: "direct main"
     description:
-      name: extended_text_field
-      sha256: "3996195c117c6beb734026a7bc0ba80d7e4e84e4edd4728caa544d8209ab4d7d"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: "106b8a5"
+      resolved-ref: "106b8a57050cbd231b7ab5dc905feb9be42662ab"
+      url: "https://github.com/fluttercandies/extended_text_field.git"
+    source: git
     version: "16.0.2"
   extended_text_library:
     dependency: transitive
