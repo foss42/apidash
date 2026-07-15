@@ -6,6 +6,10 @@ _Add your description_
 
 - Closes #
 
+## Video Demo
+
+- Video demonstrating before and after the fix.
+
 ### Checklist
 - [ ] I have gone through the [contributing guide](https://github.com/foss42/apidash/blob/main/CONTRIBUTING.md)
 - [ ] I have updated my branch and synced it with project `main` branch before making this PR
