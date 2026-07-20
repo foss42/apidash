@@ -566,6 +566,40 @@ void main() {
       expect(result.authModel?.jwt?.payload, "payload123");
     });
 
+    test("Testing jwt auth with null private key does not crash", () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/test",
+        authModel: AuthModel(
+          type: APIAuthType.jwt,
+          jwt: AuthJwtModel(
+            secret: "{{jwt_secret}}",
+            privateKey: null,
+            payload: "{{jwt_payload}}",
+            addTokenTo: "header",
+            algorithm: "HS256",
+            isSecretBase64Encoded: false,
+            headerPrefix: "Bearer",
+            queryParamKey: "token",
+            header: "Authorization",
+          ),
+        ),
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: [
+          EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          EnvironmentVariableModel(key: "jwt_secret", value: "sec123"),
+          EnvironmentVariableModel(key: "jwt_payload", value: "payload123"),
+        ],
+      };
+
+      final result = substituteHttpRequestModel(httpRequestModel, envMap, null);
+
+      expect(result.authModel?.jwt?.secret, "sec123");
+      expect(result.authModel?.jwt?.privateKey, null);
+      expect(result.authModel?.jwt?.payload, "payload123");
+    });
+
     test("Testing digest auth with environment variables", () {
       const httpRequestModel = HttpRequestModel(
         url: "{{url}}/test",

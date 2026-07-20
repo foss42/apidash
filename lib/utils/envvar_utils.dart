@@ -140,7 +140,8 @@ AuthModel? substituteAuthModel(
         return authModel.copyWith(
           jwt: jwt.copyWith(
             secret: substituteVariables(jwt.secret, envVarMap)!,
-            privateKey: substituteVariables(jwt.privateKey, envVarMap)!,
+            privateKey:
+                substituteVariables(jwt.privateKey, envVarMap) ?? jwt.privateKey,
             payload: substituteVariables(jwt.payload, envVarMap)!,
           ),
         );
