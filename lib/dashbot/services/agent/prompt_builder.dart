@@ -162,17 +162,17 @@ ${formatWsMessageLog(mqtt.messageHistory, includeTopic: true)}
     return entries.join(', ');
   }
 
-  /// Groups sent/received data messages by their mailbox (topic, carried in
+  /// Groups sent/received data messages by their channel (topic, carried in
   /// [WebSocketMessage.metadata]) into a plain-language per-topic tally, e.g.:
   ///
-  ///     Messages grouped by mailbox:
+  ///     Messages grouped by channel:
   ///     - home/temp: 12 messages (first "23.5", last "24.1")
   ///     - alerts/door: 2 messages
-  ///     - (no mailbox): 1 message
+  ///     - (no channel): 1 message
   ///
   /// Only sent/received messages are counted; lifecycle events
   /// (connected/error/disconnected) are ignored. Topics are listed in the order
-  /// they are first seen and the first/last example is only shown when a mailbox
+  /// they are first seen and the first/last example is only shown when a channel
   /// has more than one message with differing payloads. Pure and deterministic
   /// (never reads the wall clock), so it is directly unit-testable.
   String mqttMessagesByTopic(List<WebSocketMessage> history) {
@@ -185,13 +185,13 @@ ${formatWsMessageLog(mqtt.messageHistory, includeTopic: true)}
     for (final m in history) {
       if (!isData(m)) continue;
       final topic = (m.metadata == null || m.metadata!.isEmpty)
-          ? '(no mailbox)'
+          ? '(no channel)'
           : m.metadata!;
       counts[topic] = (counts[topic] ?? 0) + 1;
       firsts.putIfAbsent(topic, () => m.payload);
       lasts[topic] = m.payload;
     }
-    if (counts.isEmpty) return 'No messages grouped by mailbox yet.';
+    if (counts.isEmpty) return 'No messages grouped by channel yet.';
     String trim(String s) {
       const maxLen = 40;
       final oneLine = s.replaceAll('\n', ' ');
@@ -200,7 +200,7 @@ ${formatWsMessageLog(mqtt.messageHistory, includeTopic: true)}
           : oneLine;
     }
 
-    final lines = <String>['Messages grouped by mailbox:'];
+    final lines = <String>['Messages grouped by channel:'];
     counts.forEach((topic, n) {
       final noun = n == 1 ? 'message' : 'messages';
       final first = firsts[topic]!;
@@ -718,7 +718,7 @@ ${formatWsMessageLog(mqtt.messageHistory, includeTopic: true)}
               : _deriveMqttConnectionStatus(req, mqtt),
           settingsSummary: mqtt == null ? null : _mqttSettingsSummary(mqtt),
           topicsSummary: mqtt == null ? null : _mqttTopicsSummary(mqtt),
-          // Prepend the pre-grouped per-mailbox tally, then the full log so the
+          // Prepend the pre-grouped per-channel tally, then the full log so the
           // model can quote real examples. Look further back than the default.
           messageLog: mqtt == null
               ? null

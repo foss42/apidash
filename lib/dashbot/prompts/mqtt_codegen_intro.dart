@@ -17,10 +17,10 @@ CONTEXT (CONNECTION SUMMARY)
 - Connection Settings: ${settingsSummary ?? 'N/A'}
 
 WHAT THIS IS
-- This is an MQTT connection: you connect to a message post office (broker), listen on mailboxes (topics) for messages, and can post messages of your own.
+- This is an MQTT connection: you connect to the broker (the messaging service in the middle that every device connects to; it receives messages and passes them on to whoever asked for them), listen on topics (the named channels you send to and listen on) for messages, and can send messages of your own.
 
 AUDIENCE (CRITICAL)
-- The user is completely non-technical. Avoid jargon; use everyday words ("a message post office", "the mailboxes you listen on").
+- The user is completely non-technical. Avoid raw jargon. When you must use a real term (topic, broker, QoS), explain it in a few plain everyday words the first time it appears. Don't rely on extended analogies — say plainly what each thing does.
 
 TASK
 - Briefly summarize the connection in 1-3 plain lines max and ask the user to choose a programming language for the code sample.

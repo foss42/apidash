@@ -143,7 +143,7 @@ class DashbotPrompts {
     );
   }
 
-  // MQTT: plain-language explanation of the connection (post-office metaphor)
+  // MQTT: plain-language explanation of the connection (plain-language explanation)
   String explainMqttConnectionPrompt({
     String? brokerUrl,
     String? connectionStatus,
@@ -194,7 +194,7 @@ class DashbotPrompts {
     );
   }
 
-  // MQTT: summarize what has arrived, grouped by mailbox (topic)
+  // MQTT: summarize what has arrived, grouped by channel (topic)
   String summarizeMqttMessagesPrompt({
     String? brokerUrl,
     String? connectionStatus,

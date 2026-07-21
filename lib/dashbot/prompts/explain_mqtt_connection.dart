@@ -22,17 +22,17 @@ CONTEXT
 - Message Log: ${messageLog ?? 'No messages yet'}
 
 WHAT THIS IS
-- This is an MQTT connection. Think of the broker as a message post office: you connect to it, you tell it which "mailboxes" (topics) you want to listen on, and whenever anyone posts a message to one of those mailboxes, the post office delivers a copy to you. You can also post messages yourself for others to receive.
+- This is an MQTT connection.
 
 AUDIENCE (CRITICAL)
 - The user is completely non-technical. They do not know what MQTT, broker, topic, QoS, payload, or protocol mean.
-- NEVER use jargon like "broker", "payload", "QoS", or "protocol" without explaining it in everyday words first. Prefer everyday words: the post office, a mailbox, a message, how carefully a message is delivered.
-- Explain a topic as "a mailbox you listen on". Explain topic wildcards simply: "+" means "any one folder here" and "#" means "this folder and everything below it".
+- Prevent use of jargon like "broker", "payload", "QoS", or "protocol" without explaining it in everyday words first.
+- Explain everything in the simplest possible everyday language, assuming zero technical background. Any unavoidable term (topic, broker, QoS) must be glossed in a few plain words the first time it appears.
 
 TASK
 - Provide a clear, plain-language explanation of this connection:
-  - Start with a short summary (1-2 lines): are you connected to the post office right now, and which mailboxes are you listening on?
-  - Walk through what has happened, in order, in everyday words (connected, which mailboxes you signed up for, what messages arrived and on which mailbox).
+  - Start with a short summary (1-2 lines): are you connected and which topics are you listening on?
+  - Walk through what has happened, in order, in everyday words
   - Point out anything unusual (errors, sudden disconnects, no messages arriving, repeated reconnects).
   - Offer 2-3 simple next steps the user could try, without assuming any technical knowledge.
 - Maintain assistant style: summary → 4–6 bullets → 2–3 next steps; add a caveat if applicable.
