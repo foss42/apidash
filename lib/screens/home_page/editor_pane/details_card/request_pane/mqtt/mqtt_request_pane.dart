@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
+import 'mqtt_help_icon.dart';
 import 'mqtt_request_topics.dart';
 import 'mqtt_user_properties.dart';
 
@@ -143,6 +144,14 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                     decoration: const InputDecoration(
                       labelText: "Send to topic:",
                       border: UnderlineInputBorder(),
+                      suffixIcon: MqttHelpIcon(
+                        "The channel you're sending this message to — like a "
+                        "subject line.",
+                      ),
+                      suffixIconConstraints: BoxConstraints(
+                        minWidth: 24,
+                        minHeight: 24,
+                      ),
                     ),
                     onChanged: (val) {
                       _updateMqttModel((m) => m.copyWith(publishTopic: val));
@@ -177,6 +186,10 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               const Text("Retain"),
+              const MqttHelpIcon(
+                "Keeps this as the last message on the topic, so anyone who "
+                "connects later gets it right away.",
+              ),
               Switch(
                 value: mqttModel.retainMessage,
                 onChanged: (val) {
@@ -227,6 +240,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             initialValue: mqttModel.responseTopic,
             hintText: "Topic the responder should reply to",
             title: "Response Topic",
+            infoText:
+                "For a reply: the channel where you'd like the answer "
+                "to come back.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(responseTopic: val));
             },
@@ -236,6 +252,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             initialValue: mqttModel.correlationData,
             hintText: "Opaque token to match request ↔ response",
             title: "Correlation Data",
+            infoText:
+                "A tag that lets you match a reply back to the message "
+                "you sent.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(correlationData: val));
             },
@@ -247,6 +266,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 : mqttModel.messageExpiryInterval.toString(),
             hintText: "0 / empty = no expiry",
             title: "Message Expiry Interval (seconds)",
+            infoText:
+                "How long this message stays valid before it's dropped "
+                "if it hasn't been delivered.",
             onChanged: (val) {
               final parsed = int.tryParse(val) ?? 0;
               _updateMqttModel(
@@ -273,6 +295,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             initialValue: mqttModel.username,
             hintText: "Username",
             title: "Username",
+            infoText: "Your sign-in name — only if the service requires one.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(username: val));
             },
@@ -282,6 +305,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             isObscureText: true,
             hintText: "Password",
             title: "Password",
+            infoText:
+                "Your sign-in password — only if the service requires "
+                "one.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(password: val));
             },
@@ -315,6 +341,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   initialValue: mqttModel.clientId,
                   hintText: "Client ID",
                   title: "Client ID",
+                  infoText:
+                      "A name this app uses to identify itself to the "
+                      "service. Usually fine to leave as-is.",
                   onChanged: (val) {
                     _updateMqttModel((m) => m.copyWith(clientId: val));
                   },
@@ -327,6 +356,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   initialValue: mqttModel.port.toString(),
                   hintText: "1883",
                   title: "Port",
+                  infoText:
+                      "The specific door on the service to knock on. "
+                      "Leave the default unless you were given another number.",
                   onChanged: (val) {
                     final port = int.tryParse(val) ?? 1883;
                     _updateMqttModel((m) => m.copyWith(port: port));
@@ -345,6 +377,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   initialValue: mqttModel.keepAlivePeriod.toString(),
                   hintText: "60",
                   title: "Keep Alive (s)",
+                  infoText:
+                      "How often to send a quiet 'still here' signal so "
+                      "the connection doesn't drop.",
                   onChanged: (val) {
                     final parsed = int.tryParse(val) ?? 60;
                     _updateMqttModel(
@@ -355,20 +390,35 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: DropdownButtonFormField<int>(
-                  value: mqttModel.qos,
-                  decoration: const InputDecoration(labelText: "Default QoS"),
-                  items: [0, 1, 2]
-                      .map(
-                        (q) =>
-                            DropdownMenuItem(value: q, child: Text("QoS $q")),
-                      )
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      _updateMqttModel((m) => m.copyWith(qos: val));
-                    }
-                  },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<int>(
+                        value: mqttModel.qos,
+                        decoration: const InputDecoration(
+                          labelText: "Default QoS",
+                        ),
+                        items: [0, 1, 2]
+                            .map(
+                              (q) => DropdownMenuItem(
+                                value: q,
+                                child: Text("QoS $q"),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            _updateMqttModel((m) => m.copyWith(qos: val));
+                          }
+                        },
+                      ),
+                    ),
+                    const MqttHelpIcon(
+                      "How hard to try to deliver a message — from 'send once "
+                      "and hope' to 'guarantee it arrives exactly once'.",
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -382,16 +432,29 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(isV5 ? "Clean Start" : "Clean Session"),
-                  subtitle: const Text("Session ends on disconnect"),
-                  value: mqttModel.sessionExpiryInterval == 0,
-                  onChanged: (val) {
-                    _updateMqttModel(
-                      (m) => m.copyWith(sessionExpiryInterval: val ? 0 : 3600),
-                    );
-                  },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(isV5 ? "Clean Start" : "Clean Session"),
+                        subtitle: const Text("Session ends on disconnect"),
+                        value: mqttModel.sessionExpiryInterval == 0,
+                        onChanged: (val) {
+                          _updateMqttModel(
+                            (m) => m.copyWith(
+                              sessionExpiryInterval: val ? 0 : 3600,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const MqttHelpIcon(
+                      "Start fresh each time, or pick up where you left off "
+                      "and get messages you missed while away.",
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 16),
@@ -401,6 +464,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                     initialValue: mqttModel.sessionExpiryInterval.toString(),
                     hintText: "3600",
                     title: "Session Expiry (s)",
+                    infoText:
+                        "How long the service should hold your missed "
+                        "messages after you disconnect.",
                     onChanged: (val) {
                       final parsed = int.tryParse(val) ?? 0;
                       _updateMqttModel(
@@ -421,67 +487,104 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             initiallyExpanded: mqttModel.useTLS || mqttModel.useWebSocket,
             childrenPadding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text("Use TLS"),
-                subtitle: const Text("Encrypt the connection (TLS/SSL)"),
-                value: mqttModel.useTLS,
-                onChanged: (val) {
-                  _updateMqttModel((m) {
-                    int newPort = m.port;
-                    if (val) {
-                      if (newPort == 1883) {
-                        newPort = 8883;
-                      } else if (newPort == 8083) {
-                        newPort = 8084;
-                      }
-                    } else {
-                      if (newPort == 8883) {
-                        newPort = 1883;
-                      } else if (newPort == 8084) {
-                        newPort = 8083;
-                      }
-                    }
-                    return m.copyWith(useTLS: val, port: newPort);
-                  });
-                },
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text("Use TLS"),
+                      subtitle: const Text("Encrypt the connection (TLS/SSL)"),
+                      value: mqttModel.useTLS,
+                      onChanged: (val) {
+                        _updateMqttModel((m) {
+                          int newPort = m.port;
+                          if (val) {
+                            if (newPort == 1883) {
+                              newPort = 8883;
+                            } else if (newPort == 8083) {
+                              newPort = 8084;
+                            }
+                          } else {
+                            if (newPort == 8883) {
+                              newPort = 1883;
+                            } else if (newPort == 8084) {
+                              newPort = 8083;
+                            }
+                          }
+                          return m.copyWith(useTLS: val, port: newPort);
+                        });
+                      },
+                    ),
+                  ),
+                  const MqttHelpIcon(
+                    "Encrypts the connection so no one in between can read "
+                    "your messages.",
+                  ),
+                ],
               ),
               if (mqttModel.useTLS)
-                SwitchListTile(
-                  contentPadding: const EdgeInsets.only(left: 16),
-                  title: const Text("Allow Invalid Certificates"),
-                  subtitle: const Text("Accept self-signed / untrusted certs"),
-                  value: mqttModel.allowInvalidCertificates,
-                  onChanged: (val) {
-                    _updateMqttModel(
-                      (m) => m.copyWith(allowInvalidCertificates: val),
-                    );
-                  },
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: SwitchListTile(
+                        contentPadding: const EdgeInsets.only(left: 16),
+                        title: const Text("Allow Invalid Certificates"),
+                        subtitle: const Text(
+                          "Accept self-signed / untrusted certs",
+                        ),
+                        value: mqttModel.allowInvalidCertificates,
+                        onChanged: (val) {
+                          _updateMqttModel(
+                            (m) => m.copyWith(allowInvalidCertificates: val),
+                          );
+                        },
+                      ),
+                    ),
+                    const MqttHelpIcon(
+                      "Connect even if the security certificate can't be "
+                      "verified. Only for testing.",
+                    ),
+                  ],
                 ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text("Use WebSocket"),
-                subtitle: const Text("Tunnel MQTT over a WebSocket transport"),
-                value: mqttModel.useWebSocket,
-                onChanged: (val) {
-                  _updateMqttModel((m) {
-                    int newPort = m.port;
-                    if (val) {
-                      if (newPort == 1883) {
-                        newPort = 8083;
-                      } else if (newPort == 8883) {
-                        newPort = 8084;
-                      }
-                    } else {
-                      if (newPort == 8083) {
-                        newPort = 1883;
-                      } else if (newPort == 8084) {
-                        newPort = 8883;
-                      }
-                    }
-                    return m.copyWith(useWebSocket: val, port: newPort);
-                  });
-                },
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text("Use WebSocket"),
+                      subtitle: const Text(
+                        "Tunnel MQTT over a WebSocket transport",
+                      ),
+                      value: mqttModel.useWebSocket,
+                      onChanged: (val) {
+                        _updateMqttModel((m) {
+                          int newPort = m.port;
+                          if (val) {
+                            if (newPort == 1883) {
+                              newPort = 8083;
+                            } else if (newPort == 8883) {
+                              newPort = 8084;
+                            }
+                          } else {
+                            if (newPort == 8083) {
+                              newPort = 1883;
+                            } else if (newPort == 8084) {
+                              newPort = 8883;
+                            }
+                          }
+                          return m.copyWith(useWebSocket: val, port: newPort);
+                        });
+                      },
+                    ),
+                  ),
+                  const MqttHelpIcon(
+                    "Send messages over the web — useful when a normal "
+                    "connection is blocked.",
+                  ),
+                ],
               ),
               kVSpacer8,
             ],
@@ -501,6 +604,10 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       initialValue: mqttModel.willTopic,
                       hintText: "Will Topic",
                       title: "Will Topic",
+                      infoText:
+                          "A 'goodbye' note the service sends for you if "
+                          "you disconnect unexpectedly. This is the channel "
+                          "it's sent to.",
                       onChanged: (val) {
                         _updateMqttModel((m) => m.copyWith(willTopic: val));
                       },
@@ -512,6 +619,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       initialValue: mqttModel.willMessage,
                       hintText: "Will Message",
                       title: "Will Message",
+                      infoText:
+                          "The text of that 'goodbye' note, sent "
+                          "automatically if you disconnect unexpectedly.",
                       onChanged: (val) {
                         _updateMqttModel((m) => m.copyWith(willMessage: val));
                       },
@@ -524,33 +634,60 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: DropdownButtonFormField<int>(
-                      value: mqttModel.willQos,
-                      decoration: const InputDecoration(labelText: "Will QoS"),
-                      items: [0, 1, 2]
-                          .map(
-                            (q) => DropdownMenuItem(
-                              value: q,
-                              child: Text("QoS $q"),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<int>(
+                            value: mqttModel.willQos,
+                            decoration: const InputDecoration(
+                              labelText: "Will QoS",
                             ),
-                          )
-                          .toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          _updateMqttModel((m) => m.copyWith(willQos: val));
-                        }
-                      },
+                            items: [0, 1, 2]
+                                .map(
+                                  (q) => DropdownMenuItem(
+                                    value: q,
+                                    child: Text("QoS $q"),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (val) {
+                              if (val != null) {
+                                _updateMqttModel(
+                                  (m) => m.copyWith(willQos: val),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                        const MqttHelpIcon(
+                          "How hard to try to deliver that goodbye note.",
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text("Retain Will"),
-                      value: mqttModel.willRetain,
-                      onChanged: (val) {
-                        _updateMqttModel((m) => m.copyWith(willRetain: val));
-                      },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: SwitchListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text("Retain Will"),
+                            value: mqttModel.willRetain,
+                            onChanged: (val) {
+                              _updateMqttModel(
+                                (m) => m.copyWith(willRetain: val),
+                              );
+                            },
+                          ),
+                        ),
+                        const MqttHelpIcon(
+                          "Keep the goodbye note as the last message on its "
+                          "channel, so later joiners still see it.",
+                        ),
+                      ],
                     ),
                   ),
                 ],

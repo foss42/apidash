@@ -7,6 +7,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
+import 'mqtt_help_icon.dart';
 
 /// MQTT v5 User Properties editor.
 ///
@@ -39,11 +40,15 @@ class _EditMQTTUserPropertiesState
   void _onFieldChange() {
     final mqttModel = ref.read(selectedRequestModelProvider)?.mqttRequestModel;
     if (mqttModel != null) {
-      ref.read(collectionStateNotifierProvider.notifier).update(
+      ref
+          .read(collectionStateNotifierProvider.notifier)
+          .update(
             mqttRequestModel: mqttModel.copyWith(
               userProperties: rows.sublist(0, rows.length - 1),
-              isUserPropertyEnabledList:
-                  isRowEnabledList.sublist(0, rows.length - 1),
+              isUserPropertyEnabledList: isRowEnabledList.sublist(
+                0,
+                rows.length - 1,
+              ),
             ),
           );
     }
@@ -64,99 +69,104 @@ class _EditMQTTUserPropertiesState
 
     isRowEnabledList = [...mqttModel.isUserPropertyEnabledList];
     if (isRowEnabledList.length < props.length) {
-      isRowEnabledList
-          .addAll(List.filled(props.length - isRowEnabledList.length, true));
+      isRowEnabledList.addAll(
+        List.filled(props.length - isRowEnabledList.length, true),
+      );
     }
     isRowEnabledList.add(false);
     isAddingRow = false;
 
     List<DataColumn> columns = const [
       DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
-      DataColumn2(label: Text("Key")),
+      DataColumn2(
+        label: Row(
+          children: [
+            Text("Key"),
+            MqttHelpIcon("Extra custom labels you can attach to a message."),
+          ],
+        ),
+      ),
       DataColumn2(label: Text("Value")),
       DataColumn2(label: Text(''), fixedWidth: 32),
     ];
 
-    List<DataRow> dataRows = List<DataRow>.generate(
-      rows.length,
-      (index) {
-        bool isLast = index + 1 == rows.length;
-        return DataRow(
-          key: ValueKey("$selectedId-$index-mqtt-userprop-row-$seed"),
-          cells: <DataCell>[
-            DataCell(
-              ADCheckBox(
-                keyId: "$selectedId-$index-mqtt-userprop-c-$seed",
-                value: isRowEnabledList[index],
-                onChanged: isLast
-                    ? null
-                    : (value) {
-                        setState(() => isRowEnabledList[index] = value!);
-                        _onFieldChange();
-                      },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+    List<DataRow> dataRows = List<DataRow>.generate(rows.length, (index) {
+      bool isLast = index + 1 == rows.length;
+      return DataRow(
+        key: ValueKey("$selectedId-$index-mqtt-userprop-row-$seed"),
+        cells: <DataCell>[
+          DataCell(
+            ADCheckBox(
+              keyId: "$selectedId-$index-mqtt-userprop-c-$seed",
+              value: isRowEnabledList[index],
+              onChanged: isLast
+                  ? null
+                  : (value) {
+                      setState(() => isRowEnabledList[index] = value!);
+                      _onFieldChange();
+                    },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              EnvCellField(
-                keyId: "$selectedId-$index-mqtt-userprop-k-$seed",
-                initialValue: rows[index].name,
-                hintText: "Add Key...",
-                onChanged: (value) {
-                  rows[index] = rows[index].copyWith(name: value);
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    rows.add(kNameValueEmptyModel);
-                    isRowEnabledList.add(false);
-                  }
-                  _onFieldChange();
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+          ),
+          DataCell(
+            EnvCellField(
+              keyId: "$selectedId-$index-mqtt-userprop-k-$seed",
+              initialValue: rows[index].name,
+              hintText: "Add Key...",
+              onChanged: (value) {
+                rows[index] = rows[index].copyWith(name: value);
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  rows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
+                _onFieldChange();
+              },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              EnvCellField(
-                keyId: "$selectedId-$index-mqtt-userprop-v-$seed",
-                initialValue: rows[index].value?.toString(),
-                hintText: "Add Value...",
-                onChanged: (value) {
-                  rows[index] = rows[index].copyWith(value: value);
-                  if (isLast && !isAddingRow) {
-                    isAddingRow = true;
-                    rows.add(kNameValueEmptyModel);
-                    isRowEnabledList.add(false);
-                  }
-                  _onFieldChange();
-                },
-                colorScheme: Theme.of(context).colorScheme,
-              ),
+          ),
+          DataCell(
+            EnvCellField(
+              keyId: "$selectedId-$index-mqtt-userprop-v-$seed",
+              initialValue: rows[index].value?.toString(),
+              hintText: "Add Value...",
+              onChanged: (value) {
+                rows[index] = rows[index].copyWith(value: value);
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
+                  rows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
+                _onFieldChange();
+              },
+              colorScheme: Theme.of(context).colorScheme,
             ),
-            DataCell(
-              InkWell(
-                onTap: isLast
-                    ? null
-                    : () {
-                        seed = random.nextInt(kRandMax);
-                        if (rows.length == 2) {
-                          setState(() {
-                            rows = [kNameValueEmptyModel];
-                            isRowEnabledList = [false];
-                          });
-                        } else {
-                          rows.removeAt(index);
-                          isRowEnabledList.removeAt(index);
-                        }
-                        _onFieldChange();
-                      },
-                child: Theme.of(context).brightness == Brightness.dark
-                    ? kIconRemoveDark
-                    : kIconRemoveLight,
-              ),
+          ),
+          DataCell(
+            InkWell(
+              onTap: isLast
+                  ? null
+                  : () {
+                      seed = random.nextInt(kRandMax);
+                      if (rows.length == 2) {
+                        setState(() {
+                          rows = [kNameValueEmptyModel];
+                          isRowEnabledList = [false];
+                        });
+                      } else {
+                        rows.removeAt(index);
+                        isRowEnabledList.removeAt(index);
+                      }
+                      _onFieldChange();
+                    },
+              child: Theme.of(context).brightness == Brightness.dark
+                  ? kIconRemoveDark
+                  : kIconRemoveLight,
             ),
-          ],
-        );
-      },
-    );
+          ),
+        ],
+      );
+    });
 
     return Stack(
       children: [
@@ -167,8 +177,9 @@ class _EditMQTTUserPropertiesState
             children: [
               Expanded(
                 child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  data: Theme.of(
+                    context,
+                  ).copyWith(scrollbarTheme: kDataTableScrollbarTheme),
                   child: DataTable2(
                     columnSpacing: 12,
                     dividerThickness: 0,
