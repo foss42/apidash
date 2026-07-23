@@ -67,7 +67,11 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasBody =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket) return false;
+            if (apiType == APIType.ai ||
+                apiType == APIType.websocket ||
+                apiType == APIType.mqtt) {
+              return false;
+            }
             return value?.httpRequestModel?.hasBody;
           }),
         ) ??
@@ -76,7 +80,11 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket) return false;
+            if (apiType == APIType.ai ||
+                apiType == APIType.websocket ||
+                apiType == APIType.mqtt) {
+              return false;
+            }
             return value?.httpRequestModel?.hasQuery;
           }),
         ) ??
@@ -104,6 +112,67 @@ class HistoryRequestPane extends ConsumerWidget {
     final authModel = ref.watch(
       selectedHistoryRequestModelProvider.select((value) => value?.authModel),
     );
+
+    // MQTT read-only view data. Mirrors the WebSocket case (which shows
+    // read-only RequestDataTables), but MQTT has no params/headers — instead we
+    // surface the broker/connection + settings summary, the subscribed topics,
+    // and the v5 user properties, all as read-only key/value tables.
+    final mqttModel = ref.watch(
+      selectedHistoryRequestModelProvider.select(
+        (value) => value?.mqttRequestModel,
+      ),
+    );
+
+    final mqttConnectionMap = <String, String>{};
+    final mqttTopicsMap = <String, String>{};
+    final mqttPropertiesMap = <String, String>{};
+    if (mqttModel != null) {
+      final versionLabel = switch (mqttModel.version.name) {
+        'v3' => 'MQTT 3.0',
+        'v3_1_1' => 'MQTT 3.1.1',
+        _ => 'MQTT 5.0',
+      };
+      mqttConnectionMap['Broker URL'] = mqttModel.brokerUrl;
+      mqttConnectionMap['Port'] = '${mqttModel.port}';
+      mqttConnectionMap['Version'] = versionLabel;
+      final clientId = mqttModel.clientId;
+      if (clientId != null && clientId.isNotEmpty) {
+        mqttConnectionMap['Client ID'] = clientId;
+      }
+      final username = mqttModel.username;
+      if (username != null && username.isNotEmpty) {
+        mqttConnectionMap['Username'] = username;
+      }
+      mqttConnectionMap['QoS'] = '${mqttModel.qos}';
+      mqttConnectionMap['Keep Alive (s)'] = '${mqttModel.keepAlivePeriod}';
+      mqttConnectionMap['Clean Session'] = mqttModel.sessionExpiryInterval == 0
+          ? 'true'
+          : 'false';
+      if (mqttModel.sessionExpiryInterval > 0) {
+        mqttConnectionMap['Session Expiry (s)'] =
+            '${mqttModel.sessionExpiryInterval}';
+      }
+      mqttConnectionMap['TLS'] = mqttModel.useTLS ? 'Enabled' : 'Disabled';
+      mqttConnectionMap['WebSocket'] = mqttModel.useWebSocket
+          ? 'Enabled'
+          : 'Disabled';
+      mqttConnectionMap['Retain'] = mqttModel.retainMessage ? 'true' : 'false';
+      if (mqttModel.willTopic.isNotEmpty) {
+        mqttConnectionMap['Will Topic'] = mqttModel.willTopic;
+      }
+
+      for (final topic in mqttModel.subscribedTopics) {
+        if (topic.name.isNotEmpty) {
+          mqttTopicsMap[topic.name] = topic.value;
+        }
+      }
+
+      for (final property in mqttModel.userProperties) {
+        if (property.name.isNotEmpty) {
+          mqttPropertiesMap[property.name] = property.value;
+        }
+      }
+    }
 
     return switch (apiType) {
       APIType.rest => RequestPane(
@@ -195,17 +264,32 @@ class HistoryRequestPane extends ConsumerWidget {
               !codePaneVisible;
         },
         showViewCodeButton: !isCompact,
-        showIndicators: [
-          paramLength > 0,
-          headerLength > 0,
-        ],
-        tabLabels: const [
-          kLabelURLParams,
-          kLabelHeaders,
-        ],
+        showIndicators: [paramLength > 0, headerLength > 0],
+        tabLabels: const [kLabelURLParams, kLabelHeaders],
         children: [
           RequestDataTable(rows: paramsMap, keyName: kNameURLParam),
           RequestDataTable(rows: headersMap, keyName: kNameHeader),
+        ],
+      ),
+      APIType.mqtt => RequestPane(
+        key: const Key("history-request-pane-mqtt"),
+        selectedId: selectedId,
+        codePaneVisible: codePaneVisible,
+        onPressedCodeButton: () {
+          ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+              !codePaneVisible;
+        },
+        showViewCodeButton: !isCompact,
+        showIndicators: [
+          mqttConnectionMap.isNotEmpty,
+          mqttTopicsMap.isNotEmpty,
+          mqttPropertiesMap.isNotEmpty,
+        ],
+        tabLabels: const ["Connection", "Topics", "Properties"],
+        children: [
+          RequestDataTable(rows: mqttConnectionMap, keyName: "Setting"),
+          RequestDataTable(rows: mqttTopicsMap, keyName: "Topic"),
+          RequestDataTable(rows: mqttPropertiesMap, keyName: "Property"),
         ],
       ),
       _ => kSizedBoxEmpty,

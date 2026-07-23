@@ -31,6 +31,15 @@ class HistoryResponsePane extends ConsumerWidget {
         );
       }
 
+      if (apiType == APIType.mqtt) {
+        final mqttModel = selectedHistoryRequest.mqttRequestModel;
+        return RealtimeEventStreamView(
+          // Fresh event-stream State per history entry (mirrors ResponseTabView).
+          key: ValueKey(selectedId),
+          historyMessages: mqttModel?.messageHistory ?? [],
+        );
+      }
+
       final requestModel = getRequestModelFromHistoryModel(
         selectedHistoryRequest,
       );

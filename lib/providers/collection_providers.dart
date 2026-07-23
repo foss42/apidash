@@ -222,6 +222,7 @@ class CollectionStateNotifier
       aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
+      mqttRequestModel: currentModel.mqttRequestModel?.copyWith(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
@@ -363,16 +364,20 @@ class CollectionStateNotifier
                 //   1. the explicit top-level arg (caller-supplied merge),
                 //   2. the just-passed wsRequestModel's own field,
                 //   3. the existing model's field.
-                headers: headers ??
+                headers:
+                    headers ??
                     wsRequestModel?.headers ??
                     currentModel.wsRequestModel?.headers,
-                isHeaderEnabledList: isHeaderEnabledList ??
+                isHeaderEnabledList:
+                    isHeaderEnabledList ??
                     wsRequestModel?.isHeaderEnabledList ??
                     currentModel.wsRequestModel?.isHeaderEnabledList,
-                params: params ??
+                params:
+                    params ??
                     wsRequestModel?.params ??
                     currentModel.wsRequestModel?.params,
-                isParamEnabledList: isParamEnabledList ??
+                isParamEnabledList:
+                    isParamEnabledList ??
                     wsRequestModel?.isParamEnabledList ??
                     currentModel.wsRequestModel?.isParamEnabledList,
               )
@@ -400,8 +405,10 @@ class CollectionStateNotifier
         // Protocol-level ping interval (mutable on a live connection).
         if (oldWs?.enableHeartbeat != newWs.enableHeartbeat ||
             oldWs?.heartbeatInterval != newWs.heartbeatInterval) {
-          ConnectionManager.instance
-              .updatePingInterval(rId, _wsPingInterval(newWs));
+          ConnectionManager.instance.updatePingInterval(
+            rId,
+            _wsPingInterval(newWs),
+          );
         }
         // App-level repeating-message heartbeat (restart timer on any change,
         // without reconnecting). Fires independently of the ping change above.
@@ -418,9 +425,7 @@ class CollectionStateNotifier
   /// Heartbeat ping interval for [ws], or `null` when heartbeats are disabled.
   /// Falls back to 30s when the interval is non-positive (mirrors connect()).
   Duration? _wsPingInterval(WebSocketRequestModel ws) => ws.enableHeartbeat
-      ? Duration(
-          seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30,
-        )
+      ? Duration(seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30)
       : null;
 
   /// Builds the combined env-var map (global env overlaid by active env),
@@ -459,7 +464,7 @@ class CollectionStateNotifier
           final combined = _buildCombinedEnvVarMap();
           final substituted =
               substituteVariables(ws.messageHeartbeatPayload, combined) ??
-                  ws.messageHeartbeatPayload;
+              ws.messageHeartbeatPayload;
           sendWebSocketMessage(requestId, substituted);
         },
       );
@@ -593,9 +598,9 @@ class CollectionStateNotifier
   Future<void> _connectWebSocket(
     String requestId,
     RequestModel requestModel,
-    WebSocketRequestModel wsModel,
-    {String? historyId}
-  ) async {
+    WebSocketRequestModel wsModel, {
+    String? historyId,
+  }) async {
     final Map<String, String> combinedEnvVarMap = _buildCombinedEnvVarMap();
 
     final substitutedUrl =
@@ -742,9 +747,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, errMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, errMsg]),
+              );
             }
           }
         },
@@ -772,7 +778,12 @@ class CollectionStateNotifier
             );
             final latestReq = state?[requestId];
             if (latestReq != null) {
-              _connectWebSocket(requestId, latestReq, updatedWs, historyId: historyId);
+              _connectWebSocket(
+                requestId,
+                latestReq,
+                updatedWs,
+                historyId: historyId,
+              );
             }
           } else {
             final discMsg = WebSocketMessage(
@@ -789,9 +800,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, discMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, discMsg]),
+              );
             }
           }
         },
@@ -826,14 +838,18 @@ class CollectionStateNotifier
         ),
       };
       if (historyId != null) {
-        _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-          messageHistory: [...ws.messageHistory, errMsg, discMsg],
-        ));
+        _updateWebSocketHistoryRecord(
+          historyId,
+          ws.copyWith(messageHistory: [...ws.messageHistory, errMsg, discMsg]),
+        );
       }
     }
   }
 
-  void _updateWebSocketHistoryRecord(String historyId, WebSocketRequestModel wsRequestModel) {
+  void _updateWebSocketHistoryRecord(
+    String historyId,
+    WebSocketRequestModel wsRequestModel,
+  ) {
     final historyMap = ref.read(historyMetaStateNotifier);
     if (historyMap != null && historyMap.containsKey(historyId)) {
       final historyMeta = historyMap[historyId]!;
@@ -842,7 +858,27 @@ class CollectionStateNotifier
         metaData: historyMeta,
         wsRequestModel: wsRequestModel,
       );
-      ref.read(historyMetaStateNotifier.notifier).editHistoryRequest(historyModel);
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .editHistoryRequest(historyModel);
+    }
+  }
+
+  void _updateMqttHistoryRecord(
+    String historyId,
+    MQTTRequestModel mqttRequestModel,
+  ) {
+    final historyMap = ref.read(historyMetaStateNotifier);
+    if (historyMap != null && historyMap.containsKey(historyId)) {
+      final historyMeta = historyMap[historyId]!;
+      final historyModel = HistoryRequestModel(
+        historyId: historyId,
+        metaData: historyMeta,
+        mqttRequestModel: mqttRequestModel,
+      );
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .editHistoryRequest(historyModel);
     }
   }
 
@@ -888,7 +924,12 @@ class CollectionStateNotifier
             .read(historyMetaStateNotifier.notifier)
             .addHistoryRequest(historyModel);
 
-        await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
+        await _connectWebSocket(
+          requestId,
+          requestModel,
+          wsModel,
+          historyId: newHistoryId,
+        );
       } else {
         update(id: requestId, message: "Invalid WebSocket model");
       }
@@ -919,7 +960,30 @@ class CollectionStateNotifier
             mqttRequestModel: mqttModel,
           ),
         };
-        
+
+        // Save history for MQTT connection attempt first (mirrors WebSocket).
+        String newHistoryId = getNewUuid();
+        final historyModel = HistoryRequestModel(
+          historyId: newHistoryId,
+          metaData: HistoryMetaModel(
+            historyId: newHistoryId,
+            requestId: requestId,
+            apiType: APIType.mqtt,
+            name: requestModel.name,
+            url: mqttModel.brokerUrl,
+            method: HTTPVerb.get, // MQTT has no HTTP verb; mirror WS's default.
+            responseStatus: 0,
+            timeStamp: DateTime.now(),
+          ),
+          mqttRequestModel: mqttModel.copyWith(messageHistory: []),
+          preRequestScript: requestModel.preRequestScript,
+          postRequestScript: requestModel.postRequestScript,
+        );
+
+        ref
+            .read(historyMetaStateNotifier.notifier)
+            .addHistoryRequest(historyModel);
+
         try {
           await ConnectionManager.instance.connectMqtt(
             requestId,
@@ -935,8 +999,12 @@ class CollectionStateNotifier
             userProperties: _enabledUserProperties(mqttModel),
             sessionExpiryInterval: mqttModel.sessionExpiryInterval,
             keepAlivePeriod: mqttModel.keepAlivePeriod,
-            willTopic: mqttModel.willTopic.trim().isNotEmpty ? mqttModel.willTopic.trim() : null,
-            willMessage: mqttModel.willMessage.trim().isNotEmpty ? mqttModel.willMessage : null,
+            willTopic: mqttModel.willTopic.trim().isNotEmpty
+                ? mqttModel.willTopic.trim()
+                : null,
+            willMessage: mqttModel.willMessage.trim().isNotEmpty
+                ? mqttModel.willMessage
+                : null,
             willRetain: mqttModel.willRetain,
             willQos: mqttModel.willQos,
             onInfo: (info) {
@@ -1007,6 +1075,12 @@ class CollectionStateNotifier
                   messageHistory: [...currentModel.messageHistory, msg],
                 ),
               );
+              _updateMqttHistoryRecord(
+                newHistoryId,
+                currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
             },
           );
 
@@ -1065,6 +1139,12 @@ class CollectionStateNotifier
             isStreaming: false,
             message: "MQTT Error",
             mqttRequestModel: errModel.copyWith(
+              messageHistory: [...errModel.messageHistory, errMsg],
+            ),
+          );
+          _updateMqttHistoryRecord(
+            newHistoryId,
+            errModel.copyWith(
               messageHistory: [...errModel.messageHistory, errMsg],
             ),
           );
