@@ -94,13 +94,32 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
   }
 }
 
-class URLTextField extends ConsumerWidget {
+class URLTextField extends ConsumerStatefulWidget {
   const URLTextField({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<URLTextField> createState() => _URLTextFieldState();
+}
+
+class _URLTextFieldState extends ConsumerState<URLTextField> {
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.aiRequestModel?.url));
@@ -109,8 +128,54 @@ class URLTextField extends ConsumerWidget {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
+
+    ref.listen(selectedIdStateProvider, (_, newId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (context.isMediumWindow) {
+          // On mobile: only focus when the sidebar drawer is collapsed
+          if (ref.read(leftDrawerStateProvider)) return;
+          // ...and the URL field is empty
+          final reqModel = ref
+              .read(collectionStateNotifierProvider.notifier)
+              .getRequestModel(newId ?? '');
+          if (reqModel == null) return;
+          final url = switch (reqModel.apiType) {
+            APIType.ai => reqModel.aiRequestModel?.url,
+            _ => reqModel.httpRequestModel?.url,
+          };
+          if (url != null && url.isNotEmpty) return;
+        }
+        _focusNode.requestFocus();
+      });
+    });
+
+    // On mobile, also trigger when the drawer closes (e.g. new tab created then
+    // sidebar collapsed) — selectedId hasn't changed so the listener above
+    // won't fire.
+    ref.listen(leftDrawerStateProvider, (previous, isOpen) {
+      if (!context.isMediumWindow) return;
+      if (isOpen) return; // drawer just opened — do nothing
+      // drawer just closed
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final currentId = ref.read(selectedIdStateProvider);
+        final reqModel = ref
+            .read(collectionStateNotifierProvider.notifier)
+            .getRequestModel(currentId ?? '');
+        if (reqModel == null) return;
+        final url = switch (reqModel.apiType) {
+          APIType.ai => reqModel.aiRequestModel?.url,
+          _ => reqModel.httpRequestModel?.url,
+        };
+        if (url != null && url.isNotEmpty) return;
+        _focusNode.requestFocus();
+      });
+    });
+
     return EnvURLField(
       selectedId: selectedId,
+      focusNode: _focusNode,
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,
@@ -121,7 +186,9 @@ class URLTextField extends ConsumerWidget {
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
         } else {
-          ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .update(url: value);
         }
       },
       onFieldSubmitted: (value) {
