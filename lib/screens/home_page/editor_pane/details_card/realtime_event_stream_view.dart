@@ -173,27 +173,27 @@ class _LogEntryState extends State<_LogEntry> {
     final (Color labelColor, String labelText, IconData dirIcon) =
         switch (msg.messageType) {
       WebSocketMessageType.connected => (
-        Colors.teal.shade400,
+        kColorWsConnected,
         "Connected",
         Icons.link,
       ),
       WebSocketMessageType.sent => (
-        Colors.blue.shade400,
+        kColorWsSent,
         "Sent",
         Icons.arrow_upward,
       ),
       WebSocketMessageType.received => (
-        Colors.green.shade400,
+        kColorWsReceived,
         "Received",
         Icons.arrow_downward,
       ),
       WebSocketMessageType.error => (
-        Colors.red.shade400,
+        kColorWsError,
         "Error",
         Icons.error_outline,
       ),
       WebSocketMessageType.disconnected => (
-        Colors.orange.shade400,
+        kColorWsDisconnected,
         "Disconnected",
         Icons.link_off,
       ),

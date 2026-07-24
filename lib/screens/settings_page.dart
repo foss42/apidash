@@ -178,12 +178,14 @@ class SettingsPage extends ConsumerWidget {
                 subtitle: const Text(kLabelMaxWebSocketEventsSubtitle),
                 trailing: SizedBox(
                   width: 100,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    controller: TextEditingController(
-                      text: settings.maxWebSocketEvents.toString(),
+                  child: ADOutlinedTextField(
+                    initialValue: settings.maxWebSocketEvents.toString(),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
                     ),
-                    onSubmitted: (val) {
+                    onChanged: (val) {
                       final parsed = int.tryParse(val);
                       if (parsed != null && parsed > 0) {
                         ref
@@ -191,11 +193,6 @@ class SettingsPage extends ConsumerWidget {
                             .update(maxWebSocketEvents: parsed);
                       }
                     },
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    ),
                   ),
                 ),
               ),

@@ -7,6 +7,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../../common_widgets/common_widgets.dart';
 import 'ai_history_page.dart';
+import 'ws_history_page.dart';
 import 'his_scripts_tab.dart';
 
 class HistoryRequestPane extends ConsumerWidget {
@@ -67,7 +68,8 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasBody =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket) return false;
+            if (apiType == APIType.ai || apiType == APIType.websocket)
+              return false;
             return value?.httpRequestModel?.hasBody;
           }),
         ) ??
@@ -76,7 +78,8 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket) return false;
+            if (apiType == APIType.ai || apiType == APIType.websocket)
+              return false;
             return value?.httpRequestModel?.hasQuery;
           }),
         ) ??
@@ -194,18 +197,15 @@ class HistoryRequestPane extends ConsumerWidget {
           ref.read(historyCodePaneVisibleStateProvider.notifier).state =
               !codePaneVisible;
         },
-        showViewCodeButton: !isCompact,
-        showIndicators: [
-          paramLength > 0,
-          headerLength > 0,
-        ],
-        tabLabels: const [
-          kLabelURLParams,
-          kLabelHeaders,
-        ],
+        // WebSocket requests have no code generation, so the "View Code"
+        // button is always hidden (mirrors request_pane_ws.dart:44).
+        showViewCodeButton: false,
+        showIndicators: [paramLength > 0, headerLength > 0, true],
+        tabLabels: const [kLabelURLParams, kLabelHeaders, kLabelSettings],
         children: [
           RequestDataTable(rows: paramsMap, keyName: kNameURLParam),
           RequestDataTable(rows: headersMap, keyName: kNameHeader),
+          const HisWebSocketConfigSection(),
         ],
       ),
       _ => kSizedBoxEmpty,
