@@ -119,6 +119,7 @@ class WorkflowRunner {
       var running = WorkflowNodeRunResult(
         nodeId: node.id,
         label: node.label,
+        nodeType: node.type,
         status: WorkflowNodeRunStatus.running,
         loopIndex: entry.loopIndex,
       );
@@ -133,7 +134,9 @@ class WorkflowRunner {
           result = WorkflowNodeRunResult(
             nodeId: node.id,
             label: node.label,
+            nodeType: node.type,
             status: WorkflowNodeRunStatus.success,
+            message: 'Workflow started',
             durationMs: 0,
           );
           branchHandle = WorkflowEdgeHandle.next;
@@ -165,6 +168,7 @@ class WorkflowRunner {
           result = WorkflowNodeRunResult(
             nodeId: node.id,
             label: node.label,
+            nodeType: node.type,
             status: WorkflowNodeRunStatus.success,
             message: clampedDelay <= 0
                 ? 'No delay configured'
@@ -173,6 +177,7 @@ class WorkflowRunner {
           );
           branchHandle = WorkflowEdgeHandle.next;
         case WorkflowNodeType.condition:
+          final expression = (node.conditionExpression ?? '').trim();
           final passed = _evaluateCondition(
             node.conditionExpression,
             scopedVariables: scopedVariables,
@@ -181,8 +186,11 @@ class WorkflowRunner {
           result = WorkflowNodeRunResult(
             nodeId: node.id,
             label: node.label,
+            nodeType: node.type,
             status: WorkflowNodeRunStatus.success,
-            message: passed ? 'Condition true' : 'Condition false',
+            message: passed ? 'True' : 'False',
+            detail: expression.isEmpty ? null : expression,
+            branch: passed ? 'true' : 'false',
             durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
           );
           branchHandle =
@@ -202,9 +210,13 @@ class WorkflowRunner {
               : maxIterations != null && maxIterations > 0
                   ? allItems.take(maxIterations).toList()
                   : allItems;
+          final loopSource = node.loopMode == WorkflowLoopMode.repeat
+              ? 'repeat ${maxIterations ?? 0}'
+              : (node.loopExpression ?? '').trim();
           result = WorkflowNodeRunResult(
             nodeId: node.id,
             label: node.label,
+            nodeType: node.type,
             status: WorkflowNodeRunStatus.success,
             message: items.isEmpty
                 ? node.loopMode == WorkflowLoopMode.repeat
@@ -215,6 +227,8 @@ class WorkflowRunner {
                     : maxIterations != null && maxIterations > 0
                         ? 'Loop ${items.length} of ${allItems.length} items'
                         : 'Loop ${items.length} items',
+            detail: loopSource.isEmpty ? null : loopSource,
+            branch: items.isEmpty ? 'done' : 'each',
             durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
           );
           final doneTargetIds = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
@@ -260,6 +274,7 @@ class WorkflowRunner {
             result = WorkflowNodeRunResult(
               nodeId: node.id,
               label: node.label,
+              nodeType: node.type,
               status: WorkflowNodeRunStatus.failed,
               message: 'Missing request on node',
             );
@@ -287,6 +302,7 @@ class WorkflowRunner {
             logLabel: '${workflow.id}/${node.id}',
           );
           lastStatusCode = execution.statusCode;
+          final extracted = <String, String>{};
           for (final extraction in node.extractions) {
             final value = extractionService.extract(
               source: extraction.source,
@@ -296,12 +312,15 @@ class WorkflowRunner {
             );
             if (value != null && extraction.varName.isNotEmpty) {
               scopedVariables[extraction.varName] = value;
+              extracted[extraction.varName] = value;
             }
           }
+          final substituted = execution.substitutedRequest;
           final ok = execution.ok;
           result = WorkflowNodeRunResult(
             nodeId: node.id,
             label: node.label,
+            nodeType: node.type,
             status: ok
                 ? WorkflowNodeRunStatus.success
                 : WorkflowNodeRunStatus.failed,
@@ -309,6 +328,14 @@ class WorkflowRunner {
             statusCode: execution.statusCode,
             durationMs: execution.duration?.inMilliseconds ??
                 DateTime.now().difference(nodeStartedAt).inMilliseconds,
+            apiType: execution.apiType,
+            method: substituted?.method,
+            url: substituted?.url,
+            requestHeaders: substituted?.enabledHeadersMap,
+            requestBody: substituted?.body,
+            httpResponseModel: execution.httpResponseModel,
+            extractedVariables: extracted,
+            branch: ok ? 'success' : 'failure',
           );
           branchHandle =
               ok ? WorkflowEdgeHandle.success : WorkflowEdgeHandle.failure;
@@ -329,15 +356,7 @@ class WorkflowRunner {
 
       nodeResults.add(result);
       onNodeUpdate?.call(
-        WorkflowNodeRunResult(
-          nodeId: result.nodeId,
-          label: result.label,
-          status: result.status,
-          message: result.message,
-          durationMs: result.durationMs,
-          statusCode: result.statusCode,
-          loopIndex: entry.loopIndex,
-        ),
+        result.copyWith(loopIndex: entry.loopIndex),
       );
 
       if (skipDefaultEnqueue) {

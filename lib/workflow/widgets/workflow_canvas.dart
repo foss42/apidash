@@ -416,8 +416,8 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
         ),
         if (_showGettingStartedHint(workflow))
           Positioned(
-            left: 16,
-            bottom: 72,
+            left: 88,
+            bottom: kWorkflowRunBarFabClearance + 56,
             right: 200,
             child: _WorkflowGettingStartedHint(
               onShowHelp: () {
@@ -457,6 +457,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
           node: node,
           selected: selected,
           onTap: () => _selectNode(node.id),
+          onPlay: () => triggerWorkflowRun(context, ref),
           onDragPanUpdate: _nodeDragHandler(node.id),
           onDragPanEnd: _nodeDragEndHandler(node),
           onWirePointerDown: _onOutputPortPointerDownHandler(node.id),

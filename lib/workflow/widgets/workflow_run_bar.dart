@@ -6,26 +6,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+Future<void> triggerWorkflowRun(BuildContext context, WidgetRef ref) async {
+  if (ref.read(workflowRunInProgressProvider)) {
+    return;
+  }
+  HapticFeedback.mediumImpact();
+  final result = await runActiveWorkflow(ref);
+  if (!context.mounted || result == null) {
+    return;
+  }
+  final messenger = ScaffoldMessenger.of(context);
+  if (result.success) {
+    messenger.showSnackBar(getSnackBar(kMsgWorkflowRunSuccess));
+    return;
+  }
+  messenger.showSnackBar(
+    getSnackBar(result.error ?? kMsgWorkflowRunFailed, color: kColorRed),
+  );
+}
+
 class WorkflowRunBar extends ConsumerWidget {
-  const WorkflowRunBar({super.key, this.bottomPadding = 16});
+  const WorkflowRunBar({
+    super.key,
+    this.bottomPadding = kWorkflowRunBarFabClearance,
+  });
 
   final double bottomPadding;
-
-  Future<void> _runWorkflow(BuildContext context, WidgetRef ref) async {
-    HapticFeedback.mediumImpact();
-    final result = await runActiveWorkflow(ref);
-    if (!context.mounted || result == null) {
-      return;
-    }
-    final messenger = ScaffoldMessenger.of(context);
-    if (result.success) {
-      messenger.showSnackBar(getSnackBar(kMsgWorkflowRunSuccess));
-      return;
-    }
-    messenger.showSnackBar(
-      getSnackBar(result.error ?? kMsgWorkflowRunFailed, color: kColorRed),
-    );
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -117,16 +123,9 @@ class WorkflowRunBar extends ConsumerWidget {
                                   .state =
                               false;
                         }
-                      : () => _runWorkflow(context, ref),
+                      : () => triggerWorkflowRun(context, ref),
                   icon: running
-                      ? SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: theme.colorScheme.onPrimary,
-                          ),
-                        )
+                      ? SizedBox()
                       : const Icon(Icons.play_arrow_rounded, size: 20),
                   label: Text(running ? kLabelStopWorkflow : kLabelRunWorkflow),
                 ),

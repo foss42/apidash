@@ -55,3 +55,16 @@ const kLabelWorkflowDone = 'Done';
 const kLabelWorkflowVariables = 'Variables';
 const kLabelWorkflowExtractions = 'Response extractions';
 const kLabelWorkflowStepOutput = 'Output';
+const kLabelWorkflowRunRequest = 'Request';
+const kLabelWorkflowRunResponse = 'Response';
+const kLabelWorkflowRunExchange = 'Step exchange';
+const kMsgWorkflowNoExchange =
+    'Select a request step to inspect its live HTTP exchange.';
+const kMsgWorkflowSelectStep = 'Select a step to see what happened.';
+const kMsgWorkflowNoResponseBody = 'No response body';
+const kTooltipWorkflowOpenRunInspector = 'Open run inspector';
+const kTooltipWorkflowCollapseRunInspector = 'Collapse run inspector';
+const double kWorkflowRunExchangeHeight = 360;
+const double kWorkflowRunExchangeHeightCompact = 300;
+const double kWorkflowRunStepLogHeight = 168;
+const double kWorkflowRunBarFabClearance = 12;

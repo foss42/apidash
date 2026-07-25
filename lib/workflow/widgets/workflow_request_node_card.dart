@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
@@ -279,6 +280,7 @@ class WorkflowStartNodeCard extends StatelessWidget {
     required this.selected,
     this.highlightNext = false,
     this.onTap,
+    this.onPlay,
     this.onDragPanUpdate,
     this.onDragPanEnd,
     this.onWirePointerDown,
@@ -288,6 +290,7 @@ class WorkflowStartNodeCard extends StatelessWidget {
   final bool selected;
   final bool highlightNext;
   final VoidCallback? onTap;
+  final VoidCallback? onPlay;
   final GestureDragUpdateCallback? onDragPanUpdate;
   final GestureDragEndCallback? onDragPanEnd;
   final void Function(PointerDownEvent event, WorkflowEdgeHandle handle)?
@@ -296,6 +299,10 @@ class WorkflowStartNodeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final green = getResponseStatusCodeColor(
+      200,
+      brightness: theme.brightness,
+    );
     return SizedBox(
       width: kWorkflowStartNodeWidth,
       height: kWorkflowStartNodeHeight,
@@ -305,24 +312,52 @@ class WorkflowStartNodeCard extends StatelessWidget {
           Positioned.fill(
             child: WorkflowInteractiveNode(
               selected: selected,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              borderColor: selected
-                  ? theme.colorScheme.primary
-                  : theme.dividerColor,
+              backgroundColor: Color.alphaBlend(
+                green.withValues(
+                  alpha: theme.brightness == Brightness.dark ? 0.28 : 0.16,
+                ),
+                theme.colorScheme.surfaceContainerLow,
+              ),
+              borderColor: selected ? green : theme.dividerColor,
               onTap: onTap,
               onPanUpdate: onDragPanUpdate,
               onPanEnd: onDragPanEnd,
               child: Row(
                 children: [
-                  const Icon(Icons.play_circle_outline, size: 22),
-                  kHSpacer8,
+                  const SizedBox(width: 36),
+                  kHSpacer4,
                   Expanded(
                     child: Text(
                       node.label.isEmpty ? 'Start' : node.label,
-                      style: theme.textTheme.titleSmall,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: green,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: 8,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: IconButton(
+                tooltip: kLabelRunWorkflow,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(
+                  minWidth: 36,
+                  minHeight: 36,
+                ),
+                visualDensity: VisualDensity.compact,
+                onPressed: onPlay,
+                icon: Icon(
+                  Icons.play_circle_filled_rounded,
+                  size: 26,
+                  color: green,
+                ),
               ),
             ),
           ),
@@ -332,7 +367,7 @@ class WorkflowStartNodeCard extends StatelessWidget {
             child: WorkflowPort(
               label: 'Next',
               side: WorkflowPortSide.right,
-              color: theme.colorScheme.primary,
+              color: green,
               highlighted: highlightNext,
               onPointerDown: (event) => onWirePointerDown?.call(
                 event,

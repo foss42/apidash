@@ -454,7 +454,7 @@ class _WorkflowConditionStepEditorPageState
               node.label.isNotEmpty ? node.label : kLabelWorkflowCondition,
             ),
             Text(
-              'If / else branch',
+              'True / False branch',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],

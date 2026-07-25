@@ -848,6 +848,7 @@ Future<WorkflowRunResult?> runActiveWorkflow(WidgetRef ref) async {
   ref.read(workflowRunInProgressProvider.notifier).state = true;
   ref.read(workflowNodeRunResultsProvider.notifier).state = {};
   ref.read(workflowRunStepOrderProvider.notifier).state = [];
+  ref.read(selectedWorkflowRunResultKeyProvider.notifier).state = null;
   final runner = ref.read(workflowRunnerProvider);
   try {
     final result = await runner.run(

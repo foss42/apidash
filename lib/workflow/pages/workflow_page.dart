@@ -3,7 +3,7 @@ import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/widgets/workflow_canvas.dart';
 import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
-import 'package:apidash/workflow/widgets/workflow_run_timeline.dart';
+import 'package:apidash/workflow/widgets/workflow_run_exchange_panel.dart';
 import 'package:apidash/workflow/widgets/workflow_selector_dropdown.dart';
 import 'package:apidash/screens/common_widgets/environment_dropdown.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -99,7 +99,7 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
         ),
         const Divider(height: 1),
         const Expanded(child: ClipRect(child: WorkflowCanvas())),
-        const WorkflowRunTimeline(),
+        const WorkflowRunInspector(),
       ],
     );
   }

@@ -16,6 +16,8 @@ class WorkflowStepExecutionResult {
     this.message,
     this.httpResponseModel,
     this.duration,
+    this.apiType,
+    this.substitutedRequest,
   });
 
   final bool ok;
@@ -23,6 +25,8 @@ class WorkflowStepExecutionResult {
   final String? message;
   final HttpResponseModel? httpResponseModel;
   final Duration? duration;
+  final APIType? apiType;
+  final HttpRequestModel? substitutedRequest;
 }
 
 Future<WorkflowStepExecutionResult> executeWorkflowRequest({
@@ -139,6 +143,8 @@ Future<WorkflowStepExecutionResult> executeWorkflowRequest({
     return WorkflowStepExecutionResult(
       ok: false,
       message: errorMessage ?? 'Unknown error',
+      apiType: executionModel.apiType,
+      substitutedRequest: substituted,
     );
   }
 
@@ -162,5 +168,7 @@ Future<WorkflowStepExecutionResult> executeWorkflowRequest({
     message: kResponseCodeReasons[statusCode],
     httpResponseModel: httpResponseModel,
     duration: duration,
+    apiType: executionModel.apiType,
+    substitutedRequest: substituted,
   );
 }

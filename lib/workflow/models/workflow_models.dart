@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/workflow/models/workflow_request_codec.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 enum WorkflowNodeType { request, condition, manualStart, loop, delay }
 
@@ -485,6 +486,16 @@ class WorkflowNodeRunResult {
     this.durationMs,
     this.statusCode,
     this.loopIndex,
+    this.nodeType,
+    this.detail,
+    this.branch,
+    this.apiType,
+    this.method,
+    this.url,
+    this.requestHeaders,
+    this.requestBody,
+    this.httpResponseModel,
+    this.extractedVariables = const {},
   });
 
   final String nodeId;
@@ -494,6 +505,83 @@ class WorkflowNodeRunResult {
   final int? durationMs;
   final int? statusCode;
   final String? loopIndex;
+  final WorkflowNodeType? nodeType;
+  final String? detail;
+  final String? branch;
+  final APIType? apiType;
+  final HTTPVerb? method;
+  final String? url;
+  final Map<String, String>? requestHeaders;
+  final String? requestBody;
+  final HttpResponseModel? httpResponseModel;
+  final Map<String, String> extractedVariables;
+
+  bool get hasHttpExchange =>
+      method != null ||
+      (url != null && url!.trim().isNotEmpty) ||
+      httpResponseModel != null;
+
+  bool get isRequestStep =>
+      nodeType == WorkflowNodeType.request || hasHttpExchange;
+
+  WorkflowNodeRunResult copyWith({
+    String? nodeId,
+    String? label,
+    WorkflowNodeRunStatus? status,
+    String? message,
+    int? durationMs,
+    int? statusCode,
+    String? loopIndex,
+    bool clearLoopIndex = false,
+    WorkflowNodeType? nodeType,
+    String? detail,
+    String? branch,
+    APIType? apiType,
+    HTTPVerb? method,
+    String? url,
+    Map<String, String>? requestHeaders,
+    String? requestBody,
+    HttpResponseModel? httpResponseModel,
+    Map<String, String>? extractedVariables,
+  }) =>
+      WorkflowNodeRunResult(
+        nodeId: nodeId ?? this.nodeId,
+        label: label ?? this.label,
+        status: status ?? this.status,
+        message: message ?? this.message,
+        durationMs: durationMs ?? this.durationMs,
+        statusCode: statusCode ?? this.statusCode,
+        loopIndex: clearLoopIndex ? null : (loopIndex ?? this.loopIndex),
+        nodeType: nodeType ?? this.nodeType,
+        detail: detail ?? this.detail,
+        branch: branch ?? this.branch,
+        apiType: apiType ?? this.apiType,
+        method: method ?? this.method,
+        url: url ?? this.url,
+        requestHeaders: requestHeaders ?? this.requestHeaders,
+        requestBody: requestBody ?? this.requestBody,
+        httpResponseModel: httpResponseModel ?? this.httpResponseModel,
+        extractedVariables: extractedVariables ?? this.extractedVariables,
+      );
+
+  RequestModel? asRequestModel() {
+    if (!hasHttpExchange) {
+      return null;
+    }
+    return RequestModel(
+      id: nodeId,
+      name: label,
+      apiType: apiType ?? APIType.rest,
+      httpRequestModel: HttpRequestModel(
+        method: method ?? HTTPVerb.get,
+        url: url ?? '',
+        body: requestBody,
+      ),
+      responseStatus: statusCode,
+      message: message,
+      httpResponseModel: httpResponseModel,
+    );
+  }
 }
 
 class WorkflowRunResult {

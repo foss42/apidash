@@ -122,8 +122,27 @@ class WorkflowValidator {
       );
       if (!hasThen || !hasElse) {
         warnings.add(
-          'Condition node "${node.label}" should connect both then and else branches.',
+          'Condition node "${node.label}" should connect both True and False branches.',
         );
+      }
+    }
+
+    final starts = [
+      for (final node in workflow.graph.nodes)
+        if (node.type == WorkflowNodeType.manualStart) node,
+    ];
+    if (starts.isNotEmpty) {
+      final reachable = _reachableFrom(workflow, starts.map((n) => n.id));
+      for (final node in workflow.graph.nodes) {
+        if (node.type == WorkflowNodeType.manualStart) {
+          continue;
+        }
+        if (!reachable.contains(node.id)) {
+          final name = node.label.isNotEmpty ? node.label : node.id;
+          warnings.add(
+            'Node "$name" is not connected from Start and will be skipped.',
+          );
+        }
       }
     }
 
@@ -168,6 +187,15 @@ class WorkflowValidator {
   }
 
   List<WorkflowGraphNode> _entryNodes(WorkflowDocument workflow) {
+    final starts = [
+      for (final node in workflow.graph.nodes)
+        if (node.type == WorkflowNodeType.manualStart) node,
+    ];
+    // Prefer explicit Start node(s). Orphan/disconnected nodes must not run.
+    if (starts.isNotEmpty) {
+      return starts;
+    }
+
     final incoming = <String>{};
     for (final edge in workflow.graph.edges) {
       incoming.add(edge.target);
@@ -175,5 +203,25 @@ class WorkflowValidator {
     return workflow.graph.nodes
         .where((node) => !incoming.contains(node.id))
         .toList();
+  }
+
+  Set<String> _reachableFrom(
+    WorkflowDocument workflow,
+    Iterable<String> roots,
+  ) {
+    final adjacency = <String, List<String>>{};
+    for (final edge in workflow.graph.edges) {
+      adjacency.putIfAbsent(edge.source, () => []).add(edge.target);
+    }
+    final reachable = <String>{};
+    final queue = <String>[...roots];
+    while (queue.isNotEmpty) {
+      final id = queue.removeAt(0);
+      if (!reachable.add(id)) {
+        continue;
+      }
+      queue.addAll(adjacency[id] ?? const []);
+    }
+    return reachable;
   }
 }
