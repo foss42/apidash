@@ -6,7 +6,6 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-import 'git_diff_chrome.dart';
 import 'git_diff_file_kind.dart';
 import 'git_diff_side_by_side_shell.dart';
 import 'git_diff_snapshots.dart';
@@ -369,51 +368,42 @@ class GitListDiffView extends StatelessWidget {
                   color: highlight.foreground.withValues(alpha: 0.2),
                 ),
               ),
-              child: Row(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GitDiffChangeBadge(kind: kind),
-                  kHSpacer10,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (row.method != null && row.apiType == APIType.rest)
-                          Text(
-                            row.method!.name.toUpperCase(),
-                            style: kCodeStyle.copyWith(
-                              fontSize: 11,
-                              color: highlight.foreground,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        if (row.apiType != null && row.apiType != APIType.rest)
-                          Text(
-                            row.apiType!.label,
-                            style: textTheme.labelSmall?.copyWith(
-                              color: highlight.foreground,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        Text(
-                          row.label,
-                          style: textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: highlight.foreground,
-                          ),
-                        ),
-                        if (row.detail != null && row.detail!.isNotEmpty) ...[
-                          kVSpacer5,
-                          Text(
-                            row.detail!,
-                            style: textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ],
+                  if (row.method != null && row.apiType == APIType.rest)
+                    Text(
+                      row.method!.name.toUpperCase(),
+                      style: kCodeStyle.copyWith(
+                        fontSize: 11,
+                        color: highlight.foreground,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  if (row.apiType != null && row.apiType != APIType.rest)
+                    Text(
+                      row.apiType!.label,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: highlight.foreground,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  Text(
+                    row.label,
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: highlight.foreground,
                     ),
                   ),
+                  if (row.detail != null && row.detail!.isNotEmpty) ...[
+                    kVSpacer5,
+                    Text(
+                      row.detail!,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             );
