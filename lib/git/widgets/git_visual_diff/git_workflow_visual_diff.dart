@@ -133,6 +133,7 @@ class _NodeDiffSlots {
   const _NodeDiffSlots({
     required this.showType,
     required this.showLabel,
+    required this.showPosition,
     required this.showRequest,
     required this.showInheritFrom,
     required this.showExtractions,
@@ -145,6 +146,7 @@ class _NodeDiffSlots {
 
   final bool showType;
   final bool showLabel;
+  final bool showPosition;
   final bool showRequest;
   final bool showInheritFrom;
   final bool showExtractions;
@@ -157,6 +159,7 @@ class _NodeDiffSlots {
   bool get hasAny =>
       showType ||
       showLabel ||
+      showPosition ||
       showRequest ||
       showInheritFrom ||
       showExtractions ||
@@ -186,6 +189,9 @@ class _NodeDiffSlots {
         other == null ? null : _nodeTypeLabel(other.type),
       ),
       showLabel: changed(node?.label, other?.label),
+      showPosition: oneMissing
+          ? (node != null || other != null)
+          : !_positionsEqual(node!.position, other!.position),
       showRequest: effectiveType == WorkflowNodeType.request &&
           (oneMissing
               ? ((node?.request?.isNotEmpty ?? false) ||
@@ -422,6 +428,21 @@ class _NodeDiffCard extends StatelessWidget {
                 child: node!.label.trim().isEmpty
                     ? const _GitDiffNoContentBox()
                     : Text(node!.label),
+              ),
+            if (slots.showPosition)
+              GitDiffField(
+                label: 'Position',
+                change: _fieldChangeKind(
+                  _positionSignature(node!.position),
+                  otherNode == null
+                      ? null
+                      : _positionSignature(otherNode!.position),
+                  side,
+                ),
+                child: Text(
+                  _positionLabel(node!.position),
+                  style: kCodeStyle.copyWith(fontSize: 12),
+                ),
               ),
             if (slots.showRequest)
               GitDiffField(
@@ -717,6 +738,7 @@ bool _nodesEqual(WorkflowGraphNode? a, WorkflowGraphNode? b) {
   if (a == null || b == null) return false;
   if (a.type != b.type) return false;
   if (a.label != b.label) return false;
+  if (!_positionsEqual(a.position, b.position)) return false;
   if (!_requestMapsEqual(a.request, b.request)) return false;
   if (!_inheritEquals(a.inheritFrom, b.inheritFrom)) return false;
   if (!_extractionsEqual(a.extractions, b.extractions)) return false;
@@ -725,8 +747,29 @@ bool _nodesEqual(WorkflowGraphNode? a, WorkflowGraphNode? b) {
   if (a.loopMaxIterations != b.loopMaxIterations) return false;
   if (a.loopMode != b.loopMode) return false;
   if (a.delayMs != b.delayMs) return false;
-  // Position / layout noise is ignored for visual review.
   return true;
+}
+
+bool _positionsEqual(WorkflowPosition? a, WorkflowPosition? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  return a.x == b.x && a.y == b.y;
+}
+
+String _positionSignature(WorkflowPosition position) =>
+    '${position.x},${position.y}';
+
+String _positionLabel(WorkflowPosition position) {
+  final x = _formatCoord(position.x);
+  final y = _formatCoord(position.y);
+  return 'x: $x, y: $y';
+}
+
+String _formatCoord(double value) {
+  if (value == value.roundToDouble()) {
+    return value.toInt().toString();
+  }
+  return value.toStringAsFixed(1);
 }
 
 bool _edgesEqual(WorkflowGraphEdge? a, WorkflowGraphEdge? b) {
