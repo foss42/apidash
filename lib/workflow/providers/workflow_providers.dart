@@ -7,6 +7,7 @@ import 'package:apidash/workflow/engine/workflow_auto_arrange.dart';
 import 'package:apidash/workflow/engine/workflow_runner.dart';
 import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
+import 'package:apidash/workflow/providers/workflow_history_providers.dart';
 import 'package:apidash/workflow/providers/workflow_ui_providers.dart';
 import 'package:apidash/workflow/utils/workflow_variable_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -849,6 +850,7 @@ Future<WorkflowRunResult?> runActiveWorkflow(WidgetRef ref) async {
   ref.read(workflowNodeRunResultsProvider.notifier).state = {};
   ref.read(workflowRunStepOrderProvider.notifier).state = [];
   ref.read(selectedWorkflowRunResultKeyProvider.notifier).state = null;
+  ref.read(viewingFlowHistoryRunIdProvider.notifier).state = null;
   final runner = ref.read(workflowRunnerProvider);
   try {
     final result = await runner.run(
@@ -875,6 +877,11 @@ Future<WorkflowRunResult?> runActiveWorkflow(WidgetRef ref) async {
         }
       },
       shouldStop: () => !ref.read(workflowRunInProgressProvider),
+    );
+    await persistWorkflowRunHistory(
+      ref: ref,
+      workflow: workflow,
+      result: result,
     );
     return result;
   } finally {

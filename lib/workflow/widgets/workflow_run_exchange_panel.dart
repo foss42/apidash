@@ -884,7 +884,7 @@ class _StepEventLog extends StatelessWidget {
         if (result.durationMs != null) ...[
           kVSpacer6,
           Text(
-            '${result.durationMs} ms',
+            'Time Taken: ${result.durationMs} ms',
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

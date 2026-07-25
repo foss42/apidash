@@ -64,6 +64,11 @@ const kMsgWorkflowSelectStep = 'Select a step to see what happened.';
 const kMsgWorkflowNoResponseBody = 'No response body';
 const kTooltipWorkflowOpenRunInspector = 'Open run inspector';
 const kTooltipWorkflowCollapseRunInspector = 'Collapse run inspector';
+const kLabelFlowHistory = 'Flow history';
+const kTooltipFlowHistory = 'View past workflow runs';
+const kMsgFlowHistoryEmpty =
+    'No runs saved yet. Run this workflow to build history.';
+const kMsgFlowHistoryOpen = 'Open in inspector';
 const double kWorkflowRunExchangeHeight = 360;
 const double kWorkflowRunExchangeHeightCompact = 300;
 const double kWorkflowRunStepLogHeight = 168;

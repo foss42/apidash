@@ -779,6 +779,100 @@ class WorkspaceStorage {
     await setAllHistoryMetas(null);
   }
 
+
+  String _flowHistoryDir() =>
+      p.join(kWorkspaceHistoryDir, kWorkspaceFlowHistoryDir);
+
+  String _flowHistoryIndexPath() =>
+      p.join(_flowHistoryDir(), kWorkspaceFlowHistoryIndexFile);
+
+  String _flowHistoryRecordPath(String runId) =>
+      p.join(_flowHistoryDir(), '$runId$kJsonFileExtension');
+
+  Map<String, Map<String, dynamic>>? getAllFlowHistoryMetas() {
+    final json = _readJsonSync(_flowHistoryIndexPath());
+    if (json == null) {
+      return null;
+    }
+    final metas = json[kWorkspaceFlowHistoryMetasKey];
+    if (metas is! Map || metas.isEmpty) {
+      return null;
+    }
+    return Map<String, Map<String, dynamic>>.fromEntries(
+      metas.entries.map((e) {
+        final value = e.value;
+        if (value is! Map) {
+          return MapEntry(e.key.toString(), <String, dynamic>{});
+        }
+        return MapEntry(e.key.toString(), Map<String, dynamic>.from(value));
+      }),
+    );
+  }
+
+  Future<void> setAllFlowHistoryMetas(
+    Map<String, Map<String, dynamic>>? metas,
+  ) async {
+    await writeJsonAtomic(_path(_flowHistoryIndexPath()), {
+      kWorkspaceFlowHistoryMetasKey:
+          metas?.map((k, v) => MapEntry(k, Map<String, Object?>.from(v))) ??
+          <String, Map<String, Object?>>{},
+    });
+  }
+
+  Future<void> setFlowHistoryMeta(
+    String runId,
+    Map<String, dynamic>? metaJson,
+  ) async {
+    if (metaJson == null) {
+      await deleteFlowHistoryMeta(runId);
+      return;
+    }
+    final all = Map<String, Map<String, dynamic>>.from(
+      getAllFlowHistoryMetas() ?? {},
+    );
+    all[runId] = Map<String, dynamic>.from(metaJson);
+    await setAllFlowHistoryMetas(all);
+  }
+
+  Future<void> deleteFlowHistoryMeta(String runId) async {
+    final all = getAllFlowHistoryMetas();
+    if (all == null || !all.containsKey(runId)) {
+      return;
+    }
+    all.remove(runId);
+    await setAllFlowHistoryMetas(all.isEmpty ? null : all);
+  }
+
+  Future<Map<String, dynamic>?> getFlowHistoryRecord(String runId) async {
+    final json = await readJsonFile(_path(_flowHistoryRecordPath(runId)));
+    if (json == null) {
+      return null;
+    }
+    return Map<String, dynamic>.from(json);
+  }
+
+  Future<void> setFlowHistoryRecord(
+    String runId,
+    Map<String, dynamic>? recordJson,
+  ) async {
+    if (recordJson == null) {
+      await deleteFlowHistoryRecord(runId);
+      return;
+    }
+    await writeJsonAtomic(
+      _path(_flowHistoryRecordPath(runId)),
+      Map<String, Object?>.from(recordJson),
+    );
+  }
+
+  Future<void> deleteFlowHistoryRecord(String runId) async {
+    final recordFile = File(_path(_flowHistoryRecordPath(runId)));
+    if (await recordFile.exists()) {
+      await recordFile.delete();
+    }
+    await deleteFlowHistoryMeta(runId);
+  }
+
   Future<void> clear() async {
     final collectionIds = getCollectionsIndex().map((e) => e.id).toList();
     if (collectionIds.isEmpty) {

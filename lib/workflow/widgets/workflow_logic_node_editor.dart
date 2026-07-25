@@ -1012,7 +1012,7 @@ class _ConditionGuidePanel extends StatelessWidget {
         _GuideSection(
           title: 'Status checks',
           body:
-              'Use status>=200, status<400, or status>=200&&status<300 to branch on the last HTTP response code.',
+              'Use status>=200, status<400, or status>=200&&status<300 to branch on the last response code.',
         ),
         _GuideSection(
           title: 'Variables',

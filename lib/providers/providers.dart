@@ -12,3 +12,4 @@ export 'workspace_disk_sync.dart';
 export 'js_runtime_notifier.dart';
 export '../workflow/providers/workflow_providers.dart';
 export '../workflow/providers/workflow_ui_providers.dart';
+export '../workflow/providers/workflow_history_providers.dart';

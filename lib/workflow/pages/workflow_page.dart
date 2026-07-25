@@ -1,6 +1,8 @@
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/services/storage/workspace_storage.dart';
+import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
+import 'package:apidash/workflow/widgets/workflow_history_drawer.dart';
 import 'package:apidash/workflow/widgets/workflow_canvas.dart';
 import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
 import 'package:apidash/workflow/widgets/workflow_run_exchange_panel.dart';
@@ -93,6 +95,14 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
                 ),
               ],
               const Spacer(),
+              IconButton(
+                tooltip: kTooltipFlowHistory,
+                onPressed: workflow == null
+                    ? null
+                    : () => showFlowHistoryDrawer(context),
+                icon: const Icon(Icons.history_rounded),
+              ),
+              kHSpacer4,
               const EnvironmentDropdown(),
             ],
           ),

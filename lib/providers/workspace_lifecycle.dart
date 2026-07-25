@@ -22,6 +22,7 @@ import 'settings_providers.dart';
 import 'ui_providers.dart';
 import '../workflow/providers/workflow_providers.dart';
 import '../workflow/providers/workflow_ui_providers.dart';
+import '../workflow/providers/workflow_history_providers.dart';
 
 final workspaceDiskReloadSuppressCountProvider = StateProvider<int>((ref) => 0);
 
@@ -169,6 +170,7 @@ Future<void> _reloadWorkspaceFromDisk(
       );
     }
     await read(workflowCatalogProvider.notifier).reloadFromDisk();
+    read(flowHistoryMetasProvider.notifier).reload();
     final activeWorkflowId = read(selectedWorkflowIdStateProvider);
     if (activeWorkflowId != null) {
       await read(activeWorkflowProvider.notifier).load(activeWorkflowId);
