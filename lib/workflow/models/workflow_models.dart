@@ -408,7 +408,6 @@ class WorkflowDocument {
   const WorkflowDocument({
     required this.id,
     required this.name,
-    required this.modifiedAt,
     this.description = '',
     this.graph = const WorkflowGraph(),
   });
@@ -416,13 +415,11 @@ class WorkflowDocument {
   final String id;
   final String name;
   final String description;
-  final DateTime modifiedAt;
   final WorkflowGraph graph;
 
   Map<String, dynamic> toJson() => {
         'name': name,
         if (description.isNotEmpty) 'description': description,
-        'modifiedAt': modifiedAt.toIso8601String(),
         'nodes': graph.nodes.map((node) => node.toJson()).toList(),
         'edges': graph.edges.map((edge) => edge.toJson()).toList(),
       };
@@ -444,8 +441,6 @@ class WorkflowDocument {
       id: idRaw.isNotEmpty ? idRaw : name,
       name: name,
       description: json['description']?.toString() ?? '',
-      modifiedAt: DateTime.tryParse(json['modifiedAt']?.toString() ?? '') ??
-          DateTime.now(),
       graph: WorkflowGraph.fromJson(nodesRaw: nodesRaw, edgesRaw: edgesRaw),
     );
   }
@@ -454,14 +449,12 @@ class WorkflowDocument {
     String? id,
     String? name,
     String? description,
-    DateTime? modifiedAt,
     WorkflowGraph? graph,
   }) =>
       WorkflowDocument(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
-        modifiedAt: modifiedAt ?? this.modifiedAt,
         graph: graph ?? this.graph,
       );
 

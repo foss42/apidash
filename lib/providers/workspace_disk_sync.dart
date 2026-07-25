@@ -188,16 +188,6 @@ Future<void> _applyDiskSyncBatch(
           if (workspaceStorage.workflowExistsOnDisk(workflowId)) {
             continue;
           }
-          final workflowDir = Directory(
-            p.join(
-              workspaceStorage.rootPath,
-              kWorkspaceWorkflowsDir,
-              workflowId,
-            ),
-          );
-          if (await workflowDir.exists()) {
-            continue;
-          }
           if (await workflows.applyExternalWorkflowRemoved(workflowId)) {
             removedWorkflow = true;
           }

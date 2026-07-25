@@ -422,27 +422,23 @@ WorkspaceDiskChange? _classifyWorkflowDiskEvent({
     return null;
   }
 
-  if (segments.length < 2) return null;
+  if (segments.length != 2) return null;
 
-  final workflowId = segments[1];
-  if (workflowId.isEmpty ||
-      workflowId.startsWith('.') ||
-      workflowId.endsWith(kJsonFileExtension)) {
+  final fileName = segments[1];
+  if (!fileName.endsWith(kJsonFileExtension)) {
+    return null;
+  }
+  final workflowId = fileName.substring(
+    0,
+    fileName.length - kJsonFileExtension.length,
+  );
+  if (workflowId.isEmpty || workflowId.startsWith('.')) {
     return null;
   }
 
-  if (segments.length == 2) {
-    if (isRemoval) return WorkflowRemovedFromDisk(workflowId);
-    if (isCreate) return WorkflowAddedFromDisk(workflowId);
-    return null;
-  }
-
-  if (segments.length == 3 && segments[2] == kWorkspaceWorkflowFile) {
-    if (isRemoval) return WorkflowRemovedFromDisk(workflowId);
-    if (isCreate) return WorkflowAddedFromDisk(workflowId);
-    if (isContentWrite) return WorkflowContentChangedOnDisk(workflowId);
-  }
-
+  if (isRemoval) return WorkflowRemovedFromDisk(workflowId);
+  if (isCreate) return WorkflowAddedFromDisk(workflowId);
+  if (isContentWrite) return WorkflowContentChangedOnDisk(workflowId);
   return null;
 }
 

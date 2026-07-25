@@ -39,6 +39,18 @@ Future<String> resolveGitDiffTitle(
         return parent;
       }
     }
+    if (_isUnderWorkspaceDir(change.path, kWorkspaceWorkflowsDir) &&
+        fileName.endsWith(kJsonFileExtension) &&
+        fileName != kWorkspaceWorkflowsIndexFile) {
+      final name = json['name']?.toString().trim();
+      if (name != null && name.isNotEmpty) return name;
+      if (fileName.endsWith(kJsonFileExtension)) {
+        return fileName.substring(
+          0,
+          fileName.length - kJsonFileExtension.length,
+        );
+      }
+    }
     if (change.path.contains('/$kWorkspaceCollectionsDir/') &&
         fileName == kWorkspaceCollectionsIndexFile) {
       return 'Collections index';
@@ -46,6 +58,10 @@ Future<String> resolveGitDiffTitle(
     if (_isUnderWorkspaceDir(change.path, kWorkspaceEnvironmentsDir) &&
         fileName == kWorkspaceEnvironmentIndexFile) {
       return 'Environments index';
+    }
+    if (_isUnderWorkspaceDir(change.path, kWorkspaceWorkflowsDir) &&
+        fileName == kWorkspaceWorkflowsIndexFile) {
+      return 'Workflows index';
     }
   } catch (_) {}
 

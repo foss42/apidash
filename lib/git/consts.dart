@@ -14,6 +14,7 @@ const kLabelGitDiffOriginal = 'Original';
 const kLabelGitDiffCurrent = 'Current';
 const kLabelGitCommitter = 'Committing as';
 const kLabelGitPushOrigin = 'Push origin';
+const kLabelGitPushingOrigin = 'Pushing…';
 const kMsgGitCommitterNotConfigured =
     'Git user.name is not configured for this repository';
 const kMsgGitNotInstalled =

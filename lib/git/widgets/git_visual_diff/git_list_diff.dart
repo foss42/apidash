@@ -100,6 +100,21 @@ List<GitListDiffRow> diffEnvironmentIndexRows({
   );
 }
 
+List<GitListDiffRow> diffWorkflowIndexRows({
+  Map<String, Object?>? head,
+  Map<String, Object?>? current,
+}) {
+  final original = _parseWorkflowNames(head);
+  final updated = _parseWorkflowNames(current);
+  return _diffById(
+    original: original.map((name) => _IdLabel(id: name, label: name)).toList(),
+    updated: updated.map((name) => _IdLabel(id: name, label: name)).toList(),
+    idOf: (e) => e.id,
+    labelOf: (e) => e.label,
+    equals: (a, b) => a.id == b.id,
+  );
+}
+
 List<GitListDiffRow> diffEnvironmentRows({
   Map<String, Object?>? head,
   Map<String, Object?>? current,
@@ -166,6 +181,16 @@ List<String> _parseEnvironmentIds(Map<String, Object?>? json) {
   return [
     for (final item in entries)
       if (item != null) item.toString(),
+  ];
+}
+
+List<String> _parseWorkflowNames(Map<String, Object?>? json) {
+  if (json == null) return const [];
+  final entries = json[kWorkspaceWorkflowsIndexKey];
+  if (entries is! List) return const [];
+  return [
+    for (final item in entries)
+      if (item is String && item.trim().isNotEmpty) item.trim(),
   ];
 }
 
@@ -477,6 +502,15 @@ class GitListSnapshotPreview extends StatelessWidget {
               .values
               .where((v) => v.key.isNotEmpty)
               .map((v) => v.key),
+        ],
+      GitDiffFileKind.workflowIndex => _parseWorkflowNames(json),
+      GitDiffFileKind.workflow => [
+          if (json['name'] != null) json['name'].toString(),
+          for (final item in (json['nodes'] as List? ?? const []))
+            if (item is Map)
+              (item['label']?.toString().trim().isNotEmpty ?? false)
+                  ? item['label'].toString()
+                  : (item['type']?.toString() ?? item['id']?.toString() ?? 'node'),
         ],
       _ => const [],
     };

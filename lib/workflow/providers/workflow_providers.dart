@@ -48,13 +48,11 @@ class WorkflowSummary {
   const WorkflowSummary({
     required this.id,
     required this.name,
-    required this.modifiedAt,
     required this.stepCount,
   });
 
   final String id;
   final String name;
-  final DateTime modifiedAt;
   final int stepCount;
 }
 
@@ -82,7 +80,6 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
       return WorkflowSummary(
         id: name,
         name: name,
-        modifiedAt: DateTime.now(),
         stepCount: 0,
       );
     }
@@ -91,7 +88,6 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
     return WorkflowSummary(
       id: workflowName,
       name: workflowName,
-      modifiedAt: workflow.modifiedAt,
       stepCount: workflow.graph.requestNodeCount,
     );
   }
@@ -103,12 +99,11 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
   Future<WorkflowDocument> createWorkflow({
     String? name,
   }) async {
-    final now = DateTime.now();
     final baseName = name?.trim().isNotEmpty == true
         ? name!.trim()
         : 'Workflow ${(state.value?.length ?? 0) + 1}';
     final workflowName = _uniqueWorkflowName(baseName);
-    final workflow = _defaultWorkflow(name: workflowName, now: now);
+    final workflow = _defaultWorkflow(name: workflowName);
     await _persistWorkflow(workflow);
     await reloadFromDisk();
     ref.read(selectedWorkflowIdStateProvider.notifier).state = workflowName;
@@ -277,7 +272,6 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     final updated = workflow.copyWith(
       id: name,
       name: name,
-      modifiedAt: DateTime.now(),
     );
     state = updated;
     await workspaceStorage.setWorkflow(updated.id, updated.toJson());
@@ -773,7 +767,6 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
 
 WorkflowDocument _defaultWorkflow({
   required String name,
-  required DateTime now,
 }) {
   final requestId = getNewUuid();
   final nodeId = 'node_${getNewUuid().substring(0, 8)}';
@@ -781,7 +774,6 @@ WorkflowDocument _defaultWorkflow({
   return WorkflowDocument(
     id: name,
     name: name,
-    modifiedAt: now,
     graph: WorkflowGraph(
       nodes: [
         const WorkflowGraphNode(

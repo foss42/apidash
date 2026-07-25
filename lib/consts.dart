@@ -99,7 +99,6 @@ const kWorkspaceFlowHistoryIndexFile = 'flow_history_index.json';
 const kWorkspaceFlowHistoryMetasKey = 'flowHistoryMeta';
 const kWorkspaceWorkflowsDir = 'workflows';
 const kWorkspaceWorkflowsIndexFile = 'workflow_index.json';
-const kWorkspaceWorkflowFile = 'workflow.json';
 const kWorkspaceWorkflowsIndexKey = 'workflows';
 const kJsonFileExtension = '.json';
 

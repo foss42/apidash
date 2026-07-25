@@ -140,11 +140,21 @@ class _GitPushOriginBar extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.arrow_upward_rounded,
-                    size: 18,
-                    color: scheme.primary,
-                  ),
+                  if (busy)
+                    SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: scheme.primary,
+                      ),
+                    )
+                  else
+                    Icon(
+                      Icons.arrow_upward_rounded,
+                      size: 18,
+                      color: scheme.primary,
+                    ),
                   kHSpacer10,
                   Flexible(
                     child: Column(
@@ -152,7 +162,7 @@ class _GitPushOriginBar extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          kLabelGitPushOrigin,
+                          busy ? kLabelGitPushingOrigin : kLabelGitPushOrigin,
                           style: textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: scheme.onSurface,
