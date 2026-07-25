@@ -1,8 +1,6 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-const double kGitDiffLabelWidth = 84;
-
 class GitDiffField extends StatelessWidget {
   const GitDiffField({
     super.key,
@@ -19,27 +17,20 @@ class GitDiffField extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            width: kGitDiffLabelWidth,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: scheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
                 ),
-              ),
-            ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: GitDiffHighlightBox(change: change, child: child),
-          ),
+          const SizedBox(height: 6),
+          GitDiffHighlightBox(change: change, child: child),
         ],
       ),
     );
