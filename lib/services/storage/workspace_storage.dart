@@ -23,8 +23,14 @@ void resetWorkspaceStorage() {
 
 String _environmentFileName(String id) => '$id$kJsonFileExtension';
 
+String _requestHistoryDir() =>
+    p.join(kWorkspaceHistoryDir, kWorkspaceRequestHistoryDir);
+
 String _historyRecordPath(String id) =>
-    p.join(kWorkspaceHistoryDir, '$id$kJsonFileExtension');
+    p.join(_requestHistoryDir(), '$id$kJsonFileExtension');
+
+String _historyMetasPath() =>
+    p.join(_requestHistoryDir(), kWorkspaceRequestHistoryIndexFile);
 
 String _collectionDir(String collectionId) =>
     p.join(kWorkspaceCollectionsDir, collectionId);
@@ -173,6 +179,18 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
   final historyDir = Directory(p.join(root.path, kWorkspaceHistoryDir));
   if (!await historyDir.exists()) {
     await historyDir.create(recursive: true);
+  }
+  final requestHistoryDir = Directory(
+    p.join(root.path, kWorkspaceHistoryDir, kWorkspaceRequestHistoryDir),
+  );
+  if (!await requestHistoryDir.exists()) {
+    await requestHistoryDir.create(recursive: true);
+  }
+  final flowHistoryDir = Directory(
+    p.join(root.path, kWorkspaceHistoryDir, kWorkspaceFlowHistoryDir),
+  );
+  if (!await flowHistoryDir.exists()) {
+    await flowHistoryDir.create(recursive: true);
   }
 
   final workflowsDir = Directory(p.join(root.path, kWorkspaceWorkflowsDir));
@@ -669,9 +687,6 @@ class WorkspaceStorage {
     }
   }
 
-  String _historyMetasPath() =>
-      p.join(kWorkspaceHistoryDir, kWorkspaceHistoryIndexFile);
-
   Map<String, Map<String, dynamic>>? getAllHistoryMetas() {
     final json = _readJsonSync(_historyMetasPath());
     if (json == null) {
@@ -760,25 +775,32 @@ class WorkspaceStorage {
   }
 
   Future<void> clearAllHistory() async {
-    final historyDir = Directory(_path(kWorkspaceHistoryDir));
-    if (await historyDir.exists()) {
-      await for (final entity in historyDir.list()) {
-        if (entity is File) {
-          final name = p.basename(entity.path);
-          if (name == kWorkspaceHistoryIndexFile) {
-            continue;
-          }
-          if (name.endsWith(kJsonFileExtension)) {
-            await entity.delete();
-          }
-        } else if (entity is Directory) {
-          await entity.delete(recursive: true);
+    final requestHistoryDir = Directory(_path(_requestHistoryDir()));
+    if (await requestHistoryDir.exists()) {
+      await for (final entity in requestHistoryDir.list()) {
+        if (entity is File &&
+            p.basename(entity.path) != kWorkspaceRequestHistoryIndexFile &&
+            p.basename(entity.path).endsWith(kJsonFileExtension)) {
+          await entity.delete();
         }
       }
     }
     await setAllHistoryMetas(null);
   }
 
+  Future<void> clearAllFlowHistory() async {
+    final flowHistoryDir = Directory(_path(_flowHistoryDir()));
+    if (await flowHistoryDir.exists()) {
+      await for (final entity in flowHistoryDir.list()) {
+        if (entity is File &&
+            p.basename(entity.path) != kWorkspaceFlowHistoryIndexFile &&
+            p.basename(entity.path).endsWith(kJsonFileExtension)) {
+          await entity.delete();
+        }
+      }
+    }
+    await setAllFlowHistoryMetas(null);
+  }
 
   String _flowHistoryDir() =>
       p.join(kWorkspaceHistoryDir, kWorkspaceFlowHistoryDir);
@@ -914,6 +936,7 @@ class WorkspaceStorage {
     }
 
     await clearAllHistory();
+    await clearAllFlowHistory();
 
     final workflowsDir = Directory(_path(kWorkspaceWorkflowsDir));
     if (await workflowsDir.exists()) {
