@@ -3,6 +3,7 @@ import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
+import 'package:apidash/workflow/providers/workflow_ui_providers.dart';
 import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -16,14 +17,33 @@ enum _AddNodePage {
   importCollection,
 }
 
-Future<void> showWorkflowAddNodeSheet(BuildContext context, WidgetRef ref) {
+class WorkflowAddNodeConnectFrom {
+  const WorkflowAddNodeConnectFrom({
+    required this.sourceNodeId,
+    required this.sourceHandle,
+    required this.position,
+  });
+
+  final String sourceNodeId;
+  final WorkflowEdgeHandle sourceHandle;
+  final Offset position;
+}
+
+Future<void> showWorkflowAddNodeSheet(
+  BuildContext context,
+  WidgetRef ref, {
+  WorkflowAddNodeConnectFrom? connectFrom,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
     useSafeArea: true,
-    builder: (sheetContext) =>
-        _WorkflowAddNodeSheet(parentRef: ref, sheetContext: sheetContext),
+    builder: (sheetContext) => _WorkflowAddNodeSheet(
+      parentRef: ref,
+      sheetContext: sheetContext,
+      connectFrom: connectFrom,
+    ),
   );
 }
 
@@ -31,10 +51,12 @@ class _WorkflowAddNodeSheet extends ConsumerStatefulWidget {
   const _WorkflowAddNodeSheet({
     required this.parentRef,
     required this.sheetContext,
+    this.connectFrom,
   });
 
   final WidgetRef parentRef;
   final BuildContext sheetContext;
+  final WorkflowAddNodeConnectFrom? connectFrom;
 
   @override
   ConsumerState<_WorkflowAddNodeSheet> createState() =>
@@ -47,6 +69,10 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
   APIType? _importApiTypeFilter;
 
   Offset _placementPosition() {
+    final connectFrom = widget.connectFrom;
+    if (connectFrom != null) {
+      return connectFrom.position;
+    }
     final workflow = ref.read(activeWorkflowProvider);
     if (workflow == null) {
       return const Offset(280, 180);
@@ -65,6 +91,10 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
     }
     return const Offset(280, 180);
   }
+
+  String? get _afterNodeId => widget.connectFrom?.sourceNodeId;
+
+  WorkflowEdgeHandle? get _sourceHandle => widget.connectFrom?.sourceHandle;
 
   void _closeSheet() {
     Navigator.of(widget.sheetContext).pop();
@@ -108,9 +138,11 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
   }
 
   Future<void> _addLoopNode() async {
-    final nodeId = await ref
-        .read(activeWorkflowProvider.notifier)
-        .addLoopNode(position: _placementPosition());
+    final nodeId = await ref.read(activeWorkflowProvider.notifier).addLoopNode(
+          position: _placementPosition(),
+          afterNodeId: _afterNodeId,
+          sourceHandle: _sourceHandle,
+        );
     if (!mounted) {
       return;
     }
@@ -119,9 +151,12 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
   }
 
   Future<void> _addConditionNode() async {
-    final nodeId = await ref
-        .read(activeWorkflowProvider.notifier)
-        .addConditionNode(position: _placementPosition());
+    final nodeId =
+        await ref.read(activeWorkflowProvider.notifier).addConditionNode(
+              position: _placementPosition(),
+              afterNodeId: _afterNodeId,
+              sourceHandle: _sourceHandle,
+            );
     if (!mounted) {
       return;
     }
@@ -130,9 +165,11 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
   }
 
   Future<void> _addDelayNode() async {
-    final nodeId = await ref
-        .read(activeWorkflowProvider.notifier)
-        .addDelayNode(position: _placementPosition());
+    final nodeId = await ref.read(activeWorkflowProvider.notifier).addDelayNode(
+          position: _placementPosition(),
+          afterNodeId: _afterNodeId,
+          sourceHandle: _sourceHandle,
+        );
     if (!mounted) {
       return;
     }
@@ -141,9 +178,13 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
   }
 
   Future<void> _createNewRequest({APIType apiType = APIType.rest}) async {
-    final nodeId = await ref
-        .read(activeWorkflowProvider.notifier)
-        .addRequestStep(position: _placementPosition(), apiType: apiType);
+    final nodeId =
+        await ref.read(activeWorkflowProvider.notifier).addRequestStep(
+              position: _placementPosition(),
+              afterNodeId: _afterNodeId,
+              sourceHandle: _sourceHandle,
+              apiType: apiType,
+            );
     if (!mounted) {
       return;
     }
@@ -161,6 +202,8 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
           collectionId: collectionId,
           requestId: requestId,
           position: _placementPosition(),
+          afterNodeId: _afterNodeId,
+          sourceHandle: _sourceHandle,
         );
     if (!mounted || nodeId == null) {
       return;

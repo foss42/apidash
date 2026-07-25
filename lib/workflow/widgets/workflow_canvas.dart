@@ -2,6 +2,7 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/providers/workflow_providers.dart';
 import 'package:apidash/workflow/providers/workflow_ui_providers.dart';
+import 'package:apidash/workflow/widgets/workflow_add_node_sheet.dart';
 import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
 import 'package:apidash/workflow/widgets/workflow_run_bar.dart';
 import 'package:apidash/workflow/consts.dart';
@@ -16,11 +17,13 @@ class _ActiveWire {
   const _ActiveWire({
     required this.sourceNodeId,
     required this.handle,
+    required this.start,
     required this.end,
   });
 
   final String sourceNodeId;
   final WorkflowEdgeHandle handle;
+  final Offset start;
   final Offset end;
 }
 
@@ -41,6 +44,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   PointerRoute? _wirePointerRoute;
 
   static const double _inputHitRadius = 28;
+  static const double _minStretchToAddNode = 48;
 
   @override
   void dispose() {
@@ -104,6 +108,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
       _activeWire = _ActiveWire(
         sourceNodeId: _activeWire!.sourceNodeId,
         handle: _activeWire!.handle,
+        start: _activeWire!.start,
         end: scenePoint,
       );
       _hoverInputNodeId = hoverId;
@@ -157,6 +162,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
       _activeWire = _ActiveWire(
         sourceNodeId: nodeId,
         handle: handle,
+        start: start,
         end: start,
       );
       _hoverInputNodeId = null;
@@ -184,6 +190,19 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     });
 
     if (targetId == null || targetId == wire.sourceNodeId) {
+      final stretched =
+          (wire.end - wire.start).distance >= _minStretchToAddNode;
+      if (stretched && mounted) {
+        await showWorkflowAddNodeSheet(
+          context,
+          ref,
+          connectFrom: WorkflowAddNodeConnectFrom(
+            sourceNodeId: wire.sourceNodeId,
+            sourceHandle: wire.handle,
+            position: wire.end,
+          ),
+        );
+      }
       return;
     }
 

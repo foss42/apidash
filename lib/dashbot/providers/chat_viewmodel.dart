@@ -3,8 +3,10 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/utils/utils.dart';
 import '../constants.dart';
 import '../models/models.dart';
@@ -295,6 +297,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
       if (action.actionType == ChatActionType.applyCurl) {
         await _applyCurl(action);
+        return;
+      }
+      if (action.actionType == ChatActionType.applyWorkflow) {
+        await _applyWorkflow(action);
         return;
       }
 
@@ -850,6 +856,40 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _appendSystem(
         'Error encountered while importing cURL - $e',
         ChatMessageType.importCurl,
+      );
+    }
+  }
+
+  Future<void> _applyWorkflow(ChatAction action) async {
+    try {
+      if (!isWorkspaceStorageInitialized()) {
+        _appendSystem(
+          'Open a workspace before creating a workflow.',
+          ChatMessageType.generateWorkflow,
+        );
+        return;
+      }
+      final prepared = _ref.read(workflowApplyServiceProvider).prepare(
+            action.value,
+            existingNames: workspaceStorage.getKnownWorkflowIds(),
+          );
+      final doc = prepared.document;
+      await workspaceStorage.setWorkflow(doc.id, doc.toJson());
+      final index = workspaceStorage.getWorkflowsIndex().toList();
+      if (!index.contains(doc.id)) {
+        index.add(doc.id);
+      }
+      await workspaceStorage.setWorkflowsIndex(index);
+      await _ref.read(workflowCatalogProvider.notifier).reloadFromDisk();
+      _ref.read(selectedWorkflowIdStateProvider.notifier).state = doc.id;
+      await _ref.read(activeWorkflowProvider.notifier).load(doc.id);
+      _ref.read(navRailIndexStateProvider.notifier).state =
+          kNavRailWorkflowsIndex;
+      _appendSystem(prepared.message, ChatMessageType.generateWorkflow);
+    } catch (e) {
+      _appendSystem(
+        'Failed to create workflow: $e',
+        ChatMessageType.generateWorkflow,
       );
     }
   }

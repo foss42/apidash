@@ -61,3 +61,7 @@ final autoFixServiceProvider = Provider<AutoFixService>((ref) {
     readCurrentRequest: () => ref.read(selectedRequestModelProvider),
   );
 });
+
+final workflowApplyServiceProvider = Provider<WorkflowApplyService>((ref) {
+  return const WorkflowApplyService();
+});

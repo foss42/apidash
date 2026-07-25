@@ -286,6 +286,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
   Future<String?> addRequestStep({
     Offset position = const Offset(280, 180),
     String? afterNodeId,
+    WorkflowEdgeHandle? sourceHandle,
     APIType apiType = APIType.rest,
   }) async {
     final current = state;
@@ -334,7 +335,8 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
         WorkflowGraphEdge(
           id: 'edge_${getNewUuid().substring(0, 8)}',
           source: afterNodeId,
-          sourceHandle: _sourceHandleForNode(current, afterNodeId),
+          sourceHandle:
+              sourceHandle ?? _sourceHandleForNode(current, afterNodeId),
           target: nodeId,
         ),
       );
@@ -351,6 +353,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
   Future<String?> addLoopNode({
     Offset position = const Offset(320, 240),
     String? afterNodeId,
+    WorkflowEdgeHandle? sourceHandle,
   }) async {
     final current = state;
     if (current == null) {
@@ -374,7 +377,8 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
         WorkflowGraphEdge(
           id: 'edge_${getNewUuid().substring(0, 8)}',
           source: afterNodeId,
-          sourceHandle: _sourceHandleForNode(current, afterNodeId),
+          sourceHandle:
+              sourceHandle ?? _sourceHandleForNode(current, afterNodeId),
           target: nodeId,
         ),
       );
@@ -391,6 +395,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
   Future<String?> addConditionNode({
     Offset position = const Offset(320, 240),
     String? afterNodeId,
+    WorkflowEdgeHandle? sourceHandle,
   }) async {
     final current = state;
     if (current == null) {
@@ -414,7 +419,8 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
         WorkflowGraphEdge(
           id: 'edge_${getNewUuid().substring(0, 8)}',
           source: afterNodeId,
-          sourceHandle: _sourceHandleForNode(current, afterNodeId),
+          sourceHandle:
+              sourceHandle ?? _sourceHandleForNode(current, afterNodeId),
           target: nodeId,
         ),
       );
@@ -431,6 +437,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
   Future<String?> addDelayNode({
     Offset position = const Offset(320, 240),
     String? afterNodeId,
+    WorkflowEdgeHandle? sourceHandle,
     int delayMs = 1000,
   }) async {
     final current = state;
@@ -455,7 +462,8 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
         WorkflowGraphEdge(
           id: 'edge_${getNewUuid().substring(0, 8)}',
           source: afterNodeId,
-          sourceHandle: _sourceHandleForNode(current, afterNodeId),
+          sourceHandle:
+              sourceHandle ?? _sourceHandleForNode(current, afterNodeId),
           target: nodeId,
         ),
       );
@@ -568,6 +576,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     required String requestId,
     Offset position = const Offset(280, 180),
     String? afterNodeId,
+    WorkflowEdgeHandle? sourceHandle,
   }) async {
     final json = workspaceStorage.getRequestModel(collectionId, requestId);
     if (json == null) {
@@ -609,7 +618,8 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
         WorkflowGraphEdge(
           id: 'edge_${getNewUuid().substring(0, 8)}',
           source: afterNodeId,
-          sourceHandle: _sourceHandleForNode(current, afterNodeId),
+          sourceHandle:
+              sourceHandle ?? _sourceHandleForNode(current, afterNodeId),
           target: nodeId,
         ),
       );
