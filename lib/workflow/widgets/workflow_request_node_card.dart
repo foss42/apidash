@@ -12,7 +12,6 @@ class WorkflowRequestNodeCard extends StatelessWidget {
   const WorkflowRequestNodeCard({
     super.key,
     required this.node,
-    required this.step,
     required this.selected,
     required this.runResult,
     this.highlightInput = false,
@@ -28,7 +27,6 @@ class WorkflowRequestNodeCard extends StatelessWidget {
   });
 
   final WorkflowGraphNode node;
-  final WorkflowStep? step;
   final bool selected;
   final WorkflowNodeRunResult? runResult;
   final bool highlightInput;
@@ -46,7 +44,7 @@ class WorkflowRequestNodeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final request = step?.request ?? const <String, dynamic>{};
+    final request = node.request ?? const <String, dynamic>{};
     final apiType = _readApiType(request);
     final isAi = apiType == APIType.ai;
     final http = request['httpRequestModel'];

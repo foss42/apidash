@@ -7,6 +7,7 @@ import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/workflow/engine/extraction_service.dart';
 import 'package:apidash/workflow/engine/workflow_request_executor.dart';
 import 'package:apidash/workflow/engine/workflow_validator.dart';
+import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,12 +25,12 @@ class _QueueEntry {
   final String? loopCompletionId;
 }
 
-RequestModel resolveWorkflowStepRequest({
-  required WorkflowStep step,
+RequestModel resolveWorkflowNodeRequest({
+  required WorkflowGraphNode node,
   required WorkspaceStorage storage,
 }) {
-  var payload = Map<String, dynamic>.from(step.request);
-  final inheritFrom = step.inheritFrom;
+  var payload = Map<String, dynamic>.from(node.request ?? const {});
+  final inheritFrom = node.inheritFrom;
   if (inheritFrom != null) {
     final inherited = storage.getRequestModel(
       inheritFrom.collectionId,
@@ -42,7 +43,7 @@ RequestModel resolveWorkflowStepRequest({
       };
     }
   }
-  return RequestModel.fromJson(Map<String, Object?>.from(payload));
+  return decodeWorkflowRequest(payload);
 }
 
 class WorkflowRunner {
@@ -74,11 +75,7 @@ class WorkflowRunner {
       );
     }
 
-    final scopedVariables = <String, String>{
-      for (final variable in workflow.flowVariables)
-        if (variable.enabled && variable.key.isNotEmpty)
-          variable.key: variable.value,
-    };
+    final scopedVariables = <String, String>{};
     final nodeResults = <WorkflowNodeRunResult>[];
     final queue = [
       for (final node in validator.entryNodes(workflow)) _QueueEntry(node),
@@ -259,14 +256,12 @@ class WorkflowRunner {
           }
           skipDefaultEnqueue = true;
         case WorkflowNodeType.request:
-          final stepKey = node.stepKey;
-          final step = stepKey == null ? null : workflow.steps[stepKey];
-          if (step == null) {
+          if (node.request == null || node.request!.isEmpty) {
             result = WorkflowNodeRunResult(
               nodeId: node.id,
               label: node.label,
               status: WorkflowNodeRunStatus.failed,
-              message: 'Missing workflow step',
+              message: 'Missing request on node',
             );
             branchHandle = WorkflowEdgeHandle.failure;
             nodeResults.add(result);
@@ -277,19 +272,19 @@ class WorkflowRunner {
               startedAt: startedAt,
               endedAt: DateTime.now(),
               nodeResults: nodeResults,
-              error: 'Missing workflow step',
+              error: 'Missing request on node',
               scopedVariables: scopedVariables,
             );
           }
-          final requestModel = resolveWorkflowStepRequest(
-            step: step,
+          final requestModel = resolveWorkflowNodeRequest(
+            node: node,
             storage: storage,
           );
           final execution = await executeWorkflowRequest(
             ref: ref,
             requestModel: requestModel,
             scopedVariables: scopedVariables,
-            logLabel: '${workflow.id}/${stepKey ?? node.id}',
+            logLabel: '${workflow.id}/${node.id}',
           );
           lastStatusCode = execution.statusCode;
           for (final extraction in node.extractions) {
@@ -317,7 +312,7 @@ class WorkflowRunner {
           );
           branchHandle =
               ok ? WorkflowEdgeHandle.success : WorkflowEdgeHandle.failure;
-          if (!ok && node.onFailure == 'abort') {
+          if (!ok) {
             nodeResults.add(result);
             onNodeUpdate?.call(result);
             return WorkflowRunResult(

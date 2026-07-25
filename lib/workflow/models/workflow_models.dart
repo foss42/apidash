@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/workflow/models/workflow_request_codec.dart';
 
 enum WorkflowNodeType { request, condition, manualStart, loop, delay }
 
@@ -42,52 +43,6 @@ class WorkflowPosition {
       );
 }
 
-class WorkflowViewport {
-  const WorkflowViewport({this.x = 0, this.y = 0, this.zoom = 1});
-
-  final double x;
-  final double y;
-  final double zoom;
-
-  Map<String, dynamic> toJson() => {'x': x, 'y': y, 'zoom': zoom};
-
-  factory WorkflowViewport.fromJson(Map<String, dynamic> json) =>
-      WorkflowViewport(
-        x: (json['x'] as num?)?.toDouble() ?? 0,
-        y: (json['y'] as num?)?.toDouble() ?? 0,
-        zoom: (json['zoom'] as num?)?.toDouble() ?? 1,
-      );
-}
-
-class WorkflowFlowVariable {
-  const WorkflowFlowVariable({
-    required this.key,
-    this.value = '',
-    this.enabled = true,
-    this.description = '',
-  });
-
-  final String key;
-  final String value;
-  final bool enabled;
-  final String description;
-
-  Map<String, dynamic> toJson() => {
-        'key': key,
-        'value': value,
-        'enabled': enabled,
-        if (description.isNotEmpty) 'description': description,
-      };
-
-  factory WorkflowFlowVariable.fromJson(Map<String, dynamic> json) =>
-      WorkflowFlowVariable(
-        key: json['key']?.toString() ?? '',
-        value: json['value']?.toString() ?? '',
-        enabled: json['enabled'] as bool? ?? true,
-        description: json['description']?.toString() ?? '',
-      );
-}
-
 class WorkflowInheritFrom {
   const WorkflowInheritFrom({
     required this.collectionId,
@@ -122,59 +77,15 @@ class WorkflowExtraction {
 
   Map<String, dynamic> toJson() => {
         'var': varName,
-        'source': source,
-        'jsonPath': jsonPath,
+        'path': jsonPath,
+        if (source != 'response.body') 'source': source,
       };
 
   factory WorkflowExtraction.fromJson(Map<String, dynamic> json) =>
       WorkflowExtraction(
         varName: json['var']?.toString() ?? '',
         source: json['source']?.toString() ?? 'response.body',
-        jsonPath: json['jsonPath']?.toString() ?? '',
-      );
-}
-
-class WorkflowStep {
-  const WorkflowStep({
-    required this.label,
-    required this.request,
-    this.inheritFrom,
-  });
-
-  final String label;
-  final Map<String, dynamic> request;
-  final WorkflowInheritFrom? inheritFrom;
-
-  Map<String, dynamic> toJson() => {
-        'label': label,
-        'request': request,
-        if (inheritFrom != null) 'inheritFrom': inheritFrom!.toJson(),
-      };
-
-  factory WorkflowStep.fromJson(Map<String, dynamic> json) => WorkflowStep(
-        label: json['label']?.toString() ?? '',
-        request: Map<String, dynamic>.from(
-          (json['request'] as Map?)?.map(
-                (key, value) => MapEntry(key.toString(), value),
-              ) ??
-              const {},
-        ),
-        inheritFrom: json['inheritFrom'] is Map
-            ? WorkflowInheritFrom.fromJson(
-                Map<String, dynamic>.from(json['inheritFrom'] as Map),
-              )
-            : null,
-      );
-
-  WorkflowStep copyWith({
-    String? label,
-    Map<String, dynamic>? request,
-    WorkflowInheritFrom? inheritFrom,
-  }) =>
-      WorkflowStep(
-        label: label ?? this.label,
-        request: request ?? this.request,
-        inheritFrom: inheritFrom ?? this.inheritFrom,
+        jsonPath: (json['path'] ?? json['jsonPath'])?.toString() ?? '',
       );
 }
 
@@ -183,55 +94,73 @@ class WorkflowGraphNode {
     required this.id,
     required this.type,
     required this.position,
-    this.stepKey,
     this.label = '',
+    this.request,
+    this.inheritFrom,
     this.conditionExpression,
     this.loopExpression,
     this.loopMaxIterations,
     this.loopMode = WorkflowLoopMode.forEach,
     this.delayMs,
     this.extractions = const [],
-    this.onFailure = 'abort',
   });
 
   final String id;
   final WorkflowNodeType type;
   final WorkflowPosition position;
-  final String? stepKey;
   final String label;
+  final Map<String, dynamic>? request;
+  final WorkflowInheritFrom? inheritFrom;
   final String? conditionExpression;
   final String? loopExpression;
   final int? loopMaxIterations;
   final WorkflowLoopMode loopMode;
   final int? delayMs;
   final List<WorkflowExtraction> extractions;
-  final String onFailure;
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type.name,
-        'position': position.toJson(),
-        if (stepKey != null) 'stepKey': stepKey,
-        if (label.isNotEmpty) 'label': label,
-        if (conditionExpression != null)
-          'conditionExpression': conditionExpression,
-        if (loopExpression != null) 'loopExpression': loopExpression,
-        if (loopMaxIterations != null && loopMaxIterations! > 0)
-          'loopMaxIterations': loopMaxIterations,
-        if (loopMode != WorkflowLoopMode.forEach) 'loopMode': loopMode.toJson(),
-        if (delayMs != null && delayMs! > 0) 'delayMs': delayMs,
-        if (extractions.isNotEmpty)
-          'extractions': extractions.map((e) => e.toJson()).toList(),
-        if (onFailure != 'abort') 'onFailure': onFailure,
-      };
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'id': id,
+      'type': _nodeTypeToJson(type),
+      'position': position.toJson(),
+    };
+    if (label.isNotEmpty) {
+      json['label'] = label;
+    }
+    if (type == WorkflowNodeType.request) {
+      if (request != null && request!.isNotEmpty) {
+        json['request'] = request;
+      }
+      if (inheritFrom != null) {
+        json['inheritFrom'] = inheritFrom!.toJson();
+      }
+      if (extractions.isNotEmpty) {
+        json['extract'] = extractions.map((e) => e.toJson()).toList();
+      }
+    }
+    if (conditionExpression != null && conditionExpression!.isNotEmpty) {
+      json['expr'] = conditionExpression;
+    }
+    if (loopExpression != null && loopExpression!.isNotEmpty) {
+      json['items'] = loopExpression;
+    }
+    if (loopMaxIterations != null && loopMaxIterations! > 0) {
+      json['max'] = loopMaxIterations;
+    }
+    if (loopMode != WorkflowLoopMode.forEach) {
+      json['mode'] = loopMode.toJson();
+    }
+    if (delayMs != null && delayMs! > 0) {
+      json['ms'] = delayMs;
+    }
+    return json;
+  }
 
   factory WorkflowGraphNode.fromJson(Map<String, dynamic> json) {
-    final typeName = json['type']?.toString() ?? WorkflowNodeType.request.name;
-    final type = WorkflowNodeType.values.firstWhere(
-      (value) => value.name == typeName,
-      orElse: () => WorkflowNodeType.request,
-    );
-    final extractionsRaw = json['extractions'];
+    final type = _nodeTypeFromJson(json['type']?.toString());
+    final extractRaw = json['extract'] ?? json['extractions'];
+    final maxRaw = json['max'] ?? json['loopMaxIterations'];
+    final msRaw = json['ms'] ?? json['delayMs'];
     return WorkflowGraphNode(
       id: json['id']?.toString() ?? '',
       type: type,
@@ -240,23 +169,32 @@ class WorkflowGraphNode {
               Map<String, dynamic>.from(json['position'] as Map),
             )
           : const WorkflowPosition(),
-      stepKey: json['stepKey']?.toString(),
       label: json['label']?.toString() ?? '',
-      conditionExpression: json['conditionExpression']?.toString(),
-      loopExpression: json['loopExpression']?.toString(),
-      loopMaxIterations: (json['loopMaxIterations'] as num?)?.toInt(),
-      loopMode: WorkflowLoopMode.fromJson(json['loopMode']?.toString()),
-      delayMs: (json['delayMs'] as num?)?.toInt(),
-      extractions: extractionsRaw is List
+      request: json['request'] is Map
+          ? Map<String, dynamic>.from(json['request'] as Map)
+          : null,
+      inheritFrom: json['inheritFrom'] is Map
+          ? WorkflowInheritFrom.fromJson(
+              Map<String, dynamic>.from(json['inheritFrom'] as Map),
+            )
+          : null,
+      conditionExpression:
+          (json['expr'] ?? json['conditionExpression'])?.toString(),
+      loopExpression: (json['items'] ?? json['loopExpression'])?.toString(),
+      loopMaxIterations: maxRaw is num ? maxRaw.toInt() : null,
+      loopMode: WorkflowLoopMode.fromJson(
+        (json['mode'] ?? json['loopMode'])?.toString(),
+      ),
+      delayMs: msRaw is num ? msRaw.toInt() : null,
+      extractions: extractRaw is List
           ? [
-              for (final item in extractionsRaw)
+              for (final item in extractRaw)
                 if (item is Map)
                   WorkflowExtraction.fromJson(
                     Map<String, dynamic>.from(item),
                   ),
             ]
           : const [],
-      onFailure: json['onFailure']?.toString() ?? 'abort',
     );
   }
 
@@ -264,26 +202,33 @@ class WorkflowGraphNode {
     String? id,
     WorkflowNodeType? type,
     WorkflowPosition? position,
-    String? stepKey,
     String? label,
+    Map<String, dynamic>? request,
+    bool clearRequest = false,
+    WorkflowInheritFrom? inheritFrom,
+    bool clearInheritFrom = false,
     String? conditionExpression,
+    bool clearConditionExpression = false,
     String? loopExpression,
+    bool clearLoopExpression = false,
     int? loopMaxIterations,
     bool clearLoopMaxIterations = false,
-    bool clearLoopExpression = false,
     WorkflowLoopMode? loopMode,
     int? delayMs,
     bool clearDelayMs = false,
     List<WorkflowExtraction>? extractions,
-    String? onFailure,
   }) =>
       WorkflowGraphNode(
         id: id ?? this.id,
         type: type ?? this.type,
         position: position ?? this.position,
-        stepKey: stepKey ?? this.stepKey,
         label: label ?? this.label,
-        conditionExpression: conditionExpression ?? this.conditionExpression,
+        request: clearRequest ? null : (request ?? this.request),
+        inheritFrom:
+            clearInheritFrom ? null : (inheritFrom ?? this.inheritFrom),
+        conditionExpression: clearConditionExpression
+            ? null
+            : (conditionExpression ?? this.conditionExpression),
         loopExpression: clearLoopExpression
             ? null
             : (loopExpression ?? this.loopExpression),
@@ -293,8 +238,14 @@ class WorkflowGraphNode {
         loopMode: loopMode ?? this.loopMode,
         delayMs: clearDelayMs ? null : (delayMs ?? this.delayMs),
         extractions: extractions ?? this.extractions,
-        onFailure: onFailure ?? this.onFailure,
       );
+
+  RequestModel? requestModel() {
+    if (type != WorkflowNodeType.request || request == null) {
+      return null;
+    }
+    return decodeWorkflowRequest(request!);
+  }
 }
 
 class WorkflowGraphEdge {
@@ -314,30 +265,66 @@ class WorkflowGraphEdge {
   final WorkflowEdgeHandle targetHandle;
   final String label;
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'source': source,
-        'sourceHandle': _handleToJson(sourceHandle),
-        'target': target,
-        'targetHandle': _handleToJson(targetHandle),
-        if (label.isNotEmpty) 'label': label,
-      };
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'id': id,
+      'from': source,
+      'to': target,
+    };
+    // Omit only request-default `success`. Keep `next`/`then`/`else`/… explicit.
+    if (sourceHandle != WorkflowEdgeHandle.success) {
+      json['out'] = _handleToJson(sourceHandle);
+    }
+    if (label.isNotEmpty) {
+      json['label'] = label;
+    }
+    return json;
+  }
 
-  factory WorkflowGraphEdge.fromJson(Map<String, dynamic> json) =>
-      WorkflowGraphEdge(
-        id: json['id']?.toString() ?? '',
-        source: json['source']?.toString() ?? '',
-        target: json['target']?.toString() ?? '',
-        sourceHandle: _parseHandle(
-          json['sourceHandle']?.toString(),
-          WorkflowEdgeHandle.success,
-        ),
-        targetHandle: _parseHandle(
-          json['targetHandle']?.toString(),
-          WorkflowEdgeHandle.inPort,
-        ),
-        label: json['label']?.toString() ?? '',
-      );
+  factory WorkflowGraphEdge.fromJson(
+    Map<String, dynamic> json, {
+    WorkflowEdgeHandle defaultSourceHandle = WorkflowEdgeHandle.success,
+  }) {
+    final hasExplicitOut =
+        json.containsKey('out') || json.containsKey('sourceHandle');
+    final rawOut = json['out']?.toString() ?? json['sourceHandle']?.toString();
+    return WorkflowGraphEdge(
+      id: json['id']?.toString() ?? '',
+      source: (json['from'] ?? json['source'])?.toString() ?? '',
+      target: (json['to'] ?? json['target'])?.toString() ?? '',
+      sourceHandle: hasExplicitOut
+          ? _parseHandle(rawOut, defaultSourceHandle)
+          : defaultSourceHandle,
+      targetHandle: _parseHandle(
+        json['targetHandle']?.toString(),
+        WorkflowEdgeHandle.inPort,
+      ),
+      label: json['label']?.toString() ?? '',
+    );
+  }
+}
+
+String _nodeTypeToJson(WorkflowNodeType type) => switch (type) {
+      WorkflowNodeType.manualStart => 'start',
+      _ => type.name,
+    };
+
+WorkflowNodeType _nodeTypeFromJson(String? raw) {
+  if (raw == 'start' || raw == 'manualStart') {
+    return WorkflowNodeType.manualStart;
+  }
+  return WorkflowNodeType.values.firstWhere(
+    (value) => value.name == raw,
+    orElse: () => WorkflowNodeType.request,
+  );
+}
+
+WorkflowEdgeHandle _defaultOutForSource(WorkflowGraphNode? source) {
+  return switch (source?.type) {
+    WorkflowNodeType.request => WorkflowEdgeHandle.success,
+    WorkflowNodeType.condition => WorkflowEdgeHandle.then,
+    _ => WorkflowEdgeHandle.next,
+  };
 }
 
 String _handleToJson(WorkflowEdgeHandle handle) {
@@ -377,29 +364,28 @@ class WorkflowGraph {
   final List<WorkflowGraphNode> nodes;
   final List<WorkflowGraphEdge> edges;
 
-  Map<String, dynamic> toJson() => {
-        'nodes': nodes.map((node) => node.toJson()).toList(),
-        'edges': edges.map((edge) => edge.toJson()).toList(),
-      };
-
-  factory WorkflowGraph.fromJson(Map<String, dynamic> json) {
-    final nodesRaw = json['nodes'];
-    final edgesRaw = json['edges'];
+  factory WorkflowGraph.fromJson({
+    required List<dynamic>? nodesRaw,
+    required List<dynamic>? edgesRaw,
+  }) {
+    final nodes = [
+      for (final item in nodesRaw ?? const [])
+        if (item is Map)
+          WorkflowGraphNode.fromJson(Map<String, dynamic>.from(item)),
+    ];
+    final nodesById = {for (final node in nodes) node.id: node};
     return WorkflowGraph(
-      nodes: nodesRaw is List
-          ? [
-              for (final item in nodesRaw)
-                if (item is Map)
-                  WorkflowGraphNode.fromJson(Map<String, dynamic>.from(item)),
-            ]
-          : const [],
-      edges: edgesRaw is List
-          ? [
-              for (final item in edgesRaw)
-                if (item is Map)
-                  WorkflowGraphEdge.fromJson(Map<String, dynamic>.from(item)),
-            ]
-          : const [],
+      nodes: nodes,
+      edges: [
+        for (final item in edgesRaw ?? const [])
+          if (item is Map)
+            WorkflowGraphEdge.fromJson(
+              Map<String, dynamic>.from(item),
+              defaultSourceHandle: _defaultOutForSource(
+                nodesById[(item['from'] ?? item['source'])?.toString()],
+              ),
+            ),
+      ],
     );
   }
 
@@ -411,136 +397,80 @@ class WorkflowGraph {
         nodes: nodes ?? this.nodes,
         edges: edges ?? this.edges,
       );
+
+  int get requestNodeCount =>
+      nodes.where((node) => node.type == WorkflowNodeType.request).length;
 }
 
+/// Lean on-disk / Dashbot workflow document.
 class WorkflowDocument {
   const WorkflowDocument({
     required this.id,
     required this.name,
-    required this.createdAt,
     required this.modifiedAt,
     this.description = '',
-    this.schemaVersion = kWorkspaceWorkflowSchemaVersion,
-    this.viewport = const WorkflowViewport(),
-    this.flowVariables = const [],
-    this.steps = const {},
     this.graph = const WorkflowGraph(),
   });
 
-  final int schemaVersion;
   final String id;
   final String name;
   final String description;
-  final DateTime createdAt;
   final DateTime modifiedAt;
-  final WorkflowViewport viewport;
-  final List<WorkflowFlowVariable> flowVariables;
-  final Map<String, WorkflowStep> steps;
   final WorkflowGraph graph;
 
   Map<String, dynamic> toJson() => {
-        'schemaVersion': schemaVersion,
-        'id': id,
         'name': name,
         if (description.isNotEmpty) 'description': description,
-        'createdAt': createdAt.toIso8601String(),
         'modifiedAt': modifiedAt.toIso8601String(),
-        'viewport': viewport.toJson(),
-        if (flowVariables.isNotEmpty)
-          'flowVariables': flowVariables.map((item) => item.toJson()).toList(),
-        'steps': steps.map((key, value) => MapEntry(key, value.toJson())),
-        'graph': graph.toJson(),
+        'nodes': graph.nodes.map((node) => node.toJson()).toList(),
+        'edges': graph.edges.map((edge) => edge.toJson()).toList(),
       };
 
   factory WorkflowDocument.fromJson(Map<String, dynamic> json) {
-    final stepsRaw = json['steps'];
-    final steps = <String, WorkflowStep>{};
-    if (stepsRaw is Map) {
-      for (final entry in stepsRaw.entries) {
-        if (entry.value is Map) {
-          steps[entry.key.toString()] = WorkflowStep.fromJson(
-            Map<String, dynamic>.from(entry.value as Map),
-          );
-        }
-      }
+    final name = json['name']?.toString() ?? kUntitled;
+    final graphRaw = json['graph'];
+    final List<dynamic>? nodesRaw;
+    final List<dynamic>? edgesRaw;
+    if (graphRaw is Map) {
+      nodesRaw = graphRaw['nodes'] as List?;
+      edgesRaw = graphRaw['edges'] as List?;
+    } else {
+      nodesRaw = json['nodes'] as List?;
+      edgesRaw = json['edges'] as List?;
     }
-    final flowVarsRaw = json['flowVariables'];
+    final idRaw = json['id']?.toString() ?? '';
     return WorkflowDocument(
-      schemaVersion: (json['schemaVersion'] as num?)?.toInt() ??
-          kWorkspaceWorkflowSchemaVersion,
-      id: json['id']?.toString() ?? '',
-      name: json['name']?.toString() ?? kUntitled,
+      id: idRaw.isNotEmpty ? idRaw : name,
+      name: name,
       description: json['description']?.toString() ?? '',
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
-          DateTime.now(),
       modifiedAt: DateTime.tryParse(json['modifiedAt']?.toString() ?? '') ??
           DateTime.now(),
-      viewport: json['viewport'] is Map
-          ? WorkflowViewport.fromJson(
-              Map<String, dynamic>.from(json['viewport'] as Map),
-            )
-          : const WorkflowViewport(),
-      flowVariables: flowVarsRaw is List
-          ? [
-              for (final item in flowVarsRaw)
-                if (item is Map)
-                  WorkflowFlowVariable.fromJson(
-                    Map<String, dynamic>.from(item),
-                  ),
-            ]
-          : const [],
-      steps: steps,
-      graph: json['graph'] is Map
-          ? WorkflowGraph.fromJson(
-              Map<String, dynamic>.from(json['graph'] as Map),
-            )
-          : const WorkflowGraph(),
+      graph: WorkflowGraph.fromJson(nodesRaw: nodesRaw, edgesRaw: edgesRaw),
     );
   }
 
   WorkflowDocument copyWith({
-    int? schemaVersion,
     String? id,
     String? name,
     String? description,
-    DateTime? createdAt,
     DateTime? modifiedAt,
-    WorkflowViewport? viewport,
-    List<WorkflowFlowVariable>? flowVariables,
-    Map<String, WorkflowStep>? steps,
     WorkflowGraph? graph,
   }) =>
       WorkflowDocument(
-        schemaVersion: schemaVersion ?? this.schemaVersion,
         id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
-        createdAt: createdAt ?? this.createdAt,
         modifiedAt: modifiedAt ?? this.modifiedAt,
-        viewport: viewport ?? this.viewport,
-        flowVariables: flowVariables ?? this.flowVariables,
-        steps: steps ?? this.steps,
         graph: graph ?? this.graph,
       );
 
-  WorkflowStep? stepForNode(WorkflowGraphNode node) {
-    final key = node.stepKey;
-    if (key == null || key.isEmpty) {
-      return null;
+  WorkflowGraphNode? nodeById(String nodeId) {
+    for (final node in graph.nodes) {
+      if (node.id == nodeId) {
+        return node;
+      }
     }
-    return steps[key];
-  }
-
-  RequestModel? requestModelForStep(String stepKey) {
-    final step = steps[stepKey];
-    if (step == null) {
-      return null;
-    }
-    try {
-      return RequestModel.fromJson(Map<String, Object?>.from(step.request));
-    } catch (_) {
-      return null;
-    }
+    return null;
   }
 }
 
@@ -563,7 +493,6 @@ class WorkflowNodeRunResult {
   final String? message;
   final int? durationMs;
   final int? statusCode;
-  /// Present when this result is one iteration of a loop body.
   final String? loopIndex;
 }
 
@@ -582,8 +511,8 @@ class WorkflowRunResult {
   final bool success;
   final DateTime startedAt;
   final DateTime endedAt;
-  final String? error;
   final List<WorkflowNodeRunResult> nodeResults;
+  final String? error;
   final Map<String, String> scopedVariables;
 
   int get durationMs => endedAt.difference(startedAt).inMilliseconds;

@@ -464,7 +464,6 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
       case WorkflowNodeType.request:
         return WorkflowRequestNodeCard(
           node: node,
-          step: workflow.stepForNode(node),
           selected: selected,
           runResult: runResult,
           highlightInput: hoverInput,

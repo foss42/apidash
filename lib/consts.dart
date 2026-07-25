@@ -98,7 +98,6 @@ const kWorkspaceWorkflowsDir = 'workflows';
 const kWorkspaceWorkflowsIndexFile = 'workflow_index.json';
 const kWorkspaceWorkflowFile = 'workflow.json';
 const kWorkspaceWorkflowsIndexKey = 'workflows';
-const kWorkspaceWorkflowSchemaVersion = 1;
 const kJsonFileExtension = '.json';
 
 const kWorkspaceRequestsKey = 'requests';

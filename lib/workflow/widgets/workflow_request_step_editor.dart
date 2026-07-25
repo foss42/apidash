@@ -25,17 +25,12 @@ Future<void> showWorkflowRequestStepEditor(
   required WorkflowGraphNode node,
 }) {
   final workflow = ref.read(activeWorkflowProvider);
-  final stepKey = node.stepKey;
-  if (workflow == null || stepKey == null) {
-    return Future.value();
-  }
-  final step = workflow.steps[stepKey];
-  if (step == null) {
+  if (workflow == null || node.type != WorkflowNodeType.request) {
     return Future.value();
   }
 
-  final resolved = resolveWorkflowStepRequest(
-    step: step,
+  final resolved = resolveWorkflowNodeRequest(
+    node: node,
     storage: workspaceStorage,
   );
   final request = resolved.copyWith(
@@ -51,7 +46,6 @@ Future<void> showWorkflowRequestStepEditor(
             ..._editorOverrides(
               ref: ref,
               node: node,
-              stepKey: stepKey,
               request: request,
             ),
           ],
@@ -69,7 +63,6 @@ Future<void> showWorkflowRequestStepEditor(
         ..._editorOverrides(
           ref: ref,
           node: node,
-          stepKey: stepKey,
           request: request,
         ),
       ],
@@ -89,7 +82,6 @@ Future<void> showWorkflowRequestStepEditor(
 List _editorOverrides({
   required WidgetRef ref,
   required WorkflowGraphNode node,
-  required String stepKey,
   required RequestModel request,
 }) {
   return [
@@ -110,7 +102,7 @@ List _editorOverrides({
       return (requestId, model) async {
         await scopeRef
             .read(activeWorkflowProvider.notifier)
-            .updateStepRequest(stepKey, model);
+            .updateNodeRequest(node.id, model);
         final workflow = scopeRef.read(activeWorkflowProvider);
         if (workflow == null) {
           return;
@@ -171,14 +163,6 @@ class _WorkflowRequestStepEditorPageState
     super.dispose();
   }
 
-  Map<String, String> _flowVariablesFor(WorkflowDocument workflow) {
-    return {
-      for (final variable in workflow.flowVariables)
-        if (variable.enabled && variable.key.isNotEmpty)
-          variable.key: variable.value,
-    };
-  }
-
   Future<void> _confirmDeleteStep() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -211,17 +195,13 @@ class _WorkflowRequestStepEditorPageState
 
   Future<void> _testStep() async {
     final workflow = ref.read(activeWorkflowProvider);
-    final stepKey = widget.node.stepKey;
     final requestId = ref.read(selectedIdStateProvider);
     final current = ref.read(selectedRequestModelProvider);
-    if (workflow == null ||
-        stepKey == null ||
-        requestId == null ||
-        current == null) {
+    if (workflow == null || requestId == null || current == null) {
       return;
     }
-    final step = workflow.steps[stepKey];
-    if (step == null) {
+    final latestNode = workflow.nodeById(widget.node.id);
+    if (latestNode == null) {
       return;
     }
 
@@ -237,16 +217,16 @@ class _WorkflowRequestStepEditorPageState
       ),
     );
 
-    final request = resolveWorkflowStepRequest(
-      step: step.copyWith(request: current.toJson()),
+    final request = resolveWorkflowNodeRequest(
+      node: latestNode.copyWith(request: current.toJson()),
       storage: workspaceStorage,
     );
 
     final result = await executeWorkflowRequest(
       ref: ref,
       requestModel: request,
-      scopedVariables: _flowVariablesFor(workflow),
-      logLabel: '${workflow.id}/$stepKey',
+      scopedVariables: const {},
+      logLabel: '${workflow.id}/${widget.node.id}',
     );
 
     final latest = ref.read(selectedRequestModelProvider) ?? current;

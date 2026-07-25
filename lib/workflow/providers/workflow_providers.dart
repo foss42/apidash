@@ -5,6 +5,7 @@ import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/workflow/engine/workflow_auto_arrange.dart';
 import 'package:apidash/workflow/engine/workflow_runner.dart';
+import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/providers/workflow_ui_providers.dart';
 import 'package:apidash/workflow/utils/workflow_variable_utils.dart';
@@ -90,7 +91,7 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
       id: workflowName,
       name: workflowName,
       modifiedAt: workflow.modifiedAt,
-      stepCount: workflow.steps.length,
+      stepCount: workflow.graph.requestNodeCount,
     );
   }
 
@@ -296,11 +297,10 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     if (current == null) {
       return null;
     }
-    final stepKey = 'step_${getNewUuid().substring(0, 8)}';
     final requestId = getNewUuid();
     final label = apiType == APIType.ai
-        ? 'AI Request ${current.steps.length + 1}'
-        : 'Request ${current.steps.length + 1}';
+        ? 'AI Request ${current.graph.requestNodeCount + 1}'
+        : 'Request ${current.graph.requestNodeCount + 1}';
     final RequestModel requestModel;
     if (apiType == APIType.ai) {
       final defaultModel = ref.read(settingsProvider).defaultAIModel;
@@ -323,19 +323,15 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
         ),
       );
     }
-    final step = WorkflowStep(
-      label: label,
-      request: requestModel.toJson(),
-    );
     final nodeId = 'node_${getNewUuid().substring(0, 8)}';
     final nodes = [...current.graph.nodes];
     final edges = [...current.graph.edges];
     final newNode = WorkflowGraphNode(
       id: nodeId,
       type: WorkflowNodeType.request,
-      stepKey: stepKey,
       label: label,
       position: WorkflowPosition(x: position.dx, y: position.dy),
+      request: encodeWorkflowRequest(requestModel),
     );
     nodes.add(newNode);
     if (afterNodeId != null) {
@@ -350,7 +346,6 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     }
     await save(
       current.copyWith(
-        steps: {...current.steps, stepKey: step},
         graph: current.graph.copyWith(nodes: nodes, edges: edges),
       ),
     );
@@ -484,56 +479,42 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     if (current == null) {
       return null;
     }
-    final node = current.graph.nodes
-        .where((candidate) => candidate.id == nodeId)
-        .cast<WorkflowGraphNode?>()
-        .firstWhere((candidate) => candidate != null, orElse: () => null);
-    if (node == null || node.stepKey == null) {
-      return null;
-    }
-    final sourceStep = current.steps[node.stepKey];
-    if (sourceStep == null) {
+    final node = current.nodeById(nodeId);
+    if (node == null || node.type != WorkflowNodeType.request) {
       return null;
     }
 
-    final stepKey = 'step_${getNewUuid().substring(0, 8)}';
     final newNodeId = 'node_${getNewUuid().substring(0, 8)}';
     final requestId = getNewUuid();
-    final baseLabel = node.label.isNotEmpty ? node.label : sourceStep.label;
+    final baseLabel = node.label.isNotEmpty ? node.label : 'Request';
     final copyLabel = '$baseLabel copy';
-    final sourceRequest = RequestModel.fromJson(
-      Map<String, Object?>.from(sourceStep.request),
-    );
-    final step = WorkflowStep(
-      label: copyLabel,
-      request: sourceRequest
-          .copyWith(
-            id: requestId,
-            name: copyLabel,
-            httpResponseModel: null,
-            responseStatus: null,
-            message: null,
-            isWorking: false,
-            isStreaming: false,
-          )
-          .toJson(),
-      inheritFrom: sourceStep.inheritFrom,
-    );
+    final sourceRequest = node.requestModel() ??
+        RequestModel(id: requestId, name: copyLabel);
     final newNode = WorkflowGraphNode(
       id: newNodeId,
       type: WorkflowNodeType.request,
-      stepKey: stepKey,
       label: copyLabel,
       position: WorkflowPosition(
         x: node.position.x + 36,
         y: node.position.y + 36,
       ),
+      request: encodeWorkflowRequest(
+        sourceRequest.copyWith(
+          id: requestId,
+          name: copyLabel,
+          httpResponseModel: null,
+          responseStatus: null,
+          message: null,
+          isWorking: false,
+          isStreaming: false,
+        ),
+      ),
+      inheritFrom: node.inheritFrom,
       extractions: [...node.extractions],
     );
 
     await save(
       current.copyWith(
-        steps: {...current.steps, stepKey: step},
         graph: current.graph.copyWith(
           nodes: [...current.graph.nodes, newNode],
         ),
@@ -602,35 +583,30 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     if (current == null) {
       return null;
     }
-    final stepKey = 'step_${getNewUuid().substring(0, 8)}';
     final nodeId = 'node_${getNewUuid().substring(0, 8)}';
     final label = request.name.isNotEmpty ? request.name : 'Imported request';
-    final step = WorkflowStep(
-      label: label,
-      request: request
-          .copyWith(
-            id: getNewUuid(),
-            httpResponseModel: null,
-            responseStatus: null,
-            message: null,
-            isWorking: false,
-            isStreaming: false,
-          )
-          .toJson(),
-      inheritFrom: WorkflowInheritFrom(
-        collectionId: collectionId,
-        requestId: requestId,
-      ),
-    );
     final nodes = [...current.graph.nodes];
     final edges = [...current.graph.edges];
     nodes.add(
       WorkflowGraphNode(
         id: nodeId,
         type: WorkflowNodeType.request,
-        stepKey: stepKey,
         label: label,
         position: WorkflowPosition(x: position.dx, y: position.dy),
+        request: encodeWorkflowRequest(
+          request.copyWith(
+            id: getNewUuid(),
+            httpResponseModel: null,
+            responseStatus: null,
+            message: null,
+            isWorking: false,
+            isStreaming: false,
+          ),
+        ),
+        inheritFrom: WorkflowInheritFrom(
+          collectionId: collectionId,
+          requestId: requestId,
+        ),
       ),
     );
     if (afterNodeId != null) {
@@ -645,7 +621,6 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     }
     await save(
       current.copyWith(
-        steps: {...current.steps, stepKey: step},
         graph: current.graph.copyWith(nodes: nodes, edges: edges),
       ),
     );
@@ -703,47 +678,34 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
       for (final existing in current.graph.nodes)
         if (existing.id == node.id) node else existing,
     ];
-    var steps = current.steps;
-    final stepKey = node.stepKey;
-    if (node.type == WorkflowNodeType.request &&
-        stepKey != null &&
-        steps.containsKey(stepKey)) {
-      steps = {
-        ...steps,
-        stepKey: steps[stepKey]!.copyWith(label: node.label),
-      };
-    }
     await save(
       current.copyWith(
-        steps: steps,
         graph: current.graph.copyWith(nodes: nodes),
       ),
     );
   }
 
-  Future<void> updateStepRequest(String stepKey, RequestModel request) async {
+  Future<void> updateNodeRequest(String nodeId, RequestModel request) async {
     final current = state;
-    if (current == null || !current.steps.containsKey(stepKey)) {
+    final node = current?.nodeById(nodeId);
+    if (current == null || node == null || node.type != WorkflowNodeType.request) {
       return;
     }
-    final step = current.steps[stepKey]!;
+    final label = request.name.isNotEmpty ? request.name : node.label;
     await save(
       current.copyWith(
-        steps: {
-          ...current.steps,
-          stepKey: step.copyWith(
-            label: request.name.isNotEmpty ? request.name : step.label,
-            request: request
-                .copyWith(
-                  httpResponseModel: null,
-                  responseStatus: null,
-                  message: null,
-                  isWorking: false,
-                  isStreaming: false,
+        graph: current.graph.copyWith(
+          nodes: [
+            for (final existing in current.graph.nodes)
+              if (existing.id == nodeId)
+                existing.copyWith(
+                  label: label,
+                  request: encodeWorkflowRequest(request),
                 )
-                .toJson(),
-          ),
-        },
+              else
+                existing,
+          ],
+        ),
       ),
     );
   }
@@ -791,20 +753,12 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     if (current == null) {
       return;
     }
-    final node = current.graph.nodes
-        .where((candidate) => candidate.id == nodeId)
-        .cast<WorkflowGraphNode?>()
-        .firstWhere((candidate) => candidate != null, orElse: () => null);
+    final node = current.nodeById(nodeId);
     if (node == null) {
       return;
     }
-    final steps = Map<String, WorkflowStep>.from(current.steps);
-    if (node.stepKey != null) {
-      steps.remove(node.stepKey);
-    }
     await save(
       current.copyWith(
-        steps: steps,
         graph: current.graph.copyWith(
           nodes: current.graph.nodes.where((n) => n.id != nodeId).toList(),
           edges: current.graph.edges
@@ -820,28 +774,13 @@ WorkflowDocument _defaultWorkflow({
   required String name,
   required DateTime now,
 }) {
-  final stepKey = 'step_${getNewUuid().substring(0, 8)}';
   final requestId = getNewUuid();
   final nodeId = 'node_${getNewUuid().substring(0, 8)}';
   const label = 'Request 1';
   return WorkflowDocument(
     id: name,
     name: name,
-    createdAt: now,
     modifiedAt: now,
-    steps: {
-      stepKey: WorkflowStep(
-        label: label,
-        request: RequestModel(
-          id: requestId,
-          name: label,
-          httpRequestModel: const HttpRequestModel(
-            method: HTTPVerb.get,
-            url: 'https://',
-          ),
-        ).toJson(),
-      ),
-    },
     graph: WorkflowGraph(
       nodes: [
         const WorkflowGraphNode(
@@ -853,9 +792,18 @@ WorkflowDocument _defaultWorkflow({
         WorkflowGraphNode(
           id: nodeId,
           type: WorkflowNodeType.request,
-          stepKey: stepKey,
           label: label,
           position: const WorkflowPosition(x: 320, y: 180),
+          request: encodeWorkflowRequest(
+            RequestModel(
+              id: requestId,
+              name: label,
+              httpRequestModel: const HttpRequestModel(
+                method: HTTPVerb.get,
+                url: 'https://',
+              ),
+            ),
+          ),
         ),
       ],
       edges: [

@@ -37,17 +37,14 @@ class WorkflowValidator {
       }
       switch (node.type) {
         case WorkflowNodeType.request:
-          final stepKey = node.stepKey;
-          if (stepKey == null || stepKey.isEmpty) {
-            errors.add('Request node "${node.label}" has no step key.');
-          } else if (!workflow.steps.containsKey(stepKey)) {
-            errors.add('Request node "${node.label}" references missing step "$stepKey".');
-          } else {
-            final request = workflow.requestModelForStep(stepKey);
-            if (request?.httpRequestModel == null &&
-                request?.aiRequestModel == null) {
-              warnings.add('Step "$stepKey" has no HTTP request configured.');
-            }
+          final request = node.requestModel();
+          if (request == null) {
+            errors.add('Request node "${node.label}" has no request payload.');
+          } else if (request.httpRequestModel == null &&
+              request.aiRequestModel == null) {
+            warnings.add(
+              'Request node "${node.label}" has no HTTP/AI request configured.',
+            );
           }
         case WorkflowNodeType.condition:
           if ((node.conditionExpression ?? '').trim().isEmpty) {
