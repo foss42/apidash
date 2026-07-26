@@ -1118,10 +1118,18 @@ class CollectionStateNotifier
                 : false;
 
             if (isEnabled && topic.name.trim().isNotEmpty) {
+              final rawQos = topic.value;
+              int tQos = subModel.qos;
+              if (rawQos is int && rawQos >= 0 && rawQos <= 2) {
+                tQos = rawQos;
+              } else {
+                final p = int.tryParse('${rawQos ?? ''}');
+                if (p != null && p >= 0 && p <= 2) tQos = p;
+              }
               ConnectionManager.instance.subscribeMqtt(
                 requestId,
                 topic.name,
-                subModel.qos,
+                tQos,
               );
             }
           }
