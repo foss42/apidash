@@ -4,6 +4,7 @@ import 'package:apidash_core/apidash_core.dart';
 
 import 'http_request_models.dart';
 import 'http_response_models.dart';
+import 'mqtt_request_models.dart';
 
 /// Basic History Meta model 1
 final historyMetaModel1 = HistoryMetaModel(
@@ -64,6 +65,31 @@ final historyRequestModelWs = HistoryRequestModel(
   historyId: 'historyIdWs',
   metaData: historyMetaModelWs,
   wsRequestModel: historyWsRequestModel,
+  authModel: AuthModel(type: APIAuthType.none),
+);
+
+/// MQTT History Meta model
+final historyMetaModelMqtt = HistoryMetaModel(
+  historyId: 'historyIdMqtt',
+  requestId: 'requestIdMqtt',
+  apiType: APIType.mqtt,
+  url: 'mqtts://broker.example.org',
+  method: HTTPVerb.get,
+  timeStamp: DateTime(2024, 1, 1),
+  responseStatus: 0,
+);
+
+/// MQTT request model fixture for history — reuses the fully-populated
+/// [mqttRequestModelFull], which carries a couple of `messageHistory` entries
+/// and two `subscribedTopics`, so the history round-trip exercises real
+/// payloads (mirrors the WebSocket fixture, but non-empty).
+final historyMqttRequestModel = mqttRequestModelFull;
+
+/// MQTT History Request model carrying a non-null mqttRequestModel.
+final historyRequestModelMqtt = HistoryRequestModel(
+  historyId: 'historyIdMqtt',
+  metaData: historyMetaModelMqtt,
+  mqttRequestModel: historyMqttRequestModel,
   authModel: AuthModel(type: APIAuthType.none),
 );
 
@@ -179,4 +205,45 @@ final Map<String, dynamic> historyRequestModelJson2 = {
   "metaData": historyMetaModelJson2,
   "httpRequestModel": httpRequestModelPost10Json,
   "httpResponseModel": responseModelJson,
+};
+
+/// MQTT History Meta JSON
+final Map<String, dynamic> historyMetaModelMqttJson = {
+  "historyId": "historyIdMqtt",
+  "requestId": "requestIdMqtt",
+  "apiType": "mqtt",
+  "name": "",
+  "url": "mqtts://broker.example.org",
+  "method": "get",
+  "timeStamp": '2024-01-01T00:00:00.000',
+  "responseStatus": 0,
+};
+
+/// Expected JSON for the MQTT mqttRequestModel fixture. Same content as the
+/// shared [mqttRequestModelFullJson]; `messageHistory` and `subscribedTopics`
+/// ARE persisted to JSON (like WebSocketRequestModel) and survive the round-trip.
+final Map<String, dynamic> historyMqttRequestModelJson =
+    Map<String, dynamic>.from(mqttRequestModelFullJson);
+
+/// Expected JSON for the MQTT HistoryRequestModel fixture.
+final Map<String, dynamic> historyRequestModelMqttJson = {
+  "historyId": "historyIdMqtt",
+  "metaData": historyMetaModelMqttJson,
+  'httpRequestModel': null,
+  'aiRequestModel': null,
+  'wsRequestModel': null,
+  'mqttRequestModel': historyMqttRequestModelJson,
+  "httpResponseModel": null,
+  'preRequestScript': null,
+  'postRequestScript': null,
+  'authModel': {
+    'type': 'none',
+    'apikey': null,
+    'bearer': null,
+    'basic': null,
+    'jwt': null,
+    'digest': null,
+    'oauth1': null,
+    'oauth2': null
+  }
 };
