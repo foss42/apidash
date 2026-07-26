@@ -169,7 +169,7 @@ class _WorkflowRequestStepEditorPageState
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete step'),
         content: const Text(
-          'Remove this request step from the workflow? Connected edges will also be removed.',
+          'Remove this request step from the workflow? Its connections will also be removed.',
         ),
         actions: [
           TextButton(

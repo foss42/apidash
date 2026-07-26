@@ -597,7 +597,7 @@ class _EdgeDiffCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GitDiffField(
-        label: 'Edge',
+        label: 'Connection',
         change: cardChange,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

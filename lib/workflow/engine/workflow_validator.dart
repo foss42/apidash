@@ -77,10 +77,10 @@ class WorkflowValidator {
 
     for (final edge in workflow.graph.edges) {
       if (!nodeIds.contains(edge.source)) {
-        errors.add('Edge ${edge.id} references missing source node.');
+        errors.add('Connection ${edge.id} references missing source node.');
       }
       if (!nodeIds.contains(edge.target)) {
-        errors.add('Edge ${edge.id} references missing target node.');
+        errors.add('Connection ${edge.id} references missing target node.');
       }
     }
 

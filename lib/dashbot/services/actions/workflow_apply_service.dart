@@ -67,11 +67,13 @@ class WorkflowApplyService {
 
     for (final edge in document.graph.edges) {
       if (edge.id.isEmpty) {
-        throw WorkflowApplyException('Every edge must have a non-empty id.');
+        throw WorkflowApplyException(
+          'Every connection must have a non-empty id.',
+        );
       }
       if (!nodeIds.contains(edge.source) || !nodeIds.contains(edge.target)) {
         throw WorkflowApplyException(
-          'Edge "${edge.id}" references unknown node(s).',
+          'Connection "${edge.id}" references unknown node(s).',
         );
       }
     }

@@ -260,7 +260,7 @@ class _WorkflowLoopStepEditorPageState
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete node'),
         content: const Text(
-          'Remove this loop from the workflow? Connected edges will also be removed.',
+          'Remove this loop from the workflow? Its connections will also be removed.',
         ),
         actions: [
           TextButton(
@@ -445,7 +445,7 @@ class _WorkflowConditionStepEditorPageState
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete node'),
         content: const Text(
-          'Remove this condition from the workflow? Connected edges will also be removed.',
+          'Remove this condition from the workflow? Its connections will also be removed.',
         ),
         actions: [
           TextButton(
@@ -607,7 +607,7 @@ class _WorkflowDelayStepEditorPageState
       builder: (dialogContext) => AlertDialog(
         title: const Text('Delete node'),
         content: const Text(
-          'Remove this delay from the workflow? Connected edges will also be removed.',
+          'Remove this delay from the workflow? Its connections will also be removed.',
         ),
         actions: [
           TextButton(
