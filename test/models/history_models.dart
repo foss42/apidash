@@ -138,16 +138,19 @@ final Map<String, dynamic> historyWsRequestModelJson = {
   'url': 'wss://echo.websocket.org',
   'messageHistory': [],
   'headers': [
-    {'name': 'Auth', 'value': 'Bearer 123'}
+    {'name': 'Auth', 'value': 'Bearer 123'},
   ],
   'isHeaderEnabledList': [true],
   'params': [
-    {'name': 'id', 'value': '1'}
+    {'name': 'id', 'value': '1'},
   ],
   'isParamEnabledList': [true],
   'autoReconnect': true,
   'enableHeartbeat': true,
   'heartbeatInterval': 15,
+  'enableMessageHeartbeat': false,
+  'messageHeartbeatInterval': 30,
+  'messageHeartbeatPayload': 'ping',
 };
 
 /// Expected JSON for the WS HistoryRequestModel fixture.
@@ -168,8 +171,8 @@ final Map<String, dynamic> historyRequestModelWsJson = {
     'jwt': null,
     'digest': null,
     'oauth1': null,
-    'oauth2': null
-  }
+    'oauth2': null,
+  },
 };
 
 final Map<String, dynamic> historyRequestModelJson2 = {
