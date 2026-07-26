@@ -2,6 +2,8 @@
 
 Workflows let you run multi-step API scenarios on a visual canvas: chain requests, pass data between steps, branch on results, and repeat actions.
 
+**Desktop only for now** — the mobile app does not include a Workflows tab; use the desktop (wide) layout to build and run workflows.
+
 
 ## What workflows do
 
