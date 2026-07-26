@@ -83,44 +83,45 @@ void main() async {
       expect(updated.wsRequestModel, isNotNull);
     });
 
+    test('switching back from websocket to rest nulls wsRequestModel and '
+        'restores an http model', () {
+      final id = notifier.state!.entries.first.key;
+      notifier.update(id: id, apiType: APIType.websocket);
+      expect(notifier.getRequestModel(id)!.wsRequestModel, isNotNull);
+
+      notifier.update(id: id, apiType: APIType.rest);
+      final updated = notifier.getRequestModel(id)!;
+      expect(updated.apiType, APIType.rest);
+      expect(updated.wsRequestModel, isNull);
+      expect(updated.httpRequestModel, isNotNull);
+    });
+
     test(
-      'switching back from websocket to rest nulls wsRequestModel and '
-      'restores an http model',
+      'switching to the same websocket apiType keeps the existing ws model',
       () {
         final id = notifier.state!.entries.first.key;
         notifier.update(id: id, apiType: APIType.websocket);
-        expect(notifier.getRequestModel(id)!.wsRequestModel, isNotNull);
 
-        notifier.update(id: id, apiType: APIType.rest);
-        final updated = notifier.getRequestModel(id)!;
-        expect(updated.apiType, APIType.rest);
-        expect(updated.wsRequestModel, isNull);
-        expect(updated.httpRequestModel, isNotNull);
+        // Give the ws model a custom url then "switch" to websocket again.
+        notifier.update(
+          id: id,
+          wsRequestModel: const WebSocketRequestModel(
+            url: 'wss://example.test',
+          ),
+        );
+        expect(
+          notifier.getRequestModel(id)!.wsRequestModel!.url,
+          'wss://example.test',
+        );
+
+        // apiType already websocket  so url survives.
+        notifier.update(id: id, apiType: APIType.websocket);
+        expect(
+          notifier.getRequestModel(id)!.wsRequestModel!.url,
+          'wss://example.test',
+        );
       },
     );
-
-    test('switching to the same websocket apiType keeps the existing ws model',
-        () {
-      final id = notifier.state!.entries.first.key;
-      notifier.update(id: id, apiType: APIType.websocket);
-
-      // Give the ws model a custom url then "switch" to websocket again.
-      notifier.update(
-        id: id,
-        wsRequestModel: const WebSocketRequestModel(url: 'wss://example.test'),
-      );
-      expect(
-        notifier.getRequestModel(id)!.wsRequestModel!.url,
-        'wss://example.test',
-      );
-
-      // apiType already websocket  so url survives.
-      notifier.update(id: id, apiType: APIType.websocket);
-      expect(
-        notifier.getRequestModel(id)!.wsRequestModel!.url,
-        'wss://example.test',
-      );
-    });
 
     tearDown(() {
       container.dispose();
@@ -154,30 +155,27 @@ void main() async {
       expect(ws.heartbeatInterval, 42);
     });
 
-    test(
-      'update(wsRequestModel:) on a websocket request merges headers/params '
-      'passed alongside into the ws model (copyWith branch)',
-      () {
-        const headers = [NameValueModel(name: 'X-Token', value: 'abc')];
-        const params = [NameValueModel(name: 'q', value: '1')];
+    test('update(wsRequestModel:) on a websocket request merges headers/params '
+        'passed alongside into the ws model (copyWith branch)', () {
+      const headers = [NameValueModel(name: 'X-Token', value: 'abc')];
+      const params = [NameValueModel(name: 'q', value: '1')];
 
-        notifier.update(
-          id: id,
-          wsRequestModel: const WebSocketRequestModel(url: 'wss://h.test'),
-          headers: headers,
-          isHeaderEnabledList: const [true],
-          params: params,
-          isParamEnabledList: const [true],
-        );
+      notifier.update(
+        id: id,
+        wsRequestModel: const WebSocketRequestModel(url: 'wss://h.test'),
+        headers: headers,
+        isHeaderEnabledList: const [true],
+        params: params,
+        isParamEnabledList: const [true],
+      );
 
-        final ws = notifier.getRequestModel(id)!.wsRequestModel!;
-        expect(ws.url, 'wss://h.test');
-        expect(ws.headers, headers);
-        expect(ws.isHeaderEnabledList, const [true]);
-        expect(ws.params, params);
-        expect(ws.isParamEnabledList, const [true]);
-      },
-    );
+      final ws = notifier.getRequestModel(id)!.wsRequestModel!;
+      expect(ws.url, 'wss://h.test');
+      expect(ws.headers, headers);
+      expect(ws.isHeaderEnabledList, const [true]);
+      expect(ws.params, params);
+      expect(ws.isParamEnabledList, const [true]);
+    });
 
     test('update(isStreaming:) flips the streaming flag', () {
       expect(notifier.getRequestModel(id)!.isStreaming, false);
@@ -255,13 +253,18 @@ void main() async {
         final channel = await ConnectionManager.instance.connect(id, wsUrl);
         await channel.ready;
 
-        final before =
-            notifier.getRequestModel(id)!.wsRequestModel!.messageHistory.length;
+        final before = notifier
+            .getRequestModel(id)!
+            .wsRequestModel!
+            .messageHistory
+            .length;
 
         notifier.sendWebSocketMessage(id, 'hi');
 
-        final history =
-            notifier.getRequestModel(id)!.wsRequestModel!.messageHistory;
+        final history = notifier
+            .getRequestModel(id)!
+            .wsRequestModel!
+            .messageHistory;
         expect(history.length, before + 1);
         final sent = history.last;
         expect(sent.payload, 'hi');
@@ -270,21 +273,28 @@ void main() async {
       },
     );
 
-    test(
-      'still records the sent message even with no active channel '
-      '(send() is a silent no-op, append still happens)',
-      () {
-        // No ConnectionManager.connect() called -> no channel for this id.
-        expect(ConnectionManager.instance.hasConnection(id), false);
+    test('does NOT record a sent message when there is no active channel '
+        '(guarded by hasConnection)', () {
+      // No ConnectionManager.connect() called -> no channel for this id.
+      expect(ConnectionManager.instance.hasConnection(id), false);
 
-        notifier.sendWebSocketMessage(id, 'queued');
+      final before = notifier
+          .getRequestModel(id)!
+          .wsRequestModel!
+          .messageHistory
+          .length;
 
-        final history =
-            notifier.getRequestModel(id)!.wsRequestModel!.messageHistory;
-        expect(history.last.payload, 'queued');
-        expect(history.last.messageType, WebSocketMessageType.sent);
-      },
-    );
+      notifier.sendWebSocketMessage(id, 'queued');
+
+      // The hasConnection guard makes this a no-op: nothing is appended when
+      // the channel is not open.
+      final history = notifier
+          .getRequestModel(id)!
+          .wsRequestModel!
+          .messageHistory;
+      expect(history.length, before);
+      expect(history, isEmpty);
+    });
 
     test('does nothing when the request is not a websocket request', () {
       // Switch back to REST: wsRequestModel becomes null.
@@ -306,65 +316,64 @@ void main() async {
       );
     });
 
-    test(
-      'echo server delivers a received message via the connect stream '
-      '(sendRequest wires stream.listen)',
-      () async {
-        await driveSendRequestForWs(container, notifier, id);
+    test('echo server delivers a received message via the connect stream '
+        '(sendRequest wires stream.listen)', () async {
+      await driveSendRequestForWs(container, notifier, id);
 
-        // After connecting, a "connected" message is appended, and isStreaming
-        // becomes true.
-        final afterConnect = notifier.getRequestModel(id)!;
-        expect(
-          afterConnect.wsRequestModel!.messageHistory.any(
-            (m) => m.messageType == WebSocketMessageType.connected,
-          ),
-          true,
-        );
+      // After connecting, a "connected" message is appended, and isStreaming
+      // becomes true.
+      final afterConnect = notifier.getRequestModel(id)!;
+      expect(
+        afterConnect.wsRequestModel!.messageHistory.any(
+          (m) => m.messageType == WebSocketMessageType.connected,
+        ),
+        true,
+      );
 
-        // Send a message and let the echo come back through the stream listener.
-        // This is a REAL internet round-trip, so allow generous settle time.
-        notifier.sendWebSocketMessage(id, 'echo-me');
-        await Future.delayed(const Duration(seconds: 5));
+      // Send a message and let the echo come back through the stream listener.
+      // This is a REAL internet round-trip, so allow generous settle time.
+      notifier.sendWebSocketMessage(id, 'echo-me');
+      await Future.delayed(const Duration(seconds: 5));
 
-        final history =
-            notifier.getRequestModel(id)!.wsRequestModel!.messageHistory;
-        // Sent message present.
-        expect(
-          history.any(
-            (m) =>
-                m.messageType == WebSocketMessageType.sent &&
-                m.payload == 'echo-me',
-          ),
-          true,
-        );
-        // Received echo present (server echoes back the same payload).
-        expect(
-          history.any(
-            (m) =>
-                m.messageType == WebSocketMessageType.received &&
-                m.payload == 'echo-me',
-          ),
-          true,
-          reason: 'echoed message should be appended by the stream listener',
-        );
+      final history = notifier
+          .getRequestModel(id)!
+          .wsRequestModel!
+          .messageHistory;
+      // Sent message present.
+      expect(
+        history.any(
+          (m) =>
+              m.messageType == WebSocketMessageType.sent &&
+              m.payload == 'echo-me',
+        ),
+        true,
+      );
+      // Received echo present (server echoes back the same payload).
+      expect(
+        history.any(
+          (m) =>
+              m.messageType == WebSocketMessageType.received &&
+              m.payload == 'echo-me',
+        ),
+        true,
+        reason: 'echoed message should be appended by the stream listener',
+      );
 
-        // Drain the connection while the notifier is still mounted so that the
-        // stream's onDone callback (which touches state) runs before disposal.
-        ConnectionManager.instance.disconnect(id);
-        await Future.delayed(const Duration(seconds: 2));
-        // After a clean close the provider flips isStreaming back to false and
-        // records a disconnected message.
-        final closed = notifier.getRequestModel(id)!;
-        expect(closed.isStreaming, false);
-        expect(
-          closed.wsRequestModel!.messageHistory.any(
-            (m) => m.messageType == WebSocketMessageType.disconnected,
-          ),
-          true,
-        );
-      },
-    );
+      // Drain the connection while the notifier is still mounted so that the
+      // stream's onDone callback (which touches state) runs before disposal.
+      ConnectionManager.instance.disconnect(id);
+      await Future.delayed(const Duration(seconds: 2));
+      // After a clean close the provider flips isStreaming back to false and
+      // records a disconnected message.
+      final closed = notifier.getRequestModel(id)!;
+      expect(closed.isStreaming, false);
+      expect(
+        closed.wsRequestModel!.messageHistory.any(
+          (m) => m.messageType == WebSocketMessageType.disconnected,
+        ),
+        true,
+      );
+    });
 
     tearDown(() {
       ConnectionManager.instance.disconnect(id);
@@ -405,19 +414,16 @@ void main() async {
       },
     );
 
-    test(
-      'remove() is safe when there is no active connection for the id',
-      () {
-        final id = notifier.state!.entries.first.key;
-        notifier.update(id: id, apiType: APIType.websocket);
-        expect(ConnectionManager.instance.hasConnection(id), false);
+    test('remove() is safe when there is no active connection for the id', () {
+      final id = notifier.state!.entries.first.key;
+      notifier.update(id: id, apiType: APIType.websocket);
+      expect(ConnectionManager.instance.hasConnection(id), false);
 
-        // Should not throw.
-        notifier.remove(id: id);
-        expect(notifier.hasId(id), false);
-        expect(ConnectionManager.instance.hasConnection(id), false);
-      },
-    );
+      // Should not throw.
+      notifier.remove(id: id);
+      expect(notifier.hasId(id), false);
+      expect(ConnectionManager.instance.hasConnection(id), false);
+    });
 
     tearDown(() {
       container.dispose();

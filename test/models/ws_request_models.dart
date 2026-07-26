@@ -64,16 +64,19 @@ const wsRequestModel1Json = {
     }
   ],
   'headers': [
-    {'name': 'Auth', 'value': 'Bearer 123'}
+    {'name': 'Auth', 'value': 'Bearer 123'},
   ],
   'isHeaderEnabledList': [true],
   'params': [
-    {'name': 'id', 'value': '1'}
+    {'name': 'id', 'value': '1'},
   ],
   'isParamEnabledList': [true],
   'autoReconnect': true,
   'enableHeartbeat': true,
   'heartbeatInterval': 15,
+  'enableMessageHeartbeat': false,
+  'messageHeartbeatInterval': 30,
+  'messageHeartbeatPayload': 'ping',
 };
 
 const wsRequestModel2Json = {
@@ -229,4 +232,7 @@ const wsRequestModelMultiHistoryJson = {
   'autoReconnect': false,
   'enableHeartbeat': false,
   'heartbeatInterval': 30,
+  'enableMessageHeartbeat': false,
+  'messageHeartbeatInterval': 30,
+  'messageHeartbeatPayload': 'ping',
 };

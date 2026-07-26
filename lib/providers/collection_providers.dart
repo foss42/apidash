@@ -223,6 +223,7 @@ class CollectionStateNotifier
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
       mqttRequestModel: currentModel.mqttRequestModel?.copyWith(),
+      wsRequestModel: currentModel.wsRequestModel?.copyWith(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,

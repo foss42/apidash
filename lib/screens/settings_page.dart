@@ -174,28 +174,25 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelMaxWebSocketEvents),
-                subtitle: const Text(kLabelMaxWebSocketEventsSubtitle),
+                title: const Text(kLabelMaxConnectionMessages),
+                subtitle: const Text(kLabelMaxConnectionMessagesSubtitle),
                 trailing: SizedBox(
                   width: 100,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    controller: TextEditingController(
-                      text: settings.maxWebSocketEvents.toString(),
+                  child: ADOutlinedTextField(
+                    initialValue: settings.maxConnectionMessages.toString(),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
                     ),
-                    onSubmitted: (val) {
+                    onChanged: (val) {
                       final parsed = int.tryParse(val);
                       if (parsed != null && parsed > 0) {
                         ref
                             .read(settingsProvider.notifier)
-                            .update(maxWebSocketEvents: parsed);
+                            .update(maxConnectionMessages: parsed);
                       }
                     },
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    ),
                   ),
                 ),
               ),
