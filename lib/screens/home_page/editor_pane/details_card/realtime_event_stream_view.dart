@@ -37,7 +37,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
     final history = widget.historyMessages ?? wsModel?.messageHistory ?? [];
 
     final settings = ref.watch(settingsProvider);
-    final maxEvents = settings.maxWebSocketEvents;
+    final maxEvents = settings.maxConnectionMessages;
 
     final filteredHistory = _filterQuery.isEmpty
         ? history

@@ -174,12 +174,12 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelMaxWebSocketEvents),
-                subtitle: const Text(kLabelMaxWebSocketEventsSubtitle),
+                title: const Text(kLabelMaxConnectionMessages),
+                subtitle: const Text(kLabelMaxConnectionMessagesSubtitle),
                 trailing: SizedBox(
                   width: 100,
                   child: ADOutlinedTextField(
-                    initialValue: settings.maxWebSocketEvents.toString(),
+                    initialValue: settings.maxConnectionMessages.toString(),
                     isDense: true,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -190,7 +190,7 @@ class SettingsPage extends ConsumerWidget {
                       if (parsed != null && parsed > 0) {
                         ref
                             .read(settingsProvider.notifier)
-                            .update(maxWebSocketEvents: parsed);
+                            .update(maxConnectionMessages: parsed);
                       }
                     },
                   ),
