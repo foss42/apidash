@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/workflow/engine/workflow_auto_arrange.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 
 class WorkflowApplyException implements Exception {
@@ -31,6 +32,7 @@ class WorkflowApplyService {
     if (map == null) {
       throw WorkflowApplyException('Workflow payload is missing or invalid.');
     }
+    _normalizeEdgeKey(map);
 
     final document = WorkflowDocument.fromJson(map);
     final name = document.name.trim();
@@ -79,9 +81,10 @@ class WorkflowApplyService {
     }
 
     final uniqueName = _uniqueWorkflowName(name, existingNames);
-    final laidOut = _ensureLayout(
+    final connected = _ensureConnections(
       document.copyWith(id: uniqueName, name: uniqueName),
     );
+    final laidOut = _autoArrange(connected);
 
     return WorkflowApplyResult(
       document: laidOut,
@@ -89,9 +92,17 @@ class WorkflowApplyService {
     );
   }
 
+  void _normalizeEdgeKey(Map<String, dynamic> map) {
+    final edges = map['edges'];
+    final edgesEmpty = edges == null || (edges is List && edges.isEmpty);
+    if (edgesEmpty && map['connections'] is List) {
+      map['edges'] = map['connections'];
+    }
+  }
+
   Map<String, dynamic>? _asStringKeyedMap(dynamic value) {
     if (value is Map<String, dynamic>) {
-      return value;
+      return Map<String, dynamic>.from(value);
     }
     if (value is Map) {
       return Map<String, dynamic>.from(value);
@@ -111,26 +122,57 @@ class WorkflowApplyService {
     return '$baseName ($suffix)';
   }
 
-  WorkflowDocument _ensureLayout(WorkflowDocument document) {
-    final nodes = document.graph.nodes;
-    final needsLayout = nodes.every(
-      (n) => n.position.x == 0 && n.position.y == 0,
-    );
-    if (!needsLayout) {
+  /// When Dashbot returns nodes without edges, wire a left-to-right chain.
+  WorkflowDocument _ensureConnections(WorkflowDocument document) {
+    if (document.graph.edges.isNotEmpty) {
       return document;
     }
 
-    final start = nodes.where((n) => n.type == WorkflowNodeType.manualStart);
-    final others = nodes.where((n) => n.type != WorkflowNodeType.manualStart);
-    final ordered = [...start, ...others];
-    final laidOut = <WorkflowGraphNode>[
-      for (var i = 0; i < ordered.length; i++)
-        ordered[i].copyWith(
-          position: WorkflowPosition(x: 80 + i * 240, y: 180),
+    final start = document.graph.nodes.firstWhere(
+      (n) => n.type == WorkflowNodeType.manualStart,
+    );
+    final rest = document.graph.nodes
+        .where((n) => n.type != WorkflowNodeType.manualStart)
+        .toList();
+    final ordered = [start, ...rest];
+    final edges = <WorkflowGraphEdge>[
+      for (var i = 0; i < ordered.length - 1; i++)
+        WorkflowGraphEdge(
+          id: 'edge_${i + 1}',
+          source: ordered[i].id,
+          target: ordered[i + 1].id,
+          sourceHandle: _defaultOutFor(ordered[i]),
         ),
     ];
     return document.copyWith(
-      graph: document.graph.copyWith(nodes: laidOut),
+      graph: document.graph.copyWith(edges: edges),
+    );
+  }
+
+  WorkflowEdgeHandle _defaultOutFor(WorkflowGraphNode source) {
+    return switch (source.type) {
+      WorkflowNodeType.request => WorkflowEdgeHandle.success,
+      WorkflowNodeType.condition => WorkflowEdgeHandle.then,
+      _ => WorkflowEdgeHandle.next,
+    };
+  }
+
+  WorkflowDocument _autoArrange(WorkflowDocument document) {
+    final positions = computeWorkflowAutoArrangePositions(document.graph);
+    if (positions.isEmpty) {
+      return document;
+    }
+    final nodes = [
+      for (final node in document.graph.nodes)
+        if (positions[node.id] case final pos?)
+          node.copyWith(
+            position: WorkflowPosition(x: pos.dx, y: pos.dy),
+          )
+        else
+          node,
+    ];
+    return document.copyWith(
+      graph: document.graph.copyWith(nodes: nodes),
     );
   }
 }

@@ -171,9 +171,45 @@ class WorkflowGraphNode {
 
   factory WorkflowGraphNode.fromJson(Map<String, dynamic> json) {
     final type = _nodeTypeFromJson(json['type']?.toString());
-    final extractRaw = json['extract'] ?? json['extractions'];
+    var extractRaw = json['extract'] ?? json['extractions'];
     final maxRaw = json['max'] ?? json['loopMaxIterations'];
     final msRaw = json['ms'] ?? json['delayMs'];
+    Map<String, dynamic>? request;
+    if (json['request'] is Map) {
+      request = Map<String, dynamic>.from(json['request'] as Map);
+      extractRaw ??= request['extract'] ?? request['extractions'];
+      request.remove('extract');
+      request.remove('extractions');
+      if (request['httpRequestModel'] == null &&
+          (request.containsKey('method') || request.containsKey('url'))) {
+        final method = request.remove('method');
+        final url = request.remove('url');
+        final headers = request.remove('headers');
+        final params = request.remove('params');
+        final body = request.remove('body');
+        final http = <String, dynamic>{
+          if (method != null) 'method': method.toString().toLowerCase(),
+          if (url != null) 'url': url,
+          if (headers != null) 'headers': headers,
+          if (params != null) 'params': params,
+          if (body != null) 'body': body,
+        };
+        request['httpRequestModel'] = http;
+        request.putIfAbsent(
+          'id',
+          () => 'req_${(json['id']?.toString().isNotEmpty == true) ? json['id'] : 'step'}',
+        );
+      }
+      final http = request['httpRequestModel'];
+      if (http is Map) {
+        final httpMap = Map<String, dynamic>.from(http);
+        final method = httpMap['method']?.toString();
+        if (method != null && method.isNotEmpty) {
+          httpMap['method'] = method.toLowerCase();
+        }
+        request['httpRequestModel'] = httpMap;
+      }
+    }
     return WorkflowGraphNode(
       id: json['id']?.toString() ?? '',
       type: type,
@@ -183,9 +219,7 @@ class WorkflowGraphNode {
             )
           : const WorkflowPosition(),
       label: json['label']?.toString() ?? '',
-      request: json['request'] is Map
-          ? Map<String, dynamic>.from(json['request'] as Map)
-          : null,
+      request: request,
       inheritFrom: json['inheritFrom'] is Map
           ? WorkflowInheritFrom.fromJson(
               Map<String, dynamic>.from(json['inheritFrom'] as Map),

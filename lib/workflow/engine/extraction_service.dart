@@ -42,10 +42,13 @@ class WorkflowExtractionService {
     }
     try {
       final decoded = jsonDecode(body);
-      final path = jsonPath.startsWith(r'$') ? jsonPath.substring(1) : jsonPath;
+      var path = jsonPath.startsWith(r'$') ? jsonPath.substring(1) : jsonPath;
+      if (path.startsWith('.')) {
+        path = path.substring(1);
+      }
+      path = normalizeExtractionPath(path);
       final segments = path
           .split('.')
-          .map((segment) => segment.replaceAll(RegExp(r'^\[|\]$'), ''))
           .where((segment) => segment.isNotEmpty)
           .toList();
       dynamic current = decoded;
@@ -70,4 +73,29 @@ class WorkflowExtractionService {
       return null;
     }
   }
+}
+
+/// Accepts `data.0.id`, `data[0].id`, and `$data[0].id`.
+String normalizeExtractionPath(String path) {
+  var out = path.trim();
+  out = out.replaceAllMapped(
+    RegExp(r'\["([^"]+)"\]'),
+    (m) => '.${m.group(1)}',
+  );
+  out = out.replaceAllMapped(
+    RegExp(r"\['([^']+)'\]"),
+    (m) => '.${m.group(1)}',
+  );
+  out = out.replaceAllMapped(
+    RegExp(r'\[(\d+)\]'),
+    (m) => '.${m.group(1)}',
+  );
+  out = out.replaceAll(RegExp(r'\.+'), '.');
+  if (out.startsWith('.')) {
+    out = out.substring(1);
+  }
+  if (out.endsWith('.')) {
+    out = out.substring(0, out.length - 1);
+  }
+  return out;
 }

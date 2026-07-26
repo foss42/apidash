@@ -47,6 +47,32 @@ Map<String, dynamic> encodeWorkflowRequest(RequestModel model) {
 RequestModel decodeWorkflowRequest(Map<String, dynamic> json) {
   final normalized = Map<String, dynamic>.from(json);
   normalized.putIfAbsent('id', () => '');
+
+  if (normalized['httpRequestModel'] == null &&
+      (normalized.containsKey('method') || normalized.containsKey('url'))) {
+    final method = normalized.remove('method');
+    final url = normalized.remove('url');
+    final headers = normalized.remove('headers');
+    final params = normalized.remove('params');
+    final body = normalized.remove('body');
+    normalized['httpRequestModel'] = <String, dynamic>{
+      if (method != null) 'method': method.toString().toLowerCase(),
+      if (url != null) 'url': url,
+      if (headers != null) 'headers': headers,
+      if (params != null) 'params': params,
+      if (body != null) 'body': body,
+    };
+  }
+
+  final http = normalized['httpRequestModel'];
+  if (http is Map) {
+    final httpMap = Map<String, dynamic>.from(http);
+    final method = httpMap['method']?.toString();
+    if (method != null && method.isNotEmpty) {
+      httpMap['method'] = method.toLowerCase();
+    }
+    normalized['httpRequestModel'] = httpMap;
+  }
   return RequestModel.fromJson(Map<String, Object?>.from(normalized));
 }
 

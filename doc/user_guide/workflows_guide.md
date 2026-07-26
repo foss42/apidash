@@ -9,6 +9,22 @@ Workflows let you run multi-step API scenarios on a visual canvas: chain request
 
 Use workflows when a single request is not enough — for example login → fetch profile → update profile, or run the same request once per item in a list.
 
+## Create with Dashbot
+
+1. Open Dashbot → **Generate Workflow** (same idea as Import cURL: Dashbot asks you to describe the flow first; it does not invent a workflow until you send details).
+2. Describe steps, URLs, extractions, and loops/conditions if needed.
+3. Review the reply and confirm **Create Workflow**. The flow is saved under your workspace `workflows/` folder and opened on the canvas.
+
+Tips for better results:
+
+- Use full URLs (prefer `https://api.apidash.dev/...` for the public demo API).
+- Name extract variables exactly as you will use them later (`userId` → `{{userId}}`).
+- Paths like `data.0.id` or `data[0].id` both work; prefer dotted indexes in prompts.
+- Dashbot does not call your API when guessing JSON paths — if the response shape differs, edit the extraction after create.
+
+On create, missing connections are chained automatically and the graph is auto-arranged.
+
+
 ## Request nodes
 
 A request node calls an API.
@@ -18,7 +34,7 @@ A request node calls an API.
 
 ### Extractions and JSON paths
 
-Extractions read from the response (usually `response.body`) using a dotted path, then store the value as a workflow variable. Downstream steps use it as `{{variableName}}`.
+Extractions read from the response (usually `response.body`) using a path, then store the value as a workflow variable. Downstream steps use it as `{{variableName}}`.
 
 #### Normal object fields
 
@@ -60,19 +76,17 @@ Response:
 }
 ```
 
-Use a **numeric index** in the path (`0` = first item, `1` = second):
+Use a **numeric index** in the path (`0` = first item, `1` = second). Both dotted and bracket forms work:
 
-| Variable | Path | Value stored |
-|----------|------|--------------|
-| `firstUserId` | `users.0.id` | `1` |
-| `secondEmail` | `users.1.email` | `b@example.com` |
-| `firstTag` | `tags.0` | `api` |
+| Variable | Path (either form) | Value stored |
+|----------|--------------------|--------------|
+| `firstUserId` | `users.0.id` or `users[0].id` | `1` |
+| `secondEmail` | `users.1.email` or `users[1].email` | `b@example.com` |
+| `firstTag` | `tags.0` or `tags[0]` | `api` |
 
 Next request example:
 
 - URL: `https://api.example.com/users/{{firstUserId}}/posts`
-
-Bracket form like `users[0].id` is not supported yet — use `users.0.id`.
 
 
 ## Condition nodes
@@ -135,4 +149,4 @@ Runs the **Each** branch a fixed number of times (no list).
 
 ## Connecting nodes
 
-Drag from an output port to an input port to connect steps. The runner follows those edges when you press Run.
+Drag from an output port to an input port to connect steps. The runner follows those connections when you press Run. Use **Arrange** on the canvas to tidy layout (Dashbot-created flows are auto-arranged on create).
