@@ -627,6 +627,10 @@ String displayNameForRequestFolder({
     base = trimmedJson;
   } else {
     base = _humanizeStorageFolderName(folderId);
+    final lower = base.toLowerCase();
+    if (lower == 'untitled' || lower == 'request') {
+      return '';
+    }
   }
   return ensureUniqueDisplayName(base, takenDisplayNamesLowercase);
 }

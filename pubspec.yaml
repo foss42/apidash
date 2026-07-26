@@ -129,3 +129,4 @@ flutter:
   assets:
     - assets/
     - assets/dashbot/
+    - assets/git/

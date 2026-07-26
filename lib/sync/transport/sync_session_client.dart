@@ -123,7 +123,7 @@ class SyncSessionClient implements SyncFileTransfer {
             break;
           case SyncMessageType.applyComplete:
             await _applyRemoteResult(message);
-            await _persistBaseline(await buildSyncManifest(workspaceRoot));
+            await _persistBaseline(message.readManifest());
             await refreshManifest();
             onRemoteApplied?.call();
             break;
