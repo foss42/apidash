@@ -2,11 +2,11 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/request_pane_ai.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane_graphql.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane_rest.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
-import 'package:apidash/screens/common_widgets/envfield_url.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/workflow/engine/workflow_request_executor.dart';
@@ -314,12 +314,11 @@ class _WorkflowRequestStepEditorPageState
       ),
       body: Column(
         children: [
-          if (apiType != APIType.ai)
-            const Padding(
-              padding: kP12,
-              child: WorkflowStepUrlBar(),
-            ),
-          if (apiType != APIType.ai) const Divider(height: 1),
+          const Padding(
+            padding: kP12,
+            child: WorkflowStepUrlBar(),
+          ),
+          const Divider(height: 1),
           Expanded(
             child: context.isMediumWindow
                 ? DefaultTabController(
@@ -545,7 +544,10 @@ class WorkflowStepUrlBar extends ConsumerWidget {
     final theme = Theme.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestModel = ref.watch(selectedRequestModelProvider);
-    final url = requestModel?.httpRequestModel?.url ?? '';
+    final apiType = requestModel?.apiType;
+    final url = requestModel?.httpRequestModel?.url ??
+        requestModel?.aiRequestModel?.httpRequestModel?.url ??
+        '';
 
     return Card(
       margin: EdgeInsets.zero,
@@ -556,42 +558,41 @@ class WorkflowStepUrlBar extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const DropdownButtonHTTPMethod(),
-                kHSpacer8,
-                Expanded(
-                  child: selectedId == null
-                      ? TextField(
-                          enabled: false,
-                          decoration: InputDecoration(
-                            labelText: kLabelURL,
-                            hintText: kHintTextUrlCard,
-                            border: const OutlineInputBorder(),
-                            isDense: true,
-                          ),
-                        )
-                      : EnvURLField(
-                          selectedId: selectedId,
-                          initialValue: url,
-                          onChanged: (value) {
-                            ref
-                                .read(activeCollectionProvider.notifier)
-                                .update(url: value);
-                          },
-                          decoration: InputDecoration(
-                            labelText: kLabelURL,
-                            hintText: kHintTextUrlCard,
-                            border: const OutlineInputBorder(),
-                            isDense: true,
-                          ),
-                        ),
-                ),
-              ],
+            switch (apiType) {
+              APIType.ai => const AIModelSelector(),
+              APIType.graphql => kSizedBoxEmpty,
+              _ => const DropdownButtonHTTPMethod(),
+            },
+            if (apiType != APIType.graphql) kHSpacer8,
+            Expanded(
+              child: selectedId == null
+                  ? TextField(
+                      enabled: false,
+                      decoration: InputDecoration(
+                        labelText: kLabelURL,
+                        hintText: kHintTextUrlCard,
+                        border: const OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                    )
+                  : EnvURLField(
+                      selectedId: selectedId,
+                      initialValue: url,
+                      onChanged: (value) {
+                        ref
+                            .read(activeCollectionProvider.notifier)
+                            .update(url: value);
+                      },
+                      decoration: InputDecoration(
+                        labelText: kLabelURL,
+                        hintText: kHintTextUrlCard,
+                        border: const OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                    ),
             ),
           ],
         ),

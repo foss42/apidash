@@ -372,26 +372,51 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
               return SizedBox(
                 width: constraints.maxWidth,
                 height: constraints.maxHeight,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: scheme.surface),
-                  child: InteractiveViewer(
-                    transformationController: _transformController,
-                    constrained: false,
-                    minScale: 0.25,
-                    maxScale: 3,
-                    boundaryMargin: const EdgeInsets.all(double.infinity),
-                    clipBehavior: Clip.hardEdge,
-                    panEnabled: _activeWire == null,
-                    scaleEnabled: _activeWire == null,
-                    child: SizedBox(
-                      key: _sceneKey,
-                      width: kWorkflowCanvasMinWidth,
-                      height: kWorkflowCanvasMinHeight,
-                      child: CustomPaint(
-                        painter: _WorkflowCanvasBackgroundPainter(
-                          color: scheme.surface,
-                          dotColor: scheme.outline.withValues(alpha: 0.18),
-                        ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ColoredBox(
+                      color: Color.alphaBlend(
+                        scheme.surfaceContainerLowest.withValues(alpha: 0.85),
+                        scheme.surface,
+                      ),
+                    ),
+                    ListenableBuilder(
+                      listenable: _transformController,
+                      builder: (context, _) {
+                        final matrix = _transformController.value;
+                        return CustomPaint(
+                          painter: _InfiniteWorkflowGridPainter(
+                            scale: matrix.getMaxScaleOnAxis(),
+                            tx: matrix.storage[12],
+                            ty: matrix.storage[13],
+                            gridColor: scheme.outline.withValues(
+                              alpha: scheme.brightness == Brightness.dark
+                                  ? 0.10
+                                  : 0.08,
+                            ),
+                            dotColor: scheme.outline.withValues(
+                              alpha: scheme.brightness == Brightness.dark
+                                  ? 0.22
+                                  : 0.16,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    InteractiveViewer(
+                      transformationController: _transformController,
+                      constrained: false,
+                      minScale: 0.25,
+                      maxScale: 3,
+                      boundaryMargin: const EdgeInsets.all(double.infinity),
+                      clipBehavior: Clip.hardEdge,
+                      panEnabled: _activeWire == null,
+                      scaleEnabled: _activeWire == null,
+                      child: SizedBox(
+                        key: _sceneKey,
+                        width: kWorkflowCanvasMinWidth,
+                        height: kWorkflowCanvasMinHeight,
                         child: CustomPaint(
                           painter: _WorkflowEdgePainter(
                             workflow: workflow,
@@ -423,7 +448,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               );
             },
@@ -538,31 +563,119 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   }
 }
 
-class _WorkflowCanvasBackgroundPainter extends CustomPainter {
-  const _WorkflowCanvasBackgroundPainter({
-    required this.color,
+class _InfiniteWorkflowGridPainter extends CustomPainter {
+  const _InfiniteWorkflowGridPainter({
+    required this.scale,
+    required this.tx,
+    required this.ty,
+    required this.gridColor,
     required this.dotColor,
   });
 
-  final Color color;
+  final double scale;
+  final double tx;
+  final double ty;
+  final Color gridColor;
   final Color dotColor;
+
+  static const double _dotSpacing = 24;
+  static const double _majorSpacing = 120;
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = color);
+    if (scale <= 0) {
+      return;
+    }
 
-    const spacing = 24.0;
-    final dotPaint = Paint()..color = dotColor;
-    for (var x = 0.0; x < size.width; x += spacing) {
-      for (var y = 0.0; y < size.height; y += spacing) {
-        canvas.drawCircle(Offset(x, y), 1, dotPaint);
+    final spacingPx = _dotSpacing * scale;
+    final majorPx = _majorSpacing * scale;
+    if (spacingPx < 4) {
+      // Zoomed out: only draw major lines to avoid dense noise.
+      _paintLines(canvas, size, majorPx, tx, ty, gridColor);
+      return;
+    }
+
+    _paintLines(canvas, size, majorPx, tx, ty, gridColor);
+    _paintDots(canvas, size, spacingPx, majorPx, tx, ty, dotColor);
+  }
+
+  void _paintLines(
+    Canvas canvas,
+    Size size,
+    double spacingPx,
+    double tx,
+    double ty,
+    Color color,
+  ) {
+    if (spacingPx < 8) {
+      return;
+    }
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1;
+
+    var x = tx % spacingPx;
+    if (x > 0) {
+      x -= spacingPx;
+    }
+    for (; x <= size.width; x += spacingPx) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+
+    var y = ty % spacingPx;
+    if (y > 0) {
+      y -= spacingPx;
+    }
+    for (; y <= size.height; y += spacingPx) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  void _paintDots(
+    Canvas canvas,
+    Size size,
+    double spacingPx,
+    double majorPx,
+    double tx,
+    double ty,
+    Color color,
+  ) {
+    final paint = Paint()..color = color;
+    var x = tx % spacingPx;
+    if (x > 0) {
+      x -= spacingPx;
+    }
+    for (; x <= size.width; x += spacingPx) {
+      final onMajorX = _nearMultiple(x - tx, majorPx);
+      var y = ty % spacingPx;
+      if (y > 0) {
+        y -= spacingPx;
+      }
+      for (; y <= size.height; y += spacingPx) {
+        final onMajorY = _nearMultiple(y - ty, majorPx);
+        if (onMajorX || onMajorY) {
+          continue;
+        }
+        canvas.drawCircle(Offset(x, y), 1.1, paint);
       }
     }
   }
 
+  bool _nearMultiple(double value, double step) {
+    if (step <= 0) {
+      return false;
+    }
+    final r = value % step;
+    return r.abs() < 0.5 || (step - r).abs() < 0.5;
+  }
+
   @override
-  bool shouldRepaint(covariant _WorkflowCanvasBackgroundPainter oldDelegate) {
-    return oldDelegate.color != color || oldDelegate.dotColor != dotColor;
+  bool shouldRepaint(covariant _InfiniteWorkflowGridPainter oldDelegate) {
+    return oldDelegate.scale != scale ||
+        oldDelegate.tx != tx ||
+        oldDelegate.ty != ty ||
+        oldDelegate.gridColor != gridColor ||
+        oldDelegate.dotColor != dotColor;
   }
 }
 

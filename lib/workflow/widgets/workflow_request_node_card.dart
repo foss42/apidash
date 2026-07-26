@@ -315,50 +315,67 @@ class WorkflowStartNodeCard extends StatelessWidget {
               selected: selected,
               backgroundColor: Color.alphaBlend(
                 green.withValues(
-                  alpha: theme.brightness == Brightness.dark ? 0.28 : 0.16,
+                  alpha: theme.brightness == Brightness.dark ? 0.30 : 0.14,
                 ),
                 theme.colorScheme.surfaceContainerLow,
               ),
               borderColor: selected ? green : theme.dividerColor,
+              borderRadius: 16,
+              padding: const EdgeInsets.fromLTRB(12, 12, 40, 12),
               onTap: onTap,
               onPanUpdate: onDragPanUpdate,
               onPanEnd: onDragPanEnd,
               child: Row(
                 children: [
-                  const SizedBox(width: 36),
-                  kHSpacer4,
-                  Expanded(
-                    child: Text(
-                      node.label.isEmpty ? 'Start' : node.label,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: green,
-                        fontWeight: FontWeight.w600,
+                  Material(
+                    color: green,
+                    shape: const CircleBorder(),
+                    elevation: selected ? 2 : 0,
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        onPlay?.call();
+                      },
+                      child: const SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 26,
+                        ),
                       ),
                     ),
                   ),
+                  kHSpacer10,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          node.label.isEmpty ? 'Start' : node.label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            color: green,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Run workflow',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-            ),
-          ),
-          Positioned(
-            left: 8,
-            top: 0,
-            bottom: 0,
-            child: Center(
-              child: IconButton(
-                tooltip: kLabelRunWorkflow,
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(
-                  minWidth: 36,
-                  minHeight: 36,
-                ),
-                visualDensity: VisualDensity.compact,
-                onPressed: onPlay,
-                icon: Icon(
-                  Icons.play_circle_filled_rounded,
-                  size: 26,
-                  color: green,
-                ),
               ),
             ),
           ),
