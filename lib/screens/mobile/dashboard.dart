@@ -12,7 +12,6 @@ import '../terminal/terminal_page.dart';
 import 'collaboration/collaboration_page.dart';
 import 'collaboration/sync_scan_page.dart';
 import 'requests_page/request_response_page.dart';
-import 'package:apidash/workflow/pages/workflow_page.dart';
 import 'widgets/page_base.dart';
 import 'navbar.dart';
 
@@ -97,8 +96,6 @@ class PageBranch extends ConsumerWidget {
           title: 'Settings',
           scaffoldBody: SettingsPage(),
         );
-      case kNavRailWorkflowsIndex:
-        return const WorkflowPage();
       default:
         return const RequestResponsePage();
     }
