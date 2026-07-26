@@ -30,6 +30,13 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
     seed = random.nextInt(kRandMax);
   }
 
+  int _topicQos(NameValueModel t, int fallback) {
+    final v = t.value;
+    if (v is int) return (v >= 0 && v <= 2) ? v : fallback;
+    final p = int.tryParse('${v ?? ''}');
+    return (p != null && p >= 0 && p <= 2) ? p : fallback;
+  }
+
   void _onFieldChange() {
     final requestModel = ref.read(selectedRequestModelProvider);
     final mqttModel = requestModel?.mqttRequestModel;
@@ -76,6 +83,7 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
     List<DataColumn> columns = const [
       DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
       DataColumn2(label: Text("Topic")),
+      DataColumn2(label: Text("QoS"), fixedWidth: 76),
       DataColumn2(label: Text(''), fixedWidth: 32),
     ];
 
@@ -104,7 +112,7 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
                               .subscribeMqttTopic(
                                 selectedId!,
                                 topicRows[index].name,
-                                mqttModel.qos,
+                                _topicQos(topicRows[index], mqttModel.qos),
                               );
                         } else {
                           ref
@@ -145,12 +153,48 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
                   if (value.isNotEmpty) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)
-                        .subscribeMqttTopic(selectedId!, value, mqttModel.qos);
+                        .subscribeMqttTopic(
+                          selectedId!,
+                          value,
+                          _topicQos(topicRows[index], mqttModel.qos),
+                        );
                   }
                 }
               },
               colorScheme: Theme.of(context).colorScheme,
             ),
+          ),
+          DataCell(
+            isLast
+                ? const SizedBox.shrink()
+                : ADDropdownButton<int>(
+                    key: ValueKey("$selectedId-$index-mqtt-topics-qos-$seed"),
+                    value: _topicQos(topicRows[index], mqttModel.qos),
+                    isDense: true,
+                    values: const [(0, 'QoS 0'), (1, 'QoS 1'), (2, 'QoS 2')],
+                    onChanged: (val) {
+                      if (val == null) return;
+                      setState(() {
+                        topicRows[index] = topicRows[index].copyWith(
+                          value: val,
+                        );
+                      });
+                      _onFieldChange();
+                      // Live QoS change on an active subscription: re-subscribe
+                      // with the new QoS (MQTT SUBSCRIBE updates the granted QoS).
+                      if ((requestModel?.isStreaming ?? false) &&
+                          isRowEnabledList[index] &&
+                          topicRows[index].name.trim().isNotEmpty) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .subscribeMqttTopic(
+                              selectedId!,
+                              topicRows[index].name,
+                              val,
+                            );
+                      }
+                    },
+                  ),
           ),
           DataCell(
             InkWell(
