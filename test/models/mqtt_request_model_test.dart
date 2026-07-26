@@ -112,10 +112,7 @@ void main() {
     });
 
     test('copyWith responseTopic/correlationData', () {
-      final c = base.copyWith(
-        responseTopic: 'r/topic',
-        correlationData: 'cid',
-      );
+      final c = base.copyWith(responseTopic: 'r/topic', correlationData: 'cid');
       expect(c.responseTopic, 'r/topic');
       expect(c.correlationData, 'cid');
       expect(c.brokerUrl, base.brokerUrl);
@@ -229,8 +226,9 @@ void main() {
     });
 
     test('fromJson with only brokerUrl yields all defaults', () {
-      final model =
-          MQTTRequestModel.fromJson({'brokerUrl': 'mqtt://only.broker'});
+      final model = MQTTRequestModel.fromJson({
+        'brokerUrl': 'mqtt://only.broker',
+      });
       expect(model.brokerUrl, 'mqtt://only.broker');
       expect(model.port, 1883);
       expect(model.clientId, isNull);
@@ -257,6 +255,29 @@ void main() {
       expect(model.willQos, 0);
     });
 
+    test(
+      'per-topic int QoS in subscribedTopics survives toJson -> fromJson',
+      () {
+        // Per-topic QoS is stored in NameValueModel.value as an int (0/1/2).
+        // It must round-trip as an int (not a String) through JSON.
+        const model = MQTTRequestModel(
+          brokerUrl: 'mqtt://broker',
+          subscribedTopics: [NameValueModel(name: 't', value: 2)],
+          isTopicEnabledList: [true],
+        );
+        final back = MQTTRequestModel.fromJson(model.toJson());
+        expect(back.subscribedTopics.length, 1);
+        expect(back.subscribedTopics[0].name, 't');
+        expect(back.subscribedTopics[0].value, 2);
+        expect(
+          back.subscribedTopics[0].value,
+          isA<int>(),
+          reason: 'int QoS must not degrade to a String on round-trip',
+        );
+        expect(back, model);
+      },
+    );
+
     test('fromJson with explicit null optionals yields defaults', () {
       final model = MQTTRequestModel.fromJson(const {
         'brokerUrl': 'mqtt://broker',
@@ -282,10 +303,7 @@ void main() {
     test('v5 maps to "v5" in JSON and round-trips', () {
       final json = mqttRequestModelDefaults.toJson();
       expect(json['version'], 'v5');
-      expect(
-        MQTTRequestModel.fromJson(json).version,
-        MQTTVersion.v5,
-      );
+      expect(MQTTRequestModel.fromJson(json).version, MQTTVersion.v5);
     });
 
     test('v3_1_1 maps to "v3_1_1" in JSON and round-trips', () {
@@ -378,10 +396,7 @@ void main() {
       expect(a == a.copyWith(willRetain: true), false);
       expect(a == a.copyWith(willQos: 1), false);
       expect(
-        a ==
-            a.copyWith(
-              messageHistory: const [WebSocketMessage(payload: 'm')],
-            ),
+        a == a.copyWith(messageHistory: const [WebSocketMessage(payload: 'm')]),
         false,
       );
     });
