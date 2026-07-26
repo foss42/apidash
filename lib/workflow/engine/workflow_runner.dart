@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
@@ -9,6 +7,7 @@ import 'package:apidash/workflow/engine/workflow_request_executor.dart';
 import 'package:apidash/workflow/engine/workflow_validator.dart';
 import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
+import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class _QueueEntry {
@@ -17,12 +16,16 @@ class _QueueEntry {
     this.loopItem,
     this.loopIndex,
     this.loopCompletionId,
+    this.loopItemField,
+    this.loopItemAs,
   });
 
   final WorkflowGraphNode node;
   final String? loopItem;
   final String? loopIndex;
   final String? loopCompletionId;
+  final String? loopItemField;
+  final String? loopItemAs;
 }
 
 RequestModel resolveWorkflowNodeRequest({
@@ -104,11 +107,14 @@ class WorkflowRunner {
       final entry = queue.removeAt(0);
       final node = entry.node;
       var loopCompletionId = entry.loopCompletionId;
-      if (entry.loopItem != null) {
-        scopedVariables['loop.item'] = entry.loopItem!;
-      }
-      if (entry.loopIndex != null) {
-        scopedVariables['loop.index'] = entry.loopIndex!;
+      if (entry.loopItem != null || entry.loopIndex != null) {
+        applyLoopScopedVariables(
+          scopedVariables,
+          loopItem: entry.loopItem,
+          loopIndex: entry.loopIndex,
+          itemField: entry.loopItemField,
+          itemAs: entry.loopItemAs,
+        );
       }
 
       final visitKey = _visitKey(entry);
@@ -264,6 +270,8 @@ class WorkflowRunner {
                   loopItem: items.first,
                   loopIndex: '0',
                   loopCompletionId: node.id,
+                  loopItemField: node.loopItemField,
+                  loopItemAs: node.loopItemAs,
                 ),
               );
             }
@@ -393,6 +401,8 @@ class WorkflowRunner {
               loopItem: entry.loopItem,
               loopIndex: entry.loopIndex,
               loopCompletionId: loopCompletionId,
+              loopItemField: entry.loopItemField,
+              loopItemAs: entry.loopItemAs,
             ),
           );
         }
@@ -468,34 +478,15 @@ class WorkflowRunner {
     Map<String, String> scopedVariables,
     Map<String, String> environmentVariables,
   ) {
-    final expr = expression?.trim();
-    if (expr == null || expr.isEmpty) {
-      return const [];
-    }
-    if (!expr.startsWith('var:')) {
-      return const [];
-    }
-    final key = expr.substring(4).trim();
-    if (key.isEmpty) {
+    final key = parseLoopListVariableName(expression);
+    if (key == null) {
       return const [];
     }
     final raw = scopedVariables[key] ?? environmentVariables[key];
     if (raw == null || raw.trim().isEmpty) {
       return const [];
     }
-    try {
-      final decoded = jsonDecode(raw);
-      if (decoded is List) {
-        return decoded.map((item) => item.toString()).toList();
-      }
-    } catch (_) {
-      return raw
-          .split(',')
-          .map((item) => item.trim())
-          .where((item) => item.isNotEmpty)
-          .toList();
-    }
-    return const [];
+    return resolveLoopItemList(raw);
   }
 
   bool _evaluateCondition(
@@ -579,8 +570,14 @@ class WorkflowRunner {
       loopItems.remove(loopId);
       loopBodyStarts.remove(loopId);
       final doneTargets = loopDoneTargets.remove(loopId) ?? const [];
-      scopedVariables.remove('loop.item');
-      scopedVariables.remove('loop.index');
+      final loopNode = workflow.graph.nodes
+          .where((candidate) => candidate.id == loopId)
+          .cast<WorkflowGraphNode?>()
+          .firstWhere((candidate) => candidate != null, orElse: () => null);
+      clearLoopScopedVariables(
+        scopedVariables,
+        itemAs: loopNode?.loopItemAs,
+      );
       _enqueueTargetIds(queue, workflow, doneTargets);
       return;
     }
@@ -602,6 +599,10 @@ class WorkflowRunner {
     if (bodyNode == null) {
       return;
     }
+    final loopNode = workflow.graph.nodes
+        .where((candidate) => candidate.id == loopId)
+        .cast<WorkflowGraphNode?>()
+        .firstWhere((candidate) => candidate != null, orElse: () => null);
     queue.insert(
       0,
       _QueueEntry(
@@ -609,6 +610,8 @@ class WorkflowRunner {
         loopItem: items[nextIndex],
         loopIndex: '$nextIndex',
         loopCompletionId: loopId,
+        loopItemField: loopNode?.loopItemField,
+        loopItemAs: loopNode?.loopItemAs,
       ),
     );
   }

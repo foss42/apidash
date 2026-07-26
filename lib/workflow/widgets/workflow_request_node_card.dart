@@ -4,6 +4,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/consts.dart';
+import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
 import 'package:apidash/workflow/widgets/workflow_interactive_node.dart';
 import 'package:apidash/workflow/widgets/workflow_port.dart';
 import 'package:flutter/material.dart';
@@ -569,15 +570,28 @@ class WorkflowLoopNodeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final loopExpr = node.loopExpression ?? 'var:items';
+    final loopExprRaw = node.loopExpression ?? 'var:items';
+    final listRef = formatLoopListVariableRef(loopExprRaw);
     final maxIterations = node.loopMaxIterations;
-    final loopDetail = node.loopMode == WorkflowLoopMode.repeat
-        ? maxIterations != null && maxIterations > 0
+    final field = node.loopItemField?.trim();
+    final asName = node.loopItemAs?.trim();
+    final hasItemVar = field != null &&
+        field.isNotEmpty &&
+        asName != null &&
+        asName.isNotEmpty;
+    final isRepeat = node.loopMode == WorkflowLoopMode.repeat;
+    final subtitle = isRepeat
+        ? (maxIterations != null && maxIterations > 0
             ? 'Repeat $maxIterations×'
-            : 'Repeat'
-        : maxIterations != null && maxIterations > 0
-            ? '$loopExpr · max $maxIterations'
-            : loopExpr;
+            : 'Repeat')
+        : listRef.isEmpty
+            ? 'Set list'
+            : listRef;
+    final itemLine = hasItemVar ? '{{$asName}}' : null;
+    final maxLine = !isRepeat && maxIterations != null && maxIterations > 0
+        ? 'Max $maxIterations'
+        : null;
+
     return SizedBox(
       width: kWorkflowLoopNodeWidth,
       height: kWorkflowLoopNodeHeight,
@@ -587,6 +601,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
           Positioned.fill(
             child: WorkflowInteractiveNode(
               selected: selected,
+              padding: const EdgeInsets.fromLTRB(28, 12, 52, 12),
               backgroundColor: theme.colorScheme.secondaryContainer,
               borderColor: selected
                   ? theme.colorScheme.primary
@@ -633,14 +648,34 @@ class WorkflowLoopNodeCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  Expanded(
-                    child: Text(
-                      loopDetail,
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  if (itemLine != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      itemLine,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
-                  ),
+                  ],
+                  if (maxLine != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      maxLine,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

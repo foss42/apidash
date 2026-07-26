@@ -1,4 +1,5 @@
 import 'package:apidash/workflow/models/workflow_models.dart';
+import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
 
 class WorkflowValidationResult {
   const WorkflowValidationResult({
@@ -57,8 +58,11 @@ class WorkflowValidator {
                 'Loop node "${node.label}" needs a repeat count greater than 0.',
               );
             }
-          } else if ((node.loopExpression ?? '').trim().isEmpty) {
-            warnings.add('Loop node "${node.label}" has no list variable.');
+          } else if ((node.loopExpression ?? '').trim().isEmpty ||
+              parseLoopListVariableName(node.loopExpression) == null) {
+            warnings.add(
+              'Loop node "${node.label}" needs a List (e.g. {{users}}) or it will not run.',
+            );
           }
         case WorkflowNodeType.delay:
           if (node.delayMs == null || node.delayMs! <= 0) {

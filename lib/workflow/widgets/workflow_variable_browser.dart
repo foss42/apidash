@@ -116,26 +116,10 @@ class _VariableTile extends StatelessWidget {
         icon: const Icon(Icons.copy_rounded, size: 18),
         onPressed: () async {
           await Clipboard.setData(ClipboardData(text: entry.reference));
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Copied ${entry.reference}'),
-                duration: const Duration(seconds: 1),
-              ),
-            );
-          }
         },
       ),
       onTap: () async {
         await Clipboard.setData(ClipboardData(text: entry.reference));
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Copied ${entry.reference}'),
-              duration: const Duration(seconds: 1),
-            ),
-          );
-        }
       },
     );
   }

@@ -102,6 +102,8 @@ class WorkflowGraphNode {
     this.loopExpression,
     this.loopMaxIterations,
     this.loopMode = WorkflowLoopMode.forEach,
+    this.loopItemField,
+    this.loopItemAs,
     this.delayMs,
     this.extractions = const [],
   });
@@ -116,6 +118,10 @@ class WorkflowGraphNode {
   final String? loopExpression;
   final int? loopMaxIterations;
   final WorkflowLoopMode loopMode;
+  /// Dotted path on each list item (e.g. `id`) promoted to [loopItemAs].
+  final String? loopItemField;
+  /// Variable name set each iteration from [loopItemField] (e.g. `userId`).
+  final String? loopItemAs;
   final int? delayMs;
   final List<WorkflowExtraction> extractions;
 
@@ -150,6 +156,12 @@ class WorkflowGraphNode {
     }
     if (loopMode != WorkflowLoopMode.forEach) {
       json['mode'] = loopMode.toJson();
+    }
+    if (loopItemField != null && loopItemField!.isNotEmpty) {
+      json['field'] = loopItemField;
+    }
+    if (loopItemAs != null && loopItemAs!.isNotEmpty) {
+      json['as'] = loopItemAs;
     }
     if (delayMs != null && delayMs! > 0) {
       json['ms'] = delayMs;
@@ -186,6 +198,8 @@ class WorkflowGraphNode {
       loopMode: WorkflowLoopMode.fromJson(
         (json['mode'] ?? json['loopMode'])?.toString(),
       ),
+      loopItemField: (json['field'] ?? json['loopItemField'])?.toString(),
+      loopItemAs: (json['as'] ?? json['loopItemAs'])?.toString(),
       delayMs: msRaw is num ? msRaw.toInt() : null,
       extractions: extractRaw is List
           ? [
@@ -215,6 +229,10 @@ class WorkflowGraphNode {
     int? loopMaxIterations,
     bool clearLoopMaxIterations = false,
     WorkflowLoopMode? loopMode,
+    String? loopItemField,
+    bool clearLoopItemField = false,
+    String? loopItemAs,
+    bool clearLoopItemAs = false,
     int? delayMs,
     bool clearDelayMs = false,
     List<WorkflowExtraction>? extractions,
@@ -237,6 +255,11 @@ class WorkflowGraphNode {
             ? null
             : (loopMaxIterations ?? this.loopMaxIterations),
         loopMode: loopMode ?? this.loopMode,
+        loopItemField: clearLoopItemField
+            ? null
+            : (loopItemField ?? this.loopItemField),
+        loopItemAs:
+            clearLoopItemAs ? null : (loopItemAs ?? this.loopItemAs),
         delayMs: clearDelayMs ? null : (delayMs ?? this.delayMs),
         extractions: extractions ?? this.extractions,
       );

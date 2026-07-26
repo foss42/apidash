@@ -44,7 +44,12 @@ String? substituteVariables(
   if (envVarMap.keys.isEmpty) {
     return input;
   }
-  final regex = RegExp("{{(${envVarMap.keys.join('|')})}}");
+  // Longer keys first so {{loop.item.id}} wins over {{loop.item}}.
+  // Escape regex metacharacters so dotted keys like loop.item match literally.
+  final keys = envVarMap.keys.toList()
+    ..sort((a, b) => b.length.compareTo(a.length));
+  final pattern = keys.map(RegExp.escape).join('|');
+  final regex = RegExp('{{($pattern)}}');
 
   String result = input.replaceAllMapped(regex, (match) {
     final key = match.group(1)?.trim() ?? '';
