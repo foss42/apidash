@@ -353,4 +353,239 @@ void main() {
       expect(prompt, contains('Markdown'));
     });
   });
+
+  group('Dashbot MQTT Prompts', () {
+    late DashbotPrompts prompts;
+
+    const brokerUrl = 'test.mosquitto.org';
+    const status = 'Currently connected';
+    const settings = 'Port: 8883; Secure (TLS): on; Delivery care (QoS): 1';
+    const topics = '"home/temp" (enabled), "alerts/#" (disabled)';
+    const log = '[2026-01-01T12:00:00.000] RECEIVED on home/temp: 23.5';
+
+    setUp(() {
+      prompts = DashbotPrompts();
+    });
+
+    // Every action name Dashbot understands, plus the action targets.
+    const actionVocabulary = [
+      'update_field',
+      'add_header',
+      'update_header',
+      'delete_header',
+      'update_body',
+      'update_url',
+      'update_method',
+      'show_languages',
+      'apply_curl',
+      'apply_openapi',
+      'download_doc',
+      'no_action',
+      'upload_asset',
+      'mqttRequestModel',
+      'wsRequestModel',
+      'httpRequestModel',
+    ];
+
+    Map<String, String> explanationOnlyPrompts() => {
+      'explainMqttConnection': prompts.explainMqttConnectionPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+      'whyNoMqttMessages': prompts.whyNoMqttMessagesPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+      'summarizeMqttMessages': prompts.summarizeMqttMessagesPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+      'explainMqttTopics': prompts.explainMqttTopicsPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+      'explainMqttLwt': prompts.explainMqttLwtPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+      'explainMqttV5': prompts.explainMqttV5Prompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+      'findInMqttMessages': prompts.findInMqttMessagesPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+    };
+
+    Map<String, String> allMqttPrompts() => {
+      ...explanationOnlyPrompts(),
+      'debugMqttConnection': prompts.debugMqttConnectionPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: 'Last attempt failed',
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      ),
+    };
+
+    test('every MQTT prompt enforces the strict-JSON contract + refusal', () {
+      allMqttPrompts().forEach((name, prompt) {
+        expect(prompt, contains('"explanation"'), reason: name);
+        expect(prompt, contains('"actions"'), reason: name);
+        expect(prompt, contains('RETURN THE JSON ONLY.'), reason: name);
+        expect(
+          prompt,
+          contains(
+            'I am Dashbot, an AI assistant focused specifically on '
+            'API development tasks within API Dash.',
+          ),
+          reason: name,
+        );
+        expect(prompt, contains(brokerUrl), reason: name);
+      });
+    });
+
+    test('explanation-only MQTT prompts carry zero action vocabulary', () {
+      explanationOnlyPrompts().forEach((name, prompt) {
+        expect(prompt, contains('"actions": []'), reason: name);
+        for (final word in actionVocabulary) {
+          expect(
+            prompt,
+            isNot(contains(word)),
+            reason: '$name must not mention "$word"',
+          );
+        }
+      });
+    });
+
+    test('debugMqttConnection whitelists exactly the 3 mqtt fixes '
+        'on mqttRequestModel with exactly 2 few-shots', () {
+      final prompt = prompts.debugMqttConnectionPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: 'Last attempt failed',
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      );
+      // The three whitelisted actions all target mqttRequestModel.
+      expect(
+        prompt,
+        contains('"action":"update_url","target":"mqttRequestModel"'),
+      );
+      expect(
+        prompt,
+        contains('"action":"update_field","target":"mqttRequestModel"'),
+      );
+      expect(prompt, contains('"field":"useTLS"'));
+      expect(prompt, contains('"field":"clientId"'));
+      expect(prompt, contains('"field":"brokerUrl"'));
+      // Forbidden action names / other targets.
+      const forbidden = [
+        'add_header',
+        'update_header',
+        'delete_header',
+        'update_body',
+        'update_method',
+        'show_languages',
+        'apply_curl',
+        'apply_openapi',
+        'download_doc',
+        'no_action',
+        'upload_asset',
+        'httpRequestModel',
+        'wsRequestModel',
+      ];
+      for (final word in forbidden) {
+        expect(
+          prompt,
+          isNot(contains(word)),
+          reason: 'debugMqttConnection must not mention "$word"',
+        );
+      }
+      // Exactly two few-shot examples.
+      expect('Example 1'.allMatches(prompt).length, 1);
+      expect('Example 2'.allMatches(prompt).length, 1);
+      expect(prompt, isNot(contains('Example 3')));
+      // Required Markdown heading layout.
+      expect(prompt, contains("## What's happening"));
+      expect(prompt, contains('## Why'));
+      expect(prompt, contains('## How to fix it'));
+    });
+
+    test('mqttSessionAdvisor whitelists exactly the one-field fix', () {
+      final prompt = prompts.mqttSessionAdvisorPrompt(
+        brokerUrl: brokerUrl,
+        connectionStatus: status,
+        settingsSummary: settings,
+        topicsSummary: topics,
+        messageLog: log,
+      );
+      // The one whitelisted action.
+      expect(
+        prompt,
+        contains('"action":"update_field","target":"mqttRequestModel"'),
+      );
+      expect(prompt, contains('"field":"sessionExpiryInterval"'));
+      // Forbidden other fields / targets / action names.
+      expect(prompt, isNot(contains('useTLS')));
+      expect(prompt, isNot(contains('clientId')));
+      expect(prompt, isNot(contains('"field":"brokerUrl"')));
+      expect(prompt, isNot(contains('update_url')));
+      expect(prompt, isNot(contains('wsRequestModel')));
+      expect(prompt, isNot(contains('httpRequestModel')));
+      // Exactly two few-shot examples.
+      expect('Example 1'.allMatches(prompt).length, 1);
+      expect('Example 2'.allMatches(prompt).length, 1);
+      expect(prompt, isNot(contains('Example 3')));
+      // Required Markdown heading layout.
+      expect(prompt, contains("## What's happening"));
+      expect(prompt, contains('## Why'));
+      expect(prompt, contains('## How to fix it'));
+    });
+
+    test('mqttCodeGenIntro is strict JSON and offers the mqtt picker', () {
+      final prompt = prompts.mqttCodeGenIntroPrompt(
+        brokerUrl,
+        status,
+        settings,
+      );
+      expect(prompt, contains('"explanation"'));
+      expect(prompt, contains('"actions"'));
+      expect(prompt, contains('RETURN THE JSON ONLY.'));
+      expect(
+        prompt,
+        contains(
+          'I am Dashbot, an AI assistant focused specifically on '
+          'API development tasks within API Dash.',
+        ),
+      );
+      expect(prompt, contains('"action":"show_languages"'));
+      expect(prompt, contains('"path":"mqtt"'));
+      expect(prompt, contains('Python (paho-mqtt)'));
+      expect(prompt, contains('JavaScript (mqtt.js)'));
+      expect(prompt, contains('Dart (mqtt_client)'));
+    });
+  });
 }

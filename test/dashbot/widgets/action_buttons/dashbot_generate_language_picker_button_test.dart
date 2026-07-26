@@ -121,6 +121,46 @@ void main() {
       expect(call.type, ChatMessageType.generateWsCode);
     });
 
+    testWidgets('mqtt picker action routes to generateMqttCode', (
+      tester,
+    ) async {
+      const action = ChatAction(
+        action: 'show_languages',
+        target: 'codegen',
+        path: 'mqtt',
+        value: ['Python (paho-mqtt)', 'Dart (mqtt_client)'],
+        actionType: ChatActionType.showLanguages,
+        targetType: ChatActionTarget.codegen,
+      );
+
+      late TestChatViewmodel notifier;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            chatViewmodelProvider.overrideWith((ref) {
+              notifier = TestChatViewmodel(ref);
+              return notifier;
+            }),
+          ],
+          child: MaterialApp(
+            theme: kThemeDataLight,
+            home: Scaffold(body: DashbotGenerateLanguagePicker(action: action)),
+          ),
+        ),
+      );
+
+      expect(find.text('Python (paho-mqtt)'), findsOneWidget);
+      expect(find.text('Dart (mqtt_client)'), findsOneWidget);
+
+      await tester.tap(find.text('Dart (mqtt_client)'));
+      await tester.pump();
+
+      expect(notifier.sendMessageCalls, hasLength(1));
+      final call = notifier.sendMessageCalls.single;
+      expect(call.text, 'Please generate code in Dart (mqtt_client)');
+      expect(call.type, ChatMessageType.generateMqttCode);
+    });
+
     testWidgets('non-websocket path keeps dispatching generateCode', (
       tester,
     ) async {
