@@ -90,19 +90,45 @@ A delay node pauses the workflow for a fixed number of milliseconds.
 
 ## Loop nodes (For each / Repeat)
 
-- **For each** runs once per list item. Put a JSON array (or comma-separated list) in an **Environment** variable, then point the loop at `var:thatName`.
-- **Repeat** runs the same step N times without needing a list.
+### For each
 
-Loop ports:
+Runs the body once per item in a list from a previous step (or an Environment variable).
 
-- **In** — entry into the loop
-- **Each** — body that runs per iteration
-- **Done** — continues after all iterations finish
+**Setup**
+
+1. On the list request, add a response extraction for the array — Variable `users`, Path `data`.
+2. Open the loop node:
+   - **List** (required): `{{users}}` — the loop will not run if this is empty.
+   - **Item extraction** (same labels as response extractions):
+     - **Variable** `userId`
+     - **Path** `id`
+   - While typing Path, a live line shows e.g. `Will be extracted from {{users}}.id`.
+   - Optional **Max items** to cap how many entries run.
+3. Wire ports:
+   - Previous step → loop **In**
+   - Loop **Each** → body request (do not wire back into the loop)
+   - Loop **Done** → optional step after all items finish
+4. Body request URL (or header/body): `https://api.apidash.dev/users/{{userId}}`
+
+**Example with the public API**
+
+```
+Start → GET https://api.apidash.dev/users  (extract data → users)
+     → For each  List {{users}}  Variable userId  Path id
+          Each → GET https://api.apidash.dev/users/{{userId}}
+```
+
+### Repeat
+
+Runs the **Each** branch a fixed number of times (no list).
+
+- **Times to repeat**: choose **1–10**, or **Custom** and type digits only.
 
 ## Variables
 
 - Use **Environments** for shared inputs (`{{name}}` in URLs, headers, and bodies).
 - Use **extractions** on request nodes to pass response values into later steps.
+- Use **Item extraction** on a for-each loop to pass a field from each list item into the body (same Variable + Path pattern).
 - If an environment variable and an extraction share the same name, the **extraction wins** during the run.
 
 ## Connecting nodes
