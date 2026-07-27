@@ -29,6 +29,13 @@ class HistoryResponsePane extends ConsumerWidget {
         );
       }
 
+      if (apiType == APIType.grpc) {
+        final grpcModel = selectedHistoryRequest.grpcRequestModel;
+        return RealtimeEventStreamView(
+          historyMessages: grpcModel?.messageHistory ?? [],
+        );
+      }
+
       final requestModel = getRequestModelFromHistoryModel(
         selectedHistoryRequest,
       );

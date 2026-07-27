@@ -179,7 +179,9 @@ class CollectionStateNotifier
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       httpResponseModel: null,
-      grpcRequestModel: currentModel.grpcRequestModel?.copyWith(messageHistory: []),
+      grpcRequestModel: currentModel.grpcRequestModel?.copyWith(
+        messageHistory: [],
+      ),
     );
     var map = {...state!};
     map[rId] = newModel;
@@ -230,6 +232,7 @@ class CollectionStateNotifier
       aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
+      grpcRequestModel: currentModel.grpcRequestModel?.copyWith(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
@@ -371,16 +374,20 @@ class CollectionStateNotifier
                 //   1. the explicit top-level arg (caller-supplied merge),
                 //   2. the just-passed wsRequestModel's own field,
                 //   3. the existing model's field.
-                headers: headers ??
+                headers:
+                    headers ??
                     wsRequestModel?.headers ??
                     currentModel.wsRequestModel?.headers,
-                isHeaderEnabledList: isHeaderEnabledList ??
+                isHeaderEnabledList:
+                    isHeaderEnabledList ??
                     wsRequestModel?.isHeaderEnabledList ??
                     currentModel.wsRequestModel?.isHeaderEnabledList,
-                params: params ??
+                params:
+                    params ??
                     wsRequestModel?.params ??
                     currentModel.wsRequestModel?.params,
-                isParamEnabledList: isParamEnabledList ??
+                isParamEnabledList:
+                    isParamEnabledList ??
                     wsRequestModel?.isParamEnabledList ??
                     currentModel.wsRequestModel?.isParamEnabledList,
               )
@@ -430,9 +437,9 @@ class CollectionStateNotifier
   Future<void> _connectWebSocket(
     String requestId,
     RequestModel requestModel,
-    WebSocketRequestModel wsModel,
-    {String? historyId}
-  ) async {
+    WebSocketRequestModel wsModel, {
+    String? historyId,
+  }) async {
     final envMap = ref.read(availableEnvironmentVariablesStateProvider);
     final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
 
@@ -590,9 +597,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, errMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, errMsg]),
+              );
             }
           }
         },
@@ -617,7 +625,12 @@ class CollectionStateNotifier
             );
             final latestReq = state?[requestId];
             if (latestReq != null) {
-              _connectWebSocket(requestId, latestReq, updatedWs, historyId: historyId);
+              _connectWebSocket(
+                requestId,
+                latestReq,
+                updatedWs,
+                historyId: historyId,
+              );
             }
           } else {
             final discMsg = WebSocketMessage(
@@ -634,9 +647,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, discMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, discMsg]),
+              );
             }
           }
         },
@@ -670,14 +684,18 @@ class CollectionStateNotifier
         ),
       };
       if (historyId != null) {
-        _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-          messageHistory: [...ws.messageHistory, errMsg, discMsg],
-        ));
+        _updateWebSocketHistoryRecord(
+          historyId,
+          ws.copyWith(messageHistory: [...ws.messageHistory, errMsg, discMsg]),
+        );
       }
     }
   }
 
-  void _updateWebSocketHistoryRecord(String historyId, WebSocketRequestModel wsRequestModel) {
+  void _updateWebSocketHistoryRecord(
+    String historyId,
+    WebSocketRequestModel wsRequestModel,
+  ) {
     final historyMap = ref.read(historyMetaStateNotifier);
     if (historyMap != null && historyMap.containsKey(historyId)) {
       final historyMeta = historyMap[historyId]!;
@@ -686,7 +704,27 @@ class CollectionStateNotifier
         metaData: historyMeta,
         wsRequestModel: wsRequestModel,
       );
-      ref.read(historyMetaStateNotifier.notifier).editHistoryRequest(historyModel);
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .editHistoryRequest(historyModel);
+    }
+  }
+
+  void _updateGrpcHistoryRecord(
+    String historyId,
+    GrpcRequestModel grpcRequestModel,
+  ) {
+    final historyMap = ref.read(historyMetaStateNotifier);
+    if (historyMap != null && historyMap.containsKey(historyId)) {
+      final historyMeta = historyMap[historyId]!;
+      final historyModel = HistoryRequestModel(
+        historyId: historyId,
+        metaData: historyMeta,
+        grpcRequestModel: grpcRequestModel,
+      );
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .editHistoryRequest(historyModel);
     }
   }
 
@@ -732,7 +770,12 @@ class CollectionStateNotifier
             .read(historyMetaStateNotifier.notifier)
             .addHistoryRequest(historyModel);
 
-        await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
+        await _connectWebSocket(
+          requestId,
+          requestModel,
+          wsModel,
+          historyId: newHistoryId,
+        );
       } else {
         update(id: requestId, message: "Invalid WebSocket model");
       }
@@ -742,7 +785,36 @@ class CollectionStateNotifier
     if (requestModel.apiType == APIType.grpc) {
       final grpcModel = requestModel.grpcRequestModel;
       if (grpcModel != null) {
-        await _connectGrpc(requestId, requestModel, grpcModel);
+        // Save history for gRPC connection attempt first
+        String newHistoryId = getNewUuid();
+        final historyModel = HistoryRequestModel(
+          historyId: newHistoryId,
+          metaData: HistoryMetaModel(
+            historyId: newHistoryId,
+            requestId: requestId,
+            apiType: APIType.grpc,
+            name: requestModel.name,
+            url: grpcModel.url,
+            method:
+                HTTPVerb.get, // gRPC has no HTTP verb; mirror WebSocket default
+            responseStatus: 0,
+            timeStamp: DateTime.now(),
+          ),
+          grpcRequestModel: grpcModel.copyWith(messageHistory: []),
+          preRequestScript: requestModel.preRequestScript,
+          postRequestScript: requestModel.postRequestScript,
+        );
+
+        ref
+            .read(historyMetaStateNotifier.notifier)
+            .addHistoryRequest(historyModel);
+
+        await _connectGrpc(
+          requestId,
+          requestModel,
+          grpcModel,
+          historyId: newHistoryId,
+        );
       } else {
         update(id: requestId, message: "Invalid gRPC model");
       }
@@ -1120,8 +1192,9 @@ class CollectionStateNotifier
   Future<void> _connectGrpc(
     String requestId,
     RequestModel requestModel,
-    GrpcRequestModel grpcModel,
-  ) async {
+    GrpcRequestModel grpcModel, {
+    String? historyId,
+  }) async {
     try {
       update(id: requestId, isWorking: true);
       await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
@@ -1143,10 +1216,10 @@ class CollectionStateNotifier
       );
 
       final currentRequest = state?[requestId];
-      if (currentRequest != null &&
-          currentRequest.grpcRequestModel != null) {
+      if (currentRequest != null && currentRequest.grpcRequestModel != null) {
         final currentGrpcModel = currentRequest.grpcRequestModel!;
-        final isActualRequest = grpcModel.service != null && grpcModel.method != null;
+        final isActualRequest =
+            grpcModel.service != null && grpcModel.method != null;
         state = {
           ...state!,
           requestId: currentRequest.copyWith(
@@ -1154,20 +1227,29 @@ class CollectionStateNotifier
             isStreaming: isActualRequest,
             responseStatus: isActualRequest ? 0 : currentRequest.responseStatus,
             message: isActualRequest ? "" : currentRequest.message,
-            httpResponseModel: isActualRequest ? null : currentRequest.httpResponseModel,
+            httpResponseModel: isActualRequest
+                ? null
+                : currentRequest.httpResponseModel,
             grpcRequestModel: currentGrpcModel.copyWith(
-              messageHistory: isActualRequest ? [msg] : currentGrpcModel.messageHistory,
+              messageHistory: isActualRequest
+                  ? [msg]
+                  : currentGrpcModel.messageHistory,
             ),
           ),
         };
 
         debugPrint("gRPC: Host established. Checking for method invocation...");
-        if (grpcModel.useReflection || (grpcModel.service == null && grpcModel.method == null)) {
+        if (grpcModel.useReflection ||
+            (grpcModel.service == null && grpcModel.method == null)) {
           debugPrint("gRPC: Fetching services via reflection...");
-          final services = await GrpcReflectionService.listServices(requestId, grpcModel);
+          final services = await GrpcReflectionService.listServices(
+            requestId,
+            grpcModel,
+          );
           if (services.isNotEmpty) {
             final latestRequest = state?[requestId];
-            if (latestRequest != null && latestRequest.grpcRequestModel != null) {
+            if (latestRequest != null &&
+                latestRequest.grpcRequestModel != null) {
               state = {
                 ...state!,
                 requestId: latestRequest.copyWith(
@@ -1185,13 +1267,17 @@ class CollectionStateNotifier
           debugPrint(
             "gRPC: Invoking method ${grpcModel.service}/${grpcModel.method}",
           );
-          
+
           GrpcMethodSchema? methodSchema;
           if (grpcModel.useReflection) {
             methodSchema = await GrpcReflectionService.getMethodSchema(
-              requestId, grpcModel, grpcModel.service!, grpcModel.method!);
+              requestId,
+              grpcModel,
+              grpcModel.service!,
+              grpcModel.method!,
+            );
           }
-          
+
           final startTime = DateTime.now();
           final requestData = grpcModel.parameters.isNotEmpty
               ? GrpcUtils.paramsToBytes(grpcModel.parameters)
@@ -1208,21 +1294,27 @@ class CollectionStateNotifier
           Map<String, String> initialMetadata = {};
           Map<String, String> trailingMetadata = {};
 
-          call.headers.then((headers) {
-             initialMetadata = headers;
-          }).catchError((_) {});
+          call.headers
+              .then((headers) {
+                initialMetadata = headers;
+              })
+              .catchError((_) {});
 
-          call.trailers.then((trailers) {
-             trailingMetadata = trailers;
-          }).catchError((_) {});
+          call.trailers
+              .then((trailers) {
+                trailingMetadata = trailers;
+              })
+              .catchError((_) {});
 
           call.response.listen(
             (data) {
               final duration = DateTime.now().difference(startTime);
-              final payload = GrpcUtils.decodeBinaryResponse(data, schema: methodSchema);
+              final payload = GrpcUtils.decodeBinaryResponse(
+                data,
+                schema: methodSchema,
+              );
               final responseMsg = WebSocketMessage(
-                payload:
-                    "Response (${duration.inMilliseconds}ms):\n$payload",
+                payload: "Response (${duration.inMilliseconds}ms):\n$payload",
                 timestamp: DateTime.now(),
                 outgoing: false,
                 messageType: WebSocketMessageType.received,
@@ -1243,13 +1335,17 @@ class CollectionStateNotifier
                     requestId: currentReq.copyWith(
                       isWorking: false,
                       isStreaming: false,
-                      responseStatus: receivedCount == 0 ? 200 : currentReq.responseStatus,
+                      responseStatus: receivedCount == 0
+                          ? 200
+                          : currentReq.responseStatus,
                       httpResponseModel: receivedCount == 0
                           ? HttpResponseModel(
-                              body: payload, 
-                              bodyBytes: utf8.encode(payload), 
+                              body: payload,
+                              bodyBytes: utf8.encode(payload),
                               time: duration,
-                              headers: initialMetadata.map((k, v) => MapEntry("[Initial] $k", v)),
+                              headers: initialMetadata.map(
+                                (k, v) => MapEntry("[Initial] $k", v),
+                              ),
                             )
                           : currentReq.httpResponseModel,
                       grpcRequestModel: grpcReqModel.copyWith(
@@ -1269,9 +1365,11 @@ class CollectionStateNotifier
                 final responseModel = currentReq.httpResponseModel;
                 final finalHeaders = {
                   ...initialMetadata.map((k, v) => MapEntry("[Initial] $k", v)),
-                  ...trailingMetadata.map((k, v) => MapEntry("[Trailing] $k", v)),
+                  ...trailingMetadata.map(
+                    (k, v) => MapEntry("[Trailing] $k", v),
+                  ),
                 };
-                
+
                 state = {
                   ...state!,
                   requestId: currentReq.copyWith(
@@ -1282,6 +1380,12 @@ class CollectionStateNotifier
                     ),
                   ),
                 };
+              }
+              if (historyId != null) {
+                _updateGrpcHistoryRecord(
+                  historyId,
+                  state?[requestId]?.grpcRequestModel ?? grpcModel,
+                );
               }
             },
             onError: (e) {
@@ -1308,13 +1412,16 @@ class CollectionStateNotifier
                       time: Duration.zero,
                     ),
                     grpcRequestModel: currentGrpc.copyWith(
-                      messageHistory: [
-                        ...currentGrpc.messageHistory,
-                        errorMsg,
-                      ],
+                      messageHistory: [...currentGrpc.messageHistory, errorMsg],
                     ),
                   ),
                 };
+              }
+              if (historyId != null) {
+                _updateGrpcHistoryRecord(
+                  historyId,
+                  state?[requestId]?.grpcRequestModel ?? grpcModel,
+                );
               }
             },
           );
@@ -1359,6 +1466,12 @@ class CollectionStateNotifier
             ),
           ),
         };
+      }
+      if (historyId != null) {
+        _updateGrpcHistoryRecord(
+          historyId,
+          state?[requestId]?.grpcRequestModel ?? grpcModel,
+        );
       }
     }
   }
