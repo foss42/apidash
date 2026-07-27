@@ -434,6 +434,58 @@ class CollectionStateNotifier
     }
   }
 
+  /// Push an additional request message onto an OPEN gRPC request stream
+  /// (client/bidi streaming). Serializes the current params/body to bytes and
+  /// appends a "sent" [WebSocketMessage] to the gRPC message history — mirrors
+  /// [sendWebSocketMessage]. No-op if there is no open request stream.
+  void sendGrpcMessage(String requestId) {
+    final currentRequest = state?[requestId];
+    if (currentRequest == null || currentRequest.apiType != APIType.grpc) {
+      return;
+    }
+    final grpcModel = currentRequest.grpcRequestModel;
+    if (grpcModel == null) return;
+
+    if (!ConnectionManager.instance.hasGrpcRequestStream(requestId)) {
+      debugPrint("gRPC: no open request stream to send on for $requestId");
+      return;
+    }
+
+    try {
+      final requestData = grpcModel.parameters.isNotEmpty
+          ? GrpcUtils.paramsToBytes(grpcModel.parameters)
+          : utf8.encode(grpcModel.requestBody);
+
+      ConnectionManager.instance.pushGrpcMessage(requestId, requestData);
+
+      final sentPreview = grpcModel.parameters.isNotEmpty
+          ? GrpcUtils.paramsToJson(grpcModel.parameters)
+          : grpcModel.requestBody;
+
+      final newMessage = WebSocketMessage(
+        payload: "Sent:\n$sentPreview",
+        timestamp: DateTime.now(),
+        outgoing: true,
+        messageType: WebSocketMessageType.sent,
+      );
+
+      update(
+        id: requestId,
+        grpcRequestModel: grpcModel.copyWith(
+          messageHistory: [...grpcModel.messageHistory, newMessage],
+        ),
+      );
+    } catch (e) {
+      debugPrint("Error sending gRPC message: $e");
+    }
+  }
+
+  /// Half-close ("finish sending") an OPEN gRPC request stream (client/bidi):
+  /// the server sees end-of-input and can complete its response.
+  void finishGrpcSending(String requestId) {
+    ConnectionManager.instance.finishGrpcSending(requestId);
+  }
+
   Future<void> _connectWebSocket(
     String requestId,
     RequestModel requestModel,
@@ -1289,7 +1341,37 @@ class CollectionStateNotifier
             grpcModel.method!,
             requestData,
             metadata: grpcModel.metadataMap,
+            streamingType: grpcModel.streamingType,
           );
+
+          // For client/bidi streaming the request stream stays open; record
+          // the first message that was just sent so the user has feedback.
+          final keepsRequestStreamOpen =
+              grpcModel.streamingType == GrpcStreamingType.client ||
+                  grpcModel.streamingType == GrpcStreamingType.bidi;
+          if (keepsRequestStreamOpen) {
+            final sentPreview = grpcModel.parameters.isNotEmpty
+                ? GrpcUtils.paramsToJson(grpcModel.parameters)
+                : grpcModel.requestBody;
+            final sentMsg = WebSocketMessage(
+              payload: "Sent:\n$sentPreview",
+              timestamp: DateTime.now(),
+              outgoing: true,
+              messageType: WebSocketMessageType.sent,
+            );
+            final reqNow = state?[requestId];
+            final grpcNow = reqNow?.grpcRequestModel;
+            if (reqNow != null && grpcNow != null) {
+              state = {
+                ...state!,
+                requestId: reqNow.copyWith(
+                  grpcRequestModel: grpcNow.copyWith(
+                    messageHistory: [...grpcNow.messageHistory, sentMsg],
+                  ),
+                ),
+              };
+            }
+          }
 
           Map<String, String> initialMetadata = {};
           Map<String, String> trailingMetadata = {};

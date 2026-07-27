@@ -1,5 +1,6 @@
 // lib/services/connection_manager.dart
 
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
@@ -21,6 +22,12 @@ class ConnectionManager {
   final Map<String, WebSocketChannel> _channels = {};
 
   final Map<String, ClientChannel> _grpcChannels = {};
+
+  /// Maps request ID → the open request StreamController that feeds the gRPC
+  /// call. For unary/server-streaming this is closed immediately after the
+  /// single request message is added (half-close). For client/bidi streaming
+  /// it is kept open so the user can push more messages while the call is live.
+  final Map<String, StreamController<List<int>>> _grpcRequestControllers = {};
 
   /// Whether there is an active connection for [requestId].
   bool hasConnection(String requestId) => _channels.containsKey(requestId);
@@ -77,6 +84,10 @@ class ConnectionManager {
       entry.value.sink.close();
     }
     _channels.clear();
+    for (final entry in _grpcRequestControllers.entries) {
+      if (!entry.value.isClosed) entry.value.close();
+    }
+    _grpcRequestControllers.clear();
     for (final entry in _grpcChannels.entries) {
       entry.value.terminate();
     }
@@ -113,8 +124,17 @@ class ConnectionManager {
   }
 
   void disconnectGrpc(String requestId) {
+    _closeGrpcRequestController(requestId);
     final channel = _grpcChannels.remove(requestId);
     channel?.terminate();
+  }
+
+  /// Whether there is an OPEN request stream for [requestId] onto which more
+  /// gRPC request messages can be pushed (only true for client/bidi streaming
+  /// while the call is live and has not yet been half-closed).
+  bool hasGrpcRequestStream(String requestId) {
+    final controller = _grpcRequestControllers[requestId];
+    return controller != null && !controller.isClosed;
   }
 
   ClientCall<List<int>, List<int>> callGrpcMethod(
@@ -123,6 +143,7 @@ class ConnectionManager {
     String method,
     List<int> requestBytes, {
     Map<String, String>? metadata,
+    GrpcStreamingType streamingType = GrpcStreamingType.unary,
   }) {
     final channel = _grpcChannels[requestId];
     if (channel == null) {
@@ -138,12 +159,56 @@ class ConnectionManager {
       (List<int> value) => value,
     );
 
+    // Tear down any leftover request controller from a previous call on the
+    // same tab, then build a fresh one. Streaming in the `grpc` package is
+    // emergent from this request stream: every message it emits is sent, and
+    // the client half-closes when the stream is done.
+    _closeGrpcRequestController(requestId);
+    final controller = StreamController<List<int>>();
+    _grpcRequestControllers[requestId] = controller;
+
+    // The first message is always sent.
+    controller.add(requestBytes);
+
+    // unary + server-streaming send exactly one message then half-close.
+    // client + bidi keep the request stream open for [pushGrpcMessage].
+    final singleShot = streamingType == GrpcStreamingType.unary ||
+        streamingType == GrpcStreamingType.server;
+    if (singleShot) {
+      controller.close();
+      _grpcRequestControllers.remove(requestId);
+    }
+
     final call = channel.createCall(
       clientMethod,
-      Stream.fromIterable([requestBytes]),
+      controller.stream,
       CallOptions(metadata: metadata),
     );
 
     return call;
+  }
+
+  /// Pushes an additional request [bytes] message onto the open request stream
+  /// for [requestId] (client/bidi streaming). No-op if there is no open stream.
+  void pushGrpcMessage(String requestId, List<int> bytes) {
+    final controller = _grpcRequestControllers[requestId];
+    if (controller == null || controller.isClosed) {
+      debugPrint('gRPC: no open request stream for $requestId');
+      return;
+    }
+    controller.add(bytes);
+  }
+
+  /// Half-closes the request stream for [requestId] (client/bidi "finish
+  /// sending"): the server sees end-of-input and can complete its response.
+  void finishGrpcSending(String requestId) {
+    _closeGrpcRequestController(requestId);
+  }
+
+  void _closeGrpcRequestController(String requestId) {
+    final controller = _grpcRequestControllers.remove(requestId);
+    if (controller != null && !controller.isClosed) {
+      controller.close();
+    }
   }
 }

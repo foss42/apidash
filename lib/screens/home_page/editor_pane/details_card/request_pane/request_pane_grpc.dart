@@ -43,6 +43,16 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
       _bodyController.text = grpcModel.requestBody;
     }
 
+    final requestId = requestModel?.id;
+    // grpcModel != null implies requestModel (and its id) is non-null; the
+    // guard just narrows the type for the streaming send affordance below.
+    if (requestId == null) return kSizedBoxEmpty;
+    final isClientOrBidi =
+        grpcModel.streamingType == GrpcStreamingType.client ||
+            grpcModel.streamingType == GrpcStreamingType.bidi;
+    final hasOpenGrpcStream =
+        ConnectionManager.instance.hasGrpcRequestStream(requestId);
+
     return DefaultTabController(
       length: 4,
       child: Column(
@@ -172,6 +182,33 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                         ],
                       ),
                       kVSpacer20,
+                      Row(
+                        children: [
+                          const Text("Type: ", style: kTextStyleButtonSmall),
+                          kHSpacer10,
+                          ADDropdownButton<GrpcStreamingType>(
+                            value: grpcModel.streamingType,
+                            values: const [
+                              (GrpcStreamingType.unary, "Unary"),
+                              (GrpcStreamingType.client, "Client streaming"),
+                              (GrpcStreamingType.server, "Server streaming"),
+                              (GrpcStreamingType.bidi, "Bidirectional"),
+                            ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                ref
+                                    .read(collectionStateNotifierProvider
+                                        .notifier)
+                                    .update(
+                                      grpcRequestModel: grpcModel.copyWith(
+                                          streamingType: val),
+                                    );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      kVSpacer20,
                       const Text("Request Parameters (Form)",
                           style: kTextStyleButtonSmall),
                       kVSpacer10,
@@ -223,6 +260,46 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                           },
                         ),
                       ),
+                      if (isClientOrBidi) ...[
+                        kVSpacer10,
+                        Row(
+                          children: [
+                            OutlinedButton.icon(
+                              icon: const Icon(Icons.send, size: 16),
+                              label: const Text("Send message"),
+                              onPressed: hasOpenGrpcStream
+                                  ? () {
+                                      ref
+                                          .read(collectionStateNotifierProvider
+                                              .notifier)
+                                          .sendGrpcMessage(requestId);
+                                    }
+                                  : null,
+                            ),
+                            kHSpacer10,
+                            OutlinedButton.icon(
+                              icon: const Icon(Icons.done_all, size: 16),
+                              label: const Text("Finish sending"),
+                              onPressed: hasOpenGrpcStream
+                                  ? () {
+                                      ref
+                                          .read(collectionStateNotifierProvider
+                                              .notifier)
+                                          .finishGrpcSending(requestId);
+                                      setState(() {});
+                                    }
+                                  : null,
+                            ),
+                          ],
+                        ),
+                        kVSpacer5,
+                        Text(
+                          hasOpenGrpcStream
+                              ? "Streaming active — edit the params/body, then Send. Finish sending to half-close the request stream."
+                              : "Start a ${grpcModel.streamingType == GrpcStreamingType.client ? 'client' : 'bidirectional'}-streaming call (Send in the URL bar) to push more messages here.",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -342,7 +419,6 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             await ConnectionManager.instance
                                 .connectGrpc(requestModel.id, grpcModel);
 
-                            print("Calling listServices now...");
                             final services =
                                 await GrpcReflectionService.listServices(
                                     requestModel.id, grpcModel);
@@ -392,28 +468,29 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                   ),
                                 );
                           } else {
-                            // Mocking fallback
+                            // No reflection enabled and no proto file selected:
+                            // there is nothing to discover. Show a real empty
+                            // state instead of mock services.
                             ref
                                 .read(collectionStateNotifierProvider.notifier)
                                 .update(
                                   grpcRequestModel: grpcModel.copyWith(
-                                    availableServices: [
-                                      "helloworld.Greeter",
-                                      "echo.EchoService"
-                                    ],
-                                    availableMethods: [
-                                      "SayHello",
-                                      "SayGoodbye",
-                                      "Echo"
-                                    ],
-                                    parameters: [
-                                      const GrpcParameterModel(
-                                          name: "name", type: "string"),
-                                      const GrpcParameterModel(
-                                          name: "age", type: "int32"),
-                                    ],
+                                    availableServices: const <String>[],
+                                    availableMethods: const <String>[],
+                                    service: null,
+                                    method: null,
+                                    parameters: const <GrpcParameterModel>[],
                                   ),
                                 );
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      "No services found. Enable Reflection or select a .proto file."),
+                                  duration: Duration(milliseconds: 2500),
+                                ),
+                              );
+                            }
                           }
                         },
                         icon: const Icon(Icons.refresh),

@@ -59,6 +59,66 @@ void main() {
       );
     });
 
+    test(
+        'client-streaming call keeps the request stream open for multiple messages',
+        () async {
+      const model = GrpcRequestModel(
+        url: 'localhost:50051',
+        streamingType: GrpcStreamingType.client,
+      );
+      await ConnectionManager.instance.connectGrpc(requestId, model);
+
+      final call = ConnectionManager.instance.callGrpcMethod(
+        requestId,
+        'test.Service',
+        'ClientStream',
+        [1, 2, 3],
+        streamingType: GrpcStreamingType.client,
+      );
+      // No live server in the test env; swallow async connection errors.
+      call.response.listen((_) {}, onError: (_) {}, cancelOnError: true);
+
+      // The request stream must stay open so more messages can be pushed.
+      expect(ConnectionManager.instance.hasGrpcRequestStream(requestId), isTrue);
+
+      // Pushing additional request messages must not throw.
+      ConnectionManager.instance.pushGrpcMessage(requestId, [4, 5, 6]);
+      ConnectionManager.instance.pushGrpcMessage(requestId, [7, 8, 9]);
+      expect(ConnectionManager.instance.hasGrpcRequestStream(requestId), isTrue);
+
+      // Finishing sending half-closes the request stream.
+      ConnectionManager.instance.finishGrpcSending(requestId);
+      expect(
+          ConnectionManager.instance.hasGrpcRequestStream(requestId), isFalse);
+
+      await call.cancel();
+    });
+
+    test('unary call half-closes the request stream immediately', () async {
+      const model = GrpcRequestModel(
+        url: 'localhost:50051',
+        streamingType: GrpcStreamingType.unary,
+      );
+      await ConnectionManager.instance.connectGrpc(requestId, model);
+
+      final call = ConnectionManager.instance.callGrpcMethod(
+        requestId,
+        'test.Service',
+        'Unary',
+        [1, 2, 3],
+        streamingType: GrpcStreamingType.unary,
+      );
+      call.response.listen((_) {}, onError: (_) {}, cancelOnError: true);
+
+      // unary sends exactly one message then half-closes: no open stream.
+      expect(
+          ConnectionManager.instance.hasGrpcRequestStream(requestId), isFalse);
+      // pushGrpcMessage is a safe no-op when there is no open stream.
+      ConnectionManager.instance.pushGrpcMessage(requestId, [4, 5, 6]);
+
+      await call.cancel();
+    });
+
     test('disconnectAll removes all gRPC channels', () async {
       const model = GrpcRequestModel(url: 'localhost');
       await ConnectionManager.instance.connectGrpc('id1', model);
