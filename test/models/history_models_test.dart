@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import 'package:apidash/models/models.dart';
@@ -12,8 +13,10 @@ void main() {
       final historyMetaModelcopyWith = historyMetaModel.copyWith(
         url: 'https://api.apidash.dev/humanize/social',
       );
-      expect(historyMetaModelcopyWith.url,
-          'https://api.apidash.dev/humanize/social');
+      expect(
+        historyMetaModelcopyWith.url,
+        'https://api.apidash.dev/humanize/social',
+      );
       // original model unchanged
       expect(historyMetaModel.url, 'https://api.apidash.dev/humanize/social');
     });
@@ -60,8 +63,9 @@ void main() {
 
     test("Testing HistoryRequestModel fromJson", () {
       var historyRequestModel = historyRequestModel1;
-      final modelFromJson =
-          HistoryRequestModel.fromJson(historyRequestModelJson1);
+      final modelFromJson = HistoryRequestModel.fromJson(
+        historyRequestModelJson1,
+      );
       expect(modelFromJson, historyRequestModel);
       expect(modelFromJson.metaData, historyMetaModel1);
       expect(modelFromJson.httpRequestModel, httpRequestModelGet4);
@@ -127,8 +131,7 @@ void main() {
       expect(historyRequestModelcopyWith.historyId, 'historyIdWsChanged');
       // other fields preserved
       expect(historyRequestModelcopyWith.metaData, historyMetaModelWs);
-      expect(
-          historyRequestModelcopyWith.wsRequestModel, historyWsRequestModel);
+      expect(historyRequestModelcopyWith.wsRequestModel, historyWsRequestModel);
       expect(historyRequestModelcopyWith.httpRequestModel, isNull);
       // original model unchanged
       expect(historyRequestModel.historyId, 'historyIdWs');
@@ -145,8 +148,9 @@ void main() {
 
     test("Testing HistoryRequestModel fromJson", () {
       var historyRequestModel = historyRequestModelWs;
-      final modelFromJson =
-          HistoryRequestModel.fromJson(historyRequestModelWsJson);
+      final modelFromJson = HistoryRequestModel.fromJson(
+        historyRequestModelWsJson,
+      );
       expect(modelFromJson, historyRequestModel);
       expect(modelFromJson.metaData, historyMetaModelWs);
       expect(modelFromJson.metaData.apiType, APIType.websocket);
@@ -154,7 +158,9 @@ void main() {
       // wsRequestModel persisted fields survive the round-trip.
       final ws = modelFromJson.wsRequestModel!;
       expect(ws.url, 'wss://echo.websocket.org');
-      expect(ws.headers, [const NameValueModel(name: 'Auth', value: 'Bearer 123')]);
+      expect(ws.headers, [
+        const NameValueModel(name: 'Auth', value: 'Bearer 123'),
+      ]);
       expect(ws.isHeaderEnabledList, [true]);
       expect(ws.params, [const NameValueModel(name: 'id', value: '1')]);
       expect(ws.isParamEnabledList, [true]);
@@ -173,5 +179,86 @@ void main() {
       expect(historyRequestModel.httpRequestModel, isNull);
       expect(historyRequestModel.httpResponseModel, isNull);
     });
+  });
+
+  group('Testing History Request Models (gRPC)', () {
+    test("Testing HistoryRequestModel copyWith", () {
+      var historyRequestModel = historyRequestModelGrpc;
+      final historyRequestModelcopyWith = historyRequestModel.copyWith(
+        historyId: 'historyIdGrpcChanged',
+      );
+      expect(historyRequestModelcopyWith.historyId, 'historyIdGrpcChanged');
+      // other fields preserved
+      expect(historyRequestModelcopyWith.metaData, historyMetaModelGrpc);
+      expect(
+        historyRequestModelcopyWith.grpcRequestModel,
+        historyGrpcRequestModel,
+      );
+      expect(historyRequestModelcopyWith.wsRequestModel, isNull);
+      expect(historyRequestModelcopyWith.httpRequestModel, isNull);
+      // original model unchanged
+      expect(historyRequestModel.historyId, 'historyIdGrpc');
+    });
+
+    test("Testing HistoryRequestModel getters", () {
+      var historyRequestModel = historyRequestModelGrpc;
+      expect(historyRequestModel.historyId, 'historyIdGrpc');
+      expect(historyRequestModel.metaData, historyMetaModelGrpc);
+      expect(historyRequestModel.metaData.apiType, APIType.grpc);
+      expect(historyRequestModel.grpcRequestModel, historyGrpcRequestModel);
+      expect(historyRequestModel.wsRequestModel, isNull);
+      expect(historyRequestModel.httpRequestModel, isNull);
+      expect(historyRequestModel.httpResponseModel, isNull);
+    });
+
+    test(
+      "Testing HistoryRequestModel toJson -> fromJson round-trip preserves "
+      "apiType, grpcRequestModel, messageHistory, metadata and service/method",
+      () {
+        // Normalise nested freezed objects (WebSocketMessage in messageHistory,
+        // NameValueModel in metadata) to plain maps via json enc/dec first, then
+        // rebuild through fromJson.
+        final json = jsonDecode(jsonEncode(historyRequestModelGrpc.toJson()));
+        final decoded = HistoryRequestModel.fromJson(
+          Map<String, Object?>.from(json as Map),
+        );
+
+        // apiType survives on the meta.
+        expect(decoded.metaData.apiType, APIType.grpc);
+        // whole model is value-equal after the round-trip.
+        expect(decoded, historyRequestModelGrpc);
+
+        final grpc = decoded.grpcRequestModel!;
+        // grpcRequestModel is value-equal after the round-trip.
+        expect(grpc, historyGrpcRequestModel);
+        // service / method / url / streamingType survive.
+        expect(grpc.url, 'localhost:50051');
+        expect(grpc.service, 'GreeterService');
+        expect(grpc.method, 'SayHello');
+        expect(grpc.streamingType, GrpcStreamingType.bidi);
+        expect(grpc.useReflection, true);
+        expect(grpc.requestBody, '{"name":"Dash"}');
+        // messageHistory entries survive with their type/direction/payload.
+        expect(grpc.messageHistory.length, 2);
+        expect(
+          grpc.messageHistory.first.messageType,
+          WebSocketMessageType.connected,
+        );
+        expect(grpc.messageHistory.first.outgoing, false);
+        expect(grpc.messageHistory.last.messageType, WebSocketMessageType.sent);
+        expect(grpc.messageHistory.last.outgoing, true);
+        expect(grpc.messageHistory.last.payload, '{"name":"Dash"}');
+        // metadata (NameValueModel) survives.
+        expect(grpc.metadata, const [
+          NameValueModel(name: 'Authorization', value: 'Bearer token'),
+          NameValueModel(name: 'x-trace-id', value: 'abc-123'),
+        ]);
+        expect(grpc.isMetadataEnabled, const [true, false]);
+        // Sibling protocol models are absent on a gRPC history entry.
+        expect(decoded.httpRequestModel, isNull);
+        expect(decoded.wsRequestModel, isNull);
+        expect(decoded.aiRequestModel, isNull);
+      },
+    );
   });
 }

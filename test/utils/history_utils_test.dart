@@ -1,10 +1,56 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/utils/history_utils.dart';
 
 import '../models/history_models.dart';
 
 void main() {
+  group('Testing getRequestModelFromHistoryModel passthrough', () {
+    test('carries grpcRequestModel for a gRPC history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModelGrpc,
+      );
+
+      expect(requestModel.id, 'historyIdGrpc');
+      expect(requestModel.apiType, APIType.grpc);
+      // The actual fix: grpcRequestModel is carried through.
+      expect(requestModel.grpcRequestModel, isNotNull);
+      expect(requestModel.grpcRequestModel, historyGrpcRequestModel);
+      expect(requestModel.grpcRequestModel!.url, 'localhost:50051');
+      expect(requestModel.grpcRequestModel!.service, 'GreeterService');
+      expect(requestModel.grpcRequestModel!.method, 'SayHello');
+      expect(requestModel.grpcRequestModel!.messageHistory.length, 2);
+      // Sibling protocol models stay null on a gRPC restore.
+      expect(requestModel.wsRequestModel, isNull);
+      expect(requestModel.httpRequestModel, isNull);
+      expect(requestModel.aiRequestModel, isNull);
+    });
+
+    test('carries wsRequestModel for a WebSocket history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModelWs,
+      );
+
+      expect(requestModel.apiType, APIType.websocket);
+      // wsRequestModel passthrough (added alongside the gRPC fix).
+      expect(requestModel.wsRequestModel, isNotNull);
+      expect(requestModel.wsRequestModel, historyWsRequestModel);
+      expect(requestModel.grpcRequestModel, isNull);
+    });
+
+    test('carries httpRequestModel for a REST history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModel1,
+      );
+
+      expect(requestModel.apiType, APIType.rest);
+      expect(requestModel.httpRequestModel, isNotNull);
+      expect(requestModel.grpcRequestModel, isNull);
+      expect(requestModel.wsRequestModel, isNull);
+    });
+  });
+
   group('Testing getHistoryRequestName function', () {
     test('returns name when name is not empty', () {
       final model = historyMetaModel1.copyWith(name: 'Social');
@@ -31,7 +77,9 @@ void main() {
 
       final result = getHistoryRequestKey(model);
       expect(
-          result, 'https://api.apidash.dev/humanize/socialgetJanuary 1, 2024');
+        result,
+        'https://api.apidash.dev/humanize/socialgetJanuary 1, 2024',
+      );
     });
   });
 
@@ -76,22 +124,30 @@ void main() {
       final models = [
         historyMetaModel1,
         historyMetaModel1.copyWith(
-            historyId: 'historyId1-1',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 1))),
+          historyId: 'historyId1-1',
+          timeStamp: historyMetaModel1.timeStamp.add(
+            const Duration(seconds: 1),
+          ),
+        ),
         historyMetaModel1.copyWith(
-            historyId: 'historyId1-2',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 2))),
+          historyId: 'historyId1-2',
+          timeStamp: historyMetaModel1.timeStamp.add(
+            const Duration(seconds: 2),
+          ),
+        ),
         historyMetaModel2,
         historyMetaModel2.copyWith(
-            historyId: 'historyId2-1',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 1))),
+          historyId: 'historyId2-1',
+          timeStamp: historyMetaModel2.timeStamp.add(
+            const Duration(seconds: 1),
+          ),
+        ),
         historyMetaModel2.copyWith(
-            historyId: 'historyId2-2',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 2))),
+          historyId: 'historyId2-2',
+          timeStamp: historyMetaModel2.timeStamp.add(
+            const Duration(seconds: 2),
+          ),
+        ),
       ];
 
       final result = getRequestGroups(models);
@@ -130,36 +186,45 @@ void main() {
     });
 
     test(
-        'returns list of models with same request key as selectedModel and sorted',
-        () {
-      final models = [
-        historyMetaModel1,
-        historyMetaModel1.copyWith(
+      'returns list of models with same request key as selectedModel and sorted',
+      () {
+        final models = [
+          historyMetaModel1,
+          historyMetaModel1.copyWith(
             historyId: 'historyId1-1',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 1))),
-        historyMetaModel1.copyWith(
+            timeStamp: historyMetaModel1.timeStamp.add(
+              const Duration(seconds: 1),
+            ),
+          ),
+          historyMetaModel1.copyWith(
             historyId: 'historyId1-2',
-            timeStamp:
-                historyMetaModel1.timeStamp.add(const Duration(seconds: 2))),
-        historyMetaModel2,
-        historyMetaModel2.copyWith(
+            timeStamp: historyMetaModel1.timeStamp.add(
+              const Duration(seconds: 2),
+            ),
+          ),
+          historyMetaModel2,
+          historyMetaModel2.copyWith(
             historyId: 'historyId2-1',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 1))),
-        historyMetaModel2.copyWith(
+            timeStamp: historyMetaModel2.timeStamp.add(
+              const Duration(seconds: 1),
+            ),
+          ),
+          historyMetaModel2.copyWith(
             historyId: 'historyId2-2',
-            timeStamp:
-                historyMetaModel2.timeStamp.add(const Duration(seconds: 2))),
-      ];
+            timeStamp: historyMetaModel2.timeStamp.add(
+              const Duration(seconds: 2),
+            ),
+          ),
+        ];
 
-      final result = getRequestGroup(models, models[1]);
-      expect(result.length, 3);
+        final result = getRequestGroup(models, models[1]);
+        expect(result.length, 3);
 
-      for (int i = 0; i < result.length - 1; i++) {
-        expect(result[i].timeStamp.isAfter(result[i + 1].timeStamp), isTrue);
-      }
-    });
+        for (int i = 0; i < result.length - 1; i++) {
+          expect(result[i].timeStamp.isAfter(result[i + 1].timeStamp), isTrue);
+        }
+      },
+    );
   });
 
   group('Testing getRetentionDate functon', () {
