@@ -56,6 +56,9 @@ _GrpcRequestModel _$GrpcRequestModelFromJson(
           ?.map((e) => e as bool)
           .toList() ??
       const [],
+  authModel: json['authModel'] == null
+      ? null
+      : AuthModel.fromJson(json['authModel'] as Map<String, dynamic>),
   availableServices:
       (json['availableServices'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -86,6 +89,7 @@ Map<String, dynamic> _$GrpcRequestModelToJson(_GrpcRequestModel instance) =>
       'useReflection': instance.useReflection,
       'metadata': instance.metadata,
       'isMetadataEnabled': instance.isMetadataEnabled,
+      'authModel': instance.authModel,
       'availableServices': instance.availableServices,
       'availableMethods': instance.availableMethods,
       'parameters': instance.parameters,

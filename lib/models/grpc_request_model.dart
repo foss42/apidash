@@ -37,6 +37,7 @@ abstract class GrpcRequestModel with _$GrpcRequestModel {
     @Default(false) bool useReflection,
     @Default([]) List<NameValueModel>? metadata,
     @Default([]) List<bool>? isMetadataEnabled,
+    AuthModel? authModel,
     @Default([]) List<String> availableServices,
     @Default([]) List<String> availableMethods,
     @Default([]) List<GrpcParameterModel> parameters,

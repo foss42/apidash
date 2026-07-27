@@ -15,6 +15,46 @@ import '../models/models.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
 
+/// Builds the metadata map for a gRPC call by merging the user's Metadata-table
+/// entries with headers derived from the request's [AuthModel].
+///
+/// Precedence: user metadata entries are applied first, then auth-derived
+/// headers are merged on top — so an auth entry OVERRIDES a manual metadata
+/// entry sharing the same (case-insensitive) key. This makes the first-class
+/// Auth tab the source of truth and stops a stale hand-typed `authorization`
+/// row from silently defeating it. Entries with different keys always coexist.
+///
+/// Keys are lower-cased (HTTP/2 / gRPC header semantics) so a collision resolves
+/// deterministically here, before the grpc package's own metadata sanitizer
+/// (which also lower-cases) runs.
+///
+/// Token formatting is delegated to [handleAuth] — the exact helper the HTTP
+/// path uses — so bearer/basic/api-key/jwt/etc. are formatted identically. Only
+/// header-targeted auth maps to gRPC; query-param auth (api-key/jwt set to
+/// `query`) has no gRPC equivalent and is ignored.
+Future<Map<String, String>> buildGrpcMetadata(GrpcRequestModel grpcModel) async {
+  final merged = <String, String>{};
+
+  grpcModel.metadataMap.forEach((name, value) {
+    final key = name.trim().toLowerCase();
+    if (key.isNotEmpty) merged[key] = value;
+  });
+
+  final authModel = grpcModel.authModel;
+  if (authModel != null && authModel.type != APIAuthType.none) {
+    final authed = await handleAuth(
+      HttpRequestModel(url: grpcModel.url, headers: const []),
+      authModel,
+    );
+    for (final header in (authed.headers ?? const <NameValueModel>[])) {
+      final key = header.name.trim().toLowerCase();
+      if (key.isNotEmpty) merged[key] = header.value;
+    }
+  }
+
+  return merged;
+}
+
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
@@ -1340,7 +1380,7 @@ class CollectionStateNotifier
             grpcModel.service!,
             grpcModel.method!,
             requestData,
-            metadata: grpcModel.metadataMap,
+            metadata: await buildGrpcMetadata(grpcModel),
             streamingType: grpcModel.streamingType,
           );
 

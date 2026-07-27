@@ -9,6 +9,7 @@ import 'package:apidash/utils/grpc_utils.dart';
 import 'package:apidash/services/grpc_reflection_service.dart';
 import 'request_metadata_grpc.dart';
 import 'request_parameters_grpc.dart';
+import 'request_auth_grpc.dart';
 
 class EditGrpcRequestPane extends ConsumerStatefulWidget {
   const EditGrpcRequestPane({
@@ -54,7 +55,7 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
         ConnectionManager.instance.hasGrpcRequestStream(requestId);
 
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Column(
         children: [
           TabBar(
@@ -65,6 +66,7 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
               Tab(text: "Invocation"),
               Tab(text: "Body"),
               Tab(text: "Metadata"),
+              Tab(text: "Auth"),
               Tab(text: "Settings"),
             ],
           ),
@@ -305,6 +307,8 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                 ),
                 // Metadata Tab
                 const EditGrpcRequestMetadata(),
+                // Auth Tab
+                const EditGrpcRequestAuth(),
                 // Settings Tab
                 Padding(
                   padding: const EdgeInsets.all(16),
