@@ -130,6 +130,7 @@ class FieldDescriptorProto extends GeneratedMessage {
   int get number => $_getIZ(1);
   String get typeName => $_getS(4, '');
   FieldDescriptorProto_Type get type => $_getN(3);
+  FieldDescriptorProto_Label get label => $_getN(2);
 }
 
 class FieldDescriptorProto_Type extends ProtobufEnum {
@@ -465,7 +466,6 @@ class GrpcReflectionService {
       );
 
     } catch (e) {
-      print("Error in getMethodSchema: $e");
       return null;
     }
   }
@@ -483,7 +483,6 @@ class GrpcReflectionService {
         value: "",
       )).toList();
     } catch (e) {
-      print("Error in getParamsForMethod: $e");
       return [];
     }
   }
@@ -494,18 +493,18 @@ class GrpcReflectionService {
     if (type == FieldDescriptorProto_Type.TYPE_INT64) return 'int64';
     if (type == FieldDescriptorProto_Type.TYPE_UINT64) return 'uint64';
     if (type == FieldDescriptorProto_Type.TYPE_INT32) return 'int32';
-    if (type == FieldDescriptorProto_Type.TYPE_FIXED64) return 'int64';
-    if (type == FieldDescriptorProto_Type.TYPE_FIXED32) return 'int32';
+    if (type == FieldDescriptorProto_Type.TYPE_FIXED64) return 'fixed64';
+    if (type == FieldDescriptorProto_Type.TYPE_FIXED32) return 'fixed32';
     if (type == FieldDescriptorProto_Type.TYPE_BOOL) return 'bool';
     if (type == FieldDescriptorProto_Type.TYPE_STRING) return 'string';
     if (type == FieldDescriptorProto_Type.TYPE_MESSAGE) return 'message';
     if (type == FieldDescriptorProto_Type.TYPE_BYTES) return 'bytes';
     if (type == FieldDescriptorProto_Type.TYPE_UINT32) return 'uint32';
     if (type == FieldDescriptorProto_Type.TYPE_ENUM) return 'enum';
-    if (type == FieldDescriptorProto_Type.TYPE_SFIXED32) return 'int32';
-    if (type == FieldDescriptorProto_Type.TYPE_SFIXED64) return 'int64';
-    if (type == FieldDescriptorProto_Type.TYPE_SINT32) return 'int32';
-    if (type == FieldDescriptorProto_Type.TYPE_SINT64) return 'int64';
+    if (type == FieldDescriptorProto_Type.TYPE_SFIXED32) return 'sfixed32';
+    if (type == FieldDescriptorProto_Type.TYPE_SFIXED64) return 'sfixed64';
+    if (type == FieldDescriptorProto_Type.TYPE_SINT32) return 'sint32';
+    if (type == FieldDescriptorProto_Type.TYPE_SINT64) return 'sint64';
     return 'string';
   }
 }
