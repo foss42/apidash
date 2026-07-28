@@ -63,12 +63,11 @@ class EditGrpcRequestParameters extends ConsumerWidget {
           onChanged: (val) => _updateParamValue(ref, grpcModel, index, val.toString()),
         );
       case "enum":
-        return DropdownButtonFormField<String>(
+        return ADDropdownButton<String>(
           key: fieldKey,
+          isExpanded: true,
           value: param.value.isEmpty ? (param.enumValues?.first) : param.value,
-          items: param.enumValues?.map((e) {
-            return DropdownMenuItem(value: e, child: Text(e));
-          }).toList(),
+          values: (param.enumValues ?? const <String>[]).map((e) => (e, e)),
           onChanged: (val) => _updateParamValue(ref, grpcModel, index, val ?? ""),
         );
       default:

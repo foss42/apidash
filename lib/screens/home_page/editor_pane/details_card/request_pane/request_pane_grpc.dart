@@ -82,103 +82,117 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                       Row(
                         children: [
                           Expanded(
-                            child: DropdownButtonFormField<String>(
-                              value: grpcModel.service,
-                              decoration: const InputDecoration(
-                                labelText: "Select Service",
-                                border: OutlineInputBorder(),
-                              ),
-                              isExpanded: true,
-                              items: grpcModel.availableServices.map((s) {
-                                return DropdownMenuItem(
-                                  value: s,
-                                  child: Text(s),
-                                );
-                              }).toList(),
-                              onChanged: (val) async {
-                                if (val != null) {
-                                  List<String> methods = [];
-                                  if (grpcModel.useReflection && requestModel != null) {
-                                    await ConnectionManager.instance
-                                        .connectGrpc(requestModel.id, grpcModel);
-                                    final result = await GrpcReflectionService
-                                        .getMethodsForService(
-                                            requestModel.id, grpcModel, val);
-                                    methods = result[val] ?? [];
-                                  }
-                                  ref
-                                      .read(collectionStateNotifierProvider
-                                          .notifier)
-                                      .update(
-                                        grpcRequestModel: grpcModel.copyWith(
-                                          service: val,
-                                          availableMethods: methods,
-                                          method: null,
-                                        ),
-                                      );
-                                }
-                              },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Select Service",
+                                    style: kTextStyleButtonSmall),
+                                kVSpacer5,
+                                ADDropdownButton<String>(
+                                  isExpanded: true,
+                                  value: grpcModel.service,
+                                  values: grpcModel.availableServices
+                                      .map((s) => (s, s)),
+                                  onChanged: (val) async {
+                                    if (val != null) {
+                                      List<String> methods = [];
+                                      if (grpcModel.useReflection &&
+                                          requestModel != null) {
+                                        await ConnectionManager.instance
+                                            .connectGrpc(
+                                                requestModel.id, grpcModel);
+                                        final result =
+                                            await GrpcReflectionService
+                                                .getMethodsForService(
+                                                    requestModel.id,
+                                                    grpcModel,
+                                                    val);
+                                        methods = result[val] ?? [];
+                                      }
+                                      ref
+                                          .read(collectionStateNotifierProvider
+                                              .notifier)
+                                          .update(
+                                            grpcRequestModel:
+                                                grpcModel.copyWith(
+                                              service: val,
+                                              availableMethods: methods,
+                                              method: null,
+                                            ),
+                                          );
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                           kHSpacer20,
                           Expanded(
-                            child: DropdownButtonFormField<String>(
-                              isExpanded: true,
-                              value: grpcModel.method,
-                              decoration: const InputDecoration(
-                                labelText: "Select Method",
-                                border: OutlineInputBorder(),
-                              ),
-                              items: grpcModel.availableMethods.map((m) {
-                                return DropdownMenuItem(
-                                  value: m,
-                                  child: Text(m),
-                                );
-                              }).toList(),
-                              onChanged: (val) async {
-                                if (val != null) {
-                                  List<GrpcParameterModel> params = [];
-                                  if (grpcModel.protoFile != null) {
-                                    final result = await GrpcUtils.parseProtoFile(
-                                        grpcModel.protoFile!);
-                                    final methodMappings =
-                                        result['methods'] as Map<String, dynamic>?;
-                                    final messageFields = result['messageFields']
-                                        as Map<String, dynamic>?;
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Select Method",
+                                    style: kTextStyleButtonSmall),
+                                kVSpacer5,
+                                ADDropdownButton<String>(
+                                  isExpanded: true,
+                                  value: grpcModel.method,
+                                  values: grpcModel.availableMethods
+                                      .map((m) => (m, m)),
+                                  onChanged: (val) async {
+                                    if (val != null) {
+                                      List<GrpcParameterModel> params = [];
+                                      if (grpcModel.protoFile != null) {
+                                        final result =
+                                            await GrpcUtils.parseProtoFile(
+                                                grpcModel.protoFile!);
+                                        final methodMappings = result['methods']
+                                            as Map<String, dynamic>?;
+                                        final messageFields =
+                                            result['messageFields']
+                                                as Map<String, dynamic>?;
 
-                                    if (methodMappings != null &&
-                                        messageFields != null) {
-                                      final requestType =
-                                          (methodMappings["${grpcModel.service}/$val"]
-                                              as List<String>?)?.first;
-                                      if (requestType != null) {
-                                        params = (messageFields[requestType]
-                                                as List<GrpcParameterModel>?) ??
-                                            [];
+                                        if (methodMappings != null &&
+                                            messageFields != null) {
+                                          final requestType = (methodMappings[
+                                                      "${grpcModel.service}/$val"]
+                                                  as List<String>?)
+                                              ?.first;
+                                          if (requestType != null) {
+                                            params = (messageFields[requestType]
+                                                    as List<
+                                                        GrpcParameterModel>?) ??
+                                                [];
+                                          }
+                                        }
+                                      } else if (grpcModel.useReflection &&
+                                          requestModel != null &&
+                                          grpcModel.service != null) {
+                                        params = await GrpcReflectionService
+                                            .getParamsForMethod(
+                                                requestModel.id,
+                                                grpcModel,
+                                                grpcModel.service!,
+                                                val);
                                       }
-                                    }
-                                  } else if (grpcModel.useReflection &&
-                                      requestModel != null &&
-                                      grpcModel.service != null) {
-                                    params = await GrpcReflectionService
-                                        .getParamsForMethod(
-                                            requestModel.id,
-                                            grpcModel,
-                                            grpcModel.service!,
-                                            val);
-                                  }
 
-                                  ref
-                                      .read(collectionStateNotifierProvider.notifier)
-                                      .update(
-                                        grpcRequestModel: grpcModel.copyWith(
-                                          method: val,
-                                          parameters: params,
-                                          requestBody: GrpcUtils.paramsToJson(params),
-                                        ),
-                                      );
-                                }
-                              },
+                                      ref
+                                          .read(collectionStateNotifierProvider
+                                              .notifier)
+                                          .update(
+                                            grpcRequestModel:
+                                                grpcModel.copyWith(
+                                              method: val,
+                                              parameters: params,
+                                              requestBody:
+                                                  GrpcUtils.paramsToJson(
+                                                      params),
+                                            ),
+                                          );
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ],

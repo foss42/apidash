@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,6 +57,6 @@ void main() {
 
     expect(find.byType(TextFormField), findsOneWidget);
     expect(find.byType(Switch), findsOneWidget);
-    expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
+    expect(find.byType(ADDropdownButton<String>), findsOneWidget);
   });
 }
