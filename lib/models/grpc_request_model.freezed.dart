@@ -518,8 +518,8 @@ return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTL
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class _GrpcRequestModel extends GrpcRequestModel {
   const _GrpcRequestModel({this.url = "", this.service, this.method, this.protoFile, this.useTLS = false, this.streamingType = GrpcStreamingType.unary, final  List<WebSocketMessage> messageHistory = const [], this.requestBody = "", this.useReflection = false, final  List<NameValueModel>? metadata = const [], final  List<bool>? isMetadataEnabled = const [], this.authModel, final  List<String> availableServices = const [], final  List<String> availableMethods = const [], final  List<GrpcParameterModel> parameters = const []}): _messageHistory = messageHistory,_metadata = metadata,_isMetadataEnabled = isMetadataEnabled,_availableServices = availableServices,_availableMethods = availableMethods,_parameters = parameters,super._();
   factory _GrpcRequestModel.fromJson(Map<String, dynamic> json) => _$GrpcRequestModelFromJson(json);

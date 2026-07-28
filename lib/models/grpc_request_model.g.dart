@@ -28,9 +28,7 @@ Map<String, dynamic> _$GrpcParameterModelToJson(_GrpcParameterModel instance) =>
       'enumValues': instance.enumValues,
     };
 
-_GrpcRequestModel _$GrpcRequestModelFromJson(
-  Map<String, dynamic> json,
-) => _GrpcRequestModel(
+_GrpcRequestModel _$GrpcRequestModelFromJson(Map json) => _GrpcRequestModel(
   url: json['url'] as String? ?? "",
   service: json['service'] as String?,
   method: json['method'] as String?,
@@ -41,14 +39,19 @@ _GrpcRequestModel _$GrpcRequestModelFromJson(
       GrpcStreamingType.unary,
   messageHistory:
       (json['messageHistory'] as List<dynamic>?)
-          ?.map((e) => WebSocketMessage.fromJson(e as Map<String, dynamic>))
+          ?.map(
+            (e) =>
+                WebSocketMessage.fromJson(Map<String, dynamic>.from(e as Map)),
+          )
           .toList() ??
       const [],
   requestBody: json['requestBody'] as String? ?? "",
   useReflection: json['useReflection'] as bool? ?? false,
   metadata:
       (json['metadata'] as List<dynamic>?)
-          ?.map((e) => NameValueModel.fromJson(e as Map<String, dynamic>))
+          ?.map(
+            (e) => NameValueModel.fromJson(Map<String, Object?>.from(e as Map)),
+          )
           .toList() ??
       const [],
   isMetadataEnabled:
@@ -58,7 +61,7 @@ _GrpcRequestModel _$GrpcRequestModelFromJson(
       const [],
   authModel: json['authModel'] == null
       ? null
-      : AuthModel.fromJson(json['authModel'] as Map<String, dynamic>),
+      : AuthModel.fromJson(Map<String, dynamic>.from(json['authModel'] as Map)),
   availableServices:
       (json['availableServices'] as List<dynamic>?)
           ?.map((e) => e as String)
@@ -71,7 +74,11 @@ _GrpcRequestModel _$GrpcRequestModelFromJson(
       const [],
   parameters:
       (json['parameters'] as List<dynamic>?)
-          ?.map((e) => GrpcParameterModel.fromJson(e as Map<String, dynamic>))
+          ?.map(
+            (e) => GrpcParameterModel.fromJson(
+              Map<String, dynamic>.from(e as Map),
+            ),
+          )
           .toList() ??
       const [],
 );
@@ -84,15 +91,15 @@ Map<String, dynamic> _$GrpcRequestModelToJson(_GrpcRequestModel instance) =>
       'protoFile': instance.protoFile,
       'useTLS': instance.useTLS,
       'streamingType': _$GrpcStreamingTypeEnumMap[instance.streamingType]!,
-      'messageHistory': instance.messageHistory,
+      'messageHistory': instance.messageHistory.map((e) => e.toJson()).toList(),
       'requestBody': instance.requestBody,
       'useReflection': instance.useReflection,
-      'metadata': instance.metadata,
+      'metadata': instance.metadata?.map((e) => e.toJson()).toList(),
       'isMetadataEnabled': instance.isMetadataEnabled,
-      'authModel': instance.authModel,
+      'authModel': instance.authModel?.toJson(),
       'availableServices': instance.availableServices,
       'availableMethods': instance.availableMethods,
-      'parameters': instance.parameters,
+      'parameters': instance.parameters.map((e) => e.toJson()).toList(),
     };
 
 const _$GrpcStreamingTypeEnumMap = {

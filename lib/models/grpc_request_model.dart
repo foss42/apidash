@@ -25,6 +25,10 @@ abstract class GrpcParameterModel with _$GrpcParameterModel {
 abstract class GrpcRequestModel with _$GrpcRequestModel {
   const GrpcRequestModel._();
 
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory GrpcRequestModel({
     @Default("") String url,
     String? service,
