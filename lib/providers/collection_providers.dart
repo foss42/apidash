@@ -1338,12 +1338,22 @@ class CollectionStateNotifier
         };
 
         debugPrint("gRPC: Host established. Checking for method invocation...");
+
+        // Build call metadata once (auth headers + custom metadata). Reflection
+        // needs it too: a server that requires auth rejects unauthenticated
+        // ServerReflectionInfo calls, so it is threaded through the reflection
+        // helpers as well as the actual RPC below.
+        final grpcMetadata = await buildGrpcMetadata(grpcModel);
+        // Guard: disposed while building auth metadata; state writes below throw.
+        if (!mounted) return;
+
         if (grpcModel.useReflection ||
             (grpcModel.service == null && grpcModel.method == null)) {
           debugPrint("gRPC: Fetching services via reflection...");
           final services = await GrpcReflectionService.listServices(
             requestId,
             grpcModel,
+            metadata: grpcMetadata,
           );
           // Guard: disposed while awaiting reflection; state access below throws.
           if (!mounted) return;
@@ -1361,6 +1371,29 @@ class CollectionStateNotifier
                 ),
               };
             }
+          } else if (GrpcReflectionService.lastError != null) {
+            // Reflection produced no services. Surface WHY (wrong reflection
+            // version, TLS mismatch, connection refused, reflection disabled)
+            // through the same message-history error channel the streaming
+            // onError path uses, instead of a silent empty dropdown.
+            final reflectionErrorMsg = WebSocketMessage(
+              payload: "Reflection failed: ${GrpcReflectionService.lastError}",
+              timestamp: DateTime.now(),
+              outgoing: false,
+              messageType: WebSocketMessageType.error,
+            );
+            final currentReq = state?[requestId];
+            if (currentReq != null && currentReq.grpcRequestModel != null) {
+              update(
+                id: requestId,
+                grpcRequestModel: currentReq.grpcRequestModel!.copyWith(
+                  messageHistory: [
+                    ...currentReq.grpcRequestModel!.messageHistory,
+                    reflectionErrorMsg,
+                  ],
+                ),
+              );
+            }
           }
         }
 
@@ -1376,6 +1409,7 @@ class CollectionStateNotifier
               grpcModel,
               grpcModel.service!,
               grpcModel.method!,
+              metadata: grpcMetadata,
             );
           }
           // Guard: disposed while awaiting the method schema.
@@ -1385,10 +1419,6 @@ class CollectionStateNotifier
           final requestData = grpcModel.parameters.isNotEmpty
               ? GrpcUtils.paramsToBytes(grpcModel.parameters)
               : utf8.encode(grpcModel.requestBody);
-
-          final grpcMetadata = await buildGrpcMetadata(grpcModel);
-          // Guard: disposed while building auth metadata; state writes below throw.
-          if (!mounted) return;
 
           final call = ConnectionManager.instance.callGrpcMethod(
             requestId,

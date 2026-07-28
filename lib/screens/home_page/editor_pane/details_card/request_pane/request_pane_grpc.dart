@@ -106,7 +106,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                                 .getMethodsForService(
                                                     requestModel.id,
                                                     grpcModel,
-                                                    val);
+                                                    val,
+                                                    metadata:
+                                                        await buildGrpcMetadata(
+                                                            grpcModel));
                                         methods = result[val] ?? [];
                                       }
                                       ref
@@ -173,7 +176,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                                 requestModel.id,
                                                 grpcModel,
                                                 grpcModel.service!,
-                                                val);
+                                                val,
+                                                metadata:
+                                                    await buildGrpcMetadata(
+                                                        grpcModel));
                                       }
 
                                       ref
@@ -437,14 +443,20 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             await ConnectionManager.instance
                                 .connectGrpc(requestModel.id, grpcModel);
 
+                            // Reflection may require auth on secured servers, so
+                            // thread the same metadata the actual RPC uses.
+                            final reflectionMetadata =
+                                await buildGrpcMetadata(grpcModel);
                             final services =
                                 await GrpcReflectionService.listServices(
-                                    requestModel.id, grpcModel);
+                                    requestModel.id, grpcModel,
+                                    metadata: reflectionMetadata);
                             List<String> methods = [];
                             if (services.isNotEmpty) {
                               final res = await GrpcReflectionService
-                                  .getMethodsForService(requestModel.id,
-                                      grpcModel, services.first);
+                                  .getMethodsForService(
+                                      requestModel.id, grpcModel, services.first,
+                                      metadata: reflectionMetadata);
                               methods = res[services.first] ?? [];
                             }
 
@@ -460,6 +472,21 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                     parameters: [],
                                   ),
                                 );
+
+                            // Empty result with no feedback is the exact bug:
+                            // surface the real reflection error (wrong version,
+                            // TLS mismatch, refused, reflection disabled).
+                            if (services.isEmpty && context.mounted) {
+                              final err = GrpcReflectionService.lastError;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(err != null
+                                      ? "Reflection failed: $err"
+                                      : "No services found. Enable Reflection or select a .proto file."),
+                                  duration: const Duration(milliseconds: 4000),
+                                ),
+                              );
+                            }
                           } else if (grpcModel.protoFile != null) {
                             final result = await GrpcUtils.parseProtoFile(
                                 grpcModel.protoFile!);
@@ -501,11 +528,13 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                   ),
                                 );
                             if (context.mounted) {
+                              final err = GrpcReflectionService.lastError;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      "No services found. Enable Reflection or select a .proto file."),
-                                  duration: Duration(milliseconds: 2500),
+                                SnackBar(
+                                  content: Text(err != null
+                                      ? "No services found. Enable Reflection or select a .proto file.\n$err"
+                                      : "No services found. Enable Reflection or select a .proto file."),
+                                  duration: const Duration(milliseconds: 2500),
                                 ),
                               );
                             }

@@ -281,6 +281,33 @@ class FileDescriptorResponse extends GeneratedMessage {
   List<List<int>> get fileDescriptorProto => $_getList(0);
 }
 
+// grpc.reflection ErrorResponse (field 7 of ServerReflectionResponse). When a
+// server supports reflection but the specific query fails (e.g. symbol/service
+// not found) it returns THIS instead of a gRPC-level status error, so parsing
+// it lets us surface the real reason instead of a silent empty result.
+class ErrorResponse extends GeneratedMessage {
+  static final BuilderInfo _i = BuilderInfo('ErrorResponse',
+      package: const PackageName('grpc.reflection.v1alpha'),
+      createEmptyInstance: create)
+    ..a<int>(1, 'errorCode', PbFieldType.O3)
+    ..aOS(2, 'errorMessage')
+    ..hasRequiredFields = false;
+
+  ErrorResponse() : super();
+  static ErrorResponse create() => ErrorResponse._();
+  ErrorResponse._() : super();
+
+  @override
+  BuilderInfo get info_ => _i;
+  @override
+  ErrorResponse clone() => ErrorResponse()..mergeFromMessage(this);
+  @override
+  ErrorResponse createEmptyInstance() => create();
+
+  int get errorCode => $_getIZ(0);
+  String get errorMessage => $_getS(1, '');
+}
+
 class ServerReflectionResponse extends GeneratedMessage {
   static final BuilderInfo _i = BuilderInfo('ServerReflectionResponse',
       package: const PackageName('grpc.reflection.v1alpha'),
@@ -289,6 +316,7 @@ class ServerReflectionResponse extends GeneratedMessage {
     ..aOM<ServerReflectionRequest>(2, 'originalRequest', subBuilder: ServerReflectionRequest.create)
     ..aOM<FileDescriptorResponse>(4, 'fileDescriptorResponse', subBuilder: FileDescriptorResponse.create)
     ..aOM<ListServiceResponse>(6, 'listServicesResponse', subBuilder: ListServiceResponse.create)
+    ..aOM<ErrorResponse>(7, 'errorResponse', subBuilder: ErrorResponse.create)
     ..hasRequiredFields = false;
 
   ServerReflectionResponse() : super();
@@ -307,115 +335,189 @@ class ServerReflectionResponse extends GeneratedMessage {
 
   ListServiceResponse get listServicesResponse => $_getN(3);
   FileDescriptorResponse get fileDescriptorResponse => $_getN(2);
+  ErrorResponse get errorResponse => $_getN(4);
 }
 
 class GrpcReflectionService {
-  static Future<List<String>> listServices(String requestId, GrpcRequestModel model) async {
-    String host = model.url.trim().split(':')[0];
-    final request = ServerReflectionRequest()..host = host..listServices = "";
-    
+  /// Reflection service names to try, in order. Modern servers expose only
+  /// `grpc.reflection.v1.ServerReflection`; older ones only the `v1alpha`
+  /// variant. Some expose both. The method name (`ServerReflectionInfo`) is the
+  /// same for both versions, so we can retry the SAME request against the other
+  /// service name when the first is UNIMPLEMENTED. v1 is tried first because it
+  /// is the stable/current version.
+  static const List<String> reflectionServices = [
+    'grpc.reflection.v1.ServerReflection',
+    'grpc.reflection.v1alpha.ServerReflection',
+  ];
+
+  static const String reflectionMethod = 'ServerReflectionInfo';
+
+  /// The most recent reflection failure reason, or `null` after a call that
+  /// succeeded. Surfaced to the UI (terminal / message history / SnackBar) so a
+  /// silent empty dropdown becomes an actionable error like
+  /// "UNIMPLEMENTED: unknown service grpc.reflection.v1.ServerReflection".
+  static String? lastError;
+
+  /// Sends a single `ServerReflectionInfo` request, trying each reflection
+  /// service version in [reflectionServices] until one answers. Returns the
+  /// first `ServerReflectionResponse`, or `null` if every version failed.
+  ///
+  /// Each reflection query here maps to exactly one response message, so we
+  /// return after the first. On failure of a version we remember the reason and
+  /// fall through to the next; the final reason is stored in [lastError].
+  static Future<ServerReflectionResponse?> _reflect(
+    String requestId,
+    ServerReflectionRequest request, {
+    Map<String, String>? metadata,
+  }) async {
+    final requestBytes = request.writeToBuffer();
+    String? failure;
+    for (final service in reflectionServices) {
+      try {
+        final call = ConnectionManager.instance.callGrpcMethod(
+          requestId,
+          service,
+          reflectionMethod,
+          requestBytes,
+          metadata: metadata,
+        );
+
+        await for (final responseBytes in call.response) {
+          final response = ServerReflectionResponse.fromBuffer(responseBytes);
+          // Server-side error_response: reflection is reachable on this version
+          // but the query failed (e.g. symbol/service not found). Record the
+          // server's message and try the other version before giving up.
+          if (response.hasField(7)) {
+            final err = response.errorResponse;
+            failure = err.errorMessage.isNotEmpty
+                ? err.errorMessage
+                : 'Reflection error (code ${err.errorCode})';
+            break;
+          }
+          lastError = null;
+          return response;
+        }
+        // Stream ended with no usable message.
+        failure ??= 'Empty reflection response from $service';
+      } catch (e) {
+        // gRPC-level failure for THIS version — e.g. UNIMPLEMENTED when the
+        // server only exposes the other reflection version, a TLS mismatch, or
+        // connection refused. Remember it and try the next version.
+        failure = e.toString();
+      }
+    }
+    lastError = failure;
+    return null;
+  }
+
+  static Future<List<String>> listServices(
+    String requestId,
+    GrpcRequestModel model, {
+    Map<String, String>? metadata,
+  }) async {
     try {
-      final call = ConnectionManager.instance.callGrpcMethod(
-        requestId,
-        "grpc.reflection.v1alpha.ServerReflection",
-        "ServerReflectionInfo",
-        request.writeToBuffer(),
-      );
+      final host = model.url.trim().split(':')[0];
+      final request = ServerReflectionRequest()
+        ..host = host
+        ..listServices = "";
+
+      final response = await _reflect(requestId, request, metadata: metadata);
+      if (response == null) return []; // lastError set by _reflect
 
       final services = <String>[];
-      await for (final responseBytes in call.response) {
-        final response = ServerReflectionResponse.fromBuffer(responseBytes);
-        if (response.hasField(6)) {
-          for (final service in response.listServicesResponse.service) {
-            services.add(service.name);
-          }
-          break; 
+      if (response.hasField(6)) {
+        for (final service in response.listServicesResponse.service) {
+          services.add(service.name);
         }
+      }
+      if (services.isEmpty) {
+        lastError ??= 'Reflection returned no services';
       }
       return services;
     } catch (e) {
+      lastError = e.toString();
       return [];
     }
   }
 
-  static Future<Map<String, List<String>>> getMethodsForService(String requestId, GrpcRequestModel model, String serviceName) async {
-    String host = model.url.trim().split(':')[0];
-    final request = ServerReflectionRequest()..host = host..fileBySymbol = serviceName;
-    
+  static Future<Map<String, List<String>>> getMethodsForService(
+    String requestId,
+    GrpcRequestModel model,
+    String serviceName, {
+    Map<String, String>? metadata,
+  }) async {
     try {
-      final call = ConnectionManager.instance.callGrpcMethod(
-        requestId,
-        "grpc.reflection.v1alpha.ServerReflection",
-        "ServerReflectionInfo",
-        request.writeToBuffer(),
-      );
+      final host = model.url.trim().split(':')[0];
+      final request = ServerReflectionRequest()
+        ..host = host
+        ..fileBySymbol = serviceName;
 
+      final response = await _reflect(requestId, request, metadata: metadata);
       final Map<String, List<String>> result = {};
-      
-      await for (final responseBytes in call.response) {
-        final response = ServerReflectionResponse.fromBuffer(responseBytes);
-        if (response.hasField(4)) {
-          for (final protoBytes in response.fileDescriptorResponse.fileDescriptorProto) {
-            final fileProto = FileDescriptorProto.fromBuffer(protoBytes);
-            final package = fileProto.package;
-            
-            for (final service in fileProto.service) {
-              final fullName = package.isNotEmpty ? "$package.${service.name}" : service.name;
-              if (fullName == serviceName) {
-                final methods = service.method.map((m) => m.name).toList();
-                result[fullName] = methods;
-              }
+      if (response != null && response.hasField(4)) {
+        for (final protoBytes
+            in response.fileDescriptorResponse.fileDescriptorProto) {
+          final fileProto = FileDescriptorProto.fromBuffer(protoBytes);
+          final package = fileProto.package;
+
+          for (final service in fileProto.service) {
+            final fullName =
+                package.isNotEmpty ? "$package.${service.name}" : service.name;
+            if (fullName == serviceName) {
+              result[fullName] = service.method.map((m) => m.name).toList();
             }
           }
-          if (result.isNotEmpty) break;
         }
       }
       return result;
     } catch (e) {
+      lastError = e.toString();
       return {};
     }
   }
 
-  static Future<GrpcMethodSchema?> getMethodSchema(String requestId, GrpcRequestModel model, String serviceName, String methodName) async {
-    String host = model.url.trim().split(':')[0];
-    final request = ServerReflectionRequest()..host = host..fileBySymbol = serviceName;
-    
+  static Future<GrpcMethodSchema?> getMethodSchema(
+    String requestId,
+    GrpcRequestModel model,
+    String serviceName,
+    String methodName, {
+    Map<String, String>? metadata,
+  }) async {
     try {
-      final call = ConnectionManager.instance.callGrpcMethod(
-        requestId,
-        "grpc.reflection.v1alpha.ServerReflection",
-        "ServerReflectionInfo",
-        request.writeToBuffer(),
-      );
+      final host = model.url.trim().split(':')[0];
+      final request = ServerReflectionRequest()
+        ..host = host
+        ..fileBySymbol = serviceName;
+
+      final response = await _reflect(requestId, request, metadata: metadata);
+      if (response == null || !response.hasField(4)) return null;
 
       String? inputType;
       String? outputType;
       final List<FileDescriptorProto> fileProtos = [];
-      
-      await for (final responseBytes in call.response) {
-        final response = ServerReflectionResponse.fromBuffer(responseBytes);
-        if (response.hasField(4)) {
-          for (final protoBytes in response.fileDescriptorResponse.fileDescriptorProto) {
-            final fileProto = FileDescriptorProto.fromBuffer(protoBytes);
-            fileProtos.add(fileProto);
-            final package = fileProto.package;
-            
-            for (final service in fileProto.service) {
-              final fullName = package.isNotEmpty ? "$package.${service.name}" : service.name;
-              if (fullName == serviceName) {
-                for (final method in service.method) {
-                  if (method.name == methodName) {
-                    inputType = method.inputType;
-                    outputType = method.outputType;
-                    if (inputType.startsWith('.')) inputType = inputType.substring(1);
-                    if (outputType.startsWith('.')) outputType = outputType.substring(1);
-                    break;
-                  }
+
+      for (final protoBytes
+          in response.fileDescriptorResponse.fileDescriptorProto) {
+        final fileProto = FileDescriptorProto.fromBuffer(protoBytes);
+        fileProtos.add(fileProto);
+        final package = fileProto.package;
+
+        for (final service in fileProto.service) {
+          final fullName =
+              package.isNotEmpty ? "$package.${service.name}" : service.name;
+          if (fullName == serviceName) {
+            for (final method in service.method) {
+              if (method.name == methodName) {
+                inputType = method.inputType;
+                outputType = method.outputType;
+                if (inputType.startsWith('.')) inputType = inputType.substring(1);
+                if (outputType.startsWith('.')) {
+                  outputType = outputType.substring(1);
                 }
+                break;
               }
             }
           }
-          if (inputType != null && outputType != null) break;
         }
       }
 
@@ -425,38 +527,37 @@ class GrpcReflectionService {
       for (final fp in fileProtos) {
         final package = fp.package;
         for (final msg in fp.messageType) {
-          final fullName = package.isNotEmpty ? "$package.${msg.name}" : msg.name;
+          final fullName =
+              package.isNotEmpty ? "$package.${msg.name}" : msg.name;
           allDescriptors[fullName] = msg;
         }
       }
 
       for (final type in [inputType, outputType]) {
         if (!allDescriptors.containsKey(type)) {
-          String host = model.url.trim().split(':')[0];
-          final requestMsg = ServerReflectionRequest()..host = host..fileBySymbol = type;
-          final callMsg = ConnectionManager.instance.callGrpcMethod(
-            requestId,
-            "grpc.reflection.v1alpha.ServerReflection",
-            "ServerReflectionInfo",
-            requestMsg.writeToBuffer(),
-          );
-
-          await for (final responseBytes in callMsg.response) {
-            final response = ServerReflectionResponse.fromBuffer(responseBytes);
-            if (response.hasField(4)) {
-              for (final protoBytes in response.fileDescriptorResponse.fileDescriptorProto) {
-                final fileProto = FileDescriptorProto.fromBuffer(protoBytes);
-                final package = fileProto.package;
-                for (final msg in fileProto.messageType) {
-                  final fullName = package.isNotEmpty ? "$package.${msg.name}" : msg.name;
-                  allDescriptors[fullName] = msg;
-                }
+          final typeRequest = ServerReflectionRequest()
+            ..host = host
+            ..fileBySymbol = type;
+          final typeResponse =
+              await _reflect(requestId, typeRequest, metadata: metadata);
+          if (typeResponse != null && typeResponse.hasField(4)) {
+            for (final protoBytes
+                in typeResponse.fileDescriptorResponse.fileDescriptorProto) {
+              final fileProto = FileDescriptorProto.fromBuffer(protoBytes);
+              final package = fileProto.package;
+              for (final msg in fileProto.messageType) {
+                final fullName =
+                    package.isNotEmpty ? "$package.${msg.name}" : msg.name;
+                allDescriptors[fullName] = msg;
               }
             }
           }
         }
       }
 
+      // Reached a complete schema: clear any per-version failure captured while
+      // resolving nested message types so callers don't see a stale error.
+      lastError = null;
       return GrpcMethodSchema(
         inputType: inputType,
         outputType: outputType,
@@ -464,15 +565,27 @@ class GrpcReflectionService {
         outputDescriptor: allDescriptors[outputType],
         allDescriptors: allDescriptors,
       );
-
     } catch (e) {
+      lastError = e.toString();
       return null;
     }
   }
 
-  static Future<List<GrpcParameterModel>> getParamsForMethod(String requestId, GrpcRequestModel model, String serviceName, String methodName) async {
+  static Future<List<GrpcParameterModel>> getParamsForMethod(
+    String requestId,
+    GrpcRequestModel model,
+    String serviceName,
+    String methodName, {
+    Map<String, String>? metadata,
+  }) async {
     try {
-      final schema = await getMethodSchema(requestId, model, serviceName, methodName);
+      final schema = await getMethodSchema(
+        requestId,
+        model,
+        serviceName,
+        methodName,
+        metadata: metadata,
+      );
       if (schema == null || schema.inputDescriptor == null) return [];
 
       return schema.inputDescriptor!.field.map((f) => GrpcParameterModel(
@@ -483,6 +596,7 @@ class GrpcReflectionService {
         value: "",
       )).toList();
     } catch (e) {
+      lastError = e.toString();
       return [];
     }
   }
