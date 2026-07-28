@@ -168,8 +168,11 @@ class CollectionStateNotifier
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId);
 
-    // Cleanup active connections
+    // Cleanup active connections. Both are safe no-ops when the tab has no
+    // matching connection, so deleting a gRPC tab tears down its channel and
+    // request controller instead of leaking them (mirrors the WS `disconnect`).
     ConnectionManager.instance.disconnect(rId);
+    ConnectionManager.instance.disconnectGrpc(rId);
     cancelHttpRequest(rId);
 
     itemIds.remove(rId);
@@ -1291,6 +1294,10 @@ class CollectionStateNotifier
       update(id: requestId, isWorking: true);
       await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
 
+      // Guard: the notifier may have been disposed while awaiting the gRPC
+      // channel handshake; the `state` reads/writes below would throw otherwise.
+      if (!mounted) return;
+
       String host = grpcModel.url.trim();
       int port = 50051;
       if (host.contains(':')) {
@@ -1338,6 +1345,8 @@ class CollectionStateNotifier
             requestId,
             grpcModel,
           );
+          // Guard: disposed while awaiting reflection; state access below throws.
+          if (!mounted) return;
           if (services.isNotEmpty) {
             final latestRequest = state?[requestId];
             if (latestRequest != null &&
@@ -1369,18 +1378,24 @@ class CollectionStateNotifier
               grpcModel.method!,
             );
           }
+          // Guard: disposed while awaiting the method schema.
+          if (!mounted) return;
 
           final startTime = DateTime.now();
           final requestData = grpcModel.parameters.isNotEmpty
               ? GrpcUtils.paramsToBytes(grpcModel.parameters)
               : utf8.encode(grpcModel.requestBody);
 
+          final grpcMetadata = await buildGrpcMetadata(grpcModel);
+          // Guard: disposed while building auth metadata; state writes below throw.
+          if (!mounted) return;
+
           final call = ConnectionManager.instance.callGrpcMethod(
             requestId,
             grpcModel.service!,
             grpcModel.method!,
             requestData,
-            metadata: await buildGrpcMetadata(grpcModel),
+            metadata: grpcMetadata,
             streamingType: grpcModel.streamingType,
           );
 
@@ -1430,6 +1445,9 @@ class CollectionStateNotifier
 
           call.response.listen(
             (data) {
+              // Guard: stream events can arrive after the notifier is disposed
+              // (free-floating subscription); touching `state` then throws.
+              if (!mounted) return;
               final duration = DateTime.now().difference(startTime);
               final payload = GrpcUtils.decodeBinaryResponse(
                 data,
@@ -1452,36 +1470,41 @@ class CollectionStateNotifier
                       )
                       .length;
 
-                  state = {
-                    ...state!,
-                    requestId: currentReq.copyWith(
-                      isWorking: false,
-                      isStreaming: false,
-                      responseStatus: receivedCount == 0
-                          ? 200
-                          : currentReq.responseStatus,
-                      httpResponseModel: receivedCount == 0
-                          ? HttpResponseModel(
-                              body: payload,
-                              bodyBytes: utf8.encode(payload),
-                              time: duration,
-                              headers: initialMetadata.map(
-                                (k, v) => MapEntry("[Initial] $k", v),
-                              ),
-                            )
-                          : currentReq.httpResponseModel,
-                      grpcRequestModel: grpcReqModel.copyWith(
-                        messageHistory: [
-                          ...grpcReqModel.messageHistory,
-                          responseMsg,
-                        ],
-                      ),
+                  update(
+                    id: requestId,
+                    isWorking: false,
+                    isStreaming: false,
+                    responseStatus: receivedCount == 0
+                        ? 200
+                        : currentReq.responseStatus,
+                    httpResponseModel: receivedCount == 0
+                        ? HttpResponseModel(
+                            body: payload,
+                            bodyBytes: utf8.encode(payload),
+                            time: duration,
+                            headers: initialMetadata.map(
+                              (k, v) => MapEntry("[Initial] $k", v),
+                            ),
+                          )
+                        : currentReq.httpResponseModel,
+                    grpcRequestModel: grpcReqModel.copyWith(
+                      messageHistory: [
+                        ...grpcReqModel.messageHistory,
+                        responseMsg,
+                      ],
                     ),
-                  };
+                  );
                 }
               }
             },
             onDone: () {
+              // Guard: onDone fires asynchronously after the call completes and
+              // may run after the notifier is disposed; touching `state` throws.
+              if (!mounted) return;
+              // The call has ended: close any still-open client/bidi request
+              // stream so `hasGrpcRequestStream` is false and the Body-tab Send
+              // button no longer pushes into a dead call (no-op for unary/server).
+              ConnectionManager.instance.finishGrpcSending(requestId);
               final currentReq = state?[requestId];
               if (currentReq != null) {
                 final responseModel = currentReq.httpResponseModel;
@@ -1492,16 +1515,14 @@ class CollectionStateNotifier
                   ),
                 };
 
-                state = {
-                  ...state!,
-                  requestId: currentReq.copyWith(
-                    isWorking: false,
-                    isStreaming: false,
-                    httpResponseModel: responseModel?.copyWith(
-                      headers: finalHeaders,
-                    ),
+                update(
+                  id: requestId,
+                  isWorking: false,
+                  isStreaming: false,
+                  httpResponseModel: responseModel?.copyWith(
+                    headers: finalHeaders,
                   ),
-                };
+                );
               }
               if (historyId != null) {
                 _updateGrpcHistoryRecord(
@@ -1511,6 +1532,12 @@ class CollectionStateNotifier
               }
             },
             onError: (e) {
+              // Guard: onError can fire after dispose (call failing while the tab
+              // is torn down); touching `state` then throws "used after dispose".
+              if (!mounted) return;
+              // The call has ended in error: close any open client/bidi request
+              // stream so the Body-tab Send button no longer targets a dead call.
+              ConnectionManager.instance.finishGrpcSending(requestId);
               final errorMsg = WebSocketMessage(
                 payload: "RPC Error: ${e.toString()}",
                 timestamp: DateTime.now(),
@@ -1521,23 +1548,21 @@ class CollectionStateNotifier
               final currentReq = state?[requestId];
               if (currentReq != null && currentReq.grpcRequestModel != null) {
                 final currentGrpc = currentReq.grpcRequestModel!;
-                state = {
-                  ...state!,
-                  requestId: currentReq.copyWith(
-                    isWorking: false,
-                    isStreaming: false,
-                    responseStatus: 400,
-                    message: "",
-                    httpResponseModel: HttpResponseModel(
-                      body: e.toString(),
-                      bodyBytes: utf8.encode(e.toString()),
-                      time: Duration.zero,
-                    ),
-                    grpcRequestModel: currentGrpc.copyWith(
-                      messageHistory: [...currentGrpc.messageHistory, errorMsg],
-                    ),
+                update(
+                  id: requestId,
+                  isWorking: false,
+                  isStreaming: false,
+                  responseStatus: 400,
+                  message: "",
+                  httpResponseModel: HttpResponseModel(
+                    body: e.toString(),
+                    bodyBytes: utf8.encode(e.toString()),
+                    time: Duration.zero,
                   ),
-                };
+                  grpcRequestModel: currentGrpc.copyWith(
+                    messageHistory: [...currentGrpc.messageHistory, errorMsg],
+                  ),
+                );
               }
               if (historyId != null) {
                 _updateGrpcHistoryRecord(
