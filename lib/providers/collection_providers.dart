@@ -1515,6 +1515,8 @@ class CollectionStateNotifier
                             headers: initialMetadata.map(
                               (k, v) => MapEntry("[Initial] $k", v),
                             ),
+                            // The metadata we sent → shown as "Request Headers".
+                            requestHeaders: grpcMetadata,
                           )
                         : currentReq.httpResponseModel,
                     grpcRequestModel: grpcReqModel.copyWith(
@@ -1588,6 +1590,7 @@ class CollectionStateNotifier
                     body: e.toString(),
                     bodyBytes: utf8.encode(e.toString()),
                     time: Duration.zero,
+                    requestHeaders: grpcMetadata,
                   ),
                   grpcRequestModel: currentGrpc.copyWith(
                     messageHistory: [...currentGrpc.messageHistory, errorMsg],
