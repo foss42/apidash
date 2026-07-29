@@ -45,7 +45,12 @@ class ResponsePane extends ConsumerWidget {
 
     // ── gRPC response: stream view if multiple ───────────────────────
     if (apiType == APIType.grpc) {
-      if (isWorking && !isStreaming) {
+      // While the request is in flight (connecting / awaiting the first
+      // response) show the same "sending" animation HTTP uses — for every
+      // streaming type. `isWorking` is cleared on the first received message
+      // (see _connectGrpc), at which point we fall through to the stream view
+      // (streaming) or the single-response view (unary).
+      if (isWorking) {
         return SendingWidget(
           startSendingTime: startSendingTime,
         );
