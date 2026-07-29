@@ -1291,7 +1291,19 @@ class CollectionStateNotifier
     String? historyId,
   }) async {
     try {
-      update(id: requestId, isWorking: true);
+      // Mark in-flight AND stamp sendingTime so the response pane's sending
+      // animation shows a live elapsed timer (mirrors WS/HTTP). Without
+      // sendingTime the timer is stuck at 0ms.
+      final connectingReq = state?[requestId];
+      if (connectingReq != null) {
+        state = {
+          ...state!,
+          requestId: connectingReq.copyWith(
+            isWorking: true,
+            sendingTime: DateTime.now(),
+          ),
+        };
+      }
       await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
 
       // Guard: the notifier may have been disposed while awaiting the gRPC
