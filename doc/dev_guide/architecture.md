@@ -8,7 +8,7 @@ This document provides an overview of the API Dash project architecture for deve
 |-----------|------------|
 | **Framework** | Flutter (Dart) |
 | **State Management** | Riverpod |
-| **Local Storage** | Hive (NoSQL embedded database) |
+| **Local Storage** | Filesystem JSON workspaces; SharedPreferences for settings; `flutter_secure_storage` for secrets |
 | **Code Generation (models)** | Freezed, json_serializable, build_runner |
 | **Code Generation (API)** | Jinja templates |
 | **Monorepo Management** | Melos |
@@ -24,6 +24,8 @@ apidash/
 │   ├── consts.dart               # Constants, enums, defaults
 │   ├── codegen/                  # Code generation for 30+ languages
 │   ├── dashbot/                  # AI assistant (Dashbot)
+│   ├── git/                      # Desktop Git collaboration (system git CLI)
+│   ├── sync/                     # LAN QR Scan Sync (phone ↔ desktop)
 │   ├── importer/                 # Import from cURL, Postman, etc.
 │   ├── models/                   # Data models (Freezed)
 │   ├── providers/                # Riverpod state management
@@ -56,7 +58,7 @@ The app starts in `lib/main.dart` and follows this initialization sequence:
 1. **Analytics setup** — Initialize telemetry (Stac).
 2. **AI model loading** — Load available AI models via `ModelManager`.
 3. **Settings loading** — Read user preferences from `SharedPreferences`.
-4. **Hive initialization** — Open persistent storage boxes for requests, environments, history, and Dashbot data.
+4. **Workspace storage** — Resolve and open the filesystem workspace (`WorkspaceStorage`); secrets via secure storage.
 5. **Window configuration** — Restore window size and position on desktop platforms.
 6. **Provider injection** — Wrap the app in Riverpod `ProviderScope` with initial settings.
 7. **Run app** — Launch `DashApp`.
@@ -72,6 +74,7 @@ DashApp (ConsumerWidget)
               │   ├── Requests tab     → HomePage
               │   ├── Variables tab    → EnvironmentPage
               │   ├── History tab      → HistoryPage
+              │   ├── Collaboration    → Git + Sync (desktop); Sync-only (mobile)
               │   └── Logs tab         → TerminalPage
               └── Content Area
                   └── HomePage
@@ -88,13 +91,15 @@ All application state is managed through Riverpod providers. Providers are organ
 
 | File | Purpose |
 |------|---------|
-| `collection_providers.dart` | Request collection CRUD, selection, ordering |
+| `collection_catalog_providers.dart` / `active_collection_providers.dart` | Multi-collection catalog, active collection CRUD, lazy request load, selection |
 | `ui_providers.dart` | UI state (navigation, edit mode, search, visibility) |
-| `settings_providers.dart` | Theme, window, codegen language, SSL, workspace |
+| `settings_providers.dart` | Theme, window, codegen language, SSL, workspace path |
 | `environment_providers.dart` | Environment variables and active environment |
 | `history_providers.dart` | Request history management |
 | `ai_providers.dart` | AI/Dashbot integration |
 | `terminal_providers.dart` | Debug console and network logs |
+| `lib/git/providers/` | Git status, fetch/pull/push/commit (desktop) |
+| `lib/sync/providers/` | Scan Sync session state |
 
 ### Key Providers
 
@@ -102,10 +107,10 @@ All application state is managed through Riverpod providers. Providers are organ
 // Currently selected request
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
-// Collection of all requests (Map<String, RequestModel>)
-final collectionStateNotifierProvider = StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>(...)
+// Active collection requests (lazy-loaded Map<String, RequestModel>)
+final activeCollectionProvider = ...
 
-// Request ordering
+// Request ordering within the active collection
 final requestSequenceProvider = StateProvider<List<String>>((ref) => []);
 
 // App settings (theme, workspace, etc.)
@@ -119,7 +124,7 @@ final navRailIndexStateProvider = StateProvider<int>((ref) => 0);
 
 ```
 User clicks Send →
-  collectionStateNotifierProvider sends HTTP request →
+  active collection notifier sends HTTP request →
     Response stored in RequestModel →
       selectedRequestModelProvider reactively updates →
         Response pane UI rebuilds with new data
@@ -138,49 +143,53 @@ Models are defined using **Freezed** for immutability and **json_serializable** 
 
 The core HTTP request/response models (`HttpRequestModel`, `HttpResponseModel`) are defined in the `apidash_core` package.
 
-## Persistent Storage (Hive)
+## Persistent Storage (filesystem workspaces)
 
-API Dash uses Hive, a lightweight NoSQL database optimized for Flutter.
+Hive has been removed. A **workspace** is a folder of pretty-printed JSON (Git- and Sync-friendly). Settings remain in SharedPreferences. Environment secrets and AI API keys use `flutter_secure_storage` (not written as secret values on disk).
 
-### Storage Boxes
+### On-disk layout (simplified)
 
-| Box Name | Type | Content |
-|----------|------|---------|
-| `apidash-data` | Normal | Request models (full request data) |
-| `apidash-environments` | Normal | Environment variable sets |
-| `apidash-history-meta` | Normal | History metadata (dates, status codes) |
-| `apidash-history-lazy` | Lazy | Full history request data (loaded on demand) |
-| `apidash-dashbot-data` | Lazy | Dashbot AI conversation data |
-
-### HiveHandler API
-
-The `HiveHandler` class in `lib/services/hive_services.dart` provides all data access:
-
-```dart
-class HiveHandler {
-  // Request CRUD
-  dynamic getIds();
-  void setIds(List<String> ids);
-  dynamic getRequestModel(String id);
-  void setRequestModel(String id, Map<String, dynamic> data);
-  void removeRequestModel(String id);
-
-  // Environment CRUD
-  dynamic getEnvironmentIds();
-  dynamic getEnvironment(String id);
-
-  // History (lazy-loaded)
-  dynamic getHistoryIds();
-  dynamic getHistoryMeta(String id);
-  dynamic getHistoryRequest(String id);
-}
 ```
+<workspaceRoot>/
+├── collections/
+│   ├── collection_index.json
+│   └── <Collection Name>/
+│       ├── request_index.json
+│       └── <slug_id>/
+│           ├── request.json
+│           ├── response.json
+│           └── response_body.<ext>   # optional
+├── environments/
+│   ├── environment_index.json
+│   ├── global.json
+│   └── <envId>.json
+├── history/                          # local-only (gitignored / Sync excluded)
+├── .apidash/                         # workspace identity + sync baseline
+└── … (workflows on branches that include Workflow Builder)
+```
+
+### Key APIs
+
+| Concern | Start here |
+|---------|------------|
+| CRUD / paths | `lib/services/storage/workspace_storage.dart` |
+| Activate workspace | `lib/services/workspace_service.dart` |
+| Autosave | `lib/providers/auto_save.dart` |
+| Desktop disk → memory | `lib/providers/workspace_disk_sync.dart` |
+| Post Git/Sync reload | `lib/providers/workspace_lifecycle.dart` → `reloadWorkspaceFromDisk` |
+
+Requests are **lazy-loaded** into memory when selected (or when selected after delete). Deleting a request selects a neighbor and loads it so the editor does not go blank.
 
 ### Data Location
 
 - **Desktop:** User-selected workspace folder.
-- **Mobile:** App documents directory (managed by OS).
-- **Web:** Browser localStorage (via `apidash_core`).
+- **Mobile:** App documents directory under `apidash/workspaces/<id>` (path rebased on boot).
+- **Web:** Browser storage via platform adapters (where supported).
+
+## Collaboration (Git & Scan Sync)
+
+- **Git (desktop):** `lib/git/` — system `git` CLI. Overview actions: **Check remote** (`fetch` + snackbar with ahead/behind guidance), **Pull**, **Push**, commit, branches, visual diffs. See [Collaboration user guide](../user_guide/collaboration_guide.md).
+- **Scan Sync:** `lib/sync/` — one-way LAN QR send/receive; shares change-tree / diff UI with Git where useful.
 
 ## Code Generation System
 

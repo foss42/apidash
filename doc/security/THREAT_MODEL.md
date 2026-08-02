@@ -16,11 +16,12 @@ This document presents a comprehensive threat model for API Dash using the STRID
 API Dash is a Flutter-based desktop and mobile application that:
 
 - Runs locally on user devices (Windows, macOS, Linux, iOS, iPad)
-- Stores data locally using Hive database
-- Does not require backend servers or cloud services
+- Stores workspace data as JSON on the filesystem (not Hive); settings in SharedPreferences; secrets in OS secure storage
+- Does not require backend servers or cloud services for core API testing
 - Supports multiple API types: HTTP, GraphQL, SSE/Streaming, AI
 - Generates integration code in 20+ languages/libraries
 - Imports collections from Postman, cURL, Insomnia, OpenAPI, HAR formats
+- Desktop Collaboration: Git (system CLI) and LAN QR Sync to phone
 - Integrates with AI models via Ollama or cloud providers for API testing assistance
 
 ### 1.2 Key Components
@@ -37,9 +38,9 @@ API Dash is a Flutter-based desktop and mobile application that:
 └──────────────────────────────────────────────────────────┘
                             │
 ┌─────────────┬──────────────┬──────────────┬──────────────┐
-│   Network   │  Local Data  │   Code Gen   │  AI/Ollama   │
+│   Network   │  Workspace   │   Code Gen   │  AI/Ollama   │
 │   Layer     │   Storage    │   Templates  │  Integration │
-│  (HTTP/API) │   (Hive)     │              │              │
+│  (HTTP/API) │  (JSON/FS)   │              │              │
 └─────────────┴──────────────┴──────────────┴──────────────┘
                             │
 ┌──────────────────────────────────────────────────────────┐
@@ -51,7 +52,7 @@ API Dash is a Flutter-based desktop and mobile application that:
 ### 1.3 Data Flow
 
 1. **User Input** → API Request Configuration (URL, headers, body, authentication)
-2. **Local Storage** → Hive database stores requests, collections, history, settings
+2. **Local Storage** → Filesystem workspace JSON stores requests, collections, history metadata; secrets stripped to secure storage
 3. **Network Request** → Direct HTTP calls to target APIs
 4. **Response Handling** → Display/store API responses (including multimedia)
 5. **Code Generation** → Transform requests into code snippets
