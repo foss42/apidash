@@ -8,6 +8,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:apidash/workflow/utils/workflow_ai_secrets.dart';
 import '../constants.dart';
 import '../models/models.dart';
 import '../prompts/prompts.dart' as dash;
@@ -941,7 +942,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             replaceExistingId: replaceCurrent ? currentId : null,
           );
       final doc = prepared.document;
-      await workspaceStorage.setWorkflow(doc.id, doc.toJson());
+      final json = await prepareWorkflowJsonForDisk(
+        workflowId: doc.id,
+        json: doc.toJson(),
+      );
+      await workspaceStorage.setWorkflow(doc.id, json);
       final index = workspaceStorage.getWorkflowsIndex().toList();
       if (!index.contains(doc.id)) {
         index.add(doc.id);

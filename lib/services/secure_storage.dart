@@ -15,6 +15,7 @@ String _workspaceId(String workspacePath) =>
 const _envStorageKeyPrefix = 'apidash_env_secret';
 const _aiRequestStorageKeyPrefix = 'apidash_ai_secret';
 const _aiHistoryStorageKeyPrefix = 'apidash_ai_history_secret';
+const _aiWorkflowStorageKeyPrefix = 'apidash_ai_workflow_secret';
 const _defaultAiApiKeyStorageKey = 'apidash_default_ai_api_key';
 
 class EnvironmentSecretsStorage {
@@ -134,6 +135,13 @@ class AiRequestSecretsStorage {
   String _historyKey(String workspacePath, String historyId) =>
       '$_aiHistoryStorageKeyPrefix/${_workspaceId(workspacePath)}/$historyId';
 
+  String _workflowKey(
+    String workspacePath,
+    String workflowId,
+    String requestId,
+  ) =>
+      '$_aiWorkflowStorageKeyPrefix/${_workspaceId(workspacePath)}/$workflowId/$requestId';
+
   Future<String?> readApiKey(
     String workspacePath,
     String collectionId,
@@ -222,6 +230,109 @@ class AiRequestSecretsStorage {
     return _storage.delete(key: _historyKey(workspacePath, historyId));
   }
 
+  Future<String?> readWorkflowApiKey(
+    String workspacePath,
+    String workflowId,
+    String requestId,
+  ) {
+    return _storage.read(
+      key: _workflowKey(workspacePath, workflowId, requestId),
+    );
+  }
+
+  Future<void> writeWorkflowApiKey(
+    String workspacePath,
+    String workflowId,
+    String requestId,
+    String value,
+  ) {
+    return _storage.write(
+      key: _workflowKey(workspacePath, workflowId, requestId),
+      value: value,
+    );
+  }
+
+  Future<void> deleteWorkflowApiKey(
+    String workspacePath,
+    String workflowId,
+    String requestId,
+  ) {
+    return _storage.delete(
+      key: _workflowKey(workspacePath, workflowId, requestId),
+    );
+  }
+
+  Future<void> rekeyWorkflowApiKeys(
+    String workspacePath,
+    String oldWorkflowId,
+    String newWorkflowId,
+  ) async {
+    if (oldWorkflowId == newWorkflowId) {
+      return;
+    }
+    final prefix =
+        '$_aiWorkflowStorageKeyPrefix/${_workspaceId(workspacePath)}/$oldWorkflowId/';
+    try {
+      final all = await _storage.readAll();
+      for (final entry in all.entries) {
+        if (!entry.key.startsWith(prefix)) {
+          continue;
+        }
+        final requestId = entry.key.substring(prefix.length);
+        await writeWorkflowApiKey(
+          workspacePath,
+          newWorkflowId,
+          requestId,
+          entry.value,
+        );
+        await _storage.delete(key: entry.key);
+      }
+    } catch (_) {
+      // Best-effort rekey.
+    }
+  }
+
+  Future<void> deleteOrphansForWorkflow(
+    String workspacePath,
+    String workflowId,
+    Set<String> activeRequestIds,
+  ) async {
+    try {
+      final prefix =
+          '$_aiWorkflowStorageKeyPrefix/${_workspaceId(workspacePath)}/$workflowId/';
+      final all = await _storage.readAll();
+      for (final key in all.keys) {
+        if (!key.startsWith(prefix)) {
+          continue;
+        }
+        final requestId = key.substring(prefix.length);
+        if (!activeRequestIds.contains(requestId)) {
+          await _storage.delete(key: key);
+        }
+      }
+    } catch (_) {
+      // Best-effort cleanup.
+    }
+  }
+
+  Future<void> deleteAllForWorkflow(
+    String workspacePath,
+    String workflowId,
+  ) async {
+    final prefix =
+        '$_aiWorkflowStorageKeyPrefix/${_workspaceId(workspacePath)}/$workflowId/';
+    try {
+      final all = await _storage.readAll();
+      for (final key in all.keys) {
+        if (key.startsWith(prefix)) {
+          await _storage.delete(key: key);
+        }
+      }
+    } catch (_) {
+      // Best-effort cleanup.
+    }
+  }
+
   Future<String?> readDefaultApiKey() {
     return _storage.read(key: _defaultAiApiKeyStorageKey);
   }
@@ -238,10 +349,13 @@ class AiRequestSecretsStorage {
     final workspaceToken = _workspaceId(workspacePath);
     final requestPrefix = '$_aiRequestStorageKeyPrefix/$workspaceToken/';
     final historyPrefix = '$_aiHistoryStorageKeyPrefix/$workspaceToken/';
+    final workflowPrefix = '$_aiWorkflowStorageKeyPrefix/$workspaceToken/';
     try {
       final all = await _storage.readAll();
       for (final key in all.keys) {
-        if (key.startsWith(requestPrefix) || key.startsWith(historyPrefix)) {
+        if (key.startsWith(requestPrefix) ||
+            key.startsWith(historyPrefix) ||
+            key.startsWith(workflowPrefix)) {
           await _storage.delete(key: key);
         }
       }

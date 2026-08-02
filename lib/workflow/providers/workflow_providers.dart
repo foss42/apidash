@@ -1,6 +1,7 @@
 import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/settings_providers.dart';
+import 'package:apidash/services/secure_storage.dart';
 import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/workflow/engine/workflow_auto_arrange.dart';
@@ -9,6 +10,7 @@ import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/providers/workflow_history_providers.dart';
 import 'package:apidash/workflow/providers/workflow_ui_providers.dart';
+import 'package:apidash/workflow/utils/workflow_ai_secrets.dart';
 import 'package:apidash/workflow/utils/workflow_variable_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
@@ -112,6 +114,12 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
   }
 
   Future<void> deleteWorkflow(String workflowName) async {
+    if (isWorkspaceStorageInitialized()) {
+      await aiRequestSecretsStorage.deleteAllForWorkflow(
+        workspaceStorage.rootPath,
+        workflowName,
+      );
+    }
     await workspaceStorage.deleteWorkflow(workflowName);
     final remaining = workspaceStorage
         .getWorkflowsIndex()
@@ -136,6 +144,13 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
       return;
     }
     final uniqueName = _uniqueWorkflowName(trimmed, except: workflowName);
+    if (isWorkspaceStorageInitialized()) {
+      await aiRequestSecretsStorage.rekeyWorkflowApiKeys(
+        workspaceStorage.rootPath,
+        workflowName,
+        uniqueName,
+      );
+    }
     await workspaceStorage.renameWorkflow(workflowName, uniqueName);
     if (ref.read(selectedWorkflowIdStateProvider) == workflowName) {
       ref.read(selectedWorkflowIdStateProvider.notifier).state = uniqueName;
@@ -160,7 +175,11 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
   }
 
   Future<void> _persistWorkflow(WorkflowDocument workflow) async {
-    await workspaceStorage.setWorkflow(workflow.id, workflow.toJson());
+    final json = await prepareWorkflowJsonForDisk(
+      workflowId: workflow.id,
+      json: workflow.toJson(),
+    );
+    await workspaceStorage.setWorkflow(workflow.id, json);
     final index = workspaceStorage.getWorkflowsIndex().toList();
     if (!index.contains(workflow.id)) {
       index.add(workflow.id);
@@ -178,6 +197,13 @@ class WorkflowCatalogNotifier extends AsyncNotifier<List<WorkflowSummary>> {
         ref.read(selectedWorkflowIdStateProvider) == workflowId;
     if (!wasKnown && !wasSelected) {
       return false;
+    }
+
+    if (isWorkspaceStorageInitialized()) {
+      await aiRequestSecretsStorage.deleteAllForWorkflow(
+        workspaceStorage.rootPath,
+        workflowId,
+      );
     }
 
     if (index.contains(workflowId)) {
@@ -263,7 +289,9 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
       state = null;
       return;
     }
-    state = WorkflowDocument.fromJson(json);
+    var workflow = WorkflowDocument.fromJson(json);
+    workflow = await hydrateWorkflowAiApiKeys(workflow);
+    state = workflow;
   }
 
   void clear() {
@@ -281,13 +309,28 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
   }
 
   Future<void> save(WorkflowDocument workflow) async {
-    final name = workflow.name.trim().isNotEmpty ? workflow.name.trim() : workflow.id;
+    final previousId = state?.id;
+    final name =
+        workflow.name.trim().isNotEmpty ? workflow.name.trim() : workflow.id;
     final updated = workflow.copyWith(
       id: name,
       name: name,
     );
+    if (previousId != null &&
+        previousId != updated.id &&
+        isWorkspaceStorageInitialized()) {
+      await aiRequestSecretsStorage.rekeyWorkflowApiKeys(
+        workspaceStorage.rootPath,
+        previousId,
+        updated.id,
+      );
+    }
     state = updated;
-    await workspaceStorage.setWorkflow(updated.id, updated.toJson());
+    final json = await prepareWorkflowJsonForDisk(
+      workflowId: updated.id,
+      json: updated.toJson(),
+    );
+    await workspaceStorage.setWorkflow(updated.id, json);
     final index = workspaceStorage.getWorkflowsIndex().toList();
     if (!index.contains(updated.id)) {
       index.add(updated.id);
