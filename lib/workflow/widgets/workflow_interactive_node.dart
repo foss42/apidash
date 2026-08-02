@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 class WorkflowInteractiveNode extends StatefulWidget {
   const WorkflowInteractiveNode({
     super.key,
@@ -9,10 +7,6 @@ class WorkflowInteractiveNode extends StatefulWidget {
     required this.borderColor,
     required this.child,
     this.actions,
-    this.onTap,
-    this.onDoubleTap,
-    this.onPanUpdate,
-    this.onPanEnd,
     this.borderRadius = 12,
     this.padding = const EdgeInsets.all(14),
     this.runEmphasized = false,
@@ -22,17 +16,9 @@ class WorkflowInteractiveNode extends StatefulWidget {
   final Color backgroundColor;
   final Color borderColor;
   final Widget child;
-
-  /// Rendered above the drag/tap layer so IconButtons receive presses.
   final Widget? actions;
-  final VoidCallback? onTap;
-  final VoidCallback? onDoubleTap;
-  final GestureDragUpdateCallback? onPanUpdate;
-  final GestureDragEndCallback? onPanEnd;
   final double borderRadius;
   final EdgeInsetsGeometry padding;
-
-  /// Soft pulsing glow while this node is the active run step.
   final bool runEmphasized;
 
   @override
@@ -43,8 +29,6 @@ class WorkflowInteractiveNode extends StatefulWidget {
 class _WorkflowInteractiveNodeState extends State<WorkflowInteractiveNode>
     with SingleTickerProviderStateMixin {
   bool _hovered = false;
-  bool _pressed = false;
-  bool _dragging = false;
   AnimationController? _pulseController;
 
   AnimationController get _pulse {
@@ -90,22 +74,17 @@ class _WorkflowInteractiveNodeState extends State<WorkflowInteractiveNode>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final selected = widget.selected;
-    final showLift = selected || _hovered || _pressed || widget.runEmphasized;
-    final scale = _pressed && !_dragging ? 0.985 : 1.0;
-    final borderWidth = widget.runEmphasized
+    final showLift = selected || _hovered || widget.runEmphasized;
+    final borderWidth = widget.runEmphasized || selected
         ? 2.0
-        : selected
-            ? 2.0
-            : (_hovered ? 1.5 : 1.0);
+        : (_hovered ? 1.5 : 1.0);
     final elevation = selected
         ? 6.0
-        : _pressed
-            ? 1.0
-            : _hovered
-                ? 4.0
-                : widget.runEmphasized
-                    ? 3.0
-                    : 0.0;
+        : _hovered
+            ? 4.0
+            : widget.runEmphasized
+                ? 3.0
+                : 0.0;
 
     final node = Material(
       color: widget.backgroundColor,
@@ -115,43 +94,23 @@ class _WorkflowInteractiveNodeState extends State<WorkflowInteractiveNode>
       child: Stack(
         children: [
           Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapDown: (_) => setState(() => _pressed = true),
-              onTapUp: (_) => setState(() => _pressed = false),
-              onTapCancel: () => setState(() => _pressed = false),
-              onTap: () {
-                HapticFeedback.selectionClick();
-                widget.onTap?.call();
-              },
-              onDoubleTap: widget.onDoubleTap,
-              onPanStart: (_) => setState(() {
-                _dragging = true;
-                _pressed = false;
-              }),
-              onPanUpdate: widget.onPanUpdate,
-              onPanEnd: (details) {
-                setState(() => _dragging = false);
-                widget.onPanEnd?.call(details);
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 140),
-                curve: Curves.easeOutCubic,
-                padding: widget.padding,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(widget.borderRadius),
-                  border: Border.all(
-                    color: _hovered && !selected && !widget.runEmphasized
-                        ? Color.alphaBlend(
-                            widget.borderColor.withValues(alpha: 0.45),
-                            theme.dividerColor,
-                          )
-                        : widget.borderColor,
-                    width: borderWidth,
-                  ),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              curve: Curves.easeOutCubic,
+              padding: widget.padding,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                border: Border.all(
+                  color: _hovered && !selected && !widget.runEmphasized
+                      ? Color.alphaBlend(
+                          widget.borderColor.withValues(alpha: 0.45),
+                          theme.dividerColor,
+                        )
+                      : widget.borderColor,
+                  width: borderWidth,
                 ),
-                child: widget.child,
               ),
+              child: widget.child,
             ),
           ),
           if (widget.actions != null)
@@ -231,16 +190,8 @@ class _WorkflowInteractiveNodeState extends State<WorkflowInteractiveNode>
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() {
-        _hovered = false;
-        _pressed = false;
-      }),
-      child: AnimatedScale(
-        scale: scale,
-        duration: const Duration(milliseconds: 90),
-        curve: Curves.easeOutCubic,
-        child: decorated,
-      ),
+      onExit: (_) => setState(() => _hovered = false),
+      child: decorated,
     );
   }
 }

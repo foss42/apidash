@@ -12,19 +12,6 @@ const double kWorkflowLoopNodeHeight = 132;
 const double kWorkflowDelayNodeWidth = 200;
 const double kWorkflowDelayNodeHeight = 100;
 
-const double kRequestPortSendY = 118;
-const double kRequestPortSuccessY = 108;
-const double kRequestPortFailY = 128;
-const double kStartPortNextY = 52;
-const double kConditionPortInY = 68;
-const double kConditionPortThenY = 48;
-const double kConditionPortElseY = 80;
-const double kLoopPortInY = 66;
-const double kLoopPortEachY = 40;
-const double kLoopPortDoneY = 96;
-const double kDelayPortInY = 58;
-const double kDelayPortNextY = 58;
-
 const kLearnWorkflowsUrl =
     'https://github.com/foss42/apidash/blob/main/doc/user_guide/workflows_guide.md';
 const kLabelNewWorkflow = 'New workflow';

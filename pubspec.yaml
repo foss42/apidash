@@ -77,6 +77,7 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  vyuh_node_flow: ^0.27.3
 
 dependency_overrides:
   extended_text_field: ^16.0.0

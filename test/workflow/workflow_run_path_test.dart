@@ -92,12 +92,45 @@ void main() {
       };
 
       expect(
-        workflowEdgeRunStyle(edge: edge, results: results),
+        workflowEdgeRunStyle(
+          edge: edge,
+          results: results,
+          runInProgress: true,
+        ),
         WorkflowRunEdgeStyle.active,
       );
       expect(
         workflowEdgeRunStyle(edge: untaken, results: results),
         WorkflowRunEdgeStyle.idle,
+      );
+    });
+
+    test('post-run new wire to unreached node stays idle', () {
+      final edge = WorkflowGraphEdge(
+        id: 'e-new',
+        source: 'start',
+        target: 'stale',
+        sourceHandle: WorkflowEdgeHandle.next,
+      );
+      final results = <String, WorkflowNodeRunResult>{
+        'start': const WorkflowNodeRunResult(
+          nodeId: 'start',
+          status: WorkflowNodeRunStatus.success,
+          nodeType: WorkflowNodeType.manualStart,
+        ),
+      };
+
+      expect(
+        workflowEdgeRunStyle(edge: edge, results: results),
+        WorkflowRunEdgeStyle.idle,
+      );
+      expect(
+        workflowEdgeRunStyle(
+          edge: edge,
+          results: results,
+          runInProgress: true,
+        ),
+        WorkflowRunEdgeStyle.upcoming,
       );
     });
 

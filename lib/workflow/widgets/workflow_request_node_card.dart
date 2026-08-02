@@ -7,7 +7,6 @@ import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
 import 'package:apidash/workflow/utils/workflow_run_path.dart';
 import 'package:apidash/workflow/widgets/workflow_interactive_node.dart';
-import 'package:apidash/workflow/widgets/workflow_port.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -17,32 +16,15 @@ class WorkflowRequestNodeCard extends StatelessWidget {
     required this.node,
     required this.selected,
     required this.runResult,
-    this.highlightInput = false,
-    this.highlightSuccess = false,
-    this.highlightFailure = false,
-    this.onTap,
-    this.onDoubleTap,
     this.onDuplicate,
     this.onDelete,
-    this.onDragPanUpdate,
-    this.onDragPanEnd,
-    this.onWirePointerDown,
   });
 
   final WorkflowGraphNode node;
   final bool selected;
   final WorkflowNodeRunResult? runResult;
-  final bool highlightInput;
-  final bool highlightSuccess;
-  final bool highlightFailure;
-  final VoidCallback? onTap;
-  final VoidCallback? onDoubleTap;
   final VoidCallback? onDuplicate;
   final VoidCallback? onDelete;
-  final GestureDragUpdateCallback? onDragPanUpdate;
-  final GestureDragEndCallback? onDragPanEnd;
-  final void Function(PointerDownEvent event, WorkflowEdgeHandle handle)?
-      onWirePointerDown;
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +44,10 @@ class WorkflowRequestNodeCard extends StatelessWidget {
         : method;
     final detailText = isAi
         ? (aiPrompt?.trim().isNotEmpty == true
-            ? aiPrompt!.trim()
-            : 'No prompt configured')
+              ? aiPrompt!.trim()
+              : 'No prompt configured')
         : (url.isEmpty ? 'No URL configured' : url);
-    final defaultLabel =
-        isAi ? kLabelAiRequest : kLabelWorkflowStep;
+    final defaultLabel = isAi ? kLabelAiRequest : kLabelWorkflowStep;
     final borderColor = workflowNodeRunBorderColor(
       result: runResult,
       selected: selected,
@@ -79,163 +60,107 @@ class WorkflowRequestNodeCard extends StatelessWidget {
     return SizedBox(
       width: kWorkflowRequestNodeWidth,
       height: kWorkflowRequestNodeHeight,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: WorkflowInteractiveNode(
-              selected: selected,
-              runEmphasized: isRunning,
-              backgroundColor: theme.colorScheme.surfaceContainerLow,
-              borderColor: borderColor,
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-              onTap: onTap,
-              onDoubleTap: onDoubleTap,
-              onPanUpdate: onDragPanUpdate,
-              onPanEnd: onDragPanEnd,
-              actions: selected
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _NodeActionButton(
-                          icon: Icons.copy_outlined,
-                          tooltip: kTooltipDuplicate,
-                          onPressed: onDuplicate,
-                        ),
-                        _NodeActionButton(
-                          icon: Icons.delete_outline,
-                          tooltip: kTooltipDelete,
-                          onPressed: onDelete,
-                        ),
-                      ],
-                    )
-                  : null,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: WorkflowInteractiveNode(
+        selected: selected,
+        runEmphasized: isRunning,
+        backgroundColor: theme.colorScheme.surfaceContainerLow,
+        borderColor: borderColor,
+        padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+        actions: selected
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        isAi ? Icons.auto_awesome_rounded : Icons.http,
-                        size: 20,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                      kHSpacer8,
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isAi
-                              ? theme.colorScheme.tertiaryContainer
-                              : theme.colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          badgeLabel,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      if (isRunning) ...[
-                        kHSpacer8,
-                        Icon(
-                          Icons.sync_rounded,
-                          size: 16,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Running',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                      const Spacer(),
-                      if (selected) const SizedBox(width: 56),
-                    ],
+                  _NodeActionButton(
+                    icon: Icons.copy_outlined,
+                    tooltip: kTooltipDuplicate,
+                    onPressed: onDuplicate,
                   ),
-                  const SizedBox(height: 10),
+                  _NodeActionButton(
+                    icon: Icons.delete_outline,
+                    tooltip: kTooltipDelete,
+                    onPressed: onDelete,
+                  ),
+                ],
+              )
+            : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  isAi ? Icons.auto_awesome_rounded : Icons.http,
+                  size: 20,
+                  color: theme.colorScheme.onSurface,
+                ),
+                kHSpacer8,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isAi
+                        ? theme.colorScheme.tertiaryContainer
+                        : theme.colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    badgeLabel,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                if (isRunning) ...[
+                  kHSpacer8,
+                  Icon(
+                    Icons.sync_rounded,
+                    size: 16,
+                    color: theme.colorScheme.primary,
+                  ),
+                  const SizedBox(width: 4),
                   Text(
-                    node.label.isNotEmpty ? node.label : defaultLabel,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 6),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surface.withValues(
-                          alpha: 0.55,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: theme.colorScheme.outline.withValues(
-                            alpha: 0.2,
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        detailText,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall,
-                      ),
+                    'Running',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ],
+                const Spacer(),
+                if (selected) const SizedBox(width: 56),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              node.label.isNotEmpty ? node.label : defaultLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleSmall,
+            ),
+            const SizedBox(height: 6),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Text(
+                  detailText,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall,
+                ),
               ),
             ),
-          ),
-          Positioned(
-            left: -6,
-            top: kRequestPortSendY - 10,
-            child: WorkflowPort(
-              label: 'Send',
-              side: WorkflowPortSide.left,
-              color: theme.colorScheme.primary,
-              highlighted: highlightInput,
-            ),
-          ),
-          Positioned(
-            right: -6,
-            top: kRequestPortSuccessY - 10,
-            child: WorkflowPort(
-              label: 'Success()',
-              side: WorkflowPortSide.right,
-              color: Colors.green.shade600,
-              highlighted: highlightSuccess,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.success,
-              ),
-            ),
-          ),
-          Positioned(
-            right: -6,
-            top: kRequestPortFailY - 10,
-            child: WorkflowPort(
-              label: 'Fail()',
-              side: WorkflowPortSide.right,
-              color: theme.colorScheme.error,
-              highlighted: highlightFailure,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.failure,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -300,32 +225,18 @@ class WorkflowStartNodeCard extends StatelessWidget {
     required this.node,
     required this.selected,
     this.runResult,
-    this.highlightNext = false,
-    this.onTap,
     this.onPlay,
-    this.onDragPanUpdate,
-    this.onDragPanEnd,
-    this.onWirePointerDown,
   });
 
   final WorkflowGraphNode node;
   final bool selected;
   final WorkflowNodeRunResult? runResult;
-  final bool highlightNext;
-  final VoidCallback? onTap;
   final VoidCallback? onPlay;
-  final GestureDragUpdateCallback? onDragPanUpdate;
-  final GestureDragEndCallback? onDragPanEnd;
-  final void Function(PointerDownEvent event, WorkflowEdgeHandle handle)?
-      onWirePointerDown;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final green = getResponseStatusCodeColor(
-      200,
-      brightness: theme.brightness,
-    );
+    final green = getResponseStatusCodeColor(200, brightness: theme.brightness);
     final borderColor = workflowNodeRunBorderColor(
       result: runResult,
       selected: selected,
@@ -338,98 +249,73 @@ class WorkflowStartNodeCard extends StatelessWidget {
     return SizedBox(
       width: kWorkflowStartNodeWidth,
       height: kWorkflowStartNodeHeight,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: WorkflowInteractiveNode(
-              selected: selected || isRunning,
-              runEmphasized: isRunning,
-              backgroundColor: Color.alphaBlend(
-                green.withValues(
-                  alpha: theme.brightness == Brightness.dark ? 0.30 : 0.14,
+      child: WorkflowInteractiveNode(
+        selected: selected || isRunning,
+        runEmphasized: isRunning,
+        backgroundColor: Color.alphaBlend(
+          green.withValues(
+            alpha: theme.brightness == Brightness.dark ? 0.30 : 0.14,
+          ),
+          theme.colorScheme.surfaceContainerLow,
+        ),
+        borderColor: borderColor,
+        borderRadius: 16,
+        padding: const EdgeInsets.fromLTRB(12, 12, 40, 12),
+        child: Row(
+          children: [
+            Material(
+              color: green,
+              shape: const CircleBorder(),
+              elevation: selected ? 2 : 0,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () {
+                  HapticFeedback.mediumImpact();
+                  onPlay?.call();
+                },
+                child: const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: Icon(
+                    Icons.play_arrow_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
                 ),
-                theme.colorScheme.surfaceContainerLow,
               ),
-              borderColor: borderColor,
-              borderRadius: 16,
-              padding: const EdgeInsets.fromLTRB(12, 12, 40, 12),
-              onTap: onTap,
-              onPanUpdate: onDragPanUpdate,
-              onPanEnd: onDragPanEnd,
-              child: Row(
+            ),
+            kHSpacer10,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Material(
-                    color: green,
-                    shape: const CircleBorder(),
-                    elevation: selected ? 2 : 0,
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () {
-                        HapticFeedback.mediumImpact();
-                        onPlay?.call();
-                      },
-                      child: const SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Icon(
-                          Icons.play_arrow_rounded,
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                      ),
+                  Text(
+                    node.label.isEmpty ? 'Start' : node.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: green,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
-                  kHSpacer10,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          node.label.isEmpty ? 'Start' : node.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: green,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          isRunning ? 'Starting…' : 'Run workflow',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: isRunning
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurfaceVariant,
-                            fontWeight:
-                                isRunning ? FontWeight.w700 : FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 2),
+                  Text(
+                    isRunning ? 'Starting…' : 'Run workflow',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: isRunning
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurfaceVariant,
+                      fontWeight: isRunning ? FontWeight.w700 : FontWeight.w500,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          Positioned(
-            right: -6,
-            top: kStartPortNextY - 10,
-            child: WorkflowPort(
-              label: 'Next',
-              side: WorkflowPortSide.right,
-              color: green,
-              highlighted: highlightNext,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.next,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -441,32 +327,15 @@ class WorkflowConditionNodeCard extends StatelessWidget {
     required this.node,
     required this.selected,
     this.runResult,
-    this.highlightInput = false,
-    this.highlightThen = false,
-    this.highlightElse = false,
-    this.onTap,
-    this.onDoubleTap,
     this.onDuplicate,
     this.onDelete,
-    this.onDragPanUpdate,
-    this.onDragPanEnd,
-    this.onWirePointerDown,
   });
 
   final WorkflowGraphNode node;
   final bool selected;
   final WorkflowNodeRunResult? runResult;
-  final bool highlightInput;
-  final bool highlightThen;
-  final bool highlightElse;
-  final VoidCallback? onTap;
-  final VoidCallback? onDoubleTap;
   final VoidCallback? onDuplicate;
   final VoidCallback? onDelete;
-  final GestureDragUpdateCallback? onDragPanUpdate;
-  final GestureDragEndCallback? onDragPanEnd;
-  final void Function(PointerDownEvent event, WorkflowEdgeHandle handle)?
-      onWirePointerDown;
 
   @override
   Widget build(BuildContext context) {
@@ -482,128 +351,79 @@ class WorkflowConditionNodeCard extends StatelessWidget {
     return SizedBox(
       width: kWorkflowConditionNodeWidth,
       height: kWorkflowConditionNodeHeight,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: WorkflowInteractiveNode(
-              selected: selected || isRunning,
-              runEmphasized: isRunning,
-              backgroundColor: Color.alphaBlend(
-                const Color(0xFFFFB300).withValues(
-                  alpha: theme.brightness == Brightness.dark ? 0.22 : 0.14,
-                ),
-                theme.colorScheme.surfaceContainerLow,
-              ),
-              borderColor: borderColor,
-              onTap: onTap,
-              onDoubleTap: onDoubleTap,
-              onPanUpdate: onDragPanUpdate,
-              onPanEnd: onDragPanEnd,
-              actions: selected
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _NodeActionButton(
-                          icon: Icons.copy_outlined,
-                          tooltip: kTooltipDuplicate,
-                          onPressed: onDuplicate,
-                        ),
-                        _NodeActionButton(
-                          icon: Icons.delete_outline,
-                          tooltip: kTooltipDelete,
-                          onPressed: onDelete,
-                        ),
-                      ],
-                    )
-                  : null,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: WorkflowInteractiveNode(
+        selected: selected || isRunning,
+        runEmphasized: isRunning,
+        backgroundColor: Color.alphaBlend(
+          const Color(0xFFFFB300).withValues(
+            alpha: theme.brightness == Brightness.dark ? 0.22 : 0.14,
+          ),
+          theme.colorScheme.surfaceContainerLow,
+        ),
+        borderColor: borderColor,
+        actions: selected
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.call_split_rounded,
-                        size: 20,
-                        color: theme.brightness == Brightness.dark
-                            ? const Color(0xFFFFD54F)
-                            : const Color(0xFFB26A00),
-                      ),
-                      kHSpacer8,
-                      Expanded(
-                        child: Text(
-                          node.label.isEmpty ? 'Condition' : node.label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall,
-                        ),
-                      ),
-                      if (isRunning)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Text(
-                            'Running',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      if (selected) const SizedBox(width: 56),
-                    ],
+                  _NodeActionButton(
+                    icon: Icons.copy_outlined,
+                    tooltip: kTooltipDuplicate,
+                    onPressed: onDuplicate,
                   ),
-                  const SizedBox(height: 6),
-                  Expanded(
-                    child: Text(
-                      node.conditionExpression ?? 'true',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall,
-                    ),
+                  _NodeActionButton(
+                    icon: Icons.delete_outline,
+                    tooltip: kTooltipDelete,
+                    onPressed: onDelete,
                   ),
                 ],
+              )
+            : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.call_split_rounded,
+                  size: 20,
+                  color: theme.brightness == Brightness.dark
+                      ? const Color(0xFFFFD54F)
+                      : const Color(0xFFB26A00),
+                ),
+                kHSpacer8,
+                Expanded(
+                  child: Text(
+                    node.label.isEmpty ? 'Condition' : node.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                ),
+                if (isRunning)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Text(
+                      'Running',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                if (selected) const SizedBox(width: 56),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Expanded(
+              child: Text(
+                node.conditionExpression ?? 'true',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall,
               ),
             ),
-          ),
-          Positioned(
-            left: -6,
-            top: kConditionPortInY - 10,
-            child: WorkflowPort(
-              label: 'In',
-              side: WorkflowPortSide.left,
-              color: theme.colorScheme.primary,
-              highlighted: highlightInput,
-            ),
-          ),
-          Positioned(
-            right: -6,
-            top: kConditionPortThenY - 10,
-            child: WorkflowPort(
-              label: 'True',
-              side: WorkflowPortSide.right,
-              color: Colors.green.shade600,
-              highlighted: highlightThen,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.then,
-              ),
-            ),
-          ),
-          Positioned(
-            right: -6,
-            top: kConditionPortElseY - 10,
-            child: WorkflowPort(
-              label: 'False',
-              side: WorkflowPortSide.right,
-              color: theme.colorScheme.error,
-              highlighted: highlightElse,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.elseBranch,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -615,32 +435,15 @@ class WorkflowLoopNodeCard extends StatelessWidget {
     required this.node,
     required this.selected,
     this.runResult,
-    this.highlightInput = false,
-    this.highlightBody = false,
-    this.highlightDone = false,
-    this.onTap,
-    this.onDoubleTap,
     this.onDuplicate,
     this.onDelete,
-    this.onDragPanUpdate,
-    this.onDragPanEnd,
-    this.onWirePointerDown,
   });
 
   final WorkflowGraphNode node;
   final bool selected;
   final WorkflowNodeRunResult? runResult;
-  final bool highlightInput;
-  final bool highlightBody;
-  final bool highlightDone;
-  final VoidCallback? onTap;
-  final VoidCallback? onDoubleTap;
   final VoidCallback? onDuplicate;
   final VoidCallback? onDelete;
-  final GestureDragUpdateCallback? onDragPanUpdate;
-  final GestureDragEndCallback? onDragPanEnd;
-  final void Function(PointerDownEvent event, WorkflowEdgeHandle handle)?
-      onWirePointerDown;
 
   @override
   Widget build(BuildContext context) {
@@ -650,18 +453,19 @@ class WorkflowLoopNodeCard extends StatelessWidget {
     final maxIterations = node.loopMaxIterations;
     final field = node.loopItemField?.trim();
     final asName = node.loopItemAs?.trim();
-    final hasItemVar = field != null &&
+    final hasItemVar =
+        field != null &&
         field.isNotEmpty &&
         asName != null &&
         asName.isNotEmpty;
     final isRepeat = node.loopMode == WorkflowLoopMode.repeat;
     final subtitle = isRepeat
         ? (maxIterations != null && maxIterations > 0
-            ? 'Repeat $maxIterations×'
-            : 'Repeat')
+              ? 'Repeat $maxIterations×'
+              : 'Repeat')
         : listRef.isEmpty
-            ? 'Set list'
-            : listRef;
+        ? 'Set list'
+        : listRef;
     final itemLine = hasItemVar ? '{{$asName}}' : null;
     final maxLine = !isRepeat && maxIterations != null && maxIterations > 0
         ? 'Max $maxIterations'
@@ -678,140 +482,89 @@ class WorkflowLoopNodeCard extends StatelessWidget {
     return SizedBox(
       width: kWorkflowLoopNodeWidth,
       height: kWorkflowLoopNodeHeight,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: WorkflowInteractiveNode(
-              selected: selected || isRunning,
-              runEmphasized: isRunning,
-              padding: const EdgeInsets.fromLTRB(28, 12, 52, 12),
-              backgroundColor: theme.colorScheme.secondaryContainer,
-              borderColor: borderColor,
-              onTap: onTap,
-              onDoubleTap: onDoubleTap,
-              onPanUpdate: onDragPanUpdate,
-              onPanEnd: onDragPanEnd,
-              actions: selected
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _NodeActionButton(
-                          icon: Icons.copy_outlined,
-                          tooltip: kTooltipDuplicate,
-                          onPressed: onDuplicate,
-                        ),
-                        _NodeActionButton(
-                          icon: Icons.delete_outline,
-                          tooltip: kTooltipDelete,
-                          onPressed: onDelete,
-                        ),
-                      ],
-                    )
-                  : null,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: WorkflowInteractiveNode(
+        selected: selected || isRunning,
+        runEmphasized: isRunning,
+        padding: const EdgeInsets.fromLTRB(28, 12, 52, 12),
+        backgroundColor: theme.colorScheme.secondaryContainer,
+        borderColor: borderColor,
+        actions: selected
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.loop_rounded, size: 20),
-                      kHSpacer8,
-                      Expanded(
-                        child: Text(
-                          node.label.isNotEmpty
-                              ? node.label
-                              : kLabelWorkflowLoop,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall,
-                        ),
-                      ),
-                      if (isRunning)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Text(
-                            'Running',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      if (selected) const SizedBox(width: 56),
-                    ],
+                  _NodeActionButton(
+                    icon: Icons.copy_outlined,
+                    tooltip: kTooltipDuplicate,
+                    onPressed: onDuplicate,
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    subtitle,
+                  _NodeActionButton(
+                    icon: Icons.delete_outline,
+                    tooltip: kTooltipDelete,
+                    onPressed: onDelete,
+                  ),
+                ],
+              )
+            : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.loop_rounded, size: 20),
+                kHSpacer8,
+                Expanded(
+                  child: Text(
+                    node.label.isNotEmpty ? node.label : kLabelWorkflowLoop,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodySmall,
+                    style: theme.textTheme.titleSmall,
                   ),
-                  if (itemLine != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      itemLine,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                  if (maxLine != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      maxLine,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                ),
+                if (isRunning)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Text(
+                      'Running',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
-                ],
+                  ),
+                if (selected) const SizedBox(width: 56),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall,
+            ),
+            if (itemLine != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                itemLine,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            left: -6,
-            top: kLoopPortInY - 10,
-            child: WorkflowPort(
-              label: 'In',
-              side: WorkflowPortSide.left,
-              color: theme.colorScheme.primary,
-              highlighted: highlightInput,
-            ),
-          ),
-          Positioned(
-            right: -6,
-            top: kLoopPortEachY - 10,
-            child: WorkflowPort(
-              label: 'Each',
-              side: WorkflowPortSide.right,
-              color: theme.colorScheme.primary,
-              highlighted: highlightBody,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.next,
+            ],
+            if (maxLine != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                maxLine,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            right: -6,
-            top: kLoopPortDoneY - 10,
-            child: WorkflowPort(
-              label: 'Done',
-              side: WorkflowPortSide.right,
-              color: Colors.green,
-              highlighted: highlightDone,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.loopDone,
-              ),
-            ),
-          ),
-        ],
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -823,30 +576,15 @@ class WorkflowDelayNodeCard extends StatelessWidget {
     required this.node,
     required this.selected,
     this.runResult,
-    this.highlightInput = false,
-    this.highlightNext = false,
-    this.onTap,
-    this.onDoubleTap,
     this.onDuplicate,
     this.onDelete,
-    this.onDragPanUpdate,
-    this.onDragPanEnd,
-    this.onWirePointerDown,
   });
 
   final WorkflowGraphNode node;
   final bool selected;
   final WorkflowNodeRunResult? runResult;
-  final bool highlightInput;
-  final bool highlightNext;
-  final VoidCallback? onTap;
-  final VoidCallback? onDoubleTap;
   final VoidCallback? onDuplicate;
   final VoidCallback? onDelete;
-  final GestureDragUpdateCallback? onDragPanUpdate;
-  final GestureDragEndCallback? onDragPanEnd;
-  final void Function(PointerDownEvent event, WorkflowEdgeHandle handle)?
-      onWirePointerDown;
 
   @override
   Widget build(BuildContext context) {
@@ -866,105 +604,68 @@ class WorkflowDelayNodeCard extends StatelessWidget {
     return SizedBox(
       width: kWorkflowDelayNodeWidth,
       height: kWorkflowDelayNodeHeight,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: WorkflowInteractiveNode(
-              selected: selected || isRunning,
-              runEmphasized: isRunning,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              borderColor: borderColor,
-              onTap: onTap,
-              onDoubleTap: onDoubleTap,
-              onPanUpdate: onDragPanUpdate,
-              onPanEnd: onDragPanEnd,
-              actions: selected
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _NodeActionButton(
-                          icon: Icons.copy_outlined,
-                          tooltip: kTooltipDuplicate,
-                          onPressed: onDuplicate,
-                        ),
-                        _NodeActionButton(
-                          icon: Icons.delete_outline,
-                          tooltip: kTooltipDelete,
-                          onPressed: onDelete,
-                        ),
-                      ],
-                    )
-                  : null,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: WorkflowInteractiveNode(
+        selected: selected || isRunning,
+        runEmphasized: isRunning,
+        backgroundColor: theme.colorScheme.surfaceContainerHighest,
+        borderColor: borderColor,
+        actions: selected
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.timer_outlined, size: 20),
-                      kHSpacer8,
-                      Expanded(
-                        child: Text(
-                          node.label.isNotEmpty
-                              ? node.label
-                              : kLabelWorkflowDelay,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleSmall,
-                        ),
-                      ),
-                      if (isRunning)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Text(
-                            'Waiting',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      if (selected) const SizedBox(width: 56),
-                    ],
+                  _NodeActionButton(
+                    icon: Icons.copy_outlined,
+                    tooltip: kTooltipDuplicate,
+                    onPressed: onDuplicate,
                   ),
-                  const SizedBox(height: 6),
-                  Expanded(
-                    child: Text(
-                      detail,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall,
-                    ),
+                  _NodeActionButton(
+                    icon: Icons.delete_outline,
+                    tooltip: kTooltipDelete,
+                    onPressed: onDelete,
                   ),
                 ],
+              )
+            : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.timer_outlined, size: 20),
+                kHSpacer8,
+                Expanded(
+                  child: Text(
+                    node.label.isNotEmpty ? node.label : kLabelWorkflowDelay,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                ),
+                if (isRunning)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Text(
+                      'Waiting',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                if (selected) const SizedBox(width: 56),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Expanded(
+              child: Text(
+                detail,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall,
               ),
             ),
-          ),
-          Positioned(
-            left: -6,
-            top: kDelayPortInY - 10,
-            child: WorkflowPort(
-              label: 'In',
-              side: WorkflowPortSide.left,
-              color: theme.colorScheme.primary,
-              highlighted: highlightInput,
-            ),
-          ),
-          Positioned(
-            right: -6,
-            top: kDelayPortNextY - 10,
-            child: WorkflowPort(
-              label: 'Next',
-              side: WorkflowPortSide.right,
-              color: theme.colorScheme.primary,
-              highlighted: highlightNext,
-              onPointerDown: (event) => onWirePointerDown?.call(
-                event,
-                WorkflowEdgeHandle.next,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

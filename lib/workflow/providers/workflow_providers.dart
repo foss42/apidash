@@ -257,6 +257,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
   WorkflowDocument? build() => null;
 
   Future<void> load(String workflowId) async {
+    _resetRunUi();
     final json = workspaceStorage.getWorkflow(workflowId);
     if (json == null) {
       state = null;
@@ -265,7 +266,19 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     state = WorkflowDocument.fromJson(json);
   }
 
-  void clear() => state = null;
+  void clear() {
+    _resetRunUi();
+    state = null;
+  }
+
+  void _resetRunUi() {
+    ref.read(workflowRunInProgressProvider.notifier).state = false;
+    ref.read(workflowNodeRunResultsProvider.notifier).state = {};
+    ref.read(workflowRunStepOrderProvider.notifier).state = [];
+    ref.read(selectedWorkflowNodeIdProvider.notifier).state = null;
+    ref.read(selectedWorkflowRunResultKeyProvider.notifier).state = null;
+    ref.read(viewingFlowHistoryRunIdProvider.notifier).state = null;
+  }
 
   Future<void> save(WorkflowDocument workflow) async {
     final name = workflow.name.trim().isNotEmpty ? workflow.name.trim() : workflow.id;
@@ -719,13 +732,14 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     required String sourceId,
     required WorkflowEdgeHandle sourceHandle,
     required String targetId,
+    String? edgeId,
   }) async {
     final current = state;
     if (current == null) {
       return;
     }
     final edge = WorkflowGraphEdge(
-      id: 'edge_${getNewUuid().substring(0, 8)}',
+      id: edgeId ?? 'edge_${getNewUuid().substring(0, 8)}',
       source: sourceId,
       sourceHandle: sourceHandle,
       target: targetId,

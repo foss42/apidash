@@ -61,6 +61,7 @@ bool workflowSourceFiredHandle(
 WorkflowRunEdgeStyle workflowEdgeRunStyle({
   required WorkflowGraphEdge edge,
   required Map<String, WorkflowNodeRunResult> results,
+  bool runInProgress = false,
 }) {
   final source = results[edge.source];
   if (source == null) {
@@ -72,14 +73,19 @@ WorkflowRunEdgeStyle workflowEdgeRunStyle({
 
   final target = results[edge.target];
   if (target == null) {
-    return WorkflowRunEdgeStyle.upcoming;
+    // Live next hop only while running. After the run, never-reached /
+    // newly wired nodes stay idle (not "upcoming"/animated).
+    return runInProgress
+        ? WorkflowRunEdgeStyle.upcoming
+        : WorkflowRunEdgeStyle.idle;
   }
   return switch (target.status) {
     WorkflowNodeRunStatus.running => WorkflowRunEdgeStyle.active,
     WorkflowNodeRunStatus.failed => WorkflowRunEdgeStyle.failed,
     WorkflowNodeRunStatus.success => WorkflowRunEdgeStyle.completed,
-    WorkflowNodeRunStatus.pending => WorkflowRunEdgeStyle.upcoming,
-    // Stopped / abandoned hops should not keep looking "in flight".
+    WorkflowNodeRunStatus.pending => runInProgress
+        ? WorkflowRunEdgeStyle.upcoming
+        : WorkflowRunEdgeStyle.idle,
     WorkflowNodeRunStatus.skipped => WorkflowRunEdgeStyle.idle,
   };
 }
