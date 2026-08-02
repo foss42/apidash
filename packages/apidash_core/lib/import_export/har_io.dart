@@ -116,12 +116,12 @@ class HarParserIO {
 
     // Loop through the pairs and split them into keys and values
     for (var pair in pairs) {
-      var keyValue = pair.split('=');
+      var separatorIndex = pair.indexOf('=');
 
       // Ensure the pair contains both key and value
-      if (keyValue.length == 2) {
-        var key = Uri.decodeComponent(keyValue[0]);
-        var value = Uri.decodeComponent(keyValue[1]);
+      if (separatorIndex != -1) {
+        var key = Uri.decodeComponent(pair.substring(0, separatorIndex));
+        var value = Uri.decodeComponent(pair.substring(separatorIndex + 1));
 
         result[key] = value;
       }
