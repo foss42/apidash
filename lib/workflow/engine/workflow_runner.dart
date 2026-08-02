@@ -3,6 +3,8 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/workflow/engine/extraction_service.dart';
+import 'package:apidash/workflow/engine/workflow_branch_context.dart';
+import 'package:apidash/workflow/engine/workflow_parallel.dart';
 import 'package:apidash/workflow/engine/workflow_request_executor.dart';
 import 'package:apidash/workflow/engine/workflow_validator.dart';
 import 'package:apidash/workflow/models/workflow_request_codec.dart';
@@ -10,22 +12,62 @@ import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Active parallel fan-out region (AND-split). Nested splits push a child scope.
+class _ParallelScope {
+  _ParallelScope({
+    required this.id,
+    required this.siblingRoots,
+    this.parent,
+  });
+
+  final String id;
+  final List<String> siblingRoots;
+  final _ParallelScope? parent;
+}
+
 class _QueueEntry {
-  const _QueueEntry(
+  _QueueEntry(
     this.node, {
+    WorkflowBranchContext? context,
+    this.parallel,
     this.loopItem,
     this.loopIndex,
     this.loopCompletionId,
     this.loopItemField,
     this.loopItemAs,
-  });
+  }) : context = context ?? WorkflowBranchContext();
 
   final WorkflowGraphNode node;
+  final WorkflowBranchContext context;
+  final _ParallelScope? parallel;
   final String? loopItem;
   final String? loopIndex;
   final String? loopCompletionId;
   final String? loopItemField;
   final String? loopItemAs;
+
+  _QueueEntry copyWith({
+    WorkflowGraphNode? node,
+    WorkflowBranchContext? context,
+    _ParallelScope? parallel,
+    bool clearParallel = false,
+    String? loopItem,
+    String? loopIndex,
+    String? loopCompletionId,
+    String? loopItemField,
+    String? loopItemAs,
+  }) {
+    return _QueueEntry(
+      node ?? this.node,
+      context: context ?? this.context,
+      parallel: clearParallel ? null : (parallel ?? this.parallel),
+      loopItem: loopItem ?? this.loopItem,
+      loopIndex: loopIndex ?? this.loopIndex,
+      loopCompletionId: loopCompletionId ?? this.loopCompletionId,
+      loopItemField: loopItemField ?? this.loopItemField,
+      loopItemAs: loopItemAs ?? this.loopItemAs,
+    );
+  }
 }
 
 RequestModel resolveWorkflowNodeRequest({
@@ -78,374 +120,607 @@ class WorkflowRunner {
       );
     }
 
-    final scopedVariables = <String, String>{};
-    final nodeResults = <WorkflowNodeRunResult>[];
-    final queue = [
-      for (final node in validator.entryNodes(workflow)) _QueueEntry(node),
-    ];
-    final adjacency = _buildAdjacency(workflow);
-    final visited = <String>{};
-    final loopIterationsRemaining = <String, int>{};
-    final loopDoneTargets = <String, List<String>>{};
-    final loopItems = <String, List<String>>{};
-    final loopBodyStarts = <String, String>{};
-    int? lastStatusCode;
+    final session = _WorkflowRunSession(
+      ref: ref,
+      workflow: workflow,
+      storage: storage,
+      extractionService: extractionService,
+      onNodeUpdate: onNodeUpdate,
+      shouldStop: shouldStop,
+      startedAt: startedAt,
+    );
 
-    while (queue.isNotEmpty) {
-      if (shouldStop?.call() ?? false) {
-        return WorkflowRunResult(
-          workflowId: workflow.id,
-          success: false,
-          startedAt: startedAt,
-          endedAt: DateTime.now(),
-          nodeResults: nodeResults,
-          error: 'Workflow stopped',
-          scopedVariables: scopedVariables,
-        );
-      }
+    try {
+      await Future.wait([
+        for (final node in validator.entryNodes(workflow))
+          session.drive(_QueueEntry(node)),
+      ]);
+    } on _WorkflowAbort catch (abort) {
+      return session.result(
+        success: false,
+        error: abort.message,
+      );
+    } catch (error) {
+      return session.result(
+        success: false,
+        error: error.toString(),
+      );
+    }
 
-      final entry = queue.removeAt(0);
-      final node = entry.node;
-      var loopCompletionId = entry.loopCompletionId;
-      if (entry.loopItem != null || entry.loopIndex != null) {
-        applyLoopScopedVariables(
-          scopedVariables,
-          loopItem: entry.loopItem,
-          loopIndex: entry.loopIndex,
-          itemField: entry.loopItemField,
-          itemAs: entry.loopItemAs,
-        );
-      }
+    if (shouldStop?.call() ?? false) {
+      return session.result(success: false, error: 'Workflow stopped');
+    }
 
-      final visitKey = _visitKey(entry);
-      if (!visited.add(visitKey)) {
-        continue;
+    final failed = session.nodeResults.any(
+      (result) => result.status == WorkflowNodeRunStatus.failed,
+    );
+    return session.result(
+      success: !failed,
+      error: failed ? 'One or more steps failed' : null,
+    );
+  }
+}
+
+class _WorkflowAbort implements Exception {
+  _WorkflowAbort(this.message);
+  final String message;
+}
+
+class _WorkflowRunSession {
+  _WorkflowRunSession({
+    required this.ref,
+    required this.workflow,
+    required this.storage,
+    required this.extractionService,
+    required this.onNodeUpdate,
+    required this.shouldStop,
+    required this.startedAt,
+  })  : adjacency = _buildAdjacency(workflow),
+        outAdjacency = buildWorkflowOutAdjacency([
+          for (final edge in workflow.graph.edges)
+            (source: edge.source, target: edge.target),
+        ]);
+
+  final WidgetRef ref;
+  final WorkflowDocument workflow;
+  final WorkspaceStorage storage;
+  final WorkflowExtractionService extractionService;
+  final void Function(WorkflowNodeRunResult result)? onNodeUpdate;
+  final bool Function()? shouldStop;
+  final DateTime startedAt;
+
+  final Map<String, List<_WorkflowEdgeRef>> adjacency;
+  final Map<String, List<String>> outAdjacency;
+
+  final resultScopedVariables = <String, String>{};
+  final nodeResults = <WorkflowNodeRunResult>[];
+  final visited = <String>{};
+  final joinBarriers = <String, WorkflowJoinBarrier>{};
+  final loopIterationsRemaining = <String, int>{};
+  final loopDoneTargets = <String, List<String>>{};
+  final loopItems = <String, List<String>>{};
+  final loopBodyStarts = <String, String>{};
+  final loopContexts = <String, WorkflowBranchContext>{};
+  final loopParallels = <String, _ParallelScope?>{};
+
+  int _parallelSeq = 0;
+  Object? _abortError;
+
+  WorkflowRunResult result({required bool success, String? error}) {
+    return WorkflowRunResult(
+      workflowId: workflow.id,
+      success: success,
+      startedAt: startedAt,
+      endedAt: DateTime.now(),
+      nodeResults: nodeResults,
+      scopedVariables: resultScopedVariables,
+      error: error,
+    );
+  }
+
+  void _abort(String message) {
+    _abortError ??= message;
+    final error = _WorkflowAbort(message);
+    for (final barrier in joinBarriers.values) {
+      barrier.fail(error);
+    }
+  }
+
+  void _throwIfAborted() {
+    final stop = shouldStop?.call() ?? false;
+    if (stop) {
+      _abort('Workflow stopped');
+    }
+    final err = _abortError;
+    if (err != null) {
+      throw _WorkflowAbort(err.toString());
+    }
+  }
+
+  /// Drive one token from arrival through execution and successors.
+  Future<void> drive(_QueueEntry entry) async {
+    _throwIfAborted();
+    final prepared = await _prepareArrival(entry);
+    if (prepared == null) {
+      return;
+    }
+    await _execute(prepared);
+  }
+
+  Future<_QueueEntry?> _prepareArrival(_QueueEntry entry) async {
+    _throwIfAborted();
+    final scope = entry.parallel;
+    if (scope == null) {
+      if (!visited.add(_visitKey(entry))) {
+        return null;
       }
-      final nodeStartedAt = DateTime.now();
-      var running = WorkflowNodeRunResult(
+      return entry;
+    }
+
+    final expected = workflowExpectedJoinArrivals(
+      outAdjacency,
+      siblingRoots: scope.siblingRoots,
+      joinNodeId: entry.node.id,
+    );
+
+    if (expected <= 1) {
+      if (!visited.add(_visitKey(entry))) {
+        return null;
+      }
+      return entry;
+    }
+
+    final joinKey =
+        '${entry.node.id}@${scope.id}@${entry.loopCompletionId ?? ''}:${entry.loopIndex ?? ''}';
+    final barrier = joinBarriers.putIfAbsent(
+      joinKey,
+      () => WorkflowJoinBarrier(expected: expected),
+    );
+
+    try {
+      final merged = await barrier.arrive(entry.context);
+      _throwIfAborted();
+      // Only one sibling executes the joined node.
+      if (!visited.add(_visitKey(entry))) {
+        return null;
+      }
+      return entry.copyWith(
+        context: merged,
+        parallel: scope.parent,
+        clearParallel: scope.parent == null,
+      );
+    } on WorkflowMergeConflict catch (conflict) {
+      _abort(conflict.toString());
+      throw _WorkflowAbort(conflict.toString());
+    }
+  }
+
+  Future<void> _execute(_QueueEntry entry) async {
+    _throwIfAborted();
+    final node = entry.node;
+    final scopedVariables = entry.context.scopedVariables;
+    final loopCompletionId = entry.loopCompletionId;
+
+    if (entry.loopItem != null || entry.loopIndex != null) {
+      applyLoopScopedVariables(
+        scopedVariables,
+        loopItem: entry.loopItem,
+        loopIndex: entry.loopIndex,
+        itemField: entry.loopItemField,
+        itemAs: entry.loopItemAs,
+      );
+    }
+
+    final nodeStartedAt = DateTime.now();
+    onNodeUpdate?.call(
+      WorkflowNodeRunResult(
         nodeId: node.id,
         label: node.label,
         nodeType: node.type,
         status: WorkflowNodeRunStatus.running,
         loopIndex: entry.loopIndex,
-      );
-      onNodeUpdate?.call(running);
+      ),
+    );
 
-      WorkflowNodeRunResult result;
-      var branchHandle = WorkflowEdgeHandle.success;
-      var skipDefaultEnqueue = false;
+    WorkflowNodeRunResult result;
+    var branchHandle = WorkflowEdgeHandle.success;
+    var skipDefaultEnqueue = false;
+    final pendingDrives = <_QueueEntry>[];
 
-      switch (node.type) {
-        case WorkflowNodeType.manualStart:
-          result = WorkflowNodeRunResult(
-            nodeId: node.id,
-            label: node.label,
-            nodeType: node.type,
-            status: WorkflowNodeRunStatus.success,
-            message: 'Workflow started',
-            durationMs: 0,
-          );
-          branchHandle = WorkflowEdgeHandle.next;
-        case WorkflowNodeType.delay:
-          final delayMs = node.delayMs ?? 0;
-          final clampedDelay = delayMs < 0 ? 0 : delayMs;
-          if (clampedDelay > 0) {
-            const slice = Duration(milliseconds: 100);
-            var remaining = clampedDelay;
-            while (remaining > 0) {
-              if (shouldStop?.call() ?? false) {
-                return WorkflowRunResult(
-                  workflowId: workflow.id,
-                  success: false,
-                  startedAt: startedAt,
-                  endedAt: DateTime.now(),
-                  nodeResults: nodeResults,
-                  error: 'Workflow stopped',
-                  scopedVariables: scopedVariables,
-                );
-              }
-              final waitMs = remaining < slice.inMilliseconds
-                  ? remaining
-                  : slice.inMilliseconds;
-              await Future<void>.delayed(Duration(milliseconds: waitMs));
-              remaining -= waitMs;
-            }
+    switch (node.type) {
+      case WorkflowNodeType.manualStart:
+        result = WorkflowNodeRunResult(
+          nodeId: node.id,
+          label: node.label,
+          nodeType: node.type,
+          status: WorkflowNodeRunStatus.success,
+          message: 'Workflow started',
+          durationMs: 0,
+        );
+        branchHandle = WorkflowEdgeHandle.next;
+      case WorkflowNodeType.delay:
+        final delayMs = node.delayMs ?? 0;
+        final clampedDelay = delayMs < 0 ? 0 : delayMs;
+        if (clampedDelay > 0) {
+          const slice = Duration(milliseconds: 100);
+          var remaining = clampedDelay;
+          while (remaining > 0) {
+            _throwIfAborted();
+            final waitMs = remaining < slice.inMilliseconds
+                ? remaining
+                : slice.inMilliseconds;
+            await Future<void>.delayed(Duration(milliseconds: waitMs));
+            remaining -= waitMs;
           }
-          result = WorkflowNodeRunResult(
-            nodeId: node.id,
-            label: node.label,
-            nodeType: node.type,
-            status: WorkflowNodeRunStatus.success,
-            message: clampedDelay <= 0
-                ? 'No delay configured'
-                : 'Waited ${clampedDelay}ms',
-            durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
-          );
-          branchHandle = WorkflowEdgeHandle.next;
-        case WorkflowNodeType.condition:
-          final expression = (node.conditionExpression ?? '').trim();
-          final passed = _evaluateCondition(
-            node.conditionExpression,
-            scopedVariables: scopedVariables,
-            lastStatusCode: lastStatusCode,
-          );
-          result = WorkflowNodeRunResult(
-            nodeId: node.id,
-            label: node.label,
-            nodeType: node.type,
-            status: WorkflowNodeRunStatus.success,
-            message: passed ? 'True' : 'False',
-            detail: expression.isEmpty ? null : expression,
-            branch: passed ? 'true' : 'false',
-            durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
-          );
-          branchHandle =
-              passed ? WorkflowEdgeHandle.then : WorkflowEdgeHandle.elseBranch;
-        case WorkflowNodeType.loop:
-          final maxIterations = node.loopMaxIterations;
-          final environmentVariables = _environmentVariables(ref);
-          final allItems = node.loopMode == WorkflowLoopMode.repeat
-              ? _repeatLoopItems(maxIterations)
-              : _resolveLoopItems(
-                  node.loopExpression,
-                  scopedVariables,
-                  environmentVariables,
-                );
-          final items = node.loopMode == WorkflowLoopMode.repeat
-              ? allItems
-              : maxIterations != null && maxIterations > 0
-                  ? allItems.take(maxIterations).toList()
-                  : allItems;
-          final loopSource = node.loopMode == WorkflowLoopMode.repeat
-              ? 'repeat ${maxIterations ?? 0}'
-              : (node.loopExpression ?? '').trim();
-          result = WorkflowNodeRunResult(
-            nodeId: node.id,
-            label: node.label,
-            nodeType: node.type,
-            status: WorkflowNodeRunStatus.success,
-            message: items.isEmpty
-                ? node.loopMode == WorkflowLoopMode.repeat
-                    ? 'Set a repeat count greater than 0'
-                    : 'Loop has no items'
-                : node.loopMode == WorkflowLoopMode.repeat
-                    ? 'Repeat ${items.length} times'
-                    : maxIterations != null && maxIterations > 0
-                        ? 'Loop ${items.length} of ${allItems.length} items'
-                        : 'Loop ${items.length} items',
-            detail: loopSource.isEmpty ? null : loopSource,
-            branch: items.isEmpty ? 'done' : 'each',
-            durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
-          );
-          final doneTargetIds = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
-              .where((edge) => edge.sourceHandle == WorkflowEdgeHandle.loopDone)
-              .map((edge) => edge.targetId)
-              .toList();
-          final bodyStarts = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
-              .where((edge) => edge.sourceHandle == WorkflowEdgeHandle.next)
-              .map((edge) => edge.targetId)
-              .toList();
-          if (items.isEmpty) {
-            _enqueueTargetIds(queue, workflow, doneTargetIds);
-          } else if (bodyStarts.isEmpty) {
-            _enqueueTargetIds(queue, workflow, doneTargetIds);
-          } else {
-            loopIterationsRemaining[node.id] = items.length;
-            loopDoneTargets[node.id] = doneTargetIds;
-            loopItems[node.id] = items;
-            loopBodyStarts[node.id] = bodyStarts.first;
-            final bodyNode = workflow.graph.nodes
-                .where((candidate) => candidate.id == bodyStarts.first)
-                .cast<WorkflowGraphNode?>()
-                .firstWhere(
-                  (candidate) => candidate != null,
-                  orElse: () => null,
-                );
-            if (bodyNode != null) {
-              // Run iterations sequentially: queue only the first body start.
-              queue.insert(
-                0,
-                _QueueEntry(
-                  bodyNode,
-                  loopItem: items.first,
-                  loopIndex: '0',
-                  loopCompletionId: node.id,
-                  loopItemField: node.loopItemField,
-                  loopItemAs: node.loopItemAs,
-                ),
+        }
+        result = WorkflowNodeRunResult(
+          nodeId: node.id,
+          label: node.label,
+          nodeType: node.type,
+          status: WorkflowNodeRunStatus.success,
+          message: clampedDelay <= 0
+              ? 'No delay configured'
+              : 'Waited ${clampedDelay}ms',
+          durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
+        );
+        branchHandle = WorkflowEdgeHandle.next;
+      case WorkflowNodeType.condition:
+        final expression = (node.conditionExpression ?? '').trim();
+        final passed = _evaluateCondition(
+          node.conditionExpression,
+          scopedVariables: scopedVariables,
+          lastStatusCode: entry.context.lastStatusCode,
+        );
+        result = WorkflowNodeRunResult(
+          nodeId: node.id,
+          label: node.label,
+          nodeType: node.type,
+          status: WorkflowNodeRunStatus.success,
+          message: passed ? 'True' : 'False',
+          detail: expression.isEmpty ? null : expression,
+          branch: passed ? 'true' : 'false',
+          durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
+        );
+        branchHandle =
+            passed ? WorkflowEdgeHandle.then : WorkflowEdgeHandle.elseBranch;
+      case WorkflowNodeType.loop:
+        final maxIterations = node.loopMaxIterations;
+        final environmentVariables = _environmentVariables();
+        final allItems = node.loopMode == WorkflowLoopMode.repeat
+            ? _repeatLoopItems(maxIterations)
+            : _resolveLoopItems(
+                node.loopExpression,
+                scopedVariables,
+                environmentVariables,
               );
-            }
-          }
-          skipDefaultEnqueue = true;
-        case WorkflowNodeType.request:
-          if (node.request == null || node.request!.isEmpty) {
-            result = WorkflowNodeRunResult(
-              nodeId: node.id,
-              label: node.label,
-              nodeType: node.type,
-              status: WorkflowNodeRunStatus.failed,
-              message: 'Missing request on node',
-            );
-            branchHandle = WorkflowEdgeHandle.failure;
-            nodeResults.add(result);
-            onNodeUpdate?.call(result);
-            return WorkflowRunResult(
-              workflowId: workflow.id,
-              success: false,
-              startedAt: startedAt,
-              endedAt: DateTime.now(),
-              nodeResults: nodeResults,
-              error: 'Missing request on node',
-              scopedVariables: scopedVariables,
-            );
-          }
-          final requestModel = resolveWorkflowNodeRequest(
-            node: node,
-            storage: storage,
-          );
-          final execution = await executeWorkflowRequest(
-            ref: ref,
-            requestModel: requestModel,
-            scopedVariables: scopedVariables,
-            logLabel: '${workflow.id}/${node.id}',
-          );
-          lastStatusCode = execution.statusCode;
-          final extracted = <String, String>{};
-          for (final extraction in node.extractions) {
-            final value = extractionService.extract(
-              source: extraction.source,
-              jsonPath: extraction.jsonPath,
-              response: execution.httpResponseModel,
-              statusCode: execution.statusCode,
-            );
-            if (value != null && extraction.varName.isNotEmpty) {
-              scopedVariables[extraction.varName] = value;
-              extracted[extraction.varName] = value;
-            }
-          }
-          final substituted = execution.substitutedRequest;
-          final ok = execution.ok;
-          result = WorkflowNodeRunResult(
-            nodeId: node.id,
-            label: node.label,
-            nodeType: node.type,
-            status: ok
-                ? WorkflowNodeRunStatus.success
-                : WorkflowNodeRunStatus.failed,
-            message: execution.message,
-            statusCode: execution.statusCode,
-            durationMs: execution.duration?.inMilliseconds ??
-                DateTime.now().difference(nodeStartedAt).inMilliseconds,
-            apiType: execution.apiType,
-            method: substituted?.method,
-            url: substituted?.url,
-            requestHeaders: substituted?.enabledHeadersMap,
-            requestBody: substituted?.body,
-            httpResponseModel: execution.httpResponseModel,
-            extractedVariables: extracted,
-            branch: ok ? 'success' : 'failure',
-          );
-          branchHandle =
-              ok ? WorkflowEdgeHandle.success : WorkflowEdgeHandle.failure;
-          if (!ok) {
-            nodeResults.add(result);
-            onNodeUpdate?.call(result);
-            return WorkflowRunResult(
-              workflowId: workflow.id,
-              success: false,
-              startedAt: startedAt,
-              endedAt: DateTime.now(),
-              nodeResults: nodeResults,
-              error: execution.message ?? 'Request step failed',
-              scopedVariables: scopedVariables,
-            );
-          }
-      }
-
-      nodeResults.add(result);
-      onNodeUpdate?.call(
-        result.copyWith(loopIndex: entry.loopIndex),
-      );
-
-      if (skipDefaultEnqueue) {
-        continue;
-      }
-
-      final nextIds = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
-          .where((edge) => edge.sourceHandle == branchHandle)
-          .map((edge) => edge.targetId)
-          .toList();
-      if (nextIds.isEmpty && node.type == WorkflowNodeType.request) {
-        final fallback = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
-            .where(
-              (edge) =>
-                  edge.sourceHandle != WorkflowEdgeHandle.then &&
-                  edge.sourceHandle != WorkflowEdgeHandle.elseBranch &&
-                  edge.sourceHandle != WorkflowEdgeHandle.success &&
-                  edge.sourceHandle != WorkflowEdgeHandle.failure &&
-                  edge.sourceHandle != WorkflowEdgeHandle.loopDone,
-            )
-            .map((edge) => edge.targetId);
-        nextIds.addAll(fallback);
-      }
-
-      for (final nextId in nextIds) {
-        final nextNode = workflow.graph.nodes
-            .where((candidate) => candidate.id == nextId)
-            .cast<WorkflowGraphNode?>()
-            .firstWhere((candidate) => candidate != null, orElse: () => null);
-        if (nextNode != null) {
-          queue.add(
-            _QueueEntry(
-              nextNode,
-              loopItem: entry.loopItem,
-              loopIndex: entry.loopIndex,
-              loopCompletionId: loopCompletionId,
-              loopItemField: entry.loopItemField,
-              loopItemAs: entry.loopItemAs,
+        final items = node.loopMode == WorkflowLoopMode.repeat
+            ? allItems
+            : maxIterations != null && maxIterations > 0
+                ? allItems.take(maxIterations).toList()
+                : allItems;
+        final loopSource = node.loopMode == WorkflowLoopMode.repeat
+            ? 'repeat ${maxIterations ?? 0}'
+            : (node.loopExpression ?? '').trim();
+        result = WorkflowNodeRunResult(
+          nodeId: node.id,
+          label: node.label,
+          nodeType: node.type,
+          status: WorkflowNodeRunStatus.success,
+          message: items.isEmpty
+              ? node.loopMode == WorkflowLoopMode.repeat
+                  ? 'Set a repeat count greater than 0'
+                  : 'Loop has no items'
+              : node.loopMode == WorkflowLoopMode.repeat
+                  ? 'Repeat ${items.length} times'
+                  : maxIterations != null && maxIterations > 0
+                      ? 'Loop ${items.length} of ${allItems.length} items'
+                      : 'Loop ${items.length} items',
+          detail: loopSource.isEmpty ? null : loopSource,
+          branch: items.isEmpty ? 'done' : 'each',
+          durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
+        );
+        final doneTargetIds =
+            (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
+                .where((edge) => edge.sourceHandle == WorkflowEdgeHandle.loopDone)
+                .map((edge) => edge.targetId)
+                .toList();
+        final bodyStarts = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
+            .where((edge) => edge.sourceHandle == WorkflowEdgeHandle.next)
+            .map((edge) => edge.targetId)
+            .toList();
+        if (items.isEmpty || bodyStarts.isEmpty) {
+          pendingDrives.addAll(
+            _entriesForTargets(
+              doneTargetIds,
+              context: entry.context,
+              parallel: entry.parallel,
             ),
           );
+        } else {
+          loopIterationsRemaining[node.id] = items.length;
+          loopDoneTargets[node.id] = doneTargetIds;
+          loopItems[node.id] = items;
+          loopBodyStarts[node.id] = bodyStarts.first;
+          loopContexts[node.id] = entry.context;
+          loopParallels[node.id] = entry.parallel;
+          final bodyNode = _nodeById(bodyStarts.first);
+          if (bodyNode != null) {
+            // Loop iterations stay sequential; share context on this branch.
+            pendingDrives.add(
+              _QueueEntry(
+                bodyNode,
+                context: entry.context,
+                parallel: entry.parallel,
+                loopItem: items.first,
+                loopIndex: '0',
+                loopCompletionId: node.id,
+                loopItemField: node.loopItemField,
+                loopItemAs: node.loopItemAs,
+              ),
+            );
+          }
         }
-      }
+        skipDefaultEnqueue = true;
+      case WorkflowNodeType.request:
+        if (node.request == null || node.request!.isEmpty) {
+          result = WorkflowNodeRunResult(
+            nodeId: node.id,
+            label: node.label,
+            nodeType: node.type,
+            status: WorkflowNodeRunStatus.failed,
+            message: 'Missing request on node',
+          );
+          nodeResults.add(result);
+          onNodeUpdate?.call(result);
+          _abort('Missing request on node');
+          throw _WorkflowAbort('Missing request on node');
+        }
+        final requestModel = resolveWorkflowNodeRequest(
+          node: node,
+          storage: storage,
+        );
+        final execution = await executeWorkflowRequest(
+          ref: ref,
+          requestModel: requestModel,
+          scopedVariables: scopedVariables,
+          logLabel: '${workflow.id}/${node.id}',
+        );
+        _throwIfAborted();
+        entry.context.lastStatusCode = execution.statusCode;
+        final extracted = <String, String>{};
+        for (final extraction in node.extractions) {
+          final value = extractionService.extract(
+            source: extraction.source,
+            jsonPath: extraction.jsonPath,
+            response: execution.httpResponseModel,
+            statusCode: execution.statusCode,
+          );
+          if (value != null && extraction.varName.isNotEmpty) {
+            scopedVariables[extraction.varName] = value;
+            extracted[extraction.varName] = value;
+          }
+        }
+        final substituted = execution.substitutedRequest;
+        final ok = execution.ok;
+        result = WorkflowNodeRunResult(
+          nodeId: node.id,
+          label: node.label,
+          nodeType: node.type,
+          status: ok
+              ? WorkflowNodeRunStatus.success
+              : WorkflowNodeRunStatus.failed,
+          message: execution.message,
+          statusCode: execution.statusCode,
+          durationMs: execution.duration?.inMilliseconds ??
+              DateTime.now().difference(nodeStartedAt).inMilliseconds,
+          apiType: execution.apiType,
+          method: substituted?.method,
+          url: substituted?.url,
+          requestHeaders: substituted?.enabledHeadersMap,
+          requestBody: substituted?.body,
+          httpResponseModel: execution.httpResponseModel,
+          extractedVariables: extracted,
+          branch: ok ? 'success' : 'failure',
+        );
+        branchHandle =
+            ok ? WorkflowEdgeHandle.success : WorkflowEdgeHandle.failure;
+        if (!ok) {
+          resultScopedVariables.addAll(scopedVariables);
+          nodeResults.add(result);
+          onNodeUpdate?.call(result);
+          final message = execution.message ?? 'Request step failed';
+          _abort(message);
+          throw _WorkflowAbort(message);
+        }
+    }
+
+    resultScopedVariables.addAll(scopedVariables);
+    nodeResults.add(result);
+    onNodeUpdate?.call(result.copyWith(loopIndex: entry.loopIndex));
+
+    if (!skipDefaultEnqueue) {
+      final nextIds = _nextTargetIds(node, branchHandle);
+      pendingDrives.addAll(
+        _entriesForTargets(
+          nextIds,
+          context: entry.context,
+          parallel: entry.parallel,
+          loopItem: entry.loopItem,
+          loopIndex: entry.loopIndex,
+          loopCompletionId: loopCompletionId,
+          loopItemField: entry.loopItemField,
+          loopItemAs: entry.loopItemAs,
+        ),
+      );
 
       if (loopCompletionId != null && nextIds.isEmpty) {
-        _completeLoopIteration(
-          loopId: loopCompletionId,
-          loopIterationsRemaining: loopIterationsRemaining,
-          loopDoneTargets: loopDoneTargets,
-          loopItems: loopItems,
-          loopBodyStarts: loopBodyStarts,
-          queue: queue,
-          workflow: workflow,
-          scopedVariables: scopedVariables,
+        pendingDrives.addAll(
+          _completeLoopIteration(loopId: loopCompletionId),
         );
       }
     }
 
-    final failed = nodeResults.any(
-      (result) => result.status == WorkflowNodeRunStatus.failed,
+    await _driveSuccessors(pendingDrives, parentParallel: entry.parallel);
+  }
+
+  Future<void> _driveSuccessors(
+    List<_QueueEntry> successors, {
+    required _ParallelScope? parentParallel,
+  }) async {
+    if (successors.isEmpty) {
+      return;
+    }
+    if (successors.length == 1) {
+      await drive(successors.single);
+      return;
+    }
+
+    // AND-split: run sibling trees concurrently with forked contexts.
+    final scope = _ParallelScope(
+      id: 'p${_parallelSeq++}',
+      siblingRoots: [for (final e in successors) e.node.id],
+      parent: parentParallel,
     );
-    return WorkflowRunResult(
-      workflowId: workflow.id,
-      success: !failed,
-      startedAt: startedAt,
-      endedAt: DateTime.now(),
-      nodeResults: nodeResults,
-      scopedVariables: scopedVariables,
-      error: failed ? 'One or more steps failed' : null,
-    );
+    final parallelEntries = [
+      for (final e in successors) e.copyWith(parallel: scope),
+    ];
+    await Future.wait([
+      for (final e in parallelEntries) drive(e),
+    ]);
+  }
+
+  List<String> _nextTargetIds(
+    WorkflowGraphNode node,
+    WorkflowEdgeHandle branchHandle,
+  ) {
+    final nextIds = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
+        .where((edge) => edge.sourceHandle == branchHandle)
+        .map((edge) => edge.targetId)
+        .toList();
+    if (nextIds.isEmpty && node.type == WorkflowNodeType.request) {
+      final fallback = (adjacency[node.id] ?? const <_WorkflowEdgeRef>[])
+          .where(
+            (edge) =>
+                edge.sourceHandle != WorkflowEdgeHandle.then &&
+                edge.sourceHandle != WorkflowEdgeHandle.elseBranch &&
+                edge.sourceHandle != WorkflowEdgeHandle.success &&
+                edge.sourceHandle != WorkflowEdgeHandle.failure &&
+                edge.sourceHandle != WorkflowEdgeHandle.loopDone,
+          )
+          .map((edge) => edge.targetId);
+      nextIds.addAll(fallback);
+    }
+    return nextIds;
+  }
+
+  List<_QueueEntry> _entriesForTargets(
+    List<String> targetIds, {
+    required WorkflowBranchContext context,
+    _ParallelScope? parallel,
+    String? loopItem,
+    String? loopIndex,
+    String? loopCompletionId,
+    String? loopItemField,
+    String? loopItemAs,
+  }) {
+    if (targetIds.isEmpty) {
+      return const [];
+    }
+    final contexts = contextsForSuccessors(context, count: targetIds.length);
+    final entries = <_QueueEntry>[];
+    for (var i = 0; i < targetIds.length; i++) {
+      final nextNode = _nodeById(targetIds[i]);
+      if (nextNode == null) {
+        continue;
+      }
+      entries.add(
+        _QueueEntry(
+          nextNode,
+          context: contexts[i],
+          parallel: parallel,
+          loopItem: loopItem,
+          loopIndex: loopIndex,
+          loopCompletionId: loopCompletionId,
+          loopItemField: loopItemField,
+          loopItemAs: loopItemAs,
+        ),
+      );
+    }
+    return entries;
+  }
+
+  List<_QueueEntry> _completeLoopIteration({required String loopId}) {
+    final remaining = loopIterationsRemaining[loopId];
+    if (remaining == null) {
+      return const [];
+    }
+    final context = loopContexts[loopId] ?? WorkflowBranchContext();
+    final parallel = loopParallels[loopId];
+    final nextRemaining = remaining - 1;
+    if (nextRemaining <= 0) {
+      loopIterationsRemaining.remove(loopId);
+      loopItems.remove(loopId);
+      loopBodyStarts.remove(loopId);
+      loopContexts.remove(loopId);
+      loopParallels.remove(loopId);
+      final doneTargets = loopDoneTargets.remove(loopId) ?? const [];
+      final loopNode = _nodeById(loopId);
+      clearLoopScopedVariables(
+        context.scopedVariables,
+        itemAs: loopNode?.loopItemAs,
+      );
+      return _entriesForTargets(
+        doneTargets,
+        context: context,
+        parallel: parallel,
+      );
+    }
+
+    loopIterationsRemaining[loopId] = nextRemaining;
+    final items = loopItems[loopId];
+    final bodyStartId = loopBodyStarts[loopId];
+    if (items == null || bodyStartId == null) {
+      return const [];
+    }
+    final nextIndex = items.length - nextRemaining;
+    if (nextIndex < 0 || nextIndex >= items.length) {
+      return const [];
+    }
+    final bodyNode = _nodeById(bodyStartId);
+    if (bodyNode == null) {
+      return const [];
+    }
+    final loopNode = _nodeById(loopId);
+    return [
+      _QueueEntry(
+        bodyNode,
+        context: context,
+        parallel: parallel,
+        loopItem: items[nextIndex],
+        loopIndex: '$nextIndex',
+        loopCompletionId: loopId,
+        loopItemField: loopNode?.loopItemField,
+        loopItemAs: loopNode?.loopItemAs,
+      ),
+    ];
+  }
+
+  WorkflowGraphNode? _nodeById(String id) {
+    return workflow.graph.nodes
+        .where((candidate) => candidate.id == id)
+        .cast<WorkflowGraphNode?>()
+        .firstWhere((candidate) => candidate != null, orElse: () => null);
   }
 
   String _visitKey(_QueueEntry entry) {
     final node = entry.node;
-    // Loop body iterations must be distinct even for the same node id.
     if (entry.loopCompletionId != null && entry.loopIndex != null) {
       return '${node.id}@${entry.loopCompletionId}:${entry.loopIndex}';
     }
     return node.id;
   }
 
-  Map<String, String> _environmentVariables(WidgetRef ref) {
+  Map<String, String> _environmentVariables() {
     final envMap = ref.read(availableEnvironmentVariablesStateProvider);
     final activeEnvId = ref.read(activeEnvironmentIdProvider);
     final merged = <String, String>{};
@@ -521,7 +796,9 @@ class WorkflowRunner {
     return false;
   }
 
-  Map<String, List<_WorkflowEdgeRef>> _buildAdjacency(WorkflowDocument workflow) {
+  static Map<String, List<_WorkflowEdgeRef>> _buildAdjacency(
+    WorkflowDocument workflow,
+  ) {
     final map = <String, List<_WorkflowEdgeRef>>{};
     for (final edge in workflow.graph.edges) {
       map.putIfAbsent(edge.source, () => []).add(
@@ -532,88 +809,6 @@ class WorkflowRunner {
           );
     }
     return map;
-  }
-
-  void _enqueueTargetIds(
-    List<_QueueEntry> queue,
-    WorkflowDocument workflow,
-    List<String> targetIds,
-  ) {
-    for (final targetId in targetIds) {
-      final nextNode = workflow.graph.nodes
-          .where((candidate) => candidate.id == targetId)
-          .cast<WorkflowGraphNode?>()
-          .firstWhere((candidate) => candidate != null, orElse: () => null);
-      if (nextNode != null) {
-        queue.add(_QueueEntry(nextNode));
-      }
-    }
-  }
-
-  void _completeLoopIteration({
-    required String loopId,
-    required Map<String, int> loopIterationsRemaining,
-    required Map<String, List<String>> loopDoneTargets,
-    required Map<String, List<String>> loopItems,
-    required Map<String, String> loopBodyStarts,
-    required List<_QueueEntry> queue,
-    required WorkflowDocument workflow,
-    required Map<String, String> scopedVariables,
-  }) {
-    final remaining = loopIterationsRemaining[loopId];
-    if (remaining == null) {
-      return;
-    }
-    final nextRemaining = remaining - 1;
-    if (nextRemaining <= 0) {
-      loopIterationsRemaining.remove(loopId);
-      loopItems.remove(loopId);
-      loopBodyStarts.remove(loopId);
-      final doneTargets = loopDoneTargets.remove(loopId) ?? const [];
-      final loopNode = workflow.graph.nodes
-          .where((candidate) => candidate.id == loopId)
-          .cast<WorkflowGraphNode?>()
-          .firstWhere((candidate) => candidate != null, orElse: () => null);
-      clearLoopScopedVariables(
-        scopedVariables,
-        itemAs: loopNode?.loopItemAs,
-      );
-      _enqueueTargetIds(queue, workflow, doneTargets);
-      return;
-    }
-
-    loopIterationsRemaining[loopId] = nextRemaining;
-    final items = loopItems[loopId];
-    final bodyStartId = loopBodyStarts[loopId];
-    if (items == null || bodyStartId == null) {
-      return;
-    }
-    final nextIndex = items.length - nextRemaining;
-    if (nextIndex < 0 || nextIndex >= items.length) {
-      return;
-    }
-    final bodyNode = workflow.graph.nodes
-        .where((candidate) => candidate.id == bodyStartId)
-        .cast<WorkflowGraphNode?>()
-        .firstWhere((candidate) => candidate != null, orElse: () => null);
-    if (bodyNode == null) {
-      return;
-    }
-    final loopNode = workflow.graph.nodes
-        .where((candidate) => candidate.id == loopId)
-        .cast<WorkflowGraphNode?>()
-        .firstWhere((candidate) => candidate != null, orElse: () => null);
-    queue.insert(
-      0,
-      _QueueEntry(
-        bodyNode,
-        loopItem: items[nextIndex],
-        loopIndex: '$nextIndex',
-        loopCompletionId: loopId,
-        loopItemField: loopNode?.loopItemField,
-        loopItemAs: loopNode?.loopItemAs,
-      ),
-    );
   }
 }
 
