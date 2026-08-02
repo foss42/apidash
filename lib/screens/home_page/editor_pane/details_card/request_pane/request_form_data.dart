@@ -29,7 +29,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   }
 
   void _onFieldChange() {
-    ref.read(collectionStateNotifierProvider.notifier).update(
+    ref.read(activeCollectionProvider.notifier).update(
           formData: formRows.sublist(0, formRows.length - 1),
         );
   }

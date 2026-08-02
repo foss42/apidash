@@ -4,7 +4,7 @@ import 'package:apidash/dashbot/providers/chat_viewmodel.dart';
 import 'package:apidash/dashbot/providers/dashbot_window_notifier.dart';
 import 'package:apidash/dashbot/widgets/dashbot_task_buttons.dart';
 import 'package:apidash/models/request_model.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/active_collection_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

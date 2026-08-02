@@ -17,7 +17,7 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
       ),
     );
     final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
+        .read(activeCollectionProvider.notifier)
         .getRequestModel(selectedId!);
     final aiReqM = requestModel?.aiRequestModel;
     if (aiReqM == null) {
@@ -37,7 +37,7 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
                 initialValue: apiKey,
                 onChanged: (String value) {
                   ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .update(aiRequestModel: aiReqM.copyWith(apiKey: value));
                 },
                 hintText: kHintEnterApiKey,

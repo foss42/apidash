@@ -5,7 +5,6 @@ import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/request_pane_ai.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/dashbot/dashbot.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +26,9 @@ void main() {
           dashbotWindowNotifierProvider.overrideWith(
             (ref) => DashbotWindowNotifier(),
           ),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 apiType: APIType.rest,
@@ -66,8 +66,9 @@ void main() {
           dashbotWindowNotifierProvider.overrideWith(
             (ref) => DashbotWindowNotifier(),
           ),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 apiType: APIType.graphql,
@@ -105,8 +106,9 @@ void main() {
           dashbotWindowNotifierProvider.overrideWith(
             (ref) => DashbotWindowNotifier(),
           ),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(id: 'test_id', apiType: APIType.ai),
             }),
           ),
@@ -148,8 +150,9 @@ void main() {
           dashbotWindowNotifierProvider.overrideWith(
             (ref) => DashbotWindowNotifier()..togglePopped(),
           ),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 apiType: APIType.rest,

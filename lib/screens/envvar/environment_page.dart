@@ -26,9 +26,10 @@ class EnvironmentPage extends ConsumerWidget {
         mainContent: const EnvironmentEditor(),
         title: EditorTitle(
           title: name,
-          showMenu: id != kGlobalEnvironmentId,
+          showMenu: (id ?? '') != kGlobalEnvironmentId,
           onSelected: (ItemMenuOption item) {
-            if (item == ItemMenuOption.edit) {
+            if (item == ItemMenuOption.edit &&
+                (id ?? '') != kGlobalEnvironmentId) {
               showRenameDialog(context, kLabelRenameEnvironment, name, (val) {
                 ref
                     .read(environmentsStateNotifierProvider.notifier)

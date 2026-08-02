@@ -44,16 +44,16 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
                 if (item == ItemMenuOption.edit) {
                   showRenameDialog(context, kLabelRenameRequest, name, (val) {
                     ref
-                        .read(collectionStateNotifierProvider.notifier)
+                        .read(activeCollectionProvider.notifier)
                         .update(name: val);
                   });
                 }
                 if (item == ItemMenuOption.delete) {
-                  ref.read(collectionStateNotifierProvider.notifier).remove();
+                  ref.read(activeCollectionProvider.notifier).remove();
                 }
                 if (item == ItemMenuOption.duplicate) {
                   ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .duplicate();
                 }
               },

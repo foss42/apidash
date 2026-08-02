@@ -12,7 +12,7 @@ import 'helpers.dart';
 void main() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() async {
-    await testSetUpTempDirForHive();
+    await testSetUpWorkspaceStorage();
   });
 
   testWidgets(
@@ -20,7 +20,7 @@ void main() async {
     (WidgetTester tester) async {
       // Set up the test environment
       final container = createContainer();
-      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      final notifier = container.read(activeCollectionProvider.notifier);
 
       // Ensure the initial request is a GET request with no body
       final id = notifier.state!.entries.first.key;
@@ -60,7 +60,8 @@ void main() async {
     HttpOverrides.global = null; //enable networking in flutter_test
 
     final container = createContainer();
-    final notifier = container.read(collectionStateNotifierProvider.notifier);
+    await ensureCollectionReady(container);
+    final notifier = container.read(activeCollectionProvider.notifier);
 
     const model = HttpRequestModel(
       url: 'https://sse-demo.netlify.app/sse',
@@ -119,13 +120,14 @@ void main() async {
     });
   });
 
-  group('CollectionStateNotifier Auth Tests', () {
+  group('ActiveCollectionNotifier Auth Tests', () {
     late ProviderContainer container;
-    late CollectionStateNotifier notifier;
+    late ActiveCollectionNotifier notifier;
 
-    setUp(() {
+    setUp(() async {
       container = createContainer();
-      notifier = container.read(collectionStateNotifierProvider.notifier);
+      await ensureCollectionReady(container);
+      notifier = container.read(activeCollectionProvider.notifier);
     });
 
     test('should update request with basic authentication', () {
@@ -433,7 +435,7 @@ void main() async {
     });
 
     test('should save and load auth data correctly', () async {
-      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      final notifier = container.read(activeCollectionProvider.notifier);
 
       final id = notifier.state!.entries.first.key;
       const jwtAuth = AuthJwtModel(
@@ -449,20 +451,31 @@ void main() async {
       const authModel = AuthModel(type: APIAuthType.jwt, jwt: jwtAuth);
 
       notifier.update(id: id, authModel: authModel);
+      expect(
+        notifier.getRequestModel(id)?.httpRequestModel?.authModel?.type,
+        APIAuthType.jwt,
+      );
+      final collectionId = container.read(selectedCollectionIdStateProvider)!;
+      final ids = container.read(requestSequenceProvider);
+      container.read(collectionCatalogProvider.notifier).syncRequests(
+            collectionId,
+            notifier.summariesForSequence(collectionId, ids),
+          );
+      await container
+          .read(collectionCatalogProvider.notifier)
+          .saveCollections();
       await notifier.saveData();
 
       // Create new container and load data
       late ProviderContainer newContainer;
       try {
         newContainer = ProviderContainer();
+        await ensureCollectionReady(newContainer);
 
-        // Wait for the container to initialize by accessing the provider
         final newNotifier = newContainer.read(
-          collectionStateNotifierProvider.notifier,
+          activeCollectionProvider.notifier,
         );
-
-        // Give some time for the microtask in the constructor to complete
-        await Future.delayed(const Duration(milliseconds: 10));
+        newNotifier.loadRequest(id);
 
         final loadedRequest = newNotifier.getRequestModel(id);
 
@@ -752,13 +765,14 @@ void main() async {
     });
   });
 
-  group('CollectionStateNotifier Scripting Tests', () {
+  group('ActiveCollectionNotifier Scripting Tests', () {
     late ProviderContainer container;
-    late CollectionStateNotifier notifier;
+    late ActiveCollectionNotifier notifier;
 
-    setUp(() {
+    setUp(() async {
       container = createContainer();
-      notifier = container.read(collectionStateNotifierProvider.notifier);
+      await ensureCollectionReady(container);
+      notifier = container.read(activeCollectionProvider.notifier);
     });
 
     test('should update request with pre-request script', () {
@@ -944,18 +958,26 @@ void main() async {
         preRequestScript: preRequestScript,
         postRequestScript: postResponseScript,
       );
+      final collectionId = container.read(selectedCollectionIdStateProvider)!;
+      final ids = container.read(requestSequenceProvider);
+      container.read(collectionCatalogProvider.notifier).syncRequests(
+            collectionId,
+            notifier.summariesForSequence(collectionId, ids),
+          );
+      await container
+          .read(collectionCatalogProvider.notifier)
+          .saveCollections();
       await notifier.saveData();
 
       // Create new container and load data
       late ProviderContainer newContainer;
       try {
         newContainer = ProviderContainer();
+        await ensureCollectionReady(newContainer);
         final newNotifier = newContainer.read(
-          collectionStateNotifierProvider.notifier,
+          activeCollectionProvider.notifier,
         );
-
-        // Give some time for the microtask in the constructor to complete
-        await Future.delayed(const Duration(milliseconds: 10));
+        newNotifier.loadRequest(id);
 
         final loadedRequest = newNotifier.getRequestModel(id);
 
@@ -1108,6 +1130,7 @@ void main() async {
       'should handle script updates without affecting other request properties',
       () {
         final id = notifier.state!.entries.first.key;
+        notifier.loadRequest(id);
 
         // First set up a complete request
         notifier.update(
@@ -1123,19 +1146,21 @@ void main() async {
           description: 'A test request with scripts',
         );
 
-        final beforeRequest = notifier.getRequestModel(id);
+        final activeId = container.read(selectedIdStateProvider)!;
+        final beforeRequest = notifier.getRequestModel(activeId);
+        expect(beforeRequest, isNotNull);
 
         // Now update only scripts
         const newPreScript = 'ad.console.log("Updated pre-script");';
         const newPostScript = 'ad.console.log("Updated post-script");';
 
         notifier.update(
-          id: id,
+          id: activeId,
           preRequestScript: newPreScript,
           postRequestScript: newPostScript,
         );
 
-        final afterRequest = notifier.getRequestModel(id);
+        final afterRequest = notifier.getRequestModel(activeId);
 
         // Verify scripts were updated
         expect(afterRequest?.preRequestScript, equals(newPreScript));

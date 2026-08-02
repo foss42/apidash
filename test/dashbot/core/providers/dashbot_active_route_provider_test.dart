@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/dashbot/routes/routes.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/active_collection_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 
 import '../../../providers/helpers.dart';

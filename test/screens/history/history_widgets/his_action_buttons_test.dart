@@ -5,21 +5,9 @@ import 'package:apidash/screens/history/history_widgets/his_action_buttons.dart'
 import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MockCollectionStateNotifier
-    extends StateNotifier<Map<String, RequestModel>?>
-    implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
-    : super(state);
-
-  @override
-  void duplicateFromHistory(HistoryRequestModel historyModel) {}
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
+import '../../../providers/helpers.dart';
 
 void main() {
   final historyModel = HistoryRequestModel(
@@ -40,21 +28,20 @@ void main() {
     testWidgets('renders action buttons and handles state properly', (
       tester,
     ) async {
-      final mockStateNotifier = MockCollectionStateNotifier({
-        'req-1': RequestModel(
-          id: 'req-1',
-          httpRequestModel: HttpRequestModel(
-            url: 'https://example.com',
-            method: HTTPVerb.get,
-          ),
-        ),
-      });
-
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => mockStateNotifier,
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {
+                'req-1': RequestModel(
+                  id: 'req-1',
+                  httpRequestModel: HttpRequestModel(
+                    url: 'https://example.com',
+                    method: HTTPVerb.get,
+                  ),
+                ),
+              }),
             ),
           ],
           child: MaterialApp(
@@ -71,11 +58,9 @@ void main() {
       expect(find.text('Duplicate'), findsOneWidget);
       expect(find.text('Request'), findsOneWidget);
 
-      // Tap duplicate
       await tester.tap(find.text('Duplicate'));
       await tester.pumpAndSettle();
 
-      // Tap Request
       await tester.tap(find.text('Request'));
       await tester.pumpAndSettle();
     });
@@ -83,13 +68,12 @@ void main() {
     testWidgets('renders action buttons with missing request properly', (
       tester,
     ) async {
-      final mockStateNotifier = MockCollectionStateNotifier({});
-
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => mockStateNotifier,
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(
@@ -104,7 +88,6 @@ void main() {
 
       expect(find.byType(FilledButtonGroup), findsOneWidget);
 
-      // Tap Request (should be disabled)
       await tester.tap(find.text('Request'), warnIfMissed: false);
       await tester.pumpAndSettle();
     });
@@ -112,13 +95,12 @@ void main() {
     testWidgets(
       'renders action buttons with null historyRequestModel properly',
       (tester) async {
-        final mockStateNotifier = MockCollectionStateNotifier({});
-
         await tester.pumpWidget(
           ProviderScope(
             overrides: [
-              collectionStateNotifierProvider.overrideWith(
-                (ref) => mockStateNotifier,
+              selectedCollectionIdStateProvider.overrideWith((ref) => null),
+              activeCollectionProvider.overrideWith(
+                (ref) => MockActiveCollectionNotifier(ref, {}),
               ),
             ],
             child: MaterialApp(
@@ -133,9 +115,7 @@ void main() {
 
         expect(find.byType(FilledButtonGroup), findsOneWidget);
 
-        // Tap Request (should be disabled)
         await tester.tap(find.text('Request'), warnIfMissed: false);
-        // Tap Duplicate (should be disabled)
         await tester.tap(find.text('Duplicate'), warnIfMissed: false);
         await tester.pumpAndSettle();
       },

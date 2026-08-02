@@ -87,7 +87,7 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
       method: method,
       onChanged: (HTTPVerb? value) {
         ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .update(method: value);
       },
     );
@@ -102,13 +102,10 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.aiRequestModel?.url));
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.url));
-    final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(selectedId!)!;
+    final requestModel = ref.watch(selectedRequestModelProvider);
+    if (selectedId == null || requestModel == null) {
+      return const SizedBox.shrink();
+    }
     return EnvURLField(
       selectedId: selectedId,
       initialValue: switch (requestModel.apiType) {
@@ -117,15 +114,15 @@ class URLTextField extends ConsumerWidget {
       },
       onChanged: (value) {
         if (requestModel.apiType == APIType.ai) {
-          ref.read(collectionStateNotifierProvider.notifier).update(
+          ref.read(activeCollectionProvider.notifier).update(
               aiRequestModel:
                   requestModel.aiRequestModel?.copyWith(url: value));
         } else {
-          ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+          ref.read(activeCollectionProvider.notifier).update(url: value);
         }
       },
       onFieldSubmitted: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        ref.read(activeCollectionProvider.notifier).sendRequest();
       },
     );
   }
@@ -151,10 +148,10 @@ class SendRequestButton extends ConsumerWidget {
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        ref.read(activeCollectionProvider.notifier).sendRequest();
       },
       onCancel: () {
-        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+        ref.read(activeCollectionProvider.notifier).cancelRequest();
       },
     );
   }

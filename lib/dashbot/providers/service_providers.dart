@@ -16,7 +16,7 @@ final requestApplyServiceProvider = Provider<RequestApplyService>((ref) {
 });
 
 final autoFixServiceProvider = Provider<AutoFixService>((ref) {
-  final collection = ref.read(collectionStateNotifierProvider.notifier);
+  final collection = ref.read(activeCollectionProvider.notifier);
   final urlEnv = ref.read(urlEnvServiceProvider);
   return AutoFixService(
     requestApply: ref.read(requestApplyServiceProvider),

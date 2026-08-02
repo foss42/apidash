@@ -22,7 +22,7 @@ class AIRequestPromptSection extends ConsumerWidget {
       ),
     );
     final aiRequestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
+        .read(activeCollectionProvider.notifier)
         .getRequestModel(selectedId!)
         ?.aiRequestModel;
     if (aiRequestModel == null) {
@@ -48,7 +48,7 @@ class AIRequestPromptSection extends ConsumerWidget {
                 initialValue: systemPrompt,
                 onChanged: (String value) {
                   ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .update(
                         aiRequestModel: aiRequestModel.copyWith(
                           systemPrompt: value,
@@ -74,7 +74,7 @@ class AIRequestPromptSection extends ConsumerWidget {
                 initialValue: userPrompt,
                 onChanged: (String value) {
                   ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .update(
                         aiRequestModel: aiRequestModel.copyWith(
                           userPrompt: value,

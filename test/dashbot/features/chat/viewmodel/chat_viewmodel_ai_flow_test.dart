@@ -8,7 +8,7 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/dashbot/services/agent/prompt_builder.dart';
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/active_collection_providers.dart';
 import '../../../../providers/helpers.dart';
 
 /// AI-enabled flow tests for ChatViewmodel.
@@ -63,7 +63,7 @@ void main() {
   late _PromptCaptureBuilder promptCapture;
 
   setUp(() async {
-    await testSetUpTempDirForHive();
+    await testSetUpWorkspaceStorage();
   });
 
   // Helper to obtain a default PromptBuilder by reading the real provider in a temp container

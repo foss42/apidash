@@ -19,8 +19,9 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(id: 'test_id'),
             }),
           ),
@@ -48,8 +49,9 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(id: 'test_id', isWorking: true),
             }),
           ),
@@ -77,8 +79,9 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 responseStatus: -1,
@@ -110,8 +113,9 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
+          activeCollectionProvider.overrideWith(
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': RequestModel(
                 id: 'test_id',
                 responseStatus: 200,

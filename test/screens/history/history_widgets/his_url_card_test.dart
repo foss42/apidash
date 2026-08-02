@@ -3,22 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/screens/history/history_widgets/his_url_card.dart';
 
 import '../../../models/history_models.dart';
+import '../../../providers/helpers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/providers/providers.dart';
-
-class MockCollectionStateNotifier
-    extends StateNotifier<Map<String, RequestModel>?>
-    implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
-    : super(state);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
 
 void main() {
   group('Testing HistoryURLCard', () {
@@ -90,8 +80,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(
@@ -118,8 +109,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(
@@ -141,8 +133,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(
@@ -165,8 +158,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(

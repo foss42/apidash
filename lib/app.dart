@@ -80,8 +80,9 @@ class _AppState extends ConsumerState<App> with WindowListener {
               FilledButton(
                 child: const Text('Save'),
                 onPressed: () async {
+                  ref.read(autoSaveNotifierProvider.notifier).cancelPending();
                   await ref
-                      .read(collectionStateNotifierProvider.notifier)
+                      .read(activeCollectionProvider.notifier)
                       .saveData();
                   Navigator.of(context).pop();
                   await windowManager.setPreventClose(false);
@@ -113,7 +114,8 @@ class DashApp extends ConsumerWidget {
         ref.watch(settingsProvider.select((value) => value.isDark));
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
-    final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
+    final showWorkspaceSelector = kIsDesktop &&
+        (workspaceFolderPath == null || workspaceFolderPath.isEmpty);
     final userOnboarded = ref.watch(userOnboardedProvider);
     return Portal(
       child: MaterialApp(
@@ -123,11 +125,8 @@ class DashApp extends ConsumerWidget {
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         home: showWorkspaceSelector
             ? WorkspaceSelector(
-                onContinue: (val) async {
-                  await initHiveBoxes(kIsDesktop, val);
-                  ref
-                      .read(settingsProvider.notifier)
-                      .update(workspaceFolderPath: val);
+                onContinue: (path) async {
+                  await activateWorkspace(ref, path);
                 },
                 onCancel: () async {
                   try {

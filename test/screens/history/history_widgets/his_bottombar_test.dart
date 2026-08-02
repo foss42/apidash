@@ -7,20 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../providers/helpers.dart';
+
 class MockHistoryMetaStateNotifier
     extends StateNotifier<Map<String, HistoryMetaModel>?>
     implements HistoryMetaStateNotifier {
   MockHistoryMetaStateNotifier([Map<String, HistoryMetaModel>? state])
-    : super(state);
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class MockCollectionStateNotifier
-    extends StateNotifier<Map<String, RequestModel>?>
-    implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
     : super(state);
 
   @override
@@ -62,8 +54,9 @@ void main() {
             historyMetaStateNotifier.overrideWith(
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(home: Scaffold(body: HistoryPageBottombar())),
@@ -92,8 +85,9 @@ void main() {
             historyMetaStateNotifier.overrideWith(
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(home: Scaffold(body: HistoryPageBottombar())),
@@ -115,8 +109,9 @@ void main() {
             historyMetaStateNotifier.overrideWith(
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(
@@ -150,8 +145,9 @@ void main() {
             historyMetaStateNotifier.overrideWith(
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(
@@ -181,8 +177,9 @@ void main() {
             historyMetaStateNotifier.overrideWith(
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => MockCollectionStateNotifier({}),
+            selectedCollectionIdStateProvider.overrideWith((ref) => null),
+            activeCollectionProvider.overrideWith(
+              (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
           child: MaterialApp(

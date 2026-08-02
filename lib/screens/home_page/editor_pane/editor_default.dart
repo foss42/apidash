@@ -51,7 +51,15 @@ class RequestEditorDefault extends ConsumerWidget {
             // Primary action button
             ElevatedButton(
               onPressed: () {
-                ref.read(collectionStateNotifierProvider.notifier).add();
+                final hasCollections =
+                    ref.read(collectionSequenceProvider).isNotEmpty;
+                if (hasCollections) {
+                  ref.read(activeCollectionProvider.notifier).add();
+                } else {
+                  ref
+                      .read(collectionCatalogProvider.notifier)
+                      .addCollection();
+                }
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(

@@ -34,13 +34,13 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
 
     preReqCodeController.addListener(() {
       ref
-          .read(collectionStateNotifierProvider.notifier)
+          .read(activeCollectionProvider.notifier)
           .update(preRequestScript: preReqCodeController.text);
     });
 
     postResCodeController.addListener(() {
       ref
-          .read(collectionStateNotifierProvider.notifier)
+          .read(activeCollectionProvider.notifier)
           .update(postRequestScript: postResCodeController.text);
     });
 
