@@ -4,18 +4,22 @@ import 'package:apidash/providers/ui_providers.dart';
 import 'package:apidash/providers/workspace_lifecycle.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/git_models.dart';
 import 'git_last_fetched_provider.dart';
 import 'git_status_provider.dart';
 
 export 'git_status_provider.dart';
 
-Future<void> gitFetch(WidgetRef ref) async {
+Future<GitStatus> gitFetch(WidgetRef ref) async {
   final path = ref.read(settingsProvider).workspaceFolderPath;
-  if (path == null || path.isEmpty) return;
+  if (path == null || path.isEmpty) return GitStatus.empty;
 
-  await ref.read(gitServiceProvider).fetch(path);
+  final git = ref.read(gitServiceProvider);
+  await git.fetch(path);
   ref.read(gitLastFetchedProvider.notifier).markFetched(path);
+  final status = await git.getStatus(path);
   await _reloadGitStatus(ref);
+  return status;
 }
 
 Future<void> gitPull(WidgetRef ref) async {

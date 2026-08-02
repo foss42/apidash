@@ -66,12 +66,14 @@ class GitOverviewPanel extends ConsumerWidget {
                   _ActionButton(
                     label: kLabelFetch,
                     busy: busy,
+                    emphasized: false,
                     onPressed: onFetch,
                   ),
                   kHSpacer10,
                   _ActionButton(
                     label: kLabelPull,
                     busy: busy,
+                    emphasized: status.behind > 0,
                     onPressed: onPull,
                   ),
                 ],
@@ -130,19 +132,33 @@ class _ActionButton extends StatelessWidget {
     required this.label,
     required this.busy,
     required this.onPressed,
+    this.emphasized = false,
   });
 
   final String label;
   final bool busy;
   final VoidCallback onPressed;
+  final bool emphasized;
 
   @override
   Widget build(BuildContext context) {
+    final onPressedOrNull = busy ? null : onPressed;
+    final padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 12);
+    if (emphasized) {
+      return FilledButton(
+        onPressed: onPressedOrNull,
+        style: FilledButton.styleFrom(
+          visualDensity: VisualDensity.compact,
+          padding: padding,
+        ),
+        child: Text(label),
+      );
+    }
     return OutlinedButton(
-      onPressed: busy ? null : onPressed,
+      onPressed: onPressedOrNull,
       style: OutlinedButton.styleFrom(
         visualDensity: VisualDensity.compact,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: padding,
       ),
       child: Text(label),
     );

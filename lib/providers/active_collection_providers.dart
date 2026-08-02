@@ -533,6 +533,13 @@ class ActiveCollectionNotifier
       itemIds = [...itemIds];
     }
 
+    if (state != null && state!.containsKey(rId)) {
+      var map = {...state!};
+      map.remove(rId);
+      state = map;
+    }
+    _syncedContentFingerprints.remove(rId);
+
     final selectedId = ref.read(selectedIdStateProvider);
     if (selectedId == rId) {
       String? newId;
@@ -545,15 +552,14 @@ class ActiveCollectionNotifier
       } else {
         newId = itemIds[idx - 1];
       }
+      // Neighbor may only be in the sequence (lazy load) — hydrate before select
+      // so the editor does not show a blank URL/body pane.
+      if (newId != null) {
+        loadRequest(newId);
+      }
       ref.read(selectedIdStateProvider.notifier).state = newId;
     }
 
-    if (state != null && state!.containsKey(rId)) {
-      var map = {...state!};
-      map.remove(rId);
-      state = map;
-    }
-    _syncedContentFingerprints.remove(rId);
     _syncActiveCollectionSummaries();
   }
 

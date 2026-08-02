@@ -30,14 +30,14 @@ String formatGitLastFetched(DateTime? fetchedAt) {
   if (elapsed.inMinutes < 60) {
     final minutes = elapsed.inMinutes;
     final unit = minutes == 1 ? 'minute' : 'minutes';
-    return 'Last fetched: $minutes $unit ago';
+    return 'Last checked: $minutes $unit ago';
   }
   if (elapsed.inHours < 24) {
     final hours = elapsed.inHours;
     final unit = hours == 1 ? 'hour' : 'hours';
-    return 'Last fetched: $hours $unit ago';
+    return 'Last checked: $hours $unit ago';
   }
   final days = elapsed.inDays;
   final unit = days == 1 ? 'day' : 'days';
-  return 'Last fetched: $days $unit ago';
+  return 'Last checked: $days $unit ago';
 }
