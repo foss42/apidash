@@ -250,6 +250,7 @@ class _CollaborationPageState extends ConsumerState<CollaborationPage> {
   Future<void> _run(
     Future<void> Function() action,
     String successMessage, {
+    Future<String> Function()? successMessageBuilder,
     VoidCallback? onSuccess,
   }) async {
     if (_busy) return;
@@ -262,7 +263,12 @@ class _CollaborationPageState extends ConsumerState<CollaborationPage> {
           _clearGitUiState();
         });
         onSuccess?.call();
-        sm.showSnackBar(getSnackBar(successMessage));
+        final message = successMessageBuilder != null
+            ? await successMessageBuilder()
+            : successMessage;
+        if (mounted) {
+          sm.showSnackBar(getSnackBar(message));
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -543,11 +549,25 @@ class _CollaborationPageState extends ConsumerState<CollaborationPage> {
                                             ? GitOverviewPanel(
                                               status: status,
                                               busy: _busy,
-                                              onFetch:
-                                                  () => _run(
-                                                    () => gitFetch(ref),
+                                              onFetch: () {
+                                                late GitStatus fetchStatus;
+                                                unawaited(
+                                                  _run(
+                                                    () async {
+                                                      fetchStatus =
+                                                          await gitFetch(ref);
+                                                    },
                                                     kMsgGitFetchSuccess,
+                                                    successMessageBuilder:
+                                                        () async =>
+                                                            formatGitFetchResultMessage(
+                                                      ahead: fetchStatus.ahead,
+                                                      behind:
+                                                          fetchStatus.behind,
+                                                    ),
                                                   ),
+                                                );
+                                              },
                                               onPull:
                                                   () => _run(
                                                     () => gitPull(ref),

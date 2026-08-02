@@ -521,6 +521,7 @@ class RequestItem extends ConsumerWidget {
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
       onSecondaryTap: () {
+        ref.read(activeCollectionProvider.notifier).loadRequest(id);
         ref.read(selectedIdStateProvider.notifier).state = id;
       },
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),

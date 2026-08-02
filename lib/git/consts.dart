@@ -23,7 +23,7 @@ const kMsgGitNoChanges = 'No uncommitted changes';
 const kMsgGitNoCommits = 'No commits yet';
 const kMsgGitCommitSuccess = 'Changes committed';
 const kMsgGitPushSuccess = 'Pushed to remote';
-const kMsgGitFetchSuccess = 'Fetched from remote';
+const kMsgGitFetchSuccess = 'Checked remote';
 const kMsgGitPullSuccess = 'Pulled latest changes';
 const kMsgGitRestoreCommitSuccess = 'Workspace restored to selected commit';
 const kMsgGitRestoreCommitConfirmTitle = 'Restore this commit?';
@@ -42,8 +42,8 @@ const kMsgGitAuthRequired =
     'This remote needs authentication. Sign in with Git Credential Manager or SSH, then try again.';
 const kMsgGitOverviewHint =
     'Perform git actions or open files from sidebar to view';
-const kMsgGitNeverFetched = 'Not fetched yet';
-const kMsgGitLastFetchedJustNow = 'Last fetched: less than a minute ago';
+const kMsgGitNeverFetched = 'Not checked yet';
+const kMsgGitLastFetchedJustNow = 'Last checked: less than a minute ago';
 const kMsgGitCheckoutSuccess = 'Switched branch';
 const kMsgGitCreateBranchSuccess = 'Created and switched to new branch';
 const kLabelGitNewBranch = 'New branch…';
@@ -77,4 +77,22 @@ const kMsgGitSetupSyncBody =
 String formatGitBehindRemoteHint(int behind) {
   final unit = behind == 1 ? 'commit' : 'commits';
   return '$behind $unit behind remote. Pull to update before pushing.';
+}
+
+String formatGitFetchResultMessage({
+  required int ahead,
+  required int behind,
+}) {
+  if (behind > 0 && ahead > 0) {
+    return 'Checked remote: $behind behind, $ahead ahead. Pull may need a merge.';
+  }
+  if (behind > 0) {
+    final unit = behind == 1 ? 'commit' : 'commits';
+    return 'Checked remote: $behind $unit available — Pull to apply';
+  }
+  if (ahead > 0) {
+    final unit = ahead == 1 ? 'commit' : 'commits';
+    return 'Checked remote: up to date with remote. $ahead local $unit to push';
+  }
+  return 'Checked remote: up to date with remote';
 }
