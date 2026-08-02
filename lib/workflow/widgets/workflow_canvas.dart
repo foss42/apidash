@@ -9,6 +9,7 @@ import 'package:apidash/workflow/widgets/workflow_run_bar.dart';
 import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/workflow/widgets/workflow_node_layout.dart';
 import 'package:apidash/workflow/widgets/workflow_request_node_card.dart';
+import 'package:apidash/workflow/widgets/workflow_run_toast.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -522,6 +523,11 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas>
             },
           ),
         ),
+        const Positioned(
+          top: 12,
+          right: 12,
+          child: WorkflowCanvasRunToast(),
+        ),
         const Align(
           alignment: Alignment.bottomCenter,
           child: WorkflowRunBar(),
@@ -816,7 +822,6 @@ class _WorkflowEdgePainter extends CustomPainter {
 
     for (final edge in workflow.graph.edges) {
       var style = workflowEdgeRunStyle(edge: edge, results: runResults);
-      // After Stop / finished run, freeze — no "in flight" dashes.
       if (!animateFlow &&
           (style == WorkflowRunEdgeStyle.active ||
               style == WorkflowRunEdgeStyle.upcoming)) {

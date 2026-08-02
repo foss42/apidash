@@ -19,7 +19,7 @@ class DashbotTab extends ConsumerStatefulWidget {
 
 class _DashbotTabState extends ConsumerState<DashbotTab>
     with AutomaticKeepAliveClientMixin {
-  static final GlobalKey<NavigatorState> _navKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _navKey = GlobalKey<NavigatorState>();
 
   @override
   bool get wantKeepAlive => true;

@@ -860,7 +860,6 @@ Future<WorkflowRunResult?> runActiveWorkflow(WidgetRef ref) async {
       workflow: workflow,
       storage: workspaceStorage,
       onNodeUpdate: (nodeResult) {
-        // Ignore late updates after Stop so the canvas doesn't re-animate.
         if (!ref.read(workflowRunInProgressProvider) &&
             nodeResult.status == WorkflowNodeRunStatus.running) {
           return;
@@ -897,7 +896,6 @@ Future<WorkflowRunResult?> runActiveWorkflow(WidgetRef ref) async {
   }
 }
 
-/// Mark in-flight canvas steps as skipped after Stop / abort.
 void settleInterruptedWorkflowRunResults(WidgetRef ref) {
   final current = ref.read(workflowNodeRunResultsProvider);
   var changed = false;

@@ -218,7 +218,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
       return;
     } else if (resolvedType == ChatMessageType.generateWorkflow) {
-      // Mirror cURL import: ask for the flow description locally (no LLM yet).
       if (text.trim().isEmpty) {
         final rqId = _currentRequest?.id ?? 'global';
         state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
@@ -924,9 +923,22 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         );
         return;
       }
+
+      final replaceCurrent = action.field == 'apply_to_selected';
+      // Empty / apply_to_new → create a new workflow file.
+      final currentId = _ref.read(selectedWorkflowIdStateProvider)?.trim();
+      if (replaceCurrent && (currentId == null || currentId.isEmpty)) {
+        _appendSystem(
+          'No workflow is open. Create a new workflow instead.',
+          ChatMessageType.generateWorkflow,
+        );
+        return;
+      }
+
       final prepared = _ref.read(workflowApplyServiceProvider).prepare(
             action.value,
             existingNames: workspaceStorage.getKnownWorkflowIds(),
+            replaceExistingId: replaceCurrent ? currentId : null,
           );
       final doc = prepared.document;
       await workspaceStorage.setWorkflow(doc.id, doc.toJson());
@@ -937,13 +949,16 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       await workspaceStorage.setWorkflowsIndex(index);
       await _ref.read(workflowCatalogProvider.notifier).reloadFromDisk();
       _ref.read(selectedWorkflowIdStateProvider.notifier).state = doc.id;
+      _ref.read(selectedWorkflowNodeIdProvider.notifier).state = null;
+      _ref.read(workflowNodeRunResultsProvider.notifier).state = {};
+      _ref.read(workflowRunStepOrderProvider.notifier).state = [];
       await _ref.read(activeWorkflowProvider.notifier).load(doc.id);
       _ref.read(navRailIndexStateProvider.notifier).state =
           kNavRailWorkflowsIndex;
       _appendSystem(prepared.message, ChatMessageType.generateWorkflow);
     } catch (e) {
       _appendSystem(
-        'Failed to create workflow: $e',
+        'Failed to apply workflow: $e',
         ChatMessageType.generateWorkflow,
       );
     }

@@ -1,6 +1,7 @@
 import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/workflow/providers/workflow_providers.dart';
 import 'package:apidash/workflow/widgets/workflow_add_node_sheet.dart';
+import 'package:apidash/workflow/widgets/workflow_run_toast.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,14 +16,11 @@ Future<void> triggerWorkflowRun(BuildContext context, WidgetRef ref) async {
   if (!context.mounted || result == null) {
     return;
   }
-  final messenger = ScaffoldMessenger.of(context);
   if (result.success) {
-    messenger.showSnackBar(getSnackBar(kMsgWorkflowRunSuccess));
+    showWorkflowRunToast(ref, success: true);
     return;
   }
-  messenger.showSnackBar(
-    getSnackBar(result.error ?? kMsgWorkflowRunFailed, color: kColorRed),
-  );
+  showWorkflowRunFailureToasts(ref, result);
 }
 
 class WorkflowRunBar extends ConsumerWidget {

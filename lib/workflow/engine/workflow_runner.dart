@@ -9,6 +9,7 @@ import 'package:apidash/workflow/engine/workflow_request_executor.dart';
 import 'package:apidash/workflow/engine/workflow_validator.dart';
 import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
+import 'package:apidash/workflow/utils/workflow_error_utils.dart';
 import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,6 +31,7 @@ class _QueueEntry {
     this.node, {
     WorkflowBranchContext? context,
     this.parallel,
+    this.parallelRootId,
     this.loopItem,
     this.loopIndex,
     this.loopCompletionId,
@@ -40,6 +42,8 @@ class _QueueEntry {
   final WorkflowGraphNode node;
   final WorkflowBranchContext context;
   final _ParallelScope? parallel;
+  /// Sibling-root node id for the active parallel fan-out (for join absents).
+  final String? parallelRootId;
   final String? loopItem;
   final String? loopIndex;
   final String? loopCompletionId;
@@ -51,6 +55,8 @@ class _QueueEntry {
     WorkflowBranchContext? context,
     _ParallelScope? parallel,
     bool clearParallel = false,
+    String? parallelRootId,
+    bool clearParallelRootId = false,
     String? loopItem,
     String? loopIndex,
     String? loopCompletionId,
@@ -61,6 +67,9 @@ class _QueueEntry {
       node ?? this.node,
       context: context ?? this.context,
       parallel: clearParallel ? null : (parallel ?? this.parallel),
+      parallelRootId: clearParallelRootId
+          ? null
+          : (parallelRootId ?? this.parallelRootId),
       loopItem: loopItem ?? this.loopItem,
       loopIndex: loopIndex ?? this.loopIndex,
       loopCompletionId: loopCompletionId ?? this.loopCompletionId,
@@ -151,12 +160,17 @@ class WorkflowRunner {
       return session.result(success: false, error: 'Workflow stopped');
     }
 
-    final failed = session.nodeResults.any(
-      (result) => result.status == WorkflowNodeRunStatus.failed,
-    );
+    final failedResults = session.nodeResults
+        .where((result) => result.status == WorkflowNodeRunStatus.failed)
+        .toList();
     return session.result(
-      success: !failed,
-      error: failed ? 'One or more steps failed' : null,
+      success: failedResults.isEmpty,
+      error: failedResults.isEmpty
+          ? null
+          : formatWorkflowFailedStepsError([
+              for (final result in failedResults)
+                (nodeId: result.nodeId, label: result.label),
+            ]),
     );
   }
 }
@@ -202,6 +216,8 @@ class _WorkflowRunSession {
   final loopBodyStarts = <String, String>{};
   final loopContexts = <String, WorkflowBranchContext>{};
   final loopParallels = <String, _ParallelScope?>{};
+  final loopParallelRootIds = <String, String?>{};
+  final parallelRootAbsents = <String, Set<String>>{};
 
   int _parallelSeq = 0;
   Object? _abortError;
@@ -272,9 +288,26 @@ class _WorkflowRunSession {
 
     final joinKey =
         '${entry.node.id}@${scope.id}@${entry.loopCompletionId ?? ''}:${entry.loopIndex ?? ''}';
+    final absents = parallelRootAbsents[scope.id] ?? const <String>{};
+    var initialAbsent = 0;
+    for (final rootId in scope.siblingRoots) {
+      if (!absents.contains(rootId)) {
+        continue;
+      }
+      if (workflowCanReach(
+        outAdjacency,
+        from: rootId,
+        to: entry.node.id,
+      )) {
+        initialAbsent += 1;
+      }
+    }
     final barrier = joinBarriers.putIfAbsent(
       joinKey,
-      () => WorkflowJoinBarrier(expected: expected),
+      () => WorkflowJoinBarrier(
+        expected: expected,
+        initialAbsent: initialAbsent,
+      ),
     );
 
     try {
@@ -288,10 +321,17 @@ class _WorkflowRunSession {
         context: merged,
         parallel: scope.parent,
         clearParallel: scope.parent == null,
+        clearParallelRootId: scope.parent == null,
+        parallelRootId: scope.parent == null ? null : entry.parallelRootId,
       );
     } on WorkflowMergeConflict catch (conflict) {
-      _abort(conflict.toString());
-      throw _WorkflowAbort(conflict.toString());
+      final message = formatWorkflowNodeError(
+        conflict.toString(),
+        nodeLabel: entry.node.label,
+        nodeId: entry.node.id,
+      );
+      _abort(message);
+      throw _WorkflowAbort(message);
     }
   }
 
@@ -434,6 +474,7 @@ class _WorkflowRunSession {
               doneTargetIds,
               context: entry.context,
               parallel: entry.parallel,
+              parallelRootId: entry.parallelRootId,
             ),
           );
         } else {
@@ -443,6 +484,7 @@ class _WorkflowRunSession {
           loopBodyStarts[node.id] = bodyStarts.first;
           loopContexts[node.id] = entry.context;
           loopParallels[node.id] = entry.parallel;
+          loopParallelRootIds[node.id] = entry.parallelRootId;
           final bodyNode = _nodeById(bodyStarts.first);
           if (bodyNode != null) {
             // Loop iterations stay sequential; share context on this branch.
@@ -451,6 +493,7 @@ class _WorkflowRunSession {
                 bodyNode,
                 context: entry.context,
                 parallel: entry.parallel,
+                parallelRootId: entry.parallelRootId,
                 loopItem: items.first,
                 loopIndex: '0',
                 loopCompletionId: node.id,
@@ -463,28 +506,52 @@ class _WorkflowRunSession {
         skipDefaultEnqueue = true;
       case WorkflowNodeType.request:
         if (node.request == null || node.request!.isEmpty) {
+          final message = formatWorkflowNodeError(
+            'Missing request on node',
+            nodeLabel: node.label,
+            nodeId: node.id,
+          );
           result = WorkflowNodeRunResult(
             nodeId: node.id,
             label: node.label,
             nodeType: node.type,
             status: WorkflowNodeRunStatus.failed,
-            message: 'Missing request on node',
+            message: message,
+            branch: 'failure',
           );
-          nodeResults.add(result);
-          onNodeUpdate?.call(result);
-          _abort('Missing request on node');
-          throw _WorkflowAbort('Missing request on node');
+          branchHandle = WorkflowEdgeHandle.failure;
+          break;
         }
         final requestModel = resolveWorkflowNodeRequest(
           node: node,
           storage: storage,
         );
-        final execution = await executeWorkflowRequest(
-          ref: ref,
-          requestModel: requestModel,
-          scopedVariables: scopedVariables,
-          logLabel: '${workflow.id}/${node.id}',
-        );
+        late final WorkflowStepExecutionResult execution;
+        try {
+          execution = await executeWorkflowRequest(
+            ref: ref,
+            requestModel: requestModel,
+            scopedVariables: scopedVariables,
+            logLabel: '${workflow.id}/${node.id}',
+          );
+        } catch (error) {
+          final message = formatWorkflowNodeError(
+            error.toString(),
+            nodeLabel: node.label,
+            nodeId: node.id,
+          );
+          result = WorkflowNodeRunResult(
+            nodeId: node.id,
+            label: node.label,
+            nodeType: node.type,
+            status: WorkflowNodeRunStatus.failed,
+            message: message,
+            apiType: requestModel.apiType,
+            branch: 'failure',
+          );
+          branchHandle = WorkflowEdgeHandle.failure;
+          break;
+        }
         _throwIfAborted();
         entry.context.lastStatusCode = execution.statusCode;
         final extracted = <String, String>{};
@@ -502,6 +569,13 @@ class _WorkflowRunSession {
         }
         final substituted = execution.substitutedRequest;
         final ok = execution.ok;
+        final failureMessage = ok
+            ? null
+            : formatWorkflowNodeError(
+                execution.message ?? 'Request step failed',
+                nodeLabel: node.label,
+                nodeId: node.id,
+              );
         result = WorkflowNodeRunResult(
           nodeId: node.id,
           label: node.label,
@@ -509,7 +583,7 @@ class _WorkflowRunSession {
           status: ok
               ? WorkflowNodeRunStatus.success
               : WorkflowNodeRunStatus.failed,
-          message: execution.message,
+          message: ok ? execution.message : failureMessage,
           statusCode: execution.statusCode,
           durationMs: execution.duration?.inMilliseconds ??
               DateTime.now().difference(nodeStartedAt).inMilliseconds,
@@ -524,14 +598,6 @@ class _WorkflowRunSession {
         );
         branchHandle =
             ok ? WorkflowEdgeHandle.success : WorkflowEdgeHandle.failure;
-        if (!ok) {
-          resultScopedVariables.addAll(scopedVariables);
-          nodeResults.add(result);
-          onNodeUpdate?.call(result);
-          final message = execution.message ?? 'Request step failed';
-          _abort(message);
-          throw _WorkflowAbort(message);
-        }
     }
 
     resultScopedVariables.addAll(scopedVariables);
@@ -545,6 +611,7 @@ class _WorkflowRunSession {
           nextIds,
           context: entry.context,
           parallel: entry.parallel,
+          parallelRootId: entry.parallelRootId,
           loopItem: entry.loopItem,
           loopIndex: entry.loopIndex,
           loopCompletionId: loopCompletionId,
@@ -560,7 +627,40 @@ class _WorkflowRunSession {
       }
     }
 
+    if (pendingDrives.isEmpty) {
+      _noteParallelBranchEnded(entry);
+    }
     await _driveSuccessors(pendingDrives, parentParallel: entry.parallel);
+  }
+
+  /// When a parallel token dies (no successors), free joins waiting on that root.
+  void _noteParallelBranchEnded(_QueueEntry entry) {
+    final scope = entry.parallel;
+    final rootId = entry.parallelRootId;
+    if (scope == null || rootId == null || rootId.isEmpty) {
+      return;
+    }
+    final absents = parallelRootAbsents.putIfAbsent(scope.id, () => <String>{});
+    if (!absents.add(rootId)) {
+      return;
+    }
+    for (final mapEntry in joinBarriers.entries) {
+      final key = mapEntry.key;
+      final scopeMarker = '@${scope.id}@';
+      final scopeIdx = key.indexOf(scopeMarker);
+      if (scopeIdx <= 0) {
+        continue;
+      }
+      final joinNodeId = key.substring(0, scopeIdx);
+      if (!workflowCanReach(
+        outAdjacency,
+        from: rootId,
+        to: joinNodeId,
+      )) {
+        continue;
+      }
+      mapEntry.value.markAbsent();
+    }
   }
 
   Future<void> _driveSuccessors(
@@ -582,11 +682,16 @@ class _WorkflowRunSession {
       parent: parentParallel,
     );
     final parallelEntries = [
-      for (final e in successors) e.copyWith(parallel: scope),
+      for (final e in successors)
+        e.copyWith(
+          parallel: scope,
+          parallelRootId: e.node.id,
+        ),
     ];
-    await Future.wait([
-      for (final e in parallelEntries) drive(e),
-    ]);
+    await Future.wait(
+      [for (final e in parallelEntries) drive(e)],
+      eagerError: false,
+    );
   }
 
   List<String> _nextTargetIds(
@@ -617,6 +722,7 @@ class _WorkflowRunSession {
     List<String> targetIds, {
     required WorkflowBranchContext context,
     _ParallelScope? parallel,
+    String? parallelRootId,
     String? loopItem,
     String? loopIndex,
     String? loopCompletionId,
@@ -638,6 +744,7 @@ class _WorkflowRunSession {
           nextNode,
           context: contexts[i],
           parallel: parallel,
+          parallelRootId: parallelRootId,
           loopItem: loopItem,
           loopIndex: loopIndex,
           loopCompletionId: loopCompletionId,
@@ -656,6 +763,7 @@ class _WorkflowRunSession {
     }
     final context = loopContexts[loopId] ?? WorkflowBranchContext();
     final parallel = loopParallels[loopId];
+    final parallelRootId = loopParallelRootIds[loopId];
     final nextRemaining = remaining - 1;
     if (nextRemaining <= 0) {
       loopIterationsRemaining.remove(loopId);
@@ -663,6 +771,7 @@ class _WorkflowRunSession {
       loopBodyStarts.remove(loopId);
       loopContexts.remove(loopId);
       loopParallels.remove(loopId);
+      loopParallelRootIds.remove(loopId);
       final doneTargets = loopDoneTargets.remove(loopId) ?? const [];
       final loopNode = _nodeById(loopId);
       clearLoopScopedVariables(
@@ -673,6 +782,7 @@ class _WorkflowRunSession {
         doneTargets,
         context: context,
         parallel: parallel,
+        parallelRootId: parallelRootId,
       );
     }
 
@@ -696,6 +806,7 @@ class _WorkflowRunSession {
         bodyNode,
         context: context,
         parallel: parallel,
+        parallelRootId: parallelRootId,
         loopItem: items[nextIndex],
         loopIndex: '$nextIndex',
         loopCompletionId: loopId,

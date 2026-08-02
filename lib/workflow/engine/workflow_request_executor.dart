@@ -66,15 +66,53 @@ Future<WorkflowStepExecutionResult> executeWorkflowRequest({
   final noSSL = ref.read(settingsProvider).isSSLDisabled;
   final HttpRequestModel substituted;
   if (apiType == APIType.ai) {
+    final ai = executionModel.aiRequestModel;
+    if (ai == null) {
+      return const WorkflowStepExecutionResult(
+        ok: false,
+        message: 'AI request is not configured',
+        apiType: APIType.ai,
+      );
+    }
+    if (ai.modelApiProvider == null) {
+      return const WorkflowStepExecutionResult(
+        ok: false,
+        message: 'AI model provider is not selected',
+        apiType: APIType.ai,
+      );
+    }
+    if ((ai.model ?? '').trim().isEmpty) {
+      return const WorkflowStepExecutionResult(
+        ok: false,
+        message: 'AI model is not selected',
+        apiType: APIType.ai,
+      );
+    }
+    final aiHttp = ai.httpRequestModel;
+    if (aiHttp == null) {
+      return const WorkflowStepExecutionResult(
+        ok: false,
+        message: 'AI request could not be built',
+        apiType: APIType.ai,
+      );
+    }
     substituted = substituteHttpRequestModel(
-      executionModel.aiRequestModel!.httpRequestModel!,
+      aiHttp,
       envMap,
       activeEnvId,
       additionalVariables: scopedVariables,
     );
   } else {
+    final http = executionModel.httpRequestModel;
+    if (http == null) {
+      return WorkflowStepExecutionResult(
+        ok: false,
+        message: 'HTTP request is not configured',
+        apiType: apiType,
+      );
+    }
     substituted = substituteHttpRequestModel(
-      executionModel.httpRequestModel!,
+      http,
       envMap,
       activeEnvId,
       additionalVariables: scopedVariables,

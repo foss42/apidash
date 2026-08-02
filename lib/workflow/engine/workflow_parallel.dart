@@ -58,12 +58,16 @@ int workflowExpectedJoinArrivals(
 
 /// Barrier for one AND-join under a parallel scope.
 class WorkflowJoinBarrier {
-  WorkflowJoinBarrier({required this.expected});
+  WorkflowJoinBarrier({
+    required this.expected,
+    int initialAbsent = 0,
+  }) : _absent = initialAbsent;
 
   final int expected;
   final List<WorkflowBranchContext> arrivals = [];
   final Completer<WorkflowBranchContext> _completer =
       Completer<WorkflowBranchContext>();
+  int _absent;
 
   bool get isComplete => _completer.isCompleted;
 
@@ -76,8 +80,28 @@ class WorkflowJoinBarrier {
       return merged;
     }
     arrivals.add(context);
-    if (arrivals.length < expected) {
+    return _maybeComplete();
+  }
+
+  /// A sibling root ended without reaching this join (failed / dead-end path).
+  void markAbsent() {
+    if (isComplete) {
+      return;
+    }
+    _absent += 1;
+    _maybeComplete();
+  }
+
+  Future<WorkflowBranchContext> _maybeComplete() async {
+    if (arrivals.length + _absent < expected) {
       return merged;
+    }
+    if (arrivals.isEmpty) {
+      final empty = WorkflowBranchContext();
+      if (!_completer.isCompleted) {
+        _completer.complete(empty);
+      }
+      return empty;
     }
     try {
       final result = mergeBranchContexts(arrivals);

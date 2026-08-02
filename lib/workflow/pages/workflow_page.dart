@@ -1,3 +1,5 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/dashbot/dashbot.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/workflow/consts.dart';
@@ -8,6 +10,7 @@ import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
 import 'package:apidash/workflow/widgets/workflow_run_exchange_panel.dart';
 import 'package:apidash/workflow/widgets/workflow_selector_dropdown.dart';
 import 'package:apidash/screens/common_widgets/environment_dropdown.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,6 +67,11 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
     final selectedNodeId = ref.watch(selectedWorkflowNodeIdProvider);
     final workflow = ref.watch(activeWorkflowProvider);
     final selectedNode = _selectedNode(selectedNodeId, workflow);
+    final isDashbotPopped =
+        ref.watch(dashbotWindowNotifierProvider.select((s) => s.isPopped));
+    final onWorkflowsRail =
+        ref.watch(navRailIndexStateProvider) == kNavRailWorkflowsIndex;
+    final showDashbot = !isDashbotPopped && onWorkflowsRail;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -108,7 +116,14 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
           ),
         ),
         const Divider(height: 1),
-        const Expanded(child: ClipRect(child: WorkflowCanvas())),
+        Expanded(
+          child: showDashbot
+              ? const EqualSplitView(
+                  leftWidget: ClipRect(child: WorkflowCanvas()),
+                  rightWidget: DashbotTab(),
+                )
+              : const ClipRect(child: WorkflowCanvas()),
+        ),
         const WorkflowRunInspector(),
       ],
     );

@@ -27,6 +27,8 @@ class WorkflowApplyService {
   WorkflowApplyResult prepare(
     dynamic value, {
     required Iterable<String> existingNames,
+    /// When set, overwrite this workflow id/name instead of creating a new file.
+    String? replaceExistingId,
   }) {
     final map = _asStringKeyedMap(value);
     if (map == null) {
@@ -80,15 +82,26 @@ class WorkflowApplyService {
       }
     }
 
-    final uniqueName = _uniqueWorkflowName(name, existingNames);
+    final replaceId = replaceExistingId?.trim();
+    final String resolvedId;
+    final String message;
+    if (replaceId != null && replaceId.isNotEmpty) {
+      // Keep the open workflow's identity; replace graph content only.
+      resolvedId = replaceId;
+      message = 'Updated workflow "$resolvedId"';
+    } else {
+      resolvedId = _uniqueWorkflowName(name, existingNames);
+      message = 'Created workflow "$resolvedId"';
+    }
+
     final connected = _ensureConnections(
-      document.copyWith(id: uniqueName, name: uniqueName),
+      document.copyWith(id: resolvedId, name: resolvedId),
     );
     final laidOut = _autoArrange(connected);
 
     return WorkflowApplyResult(
       document: laidOut,
-      message: 'Created workflow "$uniqueName"',
+      message: message,
     );
   }
 

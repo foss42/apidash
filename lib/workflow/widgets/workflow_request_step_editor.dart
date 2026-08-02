@@ -383,7 +383,7 @@ class _WorkflowRequestStepEditorPageState
           ),
           const Divider(height: 1),
           SizedBox(
-            height: 140,
+            height: 188,
             child: _ExtractionsPanel(
               node: node,
               varController: _extractionVarController,
@@ -427,6 +427,7 @@ class _ExtractionsPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final workflow = ref.watch(activeWorkflowProvider);
     final currentNode = workflow?.graph.nodes
         .where((candidate) => candidate.id == node.id)
@@ -436,80 +437,87 @@ class _ExtractionsPanel extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
+    final extractions = currentNode.extractions;
+
     return Material(
-      color: theme.colorScheme.surfaceContainerLowest,
+      color: scheme.surfaceContainerLowest,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
+                Icon(
+                  Icons.output_outlined,
+                  size: 16,
+                  color: scheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
                 Text(
                   kLabelWorkflowExtractions,
-                  style: theme.textTheme.titleSmall,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                kHSpacer8,
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     'Pull values from this response for later steps',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ),
+                if (extractions.isNotEmpty)
+                  Text(
+                    '${extractions.length}',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
               ],
             ),
-            if (currentNode.extractions.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Expanded(
-                child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemCount: currentNode.extractions.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 2),
-                  itemBuilder: (context, index) {
-                    final extraction = currentNode.extractions[index];
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '{{${extraction.varName}}}  ·  ${extraction.source}.${extraction.jsonPath}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall,
-                          ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: extractions.isEmpty
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'None yet. Map a response path to a {{variable}} below.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant.withValues(alpha: 0.85),
                         ),
-                        IconButton(
-                          visualDensity: VisualDensity.compact,
-                          constraints: const BoxConstraints.tightFor(
-                            width: 28,
-                            height: 28,
-                          ),
-                          padding: EdgeInsets.zero,
-                          tooltip: kTooltipDelete,
-                          icon: const Icon(Icons.close, size: 16),
-                          onPressed: () async {
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.zero,
+                      itemCount: extractions.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 6),
+                      itemBuilder: (context, index) {
+                        final extraction = extractions[index];
+                        return _ExtractionRow(
+                          varName: extraction.varName,
+                          pathLabel:
+                              '${extraction.source}.${extraction.jsonPath}',
+                          onDelete: () async {
                             await ref
                                 .read(activeWorkflowProvider.notifier)
                                 .updateSelectedNode(
                                   currentNode.copyWith(
-                                    extractions: currentNode.extractions
+                                    extractions: extractions
                                         .where((item) => item != extraction)
                                         .toList(),
                                   ),
                                 );
                           },
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ] else
-              const Spacer(),
-            const SizedBox(height: 6),
+                        );
+                      },
+                    ),
+            ),
+            const SizedBox(height: 8),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -520,6 +528,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                     decoration: const InputDecoration(
                       labelText: 'Variable',
                       isDense: true,
+                      hintText: 'userId',
                     ),
                   ),
                 ),
@@ -536,10 +545,13 @@ class _ExtractionsPanel extends ConsumerWidget {
                   ),
                 ),
                 kHSpacer8,
-                FilledButton(
+                FilledButton.tonal(
                   style: FilledButton.styleFrom(
-                    visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    visualDensity: VisualDensity.standard,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                   onPressed: () async {
                     final varName = varController.text.trim();
@@ -552,7 +564,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                         .updateSelectedNode(
                           currentNode.copyWith(
                             extractions: [
-                              ...currentNode.extractions,
+                              ...extractions,
                               WorkflowExtraction(
                                 varName: varName,
                                 jsonPath: jsonPath,
@@ -566,6 +578,78 @@ class _ExtractionsPanel extends ConsumerWidget {
                   child: const Text('Add'),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ExtractionRow extends StatelessWidget {
+  const _ExtractionRow({
+    required this.varName,
+    required this.pathLabel,
+    required this.onDelete,
+  });
+
+  final String varName;
+  final String pathLabel;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.45),
+        borderRadius: kBorderRadius8,
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.35),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 6, 4, 6),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: scheme.secondaryContainer.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                '{{$varName}}',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontFamily: kCodeStyle.fontFamily,
+                  fontWeight: FontWeight.w600,
+                  color: scheme.onSecondaryContainer,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                pathLabel,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                  fontFamily: kCodeStyle.fontFamily,
+                ),
+              ),
+            ),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              tooltip: kTooltipDelete,
+              icon: Icon(
+                Icons.close_rounded,
+                size: 18,
+                color: scheme.onSurfaceVariant,
+              ),
+              onPressed: onDelete,
             ),
           ],
         ),
