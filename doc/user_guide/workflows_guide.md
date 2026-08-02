@@ -1,24 +1,25 @@
 # Workflows Guide
 
-Workflows let you run multi-step API scenarios on a visual canvas: chain requests, pass data between steps, branch on results, and repeat actions.
+Workflows let you run multi-step API scenarios on a visual canvas: chain requests, pass data between steps, run independent steps in parallel, branch on results, and repeat actions.
 
 **Desktop only for now** — the mobile app does not include a Workflows tab; use the desktop (wide) layout to build and run workflows.
 
 
 ## What workflows do
 
-Use workflows when a single request is not enough — for example login → fetch profile → update profile, or run the same request once per item in a list.
+Use workflows when a single request is not enough — for example login → fetch profile → update profile, fetch several resources at once, or run the same request once per item in a list.
 
 ## Create with Dashbot
 
 1. Open Dashbot → **Generate Workflow** (same idea as Import cURL: Dashbot asks you to describe the flow first; it does not invent a workflow until you send details).
-2. Describe steps, URLs, extractions, and loops/conditions if needed.
+2. Describe steps, URLs, extractions, and loops/conditions if needed. Say **parallel** or **at the same time** when you want independent calls from Start (or another node).
 3. Review the reply and confirm **Create Workflow**. The flow is saved under your workspace `workflows/` folder and opened on the canvas.
 
 Tips for better results:
 
 - Use full URLs (prefer `https://api.apidash.dev/...` for the public demo API).
 - Name extract variables exactly as you will use them later (`userId` → `{{userId}}`).
+- For parallel branches that later meet, use **different** extract names on each branch (`users` vs `posts`) so the join can merge them.
 - Paths like `data.0.id` or `data[0].id` both work; prefer dotted indexes in prompts.
 - Dashbot does not call your API when guessing JSON paths — if the response shape differs, edit the extraction after create.
 
@@ -89,12 +90,30 @@ Next request example:
 - URL: `https://api.example.com/users/{{firstUserId}}/posts`
 
 
+## Parallel execution and joins
+
+Wire **more than one** outgoing connection from the same port (for example Start → Users and Start → Posts) to run those branches **in parallel**.
+
+- Each branch keeps its **own** chain variables. A sibling does not see another branch’s extractions until they meet.
+- When both branches connect into the **same** next node, the runner **waits for both**, then **merges** variables and continues.
+- If both branches write the **same** variable name with **different** values, the run **fails** with a conflict. Use distinct names (`users` / `posts`) when both feed the joined step.
+- Same name and same value is fine; the merged step sees that value once.
+- A **linear** chain (Start → A → B) is still sequential; B sees A’s extractions as before.
+
+Example:
+
+```
+Start → GET /users  (extract data → users)  ─┐
+     → GET /posts  (extract data → posts)  ─┴→ next step can use {{users}} and {{posts}}
+```
+
 ## Condition nodes
 
 A condition node branches after a request.
 
 - Wire **True** and **False** ports to different next steps.
 - Use presets such as HTTP success, or check a workflow variable.
+- Only **one** side runs (not parallel). The unused branch is skipped.
 
 ## Delay nodes
 
@@ -105,6 +124,8 @@ A delay node pauses the workflow for a fixed number of milliseconds.
 - Pressing **Stop** during a delay cancels the wait.
 
 ## Loop nodes (For each / Repeat)
+
+Loop **Each** iterations always run **one after another** (not in parallel), even if the loop sits on a parallel branch.
 
 ### For each
 
@@ -143,10 +164,11 @@ Runs the **Each** branch a fixed number of times (no list).
 ## Variables
 
 - Use **Environments** for shared inputs (`{{name}}` in URLs, headers, and bodies).
-- Use **extractions** on request nodes to pass response values into later steps.
+- Use **extractions** on request nodes to pass response values into later steps on the **same chain**.
 - Use **Item extraction** on a for-each loop to pass a field from each list item into the body (same Variable + Path pattern).
 - If an environment variable and an extraction share the same name, the **extraction wins** during the run.
+- Parallel branches only share extractions after an AND-join (see above); conflicting names fail the run.
 
 ## Connecting nodes
 
-Drag from an output port to an input port to connect steps. The runner follows those connections when you press Run. Use **Arrange** on the canvas to tidy layout (Dashbot-created flows are auto-arranged on create).
+Drag from an output port to an input port to connect steps. The runner follows those connections when you press Run. Multiple outs from one port run in parallel; a single chain stays sequential. Use **Arrange** on the canvas to tidy layout (Dashbot-created flows are auto-arranged on create).
