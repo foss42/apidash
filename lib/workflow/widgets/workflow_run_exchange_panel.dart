@@ -131,11 +131,11 @@ class _WorkflowRunInspectorState extends ConsumerState<WorkflowRunInspector> {
     );
     final compact = context.isMediumWindow;
     final showHttp = effective?.hasHttpExchange == true;
-    final detailHeight = !showHttp
-        ? kWorkflowRunStepLogHeight
-        : compact
-            ? kWorkflowRunExchangeHeightCompact
-            : kWorkflowRunExchangeHeight;
+    // Keep a fixed detail pane height so Start / condition / request chips
+    // do not resize the inspector when switching selection.
+    final detailHeight = compact
+        ? kWorkflowRunExchangeHeightCompact
+        : kWorkflowRunExchangeHeight;
 
     return Material(
       color: theme.colorScheme.surface,

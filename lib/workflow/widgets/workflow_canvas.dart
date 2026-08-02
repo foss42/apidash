@@ -2,6 +2,7 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/providers/workflow_providers.dart';
 import 'package:apidash/workflow/providers/workflow_ui_providers.dart';
+import 'package:apidash/workflow/utils/workflow_run_path.dart';
 import 'package:apidash/workflow/widgets/workflow_add_node_sheet.dart';
 import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
 import 'package:apidash/workflow/widgets/workflow_run_bar.dart';
@@ -34,7 +35,8 @@ class WorkflowCanvas extends ConsumerStatefulWidget {
   ConsumerState<WorkflowCanvas> createState() => _WorkflowCanvasState();
 }
 
-class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
+class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas>
+    with SingleTickerProviderStateMixin {
   final TransformationController _transformController = TransformationController();
   final GlobalKey _sceneKey = GlobalKey();
   final Map<String, Offset> _dragOffsets = {};
@@ -42,6 +44,10 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   String? _hoverInputNodeId;
   int? _activeWirePointer;
   PointerRoute? _wirePointerRoute;
+  late final AnimationController _flowController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 3200),
+  );
 
   static const double _inputHitRadius = 28;
   static const double _minStretchToAddNode = 48;
@@ -49,8 +55,34 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   @override
   void dispose() {
     _stopWirePointerTracking();
+    _flowController.dispose();
     _transformController.dispose();
     super.dispose();
+  }
+
+  void _scheduleFlowSync() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _syncFlowAnimation(
+        runInProgress: ref.read(workflowRunInProgressProvider),
+      );
+    });
+  }
+
+  void _syncFlowAnimation({
+    required bool runInProgress,
+  }) {
+    if (runInProgress) {
+      if (!_flowController.isAnimating) {
+        _flowController.repeat();
+      }
+    } else if (_flowController.isAnimating || _flowController.value != 0) {
+      _flowController
+        ..stop()
+        ..value = 0;
+    }
   }
 
   Offset _globalToScene(Offset global) {
@@ -357,11 +389,25 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     final workflow = ref.watch(activeWorkflowProvider);
     final selectedNodeId = ref.watch(selectedWorkflowNodeIdProvider);
     final runResults = ref.watch(workflowNodeRunResultsProvider);
+    final runInProgress = ref.watch(workflowRunInProgressProvider);
     final scheme = Theme.of(context).colorScheme;
+
+    ref.listen<bool>(workflowRunInProgressProvider, (_, _) {
+      _scheduleFlowSync();
+    });
+    ref.listen<Map<String, WorkflowNodeRunResult>>(
+      workflowNodeRunResultsProvider,
+      (_, _) {
+        _scheduleFlowSync();
+      },
+    );
+    _scheduleFlowSync();
 
     if (workflow == null) {
       return const Center(child: Text('Select or create a workflow'));
     }
+
+    final hasRun = runResults.isNotEmpty;
 
     return Stack(
       fit: StackFit.expand,
@@ -417,34 +463,56 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
                         key: _sceneKey,
                         width: kWorkflowCanvasMinWidth,
                         height: kWorkflowCanvasMinHeight,
-                        child: CustomPaint(
-                          painter: _WorkflowEdgePainter(
-                            workflow: workflow,
-                            dragOffsets: _dragOffsets,
-                            scheme: scheme,
-                            activeWire: _activeWire,
-                          ),
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              if (_activeWire == null)
-                                ..._edgeDetachButtons(workflow, scheme),
-                              for (final node in workflow.graph.nodes)
-                                Positioned(
-                                  left: node.position.x +
-                                      (_dragOffsets[node.id]?.dx ?? 0),
-                                  top: node.position.y +
-                                      (_dragOffsets[node.id]?.dy ?? 0),
-                                  child: _buildNode(
-                                    node: node,
-                                    workflow: workflow,
-                                    selected: node.id == selectedNodeId,
-                                    runResult: runResults[node.id],
-                                    hoverInput: _hoverInputNodeId == node.id,
-                                  ),
-                                ),
-                            ],
-                          ),
+                        child: AnimatedBuilder(
+                          animation: _flowController,
+                          builder: (context, _) {
+                            return CustomPaint(
+                              painter: _WorkflowEdgePainter(
+                                workflow: workflow,
+                                dragOffsets: _dragOffsets,
+                                scheme: scheme,
+                                brightness: Theme.of(context).brightness,
+                                activeWire: _activeWire,
+                                runResults: runResults,
+                                flowPhase: runInProgress
+                                    ? _flowController.value
+                                    : 0,
+                                animateFlow: runInProgress,
+                              ),
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  if (_activeWire == null)
+                                    ..._edgeDetachButtons(workflow, scheme),
+                                  for (final node in workflow.graph.nodes)
+                                    Positioned(
+                                      left: node.position.x +
+                                          (_dragOffsets[node.id]?.dx ?? 0),
+                                      top: node.position.y +
+                                          (_dragOffsets[node.id]?.dy ?? 0),
+                                      child: AnimatedOpacity(
+                                        duration:
+                                            const Duration(milliseconds: 220),
+                                        opacity: _nodeRunOpacity(
+                                          hasRun: hasRun,
+                                          runInProgress: runInProgress,
+                                          result: runResults[node.id],
+                                        ),
+                                        child: _buildNode(
+                                          node: node,
+                                          workflow: workflow,
+                                          selected:
+                                              node.id == selectedNodeId,
+                                          runResult: runResults[node.id],
+                                          hoverInput:
+                                              _hoverInputNodeId == node.id,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -473,6 +541,24 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     );
   }
 
+  double _nodeRunOpacity({
+    required bool hasRun,
+    required bool runInProgress,
+    required WorkflowNodeRunResult? result,
+  }) {
+    if (!hasRun || !runInProgress) {
+      return 1;
+    }
+    if (result == null) {
+      return 0.58;
+    }
+    return switch (result.status) {
+      WorkflowNodeRunStatus.skipped => 0.58,
+      WorkflowNodeRunStatus.pending => 0.82,
+      _ => 1,
+    };
+  }
+
   bool _showGettingStartedHint(WorkflowDocument workflow) {
     if (workflow.description.isNotEmpty) {
       return false;
@@ -495,11 +581,14 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     required WorkflowNodeRunResult? runResult,
     required bool hoverInput,
   }) {
+    final branch = (runResult?.branch ?? '').toLowerCase();
     switch (node.type) {
       case WorkflowNodeType.manualStart:
         return WorkflowStartNodeCard(
           node: node,
           selected: selected,
+          runResult: runResult,
+          highlightNext: runResult?.status == WorkflowNodeRunStatus.success,
           onTap: () => _selectNode(node.id),
           onPlay: () => triggerWorkflowRun(context, ref),
           onDragPanUpdate: _nodeDragHandler(node.id),
@@ -512,6 +601,8 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
           selected: selected,
           runResult: runResult,
           highlightInput: hoverInput,
+          highlightSuccess: runResult?.status == WorkflowNodeRunStatus.success,
+          highlightFailure: runResult?.status == WorkflowNodeRunStatus.failed,
           onTap: () => _selectNode(node.id),
           onDoubleTap: () => _openNodeEditor(node),
           onDuplicate: () => _duplicateNode(node),
@@ -524,7 +615,10 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
         return WorkflowLoopNodeCard(
           node: node,
           selected: selected,
+          runResult: runResult,
           highlightInput: hoverInput,
+          highlightBody: branch == 'each',
+          highlightDone: branch == 'done',
           onTap: () => _selectNode(node.id),
           onDoubleTap: () => _openNodeEditor(node),
           onDuplicate: () => _duplicateNode(node),
@@ -537,7 +631,10 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
         return WorkflowConditionNodeCard(
           node: node,
           selected: selected,
+          runResult: runResult,
           highlightInput: hoverInput,
+          highlightThen: branch == 'true' || branch == 'then',
+          highlightElse: branch == 'false' || branch == 'else',
           onTap: () => _selectNode(node.id),
           onDoubleTap: () => _openNodeEditor(node),
           onDuplicate: () => _duplicateNode(node),
@@ -550,7 +647,9 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
         return WorkflowDelayNodeCard(
           node: node,
           selected: selected,
+          runResult: runResult,
           highlightInput: hoverInput,
+          highlightNext: runResult?.status == WorkflowNodeRunStatus.success,
           onTap: () => _selectNode(node.id),
           onDoubleTap: () => _openNodeEditor(node),
           onDuplicate: () => _duplicateNode(node),
@@ -684,12 +783,20 @@ class _WorkflowEdgePainter extends CustomPainter {
     required this.workflow,
     required this.dragOffsets,
     required this.scheme,
+    required this.brightness,
+    required this.runResults,
+    required this.flowPhase,
+    required this.animateFlow,
     this.activeWire,
   });
 
   final WorkflowDocument workflow;
   final Map<String, Offset> dragOffsets;
   final ColorScheme scheme;
+  final Brightness brightness;
+  final Map<String, WorkflowNodeRunResult> runResults;
+  final double flowPhase;
+  final bool animateFlow;
   final _ActiveWire? activeWire;
 
   Offset _nodeOrigin(WorkflowGraphNode node) {
@@ -702,15 +809,50 @@ class _WorkflowEdgePainter extends CustomPainter {
     final nodeById = {
       for (final node in workflow.graph.nodes) node.id: node,
     };
+    final hasRun = runResults.isNotEmpty;
+
+    final idleEdges = <WorkflowGraphEdge>[];
+    final pathEdges = <({WorkflowGraphEdge edge, WorkflowRunEdgeStyle style})>[];
 
     for (final edge in workflow.graph.edges) {
+      var style = workflowEdgeRunStyle(edge: edge, results: runResults);
+      // After Stop / finished run, freeze — no "in flight" dashes.
+      if (!animateFlow &&
+          (style == WorkflowRunEdgeStyle.active ||
+              style == WorkflowRunEdgeStyle.upcoming)) {
+        style = WorkflowRunEdgeStyle.idle;
+      }
+      if (style == WorkflowRunEdgeStyle.idle) {
+        idleEdges.add(edge);
+      } else {
+        pathEdges.add((edge: edge, style: style));
+      }
+    }
+
+    void drawGraphEdge(WorkflowGraphEdge edge, WorkflowRunEdgeStyle style) {
       final source = nodeById[edge.source];
       final target = nodeById[edge.target];
       if (source == null || target == null) {
-        continue;
+        return;
       }
 
-      final color = WorkflowNodeLayout.edgeColor(edge.sourceHandle, scheme);
+      final base = WorkflowNodeLayout.edgeColor(edge.sourceHandle, scheme);
+      var color = workflowRunEdgeColor(
+        style: style,
+        base: base,
+        scheme: scheme,
+        brightness: brightness,
+      );
+      if (hasRun && style == WorkflowRunEdgeStyle.idle) {
+        color = color.withValues(alpha: 0.35);
+      }
+      final strokeWidth = hasRun
+          ? workflowRunEdgeStrokeWidth(style)
+          : 2.0;
+      final flowing = animateFlow &&
+          (style == WorkflowRunEdgeStyle.active ||
+              style == WorkflowRunEdgeStyle.upcoming);
+
       _drawEdge(
         canvas,
         start: _nodeOrigin(source) +
@@ -718,7 +860,17 @@ class _WorkflowEdgePainter extends CustomPainter {
         end: _nodeOrigin(target) +
             WorkflowNodeLayout.portOffset(target, WorkflowEdgeHandle.inPort),
         color: color,
+        strokeWidth: strokeWidth,
+        style: style,
+        flowing: flowing,
       );
+    }
+
+    for (final edge in idleEdges) {
+      drawGraphEdge(edge, WorkflowRunEdgeStyle.idle);
+    }
+    for (final entry in pathEdges) {
+      drawGraphEdge(entry.edge, entry.style);
     }
 
     final wire = activeWire;
@@ -732,7 +884,10 @@ class _WorkflowEdgePainter extends CustomPainter {
               WorkflowNodeLayout.portOffset(source, wire.handle),
           end: wire.end,
           color: color.withValues(alpha: 0.75),
-          dashed: true,
+          strokeWidth: 2.5,
+          style: WorkflowRunEdgeStyle.idle,
+          flowing: false,
+          forceDashed: true,
         );
       }
     }
@@ -743,44 +898,134 @@ class _WorkflowEdgePainter extends CustomPainter {
     required Offset start,
     required Offset end,
     required Color color,
-    bool dashed = false,
+    double strokeWidth = 2,
+    required WorkflowRunEdgeStyle style,
+    bool flowing = false,
+    bool forceDashed = false,
   }) {
+    final path = WorkflowNodeLayout.edgePath(start, end);
+    final isActive = style == WorkflowRunEdgeStyle.active;
+    final isUpcoming = style == WorkflowRunEdgeStyle.upcoming;
+    final dashed = forceDashed || flowing;
+
+    if (flowing && isActive) {
+      final glow = Paint()
+        ..color = color.withValues(alpha: 0.12)
+        ..strokeWidth = strokeWidth + 4
+        ..style = PaintingStyle.stroke
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+      canvas.drawPath(path, glow);
+    }
+
     final paint = Paint()
       ..color = color
-      ..strokeWidth = dashed ? 2.5 : 2
-      ..style = PaintingStyle.stroke;
-
-    final path = WorkflowNodeLayout.edgePath(start, end);
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
 
     if (dashed) {
       canvas.drawPath(
-        _dashPath(path, dashArray: const [8, 6]),
+        _dashPath(
+          path,
+          dashArray: const [10.0, 8.0],
+          phase: flowing ? flowPhase : 0,
+        ),
         paint,
       );
     } else {
       canvas.drawPath(path, paint);
     }
 
+    if (flowing) {
+      _drawFlowParticles(
+        canvas,
+        path,
+        color: color,
+        particleCount: 1,
+        radius: isActive ? 3.5 : 2.75,
+      );
+    }
+
     final dotPaint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(start, 4, dotPaint);
-    canvas.drawCircle(end, 4, dotPaint);
+    final radius = strokeWidth >= 3 ? 4.5 : 4.0;
+    canvas.drawCircle(start, radius, dotPaint);
+    canvas.drawCircle(end, radius, dotPaint);
+
+    if (isActive || isUpcoming) {
+      final ring = Paint()
+        ..color = color.withValues(alpha: 0.22)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5;
+      canvas.drawCircle(end, radius + 2.5, ring);
+    }
   }
 
-  Path _dashPath(Path source, {required List<double> dashArray}) {
+  void _drawFlowParticles(
+    Canvas canvas,
+    Path path, {
+    required Color color,
+    required int particleCount,
+    required double radius,
+  }) {
+    for (final metric in path.computeMetrics()) {
+      final length = metric.length;
+      if (length <= 0) {
+        continue;
+      }
+      for (var i = 0; i < particleCount; i++) {
+        final t = (flowPhase + i / particleCount) % 1.0;
+        final tangent = metric.getTangentForOffset(t * length);
+        if (tangent == null) {
+          continue;
+        }
+        final pos = tangent.position;
+        canvas.drawCircle(
+          pos,
+          radius * 1.8,
+          Paint()
+            ..color = color.withValues(alpha: 0.12)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
+        );
+        canvas.drawCircle(
+          pos,
+          radius,
+          Paint()..color = color.withValues(alpha: 0.85),
+        );
+        canvas.drawCircle(
+          pos,
+          radius * 0.4,
+          Paint()..color = Colors.white.withValues(alpha: 0.55),
+        );
+      }
+    }
+  }
+
+  Path _dashPath(
+    Path source, {
+    required List<double> dashArray,
+    double phase = 0,
+  }) {
     final dashed = Path();
+    final period = dashArray[0] + dashArray[1];
+    final phaseOffset = period <= 0 ? 0.0 : (phase * period) % period;
+
     for (final metric in source.computeMetrics()) {
-      var distance = 0.0;
+      var distance = -phaseOffset;
       var draw = true;
       while (distance < metric.length) {
         final length = dashArray[draw ? 0 : 1];
         final next = distance + length;
         if (draw) {
-          dashed.addPath(
-            metric.extractPath(distance, next.clamp(0, metric.length)),
-            Offset.zero,
-          );
+          final start = distance.clamp(0.0, metric.length);
+          final end = next.clamp(0.0, metric.length);
+          if (end > start) {
+            dashed.addPath(
+              metric.extractPath(start, end),
+              Offset.zero,
+            );
+          }
         }
         distance = next;
         draw = !draw;
@@ -794,6 +1039,10 @@ class _WorkflowEdgePainter extends CustomPainter {
     return oldDelegate.workflow != workflow ||
         oldDelegate.dragOffsets != dragOffsets ||
         oldDelegate.scheme != scheme ||
+        oldDelegate.brightness != brightness ||
+        oldDelegate.runResults != runResults ||
+        oldDelegate.flowPhase != flowPhase ||
+        oldDelegate.animateFlow != animateFlow ||
         oldDelegate.activeWire?.end != activeWire?.end ||
         oldDelegate.activeWire?.sourceNodeId != activeWire?.sourceNodeId;
   }

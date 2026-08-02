@@ -5,6 +5,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
+import 'package:apidash/workflow/utils/workflow_run_path.dart';
 import 'package:apidash/workflow/widgets/workflow_interactive_node.dart';
 import 'package:apidash/workflow/widgets/workflow_port.dart';
 import 'package:flutter/material.dart';
@@ -66,12 +67,14 @@ class WorkflowRequestNodeCard extends StatelessWidget {
         : (url.isEmpty ? 'No URL configured' : url);
     final defaultLabel =
         isAi ? kLabelAiRequest : kLabelWorkflowStep;
-    final borderColor = switch (runResult?.status) {
-      WorkflowNodeRunStatus.running => theme.colorScheme.primary,
-      WorkflowNodeRunStatus.success => Colors.green,
-      WorkflowNodeRunStatus.failed => theme.colorScheme.error,
-      _ => selected ? theme.colorScheme.primary : theme.dividerColor,
-    };
+    final borderColor = workflowNodeRunBorderColor(
+      result: runResult,
+      selected: selected,
+      scheme: theme.colorScheme,
+      brightness: theme.brightness,
+      idleColor: theme.dividerColor,
+    );
+    final isRunning = runResult?.status == WorkflowNodeRunStatus.running;
 
     return SizedBox(
       width: kWorkflowRequestNodeWidth,
@@ -82,6 +85,7 @@ class WorkflowRequestNodeCard extends StatelessWidget {
           Positioned.fill(
             child: WorkflowInteractiveNode(
               selected: selected,
+              runEmphasized: isRunning,
               backgroundColor: theme.colorScheme.surfaceContainerLow,
               borderColor: borderColor,
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
@@ -135,6 +139,22 @@ class WorkflowRequestNodeCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (isRunning) ...[
+                        kHSpacer8,
+                        Icon(
+                          Icons.sync_rounded,
+                          size: 16,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Running',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                       const Spacer(),
                       if (selected) const SizedBox(width: 56),
                     ],
@@ -193,7 +213,7 @@ class WorkflowRequestNodeCard extends StatelessWidget {
             child: WorkflowPort(
               label: 'Success()',
               side: WorkflowPortSide.right,
-              color: Colors.green,
+              color: Colors.green.shade600,
               highlighted: highlightSuccess,
               onPointerDown: (event) => onWirePointerDown?.call(
                 event,
@@ -279,6 +299,7 @@ class WorkflowStartNodeCard extends StatelessWidget {
     super.key,
     required this.node,
     required this.selected,
+    this.runResult,
     this.highlightNext = false,
     this.onTap,
     this.onPlay,
@@ -289,6 +310,7 @@ class WorkflowStartNodeCard extends StatelessWidget {
 
   final WorkflowGraphNode node;
   final bool selected;
+  final WorkflowNodeRunResult? runResult;
   final bool highlightNext;
   final VoidCallback? onTap;
   final VoidCallback? onPlay;
@@ -304,6 +326,15 @@ class WorkflowStartNodeCard extends StatelessWidget {
       200,
       brightness: theme.brightness,
     );
+    final borderColor = workflowNodeRunBorderColor(
+      result: runResult,
+      selected: selected,
+      scheme: theme.colorScheme,
+      brightness: theme.brightness,
+      selectedColor: green,
+      idleColor: theme.dividerColor,
+    );
+    final isRunning = runResult?.status == WorkflowNodeRunStatus.running;
     return SizedBox(
       width: kWorkflowStartNodeWidth,
       height: kWorkflowStartNodeHeight,
@@ -312,14 +343,15 @@ class WorkflowStartNodeCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: WorkflowInteractiveNode(
-              selected: selected,
+              selected: selected || isRunning,
+              runEmphasized: isRunning,
               backgroundColor: Color.alphaBlend(
                 green.withValues(
                   alpha: theme.brightness == Brightness.dark ? 0.30 : 0.14,
                 ),
                 theme.colorScheme.surfaceContainerLow,
               ),
-              borderColor: selected ? green : theme.dividerColor,
+              borderColor: borderColor,
               borderRadius: 16,
               padding: const EdgeInsets.fromLTRB(12, 12, 40, 12),
               onTap: onTap,
@@ -365,11 +397,15 @@ class WorkflowStartNodeCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Run workflow',
+                          isRunning ? 'Starting…' : 'Run workflow',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                            color: isRunning
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onSurfaceVariant,
+                            fontWeight:
+                                isRunning ? FontWeight.w700 : FontWeight.w500,
                           ),
                         ),
                       ],
@@ -404,6 +440,7 @@ class WorkflowConditionNodeCard extends StatelessWidget {
     super.key,
     required this.node,
     required this.selected,
+    this.runResult,
     this.highlightInput = false,
     this.highlightThen = false,
     this.highlightElse = false,
@@ -418,6 +455,7 @@ class WorkflowConditionNodeCard extends StatelessWidget {
 
   final WorkflowGraphNode node;
   final bool selected;
+  final WorkflowNodeRunResult? runResult;
   final bool highlightInput;
   final bool highlightThen;
   final bool highlightElse;
@@ -433,6 +471,14 @@ class WorkflowConditionNodeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final borderColor = workflowNodeRunBorderColor(
+      result: runResult,
+      selected: selected,
+      scheme: theme.colorScheme,
+      brightness: theme.brightness,
+      idleColor: theme.dividerColor,
+    );
+    final isRunning = runResult?.status == WorkflowNodeRunStatus.running;
     return SizedBox(
       width: kWorkflowConditionNodeWidth,
       height: kWorkflowConditionNodeHeight,
@@ -441,16 +487,15 @@ class WorkflowConditionNodeCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: WorkflowInteractiveNode(
-              selected: selected,
+              selected: selected || isRunning,
+              runEmphasized: isRunning,
               backgroundColor: Color.alphaBlend(
                 const Color(0xFFFFB300).withValues(
                   alpha: theme.brightness == Brightness.dark ? 0.22 : 0.14,
                 ),
                 theme.colorScheme.surfaceContainerLow,
               ),
-              borderColor: selected
-                  ? theme.colorScheme.primary
-                  : theme.dividerColor,
+              borderColor: borderColor,
               onTap: onTap,
               onDoubleTap: onDoubleTap,
               onPanUpdate: onDragPanUpdate,
@@ -493,6 +538,17 @@ class WorkflowConditionNodeCard extends StatelessWidget {
                           style: theme.textTheme.titleSmall,
                         ),
                       ),
+                      if (isRunning)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Text(
+                            'Running',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
                       if (selected) const SizedBox(width: 56),
                     ],
                   ),
@@ -525,7 +581,7 @@ class WorkflowConditionNodeCard extends StatelessWidget {
             child: WorkflowPort(
               label: 'True',
               side: WorkflowPortSide.right,
-              color: Colors.green,
+              color: Colors.green.shade600,
               highlighted: highlightThen,
               onPointerDown: (event) => onWirePointerDown?.call(
                 event,
@@ -558,6 +614,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
     super.key,
     required this.node,
     required this.selected,
+    this.runResult,
     this.highlightInput = false,
     this.highlightBody = false,
     this.highlightDone = false,
@@ -572,6 +629,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
 
   final WorkflowGraphNode node;
   final bool selected;
+  final WorkflowNodeRunResult? runResult;
   final bool highlightInput;
   final bool highlightBody;
   final bool highlightDone;
@@ -608,6 +666,14 @@ class WorkflowLoopNodeCard extends StatelessWidget {
     final maxLine = !isRepeat && maxIterations != null && maxIterations > 0
         ? 'Max $maxIterations'
         : null;
+    final borderColor = workflowNodeRunBorderColor(
+      result: runResult,
+      selected: selected,
+      scheme: theme.colorScheme,
+      brightness: theme.brightness,
+      idleColor: theme.dividerColor,
+    );
+    final isRunning = runResult?.status == WorkflowNodeRunStatus.running;
 
     return SizedBox(
       width: kWorkflowLoopNodeWidth,
@@ -617,12 +683,11 @@ class WorkflowLoopNodeCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: WorkflowInteractiveNode(
-              selected: selected,
+              selected: selected || isRunning,
+              runEmphasized: isRunning,
               padding: const EdgeInsets.fromLTRB(28, 12, 52, 12),
               backgroundColor: theme.colorScheme.secondaryContainer,
-              borderColor: selected
-                  ? theme.colorScheme.primary
-                  : theme.dividerColor,
+              borderColor: borderColor,
               onTap: onTap,
               onDoubleTap: onDoubleTap,
               onPanUpdate: onDragPanUpdate,
@@ -661,6 +726,17 @@ class WorkflowLoopNodeCard extends StatelessWidget {
                           style: theme.textTheme.titleSmall,
                         ),
                       ),
+                      if (isRunning)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Text(
+                            'Running',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
                       if (selected) const SizedBox(width: 56),
                     ],
                   ),
@@ -746,6 +822,7 @@ class WorkflowDelayNodeCard extends StatelessWidget {
     super.key,
     required this.node,
     required this.selected,
+    this.runResult,
     this.highlightInput = false,
     this.highlightNext = false,
     this.onTap,
@@ -759,6 +836,7 @@ class WorkflowDelayNodeCard extends StatelessWidget {
 
   final WorkflowGraphNode node;
   final bool selected;
+  final WorkflowNodeRunResult? runResult;
   final bool highlightInput;
   final bool highlightNext;
   final VoidCallback? onTap;
@@ -777,6 +855,14 @@ class WorkflowDelayNodeCard extends StatelessWidget {
     final detail = delayMs != null && delayMs > 0
         ? '${delayMs}ms'
         : 'Set wait time';
+    final borderColor = workflowNodeRunBorderColor(
+      result: runResult,
+      selected: selected,
+      scheme: theme.colorScheme,
+      brightness: theme.brightness,
+      idleColor: theme.dividerColor,
+    );
+    final isRunning = runResult?.status == WorkflowNodeRunStatus.running;
     return SizedBox(
       width: kWorkflowDelayNodeWidth,
       height: kWorkflowDelayNodeHeight,
@@ -785,11 +871,10 @@ class WorkflowDelayNodeCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: WorkflowInteractiveNode(
-              selected: selected,
+              selected: selected || isRunning,
+              runEmphasized: isRunning,
               backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              borderColor: selected
-                  ? theme.colorScheme.primary
-                  : theme.dividerColor,
+              borderColor: borderColor,
               onTap: onTap,
               onDoubleTap: onDoubleTap,
               onPanUpdate: onDragPanUpdate,
@@ -828,6 +913,17 @@ class WorkflowDelayNodeCard extends StatelessWidget {
                           style: theme.textTheme.titleSmall,
                         ),
                       ),
+                      if (isRunning)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Text(
+                            'Waiting',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
                       if (selected) const SizedBox(width: 56),
                     ],
                   ),

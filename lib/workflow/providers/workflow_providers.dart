@@ -860,6 +860,11 @@ Future<WorkflowRunResult?> runActiveWorkflow(WidgetRef ref) async {
       workflow: workflow,
       storage: workspaceStorage,
       onNodeUpdate: (nodeResult) {
+        // Ignore late updates after Stop so the canvas doesn't re-animate.
+        if (!ref.read(workflowRunInProgressProvider) &&
+            nodeResult.status == WorkflowNodeRunStatus.running) {
+          return;
+        }
         final iterationKey = nodeResult.loopIndex != null
             ? '${nodeResult.nodeId}#${nodeResult.loopIndex}'
             : nodeResult.nodeId;
@@ -888,5 +893,27 @@ Future<WorkflowRunResult?> runActiveWorkflow(WidgetRef ref) async {
     return result;
   } finally {
     ref.read(workflowRunInProgressProvider.notifier).state = false;
+    settleInterruptedWorkflowRunResults(ref);
+  }
+}
+
+/// Mark in-flight canvas steps as skipped after Stop / abort.
+void settleInterruptedWorkflowRunResults(WidgetRef ref) {
+  final current = ref.read(workflowNodeRunResultsProvider);
+  var changed = false;
+  final settled = <String, WorkflowNodeRunResult>{};
+  for (final entry in current.entries) {
+    if (entry.value.status == WorkflowNodeRunStatus.running) {
+      settled[entry.key] = entry.value.copyWith(
+        status: WorkflowNodeRunStatus.skipped,
+        message: entry.value.message ?? 'Stopped',
+      );
+      changed = true;
+    } else {
+      settled[entry.key] = entry.value;
+    }
+  }
+  if (changed) {
+    ref.read(workflowNodeRunResultsProvider.notifier).state = settled;
   }
 }

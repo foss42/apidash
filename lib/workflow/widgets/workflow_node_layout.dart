@@ -79,7 +79,7 @@ class WorkflowNodeLayout {
       WorkflowEdgeHandle.success ||
       WorkflowEdgeHandle.then ||
       WorkflowEdgeHandle.loopDone =>
-        Colors.green,
+        Colors.green.shade600,
       WorkflowEdgeHandle.failure || WorkflowEdgeHandle.elseBranch =>
         scheme.error,
       WorkflowEdgeHandle.next => scheme.primary,

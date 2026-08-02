@@ -72,5 +72,4 @@ const kMsgFlowHistoryEmpty =
 const kMsgFlowHistoryOpen = 'Open in inspector';
 const double kWorkflowRunExchangeHeight = 360;
 const double kWorkflowRunExchangeHeightCompact = 300;
-const double kWorkflowRunStepLogHeight = 168;
 const double kWorkflowRunBarFabClearance = 12;

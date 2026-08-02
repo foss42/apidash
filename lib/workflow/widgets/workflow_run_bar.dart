@@ -122,6 +122,7 @@ class WorkflowRunBar extends ConsumerWidget {
                                   .read(workflowRunInProgressProvider.notifier)
                                   .state =
                               false;
+                          settleInterruptedWorkflowRunResults(ref);
                         }
                       : () => triggerWorkflowRun(context, ref),
                   icon: running

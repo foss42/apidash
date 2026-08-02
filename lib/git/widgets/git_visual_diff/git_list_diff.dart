@@ -263,15 +263,12 @@ String? _envVarModifiedDetail(
 }
 
 String? _requestSummaryPresenceDetail(RequestSummary summary) {
-  final parts = <String>[];
-  if (summary.apiType == APIType.rest && summary.method != null) {
-    parts.add(summary.method!.name.toUpperCase());
-  } else {
-    parts.add(summary.apiType.label);
-  }
+  // Method / API type are rendered as a badge above the label — do not repeat.
   final url = summary.url.trim();
-  if (url.isNotEmpty) parts.add(url);
-  return parts.isEmpty ? null : parts.join(' · ');
+  if (url.isEmpty) return null;
+  // If the label is already the URL (untitled request), skip detail.
+  if (url == _requestSummaryLabel(summary)) return null;
+  return url;
 }
 
 String? _envVarPresenceDetail(EnvironmentVariableModel variable) {

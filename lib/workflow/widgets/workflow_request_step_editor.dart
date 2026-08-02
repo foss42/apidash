@@ -383,13 +383,11 @@ class _WorkflowRequestStepEditorPageState
           ),
           const Divider(height: 1),
           SizedBox(
-            height: 148,
-            child: SingleChildScrollView(
-              child: _ExtractionsPanel(
-                node: node,
-                varController: _extractionVarController,
-                pathController: _extractionPathController,
-              ),
+            height: 140,
+            child: _ExtractionsPanel(
+              node: node,
+              varController: _extractionVarController,
+              pathController: _extractionPathController,
             ),
           ),
         ],
@@ -428,6 +426,7 @@ class _ExtractionsPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final workflow = ref.watch(activeWorkflowProvider);
     final currentNode = workflow?.graph.nodes
         .where((candidate) => candidate.id == node.id)
@@ -438,46 +437,81 @@ class _ExtractionsPanel extends ConsumerWidget {
     }
 
     return Material(
-      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+      color: theme.colorScheme.surfaceContainerLowest,
       child: Padding(
-        padding: kP8,
+        padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              kLabelWorkflowExtractions,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Extract values from this step\'s response for downstream steps.',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            kVSpacer8,
-            if (currentNode.extractions.isNotEmpty)
-              ...currentNode.extractions.map(
-                (extraction) => ListTile(
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('{{${extraction.varName}}}'),
-                  subtitle: Text('${extraction.source}.${extraction.jsonPath}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 18),
-                    onPressed: () async {
-                      await ref
-                          .read(activeWorkflowProvider.notifier)
-                          .updateSelectedNode(
-                            currentNode.copyWith(
-                              extractions: currentNode.extractions
-                                  .where((item) => item != extraction)
-                                  .toList(),
-                            ),
-                          );
-                    },
+            Row(
+              children: [
+                Text(
+                  kLabelWorkflowExtractions,
+                  style: theme.textTheme.titleSmall,
+                ),
+                kHSpacer8,
+                Expanded(
+                  child: Text(
+                    'Pull values from this response for later steps',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
+              ],
+            ),
+            if (currentNode.extractions.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Expanded(
+                child: ListView.separated(
+                  padding: EdgeInsets.zero,
+                  itemCount: currentNode.extractions.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 2),
+                  itemBuilder: (context, index) {
+                    final extraction = currentNode.extractions[index];
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '{{${extraction.varName}}}  ·  ${extraction.source}.${extraction.jsonPath}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          constraints: const BoxConstraints.tightFor(
+                            width: 28,
+                            height: 28,
+                          ),
+                          padding: EdgeInsets.zero,
+                          tooltip: kTooltipDelete,
+                          icon: const Icon(Icons.close, size: 16),
+                          onPressed: () async {
+                            await ref
+                                .read(activeWorkflowProvider.notifier)
+                                .updateSelectedNode(
+                                  currentNode.copyWith(
+                                    extractions: currentNode.extractions
+                                        .where((item) => item != extraction)
+                                        .toList(),
+                                  ),
+                                );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
+            ] else
+              const Spacer(),
+            const SizedBox(height: 6),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Expanded(
                   flex: 2,
@@ -497,12 +531,16 @@ class _ExtractionsPanel extends ConsumerWidget {
                     decoration: const InputDecoration(
                       labelText: 'Path',
                       isDense: true,
-                  
+                      hintText: 'e.g. token',
                     ),
                   ),
                 ),
                 kHSpacer8,
                 FilledButton(
+                  style: FilledButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                  ),
                   onPressed: () async {
                     final varName = varController.text.trim();
                     final jsonPath = pathController.text.trim();
