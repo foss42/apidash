@@ -524,7 +524,31 @@ const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visiblity";
 const kLabelDefaultUriScheme = "Default URI Scheme";
 const kLabelDisableSSL = "Disable SSL verification";
 const kLabelDefaultCodeGen = "Default Code Generator";
-const kLabelDefaultLLM = "Default Large Language Model (LLM)";
+const kLabelLlmSettings = "LLMs";
+const kLabelConfigureLLMsSubtitle =
+    "Model, API key, and options for DashBot and AI Requests";
+const kLabelAvailableProfiles = "Available Profiles";
+const kLabelAddLlmProfile = "Add LLM Profile";
+const kLabelManageLlms = "Manage";
+const kLabelNoLLMsConfigured = "No LLMs configured yet";
+const kLabelAddLLM = "Add LLM";
+const kLabelAddLLMEllipsis = "Add LLM…";
+const kLabelBasic = "Basic";
+const kLabelCustom = "Custom";
+const kLabelCustomOpenAIHint =
+    "Works with OpenRouter, Groq, DeepSeek, vLLM, and other OpenAI-compatible APIs.";
+const kLabelSetAsDefault = "Set as Default";
+const kLabelDefaultBadge = "Default";
+const kLabelRemove = "Remove";
+const kLabelProviderType = "LLM Provider";
+const kLabelModel = "LLM Model";
+const kLabelApiKeyField = "API Key";
+const kLabelBaseUrl = "Base URL";
+const kHintModelIds = "e.g. anthropic/claude-sonnet-4.5";
+const kHintOllamaRunningModels =
+    "Your installed Ollama models will appear here";
+const kHintCustomEndpoint = "https://openrouter.ai/api/v1/chat/completions";
+const kLabelEdit = "Edit";
 const kLabelSaveResponses = "Save Responses";
 const kLabelSaveResponsesSubtitle =
     "Save disk space by not storing API responses";

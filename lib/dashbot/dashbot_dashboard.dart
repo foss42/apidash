@@ -1,8 +1,6 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/ai/ai.dart';
 import 'providers/providers.dart';
 import 'routes/routes.dart';
@@ -20,7 +18,6 @@ class DashbotWindow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final windowState = ref.watch(dashbotWindowNotifierProvider);
     final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
-    final settings = ref.watch(settingsProvider);
     final activeRoute = ref.watch(dashbotActiveRouteProvider);
 
     // Close the overlay when the window is not popped anymore
@@ -114,28 +111,8 @@ class DashbotWindow extends ConsumerWidget {
                                       ),
                                       kHSpacer4,
                                       Flexible(
-                                        child: AIModelSelectorButton(
-                                          aiRequestModel: AIRequestModel.fromJson(
-                                              settings.defaultAIModel ?? {}),
-                                          useRootNavigator: true,
-                                          onDialogOpen: () => ref
-                                              .read(dashbotWindowNotifierProvider
-                                                  .notifier)
-                                              .hide(),
-                                          onDialogClose: () => ref
-                                              .read(dashbotWindowNotifierProvider
-                                                  .notifier)
-                                              .show(),
-                                          onModelUpdated: (d) {
-                                            ref
-                                                .read(settingsProvider.notifier)
-                                                .update(
-                                                    defaultAIModel: d.copyWith(
-                                                        modelConfigs: [],
-                                                        stream: null,
-                                                        systemPrompt: '',
-                                                        userPrompt: '').toJson());
-                                          },
+                                        child: DefaultAIModelSelector(
+                                          dashbotStyle: true,
                                         ),
                                       ),
                                     ],

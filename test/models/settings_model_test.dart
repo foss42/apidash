@@ -20,6 +20,9 @@ void main() {
     isSSLDisabled: true,
     isDashBotEnabled: true,
     defaultAIModel: {"model": "llama"},
+    aiProviders: {
+      "openai": {"apiKey": "sk-test"},
+    },
   );
 
   test('Testing toJson()', () {
@@ -40,6 +43,9 @@ void main() {
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
       "defaultAIModel": {"model": "llama"},
+      "aiProviders": {
+        "openai": {"apiKey": "sk-test"},
+      },
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -62,8 +68,24 @@ void main() {
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
       "defaultAIModel": {"model": "llama"},
+      "aiProviders": {
+        "openai": {"apiKey": "sk-test"},
+      },
     };
     expect(SettingsModel.fromJson(input), sm);
+  });
+
+  test('Testing fromJson migrates aiProviders from defaultAIModel', () {
+    const input = {
+      "isDark": false,
+      "defaultAIModel": {
+        "modelApiProvider": "openai",
+        "apiKey": "legacy-key",
+        "model": "gpt-4o",
+      },
+    };
+    final result = SettingsModel.fromJson(input);
+    expect(result.aiProviders?['openai']?['apiKey'], 'legacy-key');
   });
 
   test('Testing copyWith()', () {
@@ -81,6 +103,9 @@ void main() {
       isSSLDisabled: false,
       isDashBotEnabled: false,
       defaultAIModel: {"model": "llama"},
+      aiProviders: {
+        "openai": {"apiKey": "sk-test"},
+      },
     );
     expect(
       sm.copyWith(
@@ -112,9 +137,32 @@ void main() {
   "isDashBotEnabled": true,
   "defaultAIModel": {
     "model": "llama"
+  },
+  "aiProviders": {
+    "openai": {
+      "apiKey": "sk-test"
+    }
   }
 }''';
     expect(sm.toString(), expectedResult);
+  });
+
+  test('Testing fromJson with custom aiProviders entry', () {
+    const input = {
+      "aiProviders": {
+        "custom_abc": {
+          "compat": "openai",
+          "displayName": "OpenRouter",
+          "apiKey": "or-key",
+          "url": "https://openrouter.ai/api/v1/chat/completions",
+          "models": ["anthropic/claude-sonnet"],
+          "lastModel": "anthropic/claude-sonnet",
+        },
+      },
+    };
+    final result = SettingsModel.fromJson(input);
+    expect(result.aiProviders?['custom_abc']?['displayName'], 'OpenRouter');
+    expect(result.aiProviders?['custom_abc']?['compat'], 'openai');
   });
 
   test('Testing hashcode', () {

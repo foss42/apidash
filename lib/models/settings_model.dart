@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/ai_provider_utils.dart';
 
 @immutable
 class SettingsModel {
@@ -20,6 +21,7 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.aiProviders,
   });
 
   final bool isDark;
@@ -37,6 +39,11 @@ class SettingsModel {
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
 
+  /// Per-provider credentials keyed by [ModelAPIProvider.name].
+  /// Each value: `{ "apiKey": "...", "url": "..." }`.
+  /// Scalable for future custom providers without schema churn.
+  final Map<String, Map<String, Object?>>? aiProviders;
+
   SettingsModel copyWith({
     bool? isDark,
     bool? alwaysShowCollectionPaneScrollbar,
@@ -52,6 +59,7 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    Map<String, Map<String, Object?>>? aiProviders,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -70,6 +78,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+      aiProviders: aiProviders ?? this.aiProviders,
     );
   }
 
@@ -91,6 +100,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      aiProviders: aiProviders,
     );
   }
 
@@ -149,6 +159,21 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+
+    Map<String, Map<String, Object?>>? aiProviders;
+    final rawProviders = data["aiProviders"];
+    if (rawProviders is Map) {
+      aiProviders = rawProviders.map(
+        (key, value) => MapEntry(
+          key.toString(),
+          value is Map
+              ? Map<String, Object?>.from(value)
+              : <String, Object?>{},
+        ),
+      );
+    }
+    aiProviders = migrateAiProvidersFromDefault(aiProviders, defaultAIModel);
+
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -167,6 +192,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      aiProviders: aiProviders,
     );
   }
 
@@ -188,6 +214,7 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "aiProviders": aiProviders,
     };
   }
 
@@ -214,7 +241,8 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
-        mapEquals(other.defaultAIModel, defaultAIModel);
+        mapEquals(other.defaultAIModel, defaultAIModel) &&
+        _aiProvidersEquals(other.aiProviders, aiProviders);
   }
 
   @override
@@ -235,6 +263,20 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      aiProviders,
     );
   }
+}
+
+bool _aiProvidersEquals(
+  Map<String, Map<String, Object?>>? a,
+  Map<String, Map<String, Object?>>? b,
+) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (final entry in a.entries) {
+    if (!mapEquals(entry.value, b[entry.key])) return false;
+  }
+  return true;
 }

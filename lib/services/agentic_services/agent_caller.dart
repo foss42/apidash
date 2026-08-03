@@ -1,4 +1,5 @@
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/utils/ai_provider_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,12 +11,15 @@ class APIDashAgentCaller {
     required WidgetRef ref,
     required AgentInputs input,
   }) async {
-    final defaultAIModel =
-        ref.read(settingsProvider.select((e) => e.defaultAIModel));
+    final settings = ref.read(settingsProvider);
+    final defaultAIModel = settings.defaultAIModel;
     if (defaultAIModel == null) {
       throw Exception('NO_DEFAULT_LLM');
     }
-    final baseAIRequestObject = AIRequestModel.fromJson(defaultAIModel);
+    final baseAIRequestObject = applyProviderCredentials(
+      safeAIRequestModelFromJson(defaultAIModel),
+      settings.aiProviders,
+    );
     final ans = await AIAgentService.callAgent(
       agent,
       baseAIRequestObject,
