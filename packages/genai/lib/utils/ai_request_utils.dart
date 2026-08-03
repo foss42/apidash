@@ -3,10 +3,59 @@ import 'dart:convert';
 import 'package:better_networking/better_networking.dart';
 import 'package:flutter/foundation.dart';
 import 'package:nanoid/nanoid.dart';
+import '../interface/consts.dart';
 import '../models/models.dart';
 
+class GenAIRequestException implements Exception {
+  GenAIRequestException({
+    required this.statusCode,
+    required this.message,
+    this.body,
+  });
+
+  final int statusCode;
+  final String message;
+  final String? body;
+
+  @override
+  String toString() => message;
+}
+
+AIRequestModel withDefaultModelConfigs(AIRequestModel model) {
+  if (model.modelConfigs.isNotEmpty) return model;
+  final defaults = kModelProvidersMap[model.modelApiProvider]
+          ?.defaultAIRequestModel
+          .modelConfigs ??
+      kDefaultAiRequestModel.modelConfigs;
+  if (defaults.isEmpty) return model;
+  return model.copyWith(modelConfigs: List<ModelConfig>.from(defaults));
+}
+
+String _messageFromErrorBody(String body) {
+  try {
+    final decoded = jsonDecode(body);
+    if (decoded is Map) {
+      final error = decoded['error'];
+      if (error is Map && error['message'] is String) {
+        return error['message'] as String;
+      }
+      if (decoded['message'] is String) {
+        return decoded['message'] as String;
+      }
+    }
+  } catch (_) {
+    // fall through
+  }
+  final trimmed = body.trim();
+  if (trimmed.isEmpty) return 'LLM request failed';
+  if (trimmed.length > 280) return '${trimmed.substring(0, 280)}…';
+  return trimmed;
+}
+
 Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
-  final httpRequestModel = aiRequestModel?.httpRequestModel;
+  final prepared =
+      aiRequestModel == null ? null : withDefaultModelConfigs(aiRequestModel);
+  final httpRequestModel = prepared?.httpRequestModel;
   if (httpRequestModel == null) {
     debugPrint("executeGenAIRequest -> httpRequestModel is null");
     return null;
@@ -17,19 +66,25 @@ Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
     httpRequestModel,
   );
   if (response == null) return null;
-  if (response.statusCode == 200) {
+  final statusCode = response.statusCode;
+  if (statusCode == 200) {
     final data = jsonDecode(response.body);
-    return aiRequestModel?.getFormattedOutput(data);
-  } else {
-    debugPrint('LLM_EXCEPTION: ${response.statusCode}\n${response.body}');
-    return null;
+    return prepared?.getFormattedOutput(data);
   }
+  debugPrint('LLM_EXCEPTION: $statusCode\n${response.body}');
+  throw GenAIRequestException(
+    statusCode: statusCode,
+    message: _messageFromErrorBody(response.body),
+    body: response.body,
+  );
 }
 
 Future<Stream<String?>> streamGenAIRequest(
   AIRequestModel? aiRequestModel,
 ) async {
-  final httpRequestModel = aiRequestModel?.httpRequestModel;
+  final prepared =
+      aiRequestModel == null ? null : withDefaultModelConfigs(aiRequestModel);
+  final httpRequestModel = prepared?.httpRequestModel;
   final streamController = StreamController<String?>();
   if (httpRequestModel == null) {
     debugPrint("streamGenAIRequest -> httpRequestModel is null");
@@ -64,7 +119,7 @@ Future<Stream<String?>> streamGenAIRequest(
           final jsonStr = line.substring(6).trim();
           try {
             final jsonData = jsonDecode(jsonStr);
-            final formattedOutput = aiRequestModel?.getFormattedStreamOutput(
+            final formattedOutput = prepared?.getFormattedStreamOutput(
               jsonData,
             );
             streamController.sink.add(formattedOutput);
