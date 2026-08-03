@@ -32,7 +32,9 @@ import '../utils/utils.dart';
 /// path uses — so bearer/basic/api-key/jwt/etc. are formatted identically. Only
 /// header-targeted auth maps to gRPC; query-param auth (api-key/jwt set to
 /// `query`) has no gRPC equivalent and is ignored.
-Future<Map<String, String>> buildGrpcMetadata(GrpcRequestModel grpcModel) async {
+Future<Map<String, String>> buildGrpcMetadata(
+  GrpcRequestModel grpcModel,
+) async {
   final merged = <String, String>{};
 
   grpcModel.metadataMap.forEach((name, value) {
@@ -367,7 +369,10 @@ class CollectionStateNotifier
           httpRequestModel: null,
           aiRequestModel: defaultModel == null
               ? const AIRequestModel()
-              : AIRequestModel.fromJson(defaultModel),
+              : applyProviderCredentials(
+                  safeAIRequestModelFromJson(defaultModel),
+                  ref.read(settingsProvider).aiProviders,
+                ),
           wsRequestModel: null,
           mqttRequestModel: null,
           grpcRequestModel: null,
@@ -549,7 +554,7 @@ class CollectionStateNotifier
           final combined = _buildCombinedEnvVarMap();
           final substituted =
               substituteVariables(ws.messageHeartbeatPayload, combined) ??
-                  ws.messageHeartbeatPayload;
+              ws.messageHeartbeatPayload;
           sendWebSocketMessage(requestId, substituted, isAutomatic: true);
         },
       );
@@ -590,8 +595,11 @@ class CollectionStateNotifier
   ///
   /// [isAutomatic] marks messages sent by the app (repeating heartbeat) rather
   /// than by the user, so the UI can keep them out of "Recently Sent".
-  void sendWebSocketMessage(String requestId, String message,
-      {bool isAutomatic = false}) {
+  void sendWebSocketMessage(
+    String requestId,
+    String message, {
+    bool isAutomatic = false,
+  }) {
     final currentRequest = state?[requestId];
     if (currentRequest == null || currentRequest.apiType != APIType.websocket) {
       return;
@@ -1042,7 +1050,7 @@ class CollectionStateNotifier
           .read(historyMetaStateNotifier.notifier)
           .editHistoryRequest(historyModel);
     }
-  }  
+  }
 
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
@@ -1987,7 +1995,7 @@ class CollectionStateNotifier
           // the first message that was just sent so the user has feedback.
           final keepsRequestStreamOpen =
               grpcModel.streamingType == GrpcStreamingType.client ||
-                  grpcModel.streamingType == GrpcStreamingType.bidi;
+              grpcModel.streamingType == GrpcStreamingType.bidi;
           if (keepsRequestStreamOpen) {
             final sentPreview = grpcModel.parameters.isNotEmpty
                 ? GrpcUtils.paramsToJson(grpcModel.parameters)

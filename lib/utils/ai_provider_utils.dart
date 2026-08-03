@@ -1,0 +1,326 @@
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/utils/file_utils.dart';
+
+const kAIProviderDisplayNames = <ModelAPIProvider, String>{
+  ModelAPIProvider.openai: 'OpenAI',
+  ModelAPIProvider.anthropic: 'Anthropic',
+  ModelAPIProvider.gemini: 'Gemini',
+  ModelAPIProvider.azureopenai: 'Azure OpenAI',
+  ModelAPIProvider.ollama: 'Ollama',
+};
+
+const kCustomProviderPrefix = 'custom_';
+const kCompatOpenAI = 'openai';
+
+/// One configured LLM from settings `aiProviders`.
+class ConfiguredLLM {
+  const ConfiguredLLM({
+    required this.id,
+    required this.displayName,
+    required this.compat,
+    this.apiKey,
+    this.url,
+    this.models = const [],
+    this.lastModel,
+    this.isCustom = false,
+  });
+
+  final String id;
+  final String displayName;
+  final ModelAPIProvider compat;
+  final String? apiKey;
+  final String? url;
+  final List<String> models;
+  final String? lastModel;
+  final bool isCustom;
+
+  bool get requiresApiKey => compat != ModelAPIProvider.ollama;
+
+  bool get isReady {
+    if (!requiresApiKey) return true;
+    return apiKey != null && apiKey!.isNotEmpty;
+  }
+}
+
+bool isCustomProviderId(String id) => id.startsWith(kCustomProviderPrefix);
+
+String newCustomProviderId() => '$kCustomProviderPrefix${getNewUuid()}';
+
+bool providerRequiresApiKey(ModelAPIProvider provider) =>
+    provider != ModelAPIProvider.ollama;
+
+String providerDisplayName(ModelAPIProvider provider) =>
+    kAIProviderDisplayNames[provider] ?? provider.name;
+
+ModelAPIProvider? tryParseBuiltinProvider(String id) {
+  try {
+    return ModelAPIProvider.values.byName(id);
+  } catch (_) {
+    return null;
+  }
+}
+
+ModelAPIProvider compatFromEntry(Map<String, Object?> entry, String id) {
+  final builtin = tryParseBuiltinProvider(id);
+  if (builtin != null) return builtin;
+  final raw = entry['compat'];
+  if (raw is String) {
+    final parsed = tryParseBuiltinProvider(raw);
+    if (parsed != null) return parsed;
+  }
+  return ModelAPIProvider.openai;
+}
+
+ConfiguredLLM? configuredLLMFromEntry(String id, Map<String, Object?> entry) {
+  final compat = compatFromEntry(entry, id);
+  final apiKey = entry['apiKey'] is String ? entry['apiKey'] as String : null;
+  final url = entry['url'] is String ? entry['url'] as String : null;
+  final lastModel =
+      entry['lastModel'] is String ? entry['lastModel'] as String : null;
+
+  final models = entry['models'] is List
+      ? (entry['models'] as List)
+          .whereType<String>()
+          .where((e) => e.isNotEmpty)
+          .toList()
+      : const <String>[];
+
+  final modelId = (lastModel != null && lastModel.isNotEmpty)
+      ? lastModel
+      : (models.isNotEmpty ? models.first : null);
+  final displayName = (modelId != null && modelId.isNotEmpty)
+      ? modelId
+      : (isCustomProviderId(id) ? 'Custom' : providerDisplayName(compat));
+
+  final llm = ConfiguredLLM(
+    id: id,
+    displayName: displayName,
+    compat: compat,
+    apiKey: apiKey,
+    url: url,
+    models: models,
+    lastModel: lastModel,
+    isCustom: isCustomProviderId(id),
+  );
+  return llm.isReady ? llm : null;
+}
+
+List<ConfiguredLLM> listConfiguredLLMs(
+  Map<String, Map<String, Object?>>? aiProviders,
+) {
+  if (aiProviders == null || aiProviders.isEmpty) return const [];
+  final result = <ConfiguredLLM>[];
+  for (final entry in aiProviders.entries) {
+    final llm = configuredLLMFromEntry(entry.key, entry.value);
+    if (llm != null) result.add(llm);
+  }
+  result.sort((a, b) => a.displayName.compareTo(b.displayName));
+  return result;
+}
+
+String? defaultEndpointFor(ModelAPIProvider provider) {
+  return switch (provider) {
+    ModelAPIProvider.openai => kOpenAIUrl,
+    ModelAPIProvider.anthropic => kAnthropicUrl,
+    ModelAPIProvider.gemini => kGeminiUrl,
+    ModelAPIProvider.ollama => kOllamaUrl,
+    ModelAPIProvider.azureopenai => '',
+  };
+}
+
+AIRequestModel resolveAIRequestFromLLM(
+  ConfiguredLLM llm, {
+  String? model,
+}) {
+  final endpoint = (llm.url != null && llm.url!.isNotEmpty)
+      ? llm.url!
+      : (defaultEndpointFor(llm.compat) ?? '');
+  final selectedModel = model?.isNotEmpty == true
+      ? model
+      : (llm.lastModel?.isNotEmpty == true
+          ? llm.lastModel
+          : (llm.models.isNotEmpty ? llm.models.first : null));
+
+  return withDefaultModelConfigs(
+    AIRequestModel(
+      modelApiProvider: llm.compat,
+      url: endpoint,
+      model: selectedModel,
+      apiKey: llm.apiKey,
+    ),
+  );
+}
+
+/// Parses settings JSON; unknown `modelApiProvider` values are dropped.
+AIRequestModel safeAIRequestModelFromJson(Map<String, Object?>? json) {
+  if (json == null || json.isEmpty) return const AIRequestModel();
+  final sanitized = Map<String, Object?>.from(json);
+  final rawProvider = sanitized['modelApiProvider'];
+  if (rawProvider is String &&
+      rawProvider.isNotEmpty &&
+      !ModelAPIProvider.values.any((e) => e.name == rawProvider)) {
+    sanitized['modelApiProvider'] = null;
+  }
+  try {
+    return AIRequestModel.fromJson(sanitized);
+  } catch (_) {
+    return AIRequestModel(
+      url: sanitized['url'] is String ? sanitized['url'] as String : '',
+      model: sanitized['model'] is String ? sanitized['model'] as String : null,
+      apiKey:
+          sanitized['apiKey'] is String ? sanitized['apiKey'] as String : null,
+    );
+  }
+}
+
+/// Fills apiKey / url from `aiProviders` (by built-in provider name).
+AIRequestModel applyProviderCredentials(
+  AIRequestModel model,
+  Map<String, Map<String, Object?>>? aiProviders, {
+  bool preferStored = true,
+}) {
+  final provider = model.modelApiProvider;
+  if (provider == null) return withDefaultModelConfigs(model);
+
+  final cred = aiProviders?[provider.name];
+  final storedKey = cred?['apiKey'];
+  final storedUrl = cred?['url'];
+  final key = storedKey is String && storedKey.isNotEmpty ? storedKey : null;
+  final url = storedUrl is String && storedUrl.isNotEmpty ? storedUrl : null;
+
+  final nextKey = preferStored
+      ? (key ?? model.apiKey)
+      : ((model.apiKey?.isNotEmpty ?? false) ? model.apiKey : key);
+  final nextUrl = preferStored
+      ? (url ?? model.url)
+      : (model.url.isNotEmpty ? model.url : (url ?? model.url));
+
+  final withCreds = (nextKey == model.apiKey && nextUrl == model.url)
+      ? model
+      : model.copyWith(apiKey: nextKey, url: nextUrl);
+  return withDefaultModelConfigs(withCreds);
+}
+
+Map<String, Map<String, Object?>> upsertBuiltinProvider(
+  Map<String, Map<String, Object?>>? existing,
+  ModelAPIProvider provider, {
+  String? apiKey,
+  String? url,
+  String? lastModel,
+}) {
+  final next = Map<String, Map<String, Object?>>.from(existing ?? {});
+  final key = apiKey?.trim() ?? '';
+  final endpoint = url?.trim() ?? '';
+  final model = lastModel?.trim() ?? '';
+
+  if (providerRequiresApiKey(provider) && key.isEmpty) {
+    next.remove(provider.name);
+    return next;
+  }
+  if (key.isEmpty && endpoint.isEmpty && model.isEmpty) {
+    next.remove(provider.name);
+    return next;
+  }
+
+  final prev = Map<String, Object?>.from(next[provider.name] ?? {});
+  next[provider.name] = {
+    ...prev,
+    if (key.isNotEmpty) 'apiKey': key else if (prev['apiKey'] != null) 'apiKey': prev['apiKey'],
+    if (endpoint.isNotEmpty)
+      'url': endpoint
+    else if (prev['url'] != null)
+      'url': prev['url'],
+    if (model.isNotEmpty)
+      'lastModel': model
+    else if (prev['lastModel'] != null)
+      'lastModel': prev['lastModel'],
+  };
+  return next;
+}
+
+Map<String, Map<String, Object?>> upsertCustomProvider(
+  Map<String, Map<String, Object?>>? existing, {
+  String? id,
+  String? displayName,
+  required String apiKey,
+  required String url,
+  required List<String> models,
+  String? lastModel,
+  String compat = kCompatOpenAI,
+}) {
+  final next = Map<String, Map<String, Object?>>.from(existing ?? {});
+  final entryId = (id != null && id.isNotEmpty) ? id : newCustomProviderId();
+  final key = apiKey.trim();
+  final endpoint = url.trim();
+  final modelList =
+      models.map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+  final active = lastModel?.trim().isNotEmpty == true
+      ? lastModel!.trim()
+      : (modelList.isNotEmpty ? modelList.first : null);
+  final name = (displayName != null && displayName.trim().isNotEmpty)
+      ? displayName.trim()
+      : (active ?? '');
+
+  if (name.isEmpty || key.isEmpty || endpoint.isEmpty || active == null) {
+    return next;
+  }
+
+  next[entryId] = {
+    'compat': compat,
+    'displayName': name,
+    'apiKey': key,
+    'url': endpoint,
+    'models': modelList.isNotEmpty ? modelList : [active],
+    'lastModel': active,
+  };
+  return next;
+}
+
+Map<String, Map<String, Object?>> removeProviderCredential(
+  Map<String, Map<String, Object?>>? existing,
+  String id,
+) {
+  final next = Map<String, Map<String, Object?>>.from(existing ?? {});
+  next.remove(id);
+  return next;
+}
+
+Map<String, Map<String, Object?>> setProviderLastModel(
+  Map<String, Map<String, Object?>>? existing,
+  String providerId,
+  String model,
+) {
+  final next = Map<String, Map<String, Object?>>.from(existing ?? {});
+  final prev = Map<String, Object?>.from(next[providerId] ?? {});
+  if (prev.isEmpty) return next;
+  prev['lastModel'] = model;
+  next[providerId] = prev;
+  return next;
+}
+
+/// Seeds `aiProviders` from `defaultAIModel` when empty (known providers only).
+Map<String, Map<String, Object?>>? migrateAiProvidersFromDefault(
+  Map<String, Map<String, Object?>>? aiProviders,
+  Map<String, Object?>? defaultAIModel,
+) {
+  if (aiProviders != null && aiProviders.isNotEmpty) return aiProviders;
+  if (defaultAIModel == null) return aiProviders;
+
+  final providerName = defaultAIModel['modelApiProvider'];
+  final apiKey = defaultAIModel['apiKey'];
+  if (providerName is! String || providerName.isEmpty) return aiProviders;
+  if (apiKey is! String || apiKey.isEmpty) return aiProviders;
+
+  final provider = tryParseBuiltinProvider(providerName);
+  if (provider == null) return aiProviders;
+
+  final url = defaultAIModel['url'];
+  final model = defaultAIModel['model'];
+  return upsertBuiltinProvider(
+    aiProviders,
+    provider,
+    apiKey: apiKey,
+    url: url is String ? url : null,
+    lastModel: model is String ? model : null,
+  );
+}
