@@ -38,6 +38,18 @@ final selectedSubstitutedHttpRequestModelProvider =
       }
     });
 
+final hasInvalidAIConfigProvider = Provider<bool>((ref) {
+  final requestModel = ref.watch(selectedRequestModelProvider);
+  if (requestModel?.apiType != APIType.ai) return false;
+  final configs = requestModel?.aiRequestModel?.modelConfigs;
+  if (configs == null) return false;
+  return configs.any((config) {
+    if (config.type != ConfigType.numeric) return false;
+    final v = config.value.value;
+    return v is double && (v.isInfinite || v.isNaN);
+  });
+});
+
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
   return ids ?? [];

@@ -145,14 +145,17 @@ class SendRequestButton extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.isWorking));
     final isStreaming = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isStreaming));
+    final hasInvalidConfig = ref.watch(hasInvalidAIConfigProvider);
 
     return SendButton(
       isStreaming: isStreaming ?? false,
       isWorking: isWorking ?? false,
-      onTap: () {
-        onTap?.call();
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
-      },
+      onTap: hasInvalidConfig
+          ? null
+          : () {
+              onTap?.call();
+              ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+            },
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
       },
