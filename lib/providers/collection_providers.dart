@@ -506,10 +506,17 @@ class CollectionStateNotifier
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
-        final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
-          kJsonDecoder.convert(httpResponseModel?.body ?? "Error parsing body"),
-        );
-        httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+        final body = httpResponseModel?.body;
+        if (body != null && body.isNotEmpty) {
+          try {
+            final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
+              kJsonDecoder.convert(body),
+            );
+            httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+          } catch (_) {
+            // Invalid JSON — keep raw response; do not block isWorking clear
+          }
+        }
       }
 
       newRequestModel = newRequestModel.copyWith(
