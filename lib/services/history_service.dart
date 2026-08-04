@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'hive_services.dart';
@@ -8,35 +10,41 @@ Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
 
   if (retentionDate == null) {
     return;
-  } else {
-    List<String>? historyIds = hiveHandler.getHistoryIds();
-    List<String> toRemoveIds = [];
-
-    if (historyIds == null || historyIds.isEmpty) {
-      return;
-    }
-
-    for (var historyId in historyIds) {
-      var jsonModel = hiveHandler.getHistoryMeta(historyId);
-      if (jsonModel != null) {
-        var jsonMap = Map<String, Object?>.from(jsonModel);
-        HistoryMetaModel historyMetaModelFromJson =
-            HistoryMetaModel.fromJson(jsonMap);
-        if (historyMetaModelFromJson.timeStamp.isBefore(retentionDate)) {
-          toRemoveIds.add(historyId);
-        }
-      }
-    }
-
-    if (toRemoveIds.isEmpty) {
-      return;
-    }
-
-    for (var id in toRemoveIds) {
-      await hiveHandler.deleteHistoryRequest(id);
-      hiveHandler.deleteHistoryMeta(id);
-    }
-    hiveHandler.setHistoryIds(
-        historyIds..removeWhere((id) => toRemoveIds.contains(id)));
   }
+
+  List<String>? historyIds = hiveHandler.getHistoryIds();
+  if (historyIds == null || historyIds.isEmpty) {
+    return;
+  }
+
+  // Collect serializable meta maps on the main isolate (Hive is not isolate-safe).
+  final metas = <String, Map<String, Object?>>{};
+  for (final historyId in historyIds) {
+    final jsonModel = hiveHandler.getHistoryMeta(historyId);
+    if (jsonModel != null) {
+      metas[historyId] = Map<String, Object?>.from(jsonModel);
+    }
+  }
+
+  if (metas.isEmpty) {
+    return;
+  }
+
+  // Heavy filtering of expired entries off the UI/main thread.
+  final toRemoveIds = await Isolate.run(
+    () => findExpiredHistoryIds(metas, retentionDate),
+  );
+
+  if (toRemoveIds.isEmpty) {
+    return;
+  }
+
+  for (final id in toRemoveIds) {
+    await hiveHandler.deleteHistoryRequest(id);
+    await hiveHandler.deleteHistoryMeta(id);
+  }
+
+  await hiveHandler.setHistoryIds(
+    historyIds..removeWhere((id) => toRemoveIds.contains(id)),
+  );
 }
