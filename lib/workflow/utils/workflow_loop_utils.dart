@@ -39,13 +39,24 @@ String encodeLoopListExpression(String? raw) {
 String? formatLoopItemExtractionPreview({
   required String? listRaw,
   required String? pathRaw,
+  String? asRaw,
 }) {
   final listName = parseLoopListVariableName(listRaw);
   final path = pathRaw?.trim() ?? '';
-  if (listName == null || path.isEmpty) {
+  final asName = parseLoopListVariableName(asRaw) ?? asRaw?.trim() ?? '';
+  if (listName == null) {
     return null;
   }
-  return '{{$listName}}.$path';
+  if (path.isEmpty) {
+    if (asName.isEmpty) {
+      return null;
+    }
+    return 'each {{$listName}} item → {{$asName}}';
+  }
+  if (asName.isEmpty) {
+    return '{{$listName}}.$path';
+  }
+  return '{{$listName}}.$path → {{$asName}}';
 }
 
 String stringifyLoopItem(dynamic item) {
@@ -117,10 +128,12 @@ void applyLoopScopedVariables(
 
   final field = itemField?.trim();
   final alias = itemAs?.trim();
-  if (field == null ||
-      field.isEmpty ||
-      alias == null ||
-      alias.isEmpty) {
+  if (alias == null || alias.isEmpty) {
+    return;
+  }
+  // Path empty → whole item (List strings). Path set → object field (JSON/JSONL).
+  if (field == null || field.isEmpty) {
+    scopedVariables[alias] = loopItem;
     return;
   }
   final value = scopedVariables['loop.item.$field'];

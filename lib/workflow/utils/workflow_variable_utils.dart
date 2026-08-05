@@ -35,14 +35,14 @@ Map<String, String> upstreamExtractionVariables(
       }
     } else if (node.type == WorkflowNodeType.loop) {
       final itemAs = node.loopItemAs?.trim();
-      final itemField = node.loopItemField?.trim();
-      if (itemAs != null &&
-          itemAs.isNotEmpty &&
-          itemField != null &&
-          itemField.isNotEmpty) {
+      if (itemAs != null && itemAs.isNotEmpty) {
+        final itemField = node.loopItemField?.trim();
+        final detail = (itemField != null && itemField.isNotEmpty)
+            ? itemField
+            : 'whole item';
         result.putIfAbsent(
           itemAs,
-          () => '${node.label} · $itemField',
+          () => '${node.label} · $detail',
         );
       }
     } else if (node.type == WorkflowNodeType.sequence) {

@@ -14,7 +14,7 @@ class WorkflowVyuhAdapter {
     ].join('|');
     final edges = [
       for (final e in doc.graph.edges)
-        '${e.id}:${e.source}>${e.target}:${workflowHandleToPortId(e.sourceHandle)}',
+        '${e.id}:${e.source}>${e.target}:${workflowHandleToPortId(e.sourceHandle)}>${workflowHandleToPortId(e.targetHandle)}',
     ].join('|');
     return '${doc.id}#$nodes#$edges';
   }
@@ -83,17 +83,34 @@ class WorkflowVyuhAdapter {
           out('else', 'False', 0.68),
         ],
       WorkflowNodeType.loop => [
-          inn('in', 'In', 0.5),
+          inn('in', 'In', 0.42),
           out('next', 'Each', 0.32),
-          out('done', 'Done', 0.72),
+          out('done', 'Done', 0.62),
+          // both: receive Sequence from below, or stretch down to add Sequence.
+          Port(
+            id: 'list',
+            name: 'Seq',
+            position: PortPosition.bottom,
+            type: PortType.both,
+            offset: Offset(size.width * 0.5, 0),
+            multiConnections: false,
+            showLabel: true,
+          ),
         ],
       WorkflowNodeType.delay => [
           inn('in', 'In', 0.5),
           out('next', 'Next', 0.5),
         ],
       WorkflowNodeType.sequence => [
-          inn('in', 'In', 0.5),
-          out('next', 'Next', 0.5),
+          Port(
+            id: 'next',
+            name: 'Next',
+            position: PortPosition.top,
+            type: PortType.both,
+            offset: Offset(size.width * 0.5, 0),
+            multiConnections: false,
+            showLabel: true,
+          ),
         ],
     };
   }
@@ -103,6 +120,7 @@ String workflowHandleToPortId(WorkflowEdgeHandle handle) => switch (handle) {
       WorkflowEdgeHandle.elseBranch => 'else',
       WorkflowEdgeHandle.inPort => 'in',
       WorkflowEdgeHandle.loopDone => 'done',
+      WorkflowEdgeHandle.loopList => 'list',
       _ => handle.name,
     };
 
@@ -110,6 +128,7 @@ WorkflowEdgeHandle workflowPortIdToHandle(String portId) => switch (portId) {
       'else' => WorkflowEdgeHandle.elseBranch,
       'in' => WorkflowEdgeHandle.inPort,
       'done' => WorkflowEdgeHandle.loopDone,
+      'list' => WorkflowEdgeHandle.loopList,
       'next' => WorkflowEdgeHandle.next,
       'success' => WorkflowEdgeHandle.success,
       'failure' => WorkflowEdgeHandle.failure,

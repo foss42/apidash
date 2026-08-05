@@ -236,12 +236,12 @@ class _WorkflowLoopStepEditorPageState
     final itemField = _itemFieldController.text.trim();
     final itemAs = parseLoopListVariableName(_itemAsController.text) ??
         _itemAsController.text.trim();
-    if ((itemField.isEmpty) != (itemAs.isEmpty)) {
+    if (itemField.isNotEmpty && itemAs.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Set both Variable and Path, or leave both empty',
+              'Path needs a Variable name (or leave Path empty for whole List items)',
             ),
           ),
         );
@@ -1030,6 +1030,7 @@ class _LoopConfigPanel extends StatelessWidget {
                   controller: itemAsController,
                   decoration: const InputDecoration(
                     labelText: 'Variable',
+                    hintText: 'name',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -1041,7 +1042,8 @@ class _LoopConfigPanel extends StatelessWidget {
                 child: TextField(
                   controller: itemFieldController,
                   decoration: const InputDecoration(
-                    labelText: 'Path',
+                    labelText: 'Path (optional)',
+                    hintText: 'prompt',
                     border: OutlineInputBorder(),
                     isDense: true,
                   ),
@@ -1053,11 +1055,13 @@ class _LoopConfigPanel extends StatelessWidget {
             listenable: Listenable.merge([
               listVarController,
               itemFieldController,
+              itemAsController,
             ]),
             builder: (context, _) {
               final preview = formatLoopItemExtractionPreview(
                 listRaw: listVarController.text,
                 pathRaw: itemFieldController.text,
+                asRaw: itemAsController.text,
               );
               if (preview == null) {
                 return const SizedBox.shrink();
@@ -1065,7 +1069,7 @@ class _LoopConfigPanel extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
-                  'Will be extracted from $preview',
+                  preview,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -1379,7 +1383,7 @@ class _SequenceConfigPanel extends StatelessWidget {
             labelText: kLabelWorkflowSequenceSaveAs,
             hintText: 'batch',
             helperText:
-                'Any later step can use this variable name - For each, HTTP, AI etc.',
+                'For each reads this name as its list (wired via the Seq port).',
             border: OutlineInputBorder(),
             isDense: true,
           ),
@@ -1400,12 +1404,12 @@ class _SequenceGuidePanel extends StatelessWidget {
         _GuideSection(
           title: 'Build a list',
           body:
-              'List: [alice, bob, carol]. JSON: [{...}, {...}]. JSONL: one JSON object per line. Save as batch for later steps.',
+              'List: [alice, bob, carol]. JSON: [{...}, {...}]. JSONL: one JSON object per line. Save as batch — For each iterates {{batch}}.',
         ),
         _GuideSection(
-          title: 'Not only For each',
+          title: 'Only with For each',
           body:
-              'For each can iterate {{batch}}. A single request or AI step can also use {{batch.0}} / fields after you loop — or use extract from an API if the list already exists (skip Sequence).',
+              'Stretch For each’s bottom Seq into empty space to add Sequence. It only has a top Next into Seq — not on the main In path. If the list already exists from an API extract, skip Sequence and set List to {{users}}.',
         ),
       ],
     );
@@ -1423,12 +1427,13 @@ class _LoopGuidePanel extends StatelessWidget {
         _GuideSection(
           title: 'For each',
           body:
-              'List is a chained variable like {{users}}. Wire In from that step, Each to the body request, Done for what runs after.',
+              'List is a chained variable like {{users}} or {{batch}}. Stretch the bottom Seq port to attach a Sequence under this loop. Wire Each to the body request, Done for what runs after.',
         ),
         _GuideSection(
           title: 'Item extraction',
           body:
-              'Same as response extractions: Path is the field on each item, Variable is the name used downstream ({{userId}}).',
+              'List [a,b,c]: set Variable only (e.g. name), leave Path empty → {{name}}. '
+              'JSON/JSONL objects: Path is the field (prompt), Variable is {{prompt}}.',
         ),
         _GuideSection(
           title: 'Repeat',

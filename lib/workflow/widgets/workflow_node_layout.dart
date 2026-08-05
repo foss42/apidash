@@ -42,7 +42,8 @@ class WorkflowNodeLayout {
         Colors.green.shade600,
       WorkflowEdgeHandle.failure || WorkflowEdgeHandle.elseBranch =>
         scheme.error,
-      WorkflowEdgeHandle.next => scheme.primary,
+      WorkflowEdgeHandle.next || WorkflowEdgeHandle.loopList =>
+        scheme.primary,
       _ => scheme.outline,
     };
   }

@@ -228,6 +228,27 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     };
   }
 
+  Future<void> _attachSequenceToLoop(WorkflowGraphNode loop) async {
+    if (_writing) {
+      return;
+    }
+    final sequenceId = await ref
+        .read(activeWorkflowProvider.notifier)
+        .attachSequenceToLoop(loop.id);
+    final doc = ref.read(activeWorkflowProvider);
+    if (doc != null) {
+      _fingerprint = WorkflowVyuhAdapter.structureFingerprint(doc);
+    }
+    if (!mounted || sequenceId == null) {
+      return;
+    }
+    final model = _model(sequenceId);
+    if (model == null) {
+      return;
+    }
+    await openWorkflowNodeEditor(context, ref, node: model);
+  }
+
   @override
   Widget build(BuildContext context) {
     final workflow = ref.watch(activeWorkflowProvider);
@@ -336,11 +357,29 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
             connection: ConnectionEvents<String, void>(
               onCreated: (c) {
                 c.label = ConnectionLabel.center(text: '×', id: 'detach');
+                final source = _model(c.sourceNodeId);
+                final target = _model(c.targetNodeId);
+                // For each Seq dropped on Sequence → store Sequence → Seq.
+                if (source?.type == WorkflowNodeType.loop &&
+                    c.sourcePortId == 'list' &&
+                    target?.type == WorkflowNodeType.sequence) {
+                  _afterWrite(
+                    () => ref
+                        .read(activeWorkflowProvider.notifier)
+                        .linkSequenceToLoop(
+                          loopNodeId: c.sourceNodeId,
+                          sequenceNodeId: c.targetNodeId,
+                          edgeId: c.id,
+                        ),
+                  );
+                  return;
+                }
                 _afterWrite(
                   () => ref.read(activeWorkflowProvider.notifier).connectNodes(
                         sourceId: c.sourceNodeId,
                         sourceHandle: workflowPortIdToHandle(c.sourcePortId),
                         targetId: c.targetNodeId,
+                        targetHandle: workflowPortIdToHandle(c.targetPortId),
                         edgeId: c.id,
                       ),
                 );
@@ -351,11 +390,17 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
                     .disconnectEdge(c.id),
               ),
               onConnectStart: (node, port) {
-                final y = port.offset.dy;
-                final x = port.position == PortPosition.right
-                    ? node.size.value.width
-                    : 0.0;
-                _wire = (node.id, port.id, node.position.value + Offset(x, y));
+                final pos = node.position.value;
+                final size = node.size.value;
+                final Offset start = switch (port.position) {
+                  PortPosition.right =>
+                    pos + Offset(size.width, port.offset.dy),
+                  PortPosition.left => pos + Offset(0, port.offset.dy),
+                  PortPosition.top => pos + Offset(port.offset.dx, 0),
+                  PortPosition.bottom =>
+                    pos + Offset(port.offset.dx, size.height),
+                };
+                _wire = (node.id, port.id, start);
               },
               onConnectEnd: (target, _, pos) {
                 final wire = _wire;
@@ -365,6 +410,19 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
                 }
                 final end = pos.offset;
                 if ((end - wire.$3).distance < 48) {
+                  return;
+                }
+                // Stretch For each Seq into empty space → add Sequence.
+                if (wire.$2 == 'list' &&
+                    _model(wire.$1)?.type == WorkflowNodeType.loop) {
+                  final loop = _model(wire.$1);
+                  if (loop != null) {
+                    _attachSequenceToLoop(loop);
+                  }
+                  return;
+                }
+                // Sequence only wires to For each Seq — no stretch-add.
+                if (_model(wire.$1)?.type == WorkflowNodeType.sequence) {
                   return;
                 }
                 showWorkflowAddNodeSheet(
@@ -381,6 +439,27 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
                 if (ctx.sourceNode.id == ctx.targetNode.id ||
                     ctx.targetNode.type ==
                         WorkflowNodeType.manualStart.name) {
+                  return ConnectionValidationResult.deny();
+                }
+                // For each Seq → Sequence (saved as Sequence → Seq).
+                if (ctx.sourcePort.id == 'list' &&
+                    ctx.sourceNode.type == WorkflowNodeType.loop.name &&
+                    ctx.targetNode.type == WorkflowNodeType.sequence.name) {
+                  return ConnectionValidationResult.allow();
+                }
+                if (ctx.sourcePort.id == 'list') {
+                  return ConnectionValidationResult.deny();
+                }
+                if (ctx.targetNode.type == WorkflowNodeType.sequence.name) {
+                  return ConnectionValidationResult.deny();
+                }
+                if (ctx.targetPort.id == 'list' &&
+                    ctx.sourceNode.type != WorkflowNodeType.sequence.name) {
+                  return ConnectionValidationResult.deny();
+                }
+                if (ctx.sourceNode.type == WorkflowNodeType.sequence.name &&
+                    (ctx.targetNode.type != WorkflowNodeType.loop.name ||
+                        ctx.targetPort.id != 'list')) {
                   return ConnectionValidationResult.deny();
                 }
                 return ConnectionValidationResult.allow();

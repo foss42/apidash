@@ -453,11 +453,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
     final maxIterations = node.loopMaxIterations;
     final field = node.loopItemField?.trim();
     final asName = node.loopItemAs?.trim();
-    final hasItemVar =
-        field != null &&
-        field.isNotEmpty &&
-        asName != null &&
-        asName.isNotEmpty;
+    final hasItemVar = asName != null && asName.isNotEmpty;
     final isRepeat = node.loopMode == WorkflowLoopMode.repeat;
     final subtitle = isRepeat
         ? (maxIterations != null && maxIterations > 0
@@ -466,7 +462,9 @@ class WorkflowLoopNodeCard extends StatelessWidget {
         : listRef.isEmpty
         ? 'Set list'
         : listRef;
-    final itemLine = hasItemVar ? '{{$asName}}' : null;
+    final itemLine = hasItemVar
+        ? (field != null && field.isNotEmpty ? '{{$asName}} ← $field' : '{{$asName}}')
+        : null;
     final maxLine = !isRepeat && maxIterations != null && maxIterations > 0
         ? 'Max $maxIterations'
         : null;
@@ -485,7 +483,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
       child: WorkflowInteractiveNode(
         selected: selected || isRunning,
         runEmphasized: isRunning,
-        padding: const EdgeInsets.fromLTRB(28, 12, 52, 12),
+        padding: const EdgeInsets.fromLTRB(28, 12, 52, 22),
         backgroundColor: theme.colorScheme.secondaryContainer,
         borderColor: borderColor,
         actions: selected
@@ -719,8 +717,8 @@ class WorkflowSequenceNodeCard extends StatelessWidget {
       child: WorkflowInteractiveNode(
         selected: selected || isRunning,
         runEmphasized: isRunning,
-        // Clear left "In" / right "Next" port labels (same idea as For each).
-        padding: const EdgeInsets.fromLTRB(28, 12, 40, 12),
+        // Clear top "Next" port label.
+        padding: const EdgeInsets.fromLTRB(14, 28, 14, 12),
         backgroundColor: bg,
         borderColor: borderColor,
         actions: selected

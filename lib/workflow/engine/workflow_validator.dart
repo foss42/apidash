@@ -238,6 +238,19 @@ class WorkflowValidator {
       }
       queue.addAll(adjacency[id] ?? const []);
     }
+    // Sequence feeds For each via Seq and is not on the Start path.
+    for (final edge in workflow.graph.edges) {
+      if (edge.targetHandle != WorkflowEdgeHandle.loopList) {
+        continue;
+      }
+      if (!reachable.contains(edge.target)) {
+        continue;
+      }
+      final source = workflow.nodeById(edge.source);
+      if (source?.type == WorkflowNodeType.sequence) {
+        reachable.add(edge.source);
+      }
+    }
     return reachable;
   }
 }

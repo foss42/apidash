@@ -421,7 +421,6 @@ class _WorkflowRunSession {
             message: 'Sequence needs a Save as variable name',
             durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
           );
-          skipDefaultEnqueue = true;
         } else {
           scopedVariables[asName] = encodeSequenceVariable(items);
           result = WorkflowNodeRunResult(
@@ -435,8 +434,9 @@ class _WorkflowRunSession {
             detail: node.sequenceSource.name,
             durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
           );
-          branchHandle = WorkflowEdgeHandle.next;
         }
+        // For each pulls Sequence via Seq; Sequence never continues the graph.
+        skipDefaultEnqueue = true;
       case WorkflowNodeType.condition:
         final expression = (node.conditionExpression ?? '').trim();
         final passed = _evaluateCondition(
@@ -457,6 +457,11 @@ class _WorkflowRunSession {
         branchHandle =
             passed ? WorkflowEdgeHandle.then : WorkflowEdgeHandle.elseBranch;
       case WorkflowNodeType.loop:
+        await _runSequenceFeeders(
+          loop: node,
+          scopedVariables: scopedVariables,
+          entry: entry,
+        );
         final maxIterations = node.loopMaxIterations;
         final environmentVariables = _environmentVariables();
         final allItems = node.loopMode == WorkflowLoopMode.repeat
@@ -854,6 +859,90 @@ class _WorkflowRunSession {
         .where((candidate) => candidate.id == id)
         .cast<WorkflowGraphNode?>()
         .firstWhere((candidate) => candidate != null, orElse: () => null);
+  }
+
+  Future<void> _runSequenceFeeders({
+    required WorkflowGraphNode loop,
+    required Map<String, String> scopedVariables,
+    required _QueueEntry entry,
+  }) async {
+    if (loop.loopMode == WorkflowLoopMode.repeat) {
+      return;
+    }
+    for (final edge in workflow.graph.edges) {
+      if (edge.target != loop.id ||
+          edge.targetHandle != WorkflowEdgeHandle.loopList) {
+        continue;
+      }
+      final seq = _nodeById(edge.source);
+      if (seq == null || seq.type != WorkflowNodeType.sequence) {
+        continue;
+      }
+      await _executeSequenceFeeder(
+        seq,
+        scopedVariables: scopedVariables,
+      );
+    }
+  }
+
+  Future<void> _executeSequenceFeeder(
+    WorkflowGraphNode node, {
+    required Map<String, String> scopedVariables,
+  }) async {
+    _throwIfAborted();
+    final nodeStartedAt = DateTime.now();
+    onNodeUpdate?.call(
+      WorkflowNodeRunResult(
+        nodeId: node.id,
+        label: node.label,
+        nodeType: node.type,
+        status: WorkflowNodeRunStatus.running,
+      ),
+    );
+
+    final asName = (node.loopItemAs ?? '').trim();
+    final items = resolveSequenceItems(
+      source: node.sequenceSource,
+      value: node.sequenceValue,
+    );
+
+    final WorkflowNodeRunResult result;
+    if (asName.isEmpty) {
+      result = WorkflowNodeRunResult(
+        nodeId: node.id,
+        label: node.label,
+        nodeType: node.type,
+        status: WorkflowNodeRunStatus.failed,
+        message: 'Sequence needs a Save as variable name',
+        durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
+      );
+    } else {
+      scopedVariables[asName] = encodeSequenceVariable(items);
+      result = WorkflowNodeRunResult(
+        nodeId: node.id,
+        label: node.label,
+        nodeType: node.type,
+        status: WorkflowNodeRunStatus.success,
+        message: items.isEmpty
+            ? 'Empty sequence → {{$asName}}'
+            : 'Saved ${items.length} item${items.length == 1 ? '' : 's'} → {{$asName}}',
+        detail: node.sequenceSource.name,
+        durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
+      );
+    }
+
+    resultScopedVariables.addAll(scopedVariables);
+    nodeResults.add(result);
+    onNodeUpdate?.call(result);
+    if (result.status == WorkflowNodeRunStatus.failed) {
+      final message = formatWorkflowNodeError(
+        result.message ?? 'Sequence failed',
+        nodeLabel: node.label,
+        nodeId: node.id,
+      );
+      _abort(message);
+      throw _WorkflowAbort(message);
+    }
   }
 
   String _visitKey(_QueueEntry entry) {

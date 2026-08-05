@@ -5,7 +5,6 @@ import 'package:apidash/workflow/consts.dart';
 import 'package:apidash/workflow/widgets/workflow_node_layout.dart';
 import 'package:flutter/material.dart';
 
-
 Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
   if (graph.nodes.isEmpty) {
     return const {};
@@ -18,20 +17,48 @@ Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
 
   final nodesById = {for (final node in graph.nodes) node.id: node};
 
+  // Sequence → For each Seq is a side feed, not a main-path hop.
+  final sequenceByLoop = <String, List<String>>{};
+  final sequenceIds = <String>{};
+  for (final node in graph.nodes) {
+    if (node.type == WorkflowNodeType.sequence) {
+      sequenceIds.add(node.id);
+    }
+  }
+  for (final edge in graph.edges) {
+    if (edge.targetHandle != WorkflowEdgeHandle.loopList) {
+      continue;
+    }
+    final source = nodesById[edge.source];
+    if (source?.type != WorkflowNodeType.sequence) {
+      continue;
+    }
+    sequenceByLoop.putIfAbsent(edge.target, () => []).add(edge.source);
+  }
+
   final outgoing =
       <String, List<({String target, WorkflowEdgeHandle handle})>>{};
   final incomingCount = <String, int>{
-    for (final node in graph.nodes) node.id: 0,
+    for (final node in graph.nodes)
+      if (!sequenceIds.contains(node.id)) node.id: 0,
   };
 
   for (final edge in graph.edges) {
     if (edge.source == edge.target) {
       continue;
     }
+    // Keep Sequence off the layered main graph.
+    if (edge.targetHandle == WorkflowEdgeHandle.loopList ||
+        sequenceIds.contains(edge.source) ||
+        sequenceIds.contains(edge.target)) {
+      continue;
+    }
     outgoing
         .putIfAbsent(edge.source, () => [])
         .add((target: edge.target, handle: edge.sourceHandle));
-    incomingCount[edge.target] = (incomingCount[edge.target] ?? 0) + 1;
+    if (incomingCount.containsKey(edge.target)) {
+      incomingCount[edge.target] = (incomingCount[edge.target] ?? 0) + 1;
+    }
   }
 
   final roots = <String>[
@@ -41,12 +68,21 @@ Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
   if (roots.isEmpty) {
     roots.addAll(
       graph.nodes
-          .where((node) => (incomingCount[node.id] ?? 0) == 0)
+          .where(
+            (node) =>
+                !sequenceIds.contains(node.id) &&
+                (incomingCount[node.id] ?? 0) == 0,
+          )
           .map((node) => node.id),
     );
   }
   if (roots.isEmpty) {
-    roots.add(graph.nodes.first.id);
+    final fallback = graph.nodes
+        .where((node) => !sequenceIds.contains(node.id))
+        .map((node) => node.id);
+    if (fallback.isNotEmpty) {
+      roots.add(fallback.first);
+    }
   }
 
   final layers = <String, int>{};
@@ -57,7 +93,7 @@ Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
       handle == WorkflowEdgeHandle.elseBranch;
 
   void assignLayer(String nodeId, int layer, Set<String> path) {
-    if (path.contains(nodeId)) {
+    if (sequenceIds.contains(nodeId) || path.contains(nodeId)) {
       return;
     }
     layers[nodeId] = math.max(layers[nodeId] ?? 0, layer);
@@ -74,7 +110,7 @@ Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
   }
 
   void assignBranchRows(String nodeId, int layer, double row, Set<String> path) {
-    if (path.contains(nodeId)) {
+    if (sequenceIds.contains(nodeId) || path.contains(nodeId)) {
       return;
     }
     layers[nodeId] = math.max(layers[nodeId] ?? 0, layer);
@@ -109,6 +145,9 @@ Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
   var maxLayer = layers.values.fold(0, math.max);
   var orphanRow = rootRow;
   for (final node in graph.nodes) {
+    if (sequenceIds.contains(node.id)) {
+      continue;
+    }
     if (!layers.containsKey(node.id)) {
       maxLayer += 1;
       layers[node.id] = maxLayer;
@@ -142,6 +181,8 @@ Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
   }
 
   final positions = <String, Offset>{};
+  final placedSequences = <String>{};
+
   for (final columnEntry in nodesByColumn.entries) {
     final column = columnEntry.key;
     final nodeIds = columnEntry.value
@@ -152,10 +193,42 @@ Map<String, Offset> computeWorkflowAutoArrangePositions(WorkflowGraph graph) {
     for (final nodeId in nodeIds) {
       positions[nodeId] = Offset(x, y);
       final node = nodesById[nodeId];
-      if (node != null) {
-        y += WorkflowNodeLayout.sizeFor(node).height + rowGap;
+      if (node == null) {
+        continue;
+      }
+      y += WorkflowNodeLayout.sizeFor(node).height + rowGap;
+
+      // Keep attached Sequence(s) directly under this For each.
+      for (final seqId in sequenceByLoop[nodeId] ?? const <String>[]) {
+        final seq = nodesById[seqId];
+        if (seq == null) {
+          continue;
+        }
+        final seqSize = WorkflowNodeLayout.sizeFor(seq);
+        final loopSize = WorkflowNodeLayout.sizeFor(node);
+        positions[seqId] = Offset(
+          x + (loopSize.width - seqSize.width) / 2,
+          y,
+        );
+        placedSequences.add(seqId);
+        y += seqSize.height + rowGap;
       }
     }
+  }
+
+  // Unattached sequences: park after the main graph (not interleaved as orphans).
+  var unboundY = originY;
+  final unboundX = xForColumn(maxLayer + 1);
+  for (final seqId in sequenceIds) {
+    if (placedSequences.contains(seqId)) {
+      continue;
+    }
+    final seq = nodesById[seqId];
+    if (seq == null) {
+      continue;
+    }
+    positions[seqId] = Offset(unboundX, unboundY);
+    unboundY += WorkflowNodeLayout.sizeFor(seq).height + rowGap;
   }
 
   return positions;

@@ -426,6 +426,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
         label: label,
         position: WorkflowPosition(x: position.dx, y: position.dy),
         loopExpression: 'var:items',
+        loopItemAs: 'item',
       ),
     );
     if (afterNodeId != null) {
@@ -533,48 +534,127 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     return nodeId;
   }
 
-  Future<String?> addSequenceNode({
-    Offset position = const Offset(320, 240),
-    String? afterNodeId,
-    WorkflowEdgeHandle? sourceHandle,
-  }) async {
+  Future<String?> attachSequenceToLoop(String loopNodeId) async {
     final current = state;
     if (current == null) {
       return null;
     }
-    final nodeId = 'node_${getNewUuid().substring(0, 8)}';
-    const label = kLabelWorkflowSequence;
-    final nodes = [...current.graph.nodes];
-    final edges = [...current.graph.edges];
-    nodes.add(
-      WorkflowGraphNode(
-        id: nodeId,
-        type: WorkflowNodeType.sequence,
-        label: label,
-        position: WorkflowPosition(x: position.dx, y: position.dy),
-        sequenceSource: WorkflowSequenceSource.list,
-        sequenceValue: '',
-        loopItemAs: 'batch',
-      ),
-    );
-    if (afterNodeId != null) {
-      edges.add(
-        WorkflowGraphEdge(
-          id: 'edge_${getNewUuid().substring(0, 8)}',
-          source: afterNodeId,
-          sourceHandle:
-              sourceHandle ?? _sourceHandleForNode(current, afterNodeId),
-          target: nodeId,
-        ),
-      );
+    final loop = current.nodeById(loopNodeId);
+    if (loop == null || loop.type != WorkflowNodeType.loop) {
+      return null;
     }
+
+    for (final edge in current.graph.edges) {
+      if (edge.target != loopNodeId ||
+          edge.targetHandle != WorkflowEdgeHandle.loopList) {
+        continue;
+      }
+      final source = current.nodeById(edge.source);
+      if (source?.type == WorkflowNodeType.sequence) {
+        ref.read(selectedWorkflowNodeIdProvider.notifier).state = source!.id;
+        return source.id;
+      }
+    }
+
+    final sequenceId = 'node_${getNewUuid().substring(0, 8)}';
+    const asName = 'batch';
+    final sequence = WorkflowGraphNode(
+      id: sequenceId,
+      type: WorkflowNodeType.sequence,
+      label: kLabelWorkflowSequence,
+      position: WorkflowPosition(
+        x: loop.position.x +
+            (kWorkflowLoopNodeWidth - kWorkflowSequenceNodeWidth) / 2,
+        y: loop.position.y + kWorkflowLoopNodeHeight + 56,
+      ),
+      sequenceSource: WorkflowSequenceSource.list,
+      sequenceValue: '',
+      loopItemAs: asName,
+    );
+
+    final nodes = <WorkflowGraphNode>[
+      for (final node in current.graph.nodes)
+        if (node.id == loopNodeId)
+          node.copyWith(
+            loopExpression: 'var:$asName',
+            loopMode: WorkflowLoopMode.forEach,
+          )
+        else
+          node,
+      sequence,
+    ];
+
+    final edges = [
+      ...current.graph.edges,
+      WorkflowGraphEdge(
+        id: 'edge_${getNewUuid().substring(0, 8)}',
+        source: sequenceId,
+        sourceHandle: WorkflowEdgeHandle.next,
+        target: loopNodeId,
+        targetHandle: WorkflowEdgeHandle.loopList,
+      ),
+    ];
+
     await save(
       current.copyWith(
         graph: current.graph.copyWith(nodes: nodes, edges: edges),
       ),
     );
-    ref.read(selectedWorkflowNodeIdProvider.notifier).state = nodeId;
-    return nodeId;
+    ref.read(selectedWorkflowNodeIdProvider.notifier).state = sequenceId;
+    return sequenceId;
+  }
+
+  Future<String?> linkSequenceToLoop({
+    required String loopNodeId,
+    required String sequenceNodeId,
+    String? edgeId,
+  }) async {
+    final current = state;
+    if (current == null) {
+      return null;
+    }
+    final loop = current.nodeById(loopNodeId);
+    final sequence = current.nodeById(sequenceNodeId);
+    if (loop == null ||
+        loop.type != WorkflowNodeType.loop ||
+        sequence == null ||
+        sequence.type != WorkflowNodeType.sequence) {
+      return null;
+    }
+
+    final asName = (sequence.loopItemAs ?? '').trim();
+    final nodes = <WorkflowGraphNode>[
+      for (final node in current.graph.nodes)
+        if (node.id == loopNodeId)
+          node.copyWith(
+            loopExpression: asName.isNotEmpty ? 'var:$asName' : node.loopExpression,
+            loopMode: WorkflowLoopMode.forEach,
+          )
+        else
+          node,
+    ];
+
+    final edges = <WorkflowGraphEdge>[
+      for (final edge in current.graph.edges)
+        if (!(edge.target == loopNodeId &&
+            edge.targetHandle == WorkflowEdgeHandle.loopList))
+          edge,
+      WorkflowGraphEdge(
+        id: edgeId ?? 'edge_${getNewUuid().substring(0, 8)}',
+        source: sequenceNodeId,
+        sourceHandle: WorkflowEdgeHandle.next,
+        target: loopNodeId,
+        targetHandle: WorkflowEdgeHandle.loopList,
+      ),
+    ];
+
+    await save(
+      current.copyWith(
+        graph: current.graph.copyWith(nodes: nodes, edges: edges),
+      ),
+    );
+    ref.read(selectedWorkflowNodeIdProvider.notifier).state = sequenceNodeId;
+    return sequenceNodeId;
   }
 
   Future<String?> duplicateRequestStep(String nodeId) async {
@@ -820,10 +900,23 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     required String sourceId,
     required WorkflowEdgeHandle sourceHandle,
     required String targetId,
+    WorkflowEdgeHandle targetHandle = WorkflowEdgeHandle.inPort,
     String? edgeId,
   }) async {
     final current = state;
     if (current == null) {
+      return;
+    }
+    final source = current.nodeById(sourceId);
+    final target = current.nodeById(targetId);
+    if (source?.type == WorkflowNodeType.sequence &&
+        target?.type == WorkflowNodeType.loop &&
+        targetHandle == WorkflowEdgeHandle.loopList) {
+      await linkSequenceToLoop(
+        loopNodeId: targetId,
+        sequenceNodeId: sourceId,
+        edgeId: edgeId,
+      );
       return;
     }
     final edge = WorkflowGraphEdge(
@@ -831,6 +924,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
       source: sourceId,
       sourceHandle: sourceHandle,
       target: targetId,
+      targetHandle: targetHandle,
     );
     await save(
       current.copyWith(

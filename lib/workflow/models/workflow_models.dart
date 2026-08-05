@@ -41,6 +41,7 @@ enum WorkflowSequenceSource {
 enum WorkflowEdgeHandle {
   next,
   loopDone,
+  loopList,
   success,
   failure,
   then,
@@ -375,6 +376,10 @@ class WorkflowGraphEdge {
     if (sourceHandle != WorkflowEdgeHandle.success) {
       json['out'] = _handleToJson(sourceHandle);
     }
+    // Default target is left `in`. Persist when Sequence feeds For each `list`.
+    if (targetHandle != WorkflowEdgeHandle.inPort) {
+      json['in'] = _handleToJson(targetHandle);
+    }
     if (label.isNotEmpty) {
       json['label'] = label;
     }
@@ -396,7 +401,7 @@ class WorkflowGraphEdge {
           ? _parseHandle(rawOut, defaultSourceHandle)
           : defaultSourceHandle,
       targetHandle: _parseHandle(
-        json['targetHandle']?.toString(),
+        json['in']?.toString() ?? json['targetHandle']?.toString(),
         WorkflowEdgeHandle.inPort,
       ),
       label: json['label']?.toString() ?? '',
@@ -432,6 +437,7 @@ String _handleToJson(WorkflowEdgeHandle handle) {
     WorkflowEdgeHandle.elseBranch => 'else',
     WorkflowEdgeHandle.inPort => 'in',
     WorkflowEdgeHandle.loopDone => 'done',
+    WorkflowEdgeHandle.loopList => 'list',
     _ => handle.name,
   };
 }
@@ -448,6 +454,9 @@ WorkflowEdgeHandle _parseHandle(String? raw, WorkflowEdgeHandle fallback) {
   }
   if (raw == 'done') {
     return WorkflowEdgeHandle.loopDone;
+  }
+  if (raw == 'list' || raw == 'loopList') {
+    return WorkflowEdgeHandle.loopList;
   }
   return WorkflowEdgeHandle.values.firstWhere(
     (value) => value.name == raw,
