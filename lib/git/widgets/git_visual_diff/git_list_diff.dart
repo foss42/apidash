@@ -213,22 +213,27 @@ bool _requestSummaryEquals(RequestSummary a, RequestSummary b) {
 String? _requestSummaryModifiedDetail(RequestSummary a, RequestSummary b) {
   final parts = <String>[];
   if (a.name != b.name) {
-    parts.add('name: ${a.name} → ${b.name}');
+    parts.add('name: ${_diffText(a.name)} → ${_diffText(b.name)}');
   }
   if (a.apiType != b.apiType) {
     parts.add('type: ${a.apiType.label} → ${b.apiType.label}');
   }
   if (a.method != b.method) {
     parts.add(
-      'method: ${a.method?.name.toUpperCase() ?? '—'} → '
+      'method: ${a.method?.name.toUpperCase() ?? '_EMPTY_'} → '
       '${b.method?.name.toUpperCase() ?? '—'}',
     );
   }
   if (a.url != b.url) {
-    parts.add('url: ${a.url} → ${b.url}');
+    parts.add('url: ${_diffText(a.url)} → ${_diffText(b.url)}');
   }
   if (parts.isEmpty) return null;
   return parts.join(' · ');
+}
+
+String _diffText(String value) {
+  final trimmed = value.trim();
+  return trimmed.isEmpty ? '_EMPTY_' : trimmed;
 }
 
 bool _envVarEquals(EnvironmentVariableModel a, EnvironmentVariableModel b) {
