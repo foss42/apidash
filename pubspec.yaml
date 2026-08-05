@@ -138,7 +138,7 @@ melos:
       description: Run tests for all packages
 
     pub-get:
-      run: melos exec -- "flutter pub get"
+      run: melos exec -c 1 -- "flutter pub get"
       description: Run pub get for all packages
 
 flutter:
