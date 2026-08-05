@@ -59,6 +59,27 @@ bool workflowSourceFiredHandle(
   }
 }
 
+String? workflowRunResultKeyForNode({
+  required String nodeId,
+  required Map<String, WorkflowNodeRunResult> results,
+  required List<String> stepOrder,
+}) {
+  String? found;
+  for (final key in stepOrder) {
+    final result = results[key];
+    if (result != null && result.nodeId == nodeId) {
+      found = key;
+    }
+  }
+  if (found != null) {
+    return found;
+  }
+  if (results[nodeId] != null) {
+    return nodeId;
+  }
+  return null;
+}
+
 WorkflowRunEdgeStyle workflowEdgeRunStyle({
   required WorkflowGraphEdge edge,
   required Map<String, WorkflowNodeRunResult> results,

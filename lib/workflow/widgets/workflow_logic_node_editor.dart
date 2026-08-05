@@ -718,6 +718,7 @@ class _WorkflowSequenceStepEditorPageState
   late final TextEditingController _valueController;
   late final TextEditingController _asController;
   late WorkflowSequenceSource _source;
+  final _valueBySource = <WorkflowSequenceSource, String>{};
   final MultiSplitViewController _splitController = MultiSplitViewController(
     areas: [
       Area(id: 'variables', size: 260, min: 200, max: 360),
@@ -730,19 +731,31 @@ class _WorkflowSequenceStepEditorPageState
   void initState() {
     super.initState();
     _source = widget.node.sequenceSource;
+    _valueBySource[_source] = widget.node.sequenceValue ?? '';
     _labelController = TextEditingController(
       text: widget.node.label.isNotEmpty
           ? widget.node.label
           : kLabelWorkflowSequence,
     );
     _valueController = TextEditingController(
-      text: widget.node.sequenceValue ?? '',
+      text: _valueBySource[_source] ?? '',
     );
     _asController = TextEditingController(
       text: widget.node.loopItemAs?.trim().isNotEmpty == true
           ? widget.node.loopItemAs!.trim()
           : 'batch',
     );
+  }
+
+  void _switchSource(WorkflowSequenceSource next) {
+    if (next == _source) {
+      return;
+    }
+    _valueBySource[_source] = _valueController.text;
+    setState(() {
+      _source = next;
+      _valueController.text = _valueBySource[next] ?? '';
+    });
   }
 
   @override
@@ -865,7 +878,7 @@ class _WorkflowSequenceStepEditorPageState
           valueController: _valueController,
           asController: _asController,
           source: _source,
-          onSourceChanged: (source) => setState(() => _source = source),
+          onSourceChanged: _switchSource,
         ),
         guide: const _SequenceGuidePanel(),
       ),
@@ -1381,9 +1394,9 @@ class _SequenceConfigPanel extends StatelessWidget {
           controller: asController,
           decoration: const InputDecoration(
             labelText: kLabelWorkflowSequenceSaveAs,
-            hintText: 'batch',
+            hintText: 'prompts',
             helperText:
-                'For each reads this name as its list (wired via the Seq port).',
+                'Any name you like. For each List should match, e.g. {{prompts}}.',
             border: OutlineInputBorder(),
             isDense: true,
           ),
@@ -1404,12 +1417,12 @@ class _SequenceGuidePanel extends StatelessWidget {
         _GuideSection(
           title: 'Build a list',
           body:
-              'List: [alice, bob, carol]. JSON: [{...}, {...}]. JSONL: one JSON object per line. Save as batch — For each iterates {{batch}}.',
+              'List: [alice, bob, carol]. JSON: [{...}, {...}]. JSONL: one JSON object per line. Save as any name (prompts, users, ids). For each iterates that {{name}}.',
         ),
         _GuideSection(
           title: 'Only with For each',
           body:
-              'Stretch For each’s bottom Seq into empty space to add Sequence. It only has a top Next into Seq — not on the main In path. If the list already exists from an API extract, skip Sequence and set List to {{users}}.',
+              'Stretch For each’s bottom Seq into empty space to add Sequence. It only has a top Next into Seq, not on the main In path. If the list already exists from an API extract, skip Sequence and set List to {{users}}.',
         ),
       ],
     );

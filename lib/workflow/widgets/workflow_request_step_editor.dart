@@ -439,8 +439,8 @@ class _ExtractionsPanel extends ConsumerWidget {
 
     final extractions = currentNode.extractions;
 
-    return Material(
-      color: scheme.surfaceContainerLowest,
+    return ColoredBox(
+      color: scheme.surface,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
         child: Column(
@@ -448,36 +448,26 @@ class _ExtractionsPanel extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.output_outlined,
-                  size: 16,
-                  color: scheme.onSurfaceVariant,
-                ),
-                const SizedBox(width: 8),
                 Text(
                   kLabelWorkflowExtractions,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: theme.textTheme.titleSmall,
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Pull values from this response for later steps',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                if (extractions.isNotEmpty)
+                if (extractions.isNotEmpty) ...[
+                  const SizedBox(width: 8),
                   Text(
                     '${extractions.length}',
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
+                      color: scheme.outline,
                     ),
                   ),
+                ],
+                const Spacer(),
+                Text(
+                  'Map a response path to a {{variable}}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.outline,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -486,16 +476,16 @@ class _ExtractionsPanel extends ConsumerWidget {
                   ? Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'None yet. Map a response path to a {{variable}} below.',
+                        'None yet.',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant.withValues(alpha: 0.85),
+                          color: scheme.outline,
                         ),
                       ),
                     )
                   : ListView.separated(
                       padding: EdgeInsets.zero,
                       itemCount: extractions.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 6),
+                      separatorBuilder: (_, _) => const SizedBox(height: 4),
                       itemBuilder: (context, index) {
                         final extraction = extractions[index];
                         return _ExtractionRow(
@@ -523,34 +513,66 @@ class _ExtractionsPanel extends ConsumerWidget {
               children: [
                 Expanded(
                   flex: 2,
-                  child: TextField(
-                    controller: varController,
-                    decoration: const InputDecoration(
-                      labelText: 'Variable',
-                      isDense: true,
-                      hintText: 'userId',
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Variable',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: varController,
+                        style: kCodeStyle.copyWith(
+                          color: scheme.onSurface,
+                        ),
+                        decoration: getTextFieldInputDecoration(
+                          scheme,
+                          hintText: 'userId',
+                          isDense: true,
+                          contentPadding: kP10,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 kHSpacer8,
                 Expanded(
                   flex: 3,
-                  child: TextField(
-                    controller: pathController,
-                    decoration: const InputDecoration(
-                      labelText: 'Path',
-                      isDense: true,
-                      hintText: 'e.g. token',
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Path',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      TextField(
+                        controller: pathController,
+                        style: kCodeStyle.copyWith(
+                          color: scheme.onSurface,
+                        ),
+                        decoration: getTextFieldInputDecoration(
+                          scheme,
+                          hintText: 'token',
+                          isDense: true,
+                          contentPadding: kP10,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 kHSpacer8,
-                FilledButton.tonal(
+                FilledButton(
                   style: FilledButton.styleFrom(
                     visualDensity: VisualDensity.standard,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
-                      vertical: 12,
+                      vertical: 14,
                     ),
                   ),
                   onPressed: () async {
@@ -602,57 +624,48 @@ class _ExtractionRow extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.45),
-        borderRadius: kBorderRadius8,
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.35),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 6, 4, 6),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: scheme.secondaryContainer.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                '{{$varName}}',
-                style: theme.textTheme.labelMedium?.copyWith(
-                  fontFamily: kCodeStyle.fontFamily,
-                  fontWeight: FontWeight.w600,
-                  color: scheme.onSecondaryContainer,
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: scheme.secondaryContainer.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              '{{$varName}}',
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontFamily: kCodeStyle.fontFamily,
+                fontWeight: FontWeight.w600,
+                color: scheme.onSecondaryContainer,
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                pathLabel,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                  fontFamily: kCodeStyle.fontFamily,
-                ),
-              ),
-            ),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              tooltip: kTooltipDelete,
-              icon: Icon(
-                Icons.close_rounded,
-                size: 18,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              pathLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodySmall?.copyWith(
                 color: scheme.onSurfaceVariant,
+                fontFamily: kCodeStyle.fontFamily,
               ),
-              onPressed: onDelete,
             ),
-          ],
-        ),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            tooltip: kTooltipDelete,
+            icon: Icon(
+              Icons.close_rounded,
+              size: 18,
+              color: scheme.onSurfaceVariant,
+            ),
+            onPressed: onDelete,
+          ),
+        ],
       ),
     );
   }

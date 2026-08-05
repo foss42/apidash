@@ -249,6 +249,26 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     await openWorkflowNodeEditor(context, ref, node: model);
   }
 
+  void _selectNode(String nodeId) {
+    ref.read(selectedWorkflowNodeIdProvider.notifier).state = nodeId;
+    final results = ref.read(workflowNodeRunResultsProvider);
+    if (results.isEmpty) {
+      return;
+    }
+    // Inspector open (expanded) → show that step's run info like chips.
+    if (!ref.read(workflowRunInspectorExpandedProvider)) {
+      return;
+    }
+    final key = workflowRunResultKeyForNode(
+      nodeId: nodeId,
+      results: results,
+      stepOrder: ref.read(workflowRunStepOrderProvider),
+    );
+    if (key != null) {
+      ref.read(selectedWorkflowRunResultKeyProvider.notifier).state = key;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final workflow = ref.watch(activeWorkflowProvider);
@@ -334,18 +354,20 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
           },
           events: NodeFlowEvents<String, void>(
             node: NodeEvents<String>(
-              onTap: (n) =>
-                  ref.read(selectedWorkflowNodeIdProvider.notifier).state =
-                      n.id,
-              onSelected: (n) =>
-                  ref.read(selectedWorkflowNodeIdProvider.notifier).state =
-                      n?.id,
+              onTap: (n) => _selectNode(n.id),
+              onSelected: (n) {
+                if (n != null) {
+                  _selectNode(n.id);
+                } else {
+                  ref.read(selectedWorkflowNodeIdProvider.notifier).state = null;
+                }
+              },
               onDoubleTap: (n) {
                 final model = _model(n.id);
                 if (model == null) {
                   return;
                 }
-                ref.read(selectedWorkflowNodeIdProvider.notifier).state = n.id;
+                _selectNode(n.id);
                 openWorkflowNodeEditor(context, ref, node: model);
               },
               onDragStop: (n) => _afterWrite(

@@ -84,6 +84,13 @@ class _WorkflowRunInspectorState extends ConsumerState<WorkflowRunInspector> {
     final selectedKey = ref.watch(selectedWorkflowRunResultKeyProvider);
     final expanded = ref.watch(workflowRunInspectorExpandedProvider);
 
+    ref.listen<String?>(selectedWorkflowRunResultKeyProvider, (prev, next) {
+      if (next == null || next == prev || !expanded) {
+        return;
+      }
+      _scrollChipIntoView(next);
+    });
+
     if (workflow == null || (resultsById.isEmpty && !running)) {
       return const SizedBox.shrink();
     }
