@@ -58,7 +58,9 @@ class CollectionStateNotifier
       }
       ref.read(selectedIdStateProvider.notifier).state = ref.read(
         requestSequenceProvider,
-      )[0];
+      ).isNotEmpty
+          ? ref.read(requestSequenceProvider)[0]
+          : null;
     });
   }
 
