@@ -46,6 +46,7 @@ bool workflowSourceFiredHandle(
           handle == WorkflowEdgeHandle.next;
     case WorkflowNodeType.manualStart:
     case WorkflowNodeType.delay:
+    case WorkflowNodeType.sequence:
     case null:
       if (source.status == WorkflowNodeRunStatus.running) {
         return false;

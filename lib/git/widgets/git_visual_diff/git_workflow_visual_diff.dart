@@ -714,6 +714,7 @@ String _nodeTypeLabel(WorkflowNodeType type) => switch (type) {
       WorkflowNodeType.condition => 'Condition',
       WorkflowNodeType.loop => 'Loop',
       WorkflowNodeType.delay => 'Delay',
+      WorkflowNodeType.sequence => 'Sequence',
     };
 
 String _nodeRefLabel(WorkflowGraphNode? node, String fallbackId) {
@@ -747,6 +748,9 @@ bool _nodesEqual(WorkflowGraphNode? a, WorkflowGraphNode? b) {
   if (a.loopMaxIterations != b.loopMaxIterations) return false;
   if (a.loopMode != b.loopMode) return false;
   if (a.delayMs != b.delayMs) return false;
+  if (a.loopItemAs != b.loopItemAs) return false;
+  if (a.sequenceSource != b.sequenceSource) return false;
+  if (a.sequenceValue != b.sequenceValue) return false;
   return true;
 }
 

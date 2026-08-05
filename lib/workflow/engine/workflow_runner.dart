@@ -11,6 +11,7 @@ import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash/workflow/models/workflow_models.dart';
 import 'package:apidash/workflow/utils/workflow_error_utils.dart';
 import 'package:apidash/workflow/utils/workflow_loop_utils.dart';
+import 'package:apidash/workflow/utils/workflow_sequence_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Active parallel fan-out region (AND-split). Nested splits push a child scope.
@@ -404,6 +405,38 @@ class _WorkflowRunSession {
           durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
         );
         branchHandle = WorkflowEdgeHandle.next;
+      case WorkflowNodeType.sequence:
+        final asName = (node.loopItemAs ?? '').trim();
+        final allItems = resolveSequenceItems(
+          source: node.sequenceSource,
+          value: node.sequenceValue,
+        );
+        final items = allItems;
+        if (asName.isEmpty) {
+          result = WorkflowNodeRunResult(
+            nodeId: node.id,
+            label: node.label,
+            nodeType: node.type,
+            status: WorkflowNodeRunStatus.failed,
+            message: 'Sequence needs a Save as variable name',
+            durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
+          );
+          skipDefaultEnqueue = true;
+        } else {
+          scopedVariables[asName] = encodeSequenceVariable(items);
+          result = WorkflowNodeRunResult(
+            nodeId: node.id,
+            label: node.label,
+            nodeType: node.type,
+            status: WorkflowNodeRunStatus.success,
+            message: items.isEmpty
+                ? 'Empty sequence → {{$asName}}'
+                : 'Saved ${items.length} item${items.length == 1 ? '' : 's'} → {{$asName}}',
+            detail: node.sequenceSource.name,
+            durationMs: DateTime.now().difference(nodeStartedAt).inMilliseconds,
+          );
+          branchHandle = WorkflowEdgeHandle.next;
+        }
       case WorkflowNodeType.condition:
         final expression = (node.conditionExpression ?? '').trim();
         final passed = _evaluateCondition(

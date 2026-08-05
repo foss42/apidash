@@ -26,6 +26,8 @@ Future<void> openWorkflowNodeEditor(
       showWorkflowConditionStepEditor(context, ref, node: node),
     WorkflowNodeType.delay =>
       showWorkflowDelayStepEditor(context, ref, node: node),
+    WorkflowNodeType.sequence =>
+      showWorkflowSequenceStepEditor(context, ref, node: node),
     _ => Future.value(),
   };
 }
@@ -63,6 +65,18 @@ Future<void> showWorkflowDelayStepEditor(
     context,
     node: node,
     editor: _WorkflowDelayStepEditorPage(node: node),
+  );
+}
+
+Future<void> showWorkflowSequenceStepEditor(
+  BuildContext context,
+  WidgetRef ref, {
+  required WorkflowGraphNode node,
+}) {
+  return _showLogicNodeEditor(
+    context,
+    node: node,
+    editor: _WorkflowSequenceStepEditorPage(node: node),
   );
 }
 
@@ -688,6 +702,177 @@ class _WorkflowDelayStepEditorPageState
   }
 }
 
+class _WorkflowSequenceStepEditorPage extends ConsumerStatefulWidget {
+  const _WorkflowSequenceStepEditorPage({required this.node});
+
+  final WorkflowGraphNode node;
+
+  @override
+  ConsumerState<_WorkflowSequenceStepEditorPage> createState() =>
+      _WorkflowSequenceStepEditorPageState();
+}
+
+class _WorkflowSequenceStepEditorPageState
+    extends ConsumerState<_WorkflowSequenceStepEditorPage> {
+  late final TextEditingController _labelController;
+  late final TextEditingController _valueController;
+  late final TextEditingController _asController;
+  late WorkflowSequenceSource _source;
+  final MultiSplitViewController _splitController = MultiSplitViewController(
+    areas: [
+      Area(id: 'variables', size: 260, min: 200, max: 360),
+      Area(id: 'config', min: 420),
+      Area(id: 'guide', size: 360, min: 280, max: 520),
+    ],
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _source = widget.node.sequenceSource;
+    _labelController = TextEditingController(
+      text: widget.node.label.isNotEmpty
+          ? widget.node.label
+          : kLabelWorkflowSequence,
+    );
+    _valueController = TextEditingController(
+      text: widget.node.sequenceValue ?? '',
+    );
+    _asController = TextEditingController(
+      text: widget.node.loopItemAs?.trim().isNotEmpty == true
+          ? widget.node.loopItemAs!.trim()
+          : 'batch',
+    );
+  }
+
+  @override
+  void dispose() {
+    _labelController.dispose();
+    _valueController.dispose();
+    _asController.dispose();
+    _splitController.dispose();
+    super.dispose();
+  }
+
+  WorkflowGraphNode? _currentNode(WorkflowDocument? workflow) {
+    if (workflow == null) {
+      return null;
+    }
+    for (final candidate in workflow.graph.nodes) {
+      if (candidate.id == widget.node.id) {
+        return candidate;
+      }
+    }
+    return null;
+  }
+
+  Future<void> _saveAndClose() async {
+    final asName = _asController.text.trim();
+    if (asName.isEmpty) {
+      return;
+    }
+    final label = _labelController.text.trim();
+    await ref.read(activeWorkflowProvider.notifier).updateSelectedNode(
+          widget.node.copyWith(
+            label: label.isNotEmpty ? label : kLabelWorkflowSequence,
+            sequenceSource: _source,
+            sequenceValue: _valueController.text,
+            loopItemAs: asName,
+            clearLoopMaxIterations: true,
+          ),
+        );
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _confirmDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete node'),
+        content: const Text(
+          'Remove this sequence from the workflow? Its connections will also be removed.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text(kLabelCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text(kTooltipDelete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) {
+      return;
+    }
+    await ref.read(activeWorkflowProvider.notifier).deleteNode(widget.node.id);
+    ref.read(selectedWorkflowNodeIdProvider.notifier).state = null;
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final workflow = ref.watch(activeWorkflowProvider);
+    final node = _currentNode(workflow);
+    if (workflow == null || node == null) {
+      return const Scaffold(
+        body: Center(child: Text(kMsgWorkflowNotFound)),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              node.label.isNotEmpty ? node.label : kLabelWorkflowSequence,
+            ),
+            Text(
+              'Build a list → {{var}} for any later step',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip: kTooltipDelete,
+            onPressed: _confirmDelete,
+          ),
+          FilledButton(
+            onPressed: _saveAndClose,
+            child: const Text(kLabelWorkflowDone),
+          ),
+          kHSpacer12,
+        ],
+      ),
+      body: _LogicNodeEditorBody(
+        nodeId: node.id,
+        splitController: _splitController,
+        config: _SequenceConfigPanel(
+          labelController: _labelController,
+          valueController: _valueController,
+          asController: _asController,
+          source: _source,
+          onSourceChanged: (source) => setState(() => _source = source),
+        ),
+        guide: const _SequenceGuidePanel(),
+      ),
+    );
+  }
+}
+
 class _LogicNodeEditorBody extends StatelessWidget {
   const _LogicNodeEditorBody({
     required this.nodeId,
@@ -1099,6 +1284,128 @@ class _DelayConfigPanel extends StatelessWidget {
                 onPressed: () => onPresetSelected(preset),
               ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+class _SequenceConfigPanel extends StatelessWidget {
+  const _SequenceConfigPanel({
+    required this.labelController,
+    required this.valueController,
+    required this.asController,
+    required this.source,
+    required this.onSourceChanged,
+  });
+
+  final TextEditingController labelController;
+  final TextEditingController valueController;
+  final TextEditingController asController;
+  final WorkflowSequenceSource source;
+  final ValueChanged<WorkflowSequenceSource> onSourceChanged;
+
+  String get _valueLabel => switch (source) {
+        WorkflowSequenceSource.list => 'List [item, item, …]',
+        WorkflowSequenceSource.json => 'JSON array',
+        WorkflowSequenceSource.jsonl => 'JSONL (one JSON value per line)',
+      };
+
+  String get _valueHint => switch (source) {
+        WorkflowSequenceSource.list => '[a, b, c]',
+        WorkflowSequenceSource.json =>
+          '[{ "id": "example" }, { "id": "example" }]',
+        WorkflowSequenceSource.jsonl =>
+          '{ "prompt": "example" }\n{ "prompt": "example" }',
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ListView(
+      padding: const EdgeInsets.all(24),
+      children: [
+        Text('Sequence configuration', style: theme.textTheme.titleMedium),
+        const SizedBox(height: 16),
+        TextField(
+          controller: labelController,
+          decoration: const InputDecoration(
+            labelText: 'Node label',
+            border: OutlineInputBorder(),
+            isDense: true,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text('Source', style: theme.textTheme.titleSmall),
+        const SizedBox(height: 8),
+        SegmentedButton<WorkflowSequenceSource>(
+          segments: const [
+            ButtonSegment(
+              value: WorkflowSequenceSource.list,
+              label: Text('List'),
+            ),
+            ButtonSegment(
+              value: WorkflowSequenceSource.json,
+              label: Text('JSON'),
+            ),
+            ButtonSegment(
+              value: WorkflowSequenceSource.jsonl,
+              label: Text('JSONL'),
+            ),
+          ],
+          selected: {source},
+          onSelectionChanged: (selected) {
+            if (selected.isNotEmpty) {
+              onSourceChanged(selected.first);
+            }
+          },
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: valueController,
+          maxLines: 10,
+          decoration: InputDecoration(
+            labelText: _valueLabel,
+            hintText: _valueHint,
+            alignLabelWithHint: true,
+            border: const OutlineInputBorder(),
+            isDense: true,
+          ),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: asController,
+          decoration: const InputDecoration(
+            labelText: kLabelWorkflowSequenceSaveAs,
+            hintText: 'batch',
+            helperText:
+                'Any later step can use this variable name - For each, HTTP, AI etc.',
+            border: OutlineInputBorder(),
+            isDense: true,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SequenceGuidePanel extends StatelessWidget {
+  const _SequenceGuidePanel();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _GuidePanel(
+      title: 'How sequences work',
+      sections: [
+        _GuideSection(
+          title: 'Build a list',
+          body:
+              'List: [alice, bob, carol]. JSON: [{...}, {...}]. JSONL: one JSON object per line. Save as batch for later steps.',
+        ),
+        _GuideSection(
+          title: 'Not only For each',
+          body:
+              'For each can iterate {{batch}}. A single request or AI step can also use {{batch.0}} / fields after you loop — or use extract from an API if the list already exists (skip Sequence).',
         ),
       ],
     );

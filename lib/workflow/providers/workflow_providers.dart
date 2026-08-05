@@ -533,6 +533,50 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
     return nodeId;
   }
 
+  Future<String?> addSequenceNode({
+    Offset position = const Offset(320, 240),
+    String? afterNodeId,
+    WorkflowEdgeHandle? sourceHandle,
+  }) async {
+    final current = state;
+    if (current == null) {
+      return null;
+    }
+    final nodeId = 'node_${getNewUuid().substring(0, 8)}';
+    const label = kLabelWorkflowSequence;
+    final nodes = [...current.graph.nodes];
+    final edges = [...current.graph.edges];
+    nodes.add(
+      WorkflowGraphNode(
+        id: nodeId,
+        type: WorkflowNodeType.sequence,
+        label: label,
+        position: WorkflowPosition(x: position.dx, y: position.dy),
+        sequenceSource: WorkflowSequenceSource.list,
+        sequenceValue: '',
+        loopItemAs: 'batch',
+      ),
+    );
+    if (afterNodeId != null) {
+      edges.add(
+        WorkflowGraphEdge(
+          id: 'edge_${getNewUuid().substring(0, 8)}',
+          source: afterNodeId,
+          sourceHandle:
+              sourceHandle ?? _sourceHandleForNode(current, afterNodeId),
+          target: nodeId,
+        ),
+      );
+    }
+    await save(
+      current.copyWith(
+        graph: current.graph.copyWith(nodes: nodes, edges: edges),
+      ),
+    );
+    ref.read(selectedWorkflowNodeIdProvider.notifier).state = nodeId;
+    return nodeId;
+  }
+
   Future<String?> duplicateRequestStep(String nodeId) async {
     final current = state;
     if (current == null) {
@@ -605,6 +649,7 @@ class ActiveWorkflowNotifier extends Notifier<WorkflowDocument?> {
             WorkflowNodeType.loop => kLabelWorkflowLoop,
             WorkflowNodeType.condition => kLabelWorkflowCondition,
             WorkflowNodeType.delay => kLabelWorkflowDelay,
+            WorkflowNodeType.sequence => kLabelWorkflowSequence,
             _ => 'Node',
           };
     final newNode = node.copyWith(
@@ -888,6 +933,7 @@ WorkflowEdgeHandle _sourceHandleForNode(
         WorkflowNodeType.manualStart => WorkflowEdgeHandle.next,
         WorkflowNodeType.loop => WorkflowEdgeHandle.next,
         WorkflowNodeType.delay => WorkflowEdgeHandle.next,
+        WorkflowNodeType.sequence => WorkflowEdgeHandle.next,
         WorkflowNodeType.condition => WorkflowEdgeHandle.then,
         _ => WorkflowEdgeHandle.success,
       };

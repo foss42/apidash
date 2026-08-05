@@ -19,6 +19,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.autocompleteNoTrigger,
     this.readOnly = false,
     this.obscureText = false,
+    this.expands = false,
   }) : assert(
          !(controller != null && initialValue != null),
          'controller and initialValue cannot be simultaneously defined.',
@@ -36,6 +37,8 @@ class EnvironmentTriggerField extends StatefulWidget {
   final AutocompleteNoTrigger? autocompleteNoTrigger;
   final bool readOnly;
   final bool obscureText;
+  /// Multiline fill (AI system/user prompts). URL/auth stay single-line.
+  final bool expands;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -153,6 +156,13 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
           },
           readOnly: widget.readOnly,
           obscureText: widget.obscureText,
+          expands: widget.expands,
+          maxLines: widget.expands ? null : 1,
+          textAlignVertical:
+              widget.expands ? TextAlignVertical.top : TextAlignVertical.center,
+          keyboardType: widget.expands
+              ? TextInputType.multiline
+              : TextInputType.text,
         );
       },
     );

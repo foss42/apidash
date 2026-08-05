@@ -3,7 +3,7 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/workflow/models/workflow_request_codec.dart';
 import 'package:apidash_core/apidash_core.dart';
 
-enum WorkflowNodeType { request, condition, manualStart, loop, delay }
+enum WorkflowNodeType { request, condition, manualStart, loop, delay, sequence }
 
 enum WorkflowLoopMode {
   forEach,
@@ -17,6 +17,25 @@ enum WorkflowLoopMode {
   }
 
   String toJson() => this == WorkflowLoopMode.repeat ? 'repeat' : 'forEach';
+}
+
+enum WorkflowSequenceSource {
+  list,
+  json,
+  jsonl;
+
+  static WorkflowSequenceSource fromJson(String? value) {
+    // Legacy "variable" source → list (unused; extract→{{var}} covers that).
+    if (value == 'variable') {
+      return WorkflowSequenceSource.list;
+    }
+    return WorkflowSequenceSource.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => WorkflowSequenceSource.list,
+    );
+  }
+
+  String toJson() => name;
 }
 
 enum WorkflowEdgeHandle {
@@ -105,6 +124,8 @@ class WorkflowGraphNode {
     this.loopItemField,
     this.loopItemAs,
     this.delayMs,
+    this.sequenceSource = WorkflowSequenceSource.list,
+    this.sequenceValue,
     this.extractions = const [],
   });
 
@@ -118,11 +139,11 @@ class WorkflowGraphNode {
   final String? loopExpression;
   final int? loopMaxIterations;
   final WorkflowLoopMode loopMode;
-  /// Dotted path on each list item (e.g. `id`) promoted to [loopItemAs].
   final String? loopItemField;
-  /// Variable name set each iteration from [loopItemField] (e.g. `userId`).
   final String? loopItemAs;
   final int? delayMs;
+  final WorkflowSequenceSource sequenceSource;
+  final String? sequenceValue;
   final List<WorkflowExtraction> extractions;
 
   Map<String, dynamic> toJson() {
@@ -147,6 +168,16 @@ class WorkflowGraphNode {
     }
     if (conditionExpression != null && conditionExpression!.isNotEmpty) {
       json['expr'] = conditionExpression;
+    }
+    if (type == WorkflowNodeType.sequence) {
+      json['source'] = sequenceSource.toJson();
+      if (sequenceValue != null && sequenceValue!.isNotEmpty) {
+        json['value'] = sequenceValue;
+      }
+      if (loopItemAs != null && loopItemAs!.isNotEmpty) {
+        json['as'] = loopItemAs;
+      }
+      return json;
     }
     if (loopExpression != null && loopExpression!.isNotEmpty) {
       json['items'] = loopExpression;
@@ -235,6 +266,10 @@ class WorkflowGraphNode {
       loopItemField: (json['field'] ?? json['loopItemField'])?.toString(),
       loopItemAs: (json['as'] ?? json['loopItemAs'])?.toString(),
       delayMs: msRaw is num ? msRaw.toInt() : null,
+      sequenceSource: WorkflowSequenceSource.fromJson(
+        (json['source'] ?? json['sequenceSource'])?.toString(),
+      ),
+      sequenceValue: (json['value'] ?? json['sequenceValue'])?.toString(),
       extractions: extractRaw is List
           ? [
               for (final item in extractRaw)
@@ -269,6 +304,9 @@ class WorkflowGraphNode {
     bool clearLoopItemAs = false,
     int? delayMs,
     bool clearDelayMs = false,
+    WorkflowSequenceSource? sequenceSource,
+    String? sequenceValue,
+    bool clearSequenceValue = false,
     List<WorkflowExtraction>? extractions,
   }) =>
       WorkflowGraphNode(
@@ -295,6 +333,10 @@ class WorkflowGraphNode {
         loopItemAs:
             clearLoopItemAs ? null : (loopItemAs ?? this.loopItemAs),
         delayMs: clearDelayMs ? null : (delayMs ?? this.delayMs),
+        sequenceSource: sequenceSource ?? this.sequenceSource,
+        sequenceValue: clearSequenceValue
+            ? null
+            : (sequenceValue ?? this.sequenceValue),
         extractions: extractions ?? this.extractions,
       );
 

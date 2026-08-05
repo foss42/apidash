@@ -218,6 +218,13 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
           onDuplicate: dup,
           onDelete: del,
         ),
+      WorkflowNodeType.sequence => WorkflowSequenceNodeCard(
+          node: node,
+          selected: selected,
+          runResult: runResult,
+          onDuplicate: dup,
+          onDelete: del,
+        ),
     };
   }
 

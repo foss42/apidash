@@ -70,6 +70,18 @@ class WorkflowValidator {
               'Delay node "${node.label}" needs a wait time greater than 0ms.',
             );
           }
+        case WorkflowNodeType.sequence:
+          final asName = (node.loopItemAs ?? '').trim();
+          if (asName.isEmpty) {
+            warnings.add(
+              'Sequence node "${node.label}" needs a Save as variable name.',
+            );
+          }
+          if ((node.sequenceValue ?? '').trim().isEmpty) {
+            warnings.add(
+              'Sequence node "${node.label}" has no list content.',
+            );
+          }
         case WorkflowNodeType.manualStart:
           break;
       }

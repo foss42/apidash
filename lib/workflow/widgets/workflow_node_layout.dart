@@ -27,6 +27,10 @@ class WorkflowNodeLayout {
           kWorkflowDelayNodeWidth,
           kWorkflowDelayNodeHeight,
         ),
+      WorkflowNodeType.sequence => const Size(
+          kWorkflowSequenceNodeWidth,
+          kWorkflowSequenceNodeHeight,
+        ),
     };
   }
 

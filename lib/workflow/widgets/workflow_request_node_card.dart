@@ -670,3 +670,126 @@ class WorkflowDelayNodeCard extends StatelessWidget {
     );
   }
 }
+
+class WorkflowSequenceNodeCard extends StatelessWidget {
+  const WorkflowSequenceNodeCard({
+    super.key,
+    required this.node,
+    required this.selected,
+    this.runResult,
+    this.onDuplicate,
+    this.onDelete,
+  });
+
+  final WorkflowGraphNode node;
+  final bool selected;
+  final WorkflowNodeRunResult? runResult;
+  final VoidCallback? onDuplicate;
+  final VoidCallback? onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final asName = node.loopItemAs?.trim();
+    final asLabel =
+        (asName != null && asName.isNotEmpty) ? '{{$asName}}' : 'set as';
+    final sourceLabel = switch (node.sequenceSource) {
+      WorkflowSequenceSource.list => 'List',
+      WorkflowSequenceSource.json => 'JSON',
+      WorkflowSequenceSource.jsonl => 'JSONL',
+    };
+    final borderColor = workflowNodeRunBorderColor(
+      result: runResult,
+      selected: selected,
+      scheme: scheme,
+      brightness: theme.brightness,
+      idleColor: theme.dividerColor,
+    );
+    final isRunning = runResult?.status == WorkflowNodeRunStatus.running;
+    final bg = Color.alphaBlend(
+      scheme.primary.withValues(
+        alpha: theme.brightness == Brightness.dark ? 0.20 : 0.10,
+      ),
+      scheme.surfaceContainerLow,
+    );
+    return SizedBox(
+      width: kWorkflowSequenceNodeWidth,
+      height: kWorkflowSequenceNodeHeight,
+      child: WorkflowInteractiveNode(
+        selected: selected || isRunning,
+        runEmphasized: isRunning,
+        // Clear left "In" / right "Next" port labels (same idea as For each).
+        padding: const EdgeInsets.fromLTRB(28, 12, 40, 12),
+        backgroundColor: bg,
+        borderColor: borderColor,
+        actions: selected
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _NodeActionButton(
+                    icon: Icons.copy_outlined,
+                    tooltip: kTooltipDuplicate,
+                    onPressed: onDuplicate,
+                  ),
+                  _NodeActionButton(
+                    icon: Icons.delete_outline,
+                    tooltip: kTooltipDelete,
+                    onPressed: onDelete,
+                  ),
+                ],
+              )
+            : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.list_alt_rounded,
+                  size: 20,
+                  color: scheme.primary,
+                ),
+                kHSpacer8,
+                Expanded(
+                  child: Text(
+                    node.label.isNotEmpty
+                        ? node.label
+                        : kLabelWorkflowSequence,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleSmall,
+                  ),
+                ),
+                if (selected) const SizedBox(width: 56),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              sourceLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  asLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

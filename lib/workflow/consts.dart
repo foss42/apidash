@@ -11,6 +11,8 @@ const double kWorkflowLoopNodeWidth = 268;
 const double kWorkflowLoopNodeHeight = 132;
 const double kWorkflowDelayNodeWidth = 200;
 const double kWorkflowDelayNodeHeight = 100;
+const double kWorkflowSequenceNodeWidth = 252;
+const double kWorkflowSequenceNodeHeight = 120;
 
 const kLearnWorkflowsUrl =
     'https://github.com/foss42/apidash/blob/main/doc/user_guide/workflows_guide.md';
@@ -30,6 +32,8 @@ const kLabelWorkflowStep = 'Request step';
 const kLabelWorkflowCondition = 'Condition';
 const kLabelWorkflowLoop = 'For each';
 const kLabelWorkflowDelay = 'Delay';
+const kLabelWorkflowSequence = 'Sequence';
+const kLabelWorkflowSequenceSaveAs = 'Save as';
 const kLabelWorkflowDelayMs = 'Wait (ms)';
 const kLabelWorkflowLoopRepeat = 'Repeat';
 const kLabelWorkflowLoopForEach = 'For each item';

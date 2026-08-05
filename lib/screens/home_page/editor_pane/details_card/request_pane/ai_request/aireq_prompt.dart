@@ -1,12 +1,36 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AIRequestPromptSection extends ConsumerWidget {
   const AIRequestPromptSection({super.key});
+
+  InputDecoration _promptDecoration(BuildContext context, String hintText) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: TextStyle(
+        color: Theme.of(context).colorScheme.outlineVariant,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: kBorderRadius8,
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: kBorderRadius8,
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        ),
+      ),
+      filled: true,
+      hoverColor: kColorTransparent,
+      fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,6 +53,10 @@ class AIRequestPromptSection extends ConsumerWidget {
       return kSizedBoxEmpty;
     }
 
+    final style = kCodeStyle.copyWith(
+      fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+    );
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
@@ -42,20 +70,19 @@ class AIRequestPromptSection extends ConsumerWidget {
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: TextFieldEditor(
-                key: Key("$selectedId-aireq-sysprompt-body"),
-                fieldKey: "$selectedId-aireq-sysprompt-body",
+              child: EnvironmentTriggerField(
+                keyId: "$selectedId-aireq-sysprompt-body",
                 initialValue: systemPrompt,
+                expands: true,
+                style: style,
+                decoration: _promptDecoration(context, kHintEnterSystemPrompt),
                 onChanged: (String value) {
-                  ref
-                      .read(activeCollectionProvider.notifier)
-                      .update(
+                  ref.read(activeCollectionProvider.notifier).update(
                         aiRequestModel: aiRequestModel.copyWith(
                           systemPrompt: value,
                         ),
                       );
                 },
-                hintText: kHintEnterSystemPrompt,
               ),
             ),
           ),
@@ -68,20 +95,19 @@ class AIRequestPromptSection extends ConsumerWidget {
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
-              child: TextFieldEditor(
-                key: Key("$selectedId-aireq-userprompt-body"),
-                fieldKey: "$selectedId-aireq-userprompt-body",
+              child: EnvironmentTriggerField(
+                keyId: "$selectedId-aireq-userprompt-body",
                 initialValue: userPrompt,
+                expands: true,
+                style: style,
+                decoration: _promptDecoration(context, kHintEnterUserPrompt),
                 onChanged: (String value) {
-                  ref
-                      .read(activeCollectionProvider.notifier)
-                      .update(
+                  ref.read(activeCollectionProvider.notifier).update(
                         aiRequestModel: aiRequestModel.copyWith(
                           userPrompt: value,
                         ),
                       );
                 },
-                hintText: kHintEnterUserPrompt,
               ),
             ),
           ),

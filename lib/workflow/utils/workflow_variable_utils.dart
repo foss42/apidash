@@ -45,6 +45,14 @@ Map<String, String> upstreamExtractionVariables(
           () => '${node.label} · $itemField',
         );
       }
+    } else if (node.type == WorkflowNodeType.sequence) {
+      final asName = node.loopItemAs?.trim();
+      if (asName != null && asName.isNotEmpty) {
+        result.putIfAbsent(
+          asName,
+          () => '${node.label} · sequence',
+        );
+      }
     }
   }
   return result;

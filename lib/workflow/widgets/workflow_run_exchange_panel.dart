@@ -792,6 +792,7 @@ class _StepEventLog extends StatelessWidget {
         WorkflowNodeType.delay => 'Delay',
         WorkflowNodeType.condition => 'Condition',
         WorkflowNodeType.loop => 'Loop',
+        WorkflowNodeType.sequence => 'Sequence',
         WorkflowNodeType.request => 'Request',
         null => 'Step',
       };
@@ -801,6 +802,7 @@ class _StepEventLog extends StatelessWidget {
         WorkflowNodeType.delay => Icons.timer_outlined,
         WorkflowNodeType.condition => Icons.call_split_rounded,
         WorkflowNodeType.loop => Icons.repeat_rounded,
+        WorkflowNodeType.sequence => Icons.list_alt_rounded,
         WorkflowNodeType.request => Icons.http_rounded,
         null => Icons.info_outline_rounded,
       };

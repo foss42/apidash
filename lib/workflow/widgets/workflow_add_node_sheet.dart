@@ -177,6 +177,20 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
     await _openNodeEditor(nodeId);
   }
 
+  Future<void> _addSequenceNode() async {
+    final nodeId =
+        await ref.read(activeWorkflowProvider.notifier).addSequenceNode(
+              position: _placementPosition(),
+              afterNodeId: _afterNodeId,
+              sourceHandle: _sourceHandle,
+            );
+    if (!mounted) {
+      return;
+    }
+    _closeSheet();
+    await _openNodeEditor(nodeId);
+  }
+
   Future<void> _createNewRequest({APIType apiType = APIType.rest}) async {
     final nodeId =
         await ref.read(activeWorkflowProvider.notifier).addRequestStep(
@@ -322,6 +336,14 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
           subtitle: 'Import an HTTP request from a collection or start blank',
           showChevron: true,
           onTap: () => setState(() => _page = _AddNodePage.httpRequestSource),
+        ),
+        const SizedBox(height: 8),
+        _AddNodeOptionTile(
+          icon: Icons.list_alt_rounded,
+          iconColor: theme.colorScheme.primary,
+          title: kLabelWorkflowSequence,
+          subtitle: 'Build a list (List / JSON / JSONL) as a {{variable}}',
+          onTap: _addSequenceNode,
         ),
         const SizedBox(height: 8),
         _AddNodeOptionTile(

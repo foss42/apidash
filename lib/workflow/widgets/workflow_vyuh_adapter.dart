@@ -91,6 +91,10 @@ class WorkflowVyuhAdapter {
           inn('in', 'In', 0.5),
           out('next', 'Next', 0.5),
         ],
+      WorkflowNodeType.sequence => [
+          inn('in', 'In', 0.5),
+          out('next', 'Next', 0.5),
+        ],
     };
   }
 }
