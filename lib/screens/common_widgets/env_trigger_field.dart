@@ -140,8 +140,9 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
         ),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
-        return ExtendedTextField(
-          controller: textEditingController,
+          return ExtendedTextField(
+            maxLines: 1,
+            controller: textEditingController,
           focusNode: focusnode,
           decoration: widget.decoration,
           style: widget.style,
