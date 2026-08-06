@@ -40,9 +40,12 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.params?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
+    final requestModel = ref.watch(selectedRequestModelProvider);
+    final isWebSocket = requestModel?.apiType == APIType.websocket;
+
+    var rP = isWebSocket 
+        ? requestModel?.wsRequestModel?.params 
+        : requestModel?.httpRequestModel?.params;
     bool isParamsEmpty = rP == null || rP.isEmpty;
     paramRows = isParamsEmpty
         ? [
@@ -50,11 +53,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           ]
         : rP + [kNameValueEmptyModel];
     isRowEnabledList = [
-      ...(ref
-              .read(selectedRequestModelProvider)
-              ?.httpRequestModel
-              ?.isParamEnabledList ??
-          List.filled(rP?.length ?? 0, true, growable: true))
+      ...(isWebSocket
+          ? requestModel?.wsRequestModel?.isParamEnabledList ??
+              List.filled(rP?.length ?? 0, true, growable: true)
+          : requestModel?.httpRequestModel?.isParamEnabledList ??
+              List.filled(rP?.length ?? 0, true, growable: true))
     ];
     isRowEnabledList.add(false);
     isAddingRow = false;

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
@@ -21,143 +22,305 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   @override
   Widget build(BuildContext context) {
+    final isWs =
+        ref.watch(
+          selectedRequestModelProvider.select((value) => value?.apiType),
+        ) ==
+        APIType.websocket;
     return Container(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          kVSpacer16,
-          DashbotIcons.getDashbotIcon1(width: 60),
-          kVSpacer16,
-          Text(
-            'Hello there,',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-          ),
-          Text('How can I help you today?'),
-          kVSpacer16,
-          Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              if (kDebugMode) ...[
-                HomeScreenTaskButton(
-                  label: "🤖 Chat with Dashbot",
-                  onPressed: () {
-                    ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                    Navigator.of(context).pushNamed(DashbotRoutes.dashbotChat);
-                  },
-                ),
-              ],
-              HomeScreenTaskButton(
-                label: "🔎 Explain me this response",
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.explainResponse,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "🐞 Help me debug this error",
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.debugError,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "📄 Generate documentation",
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.generateDoc,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "📝 Generate Tests",
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.generateTest,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "🧩 Generate Code",
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.generateCode,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "📥 Import cURL",
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.importCurl,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "📄 Import OpenAPI",
-                onPressed: () {
-                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
-                  Navigator.of(context).pushNamed(
-                    DashbotRoutes.dashbotChat,
-                    arguments: ChatMessageType.importOpenApi,
-                  );
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "🛠️ Generate Tool",
-                onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
-                  notifier.hide();
-                  await GenerateToolDialog.show(context, ref);
-                  notifier.show();
-                },
-              ),
-              HomeScreenTaskButton(
-                label: "📱 Generate UI",
-                onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
-                  notifier.hide();
-                  final model = ref.watch(selectedRequestModelProvider
-                      .select((value) => value?.httpResponseModel));
-                  if (model == null) return;
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  kVSpacer16,
+                  DashbotIcons.getDashbotIcon1(width: 60),
+                  kVSpacer16,
+                  Text(
+                    'Hello there,',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  ),
+                  Text('How can I help you today?'),
+                  kVSpacer16,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (kDebugMode) ...[
+                        HomeScreenTaskButton(
+                          label: "🤖 Chat with Dashbot",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(
+                              context,
+                            ).pushNamed(DashbotRoutes.dashbotChat);
+                          },
+                        ),
+                      ],
+                      if (isWs) ...[
+                        HomeScreenTaskButton(
+                          label: "🔌 Explain this connection",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.explainWsConnection,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🛠️ Help me fix my connection",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.debugWsConnection,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📡 What is the server sending?",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.summarizeWsMessages,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🔍 Find in messages",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.findInWsMessages,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "✉️ Explain my message",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.explainWsMessage,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "❓ Why did my message fail?",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.debugWsMessage,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "❤️ Connection health",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.wsConnectionHealth,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📄 Generate documentation",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.generateWsDoc,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📝 Generate Tests",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.generateWsTest,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🧩 Generate Code",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.generateWsCode,
+                            );
+                          },
+                        ),
+                      ],
+                      if (!isWs) ...[
+                        HomeScreenTaskButton(
+                          label: "🔎 Explain me this response",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.explainResponse,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🐞 Help me debug this error",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.debugError,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📄 Generate documentation",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.generateDoc,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📝 Generate Tests",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.generateTest,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🧩 Generate Code",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.generateCode,
+                            );
+                          },
+                        ),
+                      ],
+                      HomeScreenTaskButton(
+                        label: "📥 Import cURL",
+                        onPressed: () {
+                          ref
+                              .read(dashbotActiveRouteProvider.notifier)
+                              .goToChat();
+                          Navigator.of(context).pushNamed(
+                            DashbotRoutes.dashbotChat,
+                            arguments: ChatMessageType.importCurl,
+                          );
+                        },
+                      ),
+                      HomeScreenTaskButton(
+                        label: "📄 Import OpenAPI",
+                        onPressed: () {
+                          ref
+                              .read(dashbotActiveRouteProvider.notifier)
+                              .goToChat();
+                          Navigator.of(context).pushNamed(
+                            DashbotRoutes.dashbotChat,
+                            arguments: ChatMessageType.importOpenApi,
+                          );
+                        },
+                      ),
+                      HomeScreenTaskButton(
+                        label: "🛠️ Generate Tool",
+                        onPressed: () async {
+                          final notifier = ref.read(
+                            dashbotWindowNotifierProvider.notifier,
+                          );
+                          notifier.hide();
+                          await GenerateToolDialog.show(context, ref);
+                          notifier.show();
+                        },
+                      ),
+                      if (!isWs)
+                        HomeScreenTaskButton(
+                          label: "📱 Generate UI",
+                          onPressed: () async {
+                            final notifier = ref.read(
+                              dashbotWindowNotifierProvider.notifier,
+                            );
+                            notifier.hide();
+                            final model = ref.watch(
+                              selectedRequestModelProvider.select(
+                                (value) => value?.httpResponseModel,
+                              ),
+                            );
+                            if (model == null) return;
 
-                  String data = "";
-                  if (model.sseOutput != null) {
-                    data = model.sseOutput!.join('');
-                  } else {
-                    data = model.formattedBody ?? "<>";
-                  }
+                            String data = "";
+                            if (model.sseOutput != null) {
+                              data = model.sseOutput!.join('');
+                            } else {
+                              data = model.formattedBody ?? "<>";
+                            }
 
-                  await showCustomDialog(
-                    context,
-                    GenerateUIDialog(content: data),
-                    useRootNavigator: true,
-                  );
-                  notifier.show();
-                },
+                            await showCustomDialog(
+                              context,
+                              GenerateUIDialog(content: data),
+                              useRootNavigator: true,
+                            );
+                            notifier.show();
+                          },
+                        ),
+                    ],
+                  ),
+                  kVSpacer20,
+                ],
               ),
-            ],
-          ),
-          kVSpacer20,
-        ],
+            ),
+          );
+        },
       ),
     );
   }

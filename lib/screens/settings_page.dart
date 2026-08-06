@@ -174,6 +174,30 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
+                title: const Text(kLabelMaxConnectionMessages),
+                subtitle: const Text(kLabelMaxConnectionMessagesSubtitle),
+                trailing: SizedBox(
+                  width: 100,
+                  child: ADOutlinedTextField(
+                    initialValue: settings.maxConnectionMessages.toString(),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    onChanged: (val) {
+                      final parsed = int.tryParse(val);
+                      if (parsed != null && parsed > 0) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(maxConnectionMessages: parsed);
+                      }
+                    },
+                  ),
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
                 title: const Text(kLabelExportData),
                 subtitle: const Text(kLabelExportDataSubtitle),
                 trailing: FilledButton.icon(

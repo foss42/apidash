@@ -2,6 +2,7 @@ import 'package:apidash/dashbot/constants.dart';
 import 'package:apidash/dashbot/models/models.dart';
 import 'package:apidash/dashbot/services/services.dart';
 import 'package:apidash/models/request_model.dart';
+import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 
@@ -345,6 +346,173 @@ void main() {
         ),
       );
       expect(res, isNull);
+    });
+  });
+
+  group('AutoFixService WebSocket apply', () {
+    final urlEnv = UrlEnvService();
+    final requestApply = RequestApplyService(urlEnv: urlEnv);
+
+    late RequestModel wsReqModel;
+    late List<({String id, String url})> updateWsUrlCalls;
+    late int updateSelectedCalls;
+    List<NameValueModel>? lastHeaders;
+    List<bool>? lastIsHeaderEnabledList;
+
+    AutoFixService buildService({bool withUpdateWsUrl = true}) {
+      return AutoFixService(
+        requestApply: requestApply,
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {
+              updateSelectedCalls++;
+              lastHeaders = headers;
+              lastIsHeaderEnabledList = isHeaderEnabledList;
+            },
+        addNewRequest: (_, {name}) {},
+        readCurrentRequestId: () => 'ws1',
+        ensureBaseUrl: (b) async => b,
+        readCurrentRequest: () => wsReqModel,
+        updateWsUrl: withUpdateWsUrl
+            ? ({required String id, required String url}) {
+                updateWsUrlCalls.add((id: id, url: url));
+              }
+            : null,
+      );
+    }
+
+    setUp(() {
+      updateWsUrlCalls = [];
+      updateSelectedCalls = 0;
+      lastHeaders = null;
+      lastIsHeaderEnabledList = null;
+      // Decisive fixture: NO httpRequestModel, so header reads can only
+      // succeed if they come from wsRequestModel.headers.
+      wsReqModel = RequestModel(
+        id: 'ws1',
+        name: 'WS Req',
+        apiType: APIType.websocket,
+        wsRequestModel: const WebSocketRequestModel(
+          url: 'ws://api.apidash.dev/ws/echo',
+          headers: [NameValueModel(name: 'X-Existing', value: 'old')],
+          isHeaderEnabledList: [true],
+        ),
+      );
+    });
+
+    test(
+      'update_url routes to updateWsUrl, updateSelected untouched',
+      () async {
+        final auto = buildService();
+        await auto.apply(
+          const ChatAction(
+            action: 'update_url',
+            target: 'wsRequestModel',
+            field: 'url',
+            value: 'wss://api.apidash.dev/ws/echo',
+            actionType: ChatActionType.updateUrl,
+            targetType: ChatActionTarget.wsRequestModel,
+          ),
+        );
+        expect(updateWsUrlCalls, [(id: 'ws1', url: 'wss://api.apidash.dev/ws/echo')]);
+        expect(updateSelectedCalls, 0);
+      },
+    );
+
+    test(
+      'update_url without an injected updateWsUrl is a safe no-op',
+      () async {
+        final auto = buildService(withUpdateWsUrl: false);
+        await auto.apply(
+          const ChatAction(
+            action: 'update_url',
+            target: 'wsRequestModel',
+            field: 'url',
+            value: 'wss://api.apidash.dev/ws/echo',
+            actionType: ChatActionType.updateUrl,
+            targetType: ChatActionTarget.wsRequestModel,
+          ),
+        );
+        // The HTTP url path must never run for a WS request.
+        expect(updateSelectedCalls, 0);
+      },
+    );
+
+    test('add_header reads existing headers from wsRequestModel', () async {
+      final auto = buildService();
+      await auto.apply(
+        const ChatAction(
+          action: 'add_header',
+          target: 'wsRequestModel',
+          path: 'Authorization',
+          value: 'Bearer your_access_token',
+          actionType: ChatActionType.addHeader,
+          targetType: ChatActionTarget.wsRequestModel,
+        ),
+      );
+      expect(updateSelectedCalls, 1);
+      expect(lastHeaders, isNotNull);
+      expect(lastHeaders!.map((h) => h.name), ['X-Existing', 'Authorization']);
+      expect(lastHeaders!.last.value, 'Bearer your_access_token');
+      expect(lastIsHeaderEnabledList, [true, true]);
+      expect(updateWsUrlCalls, isEmpty);
+    });
+
+    test('update_header and delete_header use the ws read side', () async {
+      final auto = buildService();
+      await auto.apply(
+        const ChatAction(
+          action: 'update_header',
+          target: 'wsRequestModel',
+          path: 'X-Existing',
+          value: 'new-value',
+          actionType: ChatActionType.updateHeader,
+          targetType: ChatActionTarget.wsRequestModel,
+        ),
+      );
+      expect(updateSelectedCalls, 1);
+      expect(lastHeaders!.single.name, 'X-Existing');
+      expect(lastHeaders!.single.value, 'new-value');
+
+      await auto.apply(
+        const ChatAction(
+          action: 'delete_header',
+          target: 'wsRequestModel',
+          path: 'X-Existing',
+          value: '',
+          actionType: ChatActionType.deleteHeader,
+          targetType: ChatActionTarget.wsRequestModel,
+        ),
+      );
+      expect(updateSelectedCalls, 2);
+      expect(lastHeaders, isEmpty);
+    });
+
+    test('WS request without wsRequestModel skips header updates', () async {
+      wsReqModel = RequestModel(id: 'ws1', apiType: APIType.websocket);
+      final auto = buildService();
+      await auto.apply(
+        const ChatAction(
+          action: 'add_header',
+          target: 'wsRequestModel',
+          path: 'Authorization',
+          value: 'Bearer x',
+          actionType: ChatActionType.addHeader,
+          targetType: ChatActionTarget.wsRequestModel,
+        ),
+      );
+      expect(updateSelectedCalls, 0);
     });
   });
 }
