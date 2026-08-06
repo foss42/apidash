@@ -26,8 +26,8 @@ class SendRequestButton extends ConsumerWidget {
     return SendButton(
       isStreaming: isStreaming ?? false,
       isWorking: isWorking ?? false,
-      sendLabel: apiType == APIType.websocket ? "Connect" : kLabelSend,
-      activeLabel: apiType == APIType.websocket ? "Disconnect" : null,
+      sendLabel: apiType == APIType.websocket ? kLabelConnect : kLabelSend,
+      activeLabel: apiType == APIType.websocket ? kLabelDisconnect : null,
       onTap: () {
         onTap?.call();
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
