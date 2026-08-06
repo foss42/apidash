@@ -1,15 +1,11 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
+import 'package:apidash/screens/home_page/editor_pane/url_card/url_card.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:flutter_portal/flutter_portal.dart';
-
-import 'package:apidash/models/models.dart';
 import 'test_utils.dart';
 
 void main() {

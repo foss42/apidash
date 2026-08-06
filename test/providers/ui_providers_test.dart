@@ -5,7 +5,7 @@ import 'package:apidash/screens/envvar/environment_page.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_default.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_pane.dart';
-import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
+import 'package:apidash/screens/home_page/editor_pane/url_card/url_card.dart';
 import 'package:apidash/screens/home_page/home_page.dart';
 import 'package:apidash/screens/screens.dart';
 import 'package:apidash/screens/settings_page.dart';
