@@ -10,6 +10,7 @@ import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
 import 'package:apidash/workflow/widgets/workflow_run_exchange_panel.dart';
 import 'package:apidash/workflow/widgets/workflow_selector_dropdown.dart';
 import 'package:apidash/screens/common_widgets/environment_dropdown.dart';
+import 'package:apidash/screens/mobile/workflows_page/mobile_workflows_pane.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -67,11 +68,54 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
     final selectedNodeId = ref.watch(selectedWorkflowNodeIdProvider);
     final workflow = ref.watch(activeWorkflowProvider);
     final selectedNode = _selectedNode(selectedNodeId, workflow);
+    final readOnly = context.isMediumWindow;
     final isDashbotPopped =
         ref.watch(dashbotWindowNotifierProvider.select((s) => s.isPopped));
     final onWorkflowsRail =
         ref.watch(navRailIndexStateProvider) == kNavRailWorkflowsIndex;
-    final showDashbot = !isDashbotPopped && onWorkflowsRail;
+    final showDashbot = !readOnly && !isDashbotPopped && onWorkflowsRail;
+
+    final historyButton = IconButton(
+      tooltip: kTooltipFlowHistory,
+      onPressed: workflow == null
+          ? null
+          : () => showFlowHistoryDrawer(context),
+      icon: const Icon(Icons.history_rounded),
+    );
+    final envDropdown = const EnvironmentDropdown();
+
+    if (readOnly) {
+      return DrawerSplitView(
+        scaffoldKey: kWorkflowScaffoldKey,
+        title: Text(
+          workflow?.name ?? kLabelWorkflows,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        leftDrawerContent: const MobileWorkflowsPane(),
+        actions: [
+          historyButton,
+          envDropdown,
+          kHSpacer8,
+        ],
+        onDrawerChanged: (value) =>
+            ref.read(leftDrawerStateProvider.notifier).state = value,
+        mainContent: Padding(
+          padding: kPb70,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ClipRect(
+                  child: WorkflowCanvas(readOnly: true),
+                ),
+              ),
+              const WorkflowRunInspector(),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,9 +124,14 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
           padding: kP8,
           child: Row(
             children: [
-              SizedBox(
-                width: context.isMediumWindow ? 240 : 320,
-                child: const WorkflowSelectorDropdown(),
+              Expanded(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 320),
+                  child: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: WorkflowSelectorDropdown(),
+                  ),
+                ),
               ),
               if (selectedNode != null &&
                   selectedNode.type != WorkflowNodeType.manualStart) ...[
@@ -97,32 +146,28 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
                     node: selectedNode,
                   ),
                   icon: const Icon(Icons.tune_rounded),
-                  label: Text(
-                    context.isMediumWindow ? 'Edit' : 'Edit node',
-                  ),
+                  label: const Text('Edit node'),
                 ),
               ],
               const Spacer(),
-              IconButton(
-                tooltip: kTooltipFlowHistory,
-                onPressed: workflow == null
-                    ? null
-                    : () => showFlowHistoryDrawer(context),
-                icon: const Icon(Icons.history_rounded),
-              ),
+              historyButton,
               kHSpacer4,
-              const EnvironmentDropdown(),
+              envDropdown,
             ],
           ),
         ),
         const Divider(height: 1),
         Expanded(
           child: showDashbot
-              ? const EqualSplitView(
-                  leftWidget: ClipRect(child: WorkflowCanvas()),
-                  rightWidget: DashbotTab(),
+              ? EqualSplitView(
+                  leftWidget: const ClipRect(
+                    child: WorkflowCanvas(),
+                  ),
+                  rightWidget: const DashbotTab(),
                 )
-              : const ClipRect(child: WorkflowCanvas()),
+              : const ClipRect(
+                  child: WorkflowCanvas(),
+                ),
         ),
         const WorkflowRunInspector(),
       ],

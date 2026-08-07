@@ -14,6 +14,7 @@ import 'collaboration/sync_scan_page.dart';
 import 'requests_page/request_response_page.dart';
 import 'widgets/page_base.dart';
 import 'navbar.dart';
+import 'package:apidash/workflow/pages/workflow_page.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
   const MobileDashboard({super.key});
@@ -72,6 +73,8 @@ class PageBranch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     switch (pageIndex) {
+      case kNavRailWorkflowsIndex:
+        return const WorkflowPage();
       case kNavRailVariablesIndex:
         return const EnvironmentPage();
       case kNavRailHistoryIndex:

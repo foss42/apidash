@@ -20,22 +20,54 @@ import 'package:vyuh_node_flow/vyuh_node_flow.dart';
 
 /// Vyuh editor host. Riverpod [WorkflowDocument] is SoT; Vyuh is ephemeral.
 class WorkflowCanvas extends ConsumerStatefulWidget {
-  const WorkflowCanvas({super.key});
+  const WorkflowCanvas({
+    super.key,
+    this.readOnly = false,
+  });
+
+  /// Inspect-only: pan/zoom/select + run. No edit/add/wire.
+  final bool readOnly;
 
   @override
   ConsumerState<WorkflowCanvas> createState() => _WorkflowCanvasState();
 }
 
 class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
-  late final _controller = NodeFlowController<String, void>();
+  late final NodeFlowController<String, void> _controller;
   String? _fingerprint;
   bool _writing = false;
   (String nodeId, String portId, Offset start)? _wire;
 
   @override
+  void initState() {
+    super.initState();
+    _controller = NodeFlowController<String, void>(
+      config: widget.readOnly
+          ? NodeFlowConfig(minZoom: kWorkflowMobileMinZoom)
+          : null,
+    );
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _fitWhenReady({int attempt = 0}) {
+    if (!widget.readOnly || !mounted) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (_controller.visibleGraphBounds == Rect.zero && attempt < 12) {
+        _fitWhenReady(attempt: attempt + 1);
+        return;
+      }
+      _controller.fitToView();
+    });
   }
 
   void _load(WorkflowDocument doc) {
@@ -51,6 +83,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
       _writing = false;
     }
     _styleRunPath(doc);
+    _fitWhenReady();
   }
 
   void _styleRunPath(WorkflowDocument doc) {
@@ -98,7 +131,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   }
 
   Future<void> _afterWrite(Future<void> Function() write) async {
-    if (_writing) {
+    if (_writing || widget.readOnly) {
       return;
     }
     await write();
@@ -118,6 +151,9 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   }
 
   Future<void> _deleteNode(WorkflowGraphNode node) async {
+    if (widget.readOnly) {
+      return;
+    }
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -180,8 +216,11 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   Widget _card(WorkflowGraphNode node) {
     final selected = ref.watch(selectedWorkflowNodeIdProvider) == node.id;
     final runResult = ref.watch(workflowNodeRunResultsProvider)[node.id];
-    void dup() => ref.read(activeWorkflowProvider.notifier).duplicateNode(node.id);
-    void del() => _deleteNode(node);
+    final VoidCallback? dup = widget.readOnly
+        ? null
+        : () => ref.read(activeWorkflowProvider.notifier).duplicateNode(node.id);
+    final VoidCallback? del =
+        widget.readOnly ? null : () => _deleteNode(node);
 
     return switch (node.type) {
       WorkflowNodeType.manualStart => WorkflowStartNodeCard(
@@ -229,7 +268,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   }
 
   Future<void> _attachSequenceToLoop(WorkflowGraphNode loop) async {
-    if (_writing) {
+    if (_writing || widget.readOnly) {
       return;
     }
     final sequenceId = await ref
@@ -273,6 +312,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   Widget build(BuildContext context) {
     final workflow = ref.watch(activeWorkflowProvider);
     final runResults = ref.watch(workflowNodeRunResultsProvider);
+    final readOnly = widget.readOnly;
 
     ref.listen(activeWorkflowProvider, (_, next) {
       if (next != null) {
@@ -287,7 +327,11 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     });
 
     if (workflow == null) {
-      return const Center(child: Text('Select or create a workflow'));
+      return Center(
+        child: Text(
+          readOnly ? 'Select a workflow' : 'Select or create a workflow',
+        ),
+      );
     }
     if (_fingerprint !=
         WorkflowVyuhAdapter.structureFingerprint(workflow)) {
@@ -298,7 +342,8 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
       });
     }
 
-    final showHint = workflow.description.isEmpty &&
+    final showHint = !readOnly &&
+        workflow.description.isEmpty &&
         workflow.graph.nodes
                 .where((n) => n.type != WorkflowNodeType.manualStart)
                 .length <=
@@ -310,9 +355,14 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
         NodeFlowEditor<String, void>(
           controller: _controller,
           theme: _theme(context),
+          behavior:
+              readOnly ? NodeFlowBehavior.inspect : NodeFlowBehavior.design,
           labelBuilder: (context, connection, label, rect, onTap) {
             if (label.id != 'detach') {
               return Text(label.text);
+            }
+            if (readOnly) {
+              return const SizedBox.shrink();
             }
             final scheme = Theme.of(context).colorScheme;
             return Material(
@@ -353,148 +403,166 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
             return Opacity(opacity: dim ? 0.58 : 1, child: _card(model));
           },
           events: NodeFlowEvents<String, void>(
+            onInit: readOnly ? () => _fitWhenReady() : null,
             node: NodeEvents<String>(
               onTap: (n) => _selectNode(n.id),
               onSelected: (n) {
                 if (n != null) {
                   _selectNode(n.id);
                 } else {
-                  ref.read(selectedWorkflowNodeIdProvider.notifier).state = null;
+                  ref.read(selectedWorkflowNodeIdProvider.notifier).state =
+                      null;
                 }
               },
-              onDoubleTap: (n) {
-                final model = _model(n.id);
-                if (model == null) {
-                  return;
-                }
-                _selectNode(n.id);
-                openWorkflowNodeEditor(context, ref, node: model);
-              },
-              onDragStop: (n) => _afterWrite(
-                () => ref
-                    .read(activeWorkflowProvider.notifier)
-                    .updateNodePosition(n.id, n.position.value),
-              ),
-            ),
-            connection: ConnectionEvents<String, void>(
-              onCreated: (c) {
-                c.label = ConnectionLabel.center(text: '×', id: 'detach');
-                final source = _model(c.sourceNodeId);
-                final target = _model(c.targetNodeId);
-                // For each Seq dropped on Sequence → store Sequence → Seq.
-                if (source?.type == WorkflowNodeType.loop &&
-                    c.sourcePortId == 'list' &&
-                    target?.type == WorkflowNodeType.sequence) {
-                  _afterWrite(
-                    () => ref
-                        .read(activeWorkflowProvider.notifier)
-                        .linkSequenceToLoop(
-                          loopNodeId: c.sourceNodeId,
-                          sequenceNodeId: c.targetNodeId,
-                          edgeId: c.id,
-                        ),
-                  );
-                  return;
-                }
-                _afterWrite(
-                  () => ref.read(activeWorkflowProvider.notifier).connectNodes(
-                        sourceId: c.sourceNodeId,
-                        sourceHandle: workflowPortIdToHandle(c.sourcePortId),
-                        targetId: c.targetNodeId,
-                        targetHandle: workflowPortIdToHandle(c.targetPortId),
-                        edgeId: c.id,
+              onDoubleTap: readOnly
+                  ? null
+                  : (n) {
+                      final model = _model(n.id);
+                      if (model == null) {
+                        return;
+                      }
+                      _selectNode(n.id);
+                      openWorkflowNodeEditor(context, ref, node: model);
+                    },
+              onDragStop: readOnly
+                  ? null
+                  : (n) => _afterWrite(
+                        () => ref
+                            .read(activeWorkflowProvider.notifier)
+                            .updateNodePosition(n.id, n.position.value),
                       ),
-                );
-              },
-              onDeleted: (c) => _afterWrite(
-                () => ref
-                    .read(activeWorkflowProvider.notifier)
-                    .disconnectEdge(c.id),
-              ),
-              onConnectStart: (node, port) {
-                final pos = node.position.value;
-                final size = node.size.value;
-                final Offset start = switch (port.position) {
-                  PortPosition.right =>
-                    pos + Offset(size.width, port.offset.dy),
-                  PortPosition.left => pos + Offset(0, port.offset.dy),
-                  PortPosition.top => pos + Offset(port.offset.dx, 0),
-                  PortPosition.bottom =>
-                    pos + Offset(port.offset.dx, size.height),
-                };
-                _wire = (node.id, port.id, start);
-              },
-              onConnectEnd: (target, _, pos) {
-                final wire = _wire;
-                _wire = null;
-                if (target != null || wire == null) {
-                  return;
-                }
-                final end = pos.offset;
-                if ((end - wire.$3).distance < 48) {
-                  return;
-                }
-                // Stretch For each Seq into empty space → add Sequence.
-                if (wire.$2 == 'list' &&
-                    _model(wire.$1)?.type == WorkflowNodeType.loop) {
-                  final loop = _model(wire.$1);
-                  if (loop != null) {
-                    _attachSequenceToLoop(loop);
-                  }
-                  return;
-                }
-                // Sequence only wires to For each Seq — no stretch-add.
-                if (_model(wire.$1)?.type == WorkflowNodeType.sequence) {
-                  return;
-                }
-                showWorkflowAddNodeSheet(
-                  context,
-                  ref,
-                  connectFrom: WorkflowAddNodeConnectFrom(
-                    sourceNodeId: wire.$1,
-                    sourceHandle: workflowPortIdToHandle(wire.$2),
-                    position: end,
-                  ),
-                );
-              },
-              onBeforeComplete: (ctx) {
-                if (ctx.sourceNode.id == ctx.targetNode.id ||
-                    ctx.targetNode.type ==
-                        WorkflowNodeType.manualStart.name) {
-                  return ConnectionValidationResult.deny();
-                }
-                // For each Seq → Sequence (saved as Sequence → Seq).
-                if (ctx.sourcePort.id == 'list' &&
-                    ctx.sourceNode.type == WorkflowNodeType.loop.name &&
-                    ctx.targetNode.type == WorkflowNodeType.sequence.name) {
-                  return ConnectionValidationResult.allow();
-                }
-                if (ctx.sourcePort.id == 'list') {
-                  return ConnectionValidationResult.deny();
-                }
-                if (ctx.targetNode.type == WorkflowNodeType.sequence.name) {
-                  return ConnectionValidationResult.deny();
-                }
-                if (ctx.targetPort.id == 'list' &&
-                    ctx.sourceNode.type != WorkflowNodeType.sequence.name) {
-                  return ConnectionValidationResult.deny();
-                }
-                if (ctx.sourceNode.type == WorkflowNodeType.sequence.name &&
-                    (ctx.targetNode.type != WorkflowNodeType.loop.name ||
-                        ctx.targetPort.id != 'list')) {
-                  return ConnectionValidationResult.deny();
-                }
-                return ConnectionValidationResult.allow();
-              },
             ),
+            connection: readOnly
+                ? null
+                : ConnectionEvents<String, void>(
+                    onCreated: (c) {
+                      c.label =
+                          ConnectionLabel.center(text: '×', id: 'detach');
+                      final source = _model(c.sourceNodeId);
+                      final target = _model(c.targetNodeId);
+                      // For each Seq dropped on Sequence → store Sequence → Seq.
+                      if (source?.type == WorkflowNodeType.loop &&
+                          c.sourcePortId == 'list' &&
+                          target?.type == WorkflowNodeType.sequence) {
+                        _afterWrite(
+                          () => ref
+                              .read(activeWorkflowProvider.notifier)
+                              .linkSequenceToLoop(
+                                loopNodeId: c.sourceNodeId,
+                                sequenceNodeId: c.targetNodeId,
+                                edgeId: c.id,
+                              ),
+                        );
+                        return;
+                      }
+                      _afterWrite(
+                        () =>
+                            ref.read(activeWorkflowProvider.notifier).connectNodes(
+                                  sourceId: c.sourceNodeId,
+                                  sourceHandle:
+                                      workflowPortIdToHandle(c.sourcePortId),
+                                  targetId: c.targetNodeId,
+                                  targetHandle:
+                                      workflowPortIdToHandle(c.targetPortId),
+                                  edgeId: c.id,
+                                ),
+                      );
+                    },
+                    onDeleted: (c) => _afterWrite(
+                      () => ref
+                          .read(activeWorkflowProvider.notifier)
+                          .disconnectEdge(c.id),
+                    ),
+                    onConnectStart: (node, port) {
+                      final pos = node.position.value;
+                      final size = node.size.value;
+                      final Offset start = switch (port.position) {
+                        PortPosition.right =>
+                          pos + Offset(size.width, port.offset.dy),
+                        PortPosition.left => pos + Offset(0, port.offset.dy),
+                        PortPosition.top => pos + Offset(port.offset.dx, 0),
+                        PortPosition.bottom =>
+                          pos + Offset(port.offset.dx, size.height),
+                      };
+                      _wire = (node.id, port.id, start);
+                    },
+                    onConnectEnd: (target, _, pos) {
+                      final wire = _wire;
+                      _wire = null;
+                      if (target != null || wire == null) {
+                        return;
+                      }
+                      final end = pos.offset;
+                      if ((end - wire.$3).distance < 48) {
+                        return;
+                      }
+                      // Stretch For each Seq into empty space → add Sequence.
+                      if (wire.$2 == 'list' &&
+                          _model(wire.$1)?.type == WorkflowNodeType.loop) {
+                        final loop = _model(wire.$1);
+                        if (loop != null) {
+                          _attachSequenceToLoop(loop);
+                        }
+                        return;
+                      }
+                      // Sequence only wires to For each Seq — no stretch-add.
+                      if (_model(wire.$1)?.type == WorkflowNodeType.sequence) {
+                        return;
+                      }
+                      showWorkflowAddNodeSheet(
+                        context,
+                        ref,
+                        connectFrom: WorkflowAddNodeConnectFrom(
+                          sourceNodeId: wire.$1,
+                          sourceHandle: workflowPortIdToHandle(wire.$2),
+                          position: end,
+                        ),
+                      );
+                    },
+                    onBeforeComplete: (ctx) {
+                      if (ctx.sourceNode.id == ctx.targetNode.id ||
+                          ctx.targetNode.type ==
+                              WorkflowNodeType.manualStart.name) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      // For each Seq → Sequence (saved as Sequence → Seq).
+                      if (ctx.sourcePort.id == 'list' &&
+                          ctx.sourceNode.type == WorkflowNodeType.loop.name &&
+                          ctx.targetNode.type ==
+                              WorkflowNodeType.sequence.name) {
+                        return ConnectionValidationResult.allow();
+                      }
+                      if (ctx.sourcePort.id == 'list') {
+                        return ConnectionValidationResult.deny();
+                      }
+                      if (ctx.targetNode.type ==
+                          WorkflowNodeType.sequence.name) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      if (ctx.targetPort.id == 'list' &&
+                          ctx.sourceNode.type !=
+                              WorkflowNodeType.sequence.name) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      if (ctx.sourceNode.type ==
+                              WorkflowNodeType.sequence.name &&
+                          (ctx.targetNode.type != WorkflowNodeType.loop.name ||
+                              ctx.targetPort.id != 'list')) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      return ConnectionValidationResult.allow();
+                    },
+                  ),
           ),
         ),
         const Positioned(right: 12, top: 12, child: WorkflowCanvasRunToast()),
-        const Positioned(
+        Positioned(
           left: 0,
           right: 0,
           bottom: 16,
-          child: Center(child: WorkflowRunBar()),
+          child: Center(
+            child: WorkflowRunBar(readOnly: readOnly),
+          ),
         ),
         if (showHint)
           Positioned(

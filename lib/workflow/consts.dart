@@ -64,3 +64,9 @@ const kMsgFlowHistoryOpen = 'Open in inspector';
 const double kWorkflowRunExchangeHeight = 360;
 const double kWorkflowRunExchangeHeightCompact = 300;
 const double kWorkflowRunBarFabClearance = 12;
+
+/// Mobile/inspect canvas: allow fitToView to zoom out past default 0.5.
+const double kWorkflowMobileMinZoom = 0.3;
+
+/// Mobile bottom nav height (content + safe area applied separately).
+const double kWorkflowMobileBottomNavHeight = 70;

@@ -43,6 +43,15 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
+                    buttonIdx: kNavRailWorkflowsIndex,
+                    selectedIcon: Icons.account_tree,
+                    icon: Icons.account_tree_outlined,
+                    label: 'Flows',
+                  ),
+                ),
+                Expanded(
+                  child: NavbarButton(
+                    railIdx: railIdx,
                     buttonIdx: kNavRailVariablesIndex,
                     selectedIcon: Icons.laptop_windows,
                     icon: Icons.laptop_windows_outlined,

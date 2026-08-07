@@ -26,9 +26,12 @@ Future<void> triggerWorkflowRun(BuildContext context, WidgetRef ref) async {
 class WorkflowRunBar extends ConsumerWidget {
   const WorkflowRunBar({
     super.key,
+    this.readOnly = false,
     this.bottomPadding = kWorkflowRunBarFabClearance,
   });
 
+  /// When true, only Run / Stop — no Add or Arrange.
+  final bool readOnly;
   final double bottomPadding;
 
   @override
@@ -67,24 +70,8 @@ class WorkflowRunBar extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              FilledButton.tonalIcon(
-                style: FilledButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
-                  animationDuration: const Duration(milliseconds: 120),
-                ),
-                onPressed: running
-                    ? null
-                    : () {
-                        HapticFeedback.selectionClick();
-                        showWorkflowAddNodeSheet(context, ref);
-                      },
-                icon: const Icon(Icons.add_rounded, size: 20),
-                label: const Text(kLabelAddWorkflowNode),
-              ),
-              const SizedBox(width: 8),
-              Tooltip(
-                message: kTooltipAutoArrange,
-                child: FilledButton.tonalIcon(
+              if (!readOnly) ...[
+                FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
                     visualDensity: VisualDensity.compact,
                     animationDuration: const Duration(milliseconds: 120),
@@ -93,17 +80,35 @@ class WorkflowRunBar extends ConsumerWidget {
                       ? null
                       : () {
                           HapticFeedback.selectionClick();
-                          ref
-                              .read(activeWorkflowProvider.notifier)
-                              .autoArrangeGraph();
+                          showWorkflowAddNodeSheet(context, ref);
                         },
-                  icon: const Icon(Icons.account_tree_outlined, size: 20),
-                  label: Text(
-                    context.isMediumWindow ? 'Arrange' : kLabelAutoArrange,
+                  icon: const Icon(Icons.add_rounded, size: 20),
+                  label: const Text(kLabelAddWorkflowNode),
+                ),
+                const SizedBox(width: 8),
+                Tooltip(
+                  message: kTooltipAutoArrange,
+                  child: FilledButton.tonalIcon(
+                    style: FilledButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      animationDuration: const Duration(milliseconds: 120),
+                    ),
+                    onPressed: running
+                        ? null
+                        : () {
+                            HapticFeedback.selectionClick();
+                            ref
+                                .read(activeWorkflowProvider.notifier)
+                                .autoArrangeGraph();
+                          },
+                    icon: const Icon(Icons.account_tree_outlined, size: 20),
+                    label: Text(
+                      context.isMediumWindow ? 'Arrange' : kLabelAutoArrange,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
+                const SizedBox(width: 8),
+              ],
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 180),
                 switchInCurve: Curves.easeOutCubic,
@@ -124,7 +129,7 @@ class WorkflowRunBar extends ConsumerWidget {
                         }
                       : () => triggerWorkflowRun(context, ref),
                   icon: running
-                      ? SizedBox()
+                      ? const SizedBox()
                       : const Icon(Icons.play_arrow_rounded, size: 20),
                   label: Text(running ? kLabelStopWorkflow : kLabelRunWorkflow),
                 ),

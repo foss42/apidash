@@ -39,6 +39,7 @@ const kMinRequestEditorDetailsCardPaneSize = 300.0;
 final kHomeScaffoldKey = GlobalKey<ScaffoldState>();
 final kEnvScaffoldKey = GlobalKey<ScaffoldState>();
 final kHisScaffoldKey = GlobalKey<ScaffoldState>();
+final kWorkflowScaffoldKey = GlobalKey<ScaffoldState>();
 final kAppScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 const kTabAnimationDuration = Duration(milliseconds: 200);

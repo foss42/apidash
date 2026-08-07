@@ -66,20 +66,22 @@ class WorkflowRequestNodeCard extends StatelessWidget {
         backgroundColor: theme.colorScheme.surfaceContainerLow,
         borderColor: borderColor,
         padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-        actions: selected
+        actions: selected && (onDuplicate != null || onDelete != null)
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _NodeActionButton(
-                    icon: Icons.copy_outlined,
-                    tooltip: kTooltipDuplicate,
-                    onPressed: onDuplicate,
-                  ),
-                  _NodeActionButton(
-                    icon: Icons.delete_outline,
-                    tooltip: kTooltipDelete,
-                    onPressed: onDelete,
-                  ),
+                  if (onDuplicate != null)
+                    _NodeActionButton(
+                      icon: Icons.copy_outlined,
+                      tooltip: kTooltipDuplicate,
+                      onPressed: onDuplicate,
+                    ),
+                  if (onDelete != null)
+                    _NodeActionButton(
+                      icon: Icons.delete_outline,
+                      tooltip: kTooltipDelete,
+                      onPressed: onDelete,
+                    ),
                 ],
               )
             : null,
@@ -361,20 +363,22 @@ class WorkflowConditionNodeCard extends StatelessWidget {
           theme.colorScheme.surfaceContainerLow,
         ),
         borderColor: borderColor,
-        actions: selected
+        actions: selected && (onDuplicate != null || onDelete != null)
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _NodeActionButton(
-                    icon: Icons.copy_outlined,
-                    tooltip: kTooltipDuplicate,
-                    onPressed: onDuplicate,
-                  ),
-                  _NodeActionButton(
-                    icon: Icons.delete_outline,
-                    tooltip: kTooltipDelete,
-                    onPressed: onDelete,
-                  ),
+                  if (onDuplicate != null)
+                    _NodeActionButton(
+                      icon: Icons.copy_outlined,
+                      tooltip: kTooltipDuplicate,
+                      onPressed: onDuplicate,
+                    ),
+                  if (onDelete != null)
+                    _NodeActionButton(
+                      icon: Icons.delete_outline,
+                      tooltip: kTooltipDelete,
+                      onPressed: onDelete,
+                    ),
                 ],
               )
             : null,
@@ -486,20 +490,22 @@ class WorkflowLoopNodeCard extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(28, 12, 52, 22),
         backgroundColor: theme.colorScheme.secondaryContainer,
         borderColor: borderColor,
-        actions: selected
+        actions: selected && (onDuplicate != null || onDelete != null)
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _NodeActionButton(
-                    icon: Icons.copy_outlined,
-                    tooltip: kTooltipDuplicate,
-                    onPressed: onDuplicate,
-                  ),
-                  _NodeActionButton(
-                    icon: Icons.delete_outline,
-                    tooltip: kTooltipDelete,
-                    onPressed: onDelete,
-                  ),
+                  if (onDuplicate != null)
+                    _NodeActionButton(
+                      icon: Icons.copy_outlined,
+                      tooltip: kTooltipDuplicate,
+                      onPressed: onDuplicate,
+                    ),
+                  if (onDelete != null)
+                    _NodeActionButton(
+                      icon: Icons.delete_outline,
+                      tooltip: kTooltipDelete,
+                      onPressed: onDelete,
+                    ),
                 ],
               )
             : null,
@@ -607,20 +613,22 @@ class WorkflowDelayNodeCard extends StatelessWidget {
         runEmphasized: isRunning,
         backgroundColor: theme.colorScheme.surfaceContainerHighest,
         borderColor: borderColor,
-        actions: selected
+        actions: selected && (onDuplicate != null || onDelete != null)
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _NodeActionButton(
-                    icon: Icons.copy_outlined,
-                    tooltip: kTooltipDuplicate,
-                    onPressed: onDuplicate,
-                  ),
-                  _NodeActionButton(
-                    icon: Icons.delete_outline,
-                    tooltip: kTooltipDelete,
-                    onPressed: onDelete,
-                  ),
+                  if (onDuplicate != null)
+                    _NodeActionButton(
+                      icon: Icons.copy_outlined,
+                      tooltip: kTooltipDuplicate,
+                      onPressed: onDuplicate,
+                    ),
+                  if (onDelete != null)
+                    _NodeActionButton(
+                      icon: Icons.delete_outline,
+                      tooltip: kTooltipDelete,
+                      onPressed: onDelete,
+                    ),
                 ],
               )
             : null,
@@ -721,20 +729,22 @@ class WorkflowSequenceNodeCard extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 28, 14, 12),
         backgroundColor: bg,
         borderColor: borderColor,
-        actions: selected
+        actions: selected && (onDuplicate != null || onDelete != null)
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _NodeActionButton(
-                    icon: Icons.copy_outlined,
-                    tooltip: kTooltipDuplicate,
-                    onPressed: onDuplicate,
-                  ),
-                  _NodeActionButton(
-                    icon: Icons.delete_outline,
-                    tooltip: kTooltipDelete,
-                    onPressed: onDelete,
-                  ),
+                  if (onDuplicate != null)
+                    _NodeActionButton(
+                      icon: Icons.copy_outlined,
+                      tooltip: kTooltipDuplicate,
+                      onPressed: onDuplicate,
+                    ),
+                  if (onDelete != null)
+                    _NodeActionButton(
+                      icon: Icons.delete_outline,
+                      tooltip: kTooltipDelete,
+                      onPressed: onDelete,
+                    ),
                 ],
               )
             : null,

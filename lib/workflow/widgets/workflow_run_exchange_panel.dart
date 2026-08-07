@@ -301,6 +301,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final compact = context.isMediumWindow;
     final allSucceeded = !running && stepCount > 0 && failed == 0;
     final hasFailures = !running && failed > 0;
     final summary = running
@@ -348,55 +349,50 @@ class _Header extends StatelessWidget {
               size: kButtonIconSizeMedium,
               color: theme.colorScheme.onSurfaceVariant,
             ),
+            kHSpacer8,
+            Icon(
+              statusIcon,
+              size: kButtonIconSizeLarge,
+              color: statusColor,
+            ),
+            kHSpacer8,
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    statusIcon,
-                    size: kButtonIconSizeLarge,
-                    color: statusColor,
-                  ),
-                  kHSpacer8,
-                  Flexible(
-                    child: Text(
-                      summary,
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: statusColor,
-                        fontWeight: allSucceeded || hasFailures
-                            ? FontWeight.w600
-                            : FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  if (!running && stepCount > 0) ...[
-                    kHSpacer8,
-                    Text(
-                      '${totalMs}ms',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: allSucceeded
-                            ? successColor
-                            : theme.colorScheme.onSurfaceVariant,
-                        fontFamily: kCodeStyle.fontFamily,
-                      ),
-                    ),
-                  ],
-                  if (running) ...[
-                    kHSpacer8,
-                    const SizedBox(
-                      width: kButtonIconSizeSmall,
-                      height: kButtonIconSizeSmall,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ],
-                ],
+              child: Text(
+                summary,
+                textAlign: compact
+                    ? TextAlign.left
+                    : TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: statusColor,
+                  fontWeight: allSucceeded || hasFailures
+                      ? FontWeight.w600
+                      : FontWeight.w500,
+                ),
               ),
             ),
-            // Balance the left collapse controls so the center stays centered.
-            const SizedBox(width: 48),
+            if (!running && stepCount > 0) ...[
+              kHSpacer8,
+              Text(
+                '${totalMs}ms',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: allSucceeded
+                      ? successColor
+                      : theme.colorScheme.onSurfaceVariant,
+                  fontFamily: kCodeStyle.fontFamily,
+                ),
+              ),
+            ],
+            if (running) ...[
+              kHSpacer8,
+              const SizedBox(
+                width: kButtonIconSizeSmall,
+                height: kButtonIconSizeSmall,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ],
+            if (!compact) const SizedBox(width: 48),
           ],
         ),
       ),
@@ -461,14 +457,16 @@ class _CollapsedInspectorBar extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       label,
-                      textAlign: TextAlign.center,
+                      textAlign: context.isMediumWindow
+                          ? TextAlign.left
+                          : TextAlign.center,
                       style: theme.textTheme.titleSmall?.copyWith(
                         color: statusColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 48),
+                  if (!context.isMediumWindow) const SizedBox(width: 48),
                 ],
               ),
             ),

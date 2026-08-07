@@ -9,7 +9,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum _WorkflowMenuAction { rename, delete }
 
 class WorkflowSelectorDropdown extends ConsumerWidget {
-  const WorkflowSelectorDropdown({super.key});
+  const WorkflowSelectorDropdown({
+    super.key,
+    this.readOnly = false,
+  });
+
+  final bool readOnly;
 
   static const _newValue = '__new__';
 
@@ -87,6 +92,14 @@ class WorkflowSelectorDropdown extends ConsumerWidget {
       error: (error, _) => Text(error.toString()),
       data: (workflows) {
         if (workflows.isEmpty) {
+          if (readOnly) {
+            return Text(
+              'No workflows',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            );
+          }
           return OutlinedButton.icon(
             onPressed: () => _createWorkflow(ref),
             icon: const Icon(Icons.add, size: 18),
@@ -125,22 +138,26 @@ class WorkflowSelectorDropdown extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  const DropdownMenuItem(
-                    value: _newValue,
-                    child: Row(
-                      children: [
-                        Icon(Icons.add, size: 18),
-                        SizedBox(width: 8),
-                        Text(kLabelNewWorkflow),
-                      ],
+                  if (!readOnly)
+                    const DropdownMenuItem(
+                      value: _newValue,
+                      child: Row(
+                        children: [
+                          Icon(Icons.add, size: 18),
+                          SizedBox(width: 8),
+                          Text(kLabelNewWorkflow),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
                 onChanged: (value) async {
                   if (value == null) {
                     return;
                   }
                   if (value == _newValue) {
+                    if (readOnly) {
+                      return;
+                    }
                     await _createWorkflow(ref);
                     return;
                   }
@@ -150,29 +167,31 @@ class WorkflowSelectorDropdown extends ConsumerWidget {
                 },
               ),
             ),
-            kHSpacer4,
-            PopupMenuButton<_WorkflowMenuAction>(
-              tooltip: 'Workflow options',
-              icon: const Icon(Icons.more_vert),
-              onSelected: (action) async {
-                switch (action) {
-                  case _WorkflowMenuAction.rename:
-                    await _renameWorkflow(context, ref, selected!);
-                  case _WorkflowMenuAction.delete:
-                    await _deleteWorkflow(context, ref, selected!);
-                }
-              },
-              itemBuilder: (context) => const [
-                PopupMenuItem(
-                  value: _WorkflowMenuAction.rename,
-                  child: Text(kLabelRenameWorkflow),
-                ),
-                PopupMenuItem(
-                  value: _WorkflowMenuAction.delete,
-                  child: Text(kLabelDeleteWorkflow),
-                ),
-              ],
-            ),
+            if (!readOnly) ...[
+              kHSpacer4,
+              PopupMenuButton<_WorkflowMenuAction>(
+                tooltip: 'Workflow options',
+                icon: const Icon(Icons.more_vert),
+                onSelected: (action) async {
+                  switch (action) {
+                    case _WorkflowMenuAction.rename:
+                      await _renameWorkflow(context, ref, selected!);
+                    case _WorkflowMenuAction.delete:
+                      await _deleteWorkflow(context, ref, selected!);
+                  }
+                },
+                itemBuilder: (context) => const [
+                  PopupMenuItem(
+                    value: _WorkflowMenuAction.rename,
+                    child: Text(kLabelRenameWorkflow),
+                  ),
+                  PopupMenuItem(
+                    value: _WorkflowMenuAction.delete,
+                    child: Text(kLabelDeleteWorkflow),
+                  ),
+                ],
+              ),
+            ],
           ],
         );
       },
