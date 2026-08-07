@@ -100,19 +100,16 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
         ],
         onDrawerChanged: (value) =>
             ref.read(leftDrawerStateProvider.notifier).state = value,
-        mainContent: Padding(
-          padding: kPb70,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: ClipRect(
-                  child: WorkflowCanvas(readOnly: true),
-                ),
+        mainContent: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ClipRect(
+                child: WorkflowCanvas(readOnly: true),
               ),
-              const WorkflowRunInspector(),
-            ],
-          ),
+            ),
+            const WorkflowRunInspector(),
+          ],
         ),
       );
     }
