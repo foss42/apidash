@@ -240,14 +240,6 @@ class CollectionStateNotifier
     unsave();
   }
 
-  /// Parses [curlText] and applies the first successfully parsed HTTP request
-  /// to the selected (or [id]) request tab.
-  ///
-  /// Always results in [APIType.rest] because cURL describes HTTP. If the tab
-  /// was AI / GraphQL / WebSocket, those sub-models are cleared. Active WS
-  /// connections for the tab are disconnected.
-  ///
-  /// Returns the imported URL on success, or `null` if parsing fails.
   String? applyCurlToSelectedRequest(String curlText, {String? id}) {
     final parsedList = CurlIO().getHttpRequestModelList(curlText);
     if (parsedList == null || parsedList.isEmpty) {
