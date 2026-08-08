@@ -12,6 +12,7 @@ class EnvURLField extends StatelessWidget {
     this.onFieldSubmitted,
     this.focusNode,
     this.hintText,
+    this.onCurlDetected,
   });
 
   final String selectedId;
@@ -20,6 +21,7 @@ class EnvURLField extends StatelessWidget {
   final void Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
   final String? hintText;
+  final Future<String?> Function(String curlText)? onCurlDetected;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class EnvURLField extends StatelessWidget {
       ),
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
+      onCurlDetected: onCurlDetected,
       optionsWidthFactor: 1,
     );
   }

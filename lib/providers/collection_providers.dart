@@ -240,6 +240,53 @@ class CollectionStateNotifier
     unsave();
   }
 
+  /// Parses [curlText] and applies the first successfully parsed HTTP request
+  /// to the selected (or [id]) request tab.
+  ///
+  /// Always results in [APIType.rest] because cURL describes HTTP. If the tab
+  /// was AI / GraphQL / WebSocket, those sub-models are cleared. Active WS
+  /// connections for the tab are disconnected.
+  ///
+  /// Returns the imported URL on success, or `null` if parsing fails.
+  String? applyCurlToSelectedRequest(String curlText, {String? id}) {
+    final parsedList = CurlIO().getHttpRequestModelList(curlText);
+    if (parsedList == null || parsedList.isEmpty) {
+      return null;
+    }
+
+    final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null || state == null || !state!.containsKey(rId)) {
+      return null;
+    }
+
+    final currentModel = state![rId]!;
+    if (currentModel.apiType == APIType.websocket) {
+      _stopMessageHeartbeat(rId);
+      ConnectionManager.instance.disconnect(rId);
+    }
+
+    final parsed = parsedList.first;
+    final headerCount = parsed.headers?.length ?? 0;
+    final paramCount = parsed.params?.length ?? 0;
+    final httpRequestModel = parsed.copyWith(
+      isHeaderEnabledList: List<bool>.filled(headerCount, true),
+      isParamEnabledList: List<bool>.filled(paramCount, true),
+    );
+
+    state = {
+      ...state!,
+      rId: currentModel.copyWith(
+        apiType: APIType.rest,
+        requestTabIndex: 0,
+        httpRequestModel: httpRequestModel,
+        aiRequestModel: null,
+        wsRequestModel: null,
+      ),
+    };
+    unsave();
+    return httpRequestModel.url;
+  }
+
   void update({
     APIType? apiType,
     String? id,
