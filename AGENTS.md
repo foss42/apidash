@@ -24,6 +24,7 @@ The current `main` branch supports:
 | GraphQL requests | Supported through HTTP POST body construction |
 | SSE and streaming HTTP responses | Supported through streaming MIME detection |
 | AI requests | Supported through `genai` and `better_networking` |
+| WebSocket requests | Supported |
 | Dashbot assistant | Supported |
 | cURL, Postman, Insomnia, HAR import | Supported |
 | OpenAPI-assisted import | Supported through Dashbot services |
