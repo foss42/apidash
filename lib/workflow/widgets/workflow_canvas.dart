@@ -25,7 +25,6 @@ class WorkflowCanvas extends ConsumerStatefulWidget {
     this.readOnly = false,
   });
 
-  /// Inspect-only: pan/zoom/select + run. No edit/add/wire.
   final bool readOnly;
 
   @override
