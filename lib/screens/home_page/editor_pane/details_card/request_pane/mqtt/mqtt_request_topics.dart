@@ -7,7 +7,6 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
-import 'package:apidash/models/models.dart';
 import 'mqtt_help_icon.dart';
 
 class EditMQTTTopics extends ConsumerStatefulWidget {
@@ -237,20 +236,12 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  Text(
-                    "Channels you're listening on",
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const MqttHelpIcon(
-                    "The channels you're listening on. '+' means any single "
-                    "word in that spot; '#' means this channel and everything "
-                    "under it.",
-                  ),
-                ],
+              const Align(
+                alignment: Alignment.centerRight,
+                child: MqttHelpIcon(
+                  "Wildcards: '+' matches any single level; '#' matches this "
+                  "level and everything under it.",
+                ),
               ),
               Expanded(
                 child: Theme(

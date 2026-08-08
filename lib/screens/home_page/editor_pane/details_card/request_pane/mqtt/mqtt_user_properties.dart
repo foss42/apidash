@@ -77,7 +77,7 @@ class _EditMQTTUserPropertiesState
     isAddingRow = false;
 
     List<DataColumn> columns = const [
-      DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
+      DataColumn2(label: SizedBox.shrink(), fixedWidth: 30),
       DataColumn2(
         label: Row(
           children: [
