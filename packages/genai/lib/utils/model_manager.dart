@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:better_networking/better_networking.dart';
 import 'package:flutter/foundation.dart';
-import 'package:nanoid/nanoid.dart';
 import '../consts.dart';
 import '../interface/interface.dart';
 import '../models/models.dart';
@@ -12,7 +11,7 @@ class ModelManager {
   }) async {
     try {
       final (resp, _, _) = await sendHttpRequest(
-        nanoid(),
+        'FETCH_MODELS',
         APIType.rest,
         HttpRequestModel(
           url: remoteURL ?? kModelRemoteUrl,
@@ -22,7 +21,8 @@ class ModelManager {
       if (resp == null) {
         debugPrint('fetchModelsFromRemote -> resp == null');
       } else {
-        return availableModelsFromJson(resp.body);
+        var remoteModels = availableModelsFromJson(resp.body);
+        return remoteModels;
       }
     } catch (e) {
       debugPrint('fetchModelsFromRemote -> ${e.toString()}');
@@ -36,18 +36,20 @@ class ModelManager {
     try {
       final oM = await fetchInstalledOllamaModels(ollamaUrl: ollamaUrl);
       if (oM != null) {
-        final l = <AIModelProvider>[];
-        for (final prov in kAvailableModels.modelProviders) {
-          l.add(
-            prov.providerId == ModelAPIProvider.ollama
-                ? prov.copyWith(
-                    providerId: prov.providerId,
-                    providerName: prov.providerName,
-                    sourceUrl: prov.sourceUrl,
-                    models: oM,
-                  )
-                : prov,
-          );
+        List<AIModelProvider> l = [];
+        for (var prov in kAvailableModels.modelProviders) {
+          if (prov.providerId == ModelAPIProvider.ollama) {
+            l.add(
+              prov.copyWith(
+                providerId: prov.providerId,
+                providerName: prov.providerName,
+                sourceUrl: prov.sourceUrl,
+                models: oM,
+              ),
+            );
+          } else {
+            l.add(prov);
+          }
         }
         return kAvailableModels.copyWith(
           version: kAvailableModels.version,
@@ -124,23 +126,23 @@ class ModelManager {
   }) async {
     final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
     try {
-      final (resp, _, _) = await sendHttpRequest(
-        nanoid(),
+      final (resp, _, msg) = await sendHttpRequest(
+        'OLLAMA_FETCH',
         APIType.rest,
         HttpRequestModel(url: url, method: HTTPVerb.get),
         noSSL: true,
       );
-      if (resp == null) return null;
-      final models = jsonDecode(resp.body)['models'];
-      if (models is! List) return [];
-      return [
-        for (final m in models)
-          if (m is Map)
-            Model(
-              id: (m['model'] ?? m['name'])?.toString(),
-              name: (m['name'] ?? m['model'])?.toString(),
-            ),
-      ].where((m) => m.id != null && m.id!.isNotEmpty).toList();
+      if (resp == null) {
+        return null;
+      }
+      final output = jsonDecode(resp.body);
+      final models = output['models'];
+      if (models == null) return [];
+      List<Model> ollamaModels = [];
+      for (final m in models) {
+        ollamaModels.add(Model(id: m['model'], name: m['name']));
+      }
+      return ollamaModels;
     } catch (e) {
       debugPrint('fetchInstalledOllamaModels -> ${e.toString()}');
       return null;
@@ -156,7 +158,7 @@ class ModelManager {
   }) async {
     try {
       final (resp, _, _) = await sendHttpRequest(
-        nanoid(),
+        'PROVIDER_MODELS_FETCH',
         APIType.rest,
         HttpRequestModel(
           url: modelsUrl,
@@ -197,7 +199,7 @@ class ModelManager {
         : kGeminiUrl;
     try {
       final (resp, _, _) = await sendHttpRequest(
-        nanoid(),
+        'GEMINI_MODELS_FETCH',
         APIType.rest,
         HttpRequestModel(
           url: '$base?key=${Uri.encodeQueryComponent(apiKey)}',
