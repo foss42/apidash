@@ -141,13 +141,13 @@ AIRequestModel resolveAIRequestFromLLM(
           ? llm.lastModel
           : (llm.models.isNotEmpty ? llm.models.first : null));
 
-  return withDefaultModelConfigs(
-    AIRequestModel(
-      modelApiProvider: llm.compat,
-      url: endpoint,
-      model: selectedModel,
-      apiKey: llm.apiKey,
-    ),
+  final base = kModelProvidersMap[llm.compat]?.defaultAIRequestModel ??
+      kDefaultAiRequestModel;
+  return base.copyWith(
+    modelApiProvider: llm.compat,
+    url: endpoint,
+    model: selectedModel,
+    apiKey: llm.apiKey,
   );
 }
 
@@ -180,7 +180,7 @@ AIRequestModel applyProviderCredentials(
   bool preferStored = true,
 }) {
   final provider = model.modelApiProvider;
-  if (provider == null) return withDefaultModelConfigs(model);
+  if (provider == null) return model;
 
   final cred = aiProviders?[provider.name];
   final storedKey = cred?['apiKey'];
@@ -195,10 +195,21 @@ AIRequestModel applyProviderCredentials(
       ? (url ?? model.url)
       : (model.url.isNotEmpty ? model.url : (url ?? model.url));
 
-  final withCreds = (nextKey == model.apiKey && nextUrl == model.url)
-      ? model
-      : model.copyWith(apiKey: nextKey, url: nextUrl);
-  return withDefaultModelConfigs(withCreds);
+  var next = model;
+  if (nextKey != model.apiKey || nextUrl != model.url) {
+    next = model.copyWith(apiKey: nextKey, url: nextUrl);
+  }
+
+  // Same as AI Request editor: provider defaults when configs were never set.
+  if (next.modelConfigs.isEmpty) {
+    final defaults =
+        kModelProvidersMap[provider]?.defaultAIRequestModel.modelConfigs ??
+            kDefaultAiRequestModel.modelConfigs;
+    if (defaults.isNotEmpty) {
+      next = next.copyWith(modelConfigs: List<ModelConfig>.from(defaults));
+    }
+  }
+  return next;
 }
 
 Map<String, Map<String, Object?>> upsertBuiltinProvider(

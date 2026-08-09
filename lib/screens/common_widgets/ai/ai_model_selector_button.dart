@@ -185,7 +185,6 @@ class DefaultAIModelSelector extends ConsumerWidget {
         await ref.read(settingsProvider.notifier).update(
               defaultAIModel: withCreds
                   .copyWith(
-                    modelConfigs: [],
                     stream: null,
                     systemPrompt: '',
                     userPrompt: '',
