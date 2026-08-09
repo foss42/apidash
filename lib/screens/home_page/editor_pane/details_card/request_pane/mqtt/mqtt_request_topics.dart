@@ -239,8 +239,8 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
               const Align(
                 alignment: Alignment.centerRight,
                 child: MqttHelpIcon(
-                  "Wildcards: '+' matches any single level; '#' matches this "
-                  "level and everything under it.",
+                  "'+' matches exactly one topic level; '#' matches this level "
+                  "and everything below it (multi-level, must be last).",
                 ),
               ),
               Expanded(

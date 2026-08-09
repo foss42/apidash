@@ -145,8 +145,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       labelText: "Send to topic:",
                       border: UnderlineInputBorder(),
                       suffixIcon: MqttHelpIcon(
-                        "The channel you're sending this message to — like a "
-                        "subject line.",
+                        "The topic to publish this message to.",
                       ),
                       suffixIconConstraints: BoxConstraints(
                         minWidth: 24,
@@ -187,8 +186,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             children: [
               const Text("Retain"),
               const MqttHelpIcon(
-                "Keeps this as the last message on the topic, so anyone who "
-                "connects later gets it right away.",
+                "Broker stores this as the topic's retained message and sends "
+                "it to new subscribers on subscribe.",
               ),
               Switch(
                 value: mqttModel.retainMessage,
@@ -241,8 +240,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "Topic the responder should reply to",
             title: "Response Topic",
             infoText:
-                "For a reply: the channel where you'd like the answer "
-                "to come back.",
+                "MQTT 5 request/response — the topic the receiver should "
+                "publish its reply to.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(responseTopic: val));
             },
@@ -253,8 +252,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "Opaque token to match request ↔ response",
             title: "Correlation Data",
             infoText:
-                "A tag that lets you match a reply back to the message "
-                "you sent.",
+                "MQTT 5 — data echoed back in the response so you can match "
+                "it to this request.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(correlationData: val));
             },
@@ -267,8 +266,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "0 / empty = no expiry",
             title: "Message Expiry Interval (seconds)",
             infoText:
-                "How long this message stays valid before it's dropped "
-                "if it hasn't been delivered.",
+                "MQTT 5 — seconds the broker keeps the message for delivery "
+                "before discarding it.",
             onChanged: (val) {
               final parsed = int.tryParse(val) ?? 0;
               _updateMqttModel(
@@ -295,7 +294,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             initialValue: mqttModel.username,
             hintText: "Username",
             title: "Username",
-            infoText: "Your sign-in name — only if the service requires one.",
+            infoText: "Username sent in the CONNECT packet for authentication.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(username: val));
             },
@@ -306,8 +305,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
             hintText: "Password",
             title: "Password",
             infoText:
-                "Your sign-in password — only if the service requires "
-                "one.",
+                "Password sent in the CONNECT packet for authentication.",
             onChanged: (val) {
               _updateMqttModel((m) => m.copyWith(password: val));
             },
@@ -342,8 +340,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   hintText: "Client ID",
                   title: "Client ID",
                   infoText:
-                      "A name this app uses to identify itself to the "
-                      "service. Usually fine to leave as-is.",
+                      "Identifier that uniquely identifies this client to the "
+                      "broker; leave empty to have the broker assign one.",
                   onChanged: (val) {
                     _updateMqttModel((m) => m.copyWith(clientId: val));
                   },
@@ -357,8 +355,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   hintText: "1883",
                   title: "Port",
                   infoText:
-                      "The specific door on the service to knock on. "
-                      "Leave the default unless you were given another number.",
+                      "Broker port — 1883 (plaintext), 8883 (TLS), "
+                      "8083/8084 (WebSocket).",
                   onChanged: (val) {
                     final port = int.tryParse(val) ?? 1883;
                     _updateMqttModel((m) => m.copyWith(port: port));
@@ -378,8 +376,9 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                   hintText: "60",
                   title: "Keep Alive (s)",
                   infoText:
-                      "How often to send a quiet 'still here' signal so "
-                      "the connection doesn't drop.",
+                      "Max seconds between packets; the client sends PINGREQ "
+                      "within this interval and the broker drops the "
+                      "connection after 1.5×.",
                   onChanged: (val) {
                     final parsed = int.tryParse(val) ?? 60;
                     _updateMqttModel(
@@ -415,8 +414,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       ),
                     ),
                     const MqttHelpIcon(
-                      "How hard to try to deliver a message — from 'send once "
-                      "and hope' to 'guarantee it arrives exactly once'.",
+                      "Quality of Service — 0: at most once, 1: at least once, "
+                      "2: exactly once.",
                     ),
                   ],
                 ),
@@ -451,8 +450,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       ),
                     ),
                     const MqttHelpIcon(
-                      "Start fresh each time, or pick up where you left off "
-                      "and get messages you missed while away.",
+                      "Start a fresh session, discarding any session state the "
+                      "broker stored for this client ID.",
                     ),
                   ],
                 ),
@@ -465,8 +464,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                     hintText: "3600",
                     title: "Session Expiry (s)",
                     infoText:
-                        "How long the service should hold your missed "
-                        "messages after you disconnect.",
+                        "MQTT 5 — seconds the broker keeps the session after "
+                        "disconnect (0 = ends immediately).",
                     onChanged: (val) {
                       final parsed = int.tryParse(val) ?? 0;
                       _updateMqttModel(
@@ -518,8 +517,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                     ),
                   ),
                   const MqttHelpIcon(
-                    "Encrypts the connection so no one in between can read "
-                    "your messages.",
+                    "Encrypt the connection with TLS (typically port 8883).",
                   ),
                 ],
               ),
@@ -543,8 +541,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       ),
                     ),
                     const MqttHelpIcon(
-                      "Connect even if the security certificate can't be "
-                      "verified. Only for testing.",
+                      "Accept self-signed or otherwise untrusted TLS "
+                      "certificates; insecure, for testing only.",
                     ),
                   ],
                 ),
@@ -581,8 +579,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                     ),
                   ),
                   const MqttHelpIcon(
-                    "Send messages over the web — useful when a normal "
-                    "connection is blocked.",
+                    "Connect using MQTT over WebSocket instead of raw TCP.",
                   ),
                 ],
               ),
@@ -605,9 +602,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       hintText: "Will Topic",
                       title: "Will Topic",
                       infoText:
-                          "A 'goodbye' note the service sends for you if "
-                          "you disconnect unexpectedly. This is the channel "
-                          "it's sent to.",
+                          "The topic the broker publishes the Will message to.",
                       onChanged: (val) {
                         _updateMqttModel((m) => m.copyWith(willTopic: val));
                       },
@@ -620,8 +615,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                       hintText: "Will Message",
                       title: "Will Message",
                       infoText:
-                          "The text of that 'goodbye' note, sent "
-                          "automatically if you disconnect unexpectedly.",
+                          "The Will message payload.",
                       onChanged: (val) {
                         _updateMqttModel((m) => m.copyWith(willMessage: val));
                       },
@@ -661,7 +655,7 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                           ),
                         ),
                         const MqttHelpIcon(
-                          "How hard to try to deliver that goodbye note.",
+                          "Quality of Service for the Will message.",
                         ),
                       ],
                     ),
@@ -684,8 +678,8 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                           ),
                         ),
                         const MqttHelpIcon(
-                          "Keep the goodbye note as the last message on its "
-                          "channel, so later joiners still see it.",
+                          "Retain the Will message on its topic for future "
+                          "subscribers.",
                         ),
                       ],
                     ),

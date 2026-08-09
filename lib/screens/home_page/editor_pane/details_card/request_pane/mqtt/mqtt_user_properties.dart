@@ -82,7 +82,9 @@ class _EditMQTTUserPropertiesState
         label: Row(
           children: [
             Text("Key"),
-            MqttHelpIcon("Extra custom labels you can attach to a message."),
+            MqttHelpIcon(
+              "MQTT 5 — custom key/value string pairs attached to the packet.",
+            ),
           ],
         ),
       ),
