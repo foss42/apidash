@@ -2,7 +2,9 @@
 
 Workflows let you run multi-step API scenarios on a visual canvas: chain requests, pass data between steps, run independent steps in parallel, branch on results, and repeat actions.
 
-**Desktop only for now** — the mobile app does not include a Workflows tab; use the desktop (wide) layout to build and run workflows.
+**Desktop (wide layout)** — full edit: add/wire nodes, Arrange, Dashbot Generate Workflow.
+
+**Mobile / medium layout** — same canvas for view + **Run** only (select an existing workflow from disk or Sync). Creating or editing the graph is desktop-only.
 
 
 ## What workflows do
@@ -161,10 +163,39 @@ Runs the **Each** branch a fixed number of times (no list).
 
 - **Times to repeat**: choose **1–10**, or **Custom** and type digits only.
 
+## Sequence nodes
+
+A Sequence node builds a **static list** and feeds it into a **For each** loop. Use it when the list is not from an API extract. If the list already comes from a response extraction (for example `{{users}}`), skip Sequence and set the loop **List** to that variable.
+
+Sequence is not in the Add node sheet — attach it from For each:
+
+1. Add a **Loop** in For each mode.
+2. Stretch the loop’s bottom **Seq** port into empty space to create and wire a Sequence (or drag **Seq** onto an existing Sequence).
+3. Open the Sequence node:
+   - **Source**: **List** (`[a, b, c]`), **JSON** (a JSON array), or **JSONL** (one JSON value per line).
+   - **Save as** (required): variable name for the list (new Sequence defaults to `batch`).
+4. On the For each loop, set **List** to the same name (`{{batch}}`, or `{{prompts}}` if you renamed Save as).
+5. Wire **Each** to the body as usual. Do not put Sequence on the main Start → loop **In** path — only Sequence **Next** → For each **Seq**.
+
+**Item extraction**
+
+- List of plain strings: set **Variable** only, leave **Path** empty.
+- JSON / JSONL objects: set **Path** to the field and **Variable** to the name you use in the body (`{{prompt}}`).
+
+**Example**
+
+```
+Start → For each  List {{prompts}}  Variable prompt
+              Each → request using {{prompt}}
+         ↑ Seq
+    Sequence  List [hello, world]  Save as prompts
+```
+
 ## Variables
 
 - Use **Environments** for shared inputs (`{{name}}` in URLs, headers, and bodies).
 - Use **extractions** on request nodes to pass response values into later steps on the **same chain**.
+- Use **Sequence** **Save as** for a static list; For each **List** must match (`{{batch}}`, etc.).
 - Use **Item extraction** on a for-each loop to pass a field from each list item into the body (same Variable + Path pattern).
 - If an environment variable and an extraction share the same name, the **extraction wins** during the run.
 - Parallel branches only share extractions after an AND-join (see above); conflicting names fail the run.
