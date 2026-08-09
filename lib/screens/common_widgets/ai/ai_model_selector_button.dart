@@ -7,10 +7,6 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/ai_provider_utils.dart';
 import 'package:apidash/widgets/anchored_overlay_menu.dart';
 
-/// Compact dropdown of configured models + Add LLM.
-///
-/// Uses [showAnchoredOverlayMenu] so the menu paints above DashBot's
-/// [OverlayEntry] (navigator [showMenu] would open underneath).
 class AIModelSelectorButton extends ConsumerWidget {
   final AIRequestModel? aiRequestModel;
   final bool readonly;
@@ -157,7 +153,6 @@ class AIModelSelectorButton extends ConsumerWidget {
   }
 }
 
-/// Default LLM control for DashBot / agents (persists [settings.defaultAIModel]).
 class DefaultAIModelSelector extends ConsumerWidget {
   final ButtonStyle? buttonStyle;
   final bool dashbotStyle;
@@ -183,13 +178,7 @@ class DefaultAIModelSelector extends ConsumerWidget {
       onModelUpdated: (d) async {
         final withCreds = applyProviderCredentials(d, settings.aiProviders);
         await ref.read(settingsProvider.notifier).update(
-              defaultAIModel: withCreds
-                  .copyWith(
-                    stream: null,
-                    systemPrompt: '',
-                    userPrompt: '',
-                  )
-                  .toJson(),
+              defaultAIModel: defaultAIModelToJson(withCreds),
             );
       },
     );

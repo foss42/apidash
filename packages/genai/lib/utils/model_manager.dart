@@ -60,14 +60,12 @@ class ModelManager {
     return kAvailableModels;
   }
 
-  /// Curated offline catalog (skips empty ids like Azure "Custom").
   static List<Model> knownModelsFor(ModelAPIProvider provider) {
     return (kAvailableModels.map[provider]?.models ?? const [])
         .where((m) => m.id != null && m.id!.isNotEmpty)
         .toList(growable: false);
   }
 
-  /// Live list from the provider. `null` = keep [knownModelsFor].
   static Future<List<Model>?> fetchProviderModels({
     required ModelAPIProvider provider,
     String? apiKey,
@@ -107,7 +105,6 @@ class ModelManager {
     }
   }
 
-  /// `…/v1/chat/completions` → host root for Ollama `/api/tags`.
   static String ollamaHostFromEndpoint(String? url) {
     final uri = Uri.tryParse(url?.trim() ?? '');
     if (uri == null || uri.host.isEmpty) return kBaseOllamaUrl;
@@ -150,7 +147,6 @@ class ModelManager {
     }
   }
 
-  /// OpenAI / Anthropic style: `{ "data": [ { "id": "..." } ] }`.
   static Future<List<Model>?> _fetchDataIdModels({
     required String modelsUrl,
     required String apiKey,

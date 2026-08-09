@@ -153,7 +153,6 @@ class _AiLlmSettingsDialogState extends ConsumerState<AiLlmSettingsDialog> {
     return switch (provider) {
       ModelAPIProvider.ollama || ModelAPIProvider.azureopenai =>
         raw.isEmpty ? null : raw,
-      // Cloud Basic form has no URL field — never reuse a leftover Ollama URL.
       _ => null,
     };
   }
@@ -239,31 +238,16 @@ class _AiLlmSettingsDialogState extends ConsumerState<AiLlmSettingsDialog> {
     Map<String, Object?>? defaultAIModel = settings.defaultAIModel;
 
     if (makeDefault != null) {
-      defaultAIModel = resolveAIRequestFromLLM(makeDefault)
-          .copyWith(
-            stream: null,
-            systemPrompt: '',
-            userPrompt: '',
-          )
-          .toJson();
+      defaultAIModel = defaultAIModelToJson(resolveAIRequestFromLLM(makeDefault));
     } else if ((defaultAIModel == null || defaultAIModel.isEmpty) &&
         configured.isNotEmpty) {
-      defaultAIModel = resolveAIRequestFromLLM(configured.first)
-          .copyWith(
-            stream: null,
-            systemPrompt: '',
-            userPrompt: '',
-          )
-          .toJson();
+      defaultAIModel =
+          defaultAIModelToJson(resolveAIRequestFromLLM(configured.first));
     } else if (defaultAIModel != null && defaultAIModel.isNotEmpty) {
       final active = safeAIRequestModelFromJson(defaultAIModel);
-      defaultAIModel = applyProviderCredentials(active, providers)
-          .copyWith(
-            stream: null,
-            systemPrompt: '',
-            userPrompt: '',
-          )
-          .toJson();
+      defaultAIModel = defaultAIModelToJson(
+        applyProviderCredentials(active, providers),
+      );
     }
 
     await ref.read(settingsProvider.notifier).update(
@@ -321,13 +305,7 @@ class _AiLlmSettingsDialogState extends ConsumerState<AiLlmSettingsDialog> {
           aiProviders: providers,
           defaultAIModel: remaining.isEmpty
               ? <String, Object?>{}
-              : resolveAIRequestFromLLM(remaining.first)
-                  .copyWith(
-                    stream: null,
-                    systemPrompt: '',
-                    userPrompt: '',
-                  )
-                  .toJson(),
+              : defaultAIModelToJson(resolveAIRequestFromLLM(remaining.first)),
         );
   }
 
@@ -911,7 +889,6 @@ class _ProfileRow extends StatelessWidget {
   }
 }
 
-/// Settings row that opens [showAiLlmSettingsDialog].
 class AIProvidersSettingsSection extends ConsumerStatefulWidget {
   const AIProvidersSettingsSection({super.key});
 

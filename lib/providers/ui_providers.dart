@@ -8,13 +8,9 @@ final mobileScaffoldKeyStateProvider = StateProvider<GlobalKey<ScaffoldState>>(
 );
 final leftDrawerStateProvider = StateProvider<bool>((ref) => false);
 final navRailIndexStateProvider = StateProvider<int>((ref) => 0);
-
-/// Desktop Settings rail index (see [Dashboard] IndexedStack).
 const kSettingsNavRailIndex = 4;
-
 final openAiLlmSetupProvider = StateProvider<bool>((ref) => false);
 
-/// Navigate to Settings and open the Add LLM modal.
 void openAddLlmInSettings(WidgetRef ref) {
   ref.read(openAiLlmSetupProvider.notifier).state = true;
   ref.read(navRailIndexStateProvider.notifier).state = kSettingsNavRailIndex;

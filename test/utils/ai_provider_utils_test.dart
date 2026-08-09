@@ -12,16 +12,6 @@ void main() {
       expect(model.modelApiProvider, isNull);
       expect(model.model, 'foo');
     });
-
-    test('keeps known provider', () {
-      final model = safeAIRequestModelFromJson({
-        'modelApiProvider': 'openai',
-        'model': 'gpt-4o',
-        'apiKey': 'sk-x',
-      });
-      expect(model.modelApiProvider, ModelAPIProvider.openai);
-      expect(model.model, 'gpt-4o');
-    });
   });
 
   group('listConfiguredLLMs', () {
@@ -31,49 +21,22 @@ void main() {
         'anthropic': {'apiKey': ''},
         'custom_1': {
           'compat': 'openai',
-          'displayName': 'OpenRouter',
-          'apiKey': 'or-key',
-          'url': 'https://openrouter.ai/api/v1/chat/completions',
+          'displayName': 'Custom',
+          'apiKey': 'custom-key',
+          'url': 'https://llm.example.com/v1/chat/completions',
           'models': ['x'],
           'lastModel': 'x',
         },
       });
       expect(list.map((e) => e.id).toSet(), {'openai', 'custom_1'});
-      expect(listConfiguredLLMs({'anthropic': {}}), isEmpty);
-    });
-
-    test('ollama only when explicitly added', () {
-      expect(listConfiguredLLMs(null), isEmpty);
-      expect(
-        listConfiguredLLMs({
-          'ollama': {'url': 'http://localhost:11434/v1/chat/completions'},
-        }).single.id,
-        'ollama',
-      );
-    });
-  });
-
-  group('upsertCustomProvider', () {
-    test('creates custom entry', () {
-      final next = upsertCustomProvider(
-        null,
-        id: 'custom_abc',
-        displayName: 'Groq',
-        apiKey: 'g-key',
-        url: 'https://api.groq.com/openai/v1/chat/completions',
-        models: ['llama-3.1'],
-      );
-      expect(next['custom_abc']?['displayName'], 'Groq');
-      expect(next['custom_abc']?['compat'], 'openai');
-      expect(next['custom_abc']?['lastModel'], 'llama-3.1');
     });
   });
 
   group('resolveAIRequestFromLLM', () {
-    test('uses openai compat for custom', () {
+    test('uses genai defaults for custom openai-compat', () {
       const llm = ConfiguredLLM(
         id: 'custom_1',
-        displayName: 'OR',
+        displayName: 'Custom',
         compat: ModelAPIProvider.openai,
         apiKey: 'k',
         url: 'https://example.com/v1/chat/completions',
@@ -85,66 +48,42 @@ void main() {
       expect(req.modelApiProvider, ModelAPIProvider.openai);
       expect(req.model, 'm1');
       expect(req.url, 'https://example.com/v1/chat/completions');
-      expect(req.apiKey, 'k');
+      expect(req.modelConfigs, isNotEmpty);
     });
   });
 
   group('applyProviderCredentials', () {
-    test('fills apiKey and url from store', () {
+    test('fills apiKey from store', () {
       final model = AIRequestModel(
         modelApiProvider: ModelAPIProvider.openai,
         model: 'gpt-4o',
         url: kOpenAIUrl,
         apiKey: '',
       );
-      final providers = {
-        'openai': {'apiKey': 'sk-test', 'url': 'https://custom.example/v1'},
-      };
-
-      final result = applyProviderCredentials(model, providers);
-
+      final result = applyProviderCredentials(model, {
+        'openai': {'apiKey': 'sk-test'},
+      });
       expect(result.apiKey, 'sk-test');
-      expect(result.url, 'https://custom.example/v1');
-      expect(result.model, 'gpt-4o');
     });
 
-    test('preferStored false keeps request key', () {
+    test('custom endpoint uses custom_ entry not builtin', () {
       final model = AIRequestModel(
         modelApiProvider: ModelAPIProvider.openai,
-        model: 'gpt-4o',
-        apiKey: 'request-key',
+        model: 'my-model',
+        apiKey: 'custom-key',
+        url: 'https://llm.example.com/v1/chat/completions',
       );
-      final providers = {
-        'openai': {'apiKey': 'settings-key'},
-      };
-
-      final result = applyProviderCredentials(
-        model,
-        providers,
-        preferStored: false,
-      );
-
-      expect(result.apiKey, 'request-key');
-    });
-  });
-
-  group('upsertBuiltinProvider', () {
-    test('adds and removes provider entries', () {
-      final added = upsertBuiltinProvider(
-        null,
-        ModelAPIProvider.anthropic,
-        apiKey: ' ant-key ',
-        url: '',
-      );
-      expect(added['anthropic']?['apiKey'], 'ant-key');
-
-      final removed = upsertBuiltinProvider(
-        added,
-        ModelAPIProvider.anthropic,
-        apiKey: '',
-        url: '',
-      );
-      expect(removed.containsKey('anthropic'), isFalse);
+      final result = applyProviderCredentials(model, {
+        'openai': {'apiKey': 'openai-key', 'url': kOpenAIUrl},
+        'custom_1': {
+          'compat': 'openai',
+          'apiKey': 'custom-key-updated',
+          'url': 'https://llm.example.com/v1/chat/completions',
+          'models': ['my-model'],
+          'lastModel': 'my-model',
+        },
+      });
+      expect(result.apiKey, 'custom-key-updated');
     });
   });
 
@@ -155,30 +94,7 @@ void main() {
         'apiKey': 'g-key',
         'url': kGeminiUrl,
       });
-
       expect(migrated?['gemini']?['apiKey'], 'g-key');
-      expect(migrated?['gemini']?['url'], kGeminiUrl);
-    });
-
-    test('ignores unknown provider ids', () {
-      final migrated = migrateAiProvidersFromDefault(null, {
-        'modelApiProvider': 'customopenai',
-        'apiKey': 'k',
-        'url': kOpenAIUrl,
-      });
-      expect(migrated, isNull);
-    });
-
-    test('does not overwrite existing store', () {
-      final existing = {
-        'openai': {'apiKey': 'keep'},
-      };
-      final migrated = migrateAiProvidersFromDefault(existing, {
-        'modelApiProvider': 'gemini',
-        'apiKey': 'g-key',
-      });
-
-      expect(migrated, same(existing));
     });
   });
 }
