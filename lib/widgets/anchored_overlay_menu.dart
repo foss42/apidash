@@ -23,11 +23,6 @@ class OverlayMenuItem<T> {
       );
 }
 
-/// Shows a compact menu above floating hosts (e.g. DashBot [OverlayEntry]).
-///
-/// Uses [Overlay.insert] on the root overlay so the menu stacks **above**
-/// manually inserted overlay windows. Prefer this over [showMenu] / navigator
-/// routes whenever the anchor may live inside an [OverlayEntry].
 Future<T?> showAnchoredOverlayMenu<T>({
   required BuildContext context,
   required List<OverlayMenuItem<T>> items,

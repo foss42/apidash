@@ -152,16 +152,16 @@ void main() {
       "aiProviders": {
         "custom_abc": {
           "compat": "openai",
-          "displayName": "OpenRouter",
-          "apiKey": "or-key",
-          "url": "https://openrouter.ai/api/v1/chat/completions",
-          "models": ["anthropic/claude-sonnet"],
-          "lastModel": "anthropic/claude-sonnet",
+          "displayName": "Custom",
+          "apiKey": "custom-key",
+          "url": "https://llm.example.com/v1/chat/completions",
+          "models": ["my-model"],
+          "lastModel": "my-model",
         },
       },
     };
     final result = SettingsModel.fromJson(input);
-    expect(result.aiProviders?['custom_abc']?['displayName'], 'OpenRouter');
+    expect(result.aiProviders?['custom_abc']?['displayName'], 'Custom');
     expect(result.aiProviders?['custom_abc']?['compat'], 'openai');
   });
 

@@ -2,7 +2,6 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/common_widgets/ai/ai.dart';
 import 'providers/providers.dart';
 import 'routes/routes.dart';
 import 'utils/utils.dart';
@@ -77,51 +76,47 @@ class _DashbotTabState extends ConsumerState<DashbotTab>
               if (widget.showTopBar)
                 Padding(
                   padding: kP8,
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: DefaultAIModelSelector(
-                            dashbotStyle: true,
-                          ),
-                        ),
-                      ),
-                      if (!kIsMobile) ...[
-                        ADIconButton(
-                          icon: Icons.close_fullscreen,
-                          onPressed: () {
-                            ref
-                                .read(dashbotWindowNotifierProvider.notifier)
-                                .togglePopped();
-
-                            final newState =
-                                ref.read(dashbotWindowNotifierProvider);
-                            if (newState.isPopped) {
-                              showDashbotWindow(context, ref);
-                            }
-                          },
-                        ),
-                        ADIconButton(
-                          onPressed: () {
-                            final isActive = ref
-                                .read(dashbotWindowNotifierProvider)
-                                .isActive;
-
-                            ref
-                                .read(dashbotWindowNotifierProvider.notifier)
-                                .togglePopped();
-                            if (isActive) {
+                  child: Align(
+                    alignment: AlignmentGeometry.centerRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (!kIsMobile) ...[
+                          ADIconButton(
+                            icon: Icons.close_fullscreen,
+                            onPressed: () {
                               ref
-                                  .read(
-                                      dashbotWindowNotifierProvider.notifier)
-                                  .toggleActive();
-                            }
-                          },
-                          icon: Icons.close,
-                        ),
+                                  .read(dashbotWindowNotifierProvider.notifier)
+                                  .togglePopped();
+
+                              final newState =
+                                  ref.read(dashbotWindowNotifierProvider);
+                              if (newState.isPopped) {
+                                showDashbotWindow(context, ref);
+                              }
+                            },
+                          ),
+                          ADIconButton(
+                            onPressed: () {
+                              final isActive = ref
+                                  .read(dashbotWindowNotifierProvider)
+                                  .isActive;
+
+                              ref
+                                  .read(dashbotWindowNotifierProvider.notifier)
+                                  .togglePopped();
+                              if (isActive) {
+                                ref
+                                    .read(
+                                        dashbotWindowNotifierProvider.notifier)
+                                    .toggleActive();
+                              }
+                            },
+                            icon: Icons.close,
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               Expanded(

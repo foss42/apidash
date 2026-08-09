@@ -38,10 +38,6 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
-
-  /// Per-provider credentials keyed by [ModelAPIProvider.name].
-  /// Each value: `{ "apiKey": "...", "url": "..." }`.
-  /// Scalable for future custom providers without schema churn.
   final Map<String, Map<String, Object?>>? aiProviders;
 
   SettingsModel copyWith({

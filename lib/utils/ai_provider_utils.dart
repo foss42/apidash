@@ -12,7 +12,6 @@ const kAIProviderDisplayNames = <ModelAPIProvider, String>{
 const kCustomProviderPrefix = 'custom_';
 const kCompatOpenAI = 'openai';
 
-/// One configured LLM from settings `aiProviders`.
 class ConfiguredLLM {
   const ConfiguredLLM({
     required this.id,
@@ -119,39 +118,53 @@ List<ConfiguredLLM> listConfiguredLLMs(
 }
 
 String? defaultEndpointFor(ModelAPIProvider provider) {
-  return switch (provider) {
-    ModelAPIProvider.openai => kOpenAIUrl,
-    ModelAPIProvider.anthropic => kAnthropicUrl,
-    ModelAPIProvider.gemini => kGeminiUrl,
-    ModelAPIProvider.ollama => kOllamaUrl,
-    ModelAPIProvider.azureopenai => '',
-  };
+  final url =
+      kModelProvidersMap[provider]?.defaultAIRequestModel.url ?? '';
+  return url.isEmpty ? null : url;
 }
 
 AIRequestModel resolveAIRequestFromLLM(
   ConfiguredLLM llm, {
   String? model,
 }) {
-  final endpoint = (llm.url != null && llm.url!.isNotEmpty)
-      ? llm.url!
-      : (defaultEndpointFor(llm.compat) ?? '');
   final selectedModel = model?.isNotEmpty == true
       ? model
       : (llm.lastModel?.isNotEmpty == true
           ? llm.lastModel
           : (llm.models.isNotEmpty ? llm.models.first : null));
-
   final base = kModelProvidersMap[llm.compat]?.defaultAIRequestModel ??
       kDefaultAiRequestModel;
+  final endpoint =
+      (llm.url != null && llm.url!.isNotEmpty) ? llm.url! : base.url;
   return base.copyWith(
     modelApiProvider: llm.compat,
+    model: selectedModel ?? base.model,
+    apiKey: llm.apiKey ?? base.apiKey,
     url: endpoint,
-    model: selectedModel,
-    apiKey: llm.apiKey,
   );
 }
 
-/// Parses settings JSON; unknown `modelApiProvider` values are dropped.
+Map<String, Object?> defaultAIModelToJson(AIRequestModel model) {
+  return model
+      .copyWith(
+        modelConfigs: const [],
+        stream: null,
+        systemPrompt: '',
+        userPrompt: '',
+      )
+      .toJson();
+}
+
+AIRequestModel withProviderDefaultConfigs(AIRequestModel model) {
+  if (model.modelConfigs.isNotEmpty) return model;
+  final provider = model.modelApiProvider;
+  final defaults =
+      kModelProvidersMap[provider]?.defaultAIRequestModel.modelConfigs ??
+          kDefaultAiRequestModel.modelConfigs;
+  if (defaults.isEmpty) return model;
+  return model.copyWith(modelConfigs: List<ModelConfig>.from(defaults));
+}
+
 AIRequestModel safeAIRequestModelFromJson(Map<String, Object?>? json) {
   if (json == null || json.isEmpty) return const AIRequestModel();
   final sanitized = Map<String, Object?>.from(json);
@@ -173,43 +186,66 @@ AIRequestModel safeAIRequestModelFromJson(Map<String, Object?>? json) {
   }
 }
 
-/// Fills apiKey / url from `aiProviders` (by built-in provider name).
+Map<String, Object?>? _credentialEntryFor(
+  AIRequestModel model,
+  Map<String, Map<String, Object?>>? aiProviders,
+) {
+  if (aiProviders == null || aiProviders.isEmpty) return null;
+  final provider = model.modelApiProvider;
+  if (provider == null) return null;
+
+  if (model.url.isNotEmpty) {
+    for (final entry in aiProviders.entries) {
+      if (!isCustomProviderId(entry.key)) continue;
+      final u = entry.value['url'];
+      if (u is String && u.isNotEmpty && u == model.url) {
+        return entry.value;
+      }
+    }
+  }
+
+  final builtin = aiProviders[provider.name];
+  if (builtin == null) return null;
+
+  final defaultUrl = defaultEndpointFor(provider) ?? '';
+  final storedUrl = builtin['url'];
+  final stored = storedUrl is String && storedUrl.isNotEmpty ? storedUrl : null;
+
+  if (model.url.isNotEmpty &&
+      model.url != defaultUrl &&
+      (stored == null || model.url != stored)) {
+    return null;
+  }
+  return builtin;
+}
+
 AIRequestModel applyProviderCredentials(
   AIRequestModel model,
   Map<String, Map<String, Object?>>? aiProviders, {
   bool preferStored = true,
 }) {
-  final provider = model.modelApiProvider;
-  if (provider == null) return model;
-
-  final cred = aiProviders?[provider.name];
-  final storedKey = cred?['apiKey'];
-  final storedUrl = cred?['url'];
-  final key = storedKey is String && storedKey.isNotEmpty ? storedKey : null;
-  final url = storedUrl is String && storedUrl.isNotEmpty ? storedUrl : null;
-
-  final nextKey = preferStored
-      ? (key ?? model.apiKey)
-      : ((model.apiKey?.isNotEmpty ?? false) ? model.apiKey : key);
-  final nextUrl = preferStored
-      ? (url ?? model.url)
-      : (model.url.isNotEmpty ? model.url : (url ?? model.url));
-
   var next = model;
-  if (nextKey != model.apiKey || nextUrl != model.url) {
-    next = model.copyWith(apiKey: nextKey, url: nextUrl);
-  }
 
-  // Same as AI Request editor: provider defaults when configs were never set.
-  if (next.modelConfigs.isEmpty) {
-    final defaults =
-        kModelProvidersMap[provider]?.defaultAIRequestModel.modelConfigs ??
-            kDefaultAiRequestModel.modelConfigs;
-    if (defaults.isNotEmpty) {
-      next = next.copyWith(modelConfigs: List<ModelConfig>.from(defaults));
+  final cred = _credentialEntryFor(model, aiProviders);
+  if (cred != null) {
+    final storedKey = cred['apiKey'];
+    final storedUrl = cred['url'];
+    final key = storedKey is String && storedKey.isNotEmpty ? storedKey : null;
+    final url = storedUrl is String && storedUrl.isNotEmpty ? storedUrl : null;
+
+    final nextKey = preferStored
+        ? (key ?? model.apiKey)
+        : ((model.apiKey?.isNotEmpty ?? false) ? model.apiKey : key);
+    final nextUrl = preferStored
+        ? (url ?? model.url)
+        : (model.url.isNotEmpty ? model.url : (url ?? model.url));
+
+    if (nextKey != model.apiKey || nextUrl != model.url) {
+      next = model.copyWith(apiKey: nextKey, url: nextUrl);
     }
   }
-  return next;
+
+  return withProviderDefaultConfigs(next);
 }
 
 Map<String, Map<String, Object?>> upsertBuiltinProvider(
@@ -236,7 +272,10 @@ Map<String, Map<String, Object?>> upsertBuiltinProvider(
   final prev = Map<String, Object?>.from(next[provider.name] ?? {});
   next[provider.name] = {
     ...prev,
-    if (key.isNotEmpty) 'apiKey': key else if (prev['apiKey'] != null) 'apiKey': prev['apiKey'],
+    if (key.isNotEmpty)
+      'apiKey': key
+    else if (prev['apiKey'] != null)
+      'apiKey': prev['apiKey'],
     if (endpoint.isNotEmpty)
       'url': endpoint
     else if (prev['url'] != null)
@@ -309,7 +348,6 @@ Map<String, Map<String, Object?>> setProviderLastModel(
   return next;
 }
 
-/// Seeds `aiProviders` from `defaultAIModel` when empty (known providers only).
 Map<String, Map<String, Object?>>? migrateAiProvidersFromDefault(
   Map<String, Map<String, Object?>>? aiProviders,
   Map<String, Object?>? defaultAIModel,

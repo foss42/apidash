@@ -536,7 +536,7 @@ const kLabelAddLLMEllipsis = "Add LLM…";
 const kLabelBasic = "Basic";
 const kLabelCustom = "Custom";
 const kLabelCustomOpenAIHint =
-    "Works with OpenRouter, Groq, DeepSeek, vLLM, and other OpenAI-compatible APIs.";
+    "Works with any OpenAI-compatible API endpoint.";
 const kLabelSetAsDefault = "Set as Default";
 const kLabelDefaultBadge = "Default";
 const kLabelRemove = "Remove";
@@ -544,10 +544,10 @@ const kLabelProviderType = "LLM Provider";
 const kLabelModel = "LLM Model";
 const kLabelApiKeyField = "API Key";
 const kLabelBaseUrl = "Base URL";
-const kHintModelIds = "e.g. anthropic/claude-sonnet-4.5";
+const kHintModelIds = "e.g. gpt-4o, llama3";
 const kHintOllamaRunningModels =
     "Your installed Ollama models will appear here";
-const kHintCustomEndpoint = "https://openrouter.ai/api/v1/chat/completions";
+const kHintCustomEndpoint = "https://api.example.com/v1/chat/completions";
 const kLabelEdit = "Edit";
 const kLabelSaveResponses = "Save Responses";
 const kLabelSaveResponsesSubtitle =
