@@ -9,12 +9,14 @@ class URLField extends StatelessWidget {
     this.initialValue,
     this.onChanged,
     this.onFieldSubmitted,
+    this.hintText,
   });
 
   final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
+  final String? hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class URLField extends StatelessWidget {
       initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(
-        hintText: kHintTextUrlCard,
+        hintText: hintText ?? kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
           color: Theme.of(context).colorScheme.outlineVariant,
         ),

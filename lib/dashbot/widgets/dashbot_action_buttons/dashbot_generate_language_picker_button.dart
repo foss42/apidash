@@ -27,6 +27,9 @@ class DashbotGenerateLanguagePicker extends ConsumerWidget
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final langs = _extractLanguages(action.value);
+    // The WS codegen intro marks its picker action with path "websocket" so
+    // the follow-up request is routed to the WS code generation prompt.
+    final isWs = action.path == 'websocket';
     return Wrap(
       spacing: 6,
       runSpacing: 6,
@@ -34,9 +37,13 @@ class DashbotGenerateLanguagePicker extends ConsumerWidget
         for (final l in langs)
           OutlinedButton(
             onPressed: () {
-              ref.read(chatViewmodelProvider.notifier).sendMessage(
+              ref
+                  .read(chatViewmodelProvider.notifier)
+                  .sendMessage(
                     text: 'Please generate code in $l',
-                    type: ChatMessageType.generateCode,
+                    type: isWs
+                        ? ChatMessageType.generateWsCode
+                        : ChatMessageType.generateCode,
                   );
             },
             child: Text(l, style: const TextStyle(fontSize: 12)),
