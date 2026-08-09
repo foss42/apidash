@@ -241,7 +241,6 @@ class _AiLlmSettingsDialogState extends ConsumerState<AiLlmSettingsDialog> {
     if (makeDefault != null) {
       defaultAIModel = resolveAIRequestFromLLM(makeDefault)
           .copyWith(
-            modelConfigs: [],
             stream: null,
             systemPrompt: '',
             userPrompt: '',
@@ -251,7 +250,6 @@ class _AiLlmSettingsDialogState extends ConsumerState<AiLlmSettingsDialog> {
         configured.isNotEmpty) {
       defaultAIModel = resolveAIRequestFromLLM(configured.first)
           .copyWith(
-            modelConfigs: [],
             stream: null,
             systemPrompt: '',
             userPrompt: '',
@@ -261,7 +259,6 @@ class _AiLlmSettingsDialogState extends ConsumerState<AiLlmSettingsDialog> {
       final active = safeAIRequestModelFromJson(defaultAIModel);
       defaultAIModel = applyProviderCredentials(active, providers)
           .copyWith(
-            modelConfigs: [],
             stream: null,
             systemPrompt: '',
             userPrompt: '',
@@ -326,7 +323,6 @@ class _AiLlmSettingsDialogState extends ConsumerState<AiLlmSettingsDialog> {
               ? <String, Object?>{}
               : resolveAIRequestFromLLM(remaining.first)
                   .copyWith(
-                    modelConfigs: [],
                     stream: null,
                     systemPrompt: '',
                     userPrompt: '',

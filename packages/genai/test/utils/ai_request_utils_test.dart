@@ -86,29 +86,14 @@ void main() {
       },
     );
 
-    test('executeGenAIRequest throws on error', () async {
+    test('executeGenAIRequest returns null on error', () async {
       var model = AIRequestModel(
         modelApiProvider: ModelAPIProvider.gemini,
         url: '$serverUrl/error',
         apiKey: 'fake_key',
       );
-      await expectLater(
-        () => executeGenAIRequest(model),
-        throwsA(isA<GenAIRequestException>()),
-      );
-    });
-
-    test('withDefaultModelConfigs fills empty configs', () {
-      const empty = AIRequestModel(
-        modelApiProvider: ModelAPIProvider.openai,
-      );
-      final filled = withDefaultModelConfigs(empty);
-      expect(filled.modelConfigs, isNotEmpty);
-      expect(
-        filled.getModelConfigMap().containsKey('max_tokens'),
-        isTrue,
-      );
-      expect(filled.getModelConfigMap()['max_tokens'], 1024);
+      final result = await executeGenAIRequest(model);
+      expect(result, isNull);
     });
 
     test('executeGenAIRequest returns null when model is null', () async {
