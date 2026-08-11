@@ -95,6 +95,23 @@ void main() {
         );
       },
     );
+
+    test(
+      'should safely handle cursor offset beyond text length',
+      () {
+        const text = 'Hello there @Sahil';
+        const value = TextEditingValue(
+          text: text,
+          selection: TextSelection.collapsed(offset: 100),
+        );
+
+        final invoked = trigger.invokingTrigger(value);
+
+        expect(invoked, isNotNull);
+        expect(invoked!.query, 'Sahil');
+        expect(invoked.selection.extentOffset, text.length);
+      },
+    );
   });
 
   group('Autocomplete trigger with `triggerOnlyAtStart` true', () {
