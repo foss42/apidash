@@ -272,28 +272,46 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       trailingBuilder: (context, node) => node.isFocused
                           ? Padding(
                               padding: const EdgeInsets.only(right: 12),
-                              child: IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints:
-                                    const BoxConstraints(maxHeight: 18),
-                                icon: const Icon(
-                                  Icons.copy,
-                                  size: 18,
-                                ),
-                                onPressed: () async {
-                                  final val = toJson(node);
-                                  String toCopy = '';
-                                  if (node.isClass ||
-                                      node.isArray ||
-                                      node.isRoot) {
-                                    toCopy = kJsonEncoder.convert(val);
-                                  } else {
-                                    toCopy = (val.values as Iterable)
-                                        .first
-                                        .toString();
-                                  }
-                                  await _copy(toCopy, sm);
-                                },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    tooltip: "Copy Value",
+                                    padding: EdgeInsets.zero,
+                                    constraints:
+                                        const BoxConstraints(maxHeight: 18),
+                                    icon: const Icon(
+                                      Icons.abc,
+                                      size: 18,
+                                    ),
+                                    onPressed: () async {
+                                      final val = toJson(node);
+                                      String toCopy = '';
+                                      if (node.isClass || node.isArray || node.isRoot) {
+                                        toCopy = kJsonEncoder.convert(val);
+                                      } else {
+                                        toCopy = node.value.toString();
+                                      }
+                                      await _copy(toCopy, sm);
+                                    },
+                                  ),
+                                  kHSpacer5,
+                                  IconButton(
+                                    tooltip: "Copy Key-Value Pair",
+                                    padding: EdgeInsets.zero,
+                                    constraints:
+                                        const BoxConstraints(maxHeight: 18),
+                                    icon: const Icon(
+                                      Icons.copy,
+                                      size: 18,
+                                    ),
+                                    onPressed: () async {
+                                      final val = toJson(node);
+                                      String toCopy = kJsonEncoder.convert(val);
+                                      await _copy(toCopy, sm);
+                                    },
+                                  ),
+                                ],
                               ),
                             )
                           : const SizedBox(),
