@@ -80,10 +80,11 @@ List<NameValueModel>? getEnabledRows(
   if (rows == null || isRowEnabledList == null) {
     return rows;
   }
-  List<NameValueModel> finalRows = rows
-      .where((element) => isRowEnabledList[rows.indexOf(element)])
+  final finalRows = rows.asMap().entries
+      .where((entry) => isRowEnabledList[entry.key])
+      .map((entry) => entry.value)
       .toList();
-  return finalRows == [] ? null : finalRows;
+  return finalRows;
 }
 
 String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
