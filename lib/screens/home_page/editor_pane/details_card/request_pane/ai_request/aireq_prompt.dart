@@ -29,19 +29,20 @@ class AIRequestPromptSection extends ConsumerWidget {
       return kSizedBoxEmpty;
     }
 
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0),
-            child: Text(kLabelSystemPrompt),
-          ),
-          kVSpacer10,
-          Expanded(
-            child: Container(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final fieldHeight = (constraints.maxHeight - 100)*3/4;
+        return ListView(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Text(kLabelSystemPrompt),
+            ),
+            kVSpacer10,
+            Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
+              height: fieldHeight,
               child: TextFieldEditor(
                 key: Key("$selectedId-aireq-sysprompt-body"),
                 fieldKey: "$selectedId-aireq-sysprompt-body",
@@ -58,16 +59,15 @@ class AIRequestPromptSection extends ConsumerWidget {
                 hintText: kHintEnterSystemPrompt,
               ),
             ),
-          ),
-          SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0),
-            child: Text(kLabelUserPromptInput),
-          ),
-          kVSpacer10,
-          Expanded(
-            child: Container(
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Text(kLabelUserPromptInput),
+            ),
+            kVSpacer10,
+            Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
+              height: fieldHeight,
               child: TextFieldEditor(
                 key: Key("$selectedId-aireq-userprompt-body"),
                 fieldKey: "$selectedId-aireq-userprompt-body",
@@ -84,9 +84,9 @@ class AIRequestPromptSection extends ConsumerWidget {
                 hintText: kHintEnterUserPrompt,
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 }
