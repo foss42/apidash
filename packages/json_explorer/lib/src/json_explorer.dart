@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -262,6 +264,9 @@ class JsonAttribute extends StatelessWidget {
     this.maxRootNodeWidth,
   }) : super(key: key);
 
+  static bool get _isMobile =>
+      !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+
   @override
   Widget build(BuildContext context) {
     final searchTerm =
@@ -290,12 +295,43 @@ class JsonAttribute extends StatelessWidget {
       },
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
+        onTapDown: _isMobile && !node.isRoot && !hasInteraction
+            ? (_) {
+                final jsonExplorerStore = Provider.of<JsonExplorerStore>(
+                  context,
+                  listen: false,
+                );
+                if (node.isFocused) {
+                  node.focus(isFocused: false);
+                  node.highlight(isHighlighted: false);
+                } else {
+                  node.focus();
+                  node.highlight();
+                  jsonExplorerStore.unfocusAllExcept(node);
+                }
+              }
+            : null,
         onTap: hasInteraction
             ? () {
                 if (valueStyle.onTap != null) {
                   valueStyle.onTap!.call();
                 } else {
-                  _onTap(context);
+                  if (_isMobile && node.isRoot) {
+                    final jsonExplorerStore = Provider.of<JsonExplorerStore>(
+                      context,
+                      listen: false,
+                    );
+                    if (node.isFocused) {
+                      node.focus(isFocused: false);
+                      node.highlight(isHighlighted: false);
+                    } else {
+                      node.focus();
+                      node.highlight();
+                      jsonExplorerStore.unfocusAllExcept(node);
+                    }
+                  } else {
+                    _onTap(context);
+                  }
                 }
               }
             : null,
@@ -322,10 +358,13 @@ class JsonAttribute extends StatelessWidget {
                       lineColor: theme.indentationLineColor,
                     ),
                     if (node.isRoot)
-                      SizedBox(
-                        width: 24,
-                        child: collapsableToggleBuilder?.call(context, node) ??
-                            _defaultCollapsableToggleBuilder(context, node),
+                      GestureDetector(
+                        onTap: () => _onTap(context),
+                        child: SizedBox(
+                          width: 24,
+                          child: collapsableToggleBuilder?.call(context, node) ??
+                              _defaultCollapsableToggleBuilder(context, node),
+                        ),
                       ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: spacing),
@@ -542,21 +581,20 @@ class _PropertyNodeWidget extends StatelessWidget {
 
     final text = valueFormatter?.call(node.value) ?? node.value.toString();
 
-    if (!showHighlightedText) {
-      return SelectableText(text, style: style);
+    final isMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+    
+    if (showHighlightedText) {
+      return _HighlightedText(
+        text: text,
+        highlightedText: searchTerm,
+        style: style,
+        primaryMatchStyle: focusedSearchHighlightStyle,
+        secondaryMatchStyle: searchHighlightStyle,
+        focusedSearchMatchIndex: context
+            .select<JsonExplorerStore, int?>(_getFocusedSearchMatchIndex),
+      );
     }
-
-    final focusedSearchMatchIndex =
-        context.select<JsonExplorerStore, int?>(_getFocusedSearchMatchIndex);
-
-    return _HighlightedText(
-      text: text,
-      highlightedText: searchTerm,
-      style: style,
-      primaryMatchStyle: focusedSearchHighlightStyle,
-      secondaryMatchStyle: searchHighlightStyle,
-      focusedSearchMatchIndex: focusedSearchMatchIndex,
-    );
+    return isMobile ? Text(text, style: style) : SelectableText(text, style: style);
   }
 }
 
