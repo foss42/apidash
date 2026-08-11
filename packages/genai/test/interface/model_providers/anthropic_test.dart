@@ -46,6 +46,15 @@ void main() {
       );
     });
 
+    test('streamOutputFormatter handles anthropic delta text', () {
+      expect(
+        AnthropicModel.instance.streamOutputFormatter({
+          'delta': {'text': 'hello'},
+        }),
+        'hello',
+      );
+    });
+
     test('defaultAIRequestModel', () {
       expect(
         AnthropicModel.instance.defaultAIRequestModel.modelApiProvider,

@@ -59,8 +59,22 @@ Future<Stream<String?>> streamGenAIRequest(
         final ans = chunk.body;
 
         final lines = ans.split('\n');
+        String? currentEvent;
         for (final line in lines) {
+          if (line.startsWith('event:')) {
+            currentEvent = line.substring(6).trim();
+            continue;
+          }
+
           if (!line.startsWith('data: ') || line.contains('[DONE]')) continue;
+
+          if (aiRequestModel?.modelApiProvider == ModelAPIProvider.anthropic &&
+              currentEvent != null &&
+              currentEvent != 'content_block_delta') {
+            currentEvent = null;
+            continue;
+          }
+
           final jsonStr = line.substring(6).trim();
           try {
             final jsonData = jsonDecode(jsonStr);
@@ -74,6 +88,7 @@ Future<Stream<String?>> streamGenAIRequest(
             );
             streamController.sink.add(jsonStr);
           }
+          currentEvent = null;
         }
       },
       onError: (error) {
