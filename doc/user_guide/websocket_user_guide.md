@@ -4,7 +4,7 @@ This guide explains how to use WebSockets in API Dash. WebSockets keep a single 
 
 Use this page when you need a live, two-way connection: chat apps, live price feeds, multiplayer games, notifications, streaming data, or any service that pushes updates to you as they happen.
 
-<!-- screenshot: a WebSocket request connected, with the message log streaming events -->
+![A WebSocket request open in API Dash](images/ws/ws_settings.png)
 
 ---
 
@@ -15,7 +15,7 @@ The fastest way to see WebSockets working is to connect to a public "echo" serve
 1. Create a new request (or open an existing one) and switch its type to **WebSocket** (see "Where to find WebSocket" below).
 2. In the URL field, enter:
    ```
-   wss://echo.websocket.org
+   ws://api.apidash.dev/ws/echo
    ```
 3. Click **Connect** and wait for the button to turn into a red **Disconnect**.
 4. Open the **Message** tab, type any text — for example `Hello!` — and click **Send**.
@@ -23,7 +23,7 @@ The fastest way to see WebSockets working is to connect to a public "echo" serve
 
 That's the whole loop: connect, send, receive. Everything else in this guide builds on those steps.
 
-<!-- screenshot: echo.websocket.org connected, "Hello!" sent and echoed back -->
+![echo server connected — "Hello!" sent and echoed back](images/ws/ws_echo_hello.png)
 
 ---
 
@@ -39,7 +39,7 @@ Once a request is a WebSocket request, the screen changes to match: there is no 
 
 > Tip: The teal **WS** badge is your quick visual cue. If you ever can't tell whether a saved request is a WebSocket, look for that badge in the sidebar.
 
-<!-- screenshot: sidebar showing a request with the teal WS badge -->
+![Sidebar showing a request with the teal WS badge](images/ws/ws_teal_sidebar.png)
 
 ---
 
@@ -67,8 +67,8 @@ When a request is set to WebSocket, the screen has a few key parts.
 This is where you enter the WebSocket endpoint. It accepts addresses that start with `ws://` or `wss://`, for example:
 
 ```
-wss://echo.websocket.org
-ws://localhost:8080/chat
+wss://api.apidash.dev/ws/echo
+
 ```
 
 The field shows a hint when empty: *"Enter WebSocket endpoint like wss://echo.websocket.org"*.
@@ -98,8 +98,7 @@ The difference mirrors `http` vs `https`:
 | `wss://` | Yes (TLS) | Anything over the public internet, especially with tokens, passwords, or private data |
 
 > Tip: When in doubt, use `wss://`. It's the secure choice and works for almost every public service.
-
-<!-- screenshot: WebSocket request screen with URL field, Connect button, and the four tabs -->
+![WebSocket request screen with URL field, Connect button, and the four tabs](images/ws/ws_connected.png)
 
 ---
 
@@ -118,8 +117,7 @@ Connecting opens the live line to the server. Here's the full flow.
 If the handshake doesn't succeed (wrong URL, server down, blocked by a firewall, etc.), API Dash logs the error with details and the button returns to **Connect** so you can fix the address and try again.
 
 > Tip: Connection details such as Params and Headers only take effect at connect time. If you change them while connected, disconnect and reconnect to apply the new values.
-
-<!-- screenshot: response pane showing a "Connecting…" spinner -->
+![A failed WebSocket connection logged with error details](images/ws/ws_error.png)
 
 ---
 
@@ -147,7 +145,7 @@ Steps:
 
 > Tip: Untick a parameter's checkbox to temporarily exclude it without deleting it — useful while testing which values a server needs.
 
-<!-- screenshot: Params tab with token and room rows and their enable checkboxes -->
+![Params tab ](images/ws/ws_params.png)
 
 ---
 
@@ -173,7 +171,7 @@ Steps:
 
 > Tip: Some servers don't check headers during the handshake — instead they expect you to authenticate **after** you connect, by sending your credentials in your very first message. If headers aren't working for login, send an auth message instead (see "Sending messages" and "Templates" below).
 
-<!-- screenshot: Headers tab with an Authorization header row -->
+![Headers tab ](images/ws/ws_header.png)
 
 ---
 
@@ -220,8 +218,7 @@ Steps:
 
 > Tip: If you don't know what interval to use, start with the default of 30 seconds and only lower it if your connection still gets dropped while idle.
 
-<!-- screenshot: Settings tab with Auto Reconnect, Heartbeat, and Ping Interval -->
-
+![Settings tab with WebSocket Heartbeat and Ping Interval options](images/ws/ws_heartbeat.png)
 ---
 
 ## Sending messages
@@ -239,8 +236,6 @@ A large, multi-line input box (shown in a monospace/code font) with the hint *"E
 - **Send is disabled until you're connected** — connect first, then send.
 - Each message you send appears in the log as an outgoing entry, marked with an up arrow (↑).
 
-> Note: Messages are sent as **text** (send JSON or plain text). Sending binary files/frames from the UI is not supported.
-
 Steps:
 1. Connect to your server.
 2. Open the **Message** tab.
@@ -255,7 +250,7 @@ Just below the input is a **Recently Sent** strip — a horizontal, scrollable l
 - Click any item to **refill the input** with that message, so you can resend or tweak it.
 - This is great for quickly repeating a command without retyping it.
 
-<!-- screenshot: Message tab with the input box, Send button, and Recently Sent strip -->
+![Message tab with the input box, Send button, and Recently Sent strip](images/ws/ws_msg_sent.png)
 
 ### Templates
 
@@ -279,8 +274,7 @@ Steps to create and use a template:
 
 > Tip: Templates are perfect for servers that authenticate **after** connecting — save your login/auth message as a template and send it as your first message every time you connect.
 
-<!-- screenshot: Templates dialog showing default templates and the Create New Template option -->
-
+![Templates dialog showing default templates and the Create New Template option](images/ws/ws_templates.png)
 ---
 
 ## Receiving messages — the live log
@@ -324,8 +318,7 @@ Steps to find a specific message in a busy log:
 3. Click an entry to copy its full payload.
 4. Click the clear (✕) on the filter to return to the full log.
 
-<!-- screenshot: live log with sent/received entries, timestamps, icons, and the filter box -->
-
+![Live message log with sent/received entries, timestamps, icons, and the filter box](images/ws/ws_filter.png)
 ---
 
 ## History & persistence
@@ -347,7 +340,7 @@ The **History** tab lets you reopen a past WebSocket session and review its mess
 
 > Tip: Save the requests you connect to often. Combined with environment variables in the URL (`{{WS_URL}}`), you can switch between servers in one click.
 
-<!-- screenshot: History tab showing a past WebSocket session's read-only log -->
+![History tab showing a past WebSocket session](images/ws/ws_history.png)
 
 ---
 
