@@ -206,6 +206,9 @@ final Map<String, dynamic> historyWsRequestModelJson = {
   'autoReconnect': true,
   'enableHeartbeat': true,
   'heartbeatInterval': 15,
+  'enableMessageHeartbeat': false,
+  'messageHeartbeatInterval': 30,
+  'messageHeartbeatPayload': 'ping',
 };
 
 /// Expected JSON for the WS HistoryRequestModel fixture.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/button_discord.dart';
 
@@ -10,13 +11,27 @@ void main() {
       MaterialApp(
         title: 'Discord button',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: DiscordButton(),
-        ),
+        home: const Scaffold(body: DiscordButton()),
       ),
     );
 
     expect(find.byIcon(Icons.discord), findsOneWidget);
-    expect(find.text("Discord Server"), findsOneWidget);
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/url_launcher'),
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'launchUrl') {
+          return true;
+        }
+        return null;
+      },
+    );
+
+    await tester.tap(find.text("Discord Server"));
+    await tester.pumpAndSettle();
+
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      const MethodChannel('plugins.flutter.io/url_launcher'),
+      null,
+    );
   });
 }

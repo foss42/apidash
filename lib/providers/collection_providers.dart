@@ -110,6 +110,16 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  final Map<String, Timer> _appHeartbeatTimers = {};
+
+  @override
+  void dispose() {
+    for (final timer in _appHeartbeatTimers.values) {
+      timer.cancel();
+    }
+    _appHeartbeatTimers.clear();
+    super.dispose();
+  }
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -168,9 +178,10 @@ class CollectionStateNotifier
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId);
 
-    // Cleanup active connections. Both are safe no-ops when the tab has no
-    // matching connection, so deleting a gRPC tab tears down its channel and
-    // request controller instead of leaking them (mirrors the WS `disconnect`).
+    // Cleanup active connections. All of these are safe no-ops when the tab
+    // has no matching connection, so deleting a gRPC tab tears down its channel
+    // and request controller (mirrors the WS disconnect) instead of leaking it.
+    _stopMessageHeartbeat(rId);
     ConnectionManager.instance.disconnect(rId);
     ConnectionManager.instance.disconnectGrpc(rId);
     cancelHttpRequest(rId);
@@ -276,6 +287,7 @@ class CollectionStateNotifier
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
       grpcRequestModel: currentModel.grpcRequestModel?.copyWith(),
+      wsRequestModel: currentModel.wsRequestModel?.copyWith(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
@@ -445,6 +457,83 @@ class CollectionStateNotifier
     map[rId] = newModel;
     state = map;
     unsave();
+
+    // Apply heartbeat changes to a LIVE WebSocket connection immediately.
+    // dart:io's WebSocket.pingInterval is mutable, so toggling heartbeat or
+    // changing the interval while connected takes effect without a reconnect.
+    // Previously these edits only applied on the next connect.
+    if (newModel.apiType == APIType.websocket &&
+        ConnectionManager.instance.hasConnection(rId)) {
+      final oldWs = currentModel.wsRequestModel;
+      final newWs = newModel.wsRequestModel;
+      if (newWs != null) {
+        // Protocol-level ping interval (mutable on a live connection).
+        if (oldWs?.enableHeartbeat != newWs.enableHeartbeat ||
+            oldWs?.heartbeatInterval != newWs.heartbeatInterval) {
+          ConnectionManager.instance
+              .updatePingInterval(rId, _wsPingInterval(newWs));
+        }
+        // App-level repeating-message heartbeat (restart timer on any change,
+        // without reconnecting). Fires independently of the ping change above.
+        if (oldWs?.enableMessageHeartbeat != newWs.enableMessageHeartbeat ||
+            oldWs?.messageHeartbeatInterval != newWs.messageHeartbeatInterval ||
+            oldWs?.messageHeartbeatPayload != newWs.messageHeartbeatPayload) {
+          _stopMessageHeartbeat(rId);
+          _startMessageHeartbeat(rId, newWs);
+        }
+      }
+    }
+  }
+
+  /// Heartbeat ping interval for [ws], or `null` when heartbeats are disabled.
+  /// Falls back to 30s when the interval is non-positive (mirrors connect()).
+  Duration? _wsPingInterval(WebSocketRequestModel ws) => ws.enableHeartbeat
+      ? Duration(
+          seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30,
+        )
+      : null;
+
+  /// Builds the combined env-var map (global env overlaid by active env),
+  /// matching the order used when connecting a WebSocket.
+  Map<String, String> _buildCombinedEnvVarMap() {
+    final envMap = ref.read(availableEnvironmentVariablesStateProvider);
+    final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+    final Map<String, String> combined = {};
+    for (var variable in (envMap[kGlobalEnvironmentId] ?? [])) {
+      combined[variable.key] = variable.value;
+    }
+    for (var variable in (envMap[activeEnvId] ?? [])) {
+      combined[variable.key] = variable.value;
+    }
+    return combined;
+  }
+
+  /// Stop and remove the app-level (repeating-message) heartbeat for [requestId].
+  void _stopMessageHeartbeat(String requestId) {
+    _appHeartbeatTimers.remove(requestId)?.cancel();
+  }
+
+  /// Start (or restart) the app-level (repeating-message) heartbeat for
+  /// [requestId]. Sends [WebSocketRequestModel.messageHeartbeatPayload]
+  /// (with {{vars}} substituted) as a normal Sent message on each tick.
+  void _startMessageHeartbeat(String requestId, WebSocketRequestModel ws) {
+    _stopMessageHeartbeat(requestId);
+    if (ws.enableMessageHeartbeat && ws.messageHeartbeatInterval > 0) {
+      _appHeartbeatTimers[requestId] = Timer.periodic(
+        Duration(seconds: ws.messageHeartbeatInterval),
+        (_) {
+          if (!mounted ||
+              !ConnectionManager.instance.hasConnection(requestId)) {
+            return;
+          }
+          final combined = _buildCombinedEnvVarMap();
+          final substituted =
+              substituteVariables(ws.messageHeartbeatPayload, combined) ??
+                  ws.messageHeartbeatPayload;
+          sendWebSocketMessage(requestId, substituted);
+        },
+      );
+    }
   }
 
   /// Send a text message over an active WebSocket connection.
@@ -455,6 +544,12 @@ class CollectionStateNotifier
     }
     final wsModel = currentRequest.wsRequestModel;
     if (wsModel == null) return;
+
+    // Guard: bail if the connection isn't actually open (avoids appending a
+    // Sent message when the channel is closed/closing).
+    if (!ConnectionManager.instance.hasConnection(requestId)) {
+      return;
+    }
 
     try {
       ConnectionManager.instance.send(requestId, message);
@@ -535,16 +630,7 @@ class CollectionStateNotifier
     WebSocketRequestModel wsModel, {
     String? historyId,
   }) async {
-    final envMap = ref.read(availableEnvironmentVariablesStateProvider);
-    final activeEnvId = ref.read(activeEnvironmentIdStateProvider);
-
-    final Map<String, String> combinedEnvVarMap = {};
-    for (var variable in (envMap[kGlobalEnvironmentId] ?? [])) {
-      combinedEnvVarMap[variable.key] = variable.value;
-    }
-    for (var variable in (envMap[activeEnvId] ?? [])) {
-      combinedEnvVarMap[variable.key] = variable.value;
-    }
+    final Map<String, String> combinedEnvVarMap = _buildCombinedEnvVarMap();
 
     final substitutedUrl =
         substituteVariables(wsModel.url, combinedEnvVarMap) ?? wsModel.url;
@@ -612,13 +698,7 @@ class CollectionStateNotifier
         requestId,
         finalUrl,
         headers: headers,
-        pingInterval: wsModel.enableHeartbeat
-            ? Duration(
-                seconds: wsModel.heartbeatInterval > 0
-                    ? wsModel.heartbeatInterval
-                    : 30,
-              )
-            : null,
+        pingInterval: _wsPingInterval(wsModel),
       );
 
       await channel.ready;
@@ -648,6 +728,8 @@ class CollectionStateNotifier
         ),
       };
 
+      _startMessageHeartbeat(requestId, currentWs);
+
       channel.stream.listen(
         (data) {
           // Guard: stream events can arrive after the notifier is disposed
@@ -676,6 +758,7 @@ class CollectionStateNotifier
           // Guard: onError can fire after dispose (connection closing while the
           // tab is torn down); touching `state` then throws "used after dispose".
           if (!mounted) return;
+          _stopMessageHeartbeat(requestId);
           final currentRequest = state?[requestId];
           final ws = currentRequest?.wsRequestModel;
           if (ws != null) {
@@ -707,6 +790,9 @@ class CollectionStateNotifier
           if (currentRequest == null) return;
           final ws = currentRequest.wsRequestModel;
           if (ws == null) return;
+          // Stop the app-level heartbeat on close. It restarts on the next
+          // successful connect (auto-reconnect calls _connectWebSocket again).
+          _stopMessageHeartbeat(requestId);
 
           if (ws.autoReconnect && currentRequest.isStreaming) {
             final reconnMsg = WebSocketMessage(
@@ -754,6 +840,7 @@ class CollectionStateNotifier
       // Guard: the connect future can complete (throw) after the notifier is
       // disposed; touching `state` below would throw "used after dispose".
       if (!mounted) return;
+      _stopMessageHeartbeat(requestId);
       final currentRequest = state?[requestId];
       final ws = currentRequest?.wsRequestModel ?? wsModel;
       final errMsg = WebSocketMessage(
@@ -1183,6 +1270,7 @@ class CollectionStateNotifier
       } else {
         update(id: id, isStreaming: false, isWorking: false);
       }
+      _stopMessageHeartbeat(id);
       ConnectionManager.instance.disconnect(id);
     } else if (requestModel?.apiType == APIType.grpc) {
       final grpc = requestModel?.grpcRequestModel;

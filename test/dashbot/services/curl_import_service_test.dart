@@ -12,7 +12,8 @@ void main() {
   group('CurlImportService.buildResponseFromParsed', () {
     test('converts curl to json message with actions', () {
       final curl = Curl.parse(
-          'curl -u user:pass "https://api.apidash.dev/items?size=10" -H "X-Test: 1" --data "{"name":"X"}"');
+        'curl -u user:pass "https://api.apidash.dev/items?size=10" -H "X-Test: 1" --data "{"name":"X"}"',
+      );
       final parsedCurl = convertCurlToHttpRequestModel(curl).toJson();
       final result = CurlImportService.buildResponseFromParsed(parsedCurl);
 
@@ -48,8 +49,10 @@ void main() {
     test('success path returns json & actions', () {
       final input =
           "curl https://api.apidash.dev/v1/users -H 'Accept: application/json'";
-      final res = CurlImportService.processPastedCurl(input,
-          current: {'method': 'POST'});
+      final res = CurlImportService.processPastedCurl(
+        input,
+        current: {'method': 'POST'},
+      );
       expect(res.error, isNull);
       expect(res.jsonMessage, isNotNull);
       expect(res.actions, isNotNull);
@@ -64,33 +67,37 @@ void main() {
 
   group('CurlImportService additional coverage', () {
     test(
-        'formData mapping & json/text body type detection in summaryForPayload',
-        () {
-      // Create a payload with form data to test summary generation
-      final payload = {
-        'method': 'POST',
-        'url': 'https://api.apidash.dev/upload',
-        'headers': <String, String>{},
-        'params': <String, String>{},
-        'form': true,
-        'formData': [
-          {'name': 'field1', 'value': 'val1'},
-          {'name': 'field2', 'value': 'val2'}
-        ],
-      };
-      final current = {
-        'method': 'GET',
-        'url': 'https://api.apidash.dev/',
-        'headers': <String, String>{},
-        'params': <String, String>{},
-        'form': true,
-        'formData': null,
-      };
-      final diff = CurlImportService.diffWithCurrent(payload, current);
-      expect(diff, '''~ method: "GET" → "POST"
+      'formData mapping & json/text body type detection in summaryForPayload',
+      () {
+        // Create a payload with form data to test summary generation
+        final payload = {
+          'method': 'POST',
+          'url': 'https://api.apidash.dev/upload',
+          'headers': <String, String>{},
+          'params': <String, String>{},
+          'form': true,
+          'formData': [
+            {'name': 'field1', 'value': 'val1'},
+            {'name': 'field2', 'value': 'val2'},
+          ],
+        };
+        final current = {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/',
+          'headers': <String, String>{},
+          'params': <String, String>{},
+          'form': true,
+          'formData': null,
+        };
+        final diff = CurlImportService.diffWithCurrent(payload, current);
+        expect(
+          diff,
+          '''~ method: "GET" → "POST"
 ~ url: "https://api.apidash.dev/" → "https://api.apidash.dev/upload"
-~ formData: null → [{"name":"field1","value":"val1"},{"name":"field2","value":"val2"}]''');
-    });
+~ formData: null → [{"name":"field1","value":"val1"},{"name":"field2","value":"val2"}]''',
+        );
+      },
+    );
 
     test('diffForPayload full diff (method,url,headers,params,body)', () {
       final current = {
@@ -106,7 +113,7 @@ void main() {
             'https://api.apidash.dev/b', // change url removes query params from url but we provide custom params below
         'headers': {
           'X-A': '2',
-          'X-New': 'n'
+          'X-New': 'n',
         }, // update + add, removal of X-Remove
         'params': {'x': '2', 'z': '3'}, // add z, update x, remove y
         'body': '{"a":1,"b":2}', // size & maybe body diff triggers diff['body']

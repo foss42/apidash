@@ -33,9 +33,12 @@ class ResponsePane extends ConsumerWidget {
         return SendingWidget(startSendingTime: startSendingTime);
       }
 
-      final wsModel = ref.watch(selectedRequestModelProvider
-          .select((value) => value?.wsRequestModel));
-      final hasMessages = (wsModel?.messageHistory.isNotEmpty) ?? false;
+      // Watch only this boolean so URL keystrokes (which replace
+      // wsRequestModel) don't rebuild the pane.
+      final hasMessages = ref.watch(selectedRequestModelProvider.select(
+              (value) =>
+                  value?.wsRequestModel?.messageHistory.isNotEmpty)) ??
+          false;
 
       if (isStreaming || hasMessages) {
         return const _WsResponsePanel();
@@ -101,6 +104,9 @@ class _WsResponsePanelState extends ConsumerState<_WsResponsePanel> {
 
   @override
   Widget build(BuildContext context) {
+    // Keyed by request id (stable across URL edits) so each request keeps its
+    // own event-stream State; mirrors ResponseTabView on the HTTP side.
+    final selectedId = ref.watch(selectedIdStateProvider);
     if (_showMetadata) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -122,6 +128,7 @@ class _WsResponsePanelState extends ConsumerState<_WsResponsePanel> {
     }
 
     return RealtimeEventStreamView(
+      key: ValueKey(selectedId),
       onViewMetadata: () => setState(() => _showMetadata = true),
     );
   }

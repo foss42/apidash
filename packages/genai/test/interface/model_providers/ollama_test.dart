@@ -14,14 +14,16 @@ void main() {
       expect(defaultModel.url, equals(kOllamaUrl));
     });
 
-    test('should only include temperature and top_p model configs by default',
-        () {
-      final defaultModel = OllamaModel.instance.defaultAIRequestModel;
-      final configIds = defaultModel.modelConfigs.map((c) => c.id).toList();
+    test(
+      'should only include temperature and top_p model configs by default',
+      () {
+        final defaultModel = OllamaModel.instance.defaultAIRequestModel;
+        final configIds = defaultModel.modelConfigs.map((c) => c.id).toList();
 
-      expect(configIds, containsAll(['temperature', 'top_p']));
-      expect(configIds, isNot(contains('max_tokens')));
-    });
+        expect(configIds, containsAll(['temperature', 'top_p']));
+        expect(configIds, isNot(contains('max_tokens')));
+      },
+    );
 
     test('should use OpenAI-compatible request format', () {
       const req = AIRequestModel(

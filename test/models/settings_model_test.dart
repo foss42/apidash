@@ -40,7 +40,7 @@ void main() {
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
       "defaultAIModel": {"model": "llama"},
-      "maxWebSocketEvents": 1000
+      "maxConnectionMessages": 1000
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -62,7 +62,7 @@ void main() {
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
-      "defaultAIModel": {"model": "llama"}
+      "defaultAIModel": {"model": "llama"},
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -84,13 +84,14 @@ void main() {
       defaultAIModel: {"model": "llama"},
     );
     expect(
-        sm.copyWith(
-          isDark: true,
-          saveResponses: false,
-          isSSLDisabled: false,
-          isDashBotEnabled: false,
-        ),
-        expectedResult);
+      sm.copyWith(
+        isDark: true,
+        saveResponses: false,
+        isSSLDisabled: false,
+        isDashBotEnabled: false,
+      ),
+      expectedResult,
+    );
   });
 
   test('Testing toString()', () {
@@ -113,7 +114,7 @@ void main() {
   "defaultAIModel": {
     "model": "llama"
   },
-  "maxWebSocketEvents": 1000
+  "maxConnectionMessages": 1000
 }''';
     expect(sm.toString(), expectedResult);
   });

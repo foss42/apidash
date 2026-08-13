@@ -31,6 +31,7 @@ void main() {
     test('ChatActionTarget round-trip mapping', () {
       final map = <ChatActionTarget, String>{
         ChatActionTarget.httpRequestModel: 'httpRequestModel',
+        ChatActionTarget.wsRequestModel: 'wsRequestModel',
         ChatActionTarget.codegen: 'codegen',
         ChatActionTarget.test: 'test',
         ChatActionTarget.code: 'code',
@@ -42,8 +43,34 @@ void main() {
         expect(chatActionTargetFromString(strVal), enumVal);
       });
       // unknown maps to default httpRequestModel
-      expect(chatActionTargetFromString('weird'),
-          ChatActionTarget.httpRequestModel);
+      expect(
+        chatActionTargetFromString('weird'),
+        ChatActionTarget.httpRequestModel,
+      );
+    });
+
+    test('wsRequestModel target round-trips', () {
+      expect(ChatActionTarget.wsRequestModel.name, 'wsRequestModel');
+      expect(
+        chatActionTargetFromString('wsRequestModel'),
+        ChatActionTarget.wsRequestModel,
+      );
+    });
+
+    test('ChatMessageType includes all WebSocket task members', () {
+      const wsTypes = [
+        ChatMessageType.explainWsConnection,
+        ChatMessageType.debugWsConnection,
+        ChatMessageType.summarizeWsMessages,
+        ChatMessageType.generateWsCode,
+        ChatMessageType.findInWsMessages,
+        ChatMessageType.generateWsDoc,
+        ChatMessageType.generateWsTest,
+        ChatMessageType.explainWsMessage,
+        ChatMessageType.debugWsMessage,
+        ChatMessageType.wsConnectionHealth,
+      ];
+      expect(ChatMessageType.values, containsAll(wsTypes));
     });
   });
 }

@@ -31,10 +31,11 @@ void main() {
     expect(find.byIcon(Icons.unfold_more_rounded), findsOneWidget);
     expect(find.byType(DropdownButton<FormDataType>), findsOneWidget);
     expect(
-        (tester.widget(find.byType(DropdownButton<FormDataType>))
-                as DropdownButton)
-            .value,
-        equals(FormDataType.file));
+      (tester.widget(find.byType(DropdownButton<FormDataType>))
+              as DropdownButton)
+          .value,
+      equals(FormDataType.file),
+    );
 
     await tester.tap(find.text('file'));
     await tester.pump();

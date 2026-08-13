@@ -9,14 +9,17 @@ void main() {
     test('should return default AIRequestModel with Azure configs', () {
       final defaultModel = AzureOpenAIModel.instance.defaultAIRequestModel;
 
-      expect(defaultModel.modelApiProvider,
-          equals(ModelAPIProvider.azureopenai));
+      expect(
+        defaultModel.modelApiProvider,
+        equals(ModelAPIProvider.azureopenai),
+      );
     });
 
     test('should create correct HttpRequestModel', () {
       const req = AIRequestModel(
         modelApiProvider: ModelAPIProvider.azureopenai,
-        url: 'https://my-resource.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-02-01',
+        url:
+            'https://my-resource.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-02-01',
         model: 'gpt-4',
         apiKey: 'azure-key',
         userPrompt: 'Hello',

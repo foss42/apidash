@@ -43,46 +43,56 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           final data = snapshot.data!;
           final mappedData = data.map;
           if (context.isMediumWindow) {
-            return Container(
-              padding: kP20,
-              width: width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ElevatedButton(
-                    onPressed: null,
-                    // TODO: Add update model logic
-                    //() async {
-                    // await LLMManager.fetchAvailableLLMs();
-                    // setState(() {});
-                    //},
-                    child: Text(kLabelUpdateModels),
-                  ),
-                  kVSpacer10,
-                  Row(
-                    children: [
-                      Text(kLabelSelectModelProvider),
-                      kHSpacer20,
-                      Expanded(
-                        child: ADDropdownButton<ModelAPIProvider>(
-                          onChanged: (x) {
-                            setState(() {
-                              selectedProvider = x;
-                              newAIRequestModel = mappedData[selectedProvider]
-                                  ?.toAiRequestModel();
-                            });
-                          },
-                          value: selectedProvider,
-                          values: data.modelProviders.map(
-                            (e) => (e.providerId!, e.providerName),
+            return SingleChildScrollView(
+              child: Container(
+                padding: kP20,
+                width: width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: null,
+                      // TODO: Add update model logic
+                      //() async {
+                      // await LLMManager.fetchAvailableLLMs();
+                      // setState(() {});
+                      //},
+                      child: Text(kLabelUpdateModels),
+                    ),
+                    kVSpacer20,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(kLabelSelectModelProvider),
+                        kVSpacer20,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outlineVariant,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
                           ),
+                          child: ADDropdownButton<ModelAPIProvider>(
+                              onChanged: (x) {
+                                setState(() {
+                                  selectedProvider = x;
+                                  newAIRequestModel = mappedData[selectedProvider]
+                                      ?.toAiRequestModel();
+                                });
+                              },
+                              value: selectedProvider,
+                              values: data.modelProviders.map(
+                                (e) => (e.providerId!, e.providerName),
+                              ),
+                            ),
                         ),
-                      ),
-                    ],
-                  ),
-                  kVSpacer10,
-                  _buildModelSelector(mappedData[selectedProvider]),
-                ],
+                      ],
+                    ),
+                    kVSpacer20,
+                    _buildModelSelector(mappedData[selectedProvider]),
+                  ],
+                ),
               ),
             );
           }

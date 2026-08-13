@@ -32,5 +32,8 @@ void main() {
     expect(find.text('Value1'), findsOneWidget);
     expect(find.text('Key2'), findsOneWidget);
     expect(find.text('Value2'), findsOneWidget);
+
+    await tester.tap(find.byType(FormDataFileButton));
+    await tester.pumpAndSettle();
   });
 }
