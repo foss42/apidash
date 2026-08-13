@@ -688,3 +688,7 @@ const kHintEnterSystemPrompt = "Enter System Prompt";
 const kLabelUserPromptInput = "User Prompt / Input";
 const kHintEnterUserPrompt = "Enter User Prompt";
 const kHintEnterApiKey = "Enter API key or Authorization Credentials";
+
+// Websocket
+const kLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";

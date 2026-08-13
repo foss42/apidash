@@ -3,7 +3,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/envfield_auth.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/details_card.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/mqtt/mqtt_help_icon.dart';
-import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
+import 'package:apidash/screens/home_page/editor_pane/url_card/url_card.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
