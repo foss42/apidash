@@ -721,12 +721,6 @@ class WorkflowStepUrlBar extends ConsumerWidget {
                             .read(activeCollectionProvider.notifier)
                             .update(url: value);
                       },
-                      decoration: InputDecoration(
-                        labelText: kLabelURL,
-                        hintText: kHintTextUrlCard,
-                        border: const OutlineInputBorder(),
-                        isDense: true,
-                      ),
                     ),
             ),
           ],
