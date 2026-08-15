@@ -453,7 +453,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                   style: theme.textTheme.titleSmall,
                 ),
                 if (extractions.isNotEmpty) ...[
-                  const SizedBox(width: 8),
+                  kHSpacer8,
                   Text(
                     '${extractions.length}',
                     style: theme.textTheme.labelSmall?.copyWith(
@@ -470,7 +470,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            kVSpacer8,
             Expanded(
               child: extractions.isEmpty
                   ? Align(
@@ -485,7 +485,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                   : ListView.separated(
                       padding: EdgeInsets.zero,
                       itemCount: extractions.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 4),
+                      separatorBuilder: (_, _) => kVSpacer4,
                       itemBuilder: (context, index) {
                         final extraction = extractions[index];
                         return _ExtractionRow(
@@ -507,7 +507,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                       },
                     ),
             ),
-            const SizedBox(height: 8),
+            kVSpacer8,
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -522,7 +522,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      kVSpacer4,
                       TextField(
                         controller: varController,
                         style: kCodeStyle.copyWith(
@@ -550,7 +550,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      kVSpacer4,
                       TextField(
                         controller: pathController,
                         style: kCodeStyle.copyWith(
@@ -643,7 +643,7 @@ class _ExtractionRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          kHSpacer10,
           Expanded(
             child: Text(
               pathLabel,

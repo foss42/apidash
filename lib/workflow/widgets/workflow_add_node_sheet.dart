@@ -282,7 +282,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
               icon: const Icon(Icons.arrow_back_rounded),
             )
           else
-            const SizedBox(width: 8),
+            kHSpacer8,
           Expanded(child: Text(title, style: theme.textTheme.titleMedium)),
           IconButton(
             tooltip: kLabelCancel,
@@ -305,7 +305,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 12),
+        kVSpacer12,
         _AddNodeOptionTile(
           icon: Icons.auto_awesome_rounded,
           iconColor: theme.colorScheme.tertiary,
@@ -314,7 +314,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
           showChevron: true,
           onTap: () => setState(() => _page = _AddNodePage.aiRequestSource),
         ),
-        const SizedBox(height: 8),
+        kVSpacer8,
         _AddNodeOptionTile(
           icon: Icons.http_rounded,
           iconColor: theme.colorScheme.primary,
@@ -323,7 +323,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
           showChevron: true,
           onTap: () => setState(() => _page = _AddNodePage.httpRequestSource),
         ),
-        const SizedBox(height: 8),
+        kVSpacer8,
         _AddNodeOptionTile(
           icon: Icons.loop_rounded,
           iconColor: theme.colorScheme.secondary,
@@ -331,7 +331,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
           subtitle: 'Repeat steps for each list item, or the same step N times',
           onTap: _addLoopNode,
         ),
-        const SizedBox(height: 8),
+        kVSpacer8,
         _AddNodeOptionTile(
           icon: Icons.rule_rounded,
           iconColor: theme.colorScheme.tertiary,
@@ -339,7 +339,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
           subtitle: 'Branch the flow on true / false conditions',
           onTap: _addConditionNode,
         ),
-        const SizedBox(height: 8),
+        kVSpacer8,
         _AddNodeOptionTile(
           icon: Icons.timer_outlined,
           iconColor: theme.colorScheme.secondary,
@@ -362,7 +362,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 12),
+        kVSpacer12,
         _AddNodeOptionTile(
           icon: Icons.folder_copy_outlined,
           iconColor: theme.colorScheme.primary,
@@ -374,7 +374,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             apiTypeFilter: APIType.rest,
           ),
         ),
-        const SizedBox(height: 8),
+        kVSpacer8,
         _AddNodeOptionTile(
           icon: Icons.add_circle_outline_rounded,
           iconColor: theme.colorScheme.primary,
@@ -397,7 +397,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 12),
+        kVSpacer12,
         _AddNodeOptionTile(
           icon: Icons.folder_copy_outlined,
           iconColor: theme.colorScheme.tertiary,
@@ -409,7 +409,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             apiTypeFilter: APIType.ai,
           ),
         ),
-        const SizedBox(height: 8),
+        kVSpacer8,
         _AddNodeOptionTile(
           icon: Icons.add_circle_outline_rounded,
           iconColor: theme.colorScheme.tertiary,
@@ -434,9 +434,9 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
               size: 48,
               color: theme.colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(height: 12),
+            kVSpacer12,
             Text('No collections yet', style: theme.textTheme.titleSmall),
-            const SizedBox(height: 4),
+            kVSpacer4,
             Text(
               'Create a collection with requests first, then import them here.',
               textAlign: TextAlign.center,
@@ -503,7 +503,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
               size: 48,
               color: theme.colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(height: 12),
+            kVSpacer12,
             Text(
               emptyLabel,
               textAlign: TextAlign.center,
@@ -609,7 +609,7 @@ class _AddNodeOptionTileState extends State<_AddNodeOptionTile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(widget.title, style: theme.textTheme.titleSmall),
-                          const SizedBox(height: 2),
+                          kVSpacer2,
                           Text(
                             widget.subtitle,
                             style: theme.textTheme.bodySmall?.copyWith(

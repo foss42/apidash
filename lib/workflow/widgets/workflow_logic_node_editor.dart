@@ -723,7 +723,6 @@ class _WorkflowSequenceStepEditorPageState
     areas: [
       Area(id: 'variables', size: 260, min: 200, max: 360),
       Area(id: 'config', min: 420),
-      Area(id: 'guide', size: 360, min: 280, max: 520),
     ],
   );
 
@@ -880,7 +879,6 @@ class _WorkflowSequenceStepEditorPageState
           source: _source,
           onSourceChanged: _switchSource,
         ),
-        guide: const _SequenceGuidePanel(),
       ),
     );
   }
@@ -891,37 +889,34 @@ class _LogicNodeEditorBody extends StatelessWidget {
     required this.nodeId,
     required this.splitController,
     required this.config,
-    required this.guide,
+    this.guide,
   });
 
   final String nodeId;
   final MultiSplitViewController splitController;
   final Widget config;
-  final Widget guide;
+  final Widget? guide;
 
   @override
   Widget build(BuildContext context) {
+    final hasGuide = guide != null;
     if (context.isMediumWindow) {
+      final tabs = <Tab>[
+        const Tab(text: kLabelConfiguration),
+        const Tab(text: kLabelWorkflowVariables),
+        if (hasGuide) const Tab(text: 'Guide'),
+      ];
+      final views = <Widget>[
+        config,
+        WorkflowVariableBrowser(nodeId: nodeId),
+        if (hasGuide) guide!,
+      ];
       return DefaultTabController(
-        length: 3,
+        length: tabs.length,
         child: Column(
           children: [
-            const TabBar(
-              tabs: [
-                Tab(text: kLabelConfiguration),
-                Tab(text: kLabelWorkflowVariables),
-                Tab(text: 'Guide'),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  config,
-                  WorkflowVariableBrowser(nodeId: nodeId),
-                  guide,
-                ],
-              ),
-            ),
+            TabBar(tabs: tabs),
+            Expanded(child: TabBarView(children: views)),
           ],
         ),
       );
@@ -942,7 +937,7 @@ class _LogicNodeEditorBody extends StatelessWidget {
         builder: (context, area) {
           return switch (area.id) {
             'variables' => WorkflowVariableBrowser(nodeId: nodeId),
-            'guide' => guide,
+            'guide' => guide ?? config,
             _ => config,
           };
         },
@@ -979,7 +974,7 @@ class _LoopConfigPanel extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       children: [
         Text('Loop configuration', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 16),
+        kVSpacer16,
         SegmentedButton<WorkflowLoopMode>(
           segments: const [
             ButtonSegment(
@@ -998,7 +993,7 @@ class _LoopConfigPanel extends StatelessWidget {
             onLoopModeChanged(selection.first);
           },
         ),
-        const SizedBox(height: 20),
+        kVSpacer20,
         TextField(
           controller: labelController,
           decoration: const InputDecoration(
@@ -1007,7 +1002,7 @@ class _LoopConfigPanel extends StatelessWidget {
             isDense: true,
           ),
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         if (isRepeat)
           _RepeatCountField(iterationsController: iterationsController)
         else ...[
@@ -1029,12 +1024,12 @@ class _LoopConfigPanel extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 20),
+          kVSpacer20,
           Text(
             kLabelWorkflowItemExtractions,
             style: theme.textTheme.titleSmall,
           ),
-          const SizedBox(height: 8),
+          kVSpacer8,
           Row(
             children: [
               Expanded(
@@ -1049,7 +1044,7 @@ class _LoopConfigPanel extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              kHSpacer8,
               Expanded(
                 flex: 3,
                 child: TextField(
@@ -1090,7 +1085,7 @@ class _LoopConfigPanel extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 16),
+          kVSpacer16,
           TextField(
             controller: iterationsController,
             keyboardType: TextInputType.number,
@@ -1170,7 +1165,7 @@ class _RepeatCountFieldState extends State<_RepeatCountField> {
           },
         ),
         if (_selection == _custom) ...[
-          const SizedBox(height: 12),
+          kVSpacer12,
           TextField(
             controller: widget.iterationsController,
             keyboardType: TextInputType.number,
@@ -1207,7 +1202,7 @@ class _ConditionConfigPanel extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       children: [
         Text('Condition configuration', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 16),
+        kVSpacer16,
         TextField(
           controller: labelController,
           decoration: const InputDecoration(
@@ -1216,7 +1211,7 @@ class _ConditionConfigPanel extends StatelessWidget {
             isDense: true,
           ),
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         TextField(
           controller: expressionController,
           decoration: const InputDecoration(
@@ -1228,9 +1223,9 @@ class _ConditionConfigPanel extends StatelessWidget {
             isDense: true,
           ),
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         Text('Quick presets', style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
+        kVSpacer8,
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -1267,7 +1262,7 @@ class _DelayConfigPanel extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       children: [
         Text('Delay configuration', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 16),
+        kVSpacer16,
         TextField(
           controller: labelController,
           decoration: const InputDecoration(
@@ -1276,7 +1271,7 @@ class _DelayConfigPanel extends StatelessWidget {
             isDense: true,
           ),
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         TextField(
           controller: delayController,
           keyboardType: TextInputType.number,
@@ -1288,9 +1283,9 @@ class _DelayConfigPanel extends StatelessWidget {
             isDense: true,
           ),
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         Text('Quick presets', style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
+        kVSpacer8,
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -1343,7 +1338,7 @@ class _SequenceConfigPanel extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       children: [
         Text('Sequence configuration', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 16),
+        kVSpacer16,
         TextField(
           controller: labelController,
           decoration: const InputDecoration(
@@ -1352,9 +1347,9 @@ class _SequenceConfigPanel extends StatelessWidget {
             isDense: true,
           ),
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         Text('Source', style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
+        kVSpacer8,
         SegmentedButton<WorkflowSequenceSource>(
           segments: const [
             ButtonSegment(
@@ -1377,52 +1372,34 @@ class _SequenceConfigPanel extends StatelessWidget {
             }
           },
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         TextField(
           controller: valueController,
           maxLines: 10,
-          decoration: InputDecoration(
-            labelText: _valueLabel,
+          style: kCodeStyle.copyWith(color: theme.colorScheme.onSurface),
+          decoration: getTextFieldInputDecoration(
+            theme.colorScheme,
             hintText: _valueHint,
+            isDense: true,
+          ).copyWith(
+            labelText: _valueLabel,
             alignLabelWithHint: true,
             border: const OutlineInputBorder(),
-            isDense: true,
           ),
         ),
-        const SizedBox(height: 16),
+        kVSpacer16,
         TextField(
           controller: asController,
-          decoration: const InputDecoration(
-            labelText: kLabelWorkflowSequenceSaveAs,
+          decoration: getTextFieldInputDecoration(
+            theme.colorScheme,
             hintText: 'prompts',
+            isDense: true,
+          ).copyWith(
+            labelText: kLabelWorkflowSequenceSaveAs,
             helperText:
                 'Any name you like. For each List should match, e.g. {{prompts}}.',
-            border: OutlineInputBorder(),
-            isDense: true,
+            border: const OutlineInputBorder(),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SequenceGuidePanel extends StatelessWidget {
-  const _SequenceGuidePanel();
-
-  @override
-  Widget build(BuildContext context) {
-    return const _GuidePanel(
-      title: 'How sequences work',
-      sections: [
-        _GuideSection(
-          title: 'Build a list',
-          body:
-              'List: [alice, bob, carol]. JSON: [{...}, {...}]. JSONL: one JSON object per line. Save as any name (prompts, users, ids). For each iterates that {{name}}.',
-        ),
-        _GuideSection(
-          title: 'Only with For each',
-          body:
-              'Stretch For each’s bottom Seq into empty space to add Sequence. It only has a top Next into Seq, not on the main In path. If the list already exists from an API extract, skip Sequence and set List to {{users}}.',
         ),
       ],
     );
@@ -1529,17 +1506,17 @@ class _GuidePanel extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       children: [
         Text(title, style: theme.textTheme.titleMedium),
-        const SizedBox(height: 16),
+        kVSpacer16,
         for (final section in sections) ...[
           Text(section.title, style: theme.textTheme.titleSmall),
-          const SizedBox(height: 4),
+          kVSpacer4,
           Text(
             section.body,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 16),
+          kVSpacer16,
         ],
       ],
     );

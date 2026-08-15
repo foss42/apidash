@@ -144,7 +144,7 @@ class WorkflowSelectorDropdown extends ConsumerWidget {
                       child: Row(
                         children: [
                           Icon(Icons.add, size: 18),
-                          SizedBox(width: 8),
+                          kHSpacer8,
                           Text(kLabelNewWorkflow),
                         ],
                       ),

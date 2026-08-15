@@ -85,7 +85,7 @@ class WorkflowRunBar extends ConsumerWidget {
                   icon: const Icon(Icons.add_rounded, size: 20),
                   label: const Text(kLabelAddWorkflowNode),
                 ),
-                const SizedBox(width: 8),
+                kHSpacer8,
                 Tooltip(
                   message: kTooltipAutoArrange,
                   child: FilledButton.tonalIcon(
@@ -107,7 +107,7 @@ class WorkflowRunBar extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                kHSpacer8,
               ],
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 180),
@@ -129,7 +129,7 @@ class WorkflowRunBar extends ConsumerWidget {
                         }
                       : () => triggerWorkflowRun(context, ref),
                   icon: running
-                      ? const SizedBox()
+                      ? kSizedBoxEmpty
                       : const Icon(Icons.play_arrow_rounded, size: 20),
                   label: Text(running ? kLabelStopWorkflow : kLabelRunWorkflow),
                 ),

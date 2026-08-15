@@ -121,7 +121,7 @@ class WorkflowRequestNodeCard extends StatelessWidget {
                     size: 16,
                     color: theme.colorScheme.primary,
                   ),
-                  const SizedBox(width: 4),
+                  kHSpacer4,
                   Text(
                     'Running',
                     style: theme.textTheme.labelSmall?.copyWith(
@@ -134,14 +134,14 @@ class WorkflowRequestNodeCard extends StatelessWidget {
                 if (selected) const SizedBox(width: 56),
               ],
             ),
-            const SizedBox(height: 10),
+            kVSpacer10,
             Text(
               node.label.isNotEmpty ? node.label : defaultLabel,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleSmall,
             ),
-            const SizedBox(height: 6),
+            kVSpacer6,
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -301,7 +301,7 @@ class WorkflowStartNodeCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  kVSpacer2,
                   Text(
                     isRunning ? 'Starting…' : 'Run workflow',
                     maxLines: 1,
@@ -417,7 +417,7 @@ class WorkflowConditionNodeCard extends StatelessWidget {
                 if (selected) const SizedBox(width: 56),
               ],
             ),
-            const SizedBox(height: 6),
+            kVSpacer6,
             Expanded(
               child: Text(
                 node.conditionExpression ?? 'true',
@@ -538,7 +538,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
                 if (selected) const SizedBox(width: 56),
               ],
             ),
-            const SizedBox(height: 6),
+            kVSpacer6,
             Text(
               subtitle,
               maxLines: 1,
@@ -546,7 +546,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
               style: theme.textTheme.bodySmall,
             ),
             if (itemLine != null) ...[
-              const SizedBox(height: 2),
+              kVSpacer2,
               Text(
                 itemLine,
                 maxLines: 1,
@@ -557,7 +557,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
               ),
             ],
             if (maxLine != null) ...[
-              const SizedBox(height: 2),
+              kVSpacer2,
               Text(
                 maxLine,
                 maxLines: 1,
@@ -661,7 +661,7 @@ class WorkflowDelayNodeCard extends StatelessWidget {
                 if (selected) const SizedBox(width: 56),
               ],
             ),
-            const SizedBox(height: 6),
+            kVSpacer6,
             Expanded(
               child: Text(
                 detail,
@@ -772,7 +772,7 @@ class WorkflowSequenceNodeCard extends StatelessWidget {
                 if (selected) const SizedBox(width: 56),
               ],
             ),
-            const SizedBox(height: 6),
+            kVSpacer6,
             Text(
               sourceLabel,
               maxLines: 1,

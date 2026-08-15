@@ -123,7 +123,7 @@ class WorkflowCanvasRunToast extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           for (var i = 0; i < visible.length; i++) ...[
-            if (i > 0) const SizedBox(height: 8),
+            if (i > 0) kVSpacer8,
             _WorkflowToastCard(
               key: ValueKey(visible[i].token),
               data: visible[i],
@@ -137,7 +137,7 @@ class WorkflowCanvasRunToast extends ConsumerWidget {
             ),
           ],
           if (hiddenCount > 0) ...[
-            const SizedBox(height: 8),
+            kVSpacer8,
             Text(
               '+$hiddenCount more',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -260,7 +260,7 @@ class _WorkflowToastCardState extends State<_WorkflowToastCard>
                       color: accent,
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  kHSpacer10,
                   Flexible(
                     child: Text(
                       widget.data.message,
