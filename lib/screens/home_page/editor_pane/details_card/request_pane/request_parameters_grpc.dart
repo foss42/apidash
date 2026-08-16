@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/grpc_request_model.dart';
 import 'package:apidash/utils/grpc_utils.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
 class EditGrpcRequestParameters extends ConsumerWidget {
   const EditGrpcRequestParameters({super.key});
@@ -53,33 +54,32 @@ class EditGrpcRequestParameters extends ConsumerWidget {
 
   Widget _buildParamInput(BuildContext context, WidgetRef ref,
       GrpcRequestModel grpcModel, int index, GrpcParameterModel param) {
-    final fieldKey = Key("${grpcModel.method}_${param.name}_$index");
-    
+    final fieldKeyId = "${grpcModel.method}_${param.name}_$index";
+
     switch (param.type) {
       case "bool":
-        return Switch(
-          key: fieldKey,
+        return ADCheckBox(
+          keyId: fieldKeyId,
           value: param.value.toLowerCase() == "true",
-          onChanged: (val) => _updateParamValue(ref, grpcModel, index, val.toString()),
+          onChanged: (val) =>
+              _updateParamValue(ref, grpcModel, index, (val ?? false).toString()),
+          colorScheme: Theme.of(context).colorScheme,
         );
       case "enum":
         return ADDropdownButton<String>(
-          key: fieldKey,
+          key: Key(fieldKeyId),
           isExpanded: true,
           value: param.value.isEmpty ? (param.enumValues?.first) : param.value,
           values: (param.enumValues ?? const <String>[]).map((e) => (e, e)),
           onChanged: (val) => _updateParamValue(ref, grpcModel, index, val ?? ""),
         );
       default:
-        return TextFormField(
-          key: fieldKey,
+        return EnvCellField(
+          keyId: fieldKeyId,
           initialValue: param.value,
-          decoration: InputDecoration(
-            hintText: "Enter ${param.type}...",
-            border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          ),
+          hintText: "Enter ${param.type}...",
           onChanged: (val) => _updateParamValue(ref, grpcModel, index, val),
+          colorScheme: Theme.of(context).colorScheme,
         );
     }
   }

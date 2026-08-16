@@ -286,9 +286,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                         kVSpacer10,
                         Row(
                           children: [
-                            OutlinedButton.icon(
-                              icon: const Icon(Icons.send, size: 16),
-                              label: const Text("Send message"),
+                            ADTextButton(
+                              icon: Icons.send,
+                              iconSize: 16,
+                              label: "Send message",
                               onPressed: hasOpenGrpcStream
                                   ? () {
                                       ref
@@ -299,9 +300,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                   : null,
                             ),
                             kHSpacer10,
-                            OutlinedButton.icon(
-                              icon: const Icon(Icons.done_all, size: 16),
-                              label: const Text("Finish sending"),
+                            ADTextButton(
+                              icon: Icons.done_all,
+                              iconSize: 16,
+                              label: "Finish sending",
                               onPressed: hasOpenGrpcStream
                                   ? () {
                                       ref
@@ -339,7 +341,8 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                           const Text("Port: "),
                           SizedBox(
                             width: 100,
-                            child: TextFormField(
+                            child: ADOutlinedTextField(
+                              isDense: true,
                               initialValue: () {
                                 String url = grpcModel.url;
                                 if (url.contains(':')) {
@@ -347,11 +350,6 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                 }
                                 return '50051';
                               }(),
-                              decoration: const InputDecoration(
-                                isDense: true,
-                                border: OutlineInputBorder(),
-                              ),
-                              keyboardType: TextInputType.number,
                               onChanged: (val) {
                                 final port = int.tryParse(val.trim()) ?? 50051;
                                 String url = grpcModel.url;

@@ -1,11 +1,13 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_parameters_grpc.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/models/grpc_request_model.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
 void main() {
   testWidgets('EditGrpcRequestParameters renders correctly for empty params', (tester) async {
@@ -43,9 +45,13 @@ void main() {
         overrides: [
           selectedRequestModelProvider.overrideWith((ref) => requestModel),
         ],
-        child: const MaterialApp(
-          home: Scaffold(
-            body: EditGrpcRequestParameters(),
+        // Portal is required by the env-aware value field (EnvCellField uses
+        // ExtendedTextField autocomplete) rendered for the string parameter.
+        child: const Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: EditGrpcRequestParameters(),
+            ),
           ),
         ),
       ),
@@ -55,8 +61,10 @@ void main() {
     expect(find.text('boolParam'), findsOneWidget);
     expect(find.text('enumParam'), findsOneWidget);
 
-    expect(find.byType(TextFormField), findsOneWidget);
-    expect(find.byType(Switch), findsOneWidget);
+    // String param now uses the env-aware EnvCellField (was a raw
+    // TextFormField); bool param now uses ADCheckBox (was a Switch).
+    expect(find.byType(EnvCellField), findsOneWidget);
+    expect(find.byType(ADCheckBox), findsOneWidget);
     expect(find.byType(ADDropdownButton<String>), findsOneWidget);
   });
 }
