@@ -189,14 +189,19 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 "Broker stores this as the topic's retained message and sends "
                 "it to new subscribers on subscribe.",
               ),
-              Switch(
+              ADCheckBox(
+                keyId: "$selectedId-mqtt-retain",
                 value: mqttModel.retainMessage,
                 onChanged: (val) {
-                  _updateMqttModel((m) => m.copyWith(retainMessage: val));
+                  _updateMqttModel(
+                    (m) => m.copyWith(retainMessage: val ?? false),
+                  );
                 },
+                colorScheme: Theme.of(context).colorScheme,
               ),
               const SizedBox(width: 16),
-              ElevatedButton(
+              ADFilledButton(
+                label: "Publish",
                 onPressed:
                     (requestModel?.isStreaming ?? false) &&
                         selectedId != null &&
@@ -211,7 +216,6 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                             );
                       }
                     : null,
-                child: const Text("Publish"),
               ),
             ],
           ),
@@ -392,20 +396,17 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const Text("Default QoS"),
+                    const SizedBox(width: 8),
                     Expanded(
-                      child: DropdownButtonFormField<int>(
+                      child: ADDropdownButton<int>(
                         value: mqttModel.qos,
-                        decoration: const InputDecoration(
-                          labelText: "Default QoS",
-                        ),
-                        items: [0, 1, 2]
-                            .map(
-                              (q) => DropdownMenuItem(
-                                value: q,
-                                child: Text("QoS $q"),
-                              ),
-                            )
-                            .toList(),
+                        isExpanded: true,
+                        values: const [
+                          (0, 'QoS 0'),
+                          (1, 'QoS 1'),
+                          (2, 'QoS 2'),
+                        ],
                         onChanged: (val) {
                           if (val != null) {
                             _updateMqttModel((m) => m.copyWith(qos: val));
@@ -631,20 +632,17 @@ class _EditMQTTRequestPaneState extends ConsumerState<EditMQTTRequestPane> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        const Text("Will QoS"),
+                        const SizedBox(width: 8),
                         Expanded(
-                          child: DropdownButtonFormField<int>(
+                          child: ADDropdownButton<int>(
                             value: mqttModel.willQos,
-                            decoration: const InputDecoration(
-                              labelText: "Will QoS",
-                            ),
-                            items: [0, 1, 2]
-                                .map(
-                                  (q) => DropdownMenuItem(
-                                    value: q,
-                                    child: Text("QoS $q"),
-                                  ),
-                                )
-                                .toList(),
+                            isExpanded: true,
+                            values: const [
+                              (0, 'QoS 0'),
+                              (1, 'QoS 1'),
+                              (2, 'QoS 2'),
+                            ],
                             onChanged: (val) {
                               if (val != null) {
                                 _updateMqttModel(
