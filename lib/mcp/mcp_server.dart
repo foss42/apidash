@@ -41,15 +41,6 @@ class ApiDashMcpServer {
       ),
     );
 
-    // Resource A4: Studio Workbench (Deep link: Logs)
-    server.registerResource(
-      'API Dash Studio Workbench (Logs)',
-      'ui://apidash-agentic-engine/workbench/studio#logs',
-      (description: 'Main API Dash interactive studio workbench', mimeType: 'text/html;profile=mcp-app'),
-          (uri, _) async => ReadResourceResult(
-          contents: [TextResourceContents(uri: uri.toString(), mimeType: 'text/html;profile=mcp-app', text: StudioWorkbench.buildHtml('pane-logs'))]
-      ),
-    );
 
     // 2. REGISTER CORE AGENT TOOLS
 
@@ -59,10 +50,12 @@ class ApiDashMcpServer {
       description: 'Executes an HTTP request. You MUST run this tool.',
       inputSchema: JsonSchema.object(
         properties: {
+          'title': JsonSchema.string(),
           'url': JsonSchema.string(),
           'method': JsonSchema.string(),
           'headers': JsonSchema.object(properties: {}), // Accepts arbitrary key/values
           'body': JsonSchema.string(),
+          'active_environment_id': JsonSchema.string(),
         },
         required: ['url', 'method'],
       ),
@@ -211,23 +204,8 @@ class ApiDashMcpServer {
       ),
     );
 
-    // Tool 8: Launch Logs Tab
-    server.registerTool(
-      'apidash_launch_logs_tab',
-      description: 'Opens the workbench directly to the Logs tab. Call this if the user asks to see the agentic event stream or system logs.',
-      inputSchema: JsonSchema.object(properties: {}),
-      meta: {
-        "ui": {"resourceUri": "ui://apidash-agentic-engine/workbench/studio#logs"}
-      },
-      callback: (_, __) async => CallToolResult(
-          content: [TextContent(text: "Workbench launched to the Logs tab.")],
-          meta: {
-            "ui": {"resourceUri": "ui://apidash-agentic-engine/workbench/studio#logs"}
-          }
-      ),
-    );
 
-    // Tool 9: Pre-Flight Sanity Inspector (Triggered by UI 'Send' button)
+    // Tool 8: Pre-Flight Sanity Inspector (Triggered by UI 'Send' button)
     server.registerTool(
       'apidash_btn_send',
       description: "UI Button: Triggered when the 'Send' button is clicked. Acts as an agentic pre-flight sanity check.",
@@ -248,6 +226,120 @@ class ApiDashMcpServer {
       },
     );
 
+    // Tool 9 get variables
+    server.registerTool(
+      'apidash_get_variables',
+      description: 'Fetches native environment variables from Hive.',
+      inputSchema: JsonSchema.object(properties: {}),
+      meta: {"ui": {"visibility": ["app"]}},
+      callback: (_, __) async {
+        final data = ToolExecutor.getAllEnvironments();
+        return CallToolResult(
+          content: [TextContent(text: jsonEncode(data))],
+          structuredContent: {"environments": data},
+        );
+      },
+    );
+
+    // Tool 10 save variables
+    server.registerTool(
+      'apidash_save_variables',
+      description: 'Saves environment variables to native Hive storage.',
+      inputSchema: JsonSchema.object(
+        properties: {
+          'id': JsonSchema.string(),
+          'name': JsonSchema.string(),
+          'values': JsonSchema.array(items: JsonSchema.object(properties: {})),
+        },
+        required: ['id', 'name', 'values'],
+      ),
+      meta: {"ui": {"visibility": ["app"]}},
+      callback: (args, _) async {
+        final success = await ToolExecutor.saveEnvironment(
+            args['id'].toString(),
+            args['name'].toString(),
+            args['values'] as List? ?? []
+        );
+        return CallToolResult(content: [TextContent(text: success ? "Saved" : "Error")]);
+      },
+    );
+
+    // Tool 11 Update History Title (Hidden from AI)
+    server.registerTool(
+      'apidash_update_history_title',
+      description: 'Updates the title of a specific history record.',
+      inputSchema: JsonSchema.object(
+        properties: {
+          'execution_id': JsonSchema.string(),
+          'title': JsonSchema.string(),
+        },
+        required: ['execution_id', 'title'],
+      ),
+      meta: {
+        "ui": {"visibility": ["app"]}
+      },
+      callback: (args, _) async {
+        final success = await ToolExecutor.updateHistoryTitle(
+            args['execution_id'].toString(),
+            args['title'].toString()
+        );
+        return CallToolResult(
+            content: [TextContent(text: success ? "Updated successfully" : "Record not found")],
+            meta: {"ui": {"visibility": ["app"]}}
+        );
+      },
+    );
+
+    // Tool 12 Duplicate Environment
+    server.registerTool(
+      'apidash_duplicate_environment',
+      description: 'Duplicates an environment.',
+      inputSchema: JsonSchema.object(
+        properties: {'id': JsonSchema.string()},
+        required: ['id'],
+      ),
+      meta: {"ui": {"visibility": ["app"]}},
+      callback: (args, _) async {
+        final newId = await ToolExecutor.duplicateEnvironment(args['id'].toString());
+        return CallToolResult(
+          content: [TextContent(text: "Duplicated successfully")],
+          structuredContent: {"id": newId},
+        );
+      },
+    );
+
+    // Tool 13 Delete Environment
+    server.registerTool(
+      'apidash_delete_environment',
+      description: 'Deletes an environment by ID.',
+      inputSchema: JsonSchema.object(
+        properties: {'id': JsonSchema.string()},
+        required: ['id'],
+      ),
+      meta: {"ui": {"visibility": ["app"]}},
+      callback: (args, _) async {
+        final success = await ToolExecutor.deleteEnvironment(args['id'].toString());
+        return CallToolResult(content: [TextContent(text: success ? "Deleted" : "Cannot delete global")]);
+      },
+    );
+
+    // Tool 14 Rename Environment
+    server.registerTool(
+      'apidash_rename_environment',
+      description: 'Renames an environment.',
+      inputSchema: JsonSchema.object(
+        properties: {
+          'id': JsonSchema.string(),
+          'name': JsonSchema.string(),
+        },
+        required: ['id', 'name'],
+      ),
+      meta: {"ui": {"visibility": ["app"]}},
+      callback: (args, _) async {
+        final success = await ToolExecutor.renameEnvironment(args['id'].toString(), args['name'].toString());
+        return CallToolResult(content: [TextContent(text: success ? "Renamed" : "Error")]);
+      },
+    );
     // CONNECT TO IDE STDIO
 
     // 1. Instantiate the official Stdio Transport

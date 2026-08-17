@@ -6,10 +6,8 @@ import '../utils/message_handler.dart';
 import 'requests_pane.dart';
 import 'variables_pane.dart';
 import 'history_pane.dart';
-import 'logs_pane.dart';
 
 class StudioWorkbench {
-  // Convert getter to a method that accepts the target tab
   static String buildHtml(String activeTab) {
     return '''
 <!DOCTYPE html>
@@ -20,8 +18,7 @@ class StudioWorkbench {
   <meta name="color-scheme" content="dark light">
   <title>API Dash Studio SPA</title>
   <style>
-    ${HostStyleVariables.css}
-    ${SharedStyles.css}
+    ${HostStyleVariables.css}${SharedStyles.css}
 
     .ad-nav-viewport {
       container-type: inline-size; container-name: topnav;
@@ -160,7 +157,6 @@ class StudioWorkbench {
     <button class="ad-tab active" data-pane="pane-studio"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zm2 0v14h6V5H5zm8 0v6h6V5h-6zm0 8v6h6v-6h-6z"/></svg><span>Requests</span></button>
     <button class="ad-tab" data-pane="pane-vars"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 16V6H4v10h16zM4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm-2 16h20v2H2v-2z"/></svg><span>Variables</span></button>
     <button class="ad-tab" data-pane="pane-history"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.25 2.52.75-1.23-3.5-2.07V8h-1.5z"/></svg><span>History</span></button>
-    <button class="ad-tab" data-pane="pane-logs"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM7.5 15l-1.41-1.41L9.67 10 6.09 6.41 7.5 5l5 5-5 5zm6 0h5v-2h-5v2z"/></svg><span>Logs</span></button>
   </nav>
 </div>
 
@@ -168,7 +164,6 @@ class StudioWorkbench {
   ${RequestsPane.html}
   ${VariablesPane.html}
   ${HistoryPane.html}
-  ${LogsPane.html}
 </main>
 
 <script>
@@ -178,30 +173,19 @@ class StudioWorkbench {
   const tabs = document.querySelectorAll('.ad-tab');
   const panes = document.querySelectorAll('.ad-pane');
   
+  // Custom Toast Notification System (Bypasses Sandbox Blocks)
+  function showToast(msg, isError = false) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.cssText = `position:fixed; bottom:20px; right:20px; background:\${isError ? '#ef4444' : '#3b82f6'}; color:white; padding:10px 16px; border-radius:6px; z-index:9999; font-size:13px; font-weight:600; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: opacity 0.3s ease-in-out; opacity: 1;`;
+    document.body.appendChild(toast);
+    setTimeout(() => { 
+      toast.style.opacity = '0'; 
+      setTimeout(() => toast.remove(), 300); 
+    }, 2500);
+  }
+  
   // --- Requests Pane Actions ---
-  // 1. Delete/Clear
-  document.getElementById('btnReqDelete')?.addEventListener('click', () => {
-    if(!confirm('Clear the current request?')) return;
-    document.getElementById('reqUrlInput').value = '';
-    document.getElementById('reqBodyTextarea').value = '';
-    document.getElementById('paramsList').innerHTML = '';
-    document.getElementById('headersList').innerHTML = '';
-    addKvRow('paramsList', 'Add URL Parameter...');
-    addKvRow('headersList', 'Add Name');
-  });
-
-  // 2. Duplicate (Copy JSON Payload to Clipboard)
-  document.getElementById('btnReqDuplicate')?.addEventListener('click', () => {
-    const payload = {
-      url: document.getElementById('reqUrlInput').value,
-      method: document.getElementById('methodText').innerText,
-      body: document.getElementById('reqBodyTextarea').value
-    };
-    navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
-    alert('Request payload copied to clipboard!');
-  });
-
-  // 3. View Code (Copy cURL)
   document.querySelector('.btn-view-code-sub')?.addEventListener('click', () => {
     const url = document.getElementById('reqUrlInput').value || 'http://localhost';
     const method = document.getElementById('methodText').innerText;
@@ -219,8 +203,159 @@ class StudioWorkbench {
       curl += ` \\\n  -d '\${body.replace(/'/g, "'\\''")}'`;
     }
     
-    navigator.clipboard.writeText(curl);
-    alert('cURL command copied to clipboard!');
+    try {
+      navigator.clipboard.writeText(curl);
+      showToast('cURL command copied to clipboard!');
+    } catch(e) {
+      showToast('Failed to copy. Clipboard access denied.', true);
+    }
+  });
+
+  // --- ENVIRONMENT ACTIONS ---
+  // Duplicate Environment Button
+  document.getElementById('btnDuplicateEnv')?.addEventListener('click', async () => {
+    const res = await executeDartTool("apidash_duplicate_environment", { id: editingEnvId });
+    const newId = res?.structuredContent?.id || res?.id;
+    if (newId) editingEnvId = newId;
+    await loadVariablesFromHive();
+    showToast("Environment duplicated!");
+  });
+
+  // Delete Environment Button
+  document.getElementById('btnDeleteEnv')?.addEventListener('click', async () => {
+    if (editingEnvId === 'global') return showToast("Cannot delete Global environment.", true);
+    await executeDartTool("apidash_delete_environment", { id: editingEnvId });
+    editingEnvId = 'global';
+    await loadVariablesFromHive();
+    showToast("Environment deleted!");
+  });
+
+  // Rename Environment Button (In-Place Edit)
+  document.getElementById('btnRenameEnv')?.addEventListener('click', () => {
+    const nameEl = document.getElementById('activeEnvNameDisplay');
+    if (!nameEl || editingEnvId === 'global') return showToast("Cannot rename Global environment.", true);
+    
+    nameEl.contentEditable = 'true';
+    nameEl.style.borderBottom = '1px dashed #3b82f6';
+    nameEl.focus();
+
+    const saveName = async () => {
+      nameEl.contentEditable = 'false';
+      nameEl.style.borderBottom = 'none';
+      const newName = nameEl.innerText.trim() || 'Untitled Environment';
+      nameEl.innerText = newName;
+      await executeDartTool("apidash_rename_environment", { id: editingEnvId, name: newName });
+      await loadVariablesFromHive();
+      showToast("Environment renamed!");
+      nameEl.removeEventListener('blur', saveName);
+    };
+
+    nameEl.addEventListener('blur', saveName);
+    nameEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
+    });
+  });
+
+  // Ensure New Environment gets a timestamped unique name to avoid duplicates
+  document.getElementById('btnNewEnv')?.addEventListener('click', async () => {
+    const all = Object.keys(allEnvironments);
+    const newId = 'env_' + Date.now();
+    const newName = "Environment " + (all.length);
+    await executeDartTool("apidash_save_variables", { id: newId, name: newName, values: [] });
+    editingEnvId = newId;
+    await loadVariablesFromHive();
+    showToast("New environment created!");
+  });
+
+  // --- STATE TRACKING FIX ---
+  let trackedExecutionId = null; // The request you are currently looking at/editing
+  let latestKnownExecutionId = null; // The absolute newest request in the database
+  
+  // Edit Request Name (In-Place DOM Edit, No Prompt)
+  document.getElementById('btnReqEdit')?.addEventListener('click', () => {
+    const titleEl = document.querySelector('.ad-req-title');
+    if (!titleEl) return;
+    
+    titleEl.contentEditable = 'true';
+    titleEl.style.borderBottom = '1px dashed #3b82f6';
+    titleEl.style.outline = 'none';
+    titleEl.focus();
+    
+    // Select the existing text for easy replacement
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(titleEl);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    const finishEditing = async () => {
+      titleEl.contentEditable = 'false';
+      titleEl.style.borderBottom = 'none';
+      const newName = titleEl.innerText.trim() || 'untitled';
+      titleEl.innerText = newName;
+      titleEl.setAttribute('title', newName);
+      
+      // NEW: Automatically save the renamed title to the database
+      if (trackedExecutionId) {
+        try {
+          await executeDartTool("apidash_update_history_title", { 
+            execution_id: trackedExecutionId, 
+            title: newName 
+          });
+          // Refresh the ledger behind the scenes so the History tab reflects the change immediately
+          fetchHistoryLedger();
+        } catch(e) {}
+      }
+
+      showToast('Request name updated!');
+      titleEl.removeEventListener('blur', finishEditing);
+    };
+
+    titleEl.addEventListener('blur', finishEditing);
+    titleEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        titleEl.blur(); // Trigger blur to save
+      }
+    });
+  });
+
+  // Delete/Clear Button (No Confirm Dialog)
+  document.getElementById('btnReqDelete')?.addEventListener('click', () => {
+    // NEW: Unlink from the history record so we don't accidentally rename it later
+    trackedExecutionId = null; 
+
+    document.getElementById('reqUrlInput').value = '';
+    document.getElementById('reqBodyTextarea').value = '';
+    document.getElementById('paramsList').innerHTML = '';
+    document.getElementById('headersList').innerHTML = '';
+    
+    const titleEl = document.querySelector('.ad-req-title');
+    if (titleEl) {
+      titleEl.innerText = 'untitled';
+      titleEl.setAttribute('title', 'untitled');
+    }
+    
+    addKvRow('paramsList', 'Add URL Parameter...');
+    addKvRow('headersList', 'Add Name');
+    showToast('Request cleared!'); 
+  });
+
+  // Duplicate/Copy Button
+  document.getElementById('btnReqDuplicate')?.addEventListener('click', () => {
+    const titleEl = document.querySelector('.ad-req-title');
+    const payload = {
+      title: titleEl ? titleEl.innerText : 'untitled',
+      url: document.getElementById('reqUrlInput').value,
+      method: document.getElementById('methodText').innerText,
+      body: document.getElementById('reqBodyTextarea').value
+    };
+    try {
+      navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+      showToast('json is copied!'); 
+    } catch(e) {
+      showToast('Failed to copy. Clipboard access denied.', true);
+    }
   });
 
   function openNamedRoofTab(targetId) {
@@ -228,22 +363,22 @@ class StudioWorkbench {
     panes.forEach(p => p.classList.remove('active'));
     document.querySelector(`[data-pane="\${targetId}"]`)?.classList.add('active');
     document.getElementById(targetId)?.classList.add('active');
+
+    // Trigger data fetching based on the active tab
+    if (targetId === 'pane-vars') loadVariablesFromHive();
+    if (targetId === 'pane-history') fetchHistoryLedger();
+
     setTimeout(sendResizeNotification, 50);
   }
 
-  let trackedExecutionId = null;
 
   window.addEventListener('DOMContentLoaded', async () => {
-    // Read the server-side injected tab variable!
     const target = '$activeTab';
 
     if (target === 'pane-history') {
       openNamedRoofTab('pane-history');
-      fetchHistoryLedger();
     } else if (target === 'pane-vars') {
       openNamedRoofTab('pane-vars');
-    } else if (target === 'pane-logs') {
-      openNamedRoofTab('pane-logs');
     } else {
       openNamedRoofTab('pane-studio');
     }
@@ -253,15 +388,17 @@ class StudioWorkbench {
       const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
       if (payload && payload.execution_id) {
         trackedExecutionId = payload.execution_id;
+        latestKnownExecutionId = payload.execution_id;
       }
     } catch(e) {}
+    
+    loadVariablesFromHive();
   });
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const target = tab.getAttribute('data-pane');
       openNamedRoofTab(target);
-      if (target === 'pane-history') fetchHistoryLedger();
     });
   });
 
@@ -341,11 +478,119 @@ class StudioWorkbench {
   });
   document.addEventListener('click', (e) => { if (!mBox.contains(e.target)) mBox.classList.remove('open'); });
 
+  // --- STATE MANAGEMENT ---
+  let allEnvironments = {};
+  let editingEnvId = 'global';
+
+  async function loadVariablesFromHive() {
+    try {
+      const res = await executeDartTool("apidash_get_variables", {});
+      allEnvironments = res?.structuredContent?.environments || res?.environments || {};
+      
+      renderEnvironmentSidebar();
+      renderActiveEnvironmentEditor();
+      
+      const selector = document.getElementById('activeEnvSelector');
+      if (selector) {
+        const currentVal = selector.value;
+        selector.innerHTML = '';
+        Object.keys(allEnvironments).forEach(id => {
+          const opt = document.createElement('option');
+          opt.value = id;
+          opt.innerText = allEnvironments[id].name || 'Unknown';
+          selector.appendChild(opt);
+        });
+        if (allEnvironments[currentVal]) selector.value = currentVal;
+      }
+    } catch(e) {}
+  }
+
+  function renderEnvironmentSidebar() {
+    const list = document.getElementById('envListContainer');
+    if (!list) return;
+    list.innerHTML = '';
+
+    Object.keys(allEnvironments).forEach(id => {
+      const env = allEnvironments[id];
+      const isGlobal = id === 'global';
+      const isActive = id === editingEnvId;
+      
+      const div = document.createElement('div');
+      div.className = `env-item \${isActive ? 'active' : ''}`;
+      div.style.cssText = `background: \${isActive ? 'var(--bg-surface-hover)' : 'transparent'}; border-left: 2px solid \${isActive ? 'var(--border-hover)' : 'transparent'}; color: \${isActive ? 'var(--text-tab-active)' : 'var(--text-main)'}; padding: 8px 12px; border-radius: 0 4px 4px 0; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center;`;
+      
+      div.innerHTML = `<span>\${env.name}</span>\${isGlobal ? '<span style="font-size: 10px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-label); padding: 2px 6px; border-radius: 4px;">Default</span>' : ''}`;
+      
+      div.onclick = () => {
+        editingEnvId = id;
+        renderEnvironmentSidebar();
+        renderActiveEnvironmentEditor();
+      };
+      list.appendChild(div);
+    });
+  }
+
+  function renderActiveEnvironmentEditor() {
+    const env = allEnvironments[editingEnvId] || { name: 'Unknown', values: [] };
+    document.getElementById('activeEnvNameDisplay').innerText = env.name;
+    
+    const list = document.getElementById('globalVarsList');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (!env.values || env.values.length === 0) {
+      addVarRow('globalVarsList', 'Variable Name', 'Value');
+      return;
+    }
+
+    env.values.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'kv-row';
+      div.innerHTML = `
+        <input type="checkbox" class="kv-chk" style="width:14px; height:14px;" \${item.enabled !== false ? 'checked' : ''}>
+        <input type="text" class="kv-box k" value="\${item.key || ''}" placeholder="Variable Name" style="background: transparent; padding: 8px 12px; border-color: var(--border-divider);">
+        <span class="kv-sep" style="font-weight: normal; margin: 0 4px;">=</span>
+        <input type="text" class="kv-box v" value="\${item.value || ''}" placeholder="Value" style="background: transparent; padding: 8px 12px; border-color: var(--border-divider);">
+        <button class="kv-del" title="Delete" style="color: #f43f5e;"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z" stroke="currentColor" stroke-width="0" fill="currentColor"/></svg></button>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  document.getElementById('btnSaveEnv')?.addEventListener('click', async () => {
+    const values = [];
+    document.querySelectorAll('#globalVarsList .kv-row').forEach(row => {
+      const key = row.querySelector('.kv-box.k')?.value.trim();
+      if (key) {
+        values.push({
+          key: key, 
+          value: row.querySelector('.kv-box.v')?.value.trim(), 
+          enabled: row.querySelector('.kv-chk')?.checked
+        });
+      }
+    });
+
+    const envName = document.getElementById('activeEnvNameDisplay').innerText;
+    await executeDartTool("apidash_save_variables", { id: editingEnvId, name: envName, values: values });
+    loadVariablesFromHive();
+    showToast("Environment Saved!");
+  });
+
+  // --- REQUEST DISPATCHER ---
   document.getElementById('btnFireRequest')?.addEventListener('click', async () => {
     const url = document.getElementById('reqUrlInput').value.trim();
-    if (!url) return alert("Please specify a target URL endpoint.");
+    if (!url) return showToast("Please specify a target URL endpoint.", true);
+    
     const method = document.getElementById('methodText').innerText;
     const body = document.getElementById('reqBodyTextarea').value;
+    
+    // Fallback in case title element is not found
+    const titleEl = document.querySelector('.ad-req-title');
+    const reqTitle = titleEl ? titleEl.innerText : 'untitled';
+    
+    const envSelector = document.getElementById('activeEnvSelector');
+    const selectedEnvId = envSelector ? envSelector.value : 'global';
+    
     let headers = {};
     document.querySelectorAll('#headersList .kv-row').forEach(row => {
       const isChecked = row.querySelector('.kv-chk')?.checked;
@@ -356,13 +601,16 @@ class StudioWorkbench {
 
     renderHydratedResults({ status_code: 0, time_ms: 0, response_body: "Dispatching request over MCP pipe..." });
     const res = await executeDartTool("apidash_execute_request", {
+      title: reqTitle,
       url, method,
       headers: Object.keys(headers).length > 0 ? headers : undefined,
-      body: body ? body : undefined
+      body: body ? body : undefined,
+      active_environment_id: selectedEnvId
     });
     const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
     if (payload && payload.execution_id) {
       trackedExecutionId = payload.execution_id;
+      latestKnownExecutionId = payload.execution_id;
       renderHydratedResults(payload);
     }
   });
@@ -417,6 +665,13 @@ class StudioWorkbench {
       const res = await executeDartTool("apidash_get_results", { execution_id: msg.id });
       const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
       if (payload) {
+        trackedExecutionId = payload.execution_id || msg.id;
+        // Hydrate Title
+        const titleEl = document.querySelector('.ad-req-title');
+        if (titleEl) {
+          titleEl.innerText = payload.title || 'untitled';
+          titleEl.setAttribute('title', payload.title || 'untitled');
+        }
         if (payload.url) document.getElementById('reqUrlInput').value = payload.url;
         if (payload.method) {
           document.getElementById('methodText').innerText = payload.method.toUpperCase();
@@ -434,6 +689,13 @@ class StudioWorkbench {
       const res = await executeDartTool("apidash_get_results", { execution_id: id });
       const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
       if (payload) {
+        trackedExecutionId = payload.execution_id || id;
+        // Hydrate Title
+        const titleEl = document.querySelector('.ad-req-title');
+        if (titleEl) {
+          titleEl.innerText = payload.title || 'untitled';
+          titleEl.setAttribute('title', payload.title || 'untitled');
+        }
         if (payload.url) document.getElementById('reqUrlInput').value = payload.url;
         if (payload.method) {
           document.getElementById('methodText').innerText = payload.method.toUpperCase();
@@ -451,8 +713,15 @@ class StudioWorkbench {
     try {
       const res = await executeDartTool("apidash_get_results", { _cache_buster: Date.now().toString() });
       const payload = res?.structuredContent || res?.result?.structuredContent || res?.meta?.structuredContent || res;
-      if (payload && payload.execution_id && payload.execution_id !== trackedExecutionId) {
+      if (payload && payload.execution_id && payload.execution_id !== latestKnownExecutionId) {
+        latestKnownExecutionId = payload.execution_id;
         trackedExecutionId = payload.execution_id;
+        // Hydrate Title
+        const titleEl = document.querySelector('.ad-req-title');
+        if (titleEl) {
+          titleEl.innerText = payload.title || 'untitled';
+          titleEl.setAttribute('title', payload.title || 'untitled');
+        }
         if (payload.url) document.getElementById('reqUrlInput').value = payload.url;
         if (payload.method) {
           document.getElementById('methodText').innerText = payload.method.toUpperCase();
@@ -485,12 +754,18 @@ class StudioWorkbench {
       data.forEach(req => {
         const isOk = req.status >= 200 && req.status < 300;
         const verbClr = `var(--http-\${req.method.toLowerCase()}, var(--http-get))`;
+        
+        const displayTitle = req.title && req.title.trim() !== '' ? req.title : 'untitled';
+
         const item = document.createElement('div');
         item.className = 'ad-hist-card';
         item.innerHTML = `
           <div class="ad-hist-left" onclick="openHistoryResult('\${req.execution_id}')" title="Click to load into Studio">
-            <span class="ad-hist-method" style="color:\${verbClr}">\${req.method}</span>
-            <span class="ad-hist-url">\${req.url}</span>
+            <span class="ad-hist-method" style="color:\${verbClr}; align-self: center;">\${req.method}</span>
+            <div style="display:flex; flex-direction:column; min-width:0; overflow:hidden; justify-content: center; gap: 2px;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">\${displayTitle}</span>
+              <span class="ad-hist-url" style="color: var(--text-muted); font-size: 11px;">\${req.url}</span>
+            </div>
           </div>
           <div class="ad-hist-right">
             <span style="color:\${isOk ? 'var(--http-get)' : 'var(--http-delete)'}; font-weight:700">\${req.status}</span>

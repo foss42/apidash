@@ -2,29 +2,40 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:hive_ce/hive.dart';
+import '../utils/envvar_utils.dart';
 import 'models/execution_record.dart';
 
 class ToolExecutor {
   static Box get _agentHistory => Hive.box('agent_history');
+  static Box get _envBox => Hive.box('apidash-environments');
 
   static Future<Map<String, dynamic>> executeRequest(Map<String, dynamic> args) async {
     try {
       stderr.writeln("[ToolExecutor] Firing HTTP request to wire...");
       final methodStr = args['method'].toString().toUpperCase();
       final urlStr = args['url'].toString();
+      final titleStr = args['title']?.toString() ?? 'untitled';
+      final activeEnvId = args['active_environment_id']?.toString() ?? 'global';
 
-      final httpRequestModel = HttpRequestModel(
+      var httpRequestModel = HttpRequestModel(
         url: urlStr,
         method: HTTPVerb.values.byName(args['method'].toString().toLowerCase()),
         headers: args['headers'] != null
-            ? (args['headers'] as Map).entries
+            ? (args['headers'] as Map)
+            .entries
             .map((e) => NameValueModel(name: e.key.toString(), value: e.value.toString()))
             .toList()
             : null,
         body: args['body']?.toString(),
       );
 
-      final (response, duration, err) = await sendHttpRequest('headless_agent', APIType.rest, httpRequestModel);
+      // 1. Build environment variable mapping using apidash_core EnvironmentVariableModel
+      final Map<String, List<EnvironmentVariableModel>> envMap = _buildEnvironmentVariableMap(activeEnvId);
+
+      // 2. Use apidash_core native substitution
+      final substitutedModel = substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
+
+      final (response, duration, err) = await sendHttpRequest('headless_agent', APIType.rest, substitutedModel);
 
       if (err != null) {
         stderr.writeln("[ToolExecutor] Network Error: $err");
@@ -35,24 +46,118 @@ class ToolExecutor {
         executionId: "req_${DateTime.now().millisecondsSinceEpoch}",
         statusCode: response?.statusCode ?? 0,
         method: methodStr,
-        url: urlStr,
+        url: substitutedModel.url,
         timeMs: duration?.inMilliseconds ?? 0,
         responseBody: response?.body ?? "No Body",
         timestamp: DateTime.now(),
         headers: args['headers'] != null ? Map<String, dynamic>.from(args['headers'] as Map) : null,
       );
 
-      await _agentHistory.put(record.executionId, record.toMap());
+      final recordMap = record.toMap();
+      recordMap['title'] = titleStr;
+
+      await _agentHistory.put(record.executionId, recordMap);
       await _agentHistory.put('latest_execution_id', record.executionId);
       await _agentHistory.flush();
 
-      stderr.writeln("✅ [ToolExecutor] Saved run ${record.executionId} to disk successfully.");
-      return record.toMap();
+      return recordMap;
     } catch (e, stack) {
       stderr.writeln("[ToolExecutor Fatal Crash]: $e\n$stack");
       rethrow;
     }
   }
+
+  // Helper using apidash_core models
+  static Map<String, List<EnvironmentVariableModel>> _buildEnvironmentVariableMap(String activeEnvId) {
+    final Map<String, List<EnvironmentVariableModel>> envMap = {};
+    final allEnvs = getAllEnvironments();
+
+    if (activeEnvId != 'global' && allEnvs.containsKey(activeEnvId)) {
+      final rawValues = allEnvs[activeEnvId]['values'] as List? ?? [];
+      envMap[activeEnvId] = rawValues
+          .map((item) => EnvironmentVariableModel.fromJson(Map<String, dynamic>.from(item as Map)))
+          .where((element) => element.enabled)
+          .toList();
+    } else if (allEnvs.containsKey('global')) {
+      final rawValues = allEnvs['global']['values'] as List? ?? [];
+      envMap['global'] = rawValues
+          .map((item) => EnvironmentVariableModel.fromJson(Map<String, dynamic>.from(item as Map)))
+          .where((element) => element.enabled)
+          .toList();
+    }
+
+    return envMap;
+  }
+
+  // --- ENVIRONMENT CRUD & DUPLICATE HANDLING ---
+
+  static Map<String, dynamic> getAllEnvironments() {
+    final envIds = List<String>.from(_envBox.get('environmentIds', defaultValue: <String>['global']));
+    final result = <String, dynamic>{};
+
+    for (var id in envIds) {
+      final envData = _envBox.get(id);
+      if (envData != null) {
+        result[id] = Map<String, dynamic>.from(envData as Map);
+      }
+    }
+    if (!result.containsKey('global')) {
+      result['global'] = {"id": "global", "name": "Global", "values": []};
+    }
+    return result;
+  }
+
+  static Future<bool> saveEnvironment(String id, String name, List<dynamic> rawValues) async {
+    final valuesList = rawValues.map((item) {
+      final m = Map<String, dynamic>.from(item as Map);
+      return {
+        "key": m["key"] ?? "",
+        "value": m["value"] ?? "",
+        "type": "variable",
+        "enabled": m["enabled"] ?? true
+      };
+    }).toList();
+
+    List<String> envIds = List<String>.from(_envBox.get('environmentIds', defaultValue: <String>['global']));
+    if (!envIds.contains(id)) {
+      envIds.add(id);
+      await _envBox.put('environmentIds', envIds);
+    }
+
+    await _envBox.put(id, {"id": id, "name": name, "values": valuesList});
+    await _envBox.flush();
+    return true;
+  }
+
+  static Future<String> duplicateEnvironment(String id) async {
+    final all = getAllEnvironments();
+    final source = all[id] ?? {"name": "Environment", "values": []};
+    final newId = "env_${DateTime.now().millisecondsSinceEpoch}";
+    final newName = "${source['name']} Copy";
+
+    await saveEnvironment(newId, newName, source['values'] as List? ?? []);
+    return newId;
+  }
+
+  static Future<bool> deleteEnvironment(String id) async {
+    if (id == 'global') return false; // Prevent deleting default global
+    List<String> envIds = List<String>.from(_envBox.get('environmentIds', defaultValue: <String>[]));
+    envIds.remove(id);
+    await _envBox.put('environmentIds', envIds);
+    await _envBox.delete(id);
+    await _envBox.flush();
+    return true;
+  }
+
+  static Future<bool> renameEnvironment(String id, String newName) async {
+    final all = getAllEnvironments();
+    if (!all.containsKey(id)) return false;
+    final env = all[id];
+    return await saveEnvironment(id, newName, env['values'] as List? ?? []);
+  }
+
+  // --- HISTORY MANAGEMENT ---
+
   // 2. GET RESULTS (For UI Hydration)
   static Map<String, dynamic> getResults(String? requestedId) {
     final targetId = requestedId ?? _agentHistory.get('latest_execution_id');
@@ -82,6 +187,7 @@ class ToolExecutor {
           final m = Map<String, dynamic>.from(data);
           list.add({
             "execution_id": key,
+            "title": m["title"] ?? "untitled", // Retrieve the title
             "method": m["method"],
             "url": m["url"],
             "status": m["status_code"],
@@ -107,6 +213,7 @@ class ToolExecutor {
     }
     return false;
   }
+
   // 5. send button preflight prompt
   static String buildSendPreFlightPrompt(Map<String, dynamic> args) {
     final draftUrl = args['url']?.toString().trim() ?? '';
@@ -129,5 +236,20 @@ You are an expert API middleware inspector. Review the draft above before puttin
 DECISION TREE:
 - IF 100% VALID & SAFE: Immediately invoke the 'apidash_execute_request' tool using the cleaned up URL, Method, Headers, and Body. Do not ask the user for permission.
 - IF CRITICAL DATA IS MISSING (e.g., an unknown API key): Stop. Explain what is missing in the chat window and ask the user to provide it.""";
+  }
+
+  // 6. UPDATE HISTORY TITLE
+  static Future<bool> updateHistoryTitle(String id, String newTitle) async {
+    if (_agentHistory.containsKey(id)) {
+      final data = _agentHistory.get(id);
+      if (data != null) {
+        final map = Map<String, dynamic>.from(data as Map);
+        map['title'] = newTitle;
+        await _agentHistory.put(id, map);
+        await _agentHistory.flush();
+        return true;
+      }
+    }
+    return false;
   }
 }

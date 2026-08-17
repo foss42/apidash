@@ -45,7 +45,8 @@ void main(List<String> args) async {
 
     Hive.init(agentPath);
     await Hive.openBox('agent_history');
-
+    await Hive.openBox('apidash-environments'); // Native Variables box
+    await Hive.openBox('apidash-data');         // Native Collections box
     // Boot the official SDK server:
     await ApiDashMcpServer.start();
     return;
