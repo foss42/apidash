@@ -82,7 +82,7 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
     List<DataColumn> columns = const [
       DataColumn2(label: Text(kNameCheckbox), fixedWidth: 30),
       DataColumn2(label: Text("Topic")),
-      DataColumn2(label: Text("QoS"), fixedWidth: 76),
+      DataColumn2(label: Text("QoS"), fixedWidth: 92),
       DataColumn2(label: Text(''), fixedWidth: 32),
     ];
 
