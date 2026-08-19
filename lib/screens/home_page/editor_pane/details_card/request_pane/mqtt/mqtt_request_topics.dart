@@ -170,6 +170,7 @@ class EditMQTTTopicsState extends ConsumerState<EditMQTTTopics> {
                     key: ValueKey("$selectedId-$index-mqtt-topics-qos-$seed"),
                     value: _topicQos(topicRows[index], mqttModel.qos),
                     isDense: true,
+                    isExpanded: true,
                     values: const [(0, 'QoS 0'), (1, 'QoS 1'), (2, 'QoS 2')],
                     onChanged: (val) {
                       if (val == null) return;
