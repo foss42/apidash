@@ -4,9 +4,9 @@ This guide explains how to connect to an MQTT broker, subscribe to topics, and p
 
 Use this page when you want to test or interact with an MQTT broker — for example IoT devices, sensors, or any real-time publish/subscribe messaging system — instead of sending one-off HTTP requests.
 
-> MQTT is different from HTTP. Instead of sending a request and waiting for a single response, you open a long-lived connection to a **broker**, **subscribe** to topics you care about, and **publish** messages to topics. Messages flow in both directions and appear live as they arrive.
+> **MQTT is different from HTTP.** Instead of sending a request and waiting for a single response, you open a long-lived connection to a central server called the **broker**. You never talk to other clients directly — everything goes through the broker. Each message is **published** to a **topic** (a hierarchical name like `home/living-room/temperature`), and every client that has **subscribed** to that topic receives a copy. Publishers and subscribers don't know about each other; the broker routes messages between them purely by topic. This decoupling is the heart of the *publish/subscribe* model. Messages flow in both directions and appear live as they arrive.
 
-<!-- screenshot: MQTT request open with the Connect button, version selector, and tabs visible -->
+![An MQTT request open in API Dash — Broker URL, MQTT 5.0 version selector, Connect button, and the Message / Topics / Properties / Auth / Settings tabs](images/mqtt/mqtt_overview.png)
 
 ---
 
@@ -59,10 +59,14 @@ This is the fastest way to see MQTT working end to end using a free public broke
 
 The **MQTT Version** selector sits where the HTTP method dropdown normally appears (right next to the Broker URL).
 
-- **MQTT 3.1.1** — the most widely deployed version. Use it if your broker or devices only support 3.1.1, or if you want the simplest setup.
-- **MQTT 5.0** — the newer version with extra features: user properties, request/response metadata, detailed reason codes, and fine-grained session control. **This is the default.**
+Both versions share the same core — a broker, topics, publish/subscribe, QoS levels, retained messages, and Last Will. MQTT 5.0 is a backward-compatible **superset**: it keeps all of that and adds features on top, rather than changing the fundamentals. So the real question is whether you need any of the 5.0 additions.
+
+- **MQTT 3.1.1** — the most widely deployed version. Use it if your broker or devices only support 3.1.1, or if you want the simplest setup. Everything you need for basic pub/sub is here.
+- **MQTT 5.0** — the newer version, and the default. On top of 3.1.1 it adds **user properties** (custom key/value metadata on messages), **response topic + correlation data** (a built-in request/response pattern), **message expiry**, **session expiry** (fine-grained control over how long the broker keeps your session), and **reason codes** (detailed explanations when the broker accepts or rejects something). Pick it when you want any of these, or when working against a modern broker. **This is the default.**
 
 When you switch versions, API Dash shows or hides the version-specific options automatically (this is called progressive disclosure — you only see what applies to your chosen version). Specifically, the **Properties** tab and several MQTT 5.0 fields appear only when you select MQTT 5.0.
+
+![The MQTT Version selector set to MQTT 3.1, shown in the slot next to the Broker URL](images/mqtt/mqtt_version_selector.png)
 
 > If you're not sure which to pick, start with the default (MQTT 5.0). Most modern public brokers support it. If you hit trouble connecting, switch to MQTT 3.1.1.
 
@@ -81,7 +85,7 @@ Steps:
 2. Type the broker address into the URL field (for example `broker.hivemq.com`).
 3. Click **Connect**, or simply press **Enter** while your cursor is in the field.
 
-<!-- screenshot: Broker URL field with Connect button -->
+![The Broker URL field with the Connect button](images/mqtt/mqtt_broker_url.png)
 
 ### Connect and Disconnect
 
@@ -121,23 +125,31 @@ Open the **Settings** tab to fine-tune how API Dash connects. Sensible defaults 
 
 ### Client ID
 
-- **What it is:** a unique identifier for your connection. Brokers use it to track your session.
+- **What it is:** a name that uniquely identifies your client to the broker. It's the key the broker uses to store and look up your **session** — your subscriptions, and any messages queued for you while offline, are filed under this ID. (Both versions.)
+- **Why it matters:** the Client ID must be unique on a given broker. If a second client connects using an ID that's already in use, the broker disconnects the first one. It's also how you **resume a session**: reconnecting with the *same* Client ID (and a non-clean session) tells the broker "I'm the same client as before — restore my state."
 - **When to set it:** leave it blank and API Dash generates one for you automatically (something like `apidash_` followed by a timestamp). Set your own only if your broker requires a specific Client ID, or if you want to resume a session later.
 
 ### Keep Alive (s)
 
-- **What it is:** how often (in seconds) API Dash sends a small heartbeat ping so the broker knows you're still there.
-- **Default:** `60`. Lower it for flaky networks; raise it to reduce traffic on stable ones.
+- **What it is:** the maximum time (in seconds) that may pass with no traffic before the client must send a small heartbeat packet (a `PINGREQ`). It's how the broker knows a client that's connected but quiet is still alive. (Both versions.)
+- **Why it matters:** if the broker hears nothing — no messages *and* no heartbeat — for roughly 1.5× the Keep Alive interval, it assumes the client is dead and closes the connection. This lapse is also what triggers the **Last Will**: a client that vanishes without a clean disconnect is detected via Keep Alive, and the broker then publishes its will message.
+- **Default:** `60`. Lower it to detect dropped connections sooner on flaky networks; raise it to reduce background traffic on stable ones.
 
 ### Default QoS
 
-QoS (Quality of Service) controls the delivery guarantee for your messages. The **Default QoS** dropdown applies to both the topics you subscribe to and the messages you publish.
+**What it is:** QoS (Quality of Service) is the *delivery guarantee* attached to a message — how much effort the broker and client spend making sure it arrives. It applies in two independent places: the QoS you **publish** with (how hard the broker tries to deliver your message onward) and the QoS you **subscribe** with (the highest QoS the broker will use when delivering to you). The **Default QoS** dropdown sets both. (Available in both MQTT 3.1.1 and 5.0.)
 
 | QoS | Name | Meaning |
 |---|---|---|
 | 0 | At most once | Fire and forget. Fastest, but a message may be lost. **(Default)** |
 | 1 | At least once | The broker acknowledges delivery. A message may arrive more than once. |
 | 2 | Exactly once | A full handshake guarantees the message arrives exactly once. Slowest. |
+
+The trade-off is speed and simplicity versus reliability:
+
+- **QoS 0** sends once with no acknowledgement. Fastest and lightest, but if the network drops the packet it's simply gone — no retry. Good for high-frequency data where a lost reading doesn't matter because a fresh one is coming (e.g. a sensor publishing every second).
+- **QoS 1** re-sends until the receiver acknowledges, so the message is guaranteed to arrive — but a retry can cause the same message to be **delivered more than once**, so the receiver must tolerate duplicates.
+- **QoS 2** uses a four-step handshake to guarantee the message arrives **exactly once**, with no loss and no duplicates. Safest but slowest, so reserve it for messages where a duplicate would cause real harm (e.g. a billing event or a one-shot command).
 
 > For interactive testing, QoS 0 is usually fine. Use QoS 1 or 2 only when you specifically need delivery guarantees.
 
@@ -147,8 +159,9 @@ QoS (Quality of Service) controls the delivery guarantee for your messages. The 
 
 Open the **Auth** tab to send a username and password to the broker.
 
-- **What it is:** credentials some brokers require before they'll accept your connection.
+- **What it is:** a username and password sent to the broker inside the CONNECT packet when you connect. The broker checks them and either accepts or rejects the connection. This proves *who you are*; it's separate from **TLS**, which encrypts the connection but doesn't identify you. (Both versions.)
 - **When to use it:** only if your broker is protected. Leave both fields blank for anonymous (open) brokers like the public test brokers.
+- **Note:** unless **Use TLS** is on, credentials travel unencrypted over the network — enable TLS whenever you send real credentials to a real broker.
 - **UI labels:** **Username** and **Password** (the password is masked as you type).
 
 Steps:
@@ -156,7 +169,7 @@ Steps:
 2. Enter your **Username** and **Password**.
 3. Connect as usual.
 
-<!-- screenshot: Auth tab with Username and Password fields -->
+![The Auth tab with Username and Password fields](images/mqtt/mqtt_auth.png)
 
 > Most public test brokers don't require credentials, so you can skip this tab when getting started.
 
@@ -170,7 +183,7 @@ In the **Settings** tab, expand the **Transport & Security** section to control 
 
 - **UI label:** **Use TLS** — "Encrypt the connection (TLS/SSL)".
 - **Default:** off.
-- **What it does:** encrypts the connection between you and the broker.
+- **What it does:** wraps the MQTT connection in TLS/SSL so everything between you and the broker — your username, password, and message payloads included — is encrypted and can't be read or tampered with by anyone on the network in between. It does **not** log you in; that's what the Auth tab is for. (Both versions.)
 - **When to use it:** whenever your broker offers a secure endpoint, and always in production.
 
 Turning this on automatically bumps the port from `1883` to `8883` (the standard secure MQTT port).
@@ -189,8 +202,8 @@ Turning this on automatically bumps the port from `1883` to `8883` (the standard
 
 - **UI label:** **Use WebSocket**.
 - **Default:** off.
-- **What it does:** tunnels the MQTT connection over a WebSocket transport instead of a raw TCP connection.
-- **When to use it:** when your broker only exposes a WebSocket endpoint, or when a firewall blocks raw MQTT ports.
+- **What it does:** tunnels the MQTT connection over a WebSocket transport instead of a raw TCP connection. The MQTT protocol is identical either way — only the underlying pipe changes. (Both versions.)
+- **When to use it:** when your broker only exposes a WebSocket endpoint, when a restrictive firewall or proxy only allows web (HTTP/WebSocket) traffic, or when the broker must also serve browser-based clients (browsers can only speak MQTT over WebSocket).
 
 Turning this on automatically adjusts the port to `8083` (or `8084` if TLS is also on).
 
@@ -200,10 +213,18 @@ Turning this on automatically adjusts the port to `8083` (or `8084` if TLS is al
 
 In the **Settings** tab, expand the **Last Will & Testament (LWT)** section.
 
-- **What it is:** a message you register up front that the broker will publish **on your behalf** if your client disconnects unexpectedly (for example, the network drops or the app crashes).
-- **When to use it:** to let other clients know when your client goes offline ungracefully — for example, publishing an "offline" status to a topic other devices watch.
+- **What it is:** a message you hand to the broker *when you connect*. The broker holds onto it and publishes it **on your behalf** only if your connection ends unexpectedly — the network drops, the app crashes, or the Keep Alive lapses. If you disconnect cleanly (clicking **Disconnect**), the broker discards the will without ever sending it. (Both versions.)
+- **Why it matters:** in pub/sub there's no other automatic way for the rest of the system to notice that a client silently vanished. The will turns an ungraceful disconnect into an ordinary message that other clients can subscribe to and react to.
+- **When to use it:** the classic use is **presence / online-offline status**. A device publishes `online` (often retained) when it connects, and registers a will of `offline` on the same topic; if it drops, subscribers see it go `offline` instantly, with no polling. It's also handy for alerting or failover when a critical publisher disappears.
 
- Will | Retain Will | off | If on, the broker keeps the will message as the last message on the topic for future subscribers. |
+The LWT fields:
+
+| Field | What it does |
+|---|---|
+| Will Topic | The topic the broker publishes your will message to. |
+| Will Message | The payload the broker publishes on your behalf if you drop unexpectedly. |
+| Will QoS | The delivery guarantee for the will message. |
+| Retain Will | If on, the broker keeps the will as the topic's retained message for future subscribers. |
 
 Steps:
 1. Open the **Settings** tab and expand **Last Will & Testament (LWT)**.
@@ -212,19 +233,23 @@ Steps:
 4. Optionally raise **Will QoS** or turn on **Retain Will**.
 5. Connect. The broker now holds your will and publishes it automatically if you drop unexpectedly.
 
-<!-- screenshot: Last Will & Testament section expanded -->
+![The Last Will & Testament section expanded, with Will Topic, Will Message, Will QoS, and Retain Will](images/mqtt/mqtt_lwt.png)
 
 ---
 
 ## Session control (Clean Start & Session Expiry)
 
-How API Dash handles your session depends on the MQTT version you chose.
+**What a session is:** when you connect, the broker can keep **session state** for your Client ID — the list of topics you're subscribed to, plus any QoS 1 and QoS 2 messages that arrived on those topics *while you were offline*. A **persistent session** means that state survives a disconnect: reconnect with the same Client ID and the broker restores your subscriptions and delivers the messages you missed. A **clean session** means the broker throws all of that away, so every connection starts from scratch. Persistent sessions let a device drop off the network and catch up on what it missed when it returns.
+
+How you control this depends on the MQTT version you chose.
 
 ### MQTT 3.1.1
 
-There's nothing to configure. API Dash connects with a clean session every time, meaning the broker doesn't keep any state for you between connections.
+MQTT 3.1.1 has a single **Clean Session** flag. API Dash connects with a clean session every time, so the broker keeps no state for you between connections — every reconnect is a fresh start. (In 3.1.1 you can't set *how long* a persistent session lasts; that's fixed by the broker. MQTT 5.0 adds that control below.)
 
 ### MQTT 5.0
+
+MQTT 5.0 splits the old single flag into two finer controls: **Clean Start** decides whether you *begin* with a fresh session, and **Session Expiry** decides how long the broker *keeps* the session after you disconnect.
 
 In the **Settings** tab you'll see a **Clean Start** toggle.
 
@@ -239,6 +264,8 @@ If you turn **Clean Start off**, a new field appears:
 - **What it does:** tells the broker how many seconds to keep your session (including your subscriptions and any queued messages) after you disconnect, so you can reconnect and resume where you left off.
 
 > To resume a session later, turn **Clean Start off**, set a **Session Expiry** long enough for your needs, and reconnect with the **same Client ID**.
+
+![The Settings tab with Clean Start turned off, revealing the Session Expiry (s) field (MQTT 5.0)](images/mqtt/mqtt_session_v5.png)
 
 ---
 
@@ -261,11 +288,13 @@ Steps:
 3. Make sure the row's checkbox is ticked.
 4. Repeat for as many topics as you like.
 
-<!-- screenshot: Topics tab table with enabled topic rows -->
+![The Topics tab table with enabled topic rows and wildcards](images/mqtt/mqtt_topics.png)
 
 ### Wildcards
 
-Topic filters support MQTT wildcards so you can match many topics at once:
+Topics are **hierarchical**: levels are separated by `/`, as in `home/living-room/temperature` (three levels). Wildcards let a single subscription match many topics at once instead of listing each one — invaluable when you don't know every topic name ahead of time, or when you want everything under a branch. They work in both MQTT versions.
+
+Topic filters support two MQTT wildcards:
 
 | Wildcard | Meaning | Example | Matches |
 |---|---|---|---|
@@ -295,7 +324,7 @@ Open the **Message** tab to send a message to a topic.
 Fields:
 - **Send to topic:** — the full topic you're publishing to. As you type, API Dash suggests topics you're already subscribed to (a convenience only; you can type any topic).
 - **Message payload** — a multiline text box for the message body.
-- **Retain** toggle — if on, the broker stores this message as the last message on the topic, so future subscribers receive it immediately when they subscribe.
+- **Retain** checkbox — if on, the broker stores this message as the last message on the topic, so future subscribers receive it immediately when they subscribe.
 - **Publish** button — sends the message.
 
 Steps:
@@ -305,9 +334,17 @@ Steps:
 4. Optionally turn on **Retain**.
 5. Click **Publish**.
 
-<!-- screenshot: Message tab with Send to topic, payload box, Retain toggle, and Publish button -->
+![The Message tab with Send to topic, payload box, Retain checkbox, and Publish button](images/mqtt/mqtt_publish.png)
 
 > The **Publish** button is enabled only when you are **connected** and have entered a topic. If it's greyed out, check that you've connected and typed a topic.
+
+### Retained messages
+
+**What it is:** normally a published message is delivered only to clients that are **already subscribed** at the instant it's sent — publish to a topic no one is watching and the message is simply gone. Turning on **Retain** tells the broker to *also* store this message as the **last known value** for that topic. The broker keeps exactly one retained message per topic; a new retained publish replaces the previous one.
+
+**Why it matters:** when any **new** client subscribes to that topic later, the broker immediately delivers the stored retained message — so a late joiner gets the **current state** right away instead of waiting for the next publish. Classic uses: the latest sensor reading (a dashboard that connects mid-stream sees the current temperature at once), or a device's `online`/`offline` status (a client learns a device's state the moment it subscribes). Without retain, a new subscriber sees nothing until the next message happens to be published. (Retained messages work in both MQTT versions.)
+
+> To clear a retained message, publish an **empty payload** to the same topic with **Retain** turned on.
 
 Every message you publish is echoed into the message log as a **sent** entry, showing the payload and topic, so you have a record of what you sent.
 
@@ -321,8 +358,8 @@ These options appear only when the **MQTT Version** is set to **MQTT 5.0**.
 
 Open the **Properties** tab (visible only for MQTT 5.0).
 
-- **What it is:** custom key/value metadata pairs, similar to HTTP headers, attached to your connection and to the messages you publish.
-- **When to use it:** to send extra context — like a trace ID, a source name, or routing hints — without putting it inside the message body.
+- **What it is:** custom key/value string pairs (like HTTP headers) that ride *alongside* a message rather than inside its payload. The broker passes them through untouched, and every subscriber that receives the message also receives its user properties — so the receiver can read this metadata without parsing the message body. This is an **MQTT 5.0-only** feature; 3.1.1 has no equivalent. You can attach them to the CONNECT and to each PUBLISH.
+- **When to use it:** to carry structured context that isn't really part of the payload — a trace/correlation ID for debugging, the source device or app name, a content hint, or routing tags a downstream consumer can act on — while keeping the payload itself clean.
 - **UI:** a table where each row has an **enable checkbox**, a **Key** field, a **Value** field, and a **remove** button.
 
 Steps:
@@ -332,19 +369,27 @@ Steps:
 4. Make sure the row's checkbox is ticked.
 5. Connect and/or publish — the enabled properties are sent along.
 
-<!-- screenshot: Properties tab with User Properties key/value rows -->
+![The Properties tab (MQTT 5.0) with User Properties key/value rows](images/mqtt/mqtt_user_properties.png)
 
 > Only rows that are **enabled** and have a **non-empty key** are actually sent. Blank or unticked rows are ignored.
 
 ### Request / Response & Expiry
 
-In the **Message** tab, expand the collapsible section titled **Request / Response & Expiry (v5)**.
+Pub/sub is one-directional by nature: you publish to a topic and the broker fans it out to subscribers — there's no built-in "reply" the way HTTP pairs a response with every request. MQTT 5.0 adds two properties that let you build a request/response exchange on top of pub/sub, plus a separate message-lifetime control. Expand the collapsible section titled **Request / Response & Expiry (v5)** in the **Message** tab. (All three are **MQTT 5.0-only**.)
 
-> Use **Response Topic** and **Correlation Data** together when you want a request/response style exchange: publish a request that tells the responder where to reply and includes a token, then match the incoming reply by that same token.
+- **Response Topic** — the topic you want the answer sent to. The responder has no other way to know where to reply, so you include it in the request; the responder then publishes its answer to that topic (which the requester is normally already subscribed to).
+- **Correlation Data** — an opaque token you attach to the request; the responder copies it verbatim into the reply. Because replies arrive asynchronously — and you may have several requests in flight at once — you match each incoming reply back to the request that caused it by comparing this token.
+- **Message Expiry Interval (seconds)** — unrelated to request/response: it tells the broker how long to keep this message for subscribers that are currently offline (persistent sessions) before discarding it. `0` or empty means no expiry.
+
+> **The request/response pattern:** the requester subscribes to a reply topic, then publishes a request carrying that **Response Topic** and a unique **Correlation Data** token. The responder does its work, publishes the result to the Response Topic, and echoes the token back. The requester matches the reply by the token — giving you HTTP-style request/response over MQTT's pub/sub.
+
+![The Request / Response & Expiry (v5) section expanded in the Message tab, showing Response Topic, Correlation Data, and Message Expiry Interval](images/mqtt/mqtt_v5_request_response.png)
 
 ### Reason codes
 
 With MQTT 5.0, the broker returns detailed diagnostic **reason codes** for connection and subscription events. API Dash surfaces these in the message log, so after you connect, subscribe, or disconnect you'll see entries such as a successful CONNACK, a SUBACK granting QoS 1, or a normal-disconnection DISCONNECT. These are a big help when debugging why a broker rejected a connection or subscription.
+
+![The message log showing MQTT 5.0 reason codes — a successful CONNACK, a SUBACK granting QoS, and a normal DISCONNECT](images/mqtt/mqtt_reason_codes.png)
 
 ---
 
@@ -365,7 +410,7 @@ Things you can do in the log:
 - **Filter by topic** — add topic filters as chips (press **Enter** to add each one) to narrow the log to specific topics. These filters support wildcards, just like subscriptions.
 - **Clear the log** — click the red **✕** button to empty the log.
 
-> The log holds up to a maximum number of events, controlled by the **Max Log Messages** app setting. Older entries are dropped once you reach the limit, which keeps memory usage in check during high-volume streams.
+> The log holds up to a maximum number of events, controlled by the **Max Connection Messages** app setting. Older entries are dropped once you reach the limit, which keeps memory usage in check during high-volume streams.
 
 ---
 
@@ -404,7 +449,7 @@ These free brokers are handy for trying things out without setting up your own. 
 - **Publish button greyed out?** You must be **connected** and have a topic typed in **Send to topic:** before you can publish.
 - **Want to resume a session after disconnecting (MQTT 5.0)?** Turn **Clean Start off**, set a **Session Expiry** long enough to cover your downtime, and reconnect with the **same Client ID**.
 - **Broker rejected your connection (MQTT 5.0)?** Read the **reason code** in the message log — it usually tells you exactly why (bad credentials, not authorized, etc.).
-- **Log filling up too fast?** Use the **search box** or add **topic filter chips** to focus on what matters, and use the **clear (✕)** button to reset. If you regularly handle high-volume streams, adjust **Max Log Messages** in the app settings.
+- **Log filling up too fast?** Use the **search box** or add **topic filter chips** to focus on what matters, and use the **clear (✕)** button to reset. If you regularly handle high-volume streams, adjust **Max Connection Messages** in the app settings.
 
 ---
 
