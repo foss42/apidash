@@ -205,4 +205,105 @@ void main() {
       expect(stripUrlParams(url), "https://example.com/page");
     });
   });
+
+  group("Testing webSocketSchemeFor", () {
+    test('https maps to wss', () {
+      expect(
+        webSocketSchemeFor(SupportedUriSchemes.https),
+        SupportedWebSocketUriSchemes.wss,
+      );
+    });
+
+    test('http maps to ws', () {
+      expect(
+        webSocketSchemeFor(SupportedUriSchemes.http),
+        SupportedWebSocketUriSchemes.ws,
+      );
+    });
+  });
+
+  group("Testing applyWebSocketUriScheme", () {
+    test('applies the default scheme when omitted', () {
+      expect(
+        applyWebSocketUriScheme("echo.websocket.org"),
+        "wss://echo.websocket.org",
+      );
+    });
+
+    test('honours an explicit default scheme', () {
+      expect(
+        applyWebSocketUriScheme(
+          "echo.websocket.org",
+          defaultUriScheme: SupportedWebSocketUriSchemes.ws,
+        ),
+        "ws://echo.websocket.org",
+      );
+    });
+
+    test('leaves an existing ws scheme untouched', () {
+      expect(
+        applyWebSocketUriScheme("ws://echo.websocket.org"),
+        "ws://echo.websocket.org",
+      );
+    });
+
+    test('leaves an existing wss scheme untouched', () {
+      expect(
+        applyWebSocketUriScheme("wss://echo.websocket.org"),
+        "wss://echo.websocket.org",
+      );
+    });
+
+    test('leaves an unsupported scheme untouched for connect to report', () {
+      expect(
+        applyWebSocketUriScheme("http://echo.websocket.org"),
+        "http://echo.websocket.org",
+      );
+    });
+
+    test('defaults localhost to ws, not wss', () {
+      expect(applyWebSocketUriScheme("localhost"), "ws://localhost");
+    });
+
+    test('defaults localhost with a port to ws', () {
+      // Uri.parse("localhost:8765") reports the scheme "localhost", so this
+      // case cannot be detected after parsing.
+      expect(applyWebSocketUriScheme("localhost:8765"), "ws://localhost:8765");
+    });
+
+    test('defaults localhost with a port and path to ws', () {
+      expect(
+        applyWebSocketUriScheme("localhost:8765/socket"),
+        "ws://localhost:8765/socket",
+      );
+    });
+
+    test('defaults a bare IP host to ws', () {
+      // Uri.parse("127.0.0.1:8765") throws, so this case cannot be detected
+      // after parsing either.
+      expect(applyWebSocketUriScheme("127.0.0.1:8765"), "ws://127.0.0.1:8765");
+    });
+
+    test('trims surrounding whitespace', () {
+      expect(
+        applyWebSocketUriScheme("  echo.websocket.org  "),
+        "wss://echo.websocket.org",
+      );
+    });
+
+    test('preserves path and query when defaulting', () {
+      expect(
+        applyWebSocketUriScheme("example.com/socket?topic=a&topic=b"),
+        "wss://example.com/socket?topic=a&topic=b",
+      );
+    });
+
+    test('returns null for a null URL', () {
+      expect(applyWebSocketUriScheme(null), null);
+    });
+
+    test('returns null for a blank URL', () {
+      expect(applyWebSocketUriScheme("   "), null);
+    });
+  });
 }

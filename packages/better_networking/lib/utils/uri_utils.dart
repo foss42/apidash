@@ -13,6 +13,54 @@ import 'http_request_utils.dart';
   return (null, false);
 }
 
+/// Maps the user's HTTP default-URI-scheme preference onto its WebSocket
+/// equivalent, so `https` implies `wss` and `http` implies `ws`.
+SupportedWebSocketUriSchemes webSocketSchemeFor(SupportedUriSchemes scheme) {
+  return switch (scheme) {
+    SupportedUriSchemes.https => SupportedWebSocketUriSchemes.wss,
+    SupportedUriSchemes.http => SupportedWebSocketUriSchemes.ws,
+  };
+}
+
+/// Applies [defaultUriScheme] to [url] when the scheme is omitted, mirroring
+/// how [getValidRequestUri] defaults HTTP URLs.
+///
+/// Localhost and bare-IP hosts default to `ws://` rather than `wss://`, for the
+/// same reason [getValidRequestUri] forces `http` for those hosts: local
+/// development servers rarely terminate TLS.
+///
+/// A URL that already carries a scheme is returned untouched, including an
+/// unsupported one, so that `WebSocket.connect` can surface its own
+/// "Unsupported URL scheme" error rather than this function guessing at intent.
+///
+/// Returns `null` when [url] is null/blank, matching the "URL is missing"
+/// case callers already handle.
+String? applyWebSocketUriScheme(
+  String? url, {
+  SupportedWebSocketUriSchemes defaultUriScheme = kDefaultWebSocketUriScheme,
+}) {
+  url = url?.trim();
+  if (url == null || url == "") {
+    return null;
+  }
+
+  // Checked before parsing: `Uri.parse("localhost:8765")` yields the scheme
+  // "localhost", and `Uri.parse("127.0.0.1:8765")` throws outright, so neither
+  // can be identified by inspecting the parsed Uri.
+  if (kLocalhostRegex.hasMatch(url) || kIPHostRegex.hasMatch(url)) {
+    return '${SupportedWebSocketUriSchemes.ws.name}://$url';
+  }
+
+  final uri = Uri.tryParse(url);
+  if (uri == null) {
+    return url;
+  }
+  if (uri.hasScheme) {
+    return url;
+  }
+  return '${defaultUriScheme.name}://$url';
+}
+
 String stripUriParams(Uri uri) {
   return "${uri.scheme}://${uri.authority}${uri.path}";
 }

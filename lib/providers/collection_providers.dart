@@ -501,10 +501,21 @@ class CollectionStateNotifier
     final substitutedUrl =
         substituteVariables(wsModel.url, combinedEnvVarMap) ?? wsModel.url;
 
-    String finalUrl = substitutedUrl;
+    // Apply the default scheme before parsing: a schemeless URL parses as a
+    // relative Uri (or throws, for bare IPs), which breaks both the query
+    // parameter handling below and WebSocket.connect itself.
+    final schemedUrl = applyWebSocketUriScheme(
+          substitutedUrl,
+          defaultUriScheme: webSocketSchemeFor(
+            ref.read(settingsProvider).defaultUriScheme,
+          ),
+        ) ??
+        substitutedUrl;
+
+    String finalUrl = schemedUrl;
     if (wsModel.params != null && wsModel.isParamEnabledList != null) {
       try {
-        final uri = Uri.parse(substitutedUrl);
+        final uri = Uri.parse(schemedUrl);
         final queryParams = Map<String, dynamic>.from(uri.queryParameters);
         for (int i = 0; i < wsModel.params!.length; i++) {
           if (wsModel.isParamEnabledList![i]) {
