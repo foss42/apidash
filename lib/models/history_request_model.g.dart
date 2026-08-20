@@ -27,6 +27,11 @@ _HistoryRequestModel _$HistoryRequestModelFromJson(Map json) =>
           : WebSocketRequestModel.fromJson(
               Map<String, dynamic>.from(json['wsRequestModel'] as Map),
             ),
+      grpcRequestModel: json['grpcRequestModel'] == null
+          ? null
+          : GrpcRequestModel.fromJson(
+              Map<String, dynamic>.from(json['grpcRequestModel'] as Map),
+            ),
       httpResponseModel: json['httpResponseModel'] == null
           ? null
           : HttpResponseModel.fromJson(
@@ -49,6 +54,7 @@ Map<String, dynamic> _$HistoryRequestModelToJson(
   'httpRequestModel': instance.httpRequestModel?.toJson(),
   'aiRequestModel': instance.aiRequestModel?.toJson(),
   'wsRequestModel': instance.wsRequestModel?.toJson(),
+  'grpcRequestModel': instance.grpcRequestModel?.toJson(),
   'httpResponseModel': instance.httpResponseModel?.toJson(),
   'preRequestScript': instance.preRequestScript,
   'postRequestScript': instance.postRequestScript,

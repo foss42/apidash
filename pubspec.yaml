@@ -87,6 +87,8 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  grpc: ^4.1.2
+  protobuf: ^4.1.0
 
 dependency_overrides:
   pdf_widget_wrapper: ^1.0.4

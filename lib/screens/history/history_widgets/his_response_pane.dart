@@ -31,6 +31,13 @@ class HistoryResponsePane extends ConsumerWidget {
         );
       }
 
+      if (apiType == APIType.grpc) {
+        final grpcModel = selectedHistoryRequest.grpcRequestModel;
+        return RealtimeEventStreamView(
+          historyMessages: grpcModel?.messageHistory ?? [],
+        );
+      }
+
       final requestModel = getRequestModelFromHistoryModel(
         selectedHistoryRequest,
       );
@@ -47,6 +54,7 @@ class HistoryResponsePane extends ConsumerWidget {
           Expanded(
             child: ResponseTabView(
               selectedId: selectedId,
+              headersTitle: requestModel?.apiType == APIType.grpc ? "Metadata" : kLabelHeaders,
               children: [
                 ResponseBody(
                   selectedRequestModel: requestModel,

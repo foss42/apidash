@@ -28,7 +28,9 @@ class HistoryRequestPane extends ConsumerWidget {
     final headersMap =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai) return <String, String>{};
+            if (apiType == APIType.ai || apiType == APIType.grpc) {
+              return <String, String>{};
+            }
             if (apiType == APIType.websocket) {
               final headers = value?.wsRequestModel?.headers ?? [];
               final map = <String, String>{};
@@ -48,7 +50,9 @@ class HistoryRequestPane extends ConsumerWidget {
     final paramsMap =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai) return <String, String>{};
+            if (apiType == APIType.ai || apiType == APIType.grpc) {
+              return <String, String>{};
+            }
             if (apiType == APIType.websocket) {
               final params = value?.wsRequestModel?.params ?? [];
               final map = <String, String>{};
@@ -68,8 +72,11 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasBody =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket)
+            if (apiType == APIType.ai ||
+                apiType == APIType.websocket ||
+                apiType == APIType.grpc) {
               return false;
+            }
             return value?.httpRequestModel?.hasBody;
           }),
         ) ??
@@ -78,8 +85,11 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket)
+            if (apiType == APIType.ai ||
+                apiType == APIType.websocket ||
+                apiType == APIType.grpc) {
               return false;
+            }
             return value?.httpRequestModel?.hasQuery;
           }),
         ) ??
@@ -107,6 +117,29 @@ class HistoryRequestPane extends ConsumerWidget {
     final authModel = ref.watch(
       selectedHistoryRequestModelProvider.select((value) => value?.authModel),
     );
+
+    final grpcRequestModel = ref.watch(
+      selectedHistoryRequestModelProvider.select(
+        (value) => value?.grpcRequestModel,
+      ),
+    );
+
+    final grpcInfoMap = <String, String>{
+      if ((grpcRequestModel?.url ?? '').isNotEmpty)
+        'Target': grpcRequestModel!.url,
+      if ((grpcRequestModel?.service ?? '').isNotEmpty)
+        'Service': grpcRequestModel!.service!,
+      if ((grpcRequestModel?.method ?? '').isNotEmpty)
+        'Method': grpcRequestModel!.method!,
+    };
+
+    final grpcMetadataMap = grpcRequestModel?.metadataMap ?? <String, String>{};
+
+    final grpcParameters = grpcRequestModel?.parameters ?? [];
+    final grpcParamsMap = <String, String>{
+      for (final param in grpcParameters)
+        if (param.name.isNotEmpty) param.name: param.value,
+    };
 
     return switch (apiType) {
       APIType.rest => RequestPane(
@@ -206,6 +239,27 @@ class HistoryRequestPane extends ConsumerWidget {
           RequestDataTable(rows: paramsMap, keyName: kNameURLParam),
           RequestDataTable(rows: headersMap, keyName: kNameHeader),
           const HisWebSocketConfigSection(),
+        ],
+      ),
+      APIType.grpc => RequestPane(
+        key: const Key("history-request-pane-grpc"),
+        selectedId: selectedId,
+        codePaneVisible: codePaneVisible,
+        onPressedCodeButton: () {
+          ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+              !codePaneVisible;
+        },
+        showViewCodeButton: !isCompact,
+        showIndicators: [
+          grpcInfoMap.isNotEmpty,
+          grpcMetadataMap.isNotEmpty,
+          grpcParamsMap.isNotEmpty,
+        ],
+        tabLabels: const ['Info', 'Metadata', 'Message'],
+        children: [
+          RequestDataTable(rows: grpcInfoMap, keyName: 'Field'),
+          RequestDataTable(rows: grpcMetadataMap, keyName: 'Metadata'),
+          RequestDataTable(rows: grpcParamsMap, keyName: 'Parameter'),
         ],
       ),
       _ => kSizedBoxEmpty,

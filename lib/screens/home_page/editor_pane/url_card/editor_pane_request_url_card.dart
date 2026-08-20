@@ -40,6 +40,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.websocket => kSizedBoxEmpty,
+                    APIType.grpc => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -56,6 +57,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.websocket => kSizedBoxEmpty,
+                    APIType.grpc => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
