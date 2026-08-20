@@ -51,6 +51,7 @@ class ToolExecutor {
         responseBody: response?.body ?? "No Body",
         timestamp: DateTime.now(),
         headers: args['headers'] != null ? Map<String, dynamic>.from(args['headers'] as Map) : null,
+        requestBody: args['body']?.toString(), 
       );
 
       final recordMap = record.toMap();

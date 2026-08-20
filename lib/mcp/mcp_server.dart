@@ -80,7 +80,7 @@ class ApiDashMcpServer {
       },
     );
 
-    // Tool 2: Get Results (Hidden from AI — For UI Polling)
+    // Tool 2: Get Results (Visible to AI — For UI Polling)
     server.registerTool(
       'apidash_get_results',
       description: 'Fetches execution payload for the UI canvas.',
@@ -99,20 +99,18 @@ class ApiDashMcpServer {
             structuredContent: data,
             meta: {
               "structuredContent": data,
-              "ui": {"visibility": ["app"]}
             }
         );
       },
     );
 
-    // Tool 3: List History (Hidden from AI)
+    // Tool 3: List History (Visible to AI)
     server.registerTool(
       'apidash_list_history',
       description: 'Lists historical execution runs.',
       inputSchema: JsonSchema.object(properties: {}), // Empty object schema
       meta: {
         "ui": {
-          "visibility": ["app"],
           // Reliably routing to the tabbed workbench history
           "resourceUri": "ui://apidash-agentic-engine/workbench/studio#history"
         }
@@ -126,7 +124,6 @@ class ApiDashMcpServer {
             meta: {
               "structuredContent": history,
               "ui": {
-                "visibility": ["app"],
                 "resourceUri": "ui://apidash-agentic-engine/workbench/studio#history"
               }
             }

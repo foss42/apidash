@@ -9,6 +9,7 @@ class ExecutionRecord {
   final String responseBody;
   final DateTime timestamp;
   final Map<String, dynamic>? headers;
+  final String? requestBody;
 
   const ExecutionRecord({
     required this.executionId,
@@ -19,6 +20,7 @@ class ExecutionRecord {
     required this.responseBody,
     required this.timestamp,
     this.headers,
+    this.requestBody,
   });
 
   bool get isSuccess => statusCode >= 200 && statusCode < 300;
@@ -33,6 +35,7 @@ class ExecutionRecord {
       'response_body': responseBody,
       'timestamp': timestamp.toIso8601String(),
       if (headers != null) 'headers': headers,
+      if (requestBody != null) 'request_body': requestBody,
     };
   }
 
@@ -48,6 +51,7 @@ class ExecutionRecord {
           ? DateTime.tryParse(map['timestamp'].toString()) ?? DateTime.now()
           : DateTime.now(),
       headers: map['headers'] != null ? Map<String, dynamic>.from(map['headers'] as Map) : null,
+      requestBody: map['request_body']?.toString(),
     );
   }
 
