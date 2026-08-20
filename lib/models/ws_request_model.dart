@@ -18,6 +18,7 @@ abstract class WebSocketMessage with _$WebSocketMessage {
     DateTime? timestamp,
     @Default(true) bool outgoing,
     @Default(WebSocketMessageType.received) WebSocketMessageType messageType,
+    String? metadata, // e.g., MQTT topic
   }) = _WebSocketMessage;
 
   factory WebSocketMessage.fromJson(Map<String, dynamic> json) =>

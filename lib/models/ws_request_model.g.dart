@@ -19,6 +19,7 @@ _WebSocketMessage _$WebSocketMessageFromJson(Map<String, dynamic> json) =>
             json['messageType'],
           ) ??
           WebSocketMessageType.received,
+      metadata: json['metadata'] as String?,
     );
 
 Map<String, dynamic> _$WebSocketMessageToJson(_WebSocketMessage instance) =>
@@ -27,6 +28,7 @@ Map<String, dynamic> _$WebSocketMessageToJson(_WebSocketMessage instance) =>
       'timestamp': instance.timestamp?.toIso8601String(),
       'outgoing': instance.outgoing,
       'messageType': _$WebSocketMessageTypeEnumMap[instance.messageType]!,
+      'metadata': instance.metadata,
     };
 
 const _$WebSocketMessageTypeEnumMap = {

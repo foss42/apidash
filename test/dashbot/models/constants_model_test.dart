@@ -32,6 +32,7 @@ void main() {
       final map = <ChatActionTarget, String>{
         ChatActionTarget.httpRequestModel: 'httpRequestModel',
         ChatActionTarget.wsRequestModel: 'wsRequestModel',
+        ChatActionTarget.mqttRequestModel: 'mqttRequestModel',
         ChatActionTarget.codegen: 'codegen',
         ChatActionTarget.test: 'test',
         ChatActionTarget.code: 'code',
@@ -55,6 +56,30 @@ void main() {
         chatActionTargetFromString('wsRequestModel'),
         ChatActionTarget.wsRequestModel,
       );
+    });
+
+    test('mqttRequestModel target round-trips', () {
+      expect(ChatActionTarget.mqttRequestModel.name, 'mqttRequestModel');
+      expect(
+        chatActionTargetFromString('mqttRequestModel'),
+        ChatActionTarget.mqttRequestModel,
+      );
+    });
+
+    test('ChatMessageType includes all MQTT task members', () {
+      const mqttTypes = [
+        ChatMessageType.explainMqttConnection,
+        ChatMessageType.debugMqttConnection,
+        ChatMessageType.whyNoMqttMessages,
+        ChatMessageType.summarizeMqttMessages,
+        ChatMessageType.explainMqttTopics,
+        ChatMessageType.mqttSessionAdvisor,
+        ChatMessageType.generateMqttCode,
+        ChatMessageType.explainMqttLwt,
+        ChatMessageType.explainMqttV5,
+        ChatMessageType.findInMqttMessages,
+      ];
+      expect(ChatMessageType.values, containsAll(mqttTypes));
     });
 
     test('ChatMessageType includes all WebSocket task members', () {

@@ -21,6 +21,25 @@ void main() {
       expect(result.responseStatus, 200);
       expect(result.message, kResponseCodeReasons[200]);
     });
+
+    test('carries wsRequestModel through the conversion', () {
+      final result = getRequestModelFromHistoryModel(historyRequestModelWs);
+      expect(result.id, 'historyIdWs');
+      expect(result.apiType, APIType.websocket);
+      expect(result.wsRequestModel, historyWsRequestModel);
+      expect(result.mqttRequestModel, isNull);
+    });
+
+    test('carries mqttRequestModel through the conversion', () {
+      final result = getRequestModelFromHistoryModel(historyRequestModelMqtt);
+      expect(result.id, 'historyIdMqtt');
+      expect(result.apiType, APIType.mqtt);
+      expect(result.mqttRequestModel, historyMqttRequestModel);
+      // populated collections carried across intact
+      expect(result.mqttRequestModel!.messageHistory.length, 2);
+      expect(result.mqttRequestModel!.subscribedTopics.length, 2);
+      expect(result.wsRequestModel, isNull);
+    });
   });
 
   group('Testing getHistoryRequestName function', () {

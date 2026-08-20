@@ -27,6 +27,11 @@ _HistoryRequestModel _$HistoryRequestModelFromJson(Map json) =>
           : WebSocketRequestModel.fromJson(
               Map<String, dynamic>.from(json['wsRequestModel'] as Map),
             ),
+      mqttRequestModel: json['mqttRequestModel'] == null
+          ? null
+          : MQTTRequestModel.fromJson(
+              Map<String, dynamic>.from(json['mqttRequestModel'] as Map),
+            ),
       httpResponseModel: json['httpResponseModel'] == null
           ? null
           : HttpResponseModel.fromJson(
@@ -49,6 +54,7 @@ Map<String, dynamic> _$HistoryRequestModelToJson(
   'httpRequestModel': instance.httpRequestModel?.toJson(),
   'aiRequestModel': instance.aiRequestModel?.toJson(),
   'wsRequestModel': instance.wsRequestModel?.toJson(),
+  'mqttRequestModel': instance.mqttRequestModel?.toJson(),
   'httpResponseModel': instance.httpResponseModel?.toJson(),
   'preRequestScript': instance.preRequestScript,
   'postRequestScript': instance.postRequestScript,

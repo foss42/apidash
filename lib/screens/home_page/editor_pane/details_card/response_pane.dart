@@ -26,17 +26,19 @@ class ResponsePane extends ConsumerWidget {
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
 
-    // ── WebSocket response: event-stream view ────────────────────────
-    if (apiType == APIType.websocket) {
+    // ── WebSocket / MQTT response: event-stream view ────────────────────────
+    if (apiType == APIType.websocket || apiType == APIType.mqtt) {
       if (isWorking) {
         return SendingWidget(startSendingTime: startSendingTime);
       }
 
-      // Watch only this boolean so URL keystrokes (which replace
-      // wsRequestModel) don't rebuild the pane.
-      final hasMessages = ref.watch(selectedRequestModelProvider.select(
-              (value) =>
-                  value?.wsRequestModel?.messageHistory.isNotEmpty)) ??
+      // Watch only this boolean so URL keystrokes (which replace the
+      // protocol sub-model) don't rebuild the pane.
+      final hasMessages = (apiType == APIType.websocket
+              ? ref.watch(selectedRequestModelProvider.select((value) =>
+                  value?.wsRequestModel?.messageHistory.isNotEmpty))
+              : ref.watch(selectedRequestModelProvider.select((value) =>
+                  value?.mqttRequestModel?.messageHistory.isNotEmpty))) ??
           false;
 
       if (isStreaming || hasMessages) {

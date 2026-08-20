@@ -42,6 +42,11 @@ _RequestModel _$RequestModelFromJson(Map json) => _RequestModel(
       : WebSocketRequestModel.fromJson(
           Map<String, dynamic>.from(json['wsRequestModel'] as Map),
         ),
+  mqttRequestModel: json['mqttRequestModel'] == null
+      ? null
+      : MQTTRequestModel.fromJson(
+          Map<String, dynamic>.from(json['mqttRequestModel'] as Map),
+        ),
 );
 
 Map<String, dynamic> _$RequestModelToJson(_RequestModel instance) =>
@@ -58,6 +63,7 @@ Map<String, dynamic> _$RequestModelToJson(_RequestModel instance) =>
       'postRequestScript': instance.postRequestScript,
       'aiRequestModel': instance.aiRequestModel?.toJson(),
       'wsRequestModel': instance.wsRequestModel?.toJson(),
+      'mqttRequestModel': instance.mqttRequestModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {
@@ -65,4 +71,5 @@ const _$APITypeEnumMap = {
   APIType.ai: 'ai',
   APIType.graphql: 'graphql',
   APIType.websocket: 'websocket',
+  APIType.mqtt: 'mqtt',
 };
