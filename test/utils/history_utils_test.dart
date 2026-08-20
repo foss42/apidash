@@ -278,4 +278,61 @@ void main() {
       expect(result, null);
     });
   });
+
+  group('Testing findExpiredHistoryIds function', () {
+    final retentionDate = DateTime(2026, 1, 1);
+
+    test('returns ids with timeStamp before retention date', () {
+      final metas = {
+        'old': <String, Object?>{
+          'timeStamp': DateTime(2025, 12, 1).toIso8601String(),
+        },
+        'keep': <String, Object?>{
+          'timeStamp': DateTime(2026, 2, 1).toIso8601String(),
+        },
+        'boundary': <String, Object?>{
+          'timeStamp': retentionDate.toIso8601String(),
+        },
+      };
+
+      final result = findExpiredHistoryIds(metas, retentionDate);
+
+      expect(result, ['old']);
+    });
+
+    test('accepts DateTime values stored directly in maps', () {
+      final metas = {
+        'old': <String, Object?>{'timeStamp': DateTime(2025, 6, 1)},
+        'keep': <String, Object?>{'timeStamp': DateTime(2026, 6, 1)},
+      };
+
+      final result = findExpiredHistoryIds(metas, retentionDate);
+
+      expect(result, ['old']);
+    });
+
+    test('skips entries with missing or invalid timestamps', () {
+      final metas = {
+        'missing': <String, Object?>{'name': 'x'},
+        'invalid': <String, Object?>{'timeStamp': 'not-a-date'},
+        'old': <String, Object?>{
+          'timeStamp': DateTime(2024, 1, 1).toIso8601String(),
+        },
+      };
+
+      final result = findExpiredHistoryIds(metas, retentionDate);
+
+      expect(result, ['old']);
+    });
+
+    test('returns empty list when nothing expired', () {
+      final metas = {
+        'a': <String, Object?>{
+          'timeStamp': DateTime(2026, 3, 1).toIso8601String(),
+        },
+      };
+
+      expect(findExpiredHistoryIds(metas, retentionDate), isEmpty);
+    });
+  });
 }

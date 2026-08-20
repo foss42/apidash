@@ -131,3 +131,31 @@ DateTime? getRetentionDate(HistoryRetentionPeriod? retentionPeriod) {
       return null;
   }
 }
+
+/// Returns history IDs whose meta `timeStamp` is strictly before [retentionDate].
+///
+/// Pure/sync helper so it can run inside an isolate without touching Hive.
+/// [metas] maps historyId -> raw Hive JSON map for [HistoryMetaModel].
+List<String> findExpiredHistoryIds(
+  Map<String, Map<String, Object?>> metas,
+  DateTime retentionDate,
+) {
+  final toRemoveIds = <String>[];
+
+  for (final entry in metas.entries) {
+    final timeStampRaw = entry.value['timeStamp'];
+    DateTime? timeStamp;
+
+    if (timeStampRaw is DateTime) {
+      timeStamp = timeStampRaw;
+    } else if (timeStampRaw is String) {
+      timeStamp = DateTime.tryParse(timeStampRaw);
+    }
+
+    if (timeStamp != null && timeStamp.isBefore(retentionDate)) {
+      toRemoveIds.add(entry.key);
+    }
+  }
+
+  return toRemoveIds;
+}
