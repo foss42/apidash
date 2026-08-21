@@ -24,6 +24,7 @@ class TerminalController extends StateNotifier<TerminalState> {
   TerminalController() : super(TerminalState(entries: <TerminalEntry>[]));
 
   static const _uuid = Uuid();
+  static const int _maxEntries = 1000;
 
   String _newId() => _uuid.v4();
 
@@ -33,6 +34,9 @@ class TerminalController extends StateNotifier<TerminalState> {
 
   String append(TerminalEntry entry) {
     final list = [entry, ...state.entries];
+    if (list.length > _maxEntries) {
+      list.removeRange(_maxEntries, list.length);
+    }
     state = TerminalState(entries: list);
     return entry.id;
   }
