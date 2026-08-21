@@ -29,13 +29,26 @@ class WsRecentlySent extends ConsumerWidget {
             .select((value) => value?.wsRequestModel?.messageHistory)) ??
         const <WebSocketMessage>[];
 
-    final sentHistory = messageHistory
-        .where((m) => m.outgoing && m.messageType == WebSocketMessageType.sent && m.payload != "Heartbeat ping")
+    // Newest-first, so the first time we see a payload while counting is
+    // also its most recent send.
+    final reversedPayloads = messageHistory
+        .where((m) =>
+            m.outgoing &&
+            m.messageType == WebSocketMessageType.sent &&
+            m.payload != "Heartbeat ping")
         .map((m) => m.payload)
         .toList()
-        .reversed
-        .take(10)
-        .toList();
+        .reversed;
+
+    // Dedupe by payload while counting how many times each was sent.
+    // A LinkedHashMap (the default Map literal) preserves insertion order,
+    // so the most-recently-sent unique payloads stay first.
+    final Map<String, int> sentCounts = {};
+    for (final payload in reversedPayloads) {
+      sentCounts[payload] = (sentCounts[payload] ?? 0) + 1;
+    }
+
+    final sentHistory = sentCounts.entries.take(10).toList();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -58,7 +71,9 @@ class WsRecentlySent extends ConsumerWidget {
               itemCount: sentHistory.length,
               separatorBuilder: (_, __) => kHSpacer10,
               itemBuilder: (context, index) {
-                final payload = sentHistory[index];
+                final entry = sentHistory[index];
+                final payload = entry.key;
+                final count = entry.value;
 
                 Map<String, String>? matchingTemplate;
                 try {
@@ -134,6 +149,24 @@ class WsRecentlySent extends ConsumerWidget {
                                       ),
                                     ),
                               ),
+                              if (count > 1) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    '×$count',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                           const SizedBox(height: 8),
