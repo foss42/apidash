@@ -8,6 +8,7 @@ import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
+import '../services/oauth_services.dart';
 import '../utils/utils.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
@@ -869,6 +870,7 @@ class CollectionStateNotifier
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      customCallbackHandler: flutterOAuth2CallbackHandler,
     );
 
     HttpResponseModel? httpResponseModel;

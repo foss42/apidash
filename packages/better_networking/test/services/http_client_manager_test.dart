@@ -1,5 +1,4 @@
 import 'package:better_networking/better_networking.dart';
-import 'package:flutter/foundation.dart';
 import 'package:test/test.dart';
 import 'package:http/io_client.dart';
 
@@ -12,7 +11,7 @@ void main() {
     });
 
     test('createHttpClientWithNoSSL: returns an IOClient when not on web', () {
-      if (!kIsWeb) {
+      if (!isThisWeb) {
         final client = manager.createClient('req2', noSSL: true);
         expect(client, isA<IOClient>());
       }
