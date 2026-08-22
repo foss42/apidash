@@ -25,6 +25,7 @@ abstract class HttpRequestModel with _$HttpRequestModel {
     @Default(ContentType.json) ContentType bodyContentType,
     String? body,
     String? query,
+    String? variables,
     List<FormDataModel>? formData,
   }) = _HttpRequestModel;
 
@@ -64,6 +65,7 @@ abstract class HttpRequestModel with _$HttpRequestModel {
       hasFormDataContentType &&
       formDataMapList.isNotEmpty;
   bool get hasQuery => query?.isNotEmpty ?? false;
+  bool get hasVariables => variables?.isNotEmpty ?? false;
   List<FormDataModel> get formDataList => formData ?? <FormDataModel>[];
   List<Map<String, String>> get formDataMapList =>
       rowsToFormDataMapList(formDataList) ?? [];

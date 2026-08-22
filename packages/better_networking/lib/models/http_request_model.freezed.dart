@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HttpRequestModel {
 
- HTTPVerb get method; String get url; List<NameValueModel>? get headers; List<NameValueModel>? get params; AuthModel? get authModel; List<bool>? get isHeaderEnabledList; List<bool>? get isParamEnabledList; ContentType get bodyContentType; String? get body; String? get query; List<FormDataModel>? get formData;
+ HTTPVerb get method; String get url; List<NameValueModel>? get headers; List<NameValueModel>? get params; AuthModel? get authModel; List<bool>? get isHeaderEnabledList; List<bool>? get isParamEnabledList; ContentType get bodyContentType; String? get body; String? get query; String? get variables; List<FormDataModel>? get formData;
 /// Create a copy of HttpRequestModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $HttpRequestModelCopyWith<HttpRequestModel> get copyWith => _$HttpRequestModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HttpRequestModel&&(identical(other.method, method) || other.method == method)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other.headers, headers)&&const DeepCollectionEquality().equals(other.params, params)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other.isHeaderEnabledList, isHeaderEnabledList)&&const DeepCollectionEquality().equals(other.isParamEnabledList, isParamEnabledList)&&(identical(other.bodyContentType, bodyContentType) || other.bodyContentType == bodyContentType)&&(identical(other.body, body) || other.body == body)&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other.formData, formData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HttpRequestModel&&(identical(other.method, method) || other.method == method)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other.headers, headers)&&const DeepCollectionEquality().equals(other.params, params)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other.isHeaderEnabledList, isHeaderEnabledList)&&const DeepCollectionEquality().equals(other.isParamEnabledList, isParamEnabledList)&&(identical(other.bodyContentType, bodyContentType) || other.bodyContentType == bodyContentType)&&(identical(other.body, body) || other.body == body)&&(identical(other.query, query) || other.query == query)&&(identical(other.variables, variables) || other.variables == variables)&&const DeepCollectionEquality().equals(other.formData, formData));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,method,url,const DeepCollectionEquality().hash(headers),const DeepCollectionEquality().hash(params),authModel,const DeepCollectionEquality().hash(isHeaderEnabledList),const DeepCollectionEquality().hash(isParamEnabledList),bodyContentType,body,query,const DeepCollectionEquality().hash(formData));
+int get hashCode => Object.hash(runtimeType,method,url,const DeepCollectionEquality().hash(headers),const DeepCollectionEquality().hash(params),authModel,const DeepCollectionEquality().hash(isHeaderEnabledList),const DeepCollectionEquality().hash(isParamEnabledList),bodyContentType,body,query,variables,const DeepCollectionEquality().hash(formData));
 
 @override
 String toString() {
-  return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, authModel: $authModel, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
+  return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, authModel: $authModel, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, variables: $variables, formData: $formData)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $HttpRequestModelCopyWith<$Res>  {
   factory $HttpRequestModelCopyWith(HttpRequestModel value, $Res Function(HttpRequestModel) _then) = _$HttpRequestModelCopyWithImpl;
 @useResult
 $Res call({
- HTTPVerb method, String url, List<NameValueModel>? headers, List<NameValueModel>? params, AuthModel? authModel, List<bool>? isHeaderEnabledList, List<bool>? isParamEnabledList, ContentType bodyContentType, String? body, String? query, List<FormDataModel>? formData
+ HTTPVerb method, String url, List<NameValueModel>? headers, List<NameValueModel>? params, AuthModel? authModel, List<bool>? isHeaderEnabledList, List<bool>? isParamEnabledList, ContentType bodyContentType, String? body, String? query, String? variables, List<FormDataModel>? formData
 });
 
 
@@ -65,7 +65,7 @@ class _$HttpRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of HttpRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? method = null,Object? url = null,Object? headers = freezed,Object? params = freezed,Object? authModel = freezed,Object? isHeaderEnabledList = freezed,Object? isParamEnabledList = freezed,Object? bodyContentType = null,Object? body = freezed,Object? query = freezed,Object? formData = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? method = null,Object? url = null,Object? headers = freezed,Object? params = freezed,Object? authModel = freezed,Object? isHeaderEnabledList = freezed,Object? isParamEnabledList = freezed,Object? bodyContentType = null,Object? body = freezed,Object? query = freezed,Object? variables = freezed,Object? formData = freezed,}) {
   return _then(_self.copyWith(
 method: null == method ? _self.method : method // ignore: cast_nullable_to_non_nullable
 as HTTPVerb,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
@@ -77,6 +77,7 @@ as List<bool>?,isParamEnabledList: freezed == isParamEnabledList ? _self.isParam
 as List<bool>?,bodyContentType: null == bodyContentType ? _self.bodyContentType : bodyContentType // ignore: cast_nullable_to_non_nullable
 as ContentType,body: freezed == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
 as String?,query: freezed == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String?,variables: freezed == variables ? _self.variables : variables // ignore: cast_nullable_to_non_nullable
 as String?,formData: freezed == formData ? _self.formData : formData // ignore: cast_nullable_to_non_nullable
 as List<FormDataModel>?,
   ));
@@ -175,10 +176,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HTTPVerb method,  String url,  List<NameValueModel>? headers,  List<NameValueModel>? params,  AuthModel? authModel,  List<bool>? isHeaderEnabledList,  List<bool>? isParamEnabledList,  ContentType bodyContentType,  String? body,  String? query,  List<FormDataModel>? formData)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HTTPVerb method,  String url,  List<NameValueModel>? headers,  List<NameValueModel>? params,  AuthModel? authModel,  List<bool>? isHeaderEnabledList,  List<bool>? isParamEnabledList,  ContentType bodyContentType,  String? body,  String? query,  String? variables,  List<FormDataModel>? formData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HttpRequestModel() when $default != null:
-return $default(_that.method,_that.url,_that.headers,_that.params,_that.authModel,_that.isHeaderEnabledList,_that.isParamEnabledList,_that.bodyContentType,_that.body,_that.query,_that.formData);case _:
+return $default(_that.method,_that.url,_that.headers,_that.params,_that.authModel,_that.isHeaderEnabledList,_that.isParamEnabledList,_that.bodyContentType,_that.body,_that.query,_that.variables,_that.formData);case _:
   return orElse();
 
 }
@@ -196,10 +197,10 @@ return $default(_that.method,_that.url,_that.headers,_that.params,_that.authMode
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HTTPVerb method,  String url,  List<NameValueModel>? headers,  List<NameValueModel>? params,  AuthModel? authModel,  List<bool>? isHeaderEnabledList,  List<bool>? isParamEnabledList,  ContentType bodyContentType,  String? body,  String? query,  List<FormDataModel>? formData)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HTTPVerb method,  String url,  List<NameValueModel>? headers,  List<NameValueModel>? params,  AuthModel? authModel,  List<bool>? isHeaderEnabledList,  List<bool>? isParamEnabledList,  ContentType bodyContentType,  String? body,  String? query,  String? variables,  List<FormDataModel>? formData)  $default,) {final _that = this;
 switch (_that) {
 case _HttpRequestModel():
-return $default(_that.method,_that.url,_that.headers,_that.params,_that.authModel,_that.isHeaderEnabledList,_that.isParamEnabledList,_that.bodyContentType,_that.body,_that.query,_that.formData);case _:
+return $default(_that.method,_that.url,_that.headers,_that.params,_that.authModel,_that.isHeaderEnabledList,_that.isParamEnabledList,_that.bodyContentType,_that.body,_that.query,_that.variables,_that.formData);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -216,10 +217,10 @@ return $default(_that.method,_that.url,_that.headers,_that.params,_that.authMode
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HTTPVerb method,  String url,  List<NameValueModel>? headers,  List<NameValueModel>? params,  AuthModel? authModel,  List<bool>? isHeaderEnabledList,  List<bool>? isParamEnabledList,  ContentType bodyContentType,  String? body,  String? query,  List<FormDataModel>? formData)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HTTPVerb method,  String url,  List<NameValueModel>? headers,  List<NameValueModel>? params,  AuthModel? authModel,  List<bool>? isHeaderEnabledList,  List<bool>? isParamEnabledList,  ContentType bodyContentType,  String? body,  String? query,  String? variables,  List<FormDataModel>? formData)?  $default,) {final _that = this;
 switch (_that) {
 case _HttpRequestModel() when $default != null:
-return $default(_that.method,_that.url,_that.headers,_that.params,_that.authModel,_that.isHeaderEnabledList,_that.isParamEnabledList,_that.bodyContentType,_that.body,_that.query,_that.formData);case _:
+return $default(_that.method,_that.url,_that.headers,_that.params,_that.authModel,_that.isHeaderEnabledList,_that.isParamEnabledList,_that.bodyContentType,_that.body,_that.query,_that.variables,_that.formData);case _:
   return null;
 
 }
@@ -231,7 +232,7 @@ return $default(_that.method,_that.url,_that.headers,_that.params,_that.authMode
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _HttpRequestModel extends HttpRequestModel {
-  const _HttpRequestModel({this.method = HTTPVerb.get, this.url = "", final  List<NameValueModel>? headers, final  List<NameValueModel>? params, this.authModel = const AuthModel(type: APIAuthType.none), final  List<bool>? isHeaderEnabledList, final  List<bool>? isParamEnabledList, this.bodyContentType = ContentType.json, this.body, this.query, final  List<FormDataModel>? formData}): _headers = headers,_params = params,_isHeaderEnabledList = isHeaderEnabledList,_isParamEnabledList = isParamEnabledList,_formData = formData,super._();
+  const _HttpRequestModel({this.method = HTTPVerb.get, this.url = "", final  List<NameValueModel>? headers, final  List<NameValueModel>? params, this.authModel = const AuthModel(type: APIAuthType.none), final  List<bool>? isHeaderEnabledList, final  List<bool>? isParamEnabledList, this.bodyContentType = ContentType.json, this.body, this.query, this.variables, final  List<FormDataModel>? formData}): _headers = headers,_params = params,_isHeaderEnabledList = isHeaderEnabledList,_isParamEnabledList = isParamEnabledList,_formData = formData,super._();
   factory _HttpRequestModel.fromJson(Map<String, dynamic> json) => _$HttpRequestModelFromJson(json);
 
 @override@JsonKey() final  HTTPVerb method;
@@ -276,6 +277,7 @@ class _HttpRequestModel extends HttpRequestModel {
 @override@JsonKey() final  ContentType bodyContentType;
 @override final  String? body;
 @override final  String? query;
+@override final  String? variables;
  final  List<FormDataModel>? _formData;
 @override List<FormDataModel>? get formData {
   final value = _formData;
@@ -299,16 +301,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HttpRequestModel&&(identical(other.method, method) || other.method == method)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other._headers, _headers)&&const DeepCollectionEquality().equals(other._params, _params)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other._isHeaderEnabledList, _isHeaderEnabledList)&&const DeepCollectionEquality().equals(other._isParamEnabledList, _isParamEnabledList)&&(identical(other.bodyContentType, bodyContentType) || other.bodyContentType == bodyContentType)&&(identical(other.body, body) || other.body == body)&&(identical(other.query, query) || other.query == query)&&const DeepCollectionEquality().equals(other._formData, _formData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HttpRequestModel&&(identical(other.method, method) || other.method == method)&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other._headers, _headers)&&const DeepCollectionEquality().equals(other._params, _params)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other._isHeaderEnabledList, _isHeaderEnabledList)&&const DeepCollectionEquality().equals(other._isParamEnabledList, _isParamEnabledList)&&(identical(other.bodyContentType, bodyContentType) || other.bodyContentType == bodyContentType)&&(identical(other.body, body) || other.body == body)&&(identical(other.query, query) || other.query == query)&&(identical(other.variables, variables) || other.variables == variables)&&const DeepCollectionEquality().equals(other._formData, _formData));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,method,url,const DeepCollectionEquality().hash(_headers),const DeepCollectionEquality().hash(_params),authModel,const DeepCollectionEquality().hash(_isHeaderEnabledList),const DeepCollectionEquality().hash(_isParamEnabledList),bodyContentType,body,query,const DeepCollectionEquality().hash(_formData));
+int get hashCode => Object.hash(runtimeType,method,url,const DeepCollectionEquality().hash(_headers),const DeepCollectionEquality().hash(_params),authModel,const DeepCollectionEquality().hash(_isHeaderEnabledList),const DeepCollectionEquality().hash(_isParamEnabledList),bodyContentType,body,query,variables,const DeepCollectionEquality().hash(_formData));
 
 @override
 String toString() {
-  return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, authModel: $authModel, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
+  return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, authModel: $authModel, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, variables: $variables, formData: $formData)';
 }
 
 
@@ -319,7 +321,7 @@ abstract mixin class _$HttpRequestModelCopyWith<$Res> implements $HttpRequestMod
   factory _$HttpRequestModelCopyWith(_HttpRequestModel value, $Res Function(_HttpRequestModel) _then) = __$HttpRequestModelCopyWithImpl;
 @override @useResult
 $Res call({
- HTTPVerb method, String url, List<NameValueModel>? headers, List<NameValueModel>? params, AuthModel? authModel, List<bool>? isHeaderEnabledList, List<bool>? isParamEnabledList, ContentType bodyContentType, String? body, String? query, List<FormDataModel>? formData
+ HTTPVerb method, String url, List<NameValueModel>? headers, List<NameValueModel>? params, AuthModel? authModel, List<bool>? isHeaderEnabledList, List<bool>? isParamEnabledList, ContentType bodyContentType, String? body, String? query, String? variables, List<FormDataModel>? formData
 });
 
 
@@ -336,7 +338,7 @@ class __$HttpRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of HttpRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? method = null,Object? url = null,Object? headers = freezed,Object? params = freezed,Object? authModel = freezed,Object? isHeaderEnabledList = freezed,Object? isParamEnabledList = freezed,Object? bodyContentType = null,Object? body = freezed,Object? query = freezed,Object? formData = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? method = null,Object? url = null,Object? headers = freezed,Object? params = freezed,Object? authModel = freezed,Object? isHeaderEnabledList = freezed,Object? isParamEnabledList = freezed,Object? bodyContentType = null,Object? body = freezed,Object? query = freezed,Object? variables = freezed,Object? formData = freezed,}) {
   return _then(_HttpRequestModel(
 method: null == method ? _self.method : method // ignore: cast_nullable_to_non_nullable
 as HTTPVerb,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
@@ -348,6 +350,7 @@ as List<bool>?,isParamEnabledList: freezed == isParamEnabledList ? _self._isPara
 as List<bool>?,bodyContentType: null == bodyContentType ? _self.bodyContentType : bodyContentType // ignore: cast_nullable_to_non_nullable
 as ContentType,body: freezed == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
 as String?,query: freezed == query ? _self.query : query // ignore: cast_nullable_to_non_nullable
+as String?,variables: freezed == variables ? _self.variables : variables // ignore: cast_nullable_to_non_nullable
 as String?,formData: freezed == formData ? _self._formData : formData // ignore: cast_nullable_to_non_nullable
 as List<FormDataModel>?,
   ));

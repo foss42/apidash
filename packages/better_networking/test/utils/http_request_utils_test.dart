@@ -241,6 +241,44 @@ void main() {
       final result = getRequestBody(APIType.graphql, model);
       expect(result, isNull);
     });
+
+    test('Includes parsed variables as JSON object when present', () {
+      const model = HttpRequestModel(
+        query: r'query($id: ID!) { user(id: $id) { name } }',
+        variables: '{"id": "42"}',
+        method: HTTPVerb.post,
+      );
+      final result = getRequestBody(APIType.graphql, model);
+      expect(
+        result,
+        '{\n  "query": "query(\$id: ID!) { user(id: \$id) { name } }",\n'
+        '  "variables": {\n    "id": "42"\n  }\n}',
+      );
+    });
+
+    test('Omits variables key for GraphQL when variables are empty', () {
+      const model = HttpRequestModel(
+        query: '{ users { name } }',
+        variables: '',
+        method: HTTPVerb.post,
+      );
+      final result = getRequestBody(APIType.graphql, model);
+      expect(result, '{\n  "query": "{ users { name } }"\n}');
+    });
+
+    test('Falls back to raw variables string when JSON is invalid', () {
+      const model = HttpRequestModel(
+        query: '{ users { name } }',
+        variables: 'not valid json',
+        method: HTTPVerb.post,
+      );
+      final result = getRequestBody(APIType.graphql, model);
+      expect(
+        result,
+        '{\n  "query": "{ users { name } }",\n'
+        '  "variables": "not valid json"\n}',
+      );
+    });
   });
 
   group('getFormDataType', () {
