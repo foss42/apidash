@@ -1,14 +1,16 @@
 import 'dart:async';
+
+import 'package:apidash/consts.dart';
+import 'package:apidash/terminal/terminal.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:apidash/consts.dart';
-import 'package:apidash/terminal/terminal.dart';
-import 'providers.dart';
+
 import '../models/models.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
+import 'providers.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 

@@ -59,6 +59,8 @@ void main() {
     expect(httpRequestModel.hasJsonData, true);
     expect(httpRequestModel.hasTextData, false);
     expect(httpRequestModel.hasFormData, false);
+    expect(httpRequestModel.hasFormUrlEncodedData, false);
+    expect(httpRequestModel.formUrlEncodedBody, "");
 
     httpRequestModel = httpRequestModel.copyWith(
       bodyContentType: ContentType.formdata,
@@ -77,6 +79,31 @@ void main() {
       {'name': 'imfile', 'value': '/Documents/up/1.png', 'type': 'file'},
     ]);
     expect(httpRequestModel.hasFileInFormData, true);
+
+    httpRequestModel = httpRequestModel.copyWith(
+      bodyContentType: ContentType.formUrlEncoded,
+    );
+    expect(httpRequestModel.hasFormUrlEncodedData, true);
+    expect(httpRequestModel.formUrlEncodedBody, 'token=xyz');
+  });
+
+  test('Testing formUrlEncodedBody edge cases', () {
+    var model = const HttpRequestModel(
+      method: HTTPVerb.post,
+      url: 'https://api.apidash.dev',
+      bodyContentType: ContentType.formUrlEncoded,
+      formData: [
+        FormDataModel(name: "email", value: "user+test@example.com", type: FormDataType.text),
+        FormDataModel(name: "message", value: "Hello World!", type: FormDataType.text),
+        FormDataModel(name: "empty_val", value: "", type: FormDataType.text),
+        FormDataModel(name: "", value: "ignored_because_empty_key", type: FormDataType.text),
+        FormDataModel(name: "file_field", value: "/path/to/file", type: FormDataType.file),
+      ],
+    );
+
+    expect(model.hasFormUrlEncodedData, true);
+    // The getter encodes keys and values with Uri.encodeComponent, skips empty keys, and ignores file types.
+    expect(model.formUrlEncodedBody, 'email=user%2Btest%40example.com&message=Hello%20World!&empty_val=');
   });
 
   test('Testing immutability', () {

@@ -64,4 +64,5 @@ const _$ContentTypeEnumMap = {
   ContentType.json: 'json',
   ContentType.text: 'text',
   ContentType.formdata: 'formdata',
+  ContentType.formUrlEncoded: 'formUrlEncoded',
 };
