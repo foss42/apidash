@@ -43,26 +43,47 @@ abstract class HttpRequestModel with _$HttpRequestModel {
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
+  bool get hasFormUrlEncodedContentType =>
+      bodyContentType == ContentType.formUrlEncoded;
   bool get hasJsonContentType => bodyContentType == ContentType.json;
   bool get hasTextContentType => bodyContentType == ContentType.text;
   int get contentLength => utf8.encode(body ?? "").length;
-  bool get hasBody => hasJsonData || hasTextData || hasFormData;
+  bool get hasBody =>
+      hasJsonData || hasTextData || hasFormData || hasFormUrlEncodedData;
   bool get hasAnyBody =>
       (hasJsonContentType && contentLength > 0) ||
       (hasTextContentType && contentLength > 0) ||
-      (hasFormDataContentType && formDataMapList.isNotEmpty);
+      (hasFormDataContentType && formDataMapList.isNotEmpty) ||
+      (hasFormUrlEncodedContentType && formDataMapList.isNotEmpty);
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
       contentLength > 0;
   bool get hasTextData =>
       kMethodsWithBody.contains(method) &&
-      hasTextContentType &&
+      (hasTextContentType || hasFormUrlEncodedContentType) &&
       contentLength > 0;
   bool get hasFormData =>
       kMethodsWithBody.contains(method) &&
       hasFormDataContentType &&
       formDataMapList.isNotEmpty;
+  bool get hasFormUrlEncodedData =>
+      kMethodsWithBody.contains(method) &&
+      hasFormUrlEncodedContentType &&
+      formDataMapList.isNotEmpty;
+  String get formUrlEncodedBody {
+    if (!hasFormUrlEncodedData) return "";
+    return formDataMapList.fold("", (previousValue, element) {
+      if (element["name"] == null || element["name"]!.isEmpty || element["type"] != "text") {
+        return previousValue;
+      }
+      String key = Uri.encodeComponent(element["name"]!);
+      String value = Uri.encodeComponent(element["value"] ?? "");
+      return previousValue.isEmpty
+          ? "$key=$value"
+          : "$previousValue&$key=$value";
+    });
+  }
   bool get hasQuery => query?.isNotEmpty ?? false;
   List<FormDataModel> get formDataList => formData ?? <FormDataModel>[];
   List<Map<String, String>> get formDataMapList =>

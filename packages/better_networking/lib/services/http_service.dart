@@ -60,11 +60,23 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
       if (apiType == APIType.rest) {
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;
+        var isFormUrlEncodedRequest =
+            requestModel.bodyContentType == ContentType.formUrlEncoded;
 
         if (kMethodsWithBody.contains(authenticatedRequestModel.method)) {
           var requestBody = authenticatedRequestModel.body;
-          if (requestBody != null &&
+          if (isFormUrlEncodedRequest &&
+              authenticatedRequestModel.hasFormUrlEncodedData) {
+            body = authenticatedRequestModel.formUrlEncodedBody;
+            if (authenticatedRequestModel.hasContentTypeHeader) {
+              overrideContentType = true;
+            } else {
+              headers[HttpHeaders.contentTypeHeader] =
+                  authenticatedRequestModel.bodyContentType.header;
+            }
+          } else if (requestBody != null &&
               !isMultiPartRequest &&
+              !isFormUrlEncodedRequest &&
               requestBody.isNotEmpty) {
             body = requestBody;
             if (authenticatedRequestModel.hasContentTypeHeader) {
@@ -351,6 +363,8 @@ Future<http.StreamedResponse> makeStreamedRequest({
   final headers = requestModel.enabledHeadersMap;
   final hasBody = kMethodsWithBody.contains(requestModel.method);
   final isMultipart = requestModel.bodyContentType == ContentType.formdata;
+  final isFormUrlEncoded =
+      requestModel.bodyContentType == ContentType.formUrlEncoded;
 
   http.StreamedResponse streamedResponse;
 
@@ -393,7 +407,15 @@ Future<http.StreamedResponse> makeStreamedRequest({
     //Handling regular REST Requests
     String? body;
     bool overrideContentType = false;
-    if (hasBody && requestModel.body?.isNotEmpty == true) {
+    if (hasBody && isFormUrlEncoded && requestModel.hasFormUrlEncodedData) {
+      body = requestModel.formUrlEncodedBody;
+      if (!requestModel.hasContentTypeHeader) {
+        headers[HttpHeaders.contentTypeHeader] =
+            requestModel.bodyContentType.header;
+      } else {
+        overrideContentType = true;
+      }
+    } else if (hasBody && requestModel.body?.isNotEmpty == true) {
       body = requestModel.body;
       if (!requestModel.hasContentTypeHeader) {
         headers[HttpHeaders.contentTypeHeader] =
