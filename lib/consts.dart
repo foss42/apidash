@@ -72,6 +72,31 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
+/// Maximum number of messages retained in a WebSocket request's
+/// `messageHistory`. Once the cap is reached the oldest messages are dropped,
+/// so a long-lived or chatty connection cannot grow the list (nor the Hive
+/// record backing it) without bound.
+const kMaxWebSocketMessages = 1000;
+
+/// Auto-reconnect gives up after this many consecutive attempts.
+const kWsMaxReconnectAttempts = 10;
+
+/// Delay before the first auto-reconnect attempt. Each subsequent attempt
+/// doubles it, jittered, up to [kWsMaxReconnectDelay].
+const kWsReconnectBaseDelay = Duration(seconds: 1);
+
+/// Upper bound on the auto-reconnect backoff delay.
+const kWsMaxReconnectDelay = Duration(seconds: 30);
+
+/// How long a connection must stay up before it counts as recovered, resetting
+/// the backoff ladder. Matches [kWsMaxReconnectDelay]: a session that outlived
+/// the longest backoff is a working connection, not a flapping one.
+///
+/// Without this, a server that accepts and immediately closes would reset the
+/// ladder on every handshake and be retried at a fixed rate forever, never
+/// reaching [kWsMaxReconnectAttempts].
+const kWsConnectionStableAfter = kWsMaxReconnectDelay;
+
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),

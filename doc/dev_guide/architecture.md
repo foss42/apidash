@@ -275,6 +275,16 @@ state = {...state!, id: updatedModel};
 // state![id] = updatedModel;
 ```
 
+### WebSocket Message Retention and Reconnect
+
+`CollectionStateNotifier` keeps a WebSocket conversation in `WebSocketRequestModel.messageHistory`, which is also persisted to Hive. Two bounds are enforced so a long-lived or chatty connection cannot grow without limit:
+
+- **Retention.** Every append goes through `appendWebSocketMessage`/`appendWebSocketMessages` in `lib/utils/websocket_utils.dart`, which returns a new list holding at most `kMaxWebSocketMessages` entries and drops the oldest to make room. Do not append to `messageHistory` with a spread (`[...history, msg]`) — that bypasses the cap.
+- **Auto-reconnect.** When a connection drops and `autoReconnect` is on, the notifier schedules a *single* pending `Timer` per request id. The delay comes from `webSocketReconnectDelay`: exponential from `kWsReconnectBaseDelay` up to `kWsMaxReconnectDelay`, with equal jitter. A retry that is refused escalates the same ladder, so a server that is briefly down is retried too. After `kWsMaxReconnectAttempts` consecutive failures the request gives up, emits an error message, and stops streaming.
+- **Ladder reset.** The attempt counter is cleared on a user-initiated connect or disconnect, and when a dropped connection had stayed up for at least `kWsConnectionStableAfter` — a session that outlived the longest backoff counts as recovered. A successful handshake alone does *not* reset it: the storm case is a server that accepts and immediately closes, which would otherwise reset the ladder every time and be retried at a fixed rate forever.
+
+Because at most one reconnect is ever pending per request, a server that accepts and immediately closes cannot fan out into overlapping connections.
+
 ### Platform Checks
 ```dart
 // From lib/consts.dart
