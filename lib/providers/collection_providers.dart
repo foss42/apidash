@@ -67,12 +67,31 @@ class CollectionStateNotifier
   final baseHttpResponseModel = const HttpResponseModel();
   final Map<String, Timer> _appHeartbeatTimers = {};
 
+  /// Pending auto-reconnect timer per request id. At most one entry per id
+  /// exists, which is what keeps repeated closes from fanning out into a
+  /// reconnect storm.
+  final Map<String, Timer> _wsReconnectTimers = {};
+
+  /// Consecutive auto-reconnect attempts per request id, used to compute the
+  /// backoff delay. Cleared once a connection proves stable.
+  final Map<String, int> _wsReconnectAttempts = {};
+
+  /// When the current connection for a request id was established, used to tell
+  /// a recovered session from a flapping one (see [kWsConnectionStableAfter]).
+  final Map<String, DateTime> _wsConnectedAt = {};
+
   @override
   void dispose() {
     for (final timer in _appHeartbeatTimers.values) {
       timer.cancel();
     }
     _appHeartbeatTimers.clear();
+    for (final timer in _wsReconnectTimers.values) {
+      timer.cancel();
+    }
+    _wsReconnectTimers.clear();
+    _wsReconnectAttempts.clear();
+    _wsConnectedAt.clear();
     super.dispose();
   }
 
@@ -135,6 +154,7 @@ class CollectionStateNotifier
 
     // Cleanup active connections
     _stopMessageHeartbeat(rId);
+    _resetWsReconnect(rId);
     ConnectionManager.instance.disconnect(rId);
     cancelHttpRequest(rId);
 
@@ -431,6 +451,110 @@ class CollectionStateNotifier
     _appHeartbeatTimers.remove(requestId)?.cancel();
   }
 
+  /// Cancel a queued auto-reconnect for [requestId], leaving the attempt
+  /// counter intact so an in-progress backoff keeps escalating.
+  void _cancelPendingWsReconnect(String requestId) {
+    _wsReconnectTimers.remove(requestId)?.cancel();
+  }
+
+  /// Cancel a queued auto-reconnect for [requestId] and clear its backoff
+  /// ladder, so the next connect starts again from [kWsReconnectBaseDelay].
+  void _resetWsReconnect(String requestId) {
+    _cancelPendingWsReconnect(requestId);
+    _wsReconnectAttempts.remove(requestId);
+    _wsConnectedAt.remove(requestId);
+  }
+
+  /// Queue the next auto-reconnect attempt for [requestId] after an
+  /// exponentially increasing, jittered delay.
+  ///
+  /// Reconnects are driven solely by this timer, and only one is ever pending
+  /// per request, so a server that accepts and immediately closes can no longer
+  /// spin up an unbounded number of connections. After
+  /// [kWsMaxReconnectAttempts] consecutive attempts the request gives up and
+  /// stops streaming.
+  ///
+  /// [lead] opens the user-visible message and names what triggered the retry
+  /// (a close from the server vs. a refused connect).
+  void _scheduleWebSocketReconnect(
+    String requestId, {
+    String? historyId,
+    String lead = "Connection closed.",
+  }) {
+    final currentRequest = state?[requestId];
+    final ws = currentRequest?.wsRequestModel;
+    if (currentRequest == null || ws == null) return;
+
+    final attempt = (_wsReconnectAttempts[requestId] ?? 0) + 1;
+
+    if (attempt > kWsMaxReconnectAttempts) {
+      _resetWsReconnect(requestId);
+      final giveUpMsg = WebSocketMessage(
+        payload:
+            "Reconnect failed after $kWsMaxReconnectAttempts attempts. "
+            "Giving up.",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.error,
+      );
+      final updatedWs = ws.copyWith(
+        messageHistory: appendWebSocketMessage(ws.messageHistory, giveUpMsg),
+      );
+      update(
+        id: requestId,
+        isStreaming: false,
+        isWorking: false,
+        wsRequestModel: updatedWs,
+      );
+      if (historyId != null) {
+        _updateWebSocketHistoryRecord(historyId, updatedWs);
+      }
+      return;
+    }
+
+    _wsReconnectAttempts[requestId] = attempt;
+    final delay = webSocketReconnectDelay(attempt);
+
+    final reconnMsg = WebSocketMessage(
+      payload:
+          "$lead Reconnecting in "
+          "${(delay.inMilliseconds / 1000).toStringAsFixed(1)}s "
+          "(attempt $attempt of $kWsMaxReconnectAttempts)...",
+      timestamp: DateTime.now(),
+      outgoing: false,
+      messageType: WebSocketMessageType.disconnected,
+    );
+    update(
+      id: requestId,
+      wsRequestModel: ws.copyWith(
+        messageHistory: appendWebSocketMessage(ws.messageHistory, reconnMsg),
+      ),
+    );
+
+    _cancelPendingWsReconnect(requestId);
+    _wsReconnectTimers[requestId] = Timer(delay, () async {
+      _wsReconnectTimers.remove(requestId);
+      if (!mounted) return;
+      final latestReq = state?[requestId];
+      final latestWs = latestReq?.wsRequestModel;
+      // Re-check intent: during the backoff the user may have disconnected,
+      // switched auto-reconnect off, or removed the request entirely.
+      if (latestReq == null ||
+          latestWs == null ||
+          !latestReq.isStreaming ||
+          !latestWs.autoReconnect) {
+        _wsReconnectAttempts.remove(requestId);
+        return;
+      }
+      await _connectWebSocket(
+        requestId,
+        latestReq,
+        latestWs,
+        historyId: historyId,
+      );
+    });
+  }
+
   /// Start (or restart) the app-level (repeating-message) heartbeat for
   /// [requestId]. Sends [WebSocketRequestModel.messageHeartbeatPayload]
   /// (with {{vars}} substituted) as a normal Sent message on each tick.
@@ -482,7 +606,10 @@ class CollectionStateNotifier
       update(
         id: requestId,
         wsRequestModel: wsModel.copyWith(
-          messageHistory: [...wsModel.messageHistory, newMessage],
+          messageHistory: appendWebSocketMessage(
+            wsModel.messageHistory,
+            newMessage,
+          ),
         ),
       );
     } catch (e) {
@@ -493,9 +620,14 @@ class CollectionStateNotifier
   Future<void> _connectWebSocket(
     String requestId,
     RequestModel requestModel,
-    WebSocketRequestModel wsModel,
-    {String? historyId}
-  ) async {
+    WebSocketRequestModel wsModel, {
+    String? historyId,
+  }) async {
+    // A connect is starting for this id, so any queued reconnect for it is
+    // stale. The attempt counter is left alone: when this call came from the
+    // backoff timer the ladder must keep escalating.
+    _cancelPendingWsReconnect(requestId);
+
     final Map<String, String> combinedEnvVarMap = _buildCombinedEnvVarMap();
 
     final substitutedUrl =
@@ -573,6 +705,12 @@ class CollectionStateNotifier
       // handshake; the `state` reads/writes below would throw otherwise.
       if (!mounted) return;
 
+      // Note the connect time rather than clearing the ladder outright: a
+      // handshake alone proves nothing, since the storm case is a server that
+      // accepts and immediately closes. The ladder resets on close, but only if
+      // the session lasted (see [kWsConnectionStableAfter]).
+      _wsConnectedAt[requestId] = DateTime.now();
+
       final latestRequest = state?[requestId];
       final currentWs = latestRequest?.wsRequestModel ?? wsModel;
 
@@ -589,7 +727,10 @@ class CollectionStateNotifier
           isWorking: false,
           isStreaming: true,
           wsRequestModel: currentWs.copyWith(
-            messageHistory: [...currentWs.messageHistory, connectedMessage],
+            messageHistory: appendWebSocketMessage(
+              currentWs.messageHistory,
+              connectedMessage,
+            ),
           ),
         ),
       };
@@ -614,7 +755,10 @@ class CollectionStateNotifier
               update(
                 id: requestId,
                 wsRequestModel: currentWs.copyWith(
-                  messageHistory: [...currentWs.messageHistory, newMessage],
+                  messageHistory: appendWebSocketMessage(
+                    currentWs.messageHistory,
+                    newMessage,
+                  ),
                 ),
               );
             }
@@ -634,16 +778,12 @@ class CollectionStateNotifier
               outgoing: false,
               messageType: WebSocketMessageType.error,
             );
-            update(
-              id: requestId,
-              wsRequestModel: ws.copyWith(
-                messageHistory: [...ws.messageHistory, errMsg],
-              ),
+            final updatedWs = ws.copyWith(
+              messageHistory: appendWebSocketMessage(ws.messageHistory, errMsg),
             );
+            update(id: requestId, wsRequestModel: updatedWs);
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, errMsg],
-              ));
+              _updateWebSocketHistoryRecord(historyId, updatedWs);
             }
           }
         },
@@ -659,38 +799,40 @@ class CollectionStateNotifier
           // successful connect (auto-reconnect calls _connectWebSocket again).
           _stopMessageHeartbeat(requestId);
 
+          // A session that stayed up long enough counts as recovered, so the
+          // next drop starts a fresh ladder. A short-lived one leaves the ladder
+          // escalating, which is what makes a flapping server eventually give up
+          // instead of reconnecting at a fixed rate forever.
+          final connectedAt = _wsConnectedAt.remove(requestId);
+          if (connectedAt != null &&
+              webSocketConnectionWasStable(connectedAt, DateTime.now())) {
+            _wsReconnectAttempts.remove(requestId);
+          }
+
           if (ws.autoReconnect && currentRequest.isStreaming) {
-            final reconnMsg = WebSocketMessage(
-              payload: "Connection closed. Reconnecting...",
-              timestamp: DateTime.now(),
-              outgoing: false,
-              messageType: WebSocketMessageType.disconnected,
-            );
-            final updatedWs = ws.copyWith(
-              messageHistory: [...ws.messageHistory, reconnMsg],
-            );
-            final latestReq = state?[requestId];
-            if (latestReq != null) {
-              _connectWebSocket(requestId, latestReq, updatedWs, historyId: historyId);
-            }
+            _scheduleWebSocketReconnect(requestId, historyId: historyId);
           } else {
+            // Closed for good: nothing is queued, so clear the ladder.
+            _resetWsReconnect(requestId);
             final discMsg = WebSocketMessage(
               payload: "Connection closed",
               timestamp: DateTime.now(),
               outgoing: false,
               messageType: WebSocketMessageType.disconnected,
             );
+            final updatedWs = ws.copyWith(
+              messageHistory: appendWebSocketMessage(
+                ws.messageHistory,
+                discMsg,
+              ),
+            );
             update(
               id: requestId,
               isStreaming: false,
-              wsRequestModel: ws.copyWith(
-                messageHistory: [...ws.messageHistory, discMsg],
-              ),
+              wsRequestModel: updatedWs,
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, discMsg],
-              ));
+              _updateWebSocketHistoryRecord(historyId, updatedWs);
             }
           }
         },
@@ -708,26 +850,55 @@ class CollectionStateNotifier
         outgoing: false,
         messageType: WebSocketMessageType.error,
       );
+
+      // A refused *reconnect* keeps the ladder going instead of giving up on
+      // the first failure: the request is still marked streaming (the backoff
+      // timer verified that before calling) and the user asked for
+      // auto-reconnect, so a server that is briefly down is retried up to
+      // [kWsMaxReconnectAttempts] times. A failed first connect is terminal —
+      // there is no session to restore, so it just reports the error.
+      final isReconnectAttempt =
+          (currentRequest?.isStreaming ?? false) && ws.autoReconnect;
+      if (isReconnectAttempt) {
+        final updatedWs = ws.copyWith(
+          messageHistory: appendWebSocketMessage(ws.messageHistory, errMsg),
+        );
+        update(id: requestId, isWorking: false, wsRequestModel: updatedWs);
+        if (historyId != null) {
+          _updateWebSocketHistoryRecord(historyId, updatedWs);
+        }
+        _scheduleWebSocketReconnect(
+          requestId,
+          historyId: historyId,
+          lead: "Connection failed.",
+        );
+        return;
+      }
+
       final discMsg = WebSocketMessage(
         payload: "Connection failed",
         timestamp: DateTime.now(),
         outgoing: false,
         messageType: WebSocketMessageType.disconnected,
       );
+      // Giving up here, so no retry stays queued and the ladder resets.
+      _resetWsReconnect(requestId);
+      final updatedWs = ws.copyWith(
+        messageHistory: appendWebSocketMessages(ws.messageHistory, [
+          errMsg,
+          discMsg,
+        ]),
+      );
       state = {
         ...state!,
         requestId: (currentRequest ?? requestModel).copyWith(
           isWorking: false,
           isStreaming: false,
-          wsRequestModel: ws.copyWith(
-            messageHistory: [...ws.messageHistory, errMsg, discMsg],
-          ),
+          wsRequestModel: updatedWs,
         ),
       };
       if (historyId != null) {
-        _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-          messageHistory: [...ws.messageHistory, errMsg, discMsg],
-        ));
+        _updateWebSocketHistoryRecord(historyId, updatedWs);
       }
     }
   }
@@ -763,6 +934,10 @@ class CollectionStateNotifier
     if (requestModel!.apiType == APIType.websocket) {
       final wsModel = requestModel.wsRequestModel;
       if (wsModel != null) {
+        // A user-initiated connect is a clean slate for the backoff ladder;
+        // auto-reconnect calls _connectWebSocket directly so it keeps its own.
+        _resetWsReconnect(requestId);
+
         // Save history for WebSocket connection attempt first
         String newHistoryId = getNewUuid();
         final historyModel = HistoryRequestModel(
@@ -1054,13 +1229,15 @@ class CollectionStateNotifier
           isStreaming: false,
           isWorking: false,
           wsRequestModel: ws.copyWith(
-            messageHistory: [...ws.messageHistory, discMsg],
+            messageHistory: appendWebSocketMessage(ws.messageHistory, discMsg),
           ),
         );
       } else {
         update(id: id, isStreaming: false, isWorking: false);
       }
       _stopMessageHeartbeat(id);
+      // The user asked to stop, so drop any queued reconnect outright.
+      _resetWsReconnect(id);
       ConnectionManager.instance.disconnect(id);
     } else {
       cancelHttpRequest(id);

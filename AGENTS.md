@@ -259,6 +259,9 @@ Hive boxes:
 - `packages/better_networking/lib/services/http_service.dart` owns HTTP, GraphQL, multipart, auth application, cancellation, and streaming response handling.
 - `cancelHttpRequest(id)` delegates to `HttpClientManager`.
 - Streaming is MIME-driven through `kStreamingResponseTypes`; do not add protocol-specific behavior in UI widgets.
+- WebSocket sockets are tracked by `ConnectionManager` in `lib/services/connection_manager.dart` and driven by `CollectionStateNotifier`.
+- Append to `WebSocketRequestModel.messageHistory` only through `appendWebSocketMessage`/`appendWebSocketMessages` in `lib/utils/websocket_utils.dart`. A spread append bypasses the `kMaxWebSocketMessages` retention cap and lets the list, and its Hive record, grow without bound.
+- WebSocket auto-reconnect must stay a single pending `Timer` per request id, delayed by `webSocketReconnectDelay` and bounded by `kWsMaxReconnectAttempts`. Do not reconnect directly from a socket callback; that is what produced the reconnect storm in issue #1759. Reset the attempt counter only on user intent or a connection that lasted `kWsConnectionStableAfter`, never on a bare handshake.
 
 ### Environment Variables
 
@@ -375,6 +378,7 @@ Docs should be specific, short enough to stay useful, and tied to real source pa
 - Running only `flutter test` and assuming package tests ran. Use `melos test` for packages.
 - Editing generated files without updating source models.
 - Mutating Riverpod maps/lists in place.
+- Growing `WebSocketRequestModel.messageHistory` with a spread instead of the capped append helpers.
 - Saving request data outside `HiveHandler`.
 - Adding UI that works on desktop but breaks `context.isMediumWindow` branches.
 - Treating GSoC proposal docs as implementation.
