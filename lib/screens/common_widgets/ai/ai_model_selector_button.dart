@@ -24,6 +24,7 @@ class AIModelSelectorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedModel = aiRequestModel?.model?.trim();
     return ElevatedButton(
       onPressed: readonly
           ? null
@@ -47,6 +48,9 @@ class AIModelSelectorButton extends StatelessWidget {
               onModelUpdated?.call(newAIRequestModel);
             },
       child: Text(
+        (selectedModel != null && selectedModel.isNotEmpty)
+            ? selectedModel
+            : kLabelSelectModel,
         aiRequestModel?.model ?? kLabelSelectModel,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
