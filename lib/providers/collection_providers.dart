@@ -524,12 +524,13 @@ class CollectionStateNotifier
       outgoing: false,
       messageType: WebSocketMessageType.disconnected,
     );
-    update(
-      id: requestId,
-      wsRequestModel: ws.copyWith(
-        messageHistory: appendWebSocketMessage(ws.messageHistory, reconnMsg),
-      ),
+    final updatedWs = ws.copyWith(
+      messageHistory: appendWebSocketMessage(ws.messageHistory, reconnMsg),
     );
+    update(id: requestId, wsRequestModel: updatedWs);
+    if (historyId != null) {
+      _updateWebSocketHistoryRecord(historyId, updatedWs);
+    }
 
     _cancelPendingWsReconnect(requestId);
     _wsReconnectTimers[requestId] = Timer(delay, () async {
