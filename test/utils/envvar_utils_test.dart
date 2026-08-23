@@ -438,6 +438,40 @@ void main() {
       );
       expect(getVariableStatus(query, envMap, activeEnvironmentId), expected);
     });
+
+    test(
+        "Testing getVariableStatus with stale activeEnvironmentId not in envMap",
+        () {
+      const query = "num";
+      Map<String, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+      };
+      const staleActiveEnvironmentId = "deletedEnvId";
+      const expected = EnvironmentVariableSuggestion(
+        environmentId: kGlobalEnvironmentId,
+        variable: EnvironmentVariableModel(key: "num", value: "5670000"),
+      );
+      expect(
+        getVariableStatus(query, envMap, staleActiveEnvironmentId),
+        expected,
+      );
+    });
+
+    test(
+        "Testing getVariableStatus with null activeEnvironmentId falls back to global",
+        () {
+      const query = "token";
+      Map<String, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+      };
+      const expected = EnvironmentVariableSuggestion(
+        environmentId: kGlobalEnvironmentId,
+        variable: EnvironmentVariableModel(key: "token", value: "token"),
+      );
+      expect(getVariableStatus(query, envMap, null), expected);
+    });
   });
 
   group("Testing auth model environment variable substitution", () {
