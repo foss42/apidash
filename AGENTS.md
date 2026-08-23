@@ -280,6 +280,8 @@ Hive boxes:
 - Desktop uses `Dashboard` with a navigation rail and `IndexedStack`.
 - Mobile uses `MobileDashboard`, `PageBranch`, bottom navigation, and mobile-specific request/response pages.
 - `HomePage` switches between `DashboardSplitView` and mobile `RequestResponsePage` using `context.isMediumWindow`.
+- WebSocket responses use `RealtimeEventStreamView`; its optional JSON watch mode renders a timestamped value series without modifying stored message history.
+- JSON watch parsing belongs in `lib/utils/json_watch_utils.dart`. Plain keys search recursively; explicit JSONPath selectors support child keys, bracket keys, array indexes, wildcards, and recursive child keys.
 - Reusable design primitives belong in `packages/apidash_design_system`.
 - Feature widgets belong near their feature under `lib/screens/` or in `lib/widgets/` when they are truly reusable.
 - Preserve desktop and mobile behavior unless the task is explicitly platform-scoped.

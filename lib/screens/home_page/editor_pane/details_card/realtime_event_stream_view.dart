@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/ws_request_model.dart';
+import 'package:apidash/utils/json_watch_utils.dart';
 import 'package:apidash/widgets/button_copy.dart';
+import 'realtime_json_watch_view.dart';
 /// A real-time, log-style view of WebSocket messages.
 ///
 /// Each entry shows direction (sent / received), a timestamp, a label, and
@@ -23,6 +25,7 @@ class RealtimeEventStreamView extends ConsumerStatefulWidget {
 class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamView> {
   final TextEditingController _filterController = TextEditingController();
   String _filterQuery = "";
+  String _watchExpression = "";
 
   @override
   void dispose() {
@@ -83,6 +86,20 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
               },
             ),
           ),
+          kHSpacer5,
+          IconButton(
+            key: const ValueKey('websocket-watch-button'),
+            icon: Icon(
+              _watchExpression.isEmpty
+                  ? Icons.visibility_outlined
+                  : Icons.visibility,
+              size: 18,
+            ),
+            tooltip: _watchExpression.isEmpty
+                ? 'Watch a JSON value'
+                : 'Watching $_watchExpression',
+            onPressed: () => _configureWatch(context),
+          ),
           if (widget.historyMessages == null) ...[
             kHSpacer5,
             IconButton(
@@ -111,10 +128,36 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                     style: TextStyle(color: Colors.grey),
                   ),
                 )
+              : _watchExpression.isNotEmpty
+              ? RealtimeJsonWatchView(
+                  history: history,
+                  expression: _watchExpression,
+                  maxEvents: maxEvents,
+                )
               : _buildLogView(context, displayHistory),
         ),
       ],
     );
+  }
+
+  Future<void> _configureWatch(BuildContext context) async {
+    final expression = await showJsonWatchDialog(
+      context,
+      currentExpression: _watchExpression,
+    );
+    if (expression == null || !mounted) return;
+
+    final validationError = expression.isEmpty
+        ? null
+        : validateJsonWatchExpression(expression);
+    if (validationError != null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(validationError)));
+      }
+      return;
+    }
+    setState(() => _watchExpression = expression);
   }
 
   Widget _buildLogView(

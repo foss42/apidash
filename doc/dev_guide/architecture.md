@@ -257,6 +257,10 @@ Key differences:
 - **Desktop:** Resizable split pane with collection sidebar and editor side-by-side. Drag handles for reordering.
 - **Mobile:** Tab-based navigation with full-screen views. Long-press for drag-to-reorder with a delay for scroll disambiguation.
 
+### WebSocket response inspection
+
+`RealtimeEventStreamView` displays the stored WebSocket message history on both desktop and mobile. Its JSON watch control can switch the response pane to a timestamped series extracted from received JSON messages. The watch expression is view-local state, so enabling or clearing it never changes the persisted request or its full message history. Plain keys search nested objects recursively, while explicit JSONPath expressions are evaluated by `lib/utils/json_watch_utils.dart`.
+
 ## Key Patterns
 
 ### UUID Generation
