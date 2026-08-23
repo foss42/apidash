@@ -1,17 +1,15 @@
-# GSoC'26 Final Report: Agentic API Testing via the API Dash MCP Server
+# GSoC'26 Final Report - API Dash as an MCP Server: Agentic Testing and GenUI Visualizations
 
 > Final report summarizing my contributions to API Dash as part of GSoC'26.
 
 ## Project Details
 
 1. **Contributor:** Abdelrahman El-Borgy
-2. **Mentors:** Ashita P, Ankit M, Ragul Raj M
+2. **Mentors:** Ashita P., Ankit M., Manas Hejmadi
 3. **Organization:** API Dash
-4. **Project:** Model Context Protocol (MCP) Server for Agentic API Testing
-
+4. **Project:** API Dash as an MCP Server: Agentic Testing and GenUI Visualizations
 #### Quick Links: 
 * [GSoC Project Page](https://summerofcode.withgoogle.com/programs/2026/projects/RQmFSAnm)
-* [Midterm Progress](https://dev.to/foss42/building-api-dash-mcp-server-adding-spa-mcp-app-10b4)
 * [Code Repository](https://github.com/foss42/apidash)
 * [NPM Package: `apidash-mcp`](https://www.npmjs.com/package/apidash-mcp)
 
@@ -125,15 +123,15 @@ Add the server to your client's configuration file (e.g., `mcp.json`).
 * If you used **Option A**, omit the `"env"` block entirely. 
 ```json
 {
-	"servers": {
-		"apidash": {
+  "servers": {
+    "apidash": {
       "command": "npx",
       "args": [
         "-y",
         "apidash-mcp@latest"
       ]
     }
-	}
+  }
 }
 ```
 * If you used **Option B**, include the `"env"` block as shown below:
@@ -146,16 +144,16 @@ Add the server to your client's configuration file (e.g., `mcp.json`).
       "args": [
         "-y",
         "apidash-mcp@latest"
-      ]
+      ],
       "env": {
-        "APIDASH_PATH": "C:\\Your\\Path\\To\\apidash.exe" 
+        "APIDASH_PATH": "C:\Your\Path\To\apidash.exe" 
       }
     }
   }
 }
 ```
 
-*(Note: If you used Option B earlier, you will need to add the `env` block back into this JSON to specify the `APIDASH_PATH`. On Windows, remember to escape backslashes `\\` in the path).*
+*(Note: If you used Option B earlier, you will need to add the `env` block back into this JSON to specify the `APIDASH_PATH`. On Windows, remember to escape backslashes `\` in the path).*
 
 **The Easier Way (GUI Setup):**
 If you prefer not to edit JSON files manually, most modern AI clients in VS Code offer a user interface to do this for you.
@@ -167,16 +165,27 @@ If you prefer not to edit JSON files manually, most modern AI clients in VS Code
 ### Step 3: Restart and Test
 Restart your AI client to spin up the bridge. You can now prompt it: *"Use API Dash to send a GET request to https://api.publicapis.org/entries and summarize the results."*
 
+---
+
 ## Pull Requests Summary
 
 | Feature | PR | Status | Comments |
 |---|---|---|---|
-| Initial MCP Server setup & NPM package scaffolding | [#1700](https://github.com/foss42/apidash/pull/1700) | Open | Established the base architecture for `apidash-mcp`. |
-| Implementation of Agentic API Testing tools | [#1711](https://github.com/foss42/apidash/pull/1711) | Open | Added `execute_request` and network handlers. |
-| SPA Workbench integration for visual data rendering | [#1720](https://github.com/foss42/apidash/pull/1720) | Open | Enabled AI to serve interactive UI components. |
-| Documentation, error handling, and release workflow | [#1737](https://github.com/foss42/apidash/pull/1737) | Open | Finalized the NPM publish pipeline and user guides. |
+| Initial MCP Server setup & NPM package scaffolding | [#1700](https://github.com/foss42/apidash/pull/1700) | Closed | Established the base architecture for `apidash-mcp`. |
+| Implementation of Agentic API Testing tools | [#1711](https://github.com/foss42/apidash/pull/1711) | Closed | Added `execute_request` and network handlers. |
+| SPA Workbench integration for visual data rendering | [#1720](https://github.com/foss42/apidash/pull/1720) | Closed | Enabled AI to serve interactive UI components. |
+| MCP server & MCP App final code release with documentation.| [#1737](https://github.com/foss42/apidash/pull/1737) | Under Review | Finalized the NPM publish pipeline and user guides. |
+| NPM package release | [#82](https://github.com/foss42/poc-experiments/pull/82) | Under Review | Added npm package source code files into the POC repository. |
+|Resolve a RenderFlex overflow in AI dialog on Android | [#1329](https://github.com/foss42/apidash/pull/1329) | Merged | Merged during the GSoC coding period. |
+|  Enable streaming responses in dashbot | [#1344](https://github.com/foss42/apidash/pull/1344) | Under Review | Currently under review. |
 
+---
 
+## Technical Blog
+
+During the coding period, I published a midterm progress blog detailing the initial development phases of the `apidash-mcp` server. It covers the architectural decisions made when building the foundation and adding the SPA MCP app to enhance testing workflows. You can read the full article here: [Midterm Progress: Building API Dash MCP Server](https://dev.to/foss42/building-api-dash-mcp-server-adding-spa-mcp-app-10b4).
+
+---
 
 ## Future Work
 
