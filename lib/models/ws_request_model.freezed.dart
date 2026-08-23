@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WebSocketMessage {
 
- String get payload; DateTime? get timestamp; bool get outgoing; WebSocketMessageType get messageType;
+ String get payload; DateTime? get timestamp; bool get outgoing; bool get isAutomatic; WebSocketMessageType get messageType;
 /// Create a copy of WebSocketMessage
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $WebSocketMessageCopyWith<WebSocketMessage> get copyWith => _$WebSocketMessageCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketMessage&&(identical(other.payload, payload) || other.payload == payload)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.outgoing, outgoing) || other.outgoing == outgoing)&&(identical(other.messageType, messageType) || other.messageType == messageType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketMessage&&(identical(other.payload, payload) || other.payload == payload)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.outgoing, outgoing) || other.outgoing == outgoing)&&(identical(other.isAutomatic, isAutomatic) || other.isAutomatic == isAutomatic)&&(identical(other.messageType, messageType) || other.messageType == messageType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,payload,timestamp,outgoing,messageType);
+int get hashCode => Object.hash(runtimeType,payload,timestamp,outgoing,isAutomatic,messageType);
 
 @override
 String toString() {
-  return 'WebSocketMessage(payload: $payload, timestamp: $timestamp, outgoing: $outgoing, messageType: $messageType)';
+  return 'WebSocketMessage(payload: $payload, timestamp: $timestamp, outgoing: $outgoing, isAutomatic: $isAutomatic, messageType: $messageType)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $WebSocketMessageCopyWith<$Res>  {
   factory $WebSocketMessageCopyWith(WebSocketMessage value, $Res Function(WebSocketMessage) _then) = _$WebSocketMessageCopyWithImpl;
 @useResult
 $Res call({
- String payload, DateTime? timestamp, bool outgoing, WebSocketMessageType messageType
+ String payload, DateTime? timestamp, bool outgoing, bool isAutomatic, WebSocketMessageType messageType
 });
 
 
@@ -65,11 +65,12 @@ class _$WebSocketMessageCopyWithImpl<$Res>
 
 /// Create a copy of WebSocketMessage
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? payload = null,Object? timestamp = freezed,Object? outgoing = null,Object? messageType = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? payload = null,Object? timestamp = freezed,Object? outgoing = null,Object? isAutomatic = null,Object? messageType = null,}) {
   return _then(_self.copyWith(
 payload: null == payload ? _self.payload : payload // ignore: cast_nullable_to_non_nullable
 as String,timestamp: freezed == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime?,outgoing: null == outgoing ? _self.outgoing : outgoing // ignore: cast_nullable_to_non_nullable
+as bool,isAutomatic: null == isAutomatic ? _self.isAutomatic : isAutomatic // ignore: cast_nullable_to_non_nullable
 as bool,messageType: null == messageType ? _self.messageType : messageType // ignore: cast_nullable_to_non_nullable
 as WebSocketMessageType,
   ));
@@ -156,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String payload,  DateTime? timestamp,  bool outgoing,  WebSocketMessageType messageType)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String payload,  DateTime? timestamp,  bool outgoing,  bool isAutomatic,  WebSocketMessageType messageType)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WebSocketMessage() when $default != null:
-return $default(_that.payload,_that.timestamp,_that.outgoing,_that.messageType);case _:
+return $default(_that.payload,_that.timestamp,_that.outgoing,_that.isAutomatic,_that.messageType);case _:
   return orElse();
 
 }
@@ -177,10 +178,10 @@ return $default(_that.payload,_that.timestamp,_that.outgoing,_that.messageType);
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String payload,  DateTime? timestamp,  bool outgoing,  WebSocketMessageType messageType)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String payload,  DateTime? timestamp,  bool outgoing,  bool isAutomatic,  WebSocketMessageType messageType)  $default,) {final _that = this;
 switch (_that) {
 case _WebSocketMessage():
-return $default(_that.payload,_that.timestamp,_that.outgoing,_that.messageType);case _:
+return $default(_that.payload,_that.timestamp,_that.outgoing,_that.isAutomatic,_that.messageType);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +198,10 @@ return $default(_that.payload,_that.timestamp,_that.outgoing,_that.messageType);
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String payload,  DateTime? timestamp,  bool outgoing,  WebSocketMessageType messageType)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String payload,  DateTime? timestamp,  bool outgoing,  bool isAutomatic,  WebSocketMessageType messageType)?  $default,) {final _that = this;
 switch (_that) {
 case _WebSocketMessage() when $default != null:
-return $default(_that.payload,_that.timestamp,_that.outgoing,_that.messageType);case _:
+return $default(_that.payload,_that.timestamp,_that.outgoing,_that.isAutomatic,_that.messageType);case _:
   return null;
 
 }
@@ -212,12 +213,13 @@ return $default(_that.payload,_that.timestamp,_that.outgoing,_that.messageType);
 @JsonSerializable()
 
 class _WebSocketMessage implements WebSocketMessage {
-  const _WebSocketMessage({required this.payload, this.timestamp, this.outgoing = true, this.messageType = WebSocketMessageType.received});
+  const _WebSocketMessage({required this.payload, this.timestamp, this.outgoing = true, this.isAutomatic = false, this.messageType = WebSocketMessageType.received});
   factory _WebSocketMessage.fromJson(Map<String, dynamic> json) => _$WebSocketMessageFromJson(json);
 
 @override final  String payload;
 @override final  DateTime? timestamp;
 @override@JsonKey() final  bool outgoing;
+@override@JsonKey() final  bool isAutomatic;
 @override@JsonKey() final  WebSocketMessageType messageType;
 
 /// Create a copy of WebSocketMessage
@@ -233,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WebSocketMessage&&(identical(other.payload, payload) || other.payload == payload)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.outgoing, outgoing) || other.outgoing == outgoing)&&(identical(other.messageType, messageType) || other.messageType == messageType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WebSocketMessage&&(identical(other.payload, payload) || other.payload == payload)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.outgoing, outgoing) || other.outgoing == outgoing)&&(identical(other.isAutomatic, isAutomatic) || other.isAutomatic == isAutomatic)&&(identical(other.messageType, messageType) || other.messageType == messageType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,payload,timestamp,outgoing,messageType);
+int get hashCode => Object.hash(runtimeType,payload,timestamp,outgoing,isAutomatic,messageType);
 
 @override
 String toString() {
-  return 'WebSocketMessage(payload: $payload, timestamp: $timestamp, outgoing: $outgoing, messageType: $messageType)';
+  return 'WebSocketMessage(payload: $payload, timestamp: $timestamp, outgoing: $outgoing, isAutomatic: $isAutomatic, messageType: $messageType)';
 }
 
 
@@ -253,7 +255,7 @@ abstract mixin class _$WebSocketMessageCopyWith<$Res> implements $WebSocketMessa
   factory _$WebSocketMessageCopyWith(_WebSocketMessage value, $Res Function(_WebSocketMessage) _then) = __$WebSocketMessageCopyWithImpl;
 @override @useResult
 $Res call({
- String payload, DateTime? timestamp, bool outgoing, WebSocketMessageType messageType
+ String payload, DateTime? timestamp, bool outgoing, bool isAutomatic, WebSocketMessageType messageType
 });
 
 
@@ -270,11 +272,12 @@ class __$WebSocketMessageCopyWithImpl<$Res>
 
 /// Create a copy of WebSocketMessage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? payload = null,Object? timestamp = freezed,Object? outgoing = null,Object? messageType = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? payload = null,Object? timestamp = freezed,Object? outgoing = null,Object? isAutomatic = null,Object? messageType = null,}) {
   return _then(_WebSocketMessage(
 payload: null == payload ? _self.payload : payload // ignore: cast_nullable_to_non_nullable
 as String,timestamp: freezed == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
 as DateTime?,outgoing: null == outgoing ? _self.outgoing : outgoing // ignore: cast_nullable_to_non_nullable
+as bool,isAutomatic: null == isAutomatic ? _self.isAutomatic : isAutomatic // ignore: cast_nullable_to_non_nullable
 as bool,messageType: null == messageType ? _self.messageType : messageType // ignore: cast_nullable_to_non_nullable
 as WebSocketMessageType,
   ));

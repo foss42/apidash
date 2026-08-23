@@ -269,7 +269,23 @@ void main() async {
         final sent = history.last;
         expect(sent.payload, 'hi');
         expect(sent.outgoing, true);
+        expect(sent.isAutomatic, false);
         expect(sent.messageType, WebSocketMessageType.sent);
+
+        notifier.sendWebSocketMessage(
+          id,
+          'custom-heartbeat',
+          isAutomatic: true,
+        );
+
+        final automatic = notifier
+            .getRequestModel(id)!
+            .wsRequestModel!
+            .messageHistory
+            .last;
+        expect(automatic.payload, 'custom-heartbeat');
+        expect(automatic.isAutomatic, true);
+        expect(automatic.messageType, WebSocketMessageType.sent);
       },
     );
 

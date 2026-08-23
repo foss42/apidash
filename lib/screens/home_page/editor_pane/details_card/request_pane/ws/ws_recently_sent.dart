@@ -30,7 +30,12 @@ class WsRecentlySent extends ConsumerWidget {
         const <WebSocketMessage>[];
 
     final sentHistory = messageHistory
-        .where((m) => m.outgoing && m.messageType == WebSocketMessageType.sent && m.payload != "Heartbeat ping")
+        .where(
+          (m) =>
+              m.outgoing &&
+              !m.isAutomatic &&
+              m.messageType == WebSocketMessageType.sent,
+        )
         .map((m) => m.payload)
         .toList()
         .reversed

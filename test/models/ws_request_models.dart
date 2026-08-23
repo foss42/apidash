@@ -12,6 +12,7 @@ const wsMessage1Json = {
   'payload': 'Hello',
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'sent',
 };
 
@@ -26,6 +27,7 @@ const wsMessage2Json = {
   'payload': 'Hi',
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': false,
+  'isAutomatic': false,
   'messageType': 'received',
 };
 
@@ -57,6 +59,7 @@ const wsRequestModel1Json = {
       'payload': 'Ping',
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'sent',
     },
   ],
@@ -109,6 +112,7 @@ const wsMessageNullTimestampJson = {
   'payload': 'NoTime',
   'timestamp': null,
   'outgoing': false,
+  'isAutomatic': false,
   'messageType': 'error',
 };
 
@@ -121,6 +125,7 @@ const wsMessageConnectedJson = {
   'payload': 'conn',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'connected',
 };
 
@@ -132,6 +137,7 @@ const wsMessageSentJson = {
   'payload': 'snt',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'sent',
 };
 
@@ -143,6 +149,7 @@ const wsMessageReceivedJson = {
   'payload': 'rcv',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'received',
 };
 
@@ -154,6 +161,7 @@ const wsMessageErrorJson = {
   'payload': 'err',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'error',
 };
 
@@ -165,6 +173,7 @@ const wsMessageDisconnectedJson = {
   'payload': 'disc',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'disconnected',
 };
 
@@ -198,18 +207,21 @@ const wsRequestModelMultiHistoryJson = {
       'payload': 'first',
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'sent',
     },
     {
       'payload': 'second',
       'timestamp': '2023-01-02T00:00:00.000',
       'outgoing': false,
+      'isAutomatic': false,
       'messageType': 'received',
     },
     {
       'payload': 'third',
       'timestamp': null,
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'error',
     },
   ],

@@ -13,6 +13,7 @@ _WebSocketMessage _$WebSocketMessageFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['timestamp'] as String),
       outgoing: json['outgoing'] as bool? ?? true,
+      isAutomatic: json['isAutomatic'] as bool? ?? false,
       messageType:
           $enumDecodeNullable(
             _$WebSocketMessageTypeEnumMap,
@@ -26,6 +27,7 @@ Map<String, dynamic> _$WebSocketMessageToJson(_WebSocketMessage instance) =>
       'payload': instance.payload,
       'timestamp': instance.timestamp?.toIso8601String(),
       'outgoing': instance.outgoing,
+      'isAutomatic': instance.isAutomatic,
       'messageType': _$WebSocketMessageTypeEnumMap[instance.messageType]!,
     };
 

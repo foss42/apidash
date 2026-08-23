@@ -50,7 +50,22 @@ void main() {
       expect(msg.payload, 'OnlyPayload');
       expect(msg.timestamp, isNull);
       expect(msg.outgoing, true);
+      expect(msg.isAutomatic, false);
       expect(msg.messageType, WebSocketMessageType.received);
+    });
+
+    test('automatic message marker round-trips through JSON', () {
+      const msg = WebSocketMessage(
+        payload: 'custom-heartbeat',
+        outgoing: true,
+        isAutomatic: true,
+        messageType: WebSocketMessageType.sent,
+      );
+
+      final back = WebSocketMessage.fromJson(msg.toJson());
+
+      expect(back, msg);
+      expect(back.isAutomatic, true);
     });
 
     test('messageType.connected round-trips', () {

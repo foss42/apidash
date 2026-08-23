@@ -135,6 +135,7 @@ Models are defined using **Freezed** for immutability and **json_serializable** 
 | `HistoryRequestModel` | `lib/models/history_request_model.dart` | Snapshot of a sent request for history |
 | `HistoryMetaModel` | `lib/models/history_meta_model.dart` | Metadata for history entries (timestamp, status) |
 | `SettingsModel` | `lib/models/settings_model.dart` | App preferences (theme, window, defaults) |
+| `WebSocketMessage` | `lib/models/ws_request_model.dart` | WebSocket event payload, direction, type, and whether the app generated it automatically |
 
 The core HTTP request/response models (`HttpRequestModel`, `HttpResponseModel`) are defined in the `apidash_core` package.
 
