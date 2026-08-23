@@ -18,6 +18,10 @@ class cURLCodeGen {
   --data '{{body}}'
 """;
 
+  String kTemplateFileBody = """ \\
+  --data-binary '@{{body}}'
+""";
+
   String? getCode(
     HttpRequestModel requestModel,
   ) {
@@ -51,9 +55,12 @@ class cURLCodeGen {
         }
       }
 
-      if (requestModel.hasJsonData || requestModel.hasTextData) {
+      if (requestModel.hasJsonData || requestModel.hasTextData || requestModel.hasFormUrlEncodedData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({"body": requestModel.body});
+      } else if (requestModel.hasFileData) {
+        var templateFileBody = jj.Template(kTemplateFileBody);
+        result += templateFileBody.render({"body": requestModel.bodyFile});
       } else if (requestModel.hasFormData) {
         for (var formData in requestModel.formDataList) {
           var templateFormData = jj.Template(kTemplateFormData);

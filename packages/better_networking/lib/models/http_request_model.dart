@@ -26,6 +26,7 @@ abstract class HttpRequestModel with _$HttpRequestModel {
     String? body,
     String? query,
     List<FormDataModel>? formData,
+    String? bodyFile,
   }) = _HttpRequestModel;
 
   factory HttpRequestModel.fromJson(Map<String, Object?> json) =>
@@ -47,18 +48,25 @@ abstract class HttpRequestModel with _$HttpRequestModel {
       bodyContentType == ContentType.formUrlEncoded;
   bool get hasJsonContentType => bodyContentType == ContentType.json;
   bool get hasTextContentType => bodyContentType == ContentType.text;
+  bool get hasFileContentType => bodyContentType == ContentType.file;
   int get contentLength => utf8.encode(body ?? "").length;
   bool get hasBody =>
-      hasJsonData || hasTextData || hasFormData || hasFormUrlEncodedData;
+      hasJsonData || hasTextData || hasFormData || hasFormUrlEncodedData || hasFileData;
   bool get hasAnyBody =>
       (hasJsonContentType && contentLength > 0) ||
       (hasTextContentType && contentLength > 0) ||
       (hasFormDataContentType && formDataMapList.isNotEmpty) ||
-      (hasFormUrlEncodedContentType && formDataMapList.isNotEmpty);
+      (hasFormUrlEncodedContentType && formDataMapList.isNotEmpty) ||
+      (hasFileContentType && bodyFile != null && bodyFile!.isNotEmpty);
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
       contentLength > 0;
+  bool get hasFileData =>
+      kMethodsWithBody.contains(method) &&
+      hasFileContentType &&
+      bodyFile != null &&
+      bodyFile!.isNotEmpty;
   bool get hasTextData =>
       kMethodsWithBody.contains(method) &&
       (hasTextContentType || hasFormUrlEncodedContentType) &&

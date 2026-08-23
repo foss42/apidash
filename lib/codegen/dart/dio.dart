@@ -86,6 +86,10 @@ class DartDioCodeGen {
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
+        case ContentType.file:
+          final ioImport = Directive.import('dart:io', as: 'io');
+          sbf.writeln(ioImport.accept(emitter));
+          dataExp = declareFinal('data').assign(refer('io.File').call([strContent]).property('openRead').call([]));
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(

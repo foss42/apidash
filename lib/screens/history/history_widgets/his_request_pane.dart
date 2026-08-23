@@ -260,6 +260,13 @@ class HisRequestBody extends ConsumerWidget {
                   isDark: Theme.of(context).brightness == Brightness.dark,
                 ),
               ),
+              ContentType.file => Padding(
+                padding: kPh4,
+                child: Text(
+                  requestModel?.bodyFile ?? "No file selected",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
               _ => Padding(
                 padding: kPt5o10,
                 child: TextFieldEditor(

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/file_utils.dart';
 import 'request_form_data.dart';
 
 class EditRequestBody extends ConsumerWidget {
@@ -64,6 +65,10 @@ class EditRequestBody extends ConsumerWidget {
                   hintText: kHintJson,
                 ),
               ),
+              ContentType.file => const Padding(
+                padding: kPh4,
+                child: RequestBodyFileWidget(),
+              ),
               _ => Padding(
                 padding: kPt5o10,
                 child: TextFieldEditor(
@@ -121,6 +126,59 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(bodyContentType: value);
       },
+    );
+  }
+}
+
+class RequestBodyFileWidget extends ConsumerWidget {
+  const RequestBodyFileWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+    final bodyFile = ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.httpRequestModel?.bodyFile,
+      ),
+    );
+
+    return Padding(
+      padding: kPt5o10,
+      child: Row(
+        children: [
+          ElevatedButton.icon(
+            onPressed: () async {
+              final pickedFile = await pickFile();
+              if (pickedFile != null) {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .update(bodyFile: pickedFile.path);
+              }
+            },
+            icon: const Icon(Icons.attach_file),
+            label: const Text("Select File"),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              bodyFile == null || bodyFile.isEmpty
+                  ? "No file selected"
+                  : getShortPath(bodyFile),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (bodyFile != null && bodyFile.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear),
+              tooltip: "Remove file",
+              onPressed: () {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .update(bodyFile: "");
+              },
+            ),
+        ],
+      ),
     );
   }
 }

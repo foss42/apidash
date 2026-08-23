@@ -167,7 +167,8 @@ enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
   formdata("$kTypeMultipart/$kSubTypeFormData"),
-  formUrlEncoded("$kTypeApplication/$kSubTypeXWwwFormUrlencoded");
+  formUrlEncoded("$kTypeApplication/$kSubTypeXWwwFormUrlencoded"),
+  file("$kTypeApplication/$kSubTypeOctetStream");
 
   const ContentType(this.header);
   final String header;

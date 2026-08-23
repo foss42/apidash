@@ -33,6 +33,7 @@ _HttpRequestModel _$HttpRequestModelFromJson(Map json) => _HttpRequestModel(
   formData: (json['formData'] as List<dynamic>?)
       ?.map((e) => FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
       .toList(),
+  bodyFile: json['bodyFile'] as String?,
 );
 
 Map<String, dynamic> _$HttpRequestModelToJson(_HttpRequestModel instance) =>
@@ -48,6 +49,7 @@ Map<String, dynamic> _$HttpRequestModelToJson(_HttpRequestModel instance) =>
       'body': instance.body,
       'query': instance.query,
       'formData': instance.formData?.map((e) => e.toJson()).toList(),
+      'bodyFile': instance.bodyFile,
     };
 
 const _$HTTPVerbEnumMap = {
@@ -65,4 +67,5 @@ const _$ContentTypeEnumMap = {
   ContentType.text: 'text',
   ContentType.formdata: 'formdata',
   ContentType.formUrlEncoded: 'formUrlEncoded',
+  ContentType.file: 'file',
 };

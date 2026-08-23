@@ -463,6 +463,14 @@ const httpRequestModelPost13 = HttpRequestModel(
 }""",
 );
 
+/// POST request model with file body
+const httpRequestModelPost14 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/io/img',
+  bodyContentType: ContentType.file,
+  bodyFile: '/Documents/up/1.png',
+);
+
 /// Basic OPTIONS request model
 const httpRequestModelOptions1 = HttpRequestModel(
   method: HTTPVerb.options,

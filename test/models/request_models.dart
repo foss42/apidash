@@ -258,6 +258,13 @@ const requestModelPost13 = RequestModel(
   httpRequestModel: httpRequestModelPost13,
 );
 
+/// POST request model with file body
+const requestModelPost14 = RequestModel(
+  id: 'post14',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelPost14,
+);
+
 const requestModelOptions1 = RequestModel(
   id: 'options1',
   apiType: APIType.rest,
