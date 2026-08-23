@@ -32,6 +32,8 @@ void main() {
         }
         if (methodCall.method == 'close') return true;
         if (methodCall.method == 'startDragging') return true;
+        if (methodCall.method == 'isFullScreen') return false;
+        if (methodCall.method == 'isPreventClose') return false;
         return null;
       },
     );

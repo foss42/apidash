@@ -25,6 +25,8 @@ class ConnectionManager {
   /// does not expose the inner socket).
   final Map<String, WebSocket> _sockets = {};
 
+  final Map<String, Object> _connectionTokens = {};
+
   /// Whether there is an active connection for [requestId].
   bool hasConnection(String requestId) => _channels.containsKey(requestId);
 
@@ -50,7 +52,15 @@ class ConnectionManager {
     // IOWebSocketChannel.connect) so we keep a reference to the underlying
     // socket. WebSocket.pingInterval is mutable at runtime, which lets us
     // change the heartbeat on a live connection (see [updatePingInterval]).
+    final currentToken =
+        Object(); // A totally unique ID for this specific attempt
+    _connectionTokens[requestId] = currentToken;
     final webSocket = await WebSocket.connect(url, headers: headers);
+    // If the token changed while the connection was being established, abort.
+    if (_connectionTokens[requestId] != currentToken) {
+      webSocket.close();
+      throw StateError('Stable connection attempt aborted');
+    }
     webSocket.pingInterval = pingInterval;
     final channel = IOWebSocketChannel(webSocket);
     _channels[requestId] = channel;
