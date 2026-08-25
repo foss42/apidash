@@ -119,6 +119,16 @@ Future<void> openFlowHistoryInInspector({
   if (record == null) {
     return;
   }
+
+  final workflowId = record.meta.workflowId.trim();
+  if (workflowId.isNotEmpty) {
+    ref.read(selectedWorkflowIdStateProvider.notifier).state = workflowId;
+    final activeId = ref.read(activeWorkflowProvider)?.id;
+    if (activeId != workflowId) {
+      await ref.read(activeWorkflowProvider.notifier).load(workflowId);
+    }
+  }
+
   final byKey = <String, WorkflowNodeRunResult>{};
   final order = <String>[];
   for (final step in record.nodeResults) {

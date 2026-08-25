@@ -71,7 +71,7 @@ class DashboardSection extends StatelessWidget {
     super.key,
     required this.title,
     required this.child,
-    this.initiallyExpanded = true,
+    this.initiallyExpanded = false,
   });
 
   final String title;

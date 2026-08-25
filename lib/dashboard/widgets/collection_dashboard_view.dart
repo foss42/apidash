@@ -132,6 +132,7 @@ class _CollectionBody extends ConsumerWidget {
         kVSpacer16,
         DashboardSection(
           title: 'Trends & health',
+          initiallyExpanded: true,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final wide = constraints.maxWidth > 900;
@@ -272,7 +273,6 @@ class _CollectionBody extends ConsumerWidget {
         kVSpacer12,
         DashboardSection(
           title: 'Recent errors',
-          initiallyExpanded: metrics.recentErrors.isNotEmpty,
           child: metrics.recentErrors.isEmpty
               ? Text(
                   'No client/server errors in this range.',

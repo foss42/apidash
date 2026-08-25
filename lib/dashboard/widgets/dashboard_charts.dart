@@ -328,6 +328,25 @@ class _DistributionBarChart extends StatelessWidget {
                 ),
               ),
             ),
+            barTouchData: BarTouchData(
+              enabled: true,
+              touchTooltipData: BarTouchTooltipData(
+                getTooltipColor: (_) => scheme.primary,
+                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                  if (groupIndex < 0 || groupIndex >= counts.length) {
+                    return null;
+                  }
+                  return BarTooltipItem(
+                    '${counts[groupIndex]}',
+                    TextStyle(
+                      color: scheme.onPrimary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  );
+                },
+              ),
+            ),
             barGroups: [
               for (var i = 0; i < counts.length; i++)
                 BarChartGroupData(
@@ -582,13 +601,13 @@ class _ChartEmpty extends StatelessWidget {
 
 LineTouchTooltipData _durationTouchTooltip(ColorScheme scheme) {
   return LineTouchTooltipData(
-    getTooltipColor: (_) => scheme.inverseSurface,
+    getTooltipColor: (_) => scheme.primary,
     getTooltipItems: (touched) => [
       for (final t in touched)
         LineTooltipItem(
           formatMs(t.y.round()),
           TextStyle(
-            color: scheme.onInverseSurface,
+            color: scheme.onPrimary,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),

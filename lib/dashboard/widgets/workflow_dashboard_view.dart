@@ -103,6 +103,7 @@ class _WorkflowBody extends ConsumerWidget {
         kVSpacer16,
         DashboardSection(
           title: 'Trends & status',
+          initiallyExpanded: true,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final trend = Column(
@@ -147,7 +148,6 @@ class _WorkflowBody extends ConsumerWidget {
         kVSpacer12,
         DashboardSection(
           title: 'Failing nodes',
-          initiallyExpanded: metrics.nodeFailures.isNotEmpty,
           child: metrics.nodeFailures.isEmpty
               ? Text(
                   'No failed nodes in sampled runs.',
@@ -196,10 +196,10 @@ class _WorkflowBody extends ConsumerWidget {
           title: 'Recent runs',
           child: _RecentRunsTable(
             rows: metrics.recentRuns,
-            onOpen: (runId) {
+            onOpen: (runId) async {
               ref.read(navRailIndexStateProvider.notifier).state =
                   kNavRailWorkflowsIndex;
-              ref.read(viewingFlowHistoryRunIdProvider.notifier).state = runId;
+              await openFlowHistoryInInspector(ref: ref, runId: runId);
             },
           ),
         ),
@@ -215,7 +215,7 @@ class _WorkflowBody extends ConsumerWidget {
 class _RecentRunsTable extends StatelessWidget {
   const _RecentRunsTable({required this.rows, required this.onOpen});
   final List<FlowRunRow> rows;
-  final void Function(String runId) onOpen;
+  final Future<void> Function(String runId) onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -248,20 +248,23 @@ class _RecentRunsTable extends StatelessWidget {
         for (final r in rows)
           TableRow(
             children: [
-              InkWell(
-                onTap: () => onOpen(r.runId),
-                child: _td(context, fmt.format(r.startedAt.toLocal())),
-              ),
-              _td(context, r.workflowName, maxLines: 1),
-              _td(
-                context,
-                r.success ? 'Success' : 'Failed',
-                color: r.success
-                    ? dashboardSuccessColor(context)
-                    : scheme.error,
-              ),
-              _td(context, formatMs(r.durationMs)),
-              _td(context, '${r.stepCount}'),
+              for (final child in [
+                _td(context, fmt.format(r.startedAt.toLocal())),
+                _td(context, r.workflowName, maxLines: 1),
+                _td(
+                  context,
+                  r.success ? 'Success' : 'Failed',
+                  color: r.success
+                      ? dashboardSuccessColor(context)
+                      : scheme.error,
+                ),
+                _td(context, formatMs(r.durationMs)),
+                _td(context, '${r.stepCount}'),
+              ])
+                InkWell(
+                  onTap: () => onOpen(r.runId),
+                  child: child,
+                ),
             ],
           ),
       ],

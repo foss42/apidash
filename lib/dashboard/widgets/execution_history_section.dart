@@ -90,29 +90,32 @@ class ExecutionHistorySection extends ConsumerWidget {
                 for (final e in entries)
                   TableRow(
                     children: [
-                      InkWell(
-                        onTap: () => _open(ref, e),
-                        child: _cell(context, fmt.format(e.at.toLocal())),
-                      ),
-                      _cell(context, e.title, maxLines: 1),
-                      _cell(
-                        context,
-                        e.success ? 'Success' : 'Failed',
-                        color: e.success
-                            ? dashboardSuccessColor(context)
-                            : scheme.error,
-                      ),
-                      _cell(context, formatMs(e.durationMs)),
-                      e.kind == ExecutionKind.request && e.statusCode != null
-                          ? _cell(
-                              context,
-                              e.detail ?? '',
-                              color: getResponseStatusCodeColor(
-                                e.statusCode,
-                                brightness: Theme.of(context).brightness,
-                              ),
-                            )
-                          : _cell(context, e.detail ?? '—', maxLines: 1),
+                      for (final child in [
+                        _cell(context, fmt.format(e.at.toLocal())),
+                        _cell(context, e.title, maxLines: 1),
+                        _cell(
+                          context,
+                          e.success ? 'Success' : 'Failed',
+                          color: e.success
+                              ? dashboardSuccessColor(context)
+                              : scheme.error,
+                        ),
+                        _cell(context, formatMs(e.durationMs)),
+                        e.kind == ExecutionKind.request && e.statusCode != null
+                            ? _cell(
+                                context,
+                                e.detail ?? '',
+                                color: getResponseStatusCodeColor(
+                                  e.statusCode,
+                                  brightness: Theme.of(context).brightness,
+                                ),
+                              )
+                            : _cell(context, e.detail ?? '—', maxLines: 1),
+                      ])
+                        InkWell(
+                          onTap: () => _open(ref, e),
+                          child: child,
+                        ),
                     ],
                   ),
               ],
@@ -120,14 +123,14 @@ class ExecutionHistorySection extends ConsumerWidget {
     );
   }
 
-  void _open(WidgetRef ref, ExecutionHistoryEntry e) {
+  Future<void> _open(WidgetRef ref, ExecutionHistoryEntry e) async {
     if (e.kind == ExecutionKind.request) {
       ref.read(navRailIndexStateProvider.notifier).state = kNavRailHistoryIndex;
       ref.read(historyMetaStateNotifier.notifier).loadHistoryRequest(e.id);
       return;
     }
     ref.read(navRailIndexStateProvider.notifier).state = kNavRailWorkflowsIndex;
-    ref.read(viewingFlowHistoryRunIdProvider.notifier).state = e.id;
+    await openFlowHistoryInInspector(ref: ref, runId: e.id);
   }
 }
 
