@@ -73,6 +73,7 @@ GlobalKey<ScaffoldState> getScaffoldKey(int railIdx) {
     kNavRailWorkflowsIndex => kWorkflowScaffoldKey,
     kNavRailVariablesIndex => kEnvScaffoldKey,
     kNavRailHistoryIndex => kHisScaffoldKey,
+    kNavRailDashboardIndex => kHomeScaffoldKey,
     _ => kHomeScaffoldKey,
   };
 }
