@@ -53,12 +53,20 @@ final filteredHistoryMetasProvider = Provider<List<HistoryMetaModel>>((ref) {
   );
 });
 
+final filteredHistoryIdsKeyProvider = Provider<String>((ref) {
+  final metas = ref.watch(filteredHistoryMetasProvider);
+  if (metas.isEmpty) return '';
+  return metas.map((m) => m.historyId).join('\u0000');
+});
+
 final historyTimingsProvider =
     FutureProvider.autoDispose<Map<String, int>>((ref) async {
-  final metas = ref.watch(filteredHistoryMetasProvider);
-  if (metas.isEmpty || !isWorkspaceStorageInitialized()) {
+  // Watch a String key so equal ID sets do not retrigger mid-build.
+  final idsKey = ref.watch(filteredHistoryIdsKeyProvider);
+  if (idsKey.isEmpty || !isWorkspaceStorageInitialized()) {
     return const {};
   }
+  final metas = ref.read(filteredHistoryMetasProvider);
   final out = <String, int>{};
   const batch = 24;
   for (var i = 0; i < metas.length; i += batch) {

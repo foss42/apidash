@@ -30,7 +30,9 @@ class ExecutionHistorySection extends ConsumerWidget {
 
     final requestMetas = ref.watch(filteredHistoryMetasProvider);
     final flowMetas = ref.watch(filteredFlowHistoryProvider);
-    final timings = ref.watch(historyTimingsProvider).value ?? const {};
+    // Prefer settled data only — avoids rebuild storms while timings load.
+    final timings =
+        ref.watch(historyTimingsProvider).asData?.value ?? const <String, int>{};
     final entries = buildUnifiedExecutionHistory(
       requestMetas: requestMetas,
       timingsMsByHistoryId: timings,
