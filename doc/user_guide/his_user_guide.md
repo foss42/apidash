@@ -56,3 +56,7 @@ Users can choose from the following predefined retention periods:
   This customization ensures that your request history remains clean and efficient, only storing the information you find most relevant. By adjusting the retention period, you can balance between having access to past requests and keeping the history log manageable.
 
 > Note: Auto-clearing occurs at the start of the application, so any changes to your retention settings will take effect the next time you launch the app.
+
+## Related
+
+Request history also feeds the desktop **Dashboard** Collections tab (health, latency, errors). See [Dashboard](dashboard_guide.md).

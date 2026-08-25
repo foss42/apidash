@@ -50,42 +50,51 @@ Tap a run (Recent runs or execution history) to open **Workflows**, select that 
 
 ## Webhook reports
 
-Use **Webhook reports** to POST the current tab’s metrics to an HTTP endpoint (CI, Slack, Discord, or your own server).
+Use **Webhook reports** to POST a **combined** Collections + Workflows snapshot to an HTTP endpoint (CI, Slack, Discord, or your own server). One send covers both; it does not depend on which Dashboard tab is open.
 
 1. Set a **Report name** (optional).
 2. Choose **Format**:
    - **JSON**: full structured metrics (default, good for CI or custom hooks).
-   - **Slack**: Slack Incoming Webhook shape (`text` + Block Kit).
-   - **Discord**: Discord webhook shape (`content` + embed).
+   - **Slack**: Slack Incoming Webhook shape (`text` + Block Kit for both sides).
+   - **Discord**: Discord webhook shape (`content` + two embeds).
 3. Paste the webhook URL.
 4. Check **Payload preview** (this is exactly what will be sent).
 5. **Copy**, **Send now**, or **Start auto-send** (`5m` / `15m` / `30m` / `60m`).
 
-Auto-send uses the same format and the live Dashboard scope (tab, range, filters) at each tick.
+Auto-send uses the same combined format and the live Dashboard scope (time range and collection / workflow filters) at each tick.
 
 ### Small examples
 
-**JSON** (truncated collection report):
+**JSON** (truncated combined report):
 
 ```json
 {
   "reportName": "API Dash Health Report",
-  "type": "collection",
-  "scope": { "timeRange": "7d", "collectionId": "all" },
+  "type": "dashboard",
+  "scope": {
+    "timeRange": "7d",
+    "collectionId": "all",
+    "workflowId": "all"
+  },
   "collection": {
     "totalRequests": 42,
     "healthScore": 88,
     "successRate": 0.95,
     "p95Ms": 120
+  },
+  "workflow": {
+    "totalRuns": 10,
+    "successRate": 0.9,
+    "failures": 1
   }
 }
 ```
 
-**Slack** (what Slack expects):
+**Slack** (what Slack expects; truncated):
 
 ```json
 {
-  "text": "API Dash Health Report · Collections · 7d · health 88 · success 95.0% · P95 120ms",
+  "text": "API Dash Health Report · 7d · Collections health 88 (95.0%) · Workflows 10 runs (90.0%)",
   "blocks": [
     {
       "type": "header",
@@ -101,13 +110,18 @@ Create the URL in Slack: App → Incoming Webhooks → Add to channel → copy `
 
 ```json
 {
-  "content": "API Dash Health Report · Collections · 7d · health 88 · success 95.0% · P95 120ms",
+  "content": "API Dash Health Report · 7d · Collections health 88 (95.0%) · Workflows 10 runs (90.0%)",
   "embeds": [
     {
-      "title": "API Dash Health Report",
+      "title": "API Dash Health Report · Collections",
       "fields": [
-        { "name": "Health", "value": "88", "inline": true },
-        { "name": "Success", "value": "95.0%", "inline": true }
+        { "name": "Health", "value": "88", "inline": true }
+      ]
+    },
+    {
+      "title": "API Dash Health Report · Workflows",
+      "fields": [
+        { "name": "Runs", "value": "10", "inline": true }
       ]
     }
   ]
@@ -125,4 +139,4 @@ Treat webhook URLs as secrets. Do not commit them or paste them into public chat
 3. Set tab, range, and filter.
 4. Read KPIs and the open chart section; expand others as needed.
 5. Tap history rows to jump to History or the workflow inspector.
-6. Optional: Webhook reports → format → preview → Send or auto-send.
+6. Optional: Webhook reports → format → preview → Send or auto-send (combined Collections + Workflows).

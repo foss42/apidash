@@ -26,6 +26,8 @@ apidash/
 │   ├── dashbot/                  # AI assistant (Dashbot)
 │   ├── git/                      # Desktop Git collaboration (system git CLI)
 │   ├── sync/                     # LAN QR Scan Sync (phone ↔ desktop)
+│   ├── workflow/                 # Visual workflow builder + runner
+│   ├── dashboard/                # Desktop collection/workflow health + webhooks
 │   ├── importer/                 # Import from cURL, Postman, etc.
 │   ├── models/                   # Data models (Freezed)
 │   ├── providers/                # Riverpod state management
@@ -188,8 +190,14 @@ Requests are **lazy-loaded** into memory when selected (or when selected after d
 
 ## Collaboration (Git & Scan Sync)
 
-- **Git (desktop):** `lib/git/` — system `git` CLI. Overview actions: **Check remote** (`fetch` + snackbar with ahead/behind guidance), **Pull**, **Push**, commit, branches, visual diffs. See [Collaboration user guide](../user_guide/collaboration_guide.md).
-- **Scan Sync:** `lib/sync/` — one-way LAN QR send/receive; shares change-tree / diff UI with Git where useful.
+- **Git (desktop):** `lib/git/` - system `git` CLI. Overview actions: **Check remote** (`fetch` + snackbar with ahead/behind guidance), **Pull**, **Push**, commit, branches, visual diffs. See [Collaboration user guide](../user_guide/collaboration_guide.md).
+- **Scan Sync:** `lib/sync/` - one-way LAN QR send/receive; shares change-tree / diff UI with Git where useful.
+
+## Dashboard (desktop)
+
+- **Feature page:** `lib/dashboard/` (`DashboardPage` on the nav rail). Aggregates local request history and workflow run history (no separate telemetry store).
+- **Tabs:** Collections (latency, status, coverage, execution history) and Workflows (run KPIs, failing nodes, recent runs).
+- **Webhooks:** one combined Collections + Workflows payload (`type: dashboard`) with **JSON** / **Slack** / **Discord** formats, preview, send now, and interval auto-send. See [Dashboard user guide](../user_guide/dashboard_guide.md).
 
 ## Code Generation System
 
