@@ -86,15 +86,4 @@ void main() {
       expect(result.apiKey, 'custom-key-updated');
     });
   });
-
-  group('migrateAiProvidersFromDefault', () {
-    test('seeds from defaultAIModel when empty', () {
-      final migrated = migrateAiProvidersFromDefault(null, {
-        'modelApiProvider': 'gemini',
-        'apiKey': 'g-key',
-        'url': kGeminiUrl,
-      });
-      expect(migrated?['gemini']?['apiKey'], 'g-key');
-    });
-  });
 }

@@ -75,19 +75,6 @@ void main() {
     expect(SettingsModel.fromJson(input), sm);
   });
 
-  test('Testing fromJson migrates aiProviders from defaultAIModel', () {
-    const input = {
-      "isDark": false,
-      "defaultAIModel": {
-        "modelApiProvider": "openai",
-        "apiKey": "legacy-key",
-        "model": "gpt-4o",
-      },
-    };
-    final result = SettingsModel.fromJson(input);
-    expect(result.aiProviders?['openai']?['apiKey'], 'legacy-key');
-  });
-
   test('Testing copyWith()', () {
     const expectedResult = SettingsModel(
       isDark: true,

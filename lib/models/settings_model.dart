@@ -2,7 +2,6 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/ai_provider_utils.dart';
 
 @immutable
 class SettingsModel {
@@ -168,7 +167,6 @@ class SettingsModel {
         ),
       );
     }
-    aiProviders = migrateAiProvidersFromDefault(aiProviders, defaultAIModel);
 
     const sm = SettingsModel();
 
