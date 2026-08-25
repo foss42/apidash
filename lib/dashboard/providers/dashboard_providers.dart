@@ -299,6 +299,9 @@ class WebhookAutoSendNotifier extends StateNotifier<WebhookAutoSendState> {
       collection: collection,
       workflow: workflow,
       coverage: coverage,
+      timeRangeLabel: ref.read(dashboardTimeRangeProvider).label,
+      collectionFilter: ref.read(dashboardCollectionFilterProvider),
+      workflowFilter: ref.read(dashboardWorkflowFilterProvider),
     );
   }
 

@@ -352,45 +352,117 @@ Map<String, dynamic> buildWebhookPayload({
   required DashboardTab tab,
   required CollectionDashboardMetrics collection,
   required WorkflowDashboardMetrics workflow,
+  required String timeRangeLabel,
+  String? collectionFilter,
+  String? workflowFilter,
   ScriptCoverage? coverage,
 }) {
   final generatedAt = DateTime.now().toUtc().toIso8601String();
+  final scope = <String, dynamic>{
+    'timeRange': timeRangeLabel,
+    if (tab == DashboardTab.collections)
+      'collectionId': collectionFilter ?? 'all',
+    if (tab == DashboardTab.workflows) 'workflowId': workflowFilter ?? 'all',
+  };
+
   if (tab == DashboardTab.workflows) {
     return {
       'reportName': reportName,
       'generatedAt': generatedAt,
       'type': 'workflow',
+      'scope': scope,
       'workflow': {
         'totalRuns': workflow.totalRuns,
-        'successRate': workflow.successRate,
+        'successCount': workflow.successCount,
         'failures': workflow.failCount,
+        'successRate': workflow.successRate,
         'avgDurationMs': workflow.avgDurationMs,
         'peakDurationMs': workflow.peakDurationMs,
+        'avgStepCount': workflow.avgStepCount,
+        'lastRunAt': workflow.lastRunAt?.toUtc().toIso8601String(),
+        'failingNodes': [
+          for (final n in workflow.nodeFailures)
+            {
+              'label': n.label,
+              'failCount': n.failCount,
+              'avgMs': n.avgMs,
+            },
+        ],
+        'recentRuns': [
+          for (final r in workflow.recentRuns.take(10))
+            {
+              'runId': r.runId,
+              'workflowName': r.workflowName,
+              'success': r.success,
+              'startedAt': r.startedAt.toUtc().toIso8601String(),
+              'durationMs': r.durationMs,
+              'stepCount': r.stepCount,
+              if (r.error != null && r.error!.isNotEmpty) 'error': r.error,
+            },
+        ],
       },
     };
   }
+
   return {
     'reportName': reportName,
     'generatedAt': generatedAt,
     'type': 'collection',
+    'scope': scope,
     'collection': {
       'totalRequests': collection.total,
-      'successRate': collection.successRate,
+      'successCount': collection.successCount,
       'failures': collection.failCount,
+      'successRate': collection.successRate,
       'healthScore': collection.healthScore,
+      'errorRatio': collection.errorRatio,
+      'uniqueEndpoints': collection.uniqueEndpoints,
+      'avgMs': collection.avgMs,
+      'peakMs': collection.peakMs,
+      'p50Ms': collection.p50Ms,
       'p95Ms': collection.p95Ms,
+      'p99Ms': collection.p99Ms,
+      'lastRunAt': collection.lastRunAt?.toUtc().toIso8601String(),
       'status': {
         '2xx': collection.status2xx,
         '3xx': collection.status3xx,
         '4xx': collection.status4xx,
         '5xx': collection.status5xx,
       },
+      'methods': {
+        for (final e in collection.methodCounts.entries) e.key.name: e.value,
+      },
+      'apiTypes': {
+        for (final e in collection.apiTypeCounts.entries) e.key.name: e.value,
+      },
+      'topEndpoints': [
+        for (final e in collection.topEndpoints.take(10))
+          {
+            'url': e.url,
+            'calls': e.count,
+            'avgMs': e.avgMs,
+            'fails': e.failCount,
+          },
+      ],
+      'recentErrors': [
+        for (final e in collection.recentErrors.take(10))
+          {
+            'name': e.name,
+            'url': e.url,
+            'method': e.method.name,
+            'status': e.status,
+            'durationMs': e.durationMs,
+            'at': e.timeStamp.toUtc().toIso8601String(),
+          },
+      ],
       if (coverage != null)
         'testCoverage': {
           'totalRequests': coverage.totalRequests,
           'withPostScript': coverage.withPostScript,
           'withPreScript': coverage.withPreScript,
+          'withAnyScript': coverage.withAnyScript,
           'coverage': coverage.testCoverage,
+          'scriptCoverage': coverage.scriptCoverage,
         },
     },
   };

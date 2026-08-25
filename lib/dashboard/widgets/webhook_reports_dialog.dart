@@ -51,11 +51,34 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
         .updateReportName(_nameController.text);
   }
 
+  String _prettyJson() {
+    final payload =
+        ref.read(webhookAutoSendProvider.notifier).previewPayload();
+    return const JsonEncoder.withIndent('  ').convert(payload);
+  }
+
+  Future<void> _copyJson() async {
+    _syncFields();
+    final text = _prettyJson();
+    await Clipboard.setData(ClipboardData(text: text));
+    ref.read(webhookAutoSendProvider.notifier).markCopied();
+  }
+
   @override
   Widget build(BuildContext context) {
     final auto = ref.watch(webhookAutoSendProvider);
+    final tab = ref.watch(dashboardTabProvider);
+    // Rebuild preview when dashboard filters / metrics change.
+    ref.watch(dashboardTimeRangeProvider);
+    ref.watch(dashboardCollectionFilterProvider);
+    ref.watch(dashboardWorkflowFilterProvider);
+    ref.watch(collectionDashboardProvider);
+    ref.watch(workflowDashboardProvider);
+    ref.watch(scriptCoverageProvider);
+
     final scheme = Theme.of(context).colorScheme;
     final timeFmt = DateFormat.Hm();
+    final preview = _prettyJson();
 
     return AlertDialog(
       title: Row(
@@ -71,14 +94,16 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
         ],
       ),
       content: SizedBox(
-        width: 460,
+        width: 560,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Sends the current Dashboard tab metrics as JSON to any HTTP endpoint (Slack, Discord, CI).',
+                'POSTs the JSON below for the current Dashboard tab '
+                '(${tab == DashboardTab.collections ? 'Collections' : 'Workflows'}) '
+                'to any HTTP endpoint (Slack, Discord, CI).',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
@@ -86,8 +111,12 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
               kVSpacer10,
               TextField(
                 controller: _nameController,
-                onChanged: (v) =>
-                    ref.read(webhookAutoSendProvider.notifier).updateReportName(v),
+                onChanged: (v) {
+                  ref
+                      .read(webhookAutoSendProvider.notifier)
+                      .updateReportName(v);
+                  setState(() {});
+                },
                 decoration: const InputDecoration(
                   labelText: 'Report name',
                   border: OutlineInputBorder(),
@@ -104,7 +133,45 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              kVSpacer10,
+              kVSpacer12,
+              Row(
+                children: [
+                  Text(
+                    'Payload preview',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const Spacer(),
+                  TextButton.icon(
+                    onPressed: _copyJson,
+                    icon: const Icon(Icons.copy_rounded, size: 16),
+                    label: const Text('Copy'),
+                  ),
+                ],
+              ),
+              kVSpacer6,
+              Container(
+                constraints: const BoxConstraints(maxHeight: 240),
+                decoration: BoxDecoration(
+                  color: scheme.surfaceContainerHigh.withValues(alpha: 0.55),
+                  borderRadius: kBorderRadius8,
+                  border: Border.all(
+                    color: scheme.outlineVariant.withValues(alpha: 0.5),
+                  ),
+                ),
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(12),
+                    child: SelectableText(
+                      preview,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontFamily: 'monospace',
+                            height: 1.35,
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+              kVSpacer12,
               Text(
                 'Auto-send interval',
                 style: Theme.of(context).textTheme.labelLarge,
@@ -172,20 +239,6 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            _syncFields();
-            final payload =
-                ref.read(webhookAutoSendProvider.notifier).previewPayload();
-            Clipboard.setData(
-              ClipboardData(
-                text: const JsonEncoder.withIndent('  ').convert(payload),
-              ),
-            );
-            ref.read(webhookAutoSendProvider.notifier).markCopied();
-          },
-          child: const Text('Copy JSON'),
-        ),
         if (auto.active)
           TextButton(
             onPressed: () =>
