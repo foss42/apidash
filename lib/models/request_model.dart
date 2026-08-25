@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'ws_request_model.dart';
 
 part 'request_model.freezed.dart';
 
@@ -6,6 +7,9 @@ part 'request_model.g.dart';
 
 @freezed
 abstract class RequestModel with _$RequestModel {
+  // Required by freezed so custom methods (e.g. getUrl) are mixed into the
+  // generated _RequestModel. Looks "unused" to the linter but removing it
+  // breaks codegen (_RequestModel stops implementing getUrl) — do not delete.
   const RequestModel._();
 
   @JsonSerializable(
@@ -28,6 +32,7 @@ abstract class RequestModel with _$RequestModel {
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? wsRequestModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>
@@ -38,6 +43,7 @@ abstract class RequestModel with _$RequestModel {
       APIType.rest => httpRequestModel?.url,
       APIType.graphql => httpRequestModel?.url,
       APIType.ai => aiRequestModel?.url,
+      APIType.websocket => wsRequestModel?.url
     };
   }
 }

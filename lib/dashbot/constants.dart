@@ -9,7 +9,17 @@ enum ChatMessageType {
   generateCode,
   importCurl,
   importOpenApi,
-  general
+  explainWsConnection,
+  debugWsConnection,
+  summarizeWsMessages,
+  generateWsCode,
+  findInWsMessages,
+  generateWsDoc,
+  generateWsTest,
+  explainWsMessage,
+  debugWsMessage,
+  wsConnectionHealth,
+  general,
 }
 
 enum ChatActionType {
@@ -34,6 +44,7 @@ enum ChatActionType {
 
 enum ChatActionTarget {
   httpRequestModel,
+  wsRequestModel,
   codegen,
   test,
   code,

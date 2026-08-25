@@ -3,7 +3,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../home_page/editor_pane/url_card.dart';
+import '../../home_page/editor_pane/url_card/send_request_button.dart';
 
 class RequestResponsePageBottombar extends ConsumerWidget {
   const RequestResponsePageBottombar({

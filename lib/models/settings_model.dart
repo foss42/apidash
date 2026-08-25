@@ -21,6 +21,7 @@ class SettingsModel {
     this.isDashBotEnabled = true,
     this.defaultAIModel,
     this.aiProviders,
+    this.maxConnectionMessages = 1000,
   });
 
   final bool isDark;
@@ -38,6 +39,7 @@ class SettingsModel {
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
   final Map<String, Map<String, Object?>>? aiProviders;
+  final int maxConnectionMessages;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -55,6 +57,7 @@ class SettingsModel {
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
     Map<String, Map<String, Object?>>? aiProviders,
+    int? maxConnectionMessages,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -74,6 +77,8 @@ class SettingsModel {
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
       aiProviders: aiProviders ?? this.aiProviders,
+      maxConnectionMessages:
+          maxConnectionMessages ?? this.maxConnectionMessages,
     );
   }
 
@@ -96,6 +101,7 @@ class SettingsModel {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
       aiProviders: aiProviders,
+      maxConnectionMessages: maxConnectionMessages,
     );
   }
 
@@ -168,6 +174,9 @@ class SettingsModel {
       );
     }
 
+    // Backward-compat: this setting was previously stored as "maxWebSocketEvents".
+    final maxConnectionMessages = data["maxConnectionMessages"] as int? ??
+        data["maxWebSocketEvents"] as int?;
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -187,6 +196,7 @@ class SettingsModel {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
       aiProviders: aiProviders,
+      maxConnectionMessages: maxConnectionMessages ?? 1000,
     );
   }
 
@@ -209,6 +219,7 @@ class SettingsModel {
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
       "aiProviders": aiProviders,
+      "maxConnectionMessages": maxConnectionMessages,
     };
   }
 
@@ -236,7 +247,8 @@ class SettingsModel {
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
         mapEquals(other.defaultAIModel, defaultAIModel) &&
-        _aiProvidersEquals(other.aiProviders, aiProviders);
+        _aiProvidersEquals(other.aiProviders, aiProviders) &&
+        other.maxConnectionMessages == maxConnectionMessages;
   }
 
   @override
@@ -258,6 +270,7 @@ class SettingsModel {
       isDashBotEnabled,
       defaultAIModel,
       aiProviders,
+      maxConnectionMessages,
     );
   }
 }

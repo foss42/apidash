@@ -40,20 +40,33 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.headers?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
+    final selectedRequest = ref.watch(selectedRequestModelProvider);
+    final apiType = selectedRequest?.apiType;
+    
+    ref.watch(selectedRequestModelProvider.select((value) {
+      if (value?.apiType == APIType.websocket) {
+        return value?.wsRequestModel?.headers?.length;
+      }
+      return value?.httpRequestModel?.headers?.length;
+    }));
+
+    var rH = apiType == APIType.websocket
+        ? selectedRequest?.wsRequestModel?.headers
+        : selectedRequest?.httpRequestModel?.headers;
+
     bool isHeadersEmpty = rH == null || rH.isEmpty;
     headerRows = isHeadersEmpty
         ? [
             kNameValueEmptyModel,
           ]
         : rH + [kNameValueEmptyModel];
+
+    var isEnabledList = apiType == APIType.websocket
+        ? selectedRequest?.wsRequestModel?.isHeaderEnabledList
+        : selectedRequest?.httpRequestModel?.isHeaderEnabledList;
+
     isRowEnabledList = [
-      ...(ref
-              .read(selectedRequestModelProvider)
-              ?.httpRequestModel
-              ?.isHeaderEnabledList ??
+      ...(isEnabledList ??
           List.filled(rH?.length ?? 0, true, growable: true))
     ];
     isRowEnabledList.add(false);

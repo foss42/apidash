@@ -23,6 +23,7 @@ void main() {
     aiProviders: {
       "openai": {"apiKey": "sk-test"},
     },
+    maxConnectionMessages: 1000,
   );
 
   test('Testing toJson()', () {
@@ -46,6 +47,7 @@ void main() {
       "aiProviders": {
         "openai": {"apiKey": "sk-test"},
       },
+      "maxConnectionMessages": 1000,
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -71,6 +73,7 @@ void main() {
       "aiProviders": {
         "openai": {"apiKey": "sk-test"},
       },
+      "maxConnectionMessages": 1000,
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -93,6 +96,7 @@ void main() {
       aiProviders: {
         "openai": {"apiKey": "sk-test"},
       },
+      maxConnectionMessages: 1000,
     );
     expect(
       sm.copyWith(
@@ -129,7 +133,8 @@ void main() {
     "openai": {
       "apiKey": "sk-test"
     }
-  }
+  },
+  "maxConnectionMessages": 1000
 }''';
     expect(sm.toString(), expectedResult);
   });

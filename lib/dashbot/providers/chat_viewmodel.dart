@@ -140,6 +140,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         overrideLanguage: detectedLang,
         history: currentMessages,
       );
+    } else if (type == ChatMessageType.generateWsCode) {
+      final detectedLang = promptBuilder.detectWsLanguage(text);
+      systemPrompt = promptBuilder.buildSystemPrompt(
+        substitutedReq,
+        type,
+        overrideLanguage: detectedLang,
+        history: currentMessages,
+      );
     } else if (type == ChatMessageType.importCurl) {
       final rqId = _currentRequest?.id ?? 'global';
       // Briefly toggle loading to indicate processing of the import flow prompt
@@ -569,12 +577,6 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     } finally {
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
     }
-  }
-
-  Map<String, dynamic>? _currentRequestContext() {
-    final originalRq = _currentSubstitutedHttpRequestModel;
-    if (originalRq == null) return null;
-    return originalRq.toJson();
   }
 
   Future<void> handleOpenApiAttachment(ChatAttachment att) async {
