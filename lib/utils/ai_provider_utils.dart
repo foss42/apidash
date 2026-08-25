@@ -347,29 +347,3 @@ Map<String, Map<String, Object?>> setProviderLastModel(
   next[providerId] = prev;
   return next;
 }
-
-Map<String, Map<String, Object?>>? migrateAiProvidersFromDefault(
-  Map<String, Map<String, Object?>>? aiProviders,
-  Map<String, Object?>? defaultAIModel,
-) {
-  if (aiProviders != null && aiProviders.isNotEmpty) return aiProviders;
-  if (defaultAIModel == null) return aiProviders;
-
-  final providerName = defaultAIModel['modelApiProvider'];
-  final apiKey = defaultAIModel['apiKey'];
-  if (providerName is! String || providerName.isEmpty) return aiProviders;
-  if (apiKey is! String || apiKey.isEmpty) return aiProviders;
-
-  final provider = tryParseBuiltinProvider(providerName);
-  if (provider == null) return aiProviders;
-
-  final url = defaultAIModel['url'];
-  final model = defaultAIModel['model'];
-  return upsertBuiltinProvider(
-    aiProviders,
-    provider,
-    apiKey: apiKey,
-    url: url is String ? url : null,
-    lastModel: model is String ? model : null,
-  );
-}
