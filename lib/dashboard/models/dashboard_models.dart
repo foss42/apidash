@@ -236,6 +236,18 @@ enum WebhookInterval {
   String get label => '${minutes}m';
 }
 
+enum WebhookPayloadFormat {
+  raw,
+  slack,
+  discord;
+
+  String get label => switch (this) {
+        WebhookPayloadFormat.raw => 'JSON',
+        WebhookPayloadFormat.slack => 'Slack',
+        WebhookPayloadFormat.discord => 'Discord',
+      };
+}
+
 class ExecutionHistoryEntry {
   const ExecutionHistoryEntry({
     required this.kind,
@@ -316,39 +328,49 @@ class WebhookAutoSendState {
   const WebhookAutoSendState({
     this.url = '',
     this.reportName = 'API Dash Health Report',
+    this.format = WebhookPayloadFormat.raw,
     this.interval = WebhookInterval.minutes15,
     this.active = false,
     this.lastSentAt,
+    this.lastSendOk,
     this.lastStatus,
     this.nextSendAt,
   });
 
   final String url;
   final String reportName;
+  final WebhookPayloadFormat format;
   final WebhookInterval interval;
   final bool active;
   final DateTime? lastSentAt;
+  /// `true` = last POST succeeded (2xx), `false` = failed, `null` = none yet.
+  final bool? lastSendOk;
   final String? lastStatus;
   final DateTime? nextSendAt;
 
   WebhookAutoSendState copyWith({
     String? url,
     String? reportName,
+    WebhookPayloadFormat? format,
     WebhookInterval? interval,
     bool? active,
     DateTime? lastSentAt,
+    bool? lastSendOk,
     String? lastStatus,
     DateTime? nextSendAt,
     bool clearNext = false,
-    bool clearLast = false,
+    bool clearLastStatus = false,
+    bool clearLastSendOk = false,
   }) {
     return WebhookAutoSendState(
       url: url ?? this.url,
       reportName: reportName ?? this.reportName,
+      format: format ?? this.format,
       interval: interval ?? this.interval,
       active: active ?? this.active,
-      lastSentAt: clearLast ? null : (lastSentAt ?? this.lastSentAt),
-      lastStatus: clearLast ? null : (lastStatus ?? this.lastStatus),
+      lastSentAt: lastSentAt ?? this.lastSentAt,
+      lastSendOk: clearLastSendOk ? null : (lastSendOk ?? this.lastSendOk),
+      lastStatus: clearLastStatus ? null : (lastStatus ?? this.lastStatus),
       nextSendAt: clearNext ? null : (nextSendAt ?? this.nextSendAt),
     );
   }

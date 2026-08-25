@@ -224,6 +224,9 @@ class WebhookAutoSendNotifier extends StateNotifier<WebhookAutoSendState> {
   void updateReportName(String name) =>
       state = state.copyWith(reportName: name);
 
+  void updateFormat(WebhookPayloadFormat format) =>
+      state = state.copyWith(format: format);
+
   void updateInterval(WebhookInterval interval) {
     state = state.copyWith(interval: interval);
     if (state.active) {
@@ -240,15 +243,22 @@ class WebhookAutoSendNotifier extends StateNotifier<WebhookAutoSendState> {
     try {
       final payload = _currentPayload();
       final result = await postWebhookJson(url: url, payload: payload);
+      final ok = result.statusCode >= 200 && result.statusCode < 300;
       state = state.copyWith(
         lastSentAt: DateTime.now(),
-        lastStatus: result.message,
+        lastSendOk: ok,
+        lastStatus: ok ? null : 'HTTP ${result.statusCode}',
+        clearLastStatus: ok,
         nextSendAt: state.active
             ? DateTime.now().add(Duration(minutes: state.interval.minutes))
             : state.nextSendAt,
       );
     } catch (e) {
-      state = state.copyWith(lastStatus: 'Failed: $e');
+      state = state.copyWith(
+        lastSentAt: DateTime.now(),
+        lastSendOk: false,
+        lastStatus: '$e',
+      );
     }
   }
 
@@ -284,7 +294,6 @@ class WebhookAutoSendNotifier extends StateNotifier<WebhookAutoSendState> {
   }
 
   Map<String, dynamic> _currentPayload() {
-    final tab = ref.read(dashboardTabProvider);
     final collection = ref.read(collectionDashboardProvider).value ??
         CollectionDashboardMetrics.empty;
     final workflow =
@@ -295,13 +304,13 @@ class WebhookAutoSendNotifier extends StateNotifier<WebhookAutoSendState> {
         : state.reportName.trim();
     return buildWebhookPayload(
       reportName: name,
-      tab: tab,
       collection: collection,
       workflow: workflow,
       coverage: coverage,
       timeRangeLabel: ref.read(dashboardTimeRangeProvider).label,
       collectionFilter: ref.read(dashboardCollectionFilterProvider),
       workflowFilter: ref.read(dashboardWorkflowFilterProvider),
+      format: state.format,
     );
   }
 

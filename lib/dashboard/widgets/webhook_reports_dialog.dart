@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../models/dashboard_models.dart';
 import '../providers/dashboard_providers.dart';
+import 'dashboard_common.dart';
 
 Future<void> showWebhookReportsDialog(BuildContext context, WidgetRef ref) {
   return showDialog<void>(
@@ -27,6 +28,7 @@ class _WebhookReportsDialog extends ConsumerStatefulWidget {
 class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
   late final TextEditingController _urlController;
   late final TextEditingController _nameController;
+  late final ScrollController _previewScrollController;
   bool _sending = false;
 
   @override
@@ -35,12 +37,14 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
     final s = ref.read(webhookAutoSendProvider);
     _urlController = TextEditingController(text: s.url);
     _nameController = TextEditingController(text: s.reportName);
+    _previewScrollController = ScrollController();
   }
 
   @override
   void dispose() {
     _urlController.dispose();
     _nameController.dispose();
+    _previewScrollController.dispose();
     super.dispose();
   }
 
@@ -67,7 +71,6 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
   @override
   Widget build(BuildContext context) {
     final auto = ref.watch(webhookAutoSendProvider);
-    final tab = ref.watch(dashboardTabProvider);
     // Rebuild preview when dashboard filters / metrics change.
     ref.watch(dashboardTimeRangeProvider);
     ref.watch(dashboardCollectionFilterProvider);
@@ -101,12 +104,37 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'POSTs the JSON below for the current Dashboard tab '
-                '(${tab == DashboardTab.collections ? 'Collections' : 'Workflows'}) '
-                'to any HTTP endpoint (Slack, Discord, CI).',
+                'Sends one combined report with both Collections and Workflows '
+                'metrics (current time range and filters). Pick a format for '
+                'the destination.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
                     ),
+              ),
+              kVSpacer10,
+              Text(
+                'Format',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              kVSpacer8,
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final format in WebhookPayloadFormat.values)
+                    ChoiceChip(
+                      label: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6),
+                        child: Text(format.label),
+                      ),
+                      selected: auto.format == format,
+                      onSelected: (_) {
+                        ref
+                            .read(webhookAutoSendProvider.notifier)
+                            .updateFormat(format);
+                      },
+                    ),
+                ],
               ),
               kVSpacer10,
               TextField(
@@ -127,17 +155,23 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
                 controller: _urlController,
                 onChanged: (v) =>
                     ref.read(webhookAutoSendProvider.notifier).updateUrl(v),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Webhook URL',
-                  hintText: 'https://hooks.slack.com/...',
-                  border: OutlineInputBorder(),
+                  hintText: switch (auto.format) {
+                    WebhookPayloadFormat.slack =>
+                      'https://hooks.slack.com/services/...',
+                    WebhookPayloadFormat.discord =>
+                      'https://discord.com/api/webhooks/...',
+                    WebhookPayloadFormat.raw => 'https://example.com/hook',
+                  },
+                  border: const OutlineInputBorder(),
                 ),
               ),
               kVSpacer12,
               Row(
                 children: [
                   Text(
-                    'Payload preview',
+                    'Payload preview · ${auto.format.label}',
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const Spacer(),
@@ -159,7 +193,11 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
                   ),
                 ),
                 child: Scrollbar(
+                  controller: _previewScrollController,
+                  thumbVisibility: true,
                   child: SingleChildScrollView(
+                    controller: _previewScrollController,
+                    primary: false,
                     padding: const EdgeInsets.all(12),
                     child: SelectableText(
                       preview,
@@ -209,9 +247,36 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (auto.lastSentAt != null)
-                        Text(
-                          'Last sent · ${timeFmt.format(auto.lastSentAt!.toLocal())}',
-                          style: Theme.of(context).textTheme.bodySmall,
+                        Text.rich(
+                          TextSpan(
+                            style: Theme.of(context).textTheme.bodySmall,
+                            children: [
+                              TextSpan(
+                                text:
+                                    'Last sent · ${timeFmt.format(auto.lastSentAt!.toLocal())}',
+                              ),
+                              if (auto.lastSendOk != null) ...[
+                                const TextSpan(text: '  ·  '),
+                                TextSpan(
+                                  text: auto.lastSendOk! ? 'Success' : 'Failed',
+                                  style: TextStyle(
+                                    color: auto.lastSendOk!
+                                        ? dashboardSuccessColor(context)
+                                        : scheme.error,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (auto.lastSendOk == false &&
+                                    auto.lastStatus != null &&
+                                    auto.lastStatus!.startsWith('HTTP ')) ...[
+                                  TextSpan(
+                                    text: ' · ${auto.lastStatus}',
+                                    style: TextStyle(color: scheme.error),
+                                  ),
+                                ],
+                              ],
+                            ],
+                          ),
                         ),
                       if (auto.active && auto.nextSendAt != null)
                         Text(
@@ -222,13 +287,15 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
                   ),
                 ),
               ],
-              if (auto.lastStatus != null) ...[
+              if (auto.lastStatus != null &&
+                  !(auto.lastSendOk == false &&
+                      auto.lastStatus!.startsWith('HTTP '))) ...[
                 kVSpacer10,
                 Text(
                   auto.lastStatus!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: auto.lastStatus!.startsWith('Failed') ||
-                                auto.lastStatus!.startsWith('Enter')
+                        color: auto.lastStatus!.startsWith('Enter') ||
+                                auto.lastSendOk == false
                             ? scheme.error
                             : scheme.onSurfaceVariant,
                       ),

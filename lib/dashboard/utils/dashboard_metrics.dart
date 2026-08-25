@@ -349,7 +349,127 @@ List<ExecutionHistoryEntry> buildUnifiedExecutionHistory({
 
 Map<String, dynamic> buildWebhookPayload({
   required String reportName,
-  required DashboardTab tab,
+  required CollectionDashboardMetrics collection,
+  required WorkflowDashboardMetrics workflow,
+  required String timeRangeLabel,
+  String? collectionFilter,
+  String? workflowFilter,
+  ScriptCoverage? coverage,
+  WebhookPayloadFormat format = WebhookPayloadFormat.raw,
+}) {
+  final raw = _buildRawWebhookPayload(
+    reportName: reportName,
+    collection: collection,
+    workflow: workflow,
+    timeRangeLabel: timeRangeLabel,
+    collectionFilter: collectionFilter,
+    workflowFilter: workflowFilter,
+    coverage: coverage,
+  );
+  return switch (format) {
+    WebhookPayloadFormat.raw => raw,
+    WebhookPayloadFormat.slack => _buildSlackWebhookPayload(raw),
+    WebhookPayloadFormat.discord => _buildDiscordWebhookPayload(raw),
+  };
+}
+
+Map<String, dynamic> _collectionWebhookMap(
+  CollectionDashboardMetrics collection,
+  ScriptCoverage? coverage,
+) {
+  return {
+    'totalRequests': collection.total,
+    'successCount': collection.successCount,
+    'failures': collection.failCount,
+    'successRate': collection.successRate,
+    'healthScore': collection.healthScore,
+    'errorRatio': collection.errorRatio,
+    'uniqueEndpoints': collection.uniqueEndpoints,
+    'avgMs': collection.avgMs,
+    'peakMs': collection.peakMs,
+    'p50Ms': collection.p50Ms,
+    'p95Ms': collection.p95Ms,
+    'p99Ms': collection.p99Ms,
+    'lastRunAt': collection.lastRunAt?.toUtc().toIso8601String(),
+    'status': {
+      '2xx': collection.status2xx,
+      '3xx': collection.status3xx,
+      '4xx': collection.status4xx,
+      '5xx': collection.status5xx,
+    },
+    'methods': {
+      for (final e in collection.methodCounts.entries) e.key.name: e.value,
+    },
+    'apiTypes': {
+      for (final e in collection.apiTypeCounts.entries) e.key.name: e.value,
+    },
+    'topEndpoints': [
+      for (final e in collection.topEndpoints.take(10))
+        {
+          'url': e.url,
+          'calls': e.count,
+          'avgMs': e.avgMs,
+          'fails': e.failCount,
+        },
+    ],
+    'recentErrors': [
+      for (final e in collection.recentErrors.take(10))
+        {
+          'name': e.name,
+          'url': e.url,
+          'method': e.method.name,
+          'status': e.status,
+          'durationMs': e.durationMs,
+          'at': e.timeStamp.toUtc().toIso8601String(),
+        },
+    ],
+    if (coverage != null)
+      'testCoverage': {
+        'totalRequests': coverage.totalRequests,
+        'withPostScript': coverage.withPostScript,
+        'withPreScript': coverage.withPreScript,
+        'withAnyScript': coverage.withAnyScript,
+        'coverage': coverage.testCoverage,
+        'scriptCoverage': coverage.scriptCoverage,
+      },
+  };
+}
+
+Map<String, dynamic> _workflowWebhookMap(WorkflowDashboardMetrics workflow) {
+  return {
+    'totalRuns': workflow.totalRuns,
+    'successCount': workflow.successCount,
+    'failures': workflow.failCount,
+    'successRate': workflow.successRate,
+    'avgDurationMs': workflow.avgDurationMs,
+    'peakDurationMs': workflow.peakDurationMs,
+    'avgStepCount': workflow.avgStepCount,
+    'lastRunAt': workflow.lastRunAt?.toUtc().toIso8601String(),
+    'failingNodes': [
+      for (final n in workflow.nodeFailures)
+        {
+          'label': n.label,
+          'failCount': n.failCount,
+          'avgMs': n.avgMs,
+        },
+    ],
+    'recentRuns': [
+      for (final r in workflow.recentRuns.take(10))
+        {
+          'runId': r.runId,
+          'workflowName': r.workflowName,
+          'success': r.success,
+          'startedAt': r.startedAt.toUtc().toIso8601String(),
+          'durationMs': r.durationMs,
+          'stepCount': r.stepCount,
+          if (r.error != null && r.error!.isNotEmpty) 'error': r.error,
+        },
+    ],
+  };
+}
+
+Map<String, dynamic> _buildRawWebhookPayload({
+  required String reportName,
   required CollectionDashboardMetrics collection,
   required WorkflowDashboardMetrics workflow,
   required String timeRangeLabel,
@@ -357,114 +477,189 @@ Map<String, dynamic> buildWebhookPayload({
   String? workflowFilter,
   ScriptCoverage? coverage,
 }) {
-  final generatedAt = DateTime.now().toUtc().toIso8601String();
-  final scope = <String, dynamic>{
-    'timeRange': timeRangeLabel,
-    if (tab == DashboardTab.collections)
-      'collectionId': collectionFilter ?? 'all',
-    if (tab == DashboardTab.workflows) 'workflowId': workflowFilter ?? 'all',
-  };
-
-  if (tab == DashboardTab.workflows) {
-    return {
-      'reportName': reportName,
-      'generatedAt': generatedAt,
-      'type': 'workflow',
-      'scope': scope,
-      'workflow': {
-        'totalRuns': workflow.totalRuns,
-        'successCount': workflow.successCount,
-        'failures': workflow.failCount,
-        'successRate': workflow.successRate,
-        'avgDurationMs': workflow.avgDurationMs,
-        'peakDurationMs': workflow.peakDurationMs,
-        'avgStepCount': workflow.avgStepCount,
-        'lastRunAt': workflow.lastRunAt?.toUtc().toIso8601String(),
-        'failingNodes': [
-          for (final n in workflow.nodeFailures)
-            {
-              'label': n.label,
-              'failCount': n.failCount,
-              'avgMs': n.avgMs,
-            },
-        ],
-        'recentRuns': [
-          for (final r in workflow.recentRuns.take(10))
-            {
-              'runId': r.runId,
-              'workflowName': r.workflowName,
-              'success': r.success,
-              'startedAt': r.startedAt.toUtc().toIso8601String(),
-              'durationMs': r.durationMs,
-              'stepCount': r.stepCount,
-              if (r.error != null && r.error!.isNotEmpty) 'error': r.error,
-            },
-        ],
-      },
-    };
-  }
-
   return {
     'reportName': reportName,
-    'generatedAt': generatedAt,
-    'type': 'collection',
-    'scope': scope,
-    'collection': {
-      'totalRequests': collection.total,
-      'successCount': collection.successCount,
-      'failures': collection.failCount,
-      'successRate': collection.successRate,
-      'healthScore': collection.healthScore,
-      'errorRatio': collection.errorRatio,
-      'uniqueEndpoints': collection.uniqueEndpoints,
-      'avgMs': collection.avgMs,
-      'peakMs': collection.peakMs,
-      'p50Ms': collection.p50Ms,
-      'p95Ms': collection.p95Ms,
-      'p99Ms': collection.p99Ms,
-      'lastRunAt': collection.lastRunAt?.toUtc().toIso8601String(),
-      'status': {
-        '2xx': collection.status2xx,
-        '3xx': collection.status3xx,
-        '4xx': collection.status4xx,
-        '5xx': collection.status5xx,
-      },
-      'methods': {
-        for (final e in collection.methodCounts.entries) e.key.name: e.value,
-      },
-      'apiTypes': {
-        for (final e in collection.apiTypeCounts.entries) e.key.name: e.value,
-      },
-      'topEndpoints': [
-        for (final e in collection.topEndpoints.take(10))
-          {
-            'url': e.url,
-            'calls': e.count,
-            'avgMs': e.avgMs,
-            'fails': e.failCount,
-          },
-      ],
-      'recentErrors': [
-        for (final e in collection.recentErrors.take(10))
-          {
-            'name': e.name,
-            'url': e.url,
-            'method': e.method.name,
-            'status': e.status,
-            'durationMs': e.durationMs,
-            'at': e.timeStamp.toUtc().toIso8601String(),
-          },
-      ],
-      if (coverage != null)
-        'testCoverage': {
-          'totalRequests': coverage.totalRequests,
-          'withPostScript': coverage.withPostScript,
-          'withPreScript': coverage.withPreScript,
-          'withAnyScript': coverage.withAnyScript,
-          'coverage': coverage.testCoverage,
-          'scriptCoverage': coverage.scriptCoverage,
-        },
+    'generatedAt': DateTime.now().toUtc().toIso8601String(),
+    'type': 'dashboard',
+    'scope': {
+      'timeRange': timeRangeLabel,
+      'collectionId': collectionFilter ?? 'all',
+      'workflowId': workflowFilter ?? 'all',
     },
+    'collection': _collectionWebhookMap(collection, coverage),
+    'workflow': _workflowWebhookMap(workflow),
+  };
+}
+
+String _pct(num? rate) {
+  if (rate == null) return '—';
+  return '${(rate.toDouble() * 100).toStringAsFixed(1)}%';
+}
+
+String _ms(num? ms) {
+  if (ms == null) return '—';
+  final v = ms.round();
+  if (v < 1000) return '${v}ms';
+  return '${(v / 1000).toStringAsFixed(v >= 10000 ? 0 : 1)}s';
+}
+
+List<({String label, String value})> _collectionSummaryFields(
+  Map<String, dynamic> raw,
+) {
+  final scope = raw['scope'];
+  final range = scope is Map ? '${scope['timeRange'] ?? '—'}' : '—';
+  final c = raw['collection'];
+  final m = c is Map ? c : const <String, dynamic>{};
+  final cov = m['testCoverage'];
+  final covMap = cov is Map ? cov : null;
+  return [
+    (label: 'Range', value: range),
+    (label: 'Health', value: '${m['healthScore'] ?? 0}'),
+    (label: 'Requests', value: '${m['totalRequests'] ?? 0}'),
+    (label: 'Success', value: _pct(m['successRate'] as num?)),
+    (label: 'Failures', value: '${m['failures'] ?? 0}'),
+    (label: 'P95', value: _ms(m['p95Ms'] as num?)),
+    if (covMap != null)
+      (label: 'Test coverage', value: _pct(covMap['coverage'] as num?)),
+  ];
+}
+
+List<({String label, String value})> _workflowSummaryFields(
+  Map<String, dynamic> raw,
+) {
+  final scope = raw['scope'];
+  final range = scope is Map ? '${scope['timeRange'] ?? '—'}' : '—';
+  final w = raw['workflow'];
+  final m = w is Map ? w : const <String, dynamic>{};
+  return [
+    (label: 'Range', value: range),
+    (label: 'Runs', value: '${m['totalRuns'] ?? 0}'),
+    (label: 'Success', value: _pct(m['successRate'] as num?)),
+    (label: 'Failures', value: '${m['failures'] ?? 0}'),
+    (label: 'Avg duration', value: _ms(m['avgDurationMs'] as num?)),
+    (label: 'Peak duration', value: _ms(m['peakDurationMs'] as num?)),
+  ];
+}
+
+String _combinedFallbackText(Map<String, dynamic> raw) {
+  final title = (raw['reportName'] as String?)?.trim().isNotEmpty == true
+      ? raw['reportName'] as String
+      : 'API Dash Health Report';
+  final scope = raw['scope'];
+  final range = scope is Map ? '${scope['timeRange'] ?? '—'}' : '—';
+  final c = raw['collection'];
+  final cm = c is Map ? c : const <String, dynamic>{};
+  final w = raw['workflow'];
+  final wm = w is Map ? w : const <String, dynamic>{};
+  return '$title · $range · '
+      'Collections health ${cm['healthScore'] ?? 0} '
+      '(${_pct(cm['successRate'] as num?)}) · '
+      'Workflows ${wm['totalRuns'] ?? 0} runs '
+      '(${_pct(wm['successRate'] as num?)})';
+}
+
+List<Map<String, dynamic>> _slackFieldSections(
+  List<({String label, String value})> fields,
+) {
+  final blocks = <Map<String, dynamic>>[];
+  for (var i = 0; i < fields.length; i += 2) {
+    final slice = fields.skip(i).take(2).toList();
+    blocks.add({
+      'type': 'section',
+      'fields': [
+        for (final f in slice)
+          {
+            'type': 'mrkdwn',
+            'text': '*${f.label}*\n${f.value}',
+          },
+      ],
+    });
+  }
+  return blocks;
+}
+
+/// Slack Incoming Webhooks: `text` + Block Kit (collections + workflows).
+Map<String, dynamic> _buildSlackWebhookPayload(Map<String, dynamic> raw) {
+  final title = (raw['reportName'] as String?)?.trim().isNotEmpty == true
+      ? raw['reportName'] as String
+      : 'API Dash Health Report';
+  final header = title.length > 150 ? '${title.substring(0, 147)}...' : title;
+  return {
+    'text': _combinedFallbackText(raw),
+    'blocks': [
+      {
+        'type': 'header',
+        'text': {
+          'type': 'plain_text',
+          'text': header,
+          'emoji': true,
+        },
+      },
+      {
+        'type': 'section',
+        'text': {
+          'type': 'mrkdwn',
+          'text': '*Collections*',
+        },
+      },
+      ..._slackFieldSections(_collectionSummaryFields(raw)),
+      {'type': 'divider'},
+      {
+        'type': 'section',
+        'text': {
+          'type': 'mrkdwn',
+          'text': '*Workflows*',
+        },
+      },
+      ..._slackFieldSections(_workflowSummaryFields(raw)),
+      {
+        'type': 'context',
+        'elements': [
+          {
+            'type': 'mrkdwn',
+            'text': 'Sent from API Dash Dashboard',
+          },
+        ],
+      },
+    ],
+  };
+}
+
+/// Discord webhooks: two embeds (collections + workflows).
+Map<String, dynamic> _buildDiscordWebhookPayload(Map<String, dynamic> raw) {
+  final title = (raw['reportName'] as String?)?.trim().isNotEmpty == true
+      ? raw['reportName'] as String
+      : 'API Dash Health Report';
+  return {
+    'content': _combinedFallbackText(raw),
+    'embeds': [
+      {
+        'title': '$title · Collections',
+        'color': 0x57F287,
+        'fields': [
+          for (final f in _collectionSummaryFields(raw))
+            {
+              'name': f.label,
+              'value': f.value,
+              'inline': true,
+            },
+        ],
+        'footer': {'text': 'API Dash Dashboard'},
+      },
+      {
+        'title': '$title · Workflows',
+        'color': 0x5865F2,
+        'fields': [
+          for (final f in _workflowSummaryFields(raw))
+            {
+              'name': f.label,
+              'value': f.value,
+              'inline': true,
+            },
+        ],
+        'footer': {'text': 'API Dash Dashboard'},
+      },
+    ],
   };
 }
 
