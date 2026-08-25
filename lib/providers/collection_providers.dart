@@ -1070,11 +1070,11 @@ class CollectionStateNotifier
 
   Future<void> clearData() async {
     ref.read(clearDataStateProvider.notifier).state = true;
+    await hiveHandler.clearRequestData();
     ref.read(selectedIdStateProvider.notifier).state = null;
-    await hiveHandler.clear();
-    ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
+    ref.read(clearDataStateProvider.notifier).state = false;
     unsave();
   }
 
