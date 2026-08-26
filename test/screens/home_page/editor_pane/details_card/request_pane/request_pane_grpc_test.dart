@@ -56,6 +56,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Port: '), findsOneWidget);
     expect(find.text('Use TLS'), findsOneWidget);
-    expect(find.text('Use Reflection'), findsOneWidget);
+    // Discovery in Settings is now the proto-only path: "Select .proto" +
+    // "Fetch services". The old "Use Reflection" toggle was removed (reflection
+    // now lives on the URL-bar "Reflect" button).
+    expect(find.text('Use Reflection'), findsNothing);
+    expect(find.text('Select .proto'), findsOneWidget);
+    expect(find.text('Fetch services'), findsOneWidget);
   });
 }

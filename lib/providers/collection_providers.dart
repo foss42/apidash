@@ -967,6 +967,15 @@ class CollectionStateNotifier
     if (requestModel.apiType == APIType.grpc) {
       final grpcModel = requestModel.grpcRequestModel;
       if (grpcModel != null) {
+        // URL-bar "Reflect" (shown when no method is selected) is a discovery
+        // action, NOT an RPC call: populate services/methods via reflection and
+        // return before any invoke path. Only a selected method drives an
+        // actual call (and its history record) below.
+        if (grpcModel.method == null) {
+          await reflectGrpcServices(requestId);
+          return;
+        }
+
         // Save history for gRPC connection attempt first
         String newHistoryId = getNewUuid();
         final historyModel = HistoryRequestModel(
@@ -1370,6 +1379,84 @@ class CollectionStateNotifier
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
     return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
+  }
+
+  /// Reflection-only service/method discovery for the URL-bar "Reflect" button
+  /// (shown whenever no method is selected). Connects, lists services via
+  /// server reflection, loads the first service's methods, and stamps
+  /// `useReflection: true` as the active discovery source. It never invokes an
+  /// RPC. On an empty result the real reflection failure ([lastError]) is
+  /// surfaced through the same messageHistory error channel the streaming
+  /// onError path uses, instead of a silent empty dropdown.
+  Future<void> reflectGrpcServices(String requestId) async {
+    final requestModel = state?[requestId];
+    final grpcModel = requestModel?.grpcRequestModel;
+    if (requestModel == null || grpcModel == null) return;
+
+    await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
+    // Guard: the notifier may have been disposed while awaiting the handshake.
+    if (!mounted) return;
+
+    // Reflection may require auth on secured servers, so thread the same
+    // metadata the actual RPC uses.
+    final metadata = await buildGrpcMetadata(grpcModel);
+    if (!mounted) return;
+
+    final services = await GrpcReflectionService.listServices(
+      requestId,
+      grpcModel,
+      metadata: metadata,
+    );
+    if (!mounted) return;
+
+    if (services.isNotEmpty) {
+      final methodsResult = await GrpcReflectionService.getMethodsForService(
+        requestId,
+        grpcModel,
+        services.first,
+        metadata: metadata,
+      );
+      if (!mounted) return;
+      final methods = methodsResult[services.first] ?? <String>[];
+
+      final latest = state?[requestId];
+      final latestGrpc = latest?.grpcRequestModel;
+      if (latest != null && latestGrpc != null) {
+        update(
+          id: requestId,
+          grpcRequestModel: latestGrpc.copyWith(
+            availableServices: services,
+            service: services.first,
+            availableMethods: methods,
+            method: null,
+            parameters: const <GrpcParameterModel>[],
+            useReflection: true,
+          ),
+        );
+      }
+    } else {
+      // Empty result with no feedback is the exact bug: surface WHY (wrong
+      // reflection version, TLS mismatch, refused, reflection disabled).
+      final err = GrpcReflectionService.lastError;
+      final errorMsg = WebSocketMessage(
+        payload: err != null
+            ? "Reflection failed: $err"
+            : "No services found. Enable reflection on the server or select a .proto file.",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.error,
+      );
+      final latest = state?[requestId];
+      final latestGrpc = latest?.grpcRequestModel;
+      if (latest != null && latestGrpc != null) {
+        update(
+          id: requestId,
+          grpcRequestModel: latestGrpc.copyWith(
+            messageHistory: [...latestGrpc.messageHistory, errorMsg],
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _connectGrpc(

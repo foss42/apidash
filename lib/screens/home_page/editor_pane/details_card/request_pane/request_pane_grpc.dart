@@ -95,6 +95,9 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                       .map((s) => (s, s)),
                                   onChanged: (val) async {
                                     if (val != null) {
+                                      // Fetch this service's methods from the
+                                      // active discovery source: reflection when
+                                      // it was last used, else the parsed proto.
                                       List<String> methods = [];
                                       if (grpcModel.useReflection &&
                                           requestModel != null) {
@@ -111,6 +114,16 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                                         await buildGrpcMetadata(
                                                             grpcModel));
                                         methods = result[val] ?? [];
+                                      } else if (grpcModel.protoFile != null) {
+                                        final result =
+                                            await GrpcUtils.parseProtoFile(
+                                                grpcModel.protoFile!);
+                                        final methodMappings =
+                                            result['methods']
+                                                as Map<String, dynamic>?;
+                                        methods = (methodMappings?[val]
+                                                as List<String>?) ??
+                                            [];
                                       }
                                       ref
                                           .read(collectionStateNotifierProvider
@@ -144,8 +157,25 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                       .map((m) => (m, m)),
                                   onChanged: (val) async {
                                     if (val != null) {
+                                      // Resolve this method's request params from
+                                      // the active discovery source. Reflection
+                                      // is checked FIRST so a stray proto file
+                                      // present while reflecting still uses
+                                      // reflection.
                                       List<GrpcParameterModel> params = [];
-                                      if (grpcModel.protoFile != null) {
+                                      if (grpcModel.useReflection &&
+                                          requestModel != null &&
+                                          grpcModel.service != null) {
+                                        params = await GrpcReflectionService
+                                            .getParamsForMethod(
+                                                requestModel.id,
+                                                grpcModel,
+                                                grpcModel.service!,
+                                                val,
+                                                metadata:
+                                                    await buildGrpcMetadata(
+                                                        grpcModel));
+                                      } else if (grpcModel.protoFile != null) {
                                         final result =
                                             await GrpcUtils.parseProtoFile(
                                                 grpcModel.protoFile!);
@@ -168,18 +198,6 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                                 [];
                                           }
                                         }
-                                      } else if (grpcModel.useReflection &&
-                                          requestModel != null &&
-                                          grpcModel.service != null) {
-                                        params = await GrpcReflectionService
-                                            .getParamsForMethod(
-                                                requestModel.id,
-                                                grpcModel,
-                                                grpcModel.service!,
-                                                val,
-                                                metadata:
-                                                    await buildGrpcMetadata(
-                                                        grpcModel));
                                       }
 
                                       ref
@@ -379,20 +397,6 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                         },
                       ),
                       kVSpacer20,
-                      SwitchListTile(
-                        title: const Text("Use Reflection"),
-                        subtitle: const Text("Discover services from server"),
-                        value: grpcModel.useReflection,
-                        onChanged: (val) {
-                          ref
-                              .read(collectionStateNotifierProvider.notifier)
-                              .update(
-                                grpcRequestModel:
-                                    grpcModel.copyWith(useReflection: val),
-                              );
-                        },
-                      ),
-                      kVSpacer20,
                       Row(
                         children: [
                           Expanded(
@@ -436,110 +440,48 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                       kVSpacer20,
                       ElevatedButton.icon(
                         onPressed: () async {
-                          if (grpcModel.useReflection && requestModel != null) {
-                            // Ensure connected
-                            await ConnectionManager.instance
-                                .connectGrpc(requestModel.id, grpcModel);
-
-                            // Reflection may require auth on secured servers, so
-                            // thread the same metadata the actual RPC uses.
-                            final reflectionMetadata =
-                                await buildGrpcMetadata(grpcModel);
-                            final services =
-                                await GrpcReflectionService.listServices(
-                                    requestModel.id, grpcModel,
-                                    metadata: reflectionMetadata);
-                            List<String> methods = [];
-                            if (services.isNotEmpty) {
-                              final res = await GrpcReflectionService
-                                  .getMethodsForService(
-                                      requestModel.id, grpcModel, services.first,
-                                      metadata: reflectionMetadata);
-                              methods = res[services.first] ?? [];
-                            }
-
-                            ref
-                                .read(collectionStateNotifierProvider.notifier)
-                                .update(
-                                  grpcRequestModel: grpcModel.copyWith(
-                                    availableServices: services,
-                                    service: services.isNotEmpty
-                                        ? services.first
-                                        : null,
-                                    availableMethods: methods,
-                                    parameters: [],
-                                  ),
-                                );
-
-                            // Empty result with no feedback is the exact bug:
-                            // surface the real reflection error (wrong version,
-                            // TLS mismatch, refused, reflection disabled).
-                            if (services.isEmpty && context.mounted) {
-                              final err = GrpcReflectionService.lastError;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(err != null
-                                      ? "Reflection failed: $err"
-                                      : "No services found. Enable Reflection or select a .proto file."),
-                                  duration: const Duration(milliseconds: 4000),
-                                ),
-                              );
-                            }
-                          } else if (grpcModel.protoFile != null) {
-                            final result = await GrpcUtils.parseProtoFile(
-                                grpcModel.protoFile!);
-                            final services =
-                                (result['services'] as List<String>?) ?? [];
-                            final methods =
-                                (result['methods'] as Map<String, dynamic>?) ?? {};
-
-                            ref
-                                .read(collectionStateNotifierProvider.notifier)
-                                .update(
-                                  grpcRequestModel: grpcModel.copyWith(
-                                    availableServices: services,
-                                    service: services.isNotEmpty
-                                        ? services.first
-                                        : null,
-                                    availableMethods: services.isNotEmpty
-                                        ? (methods[services.first]
-                                                as List<String>?) ??
-                                            []
-                                        : [],
-                                    method: null,
-                                    parameters: [],
-                                  ),
-                                );
-                          } else {
-                            // No reflection enabled and no proto file selected:
-                            // there is nothing to discover. Show a real empty
-                            // state instead of mock services.
-                            ref
-                                .read(collectionStateNotifierProvider.notifier)
-                                .update(
-                                  grpcRequestModel: grpcModel.copyWith(
-                                    availableServices: const <String>[],
-                                    availableMethods: const <String>[],
-                                    service: null,
-                                    method: null,
-                                    parameters: const <GrpcParameterModel>[],
-                                  ),
-                                );
+                          // Settings "Fetch services" = PROTO path only.
+                          // Reflection lives on the URL-bar "Reflect" button.
+                          if (grpcModel.protoFile == null) {
                             if (context.mounted) {
-                              final err = GrpcReflectionService.lastError;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(err != null
-                                      ? "No services found. Enable Reflection or select a .proto file.\n$err"
-                                      : "No services found. Enable Reflection or select a .proto file."),
-                                  duration: const Duration(milliseconds: 2500),
+                                const SnackBar(
+                                  content: Text("Select a .proto file first"),
+                                  duration: Duration(milliseconds: 2500),
                                 ),
                               );
                             }
+                            return;
                           }
+
+                          final result = await GrpcUtils.parseProtoFile(
+                              grpcModel.protoFile!);
+                          final services =
+                              (result['services'] as List<String>?) ?? [];
+                          final methods =
+                              (result['methods'] as Map<String, dynamic>?) ?? {};
+
+                          ref
+                              .read(collectionStateNotifierProvider.notifier)
+                              .update(
+                                grpcRequestModel: grpcModel.copyWith(
+                                  availableServices: services,
+                                  service: services.isNotEmpty
+                                      ? services.first
+                                      : null,
+                                  availableMethods: services.isNotEmpty
+                                      ? (methods[services.first]
+                                              as List<String>?) ??
+                                          []
+                                      : [],
+                                  method: null,
+                                  parameters: const <GrpcParameterModel>[],
+                                  useReflection: false,
+                                ),
+                              );
                         },
                         icon: const Icon(Icons.refresh),
-                        label: const Text("Fetch Services"),
+                        label: const Text("Fetch services"),
                       ),
                     ],
                   ),
