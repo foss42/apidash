@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'storage/workspace_storage.dart';
-
 FlutterSecureStorage _createSecureStorage() => const FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
       mOptions: MacOsOptions(useDataProtectionKeyChain: false),
@@ -12,28 +10,210 @@ FlutterSecureStorage _createSecureStorage() => const FlutterSecureStorage(
 String _workspaceId(String workspacePath) =>
     base64Url.encode(utf8.encode(workspacePath));
 
-const _envStorageKeyPrefix = 'apidash_env_secret';
-const _aiRequestStorageKeyPrefix = 'apidash_ai_secret';
-const _aiHistoryStorageKeyPrefix = 'apidash_ai_history_secret';
-const _defaultAiApiKeyStorageKey = 'apidash_default_ai_api_key';
+const _secretsStorageKey = 'apidash_secrets';
+const _defaultAiApiKeyField = 'defaultAiApiKey';
 
-class EnvironmentSecretsStorage {
-  EnvironmentSecretsStorage({FlutterSecureStorage? storage})
+String _requestCompositeKey(String collectionId, String requestId) =>
+    '$collectionId/$requestId';
+
+Map<String, String> _stringMap(Object? value) {
+  if (value is! Map) {
+    return {};
+  }
+  return {
+    for (final entry in value.entries)
+      entry.key.toString(): entry.value?.toString() ?? '',
+  };
+}
+
+Map<String, Map<String, String>> _envMap(Object? value) {
+  if (value is! Map) {
+    return {};
+  }
+  final result = <String, Map<String, String>>{};
+  for (final entry in value.entries) {
+    result[entry.key.toString()] = _stringMap(entry.value);
+  }
+  return result;
+}
+
+class _WorkspaceSlice {
+  _WorkspaceSlice({
+    Map<String, Map<String, String>>? env,
+    Map<String, String>? requests,
+    Map<String, String>? history,
+  })  : env = env ?? {},
+        requests = requests ?? {},
+        history = history ?? {};
+
+  final Map<String, Map<String, String>> env;
+  final Map<String, String> requests;
+  final Map<String, String> history;
+
+  bool get isEmpty => env.isEmpty && requests.isEmpty && history.isEmpty;
+
+  Map<String, Object?> toJson() => {
+        'env': env,
+        'requests': requests,
+        'history': history,
+      };
+
+  factory _WorkspaceSlice.fromJson(Object? raw) {
+    if (raw is! Map) {
+      return _WorkspaceSlice();
+    }
+    return _WorkspaceSlice(
+      env: _envMap(raw['env']),
+      requests: _stringMap(raw['requests']),
+      history: _stringMap(raw['history']),
+    );
+  }
+
+  _WorkspaceSlice copy() => _WorkspaceSlice(
+        env: {
+          for (final entry in env.entries)
+            entry.key: Map<String, String>.from(entry.value),
+        },
+        requests: Map<String, String>.from(requests),
+        history: Map<String, String>.from(history),
+      );
+}
+
+/// Single Keychain item for all secrets (all workspaces + default AI key).
+class _SecretsStore {
+  _SecretsStore({FlutterSecureStorage? storage})
       : _storage = storage ?? _createSecureStorage();
 
   final FlutterSecureStorage _storage;
+  Map<String, _WorkspaceSlice>? _workspaces;
+  String? _defaultAiApiKey;
+  Future<void>? _loadLock;
 
-  String _key(String workspacePath, String environmentId, String variableKey) =>
-      '$_envStorageKeyPrefix/${_workspaceId(workspacePath)}/$environmentId/$variableKey';
+  Future<void> _ensureLoaded() async {
+    if (_workspaces != null) {
+      return;
+    }
+    final inflight = _loadLock;
+    if (inflight != null) {
+      await inflight;
+      return;
+    }
+    final future = _load();
+    _loadLock = future;
+    try {
+      await future;
+    } finally {
+      _loadLock = null;
+    }
+  }
+
+  Future<void> _load() async {
+    final raw = await _storage.read(key: _secretsStorageKey);
+    if (raw == null || raw.isEmpty) {
+      _workspaces = {};
+      _defaultAiApiKey = null;
+      return;
+    }
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) {
+        _workspaces = {};
+        _defaultAiApiKey = null;
+        return;
+      }
+      final workspaces = <String, _WorkspaceSlice>{};
+      final rawWorkspaces = decoded['workspaces'];
+      if (rawWorkspaces is Map) {
+        for (final entry in rawWorkspaces.entries) {
+          workspaces[entry.key.toString()] =
+              _WorkspaceSlice.fromJson(entry.value);
+        }
+      }
+      _workspaces = workspaces;
+      final defaultKey = decoded[_defaultAiApiKeyField];
+      _defaultAiApiKey =
+          defaultKey is String && defaultKey.isNotEmpty ? defaultKey : null;
+    } catch (_) {
+      _workspaces = {};
+      _defaultAiApiKey = null;
+    }
+  }
+
+  Future<void> _persist() async {
+    final workspaces = _workspaces ?? {};
+    final payload = <String, Object?>{
+      'workspaces': {
+        for (final entry in workspaces.entries)
+          if (!entry.value.isEmpty) entry.key: entry.value.toJson(),
+      },
+      if (_defaultAiApiKey != null && _defaultAiApiKey!.isNotEmpty)
+        _defaultAiApiKeyField: _defaultAiApiKey,
+    };
+    final workspacesJson = payload['workspaces'];
+    final emptyWorkspaces =
+        workspacesJson is Map && workspacesJson.isEmpty;
+    if (emptyWorkspaces &&
+        (_defaultAiApiKey == null || _defaultAiApiKey!.isEmpty)) {
+      await _storage.delete(key: _secretsStorageKey);
+      return;
+    }
+    await _storage.write(key: _secretsStorageKey, value: jsonEncode(payload));
+  }
+
+  Future<_WorkspaceSlice> workspace(String workspacePath) async {
+    await _ensureLoaded();
+    final id = _workspaceId(workspacePath);
+    return (_workspaces![id] ??= _WorkspaceSlice()).copy();
+  }
+
+  Future<void> updateWorkspace(
+    String workspacePath,
+    _WorkspaceSlice Function(_WorkspaceSlice current) update,
+  ) async {
+    await _ensureLoaded();
+    final id = _workspaceId(workspacePath);
+    final current = (_workspaces![id] ?? _WorkspaceSlice()).copy();
+    final next = update(current);
+    if (next.isEmpty) {
+      _workspaces!.remove(id);
+    } else {
+      _workspaces![id] = next;
+    }
+    await _persist();
+  }
+
+  Future<String?> readDefaultAiApiKey() async {
+    await _ensureLoaded();
+    return _defaultAiApiKey;
+  }
+
+  Future<void> writeDefaultAiApiKey(String value) async {
+    await _ensureLoaded();
+    _defaultAiApiKey = value;
+    await _persist();
+  }
+
+  Future<void> deleteDefaultAiApiKey() async {
+    await _ensureLoaded();
+    _defaultAiApiKey = null;
+    await _persist();
+  }
+}
+
+final _secretsStore = _SecretsStore();
+
+class EnvironmentSecretsStorage {
+  EnvironmentSecretsStorage();
+
+  final _SecretsStore _store = _secretsStore;
 
   Future<String?> readSecret(
     String workspacePath,
     String environmentId,
     String variableKey,
-  ) {
-    return _storage.read(
-      key: _key(workspacePath, environmentId, variableKey),
-    );
+  ) async {
+    final slice = await _store.workspace(workspacePath);
+    return slice.env[environmentId]?[variableKey];
   }
 
   Future<void> writeSecret(
@@ -42,10 +222,10 @@ class EnvironmentSecretsStorage {
     String variableKey,
     String value,
   ) {
-    return _storage.write(
-      key: _key(workspacePath, environmentId, variableKey),
-      value: value,
-    );
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.env.putIfAbsent(environmentId, () => {})[variableKey] = value;
+      return slice;
+    });
   }
 
   Future<void> deleteSecret(
@@ -53,95 +233,59 @@ class EnvironmentSecretsStorage {
     String environmentId,
     String variableKey,
   ) {
-    return _storage.delete(
-      key: _key(workspacePath, environmentId, variableKey),
-    );
+    return _store.updateWorkspace(workspacePath, (slice) {
+      final envSecrets = slice.env[environmentId];
+      if (envSecrets == null) {
+        return slice;
+      }
+      envSecrets.remove(variableKey);
+      if (envSecrets.isEmpty) {
+        slice.env.remove(environmentId);
+      }
+      return slice;
+    });
   }
 
   Future<void> deleteAllForEnvironment(
     String workspacePath,
     String environmentId,
     Iterable<String> variableKeys,
-  ) async {
-    for (final key in variableKeys) {
-      await deleteSecret(workspacePath, environmentId, key);
-    }
+  ) {
+    return _store.updateWorkspace(workspacePath, (slice) {
+      final envSecrets = slice.env[environmentId];
+      if (envSecrets == null) {
+        return slice;
+      }
+      for (final key in variableKeys) {
+        envSecrets.remove(key);
+      }
+      if (envSecrets.isEmpty) {
+        slice.env.remove(environmentId);
+      }
+      return slice;
+    });
   }
 
-  Future<void> deleteAllForWorkspace(String workspacePath) async {
-    try {
-      final prefix = '$_envStorageKeyPrefix/${_workspaceId(workspacePath)}/';
-      final all = await _storage.readAll();
-      for (final key in all.keys) {
-        if (key.startsWith(prefix)) {
-          await _storage.delete(key: key);
-        }
-      }
-    } catch (_) {
-      for (final entry in _secretKeysByEnvironmentFromWorkspace().entries) {
-        await deleteAllForEnvironment(
-          workspacePath,
-          entry.key,
-          entry.value,
-        );
-      }
-    }
-  }
-
-  Map<String, List<String>> _secretKeysByEnvironmentFromWorkspace() {
-    final byEnvironment = <String, List<String>>{};
-    for (final environmentId
-        in workspaceStorage.getEnvironmentIds() ?? const []) {
-      final json = workspaceStorage.getEnvironment(environmentId);
-      if (json == null) {
-        continue;
-      }
-      final values = json['values'];
-      if (values is! List) {
-        continue;
-      }
-      for (final value in values) {
-        if (value is! Map) {
-          continue;
-        }
-        if (value['type'] != 'secret') {
-          continue;
-        }
-        final variableKey = value['key'] as String?;
-        if (variableKey == null || variableKey.isEmpty) {
-          continue;
-        }
-        byEnvironment.putIfAbsent(environmentId, () => []).add(variableKey);
-      }
-    }
-    return byEnvironment;
+  Future<void> deleteAllForWorkspace(String workspacePath) {
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.env.clear();
+      return slice;
+    });
   }
 }
 
 class AiRequestSecretsStorage {
-  AiRequestSecretsStorage({FlutterSecureStorage? storage})
-      : _storage = storage ?? _createSecureStorage();
+  AiRequestSecretsStorage();
 
-  final FlutterSecureStorage _storage;
-
-  String _requestKey(
-    String workspacePath,
-    String collectionId,
-    String requestId,
-  ) =>
-      '$_aiRequestStorageKeyPrefix/${_workspaceId(workspacePath)}/$collectionId/$requestId';
-
-  String _historyKey(String workspacePath, String historyId) =>
-      '$_aiHistoryStorageKeyPrefix/${_workspaceId(workspacePath)}/$historyId';
+  final _SecretsStore _store = _secretsStore;
 
   Future<String?> readApiKey(
     String workspacePath,
     String collectionId,
     String requestId,
-  ) {
-    return _storage.read(
-      key: _requestKey(workspacePath, collectionId, requestId),
-    );
+  ) async {
+    final slice = await _store.workspace(workspacePath);
+    return slice.requests[_requestCompositeKey(collectionId, requestId)];
   }
 
   Future<void> writeApiKey(
@@ -150,10 +294,10 @@ class AiRequestSecretsStorage {
     String requestId,
     String value,
   ) {
-    return _storage.write(
-      key: _requestKey(workspacePath, collectionId, requestId),
-      value: value,
-    );
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.requests[_requestCompositeKey(collectionId, requestId)] = value;
+      return slice;
+    });
   }
 
   Future<void> deleteApiKey(
@@ -161,9 +305,10 @@ class AiRequestSecretsStorage {
     String collectionId,
     String requestId,
   ) {
-    return _storage.delete(
-      key: _requestKey(workspacePath, collectionId, requestId),
-    );
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.requests.remove(_requestCompositeKey(collectionId, requestId));
+      return slice;
+    });
   }
 
   Future<void> rekeyApiKey(
@@ -187,27 +332,28 @@ class AiRequestSecretsStorage {
     String workspacePath,
     String collectionId,
     Set<String> activeRequestIds,
-  ) async {
-    try {
-      final prefix =
-          '$_aiRequestStorageKeyPrefix/${_workspaceId(workspacePath)}/$collectionId/';
-      final all = await _storage.readAll();
-      for (final key in all.keys) {
+  ) {
+    final prefix = '$collectionId/';
+    return _store.updateWorkspace(workspacePath, (slice) {
+      for (final key in slice.requests.keys.toList()) {
         if (!key.startsWith(prefix)) {
           continue;
         }
         final requestId = key.substring(prefix.length);
         if (!activeRequestIds.contains(requestId)) {
-          await _storage.delete(key: key);
+          slice.requests.remove(key);
         }
       }
-    } catch (_) {
-      // Best-effort cleanup.
-    }
+      return slice;
+    });
   }
 
-  Future<String?> readHistoryApiKey(String workspacePath, String historyId) {
-    return _storage.read(key: _historyKey(workspacePath, historyId));
+  Future<String?> readHistoryApiKey(
+    String workspacePath,
+    String historyId,
+  ) async {
+    final slice = await _store.workspace(workspacePath);
+    return slice.history[historyId];
   }
 
   Future<void> writeHistoryApiKey(
@@ -215,53 +361,42 @@ class AiRequestSecretsStorage {
     String historyId,
     String value,
   ) {
-    return _storage.write(key: _historyKey(workspacePath, historyId), value: value);
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.history[historyId] = value;
+      return slice;
+    });
   }
 
-  Future<void> deleteHistoryApiKey(String workspacePath, String historyId) {
-    return _storage.delete(key: _historyKey(workspacePath, historyId));
+  Future<void> deleteHistoryApiKey(
+    String workspacePath,
+    String historyId,
+  ) {
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.history.remove(historyId);
+      return slice;
+    });
   }
 
-  Future<String?> readDefaultApiKey() {
-    return _storage.read(key: _defaultAiApiKeyStorageKey);
+  Future<String?> readDefaultApiKey() => _store.readDefaultAiApiKey();
+
+  Future<void> writeDefaultApiKey(String value) =>
+      _store.writeDefaultAiApiKey(value);
+
+  Future<void> deleteDefaultApiKey() => _store.deleteDefaultAiApiKey();
+
+  Future<void> deleteAllForWorkspace(String workspacePath) {
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.requests.clear();
+      slice.history.clear();
+      return slice;
+    });
   }
 
-  Future<void> writeDefaultApiKey(String value) {
-    return _storage.write(key: _defaultAiApiKeyStorageKey, value: value);
-  }
-
-  Future<void> deleteDefaultApiKey() {
-    return _storage.delete(key: _defaultAiApiKeyStorageKey);
-  }
-
-  Future<void> deleteAllForWorkspace(String workspacePath) async {
-    final workspaceToken = _workspaceId(workspacePath);
-    final requestPrefix = '$_aiRequestStorageKeyPrefix/$workspaceToken/';
-    final historyPrefix = '$_aiHistoryStorageKeyPrefix/$workspaceToken/';
-    try {
-      final all = await _storage.readAll();
-      for (final key in all.keys) {
-        if (key.startsWith(requestPrefix) || key.startsWith(historyPrefix)) {
-          await _storage.delete(key: key);
-        }
-      }
-    } catch (_) {
-      // Best-effort cleanup.
-    }
-  }
-
-  Future<void> deleteAllHistoryForWorkspace(String workspacePath) async {
-    final prefix = '$_aiHistoryStorageKeyPrefix/${_workspaceId(workspacePath)}/';
-    try {
-      final all = await _storage.readAll();
-      for (final key in all.keys) {
-        if (key.startsWith(prefix)) {
-          await _storage.delete(key: key);
-        }
-      }
-    } catch (_) {
-      // Best-effort cleanup.
-    }
+  Future<void> deleteAllHistoryForWorkspace(String workspacePath) {
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.history.clear();
+      return slice;
+    });
   }
 
   static String? apiKeyFromJson(Map<String, dynamic> json) {
