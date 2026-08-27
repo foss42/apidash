@@ -13,6 +13,7 @@ import 'history/history_page.dart';
 import 'settings_page.dart';
 import 'terminal/terminal_page.dart';
 import 'package:apidash/workflow/pages/workflow_page.dart';
+import 'package:apidash/dashboard/dashboard.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -118,6 +119,24 @@ class Dashboard extends ConsumerWidget {
                     kVSpacer10,
                     if (kIsDesktop) ...[
                       IconButton(
+                        tooltip: kLabelDashboard,
+                        isSelected: railIdx == kNavRailDashboardIndex,
+                        onPressed: () {
+                          ref.read(navRailIndexStateProvider.notifier).state =
+                              kNavRailDashboardIndex;
+                        },
+                        icon: const Icon(Icons.insights_outlined),
+                        selectedIcon: const Icon(Icons.insights),
+                      ),
+                      Text(
+                        kLabelDashboard,
+                        style: Theme.of(context).textTheme.labelSmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
+                      kVSpacer10,
+                      IconButton(
                         tooltip: kLabelCollaboration,
                         isSelected: railIdx == kNavRailCollaborationIndex,
                         onPressed: () {
@@ -213,6 +232,7 @@ class Dashboard extends ConsumerWidget {
                   WorkflowPage(),
                   EnvironmentPage(),
                   HistoryPage(),
+                  DashboardPage(),
                   CollaborationPage(),
                   TerminalPage(),
                   SettingsPage(),

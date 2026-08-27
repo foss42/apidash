@@ -13,3 +13,4 @@ export 'js_runtime_notifier.dart';
 export '../workflow/providers/workflow_providers.dart';
 export '../workflow/providers/workflow_ui_providers.dart';
 export '../workflow/providers/workflow_history_providers.dart';
+export '../dashboard/providers/dashboard_providers.dart';

@@ -203,3 +203,7 @@ Start → For each  List {{prompts}}  Variable prompt
 ## Connecting nodes
 
 Drag from an output port to an input port to connect steps. The runner follows those connections when you press Run. Multiple outs from one port run in parallel; a single chain stays sequential. Use **Arrange** on the canvas to tidy layout (Dashbot-created flows are auto-arranged on create).
+
+## Related
+
+After you run workflows, open the desktop **Dashboard** → **Workflows** tab for run health, duration trends, and failing nodes. Webhook reports send Collections + Workflows together. See [Dashboard](dashboard_guide.md).

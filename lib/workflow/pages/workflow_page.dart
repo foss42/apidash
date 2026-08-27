@@ -37,7 +37,10 @@ class _WorkflowPageState extends ConsumerState<WorkflowPage> {
     await ref.read(workflowCatalogProvider.notifier).reloadFromDisk();
     final selected = ref.read(selectedWorkflowIdStateProvider);
     if (selected != null) {
-      await ref.read(activeWorkflowProvider.notifier).load(selected);
+      final activeId = ref.read(activeWorkflowProvider)?.id;
+      if (activeId != selected) {
+        await ref.read(activeWorkflowProvider.notifier).load(selected);
+      }
       return;
     }
     final workflows = ref.read(workflowCatalogProvider).value ?? const [];
