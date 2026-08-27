@@ -38,7 +38,7 @@ class WorkflowVariableBrowser extends ConsumerWidget {
           kLabelWorkflowVariables,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        kVSpacer5,
+        kVSpacer3,
         Text(
           'Extractions from upstream steps appear here for chaining.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
