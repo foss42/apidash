@@ -70,4 +70,4 @@ Do not put secrets you care about only in synced JSON values that are meant to s
 
 - **Check remote** ≠ **Pull**. Check only updates status; Pull updates files.
 - Flush pending edits before Pull / Push / branch switch when prompted (autosave normally handles this).
-- If authentication fails, sign in with Git Credential Manager or SSH outside the app — API Dash does not open an interactive Git password prompt.
+- If authentication fails, sign in with Git Credential Manager or SSH outside the app , API Dash does not open an interactive Git password prompt.

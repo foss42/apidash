@@ -6,6 +6,7 @@ import 'general_interaction.dart';
 import 'generate_code.dart';
 import 'generate_documentation.dart';
 import 'generate_test_cases.dart';
+import 'generate_workflow.dart';
 import 'openapi_insights.dart';
 
 class DashbotPrompts {
@@ -16,11 +17,12 @@ class DashbotPrompts {
 // Each action object shape:
 // {
 //   "action": "update_field" | "add_header" | "update_header" | "delete_header" | "update_body" |
-//              "update_url" | "update_method" | "show_languages" | "upload_asset" | "other" | "no_action",
-//   "target": "httpRequestModel" | "codegen" | "test" | "code" | "attachment",
+//              "update_url" | "update_method" | "show_languages" | "apply_workflow" |
+//              "upload_asset" | "other" | "no_action",
+//   "target": "httpRequestModel" | "codegen" | "test" | "code" | "attachment" | "workflow",
 //   "field":  string (optional, e.g. "url", "method", "headers", "body", "params"),
 //   "path":   string | null (header key, language name, etc.),
-//   "value":  string | object | array | null (new value / code / list of languages)
+//   "value":  string | object | array | null (new value / code / list of languages / workflow JSON)
 // }
 // IMPORTANT: If no actionable changes: set "actions": [] (empty array).
 // EXAMPLE MULTI-ACTION (debugging):
@@ -33,10 +35,16 @@ class DashbotPrompts {
 // }
 // EXAMPLE CODEGEN LANGUAGE PICKER:
 // {"explanation":"Choose a language","actions":[{"action":"show_languages","target":"codegen","path":null,"value":["JavaScript (fetch)","Python (requests)"]}]}
+// EXAMPLE WORKFLOW:
+// {"explanation":"...","actions":[{"action":"apply_workflow","target":"workflow","value":{"name":"Login Flow","nodes":[...],"edges":[...]}}]}
 
   /// General user interaction prompt enforcing strict JSON-only output and off-topic refusal.
   String generalInteractionPrompt() {
     return buildGeneralInteractionPrompt();
+  }
+
+  String generateWorkflowPrompt() {
+    return buildGenerateWorkflowPrompt();
   }
 
   String explainApiResponsePrompt({

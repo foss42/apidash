@@ -70,8 +70,9 @@ double? getJsonPreviewerMaxRootNodeWidth(double w) {
 
 GlobalKey<ScaffoldState> getScaffoldKey(int railIdx) {
   return switch (railIdx) {
-    1 => kEnvScaffoldKey,
-    2 => kHisScaffoldKey,
+    kNavRailWorkflowsIndex => kWorkflowScaffoldKey,
+    kNavRailVariablesIndex => kEnvScaffoldKey,
+    kNavRailHistoryIndex => kHisScaffoldKey,
     _ => kHomeScaffoldKey,
   };
 }

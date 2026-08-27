@@ -14,16 +14,17 @@ class EditAuthType extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedRequest = ref.read(selectedRequestModelProvider);
+    final selectedRequest = ref.watch(selectedRequestModelProvider);
     if (selectedRequest == null) {
       return const SizedBox.shrink();
     }
 
     ref.watch(
-      selectedRequestModelProvider.select((request) =>
-          request?.httpRequestModel?.authModel?.type ?? APIAuthType.none),
+      selectedRequestModelProvider.select((request) => request?.id),
     );
-    final currentAuthData = selectedRequest.httpRequestModel?.authModel;
+    final currentAuthData =
+        selectedRequest.httpRequestModel?.authModel ??
+        const AuthModel(type: APIAuthType.none);
 
     return AuthPage(
       authModel: currentAuthData,

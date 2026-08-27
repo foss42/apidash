@@ -10,5 +10,9 @@ bool isApidashWorkspaceGitPath(String relativePath) {
       path == kWorkspaceEnvironmentsDir) {
     return !path.endsWith('.local.json');
   }
+  if (path.startsWith('$kWorkspaceWorkflowsDir/') ||
+      path == kWorkspaceWorkflowsDir) {
+    return true;
+  }
   return false;
 }

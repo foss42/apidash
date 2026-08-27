@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 import '../envvar/environment_page.dart';
 import '../history/history_page.dart';
 import '../settings_page.dart';
@@ -13,6 +14,7 @@ import 'collaboration/sync_scan_page.dart';
 import 'requests_page/request_response_page.dart';
 import 'widgets/page_base.dart';
 import 'navbar.dart';
+import 'package:apidash/workflow/pages/workflow_page.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
   const MobileDashboard({super.key});
@@ -43,7 +45,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
           ),
           if (context.isMediumWindow)
             AnimatedPositioned(
-              bottom: railIdx > 3
+              bottom: railIdx >= kNavRailCollaborationIndex
                   ? 0
                   : isLeftDrawerOpen
                       ? 0
@@ -71,11 +73,13 @@ class PageBranch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     switch (pageIndex) {
-      case 1:
+      case kNavRailWorkflowsIndex:
+        return const WorkflowPage();
+      case kNavRailVariablesIndex:
         return const EnvironmentPage();
-      case 2:
+      case kNavRailHistoryIndex:
         return const HistoryPage();
-      case 3:
+      case kNavRailCollaborationIndex:
         return MobileCollaborationPage(
           onScan: () {
             Navigator.of(context).push(
@@ -85,12 +89,12 @@ class PageBranch extends ConsumerWidget {
             );
           },
         );
-      case 4:
+      case kNavRailLogsIndex:
         return const PageBase(
           title: 'Logs',
           scaffoldBody: TerminalPage(),
         );
-      case 5:
+      case kNavRailSettingsIndex:
         return const PageBase(
           title: 'Settings',
           scaffoldBody: SettingsPage(),

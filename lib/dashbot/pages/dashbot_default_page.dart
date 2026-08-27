@@ -45,6 +45,15 @@ class DashbotDefaultPage extends StatelessWidget {
               },
             ),
             HomeScreenTaskButton(
+              label: "🔀 Generate Workflow",
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  DashbotRoutes.dashbotChat,
+                  arguments: ChatMessageType.generateWorkflow,
+                );
+              },
+            ),
+            HomeScreenTaskButton(
               label: "📥 Import cURL",
               onPressed: () {
                 Navigator.of(context).pushNamed(

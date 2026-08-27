@@ -36,5 +36,6 @@ bool isSyncablePath(String relativePath) {
     return false;
   }
   return path.startsWith('$kWorkspaceCollectionsDir/') ||
-      path.startsWith('$kWorkspaceEnvironmentsDir/');
+      path.startsWith('$kWorkspaceEnvironmentsDir/') ||
+      path.startsWith('$kWorkspaceWorkflowsDir/');
 }

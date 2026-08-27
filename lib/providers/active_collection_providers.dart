@@ -37,6 +37,14 @@ final selectedSubstitutedHttpRequestModelProvider =
       );
     });
 
+typedef RequestPersistHook = FutureOr<void> Function(
+  String requestId,
+  RequestModel model,
+);
+
+final requestPersistHookProvider =
+    StateProvider<RequestPersistHook?>((ref) => null);
+
 final StateNotifierProvider<ActiveCollectionNotifier, Map<String, RequestModel>?>
 activeCollectionProvider = StateNotifierProvider(
   (ref) => ActiveCollectionNotifier(ref, workspaceStorage),
@@ -44,7 +52,15 @@ activeCollectionProvider = StateNotifierProvider(
 
 class ActiveCollectionNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  ActiveCollectionNotifier(this.ref, this.workspaceStorage) : super(null) {
+  ActiveCollectionNotifier(
+    this.ref,
+    this.workspaceStorage, {
+    this.ephemeral = false,
+    Map<String, RequestModel>? initialState,
+  }) : super(initialState) {
+    if (ephemeral) {
+      return;
+    }
     Future.microtask(() {
       if (!isWorkspaceStorageInitialized()) {
         return;
@@ -53,6 +69,21 @@ class ActiveCollectionNotifier
       activateCollection(ref.read(selectedCollectionIdStateProvider));
     });
   }
+
+  factory ActiveCollectionNotifier.ephemeral(
+    Ref ref,
+    WorkspaceStorage storage,
+    RequestModel request,
+  ) {
+    return ActiveCollectionNotifier(
+      ref,
+      storage,
+      ephemeral: true,
+      initialState: {request.id: request},
+    );
+  }
+
+  final bool ephemeral;
 
   List<String> _catalogRequestIds(String collectionId) {
     return ref
@@ -661,7 +692,8 @@ class ActiveCollectionNotifier
       return;
     }
     var currentModel = state![rId]!;
-    var currentHttpRequestModel = currentModel.httpRequestModel;
+    var currentHttpRequestModel =
+        currentModel.httpRequestModel ?? const HttpRequestModel();
 
     RequestModel newModel;
 
@@ -693,7 +725,7 @@ class ActiveCollectionNotifier
         name: name ?? currentModel.name,
         description: description ?? currentModel.description,
         requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-        httpRequestModel: currentHttpRequestModel?.copyWith(
+        httpRequestModel: currentHttpRequestModel.copyWith(
           method: method ?? currentHttpRequestModel.method,
           url: url ?? currentHttpRequestModel.url,
           headers: headers ?? currentHttpRequestModel.headers,
@@ -723,7 +755,7 @@ class ActiveCollectionNotifier
       );
     }
 
-    if (name != null) {
+    if (!ephemeral && name != null) {
       final storageLabel = _storageLabelFor(newModel);
       final newId = renameStorageId(rId, storageLabel);
       if (newId != rId) {
@@ -734,7 +766,26 @@ class ActiveCollectionNotifier
     }
 
     state = {...state!, rId: newModel};
+    if (ephemeral) {
+      final hook = ref.read(requestPersistHookProvider);
+      if (hook != null) {
+        hook(rId, newModel);
+      }
+      return;
+    }
     _syncActiveCollectionSummaries();
+  }
+
+  void replaceSelectedRequest(RequestModel model) {
+    final rId = ref.read(selectedIdStateProvider);
+    if (rId == null || state == null) {
+      return;
+    }
+    state = {...state!, rId: model};
+    if (ephemeral) {
+      final hook = ref.read(requestPersistHookProvider);
+      hook?.call(rId, model);
+    }
   }
 
   Future<void> sendRequest() async {

@@ -3,6 +3,7 @@ import 'package:apidash/git/widgets/git_visual_diff/git_diff_snapshots.dart';
 import 'package:apidash/git/widgets/git_visual_diff/git_list_diff.dart';
 import 'package:apidash/git/widgets/git_visual_diff/git_request_visual_diff.dart';
 import 'package:apidash/git/widgets/git_visual_diff/git_response_visual_diff.dart';
+import 'package:apidash/git/widgets/git_visual_diff/git_workflow_visual_diff.dart';
 import 'package:flutter/material.dart';
 
 class GitVisualDiffView extends StatelessWidget {
@@ -60,6 +61,18 @@ class GitVisualDiffView extends StatelessWidget {
       ),
       GitDiffFileKind.environmentIndex => _buildListDiff(
         diffEnvironmentIndexRows(
+          head: snapshots.headJson,
+          current: snapshots.currentJson,
+        ),
+      ),
+      GitDiffFileKind.workflow => GitWorkflowVisualDiff(
+        original: parseWorkflowDocument(snapshots.headJson),
+        current: parseWorkflowDocument(snapshots.currentJson),
+        originalRaw: snapshots.headRaw,
+        currentRaw: snapshots.currentRaw,
+      ),
+      GitDiffFileKind.workflowIndex => _buildListDiff(
+        diffWorkflowIndexRows(
           head: snapshots.headJson,
           current: snapshots.currentJson,
         ),

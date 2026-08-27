@@ -3,9 +3,12 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/services/storage/workspace_storage.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:apidash/workflow/utils/workflow_ai_secrets.dart';
 import '../constants.dart';
 import '../models/models.dart';
 import '../prompts/prompts.dart' as dash;
@@ -71,7 +74,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
 
     if (ai == null &&
         type != ChatMessageType.importCurl &&
-        type != ChatMessageType.importOpenApi) {
+        type != ChatMessageType.importOpenApi &&
+        type != ChatMessageType.generateWorkflow) {
       debugPrint('[Chat] No AI model configured');
       _appendSystem('AI model is not configured. Please set one.', type);
       return;
@@ -121,6 +125,27 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       return;
     }
 
+    final lastSystemWorkflow = existingMessages.lastWhere(
+      (m) =>
+          m.role == MessageRole.system &&
+          m.messageType == ChatMessageType.generateWorkflow,
+      orElse: () => ChatMessage(
+        id: '',
+        content: '',
+        role: MessageRole.system,
+        timestamp: DateTime.fromMillisecondsSinceEpoch(0),
+      ),
+    );
+    final workflowInvitePending = lastSystemWorkflow.id.isNotEmpty &&
+        (lastSystemWorkflow.actions == null ||
+            lastSystemWorkflow.actions!.isEmpty);
+    final resolvedType =
+        (type == ChatMessageType.general &&
+                workflowInvitePending &&
+                text.trim().isNotEmpty)
+            ? ChatMessageType.generateWorkflow
+            : type;
+
     final promptBuilder = _ref.read(promptBuilderProvider);
     // Prepare a substituted copy of current request for prompt context
     final currentReq = _currentRequest;
@@ -130,15 +155,15 @@ class ChatViewmodel extends StateNotifier<ChatState> {
           )
         : currentReq;
     String systemPrompt;
-    if (type == ChatMessageType.generateCode) {
+    if (resolvedType == ChatMessageType.generateCode) {
       final detectedLang = promptBuilder.detectLanguage(text);
       systemPrompt = promptBuilder.buildSystemPrompt(
         substitutedReq,
-        type,
+        resolvedType,
         overrideLanguage: detectedLang,
         history: currentMessages,
       );
-    } else if (type == ChatMessageType.importCurl) {
+    } else if (resolvedType == ChatMessageType.importCurl) {
       final rqId = _currentRequest?.id ?? 'global';
       // Briefly toggle loading to indicate processing of the import flow prompt
       state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
@@ -155,7 +180,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
       return;
-    } else if (type == ChatMessageType.importOpenApi) {
+    } else if (resolvedType == ChatMessageType.importOpenApi) {
       final rqId = _currentRequest?.id ?? 'global';
       state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
       final uploadAction = ChatAction.fromJson({
@@ -193,17 +218,49 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
       return;
+    } else if (resolvedType == ChatMessageType.generateWorkflow) {
+      if (text.trim().isEmpty) {
+        final rqId = _currentRequest?.id ?? 'global';
+        state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
+        _addMessage(
+          rqId,
+          ChatMessage(
+            id: getNewUuid(),
+            content:
+                '{"explanation":"Let\'s create an API workflow. Describe the steps below (URLs, auth, extractions, loops/conditions/delays if needed).","actions":[]}',
+            role: MessageRole.system,
+            timestamp: DateTime.now(),
+            messageType: ChatMessageType.generateWorkflow,
+          ),
+        );
+        state =
+            state.copyWith(isGenerating: false, currentStreamingResponse: '');
+        return;
+      }
+      systemPrompt = promptBuilder.buildSystemPrompt(
+        substitutedReq,
+        resolvedType,
+        history: currentMessages,
+      );
     } else {
       systemPrompt = promptBuilder.buildSystemPrompt(
         substitutedReq,
-        type,
+        resolvedType,
         history: currentMessages,
       );
+    }
+    if (ai == null) {
+      debugPrint('[Chat] No AI model configured');
+      _appendSystem(
+        'AI model is not configured. Please set one.',
+        resolvedType,
+      );
+      return;
     }
     final userPrompt = (text.trim().isEmpty && !countAsUser)
         ? 'Please complete the task based on the provided context.'
         : text;
-    final enriched = ai!.copyWith(
+    final enriched = ai.copyWith(
       systemPrompt: systemPrompt,
       userPrompt: userPrompt,
       stream: false,
@@ -235,16 +292,16 @@ class ChatViewmodel extends StateNotifier<ChatState> {
             content: response,
             role: MessageRole.system,
             timestamp: DateTime.now(),
-            messageType: type,
+            messageType: resolvedType,
             actions: actions,
           ),
         );
       } else {
-        _appendSystem('No response received from the AI.', type);
+        _appendSystem('No response received from the AI.', resolvedType);
       }
     } catch (e) {
       debugPrint('[Chat] sendChat error: $e');
-      _appendSystem('Error: $e', type);
+      _appendSystem('Error: $e', resolvedType);
     } finally {
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
     }
@@ -295,6 +352,10 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       }
       if (action.actionType == ChatActionType.applyCurl) {
         await _applyCurl(action);
+        return;
+      }
+      if (action.actionType == ChatActionType.applyWorkflow) {
+        await _applyWorkflow(action);
         return;
       }
 
@@ -850,6 +911,60 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       _appendSystem(
         'Error encountered while importing cURL - $e',
         ChatMessageType.importCurl,
+      );
+    }
+  }
+
+  Future<void> _applyWorkflow(ChatAction action) async {
+    try {
+      if (!isWorkspaceStorageInitialized()) {
+        _appendSystem(
+          'Open a workspace before creating a workflow.',
+          ChatMessageType.generateWorkflow,
+        );
+        return;
+      }
+
+      final replaceCurrent = action.field == 'apply_to_selected';
+      // Empty / apply_to_new → create a new workflow file.
+      final currentId = _ref.read(selectedWorkflowIdStateProvider)?.trim();
+      if (replaceCurrent && (currentId == null || currentId.isEmpty)) {
+        _appendSystem(
+          'No workflow is open. Create a new workflow instead.',
+          ChatMessageType.generateWorkflow,
+        );
+        return;
+      }
+
+      final prepared = _ref.read(workflowApplyServiceProvider).prepare(
+            action.value,
+            existingNames: workspaceStorage.getKnownWorkflowIds(),
+            replaceExistingId: replaceCurrent ? currentId : null,
+          );
+      final doc = prepared.document;
+      final json = await prepareWorkflowJsonForDisk(
+        workflowId: doc.id,
+        json: doc.toJson(),
+      );
+      await workspaceStorage.setWorkflow(doc.id, json);
+      final index = workspaceStorage.getWorkflowsIndex().toList();
+      if (!index.contains(doc.id)) {
+        index.add(doc.id);
+      }
+      await workspaceStorage.setWorkflowsIndex(index);
+      await _ref.read(workflowCatalogProvider.notifier).reloadFromDisk();
+      _ref.read(selectedWorkflowIdStateProvider.notifier).state = doc.id;
+      _ref.read(selectedWorkflowNodeIdProvider.notifier).state = null;
+      _ref.read(workflowNodeRunResultsProvider.notifier).state = {};
+      _ref.read(workflowRunStepOrderProvider.notifier).state = [];
+      await _ref.read(activeWorkflowProvider.notifier).load(doc.id);
+      _ref.read(navRailIndexStateProvider.notifier).state =
+          kNavRailWorkflowsIndex;
+      _appendSystem(prepared.message, ChatMessageType.generateWorkflow);
+    } catch (e) {
+      _appendSystem(
+        'Failed to apply workflow: $e',
+        ChatMessageType.generateWorkflow,
       );
     }
   }

@@ -45,40 +45,49 @@ class NavbarButton extends ConsumerWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: onPress,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: isCompact ? 36 : 36,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  backgroundColor: isSelected
-                      ? Theme.of(context).colorScheme.secondaryContainer
-                      : null,
-                ),
-                onPressed: onPress,
-                child: Icon(
-                  isSelected ? selectedIcon : icon,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: isCompact ? 36 : 36,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    backgroundColor: isSelected
+                        ? Theme.of(context).colorScheme.secondaryContainer
+                        : null,
+                  ),
+                  onPressed: onPress,
+                  child: Icon(
+                    isSelected ? selectedIcon : icon,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
-            ),
-            showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
-            showLabel
-                ? Text(
-                    label,
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isSelected
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer
-                              : Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  )
-                : const SizedBox.shrink(),
-          ],
+              showLabel ? const SizedBox(height: 2) : const SizedBox.shrink(),
+              showLabel
+                  ? Text(
+                      label,
+                      maxLines: 1,
+                      softWrap: false,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: isSelected
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .onSecondaryContainer
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                          ),
+                    )
+                  : const SizedBox.shrink(),
+            ],
+          ),
         ),
       ),
     );

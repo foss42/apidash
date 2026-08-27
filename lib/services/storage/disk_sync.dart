@@ -174,6 +174,101 @@ final class RequestIndexChangedOnDisk extends WorkspaceDiskChange {
   int get hashCode => Object.hash(runtimeType, collectionId);
 }
 
+final class WorkflowRemovedFromDisk extends WorkspaceDiskChange {
+  const WorkflowRemovedFromDisk(this.workflowId);
+  final String workflowId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is WorkflowRemovedFromDisk && other.workflowId == workflowId;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, workflowId);
+}
+
+final class WorkflowAddedFromDisk extends WorkspaceDiskChange {
+  const WorkflowAddedFromDisk(this.workflowId);
+  final String workflowId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is WorkflowAddedFromDisk && other.workflowId == workflowId;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, workflowId);
+}
+
+final class WorkflowContentChangedOnDisk extends WorkspaceDiskChange {
+  const WorkflowContentChangedOnDisk(this.workflowId);
+  final String workflowId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is WorkflowContentChangedOnDisk && other.workflowId == workflowId;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, workflowId);
+}
+
+final class WorkflowIndexChangedOnDisk extends WorkspaceDiskChange {
+  const WorkflowIndexChangedOnDisk();
+
+  @override
+  bool operator ==(Object other) => other is WorkflowIndexChangedOnDisk;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+final class EnvironmentRemovedFromDisk extends WorkspaceDiskChange {
+  const EnvironmentRemovedFromDisk(this.environmentId);
+  final String environmentId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is EnvironmentRemovedFromDisk &&
+      other.environmentId == environmentId;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, environmentId);
+}
+
+final class EnvironmentAddedFromDisk extends WorkspaceDiskChange {
+  const EnvironmentAddedFromDisk(this.environmentId);
+  final String environmentId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is EnvironmentAddedFromDisk &&
+      other.environmentId == environmentId;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, environmentId);
+}
+
+final class EnvironmentContentChangedOnDisk extends WorkspaceDiskChange {
+  const EnvironmentContentChangedOnDisk(this.environmentId);
+  final String environmentId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is EnvironmentContentChangedOnDisk &&
+      other.environmentId == environmentId;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, environmentId);
+}
+
+final class EnvironmentIndexChangedOnDisk extends WorkspaceDiskChange {
+  const EnvironmentIndexChangedOnDisk();
+
+  @override
+  bool operator ==(Object other) => other is EnvironmentIndexChangedOnDisk;
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
 /// Maps a [FileSystemEvent] under [workspaceRoot] into a domain change.
 ///
 /// Cross-platform notes:
@@ -207,8 +302,39 @@ WorkspaceDiskChange? classifyWorkspaceDiskEvent({
   if (segments.any(_shouldIgnoreSegment)) return null;
 
   final top = segments.first;
-  if (top != kWorkspaceCollectionsDir) return null;
+  if (top == kWorkspaceCollectionsDir) {
+    return _classifyCollectionDiskEvent(
+      segments: segments,
+      isRemoval: isRemoval,
+      isCreate: isCreate,
+      isContentWrite: isContentWrite,
+    );
+  }
+  if (top == kWorkspaceWorkflowsDir) {
+    return _classifyWorkflowDiskEvent(
+      segments: segments,
+      isRemoval: isRemoval,
+      isCreate: isCreate,
+      isContentWrite: isContentWrite,
+    );
+  }
+  if (top == kWorkspaceEnvironmentsDir) {
+    return _classifyEnvironmentDiskEvent(
+      segments: segments,
+      isRemoval: isRemoval,
+      isCreate: isCreate,
+      isContentWrite: isContentWrite,
+    );
+  }
+  return null;
+}
 
+WorkspaceDiskChange? _classifyCollectionDiskEvent({
+  required List<String> segments,
+  required bool isRemoval,
+  required bool isCreate,
+  required bool isContentWrite,
+}) {
   if (segments.length == 2 && segments[1] == kWorkspaceCollectionsIndexFile) {
     if (isContentWrite && !isRemoval) {
       return const CollectionIndexChangedOnDisk();
@@ -280,6 +406,72 @@ WorkspaceDiskChange? classifyWorkspaceDiskEvent({
     }
   }
 
+  return null;
+}
+
+WorkspaceDiskChange? _classifyWorkflowDiskEvent({
+  required List<String> segments,
+  required bool isRemoval,
+  required bool isCreate,
+  required bool isContentWrite,
+}) {
+  if (segments.length == 2 && segments[1] == kWorkspaceWorkflowsIndexFile) {
+    if (isContentWrite && !isRemoval) {
+      return const WorkflowIndexChangedOnDisk();
+    }
+    return null;
+  }
+
+  if (segments.length != 2) return null;
+
+  final fileName = segments[1];
+  if (!fileName.endsWith(kJsonFileExtension)) {
+    return null;
+  }
+  final workflowId = fileName.substring(
+    0,
+    fileName.length - kJsonFileExtension.length,
+  );
+  if (workflowId.isEmpty || workflowId.startsWith('.')) {
+    return null;
+  }
+
+  if (isRemoval) return WorkflowRemovedFromDisk(workflowId);
+  if (isCreate) return WorkflowAddedFromDisk(workflowId);
+  if (isContentWrite) return WorkflowContentChangedOnDisk(workflowId);
+  return null;
+}
+
+WorkspaceDiskChange? _classifyEnvironmentDiskEvent({
+  required List<String> segments,
+  required bool isRemoval,
+  required bool isCreate,
+  required bool isContentWrite,
+}) {
+  if (segments.length == 2 && segments[1] == kWorkspaceEnvironmentIndexFile) {
+    if (isContentWrite && !isRemoval) {
+      return const EnvironmentIndexChangedOnDisk();
+    }
+    return null;
+  }
+
+  if (segments.length != 2) return null;
+
+  final fileName = segments[1];
+  if (!fileName.endsWith(kJsonFileExtension)) {
+    return null;
+  }
+  final environmentId = fileName.substring(
+    0,
+    fileName.length - kJsonFileExtension.length,
+  );
+  if (environmentId.isEmpty || environmentId.startsWith('.')) {
+    return null;
+  }
+
+  if (isRemoval) return EnvironmentRemovedFromDisk(environmentId);
+  if (isCreate) return EnvironmentAddedFromDisk(environmentId);
+  if (isContentWrite) return EnvironmentContentChangedOnDisk(environmentId);
   return null;
 }
 

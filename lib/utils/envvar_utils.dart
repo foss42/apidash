@@ -44,7 +44,12 @@ String? substituteVariables(
   if (envVarMap.keys.isEmpty) {
     return input;
   }
-  final regex = RegExp("{{(${envVarMap.keys.join('|')})}}");
+  // Longer keys first so {{loop.item.id}} wins over {{loop.item}}.
+  // Escape regex metacharacters so dotted keys like loop.item match literally.
+  final keys = envVarMap.keys.toList()
+    ..sort((a, b) => b.length.compareTo(a.length));
+  final pattern = keys.map(RegExp.escape).join('|');
+  final regex = RegExp('{{($pattern)}}');
 
   String result = input.replaceAllMapped(regex, (match) {
     final key = match.group(1)?.trim() ?? '';
@@ -59,6 +64,7 @@ HttpRequestModel substituteHttpRequestModel(
   Map<String?, List<EnvironmentVariableModel>> envMap,
   String? activeEnvironmentId, {
   String globalEnvironmentId = kGlobalEnvironmentId,
+  Map<String, String> additionalVariables = const {},
 }) {
   final Map<String, String> combinedEnvVarMap = {};
   final activeEnv = envMap[activeEnvironmentId] ?? [];
@@ -70,6 +76,7 @@ HttpRequestModel substituteHttpRequestModel(
   for (var variable in activeEnv) {
     combinedEnvVarMap[variable.key] = variable.value;
   }
+  combinedEnvVarMap.addAll(additionalVariables);
 
   var newRequestModel = httpRequestModel.copyWith(
     url: substituteVariables(httpRequestModel.url, combinedEnvVarMap)!,

@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -17,25 +18,46 @@ class EnvVarSpan extends HookConsumerWidget {
     final environments = ref.watch(environmentsStateNotifierProvider);
     final envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     final activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
+    final chainedVariables = ref.watch(workflowChainedVariablesProvider);
 
-    final suggestion = getVariableStatus(
+    var suggestion = getVariableStatus(
       variableKey,
       envMap,
       activeEnvironmentId,
     );
+
+    // Workflow extractions aren't env vars — treat unknown + upstream match as chained.
+    final isChained =
+        suggestion.isUnknown && chainedVariables.containsKey(variableKey);
+    if (isChained) {
+      suggestion = EnvironmentVariableSuggestion(
+        environmentId: activeEnvironmentId ?? '',
+        isUnknown: false,
+        variable: EnvironmentVariableModel(
+          key: variableKey,
+          value: 'chained variable',
+        ),
+      );
+    }
 
     final showPopover = useState(false);
 
     final isMissingVariable = suggestion.isUnknown;
     final String scope = isMissingVariable
         ? kLabelUnknown
-        : getEnvironmentTitle(environments?[suggestion.environmentId]?.name);
+        : isChained
+            ? 'Chained'
+            : getEnvironmentTitle(environments?[suggestion.environmentId]?.name);
     final colorScheme = Theme.of(context).colorScheme;
 
     var text = Text(
       '{{${suggestion.variable.key}}}',
       style: TextStyle(
-        color: isMissingVariable ? colorScheme.error : colorScheme.primary,
+        color: isMissingVariable
+            ? colorScheme.error
+            : isChained
+                ? colorScheme.tertiary
+                : colorScheme.primary,
         fontWeight: FontWeight.w600,
       ),
     );

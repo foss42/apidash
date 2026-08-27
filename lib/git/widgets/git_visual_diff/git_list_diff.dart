@@ -100,6 +100,21 @@ List<GitListDiffRow> diffEnvironmentIndexRows({
   );
 }
 
+List<GitListDiffRow> diffWorkflowIndexRows({
+  Map<String, Object?>? head,
+  Map<String, Object?>? current,
+}) {
+  final original = _parseWorkflowNames(head);
+  final updated = _parseWorkflowNames(current);
+  return _diffById(
+    original: original.map((name) => _IdLabel(id: name, label: name)).toList(),
+    updated: updated.map((name) => _IdLabel(id: name, label: name)).toList(),
+    idOf: (e) => e.id,
+    labelOf: (e) => e.label,
+    equals: (a, b) => a.id == b.id,
+  );
+}
+
 List<GitListDiffRow> diffEnvironmentRows({
   Map<String, Object?>? head,
   Map<String, Object?>? current,
@@ -169,6 +184,16 @@ List<String> _parseEnvironmentIds(Map<String, Object?>? json) {
   ];
 }
 
+List<String> _parseWorkflowNames(Map<String, Object?>? json) {
+  if (json == null) return const [];
+  final entries = json[kWorkspaceWorkflowsIndexKey];
+  if (entries is! List) return const [];
+  return [
+    for (final item in entries)
+      if (item is String && item.trim().isNotEmpty) item.trim(),
+  ];
+}
+
 String _requestSummaryLabel(RequestSummary summary) {
   final name = summary.name.trim();
   if (name.isNotEmpty) return name;
@@ -188,22 +213,27 @@ bool _requestSummaryEquals(RequestSummary a, RequestSummary b) {
 String? _requestSummaryModifiedDetail(RequestSummary a, RequestSummary b) {
   final parts = <String>[];
   if (a.name != b.name) {
-    parts.add('name: ${a.name} → ${b.name}');
+    parts.add('name: ${_diffText(a.name)} → ${_diffText(b.name)}');
   }
   if (a.apiType != b.apiType) {
     parts.add('type: ${a.apiType.label} → ${b.apiType.label}');
   }
   if (a.method != b.method) {
     parts.add(
-      'method: ${a.method?.name.toUpperCase() ?? '—'} → '
+      'method: ${a.method?.name.toUpperCase() ?? '_EMPTY_'} → '
       '${b.method?.name.toUpperCase() ?? '—'}',
     );
   }
   if (a.url != b.url) {
-    parts.add('url: ${a.url} → ${b.url}');
+    parts.add('url: ${_diffText(a.url)} → ${_diffText(b.url)}');
   }
   if (parts.isEmpty) return null;
   return parts.join(' · ');
+}
+
+String _diffText(String value) {
+  final trimmed = value.trim();
+  return trimmed.isEmpty ? '_EMPTY_' : trimmed;
 }
 
 bool _envVarEquals(EnvironmentVariableModel a, EnvironmentVariableModel b) {
@@ -238,15 +268,12 @@ String? _envVarModifiedDetail(
 }
 
 String? _requestSummaryPresenceDetail(RequestSummary summary) {
-  final parts = <String>[];
-  if (summary.apiType == APIType.rest && summary.method != null) {
-    parts.add(summary.method!.name.toUpperCase());
-  } else {
-    parts.add(summary.apiType.label);
-  }
+  // Method / API type are rendered as a badge above the label — do not repeat.
   final url = summary.url.trim();
-  if (url.isNotEmpty) parts.add(url);
-  return parts.isEmpty ? null : parts.join(' · ');
+  if (url.isEmpty) return null;
+  // If the label is already the URL (untitled request), skip detail.
+  if (url == _requestSummaryLabel(summary)) return null;
+  return url;
 }
 
 String? _envVarPresenceDetail(EnvironmentVariableModel variable) {
@@ -477,6 +504,15 @@ class GitListSnapshotPreview extends StatelessWidget {
               .values
               .where((v) => v.key.isNotEmpty)
               .map((v) => v.key),
+        ],
+      GitDiffFileKind.workflowIndex => _parseWorkflowNames(json),
+      GitDiffFileKind.workflow => [
+          if (json['name'] != null) json['name'].toString(),
+          for (final item in (json['nodes'] as List? ?? const []))
+            if (item is Map)
+              (item['label']?.toString().trim().isNotEmpty ?? false)
+                  ? item['label'].toString()
+                  : (item['type']?.toString() ?? item['id']?.toString() ?? 'node'),
         ],
       _ => const [],
     };

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:apidash/consts.dart';
-import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../services/services.dart'
@@ -12,6 +12,9 @@ import '../services/services.dart'
         isWorkspaceStorageInitialized,
         workspaceStorage,
         WorkspaceStorage;
+import 'collection_catalog_providers.dart';
+import 'settings_providers.dart';
+import 'ui_providers.dart';
 
 final selectedEnvironmentIdStateProvider = StateProvider<String?>(
   (ref) => null,
@@ -414,5 +417,199 @@ class EnvironmentsStateNotifier
     }
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
+  }
+
+  /// Recreates Global on disk + memory. Never allow an empty env state.
+  Future<void> ensureGlobalEnvironment() async {
+    await workspaceStorage.ensureGlobalEnvironmentExists();
+    final json = workspaceStorage.getEnvironment(kGlobalEnvironmentId);
+    final EnvironmentModel global;
+    if (json != null) {
+      final model = EnvironmentModel.fromJson(Map<String, Object?>.from(json));
+      final hydrated = await _hydrateSecretValues(
+        kGlobalEnvironmentId,
+        model.values,
+      );
+      global = model.copyWith(
+        id: kGlobalEnvironmentId,
+        name: model.name.trim().isNotEmpty
+            ? model.name
+            : kGlobalEnvironmentName,
+        values: hydrated,
+      );
+    } else {
+      global = const EnvironmentModel(
+        id: kGlobalEnvironmentId,
+        name: kGlobalEnvironmentName,
+        values: [],
+      );
+    }
+
+    final current = state ?? <String, EnvironmentModel>{};
+    state = {...current, kGlobalEnvironmentId: global};
+
+    final sequence = ref.read(environmentSequenceProvider);
+    if (!sequence.contains(kGlobalEnvironmentId)) {
+      ref.read(environmentSequenceProvider.notifier).state = [
+        kGlobalEnvironmentId,
+        ...sequence,
+      ];
+    }
+    await workspaceStorage.setEnvironmentIds(
+      ref.read(environmentSequenceProvider),
+    );
+
+    final selected = ref.read(selectedEnvironmentIdStateProvider);
+    if (selected == null || !(state?.containsKey(selected) ?? false)) {
+      ref.read(selectedEnvironmentIdStateProvider.notifier).state =
+          kGlobalEnvironmentId;
+    }
+    final active = ref.read(activeEnvironmentIdProvider);
+    if (active == null || !(state?.containsKey(active) ?? false)) {
+      await ref
+          .read(settingsProvider.notifier)
+          .update(activeEnvironmentId: kGlobalEnvironmentId);
+    }
+  }
+
+  Future<EnvironmentModel?> _loadEnvironmentFromDisk(String id) async {
+    final json = workspaceStorage.getEnvironment(id);
+    if (json == null) {
+      return null;
+    }
+    final model = EnvironmentModel.fromJson(Map<String, Object?>.from(json));
+    final hydrated = await _hydrateSecretValues(id, model.values);
+    return model.copyWith(
+      id: id,
+      name: model.name.trim().isNotEmpty ? model.name : id,
+      values: hydrated,
+    );
+  }
+
+  Future<void> _persistEnvironmentIndex() async {
+    final ids = ref.read(environmentSequenceProvider);
+    final withGlobal = ids.contains(kGlobalEnvironmentId)
+        ? ids
+        : [kGlobalEnvironmentId, ...ids];
+    if (!listEquals(withGlobal, ids)) {
+      ref.read(environmentSequenceProvider.notifier).state = [...withGlobal];
+    }
+    await workspaceStorage.setEnvironmentIds(withGlobal);
+  }
+
+  /// Returns true when a non-global environment was removed (for snackbar).
+  Future<bool> applyExternalEnvironmentRemoved(String environmentId) async {
+    if (environmentId == kGlobalEnvironmentId) {
+      await ensureGlobalEnvironment();
+      return false;
+    }
+
+    final inState = state?.containsKey(environmentId) ?? false;
+    final inSequence =
+        ref.read(environmentSequenceProvider).contains(environmentId);
+    if (!inState && !inSequence) {
+      await ensureGlobalEnvironment();
+      return false;
+    }
+
+    removeEnvironment(environmentId);
+    await _persistEnvironmentIndex();
+    await ensureGlobalEnvironment();
+    return true;
+  }
+
+  Future<bool> applyExternalEnvironmentAdded(String environmentId) async {
+    if (environmentId == kGlobalEnvironmentId) {
+      await ensureGlobalEnvironment();
+      return true;
+    }
+    if (!workspaceStorage.environmentExistsOnDisk(environmentId)) {
+      return false;
+    }
+    final loaded = await _loadEnvironmentFromDisk(environmentId);
+    if (loaded == null) {
+      return false;
+    }
+    final alreadyListed =
+        (state?.containsKey(environmentId) ?? false) ||
+        ref.read(environmentSequenceProvider).contains(environmentId);
+
+    state = {...?state, environmentId: loaded};
+    final sequence = ref.read(environmentSequenceProvider);
+    if (!sequence.contains(environmentId)) {
+      ref.read(environmentSequenceProvider.notifier).state = [
+        ...sequence,
+        environmentId,
+      ];
+    }
+    await _persistEnvironmentIndex();
+    await ensureGlobalEnvironment();
+    return !alreadyListed;
+  }
+
+  Future<bool> applyExternalEnvironmentContentChanged(
+    String environmentId,
+  ) async {
+    if (environmentId == kGlobalEnvironmentId) {
+      if (!workspaceStorage.environmentExistsOnDisk(kGlobalEnvironmentId)) {
+        await ensureGlobalEnvironment();
+        return true;
+      }
+    } else if (!workspaceStorage.environmentExistsOnDisk(environmentId)) {
+      return false;
+    }
+
+    final loaded = await _loadEnvironmentFromDisk(environmentId);
+    if (loaded == null) {
+      if (environmentId == kGlobalEnvironmentId) {
+        await ensureGlobalEnvironment();
+        return true;
+      }
+      return false;
+    }
+
+    state = {...?state, environmentId: loaded};
+    final sequence = ref.read(environmentSequenceProvider);
+    if (!sequence.contains(environmentId)) {
+      ref.read(environmentSequenceProvider.notifier).state = [
+        ...sequence,
+        environmentId,
+      ];
+      await _persistEnvironmentIndex();
+    }
+    await ensureGlobalEnvironment();
+    return true;
+  }
+
+  Future<bool> applyExternalEnvironmentIndexChanged() async {
+    final indexIds = workspaceStorage.getEnvironmentIds() ?? <String>[];
+    final diskIds = workspaceStorage.listEnvironmentIdsOnDisk();
+    final ordered = <String>[
+      kGlobalEnvironmentId,
+      for (final id in indexIds)
+        if (id != kGlobalEnvironmentId) id,
+      for (final id in diskIds)
+        if (id != kGlobalEnvironmentId && !indexIds.contains(id)) id,
+    ];
+
+    final nextState = <String, EnvironmentModel>{};
+    for (final id in ordered) {
+      if (id == kGlobalEnvironmentId &&
+          !workspaceStorage.environmentExistsOnDisk(id)) {
+        continue;
+      }
+      final loaded = await _loadEnvironmentFromDisk(id);
+      if (loaded != null) {
+        nextState[id] = loaded;
+      }
+    }
+
+    state = nextState.isEmpty ? null : nextState;
+    ref.read(environmentSequenceProvider.notifier).state = [
+      for (final id in ordered)
+        if (nextState.containsKey(id) || id == kGlobalEnvironmentId) id,
+    ];
+    await ensureGlobalEnvironment();
+    return true;
   }
 }

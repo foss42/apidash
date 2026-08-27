@@ -1,0 +1,619 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/sync/consts.dart';
+import 'package:apidash/workflow/consts.dart';
+import 'package:apidash/workflow/models/workflow_models.dart';
+import 'package:apidash/workflow/providers/workflow_providers.dart';
+import 'package:apidash/workflow/providers/workflow_ui_providers.dart';
+import 'package:apidash/workflow/utils/workflow_run_path.dart';
+import 'package:apidash/workflow/widgets/workflow_add_node_sheet.dart';
+import 'package:apidash/workflow/widgets/workflow_logic_node_editor.dart';
+import 'package:apidash/workflow/widgets/workflow_node_layout.dart';
+import 'package:apidash/workflow/widgets/workflow_request_node_card.dart';
+import 'package:apidash/workflow/widgets/workflow_run_bar.dart';
+import 'package:apidash/workflow/widgets/workflow_run_toast.dart';
+import 'package:apidash/workflow/widgets/workflow_vyuh_adapter.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vyuh_node_flow/vyuh_node_flow.dart';
+
+/// Vyuh editor host. Riverpod [WorkflowDocument] is SoT; Vyuh is ephemeral.
+class WorkflowCanvas extends ConsumerStatefulWidget {
+  const WorkflowCanvas({
+    super.key,
+    this.readOnly = false,
+  });
+
+  final bool readOnly;
+
+  @override
+  ConsumerState<WorkflowCanvas> createState() => _WorkflowCanvasState();
+}
+
+class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
+  late final NodeFlowController<String, void> _controller;
+  String? _fingerprint;
+  bool _writing = false;
+  (String nodeId, String portId, Offset start)? _wire;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = NodeFlowController<String, void>(
+      config: widget.readOnly
+          ? NodeFlowConfig(minZoom: kWorkflowMobileMinZoom)
+          : null,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _fitWhenReady({int attempt = 0}) {
+    if (!widget.readOnly || !mounted) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (_controller.visibleGraphBounds == Rect.zero && attempt < 12) {
+        _fitWhenReady(attempt: attempt + 1);
+        return;
+      }
+      _controller.fitToView();
+    });
+  }
+
+  void _load(WorkflowDocument doc) {
+    final fp = WorkflowVyuhAdapter.structureFingerprint(doc);
+    if (fp == _fingerprint) {
+      return;
+    }
+    _fingerprint = fp;
+    _writing = true;
+    try {
+      _controller.loadGraph(WorkflowVyuhAdapter.toGraph(doc));
+    } finally {
+      _writing = false;
+    }
+    _styleRunPath(doc);
+    _fitWhenReady();
+  }
+
+  void _styleRunPath(WorkflowDocument doc) {
+    final results = ref.read(workflowNodeRunResultsProvider);
+    final scheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
+    final hasRun = results.isNotEmpty;
+    final byId = {for (final e in doc.graph.edges) e.id: e};
+
+    for (final connection in _controller.connections) {
+      final edge = byId[connection.id];
+      if (edge == null) {
+        continue;
+      }
+      final base = WorkflowNodeLayout.edgeColor(edge.sourceHandle, scheme);
+      if (!hasRun) {
+        connection
+          ..color = base
+          ..strokeWidth = 2
+          ..animated = false
+          ..animationEffect = null;
+        continue;
+      }
+      final style = workflowEdgeRunStyle(
+        edge: edge,
+        results: results,
+        runInProgress: ref.read(workflowRunInProgressProvider),
+      );
+      final active = style == WorkflowRunEdgeStyle.active ||
+          style == WorkflowRunEdgeStyle.upcoming;
+      connection
+        ..color = workflowRunEdgeColor(
+          style: style,
+          base: base.withValues(
+            alpha: style == WorkflowRunEdgeStyle.idle ? 0.28 : 1,
+          ),
+          scheme: scheme,
+          brightness: brightness,
+        )
+        ..strokeWidth = workflowRunEdgeStrokeWidth(style)
+        ..animated = active
+        ..animationEffect =
+            active ? ConnectionEffects.flowingDashFast : null;
+    }
+  }
+
+  Future<void> _afterWrite(Future<void> Function() write) async {
+    if (_writing || widget.readOnly) {
+      return;
+    }
+    await write();
+    final doc = ref.read(activeWorkflowProvider);
+    if (doc != null) {
+      _fingerprint = WorkflowVyuhAdapter.structureFingerprint(doc);
+    }
+  }
+
+  WorkflowGraphNode? _model(String id) {
+    return ref
+        .read(activeWorkflowProvider)
+        ?.graph
+        .nodes
+        .where((n) => n.id == id)
+        .firstOrNull;
+  }
+
+  Future<void> _deleteNode(WorkflowGraphNode node) async {
+    if (widget.readOnly) {
+      return;
+    }
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete node?'),
+        content: Text(
+          'Remove "${node.label.isEmpty ? node.type.name : node.label}"?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text(kLabelCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(kLabelDelete),
+          ),
+        ],
+      ),
+    );
+    if (ok == true && mounted) {
+      await ref.read(activeWorkflowProvider.notifier).deleteNode(node.id);
+      ref.read(selectedWorkflowNodeIdProvider.notifier).state = null;
+    }
+  }
+
+  NodeFlowTheme _theme(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final base = dark ? NodeFlowTheme.dark : NodeFlowTheme.light;
+    return base.copyWith(
+      backgroundColor: Color.alphaBlend(
+        scheme.surfaceContainerLowest.withValues(alpha: 0.85),
+        scheme.surface,
+      ),
+      gridTheme: base.gridTheme.copyWith(
+        style: GridStyles.dots,
+        color: scheme.outline.withValues(alpha: dark ? 0.18 : 0.12),
+      ),
+      // Cards draw their own chrome.
+      nodeTheme: base.nodeTheme.copyWith(
+        backgroundColor: Colors.transparent,
+        selectedBackgroundColor: Colors.transparent,
+        highlightBackgroundColor: Colors.transparent,
+        borderColor: Colors.transparent,
+        selectedBorderColor: Colors.transparent,
+        highlightBorderColor: Colors.transparent,
+        borderWidth: 0,
+        selectedBorderWidth: 0,
+      ),
+      connectionTheme: base.connectionTheme.copyWith(
+        style: ConnectionStyles.bezier,
+      ),
+      temporaryConnectionTheme: base.temporaryConnectionTheme.copyWith(
+        style: ConnectionStyles.bezier,
+        color: scheme.primary.withValues(alpha: 0.85),
+      ),
+    );
+  }
+
+  Widget _card(WorkflowGraphNode node) {
+    final selected = ref.watch(selectedWorkflowNodeIdProvider) == node.id;
+    final runResult = ref.watch(workflowNodeRunResultsProvider)[node.id];
+    final VoidCallback? dup = widget.readOnly
+        ? null
+        : () => ref.read(activeWorkflowProvider.notifier).duplicateNode(node.id);
+    final VoidCallback? del =
+        widget.readOnly ? null : () => _deleteNode(node);
+
+    return switch (node.type) {
+      WorkflowNodeType.manualStart => WorkflowStartNodeCard(
+          node: node,
+          selected: selected,
+          runResult: runResult,
+          onPlay: () => triggerWorkflowRun(context, ref),
+        ),
+      WorkflowNodeType.request => WorkflowRequestNodeCard(
+          node: node,
+          selected: selected,
+          runResult: runResult,
+          onDuplicate: dup,
+          onDelete: del,
+        ),
+      WorkflowNodeType.loop => WorkflowLoopNodeCard(
+          node: node,
+          selected: selected,
+          runResult: runResult,
+          onDuplicate: dup,
+          onDelete: del,
+        ),
+      WorkflowNodeType.condition => WorkflowConditionNodeCard(
+          node: node,
+          selected: selected,
+          runResult: runResult,
+          onDuplicate: dup,
+          onDelete: del,
+        ),
+      WorkflowNodeType.delay => WorkflowDelayNodeCard(
+          node: node,
+          selected: selected,
+          runResult: runResult,
+          onDuplicate: dup,
+          onDelete: del,
+        ),
+      WorkflowNodeType.sequence => WorkflowSequenceNodeCard(
+          node: node,
+          selected: selected,
+          runResult: runResult,
+          onDuplicate: dup,
+          onDelete: del,
+        ),
+    };
+  }
+
+  Future<void> _attachSequenceToLoop(WorkflowGraphNode loop) async {
+    if (_writing || widget.readOnly) {
+      return;
+    }
+    final sequenceId = await ref
+        .read(activeWorkflowProvider.notifier)
+        .attachSequenceToLoop(loop.id);
+    final doc = ref.read(activeWorkflowProvider);
+    if (doc != null) {
+      _fingerprint = WorkflowVyuhAdapter.structureFingerprint(doc);
+    }
+    if (!mounted || sequenceId == null) {
+      return;
+    }
+    final model = _model(sequenceId);
+    if (model == null) {
+      return;
+    }
+    await openWorkflowNodeEditor(context, ref, node: model);
+  }
+
+  void _selectNode(String nodeId) {
+    ref.read(selectedWorkflowNodeIdProvider.notifier).state = nodeId;
+    final results = ref.read(workflowNodeRunResultsProvider);
+    if (results.isEmpty) {
+      return;
+    }
+    // Inspector open (expanded) → show that step's run info like chips.
+    if (!ref.read(workflowRunInspectorExpandedProvider)) {
+      return;
+    }
+    final key = workflowRunResultKeyForNode(
+      nodeId: nodeId,
+      results: results,
+      stepOrder: ref.read(workflowRunStepOrderProvider),
+    );
+    if (key != null) {
+      ref.read(selectedWorkflowRunResultKeyProvider.notifier).state = key;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final workflow = ref.watch(activeWorkflowProvider);
+    final runResults = ref.watch(workflowNodeRunResultsProvider);
+    final readOnly = widget.readOnly;
+
+    ref.listen(activeWorkflowProvider, (_, next) {
+      if (next != null) {
+        _load(next);
+      }
+    });
+    ref.listen(workflowNodeRunResultsProvider, (_, _) {
+      final doc = ref.read(activeWorkflowProvider);
+      if (doc != null) {
+        _styleRunPath(doc);
+      }
+    });
+
+    if (workflow == null) {
+      return Center(
+        child: Text(
+          readOnly ? 'Select a workflow' : 'Select or create a workflow',
+        ),
+      );
+    }
+    if (_fingerprint !=
+        WorkflowVyuhAdapter.structureFingerprint(workflow)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _load(workflow);
+        }
+      });
+    }
+
+    final showHint = !readOnly &&
+        workflow.description.isEmpty &&
+        workflow.graph.nodes
+                .where((n) => n.type != WorkflowNodeType.manualStart)
+                .length <=
+            1;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        NodeFlowEditor<String, void>(
+          controller: _controller,
+          theme: _theme(context),
+          behavior:
+              readOnly ? NodeFlowBehavior.inspect : NodeFlowBehavior.design,
+          labelBuilder: (context, connection, label, rect, onTap) {
+            if (label.id != 'detach') {
+              return Text(label.text);
+            }
+            if (readOnly) {
+              return const SizedBox.shrink();
+            }
+            final scheme = Theme.of(context).colorScheme;
+            return Material(
+              color: scheme.surfaceContainerHighest,
+              elevation: 1,
+              shape: const CircleBorder(),
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: () => _afterWrite(
+                  () => ref
+                      .read(activeWorkflowProvider.notifier)
+                      .disconnectEdge(connection.id),
+                ),
+                child: SizedBox(
+                  width: rect.width.clamp(18, 24),
+                  height: rect.height.clamp(18, 24),
+                  child: Icon(
+                    Icons.close,
+                    size: 12,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            );
+          },
+          nodeBuilder: (context, node) {
+            final model = workflow.graph.nodes
+                .where((n) => n.id == node.id)
+                .firstOrNull;
+            if (model == null) {
+              return const SizedBox.shrink();
+            }
+            final result = runResults[model.id];
+            final dim = runResults.isNotEmpty &&
+                ref.watch(workflowRunInProgressProvider) &&
+                (result == null ||
+                    result.status == WorkflowNodeRunStatus.skipped);
+            return Opacity(opacity: dim ? 0.58 : 1, child: _card(model));
+          },
+          events: NodeFlowEvents<String, void>(
+            onInit: readOnly ? () => _fitWhenReady() : null,
+            node: NodeEvents<String>(
+              onTap: (n) => _selectNode(n.id),
+              onSelected: (n) {
+                if (n != null) {
+                  _selectNode(n.id);
+                } else {
+                  ref.read(selectedWorkflowNodeIdProvider.notifier).state =
+                      null;
+                }
+              },
+              onDoubleTap: readOnly
+                  ? null
+                  : (n) {
+                      final model = _model(n.id);
+                      if (model == null) {
+                        return;
+                      }
+                      _selectNode(n.id);
+                      openWorkflowNodeEditor(context, ref, node: model);
+                    },
+              onDragStop: readOnly
+                  ? null
+                  : (n) => _afterWrite(
+                        () => ref
+                            .read(activeWorkflowProvider.notifier)
+                            .updateNodePosition(n.id, n.position.value),
+                      ),
+            ),
+            connection: readOnly
+                ? null
+                : ConnectionEvents<String, void>(
+                    onCreated: (c) {
+                      c.label =
+                          ConnectionLabel.center(text: '×', id: 'detach');
+                      final source = _model(c.sourceNodeId);
+                      final target = _model(c.targetNodeId);
+                      // For each Seq dropped on Sequence → store Sequence → Seq.
+                      if (source?.type == WorkflowNodeType.loop &&
+                          c.sourcePortId == 'list' &&
+                          target?.type == WorkflowNodeType.sequence) {
+                        _afterWrite(
+                          () => ref
+                              .read(activeWorkflowProvider.notifier)
+                              .linkSequenceToLoop(
+                                loopNodeId: c.sourceNodeId,
+                                sequenceNodeId: c.targetNodeId,
+                                edgeId: c.id,
+                              ),
+                        );
+                        return;
+                      }
+                      _afterWrite(
+                        () =>
+                            ref.read(activeWorkflowProvider.notifier).connectNodes(
+                                  sourceId: c.sourceNodeId,
+                                  sourceHandle:
+                                      workflowPortIdToHandle(c.sourcePortId),
+                                  targetId: c.targetNodeId,
+                                  targetHandle:
+                                      workflowPortIdToHandle(c.targetPortId),
+                                  edgeId: c.id,
+                                ),
+                      );
+                    },
+                    onDeleted: (c) => _afterWrite(
+                      () => ref
+                          .read(activeWorkflowProvider.notifier)
+                          .disconnectEdge(c.id),
+                    ),
+                    onConnectStart: (node, port) {
+                      final pos = node.position.value;
+                      final size = node.size.value;
+                      final Offset start = switch (port.position) {
+                        PortPosition.right =>
+                          pos + Offset(size.width, port.offset.dy),
+                        PortPosition.left => pos + Offset(0, port.offset.dy),
+                        PortPosition.top => pos + Offset(port.offset.dx, 0),
+                        PortPosition.bottom =>
+                          pos + Offset(port.offset.dx, size.height),
+                      };
+                      _wire = (node.id, port.id, start);
+                    },
+                    onConnectEnd: (target, _, pos) {
+                      final wire = _wire;
+                      _wire = null;
+                      if (target != null || wire == null) {
+                        return;
+                      }
+                      final end = pos.offset;
+                      if ((end - wire.$3).distance < 48) {
+                        return;
+                      }
+                      // Stretch For each Seq into empty space → add Sequence.
+                      if (wire.$2 == 'list' &&
+                          _model(wire.$1)?.type == WorkflowNodeType.loop) {
+                        final loop = _model(wire.$1);
+                        if (loop != null) {
+                          _attachSequenceToLoop(loop);
+                        }
+                        return;
+                      }
+                      // Sequence only wires to For each Seq — no stretch-add.
+                      if (_model(wire.$1)?.type == WorkflowNodeType.sequence) {
+                        return;
+                      }
+                      showWorkflowAddNodeSheet(
+                        context,
+                        ref,
+                        connectFrom: WorkflowAddNodeConnectFrom(
+                          sourceNodeId: wire.$1,
+                          sourceHandle: workflowPortIdToHandle(wire.$2),
+                          position: end,
+                        ),
+                      );
+                    },
+                    onBeforeComplete: (ctx) {
+                      if (ctx.sourceNode.id == ctx.targetNode.id ||
+                          ctx.targetNode.type ==
+                              WorkflowNodeType.manualStart.name) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      // For each Seq → Sequence (saved as Sequence → Seq).
+                      if (ctx.sourcePort.id == 'list' &&
+                          ctx.sourceNode.type == WorkflowNodeType.loop.name &&
+                          ctx.targetNode.type ==
+                              WorkflowNodeType.sequence.name) {
+                        return ConnectionValidationResult.allow();
+                      }
+                      if (ctx.sourcePort.id == 'list') {
+                        return ConnectionValidationResult.deny();
+                      }
+                      if (ctx.targetNode.type ==
+                          WorkflowNodeType.sequence.name) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      if (ctx.targetPort.id == 'list' &&
+                          ctx.sourceNode.type !=
+                              WorkflowNodeType.sequence.name) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      if (ctx.sourceNode.type ==
+                              WorkflowNodeType.sequence.name &&
+                          (ctx.targetNode.type != WorkflowNodeType.loop.name ||
+                              ctx.targetPort.id != 'list')) {
+                        return ConnectionValidationResult.deny();
+                      }
+                      return ConnectionValidationResult.allow();
+                    },
+                  ),
+          ),
+        ),
+        const Positioned(right: 12, top: 12, child: WorkflowCanvasRunToast()),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 16,
+          child: Center(
+            child: WorkflowRunBar(readOnly: readOnly),
+          ),
+        ),
+        if (showHint)
+          Positioned(
+            left: 16,
+            bottom: 16,
+            child: _Hint(
+              onHelp: () => launchUrl(Uri.parse(kLearnWorkflowsUrl)),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _Hint extends StatelessWidget {
+  const _Hint({required this.onHelp});
+
+  final VoidCallback onHelp;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      elevation: 1,
+      color: theme.colorScheme.surfaceContainerHigh,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.tips_and_updates_outlined,
+              size: 18,
+              color: theme.colorScheme.primary,
+            ),
+            kHSpacer8,
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 280),
+              child: Text(
+                'Drag a port to connect, or stretch into empty space to add a node.',
+                style: theme.textTheme.bodySmall,
+              ),
+            ),
+            IconButton(
+              tooltip: kLabelWorkflowHelp,
+              onPressed: onHelp,
+              icon: const Icon(Icons.open_in_new, size: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

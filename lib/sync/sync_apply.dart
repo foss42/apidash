@@ -62,6 +62,19 @@ List<String> expandSyncWritePaths(Iterable<SyncFileChange> outgoing) {
     );
   }
 
+  var touchedWorkflows = false;
+  for (final path in List<String>.from(expanded)) {
+    if (!path.startsWith('$kWorkspaceWorkflowsDir/')) {
+      continue;
+    }
+    touchedWorkflows = true;
+  }
+  if (touchedWorkflows) {
+    expanded.add(
+      '$kWorkspaceWorkflowsDir/$kWorkspaceWorkflowsIndexFile',
+    );
+  }
+
   return expanded.toList()..sort();
 }
 

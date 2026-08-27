@@ -12,6 +12,7 @@ import 'home_page/home_page.dart';
 import 'history/history_page.dart';
 import 'settings_page.dart';
 import 'terminal/terminal_page.dart';
+import 'package:apidash/workflow/pages/workflow_page.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -45,9 +46,10 @@ class Dashboard extends ConsumerWidget {
                     children: [
                     IconButton(
                       tooltip: kLabelRequests,
-                      isSelected: railIdx == 0,
+                      isSelected: railIdx == kNavRailRequestsIndex,
                       onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 0;
+                        ref.read(navRailIndexStateProvider.notifier).state =
+                            kNavRailRequestsIndex;
                       },
                       icon: const Icon(Icons.auto_awesome_mosaic_outlined),
                       selectedIcon: const Icon(Icons.auto_awesome_mosaic),
@@ -61,10 +63,29 @@ class Dashboard extends ConsumerWidget {
                     ),
                     kVSpacer10,
                     IconButton(
-                      tooltip: kLabelVariables,
-                      isSelected: railIdx == 1,
+                      tooltip: kLabelWorkflows,
+                      isSelected: railIdx == kNavRailWorkflowsIndex,
                       onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 1;
+                        ref.read(navRailIndexStateProvider.notifier).state =
+                            kNavRailWorkflowsIndex;
+                      },
+                      icon: const Icon(Icons.account_tree_outlined),
+                      selectedIcon: const Icon(Icons.account_tree),
+                    ),
+                    Text(
+                      kLabelWorkflows,
+                      style: Theme.of(context).textTheme.labelSmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                    kVSpacer10,
+                    IconButton(
+                      tooltip: kLabelVariables,
+                      isSelected: railIdx == kNavRailVariablesIndex,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state =
+                            kNavRailVariablesIndex;
                       },
                       icon: const Icon(Icons.laptop_windows_outlined),
                       selectedIcon: const Icon(Icons.laptop_windows),
@@ -79,9 +100,10 @@ class Dashboard extends ConsumerWidget {
                     kVSpacer10,
                     IconButton(
                       tooltip: kLabelHistory,
-                      isSelected: railIdx == 2,
+                      isSelected: railIdx == kNavRailHistoryIndex,
                       onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 2;
+                        ref.read(navRailIndexStateProvider.notifier).state =
+                            kNavRailHistoryIndex;
                       },
                       icon: const Icon(Icons.history_outlined),
                       selectedIcon: const Icon(Icons.history_rounded),
@@ -188,6 +210,7 @@ class Dashboard extends ConsumerWidget {
                 index: railIdx,
                 children: const [
                   HomePage(),
+                  WorkflowPage(),
                   EnvironmentPage(),
                   HistoryPage(),
                   CollaborationPage(),

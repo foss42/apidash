@@ -79,6 +79,7 @@ class AutoFixService {
       case ChatActionType.other:
         // defer to specific target logic if needed
         return null;
+      case ChatActionType.applyWorkflow:
       case ChatActionType.showLanguages:
       case ChatActionType.noAction:
       case ChatActionType.uploadAsset:

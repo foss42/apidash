@@ -19,6 +19,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.autocompleteNoTrigger,
     this.readOnly = false,
     this.obscureText = false,
+    this.expands = false,
   }) : assert(
          !(controller != null && initialValue != null),
          'controller and initialValue cannot be simultaneously defined.',
@@ -36,6 +37,8 @@ class EnvironmentTriggerField extends StatefulWidget {
   final AutocompleteNoTrigger? autocompleteNoTrigger;
   final bool readOnly;
   final bool obscureText;
+  /// Multiline fill (AI system/user prompts). URL/auth stay single-line.
+  final bool expands;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -140,6 +143,27 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
         ),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
+        if (widget.expands) {
+          return ExtendedTextField(
+            controller: textEditingController,
+            focusNode: focusnode,
+            decoration: widget.decoration,
+            style: widget.style,
+            onChanged: widget.onChanged,
+            onSubmitted: widget.onFieldSubmitted,
+            specialTextSpanBuilder: EnvRegExpSpanBuilder(),
+            onTapOutside: (event) {
+              _focusNode.unfocus();
+            },
+            readOnly: widget.readOnly,
+            obscureText: widget.obscureText,
+            expands: true,
+            maxLines: null,
+            textAlignVertical: TextAlignVertical.top,
+            keyboardType: TextInputType.multiline,
+          );
+        }
+        // Default path matches main (URL/auth/etc.).
         return ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,

@@ -23,8 +23,14 @@ void resetWorkspaceStorage() {
 
 String _environmentFileName(String id) => '$id$kJsonFileExtension';
 
+String _requestHistoryDir() =>
+    p.join(kWorkspaceHistoryDir, kWorkspaceRequestHistoryDir);
+
 String _historyRecordPath(String id) =>
-    p.join(kWorkspaceHistoryDir, '$id$kJsonFileExtension');
+    p.join(_requestHistoryDir(), '$id$kJsonFileExtension');
+
+String _historyMetasPath() =>
+    p.join(_requestHistoryDir(), kWorkspaceRequestHistoryIndexFile);
 
 String _collectionDir(String collectionId) =>
     p.join(kWorkspaceCollectionsDir, collectionId);
@@ -173,6 +179,31 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
   final historyDir = Directory(p.join(root.path, kWorkspaceHistoryDir));
   if (!await historyDir.exists()) {
     await historyDir.create(recursive: true);
+  }
+  final requestHistoryDir = Directory(
+    p.join(root.path, kWorkspaceHistoryDir, kWorkspaceRequestHistoryDir),
+  );
+  if (!await requestHistoryDir.exists()) {
+    await requestHistoryDir.create(recursive: true);
+  }
+  final flowHistoryDir = Directory(
+    p.join(root.path, kWorkspaceHistoryDir, kWorkspaceFlowHistoryDir),
+  );
+  if (!await flowHistoryDir.exists()) {
+    await flowHistoryDir.create(recursive: true);
+  }
+
+  final workflowsDir = Directory(p.join(root.path, kWorkspaceWorkflowsDir));
+  if (!await workflowsDir.exists()) {
+    await workflowsDir.create(recursive: true);
+  }
+  final workflowIndexFile = File(
+    p.join(root.path, kWorkspaceWorkflowsDir, kWorkspaceWorkflowsIndexFile),
+  );
+  if (!await workflowIndexFile.exists()) {
+    await writeJsonAtomic(workflowIndexFile.path, {
+      kWorkspaceWorkflowsIndexKey: <String>[],
+    });
   }
 
   final envIndexFile = File(
@@ -552,6 +583,51 @@ class WorkspaceStorage {
     );
   }
 
+  bool environmentExistsOnDisk(String id) {
+    return File(
+      _path(p.join(kWorkspaceEnvironmentsDir, _environmentFileName(id))),
+    ).existsSync();
+  }
+
+  List<String> listEnvironmentIdsOnDisk() {
+    final envDir = Directory(_path(kWorkspaceEnvironmentsDir));
+    if (!envDir.existsSync()) {
+      return [];
+    }
+    final result = <String>[];
+    for (final entity in envDir.listSync()) {
+      if (entity is! File || !entity.path.endsWith(kJsonFileExtension)) {
+        continue;
+      }
+      final fileName = p.basenameWithoutExtension(entity.path);
+      if (fileName ==
+          p.basenameWithoutExtension(kWorkspaceEnvironmentIndexFile)) {
+        continue;
+      }
+      if (fileName.isEmpty || fileName.startsWith('.')) {
+        continue;
+      }
+      result.add(fileName);
+    }
+    result.sort();
+    return result;
+  }
+
+  /// Ensures [kGlobalEnvironmentId] exists on disk and in the environment index.
+  Future<void> ensureGlobalEnvironmentExists() async {
+    final ids = getEnvironmentIds()?.toList() ?? <String>[];
+    if (!ids.contains(kGlobalEnvironmentId)) {
+      await setEnvironmentIds([kGlobalEnvironmentId, ...ids]);
+    }
+    if (!environmentExistsOnDisk(kGlobalEnvironmentId)) {
+      await setEnvironment(kGlobalEnvironmentId, {
+        'id': kGlobalEnvironmentId,
+        'name': kGlobalEnvironmentName,
+        'values': <Map<String, Object?>>[],
+      });
+    }
+  }
+
   Map<String, dynamic>? getEnvironment(String id) {
     final json = _readJsonSync(
       p.join(kWorkspaceEnvironmentsDir, _environmentFileName(id)),
@@ -610,9 +686,6 @@ class WorkspaceStorage {
       unawaited(writeJsonAtomic(newPath, Map<String, Object?>.from(json)));
     }
   }
-
-  String _historyMetasPath() =>
-      p.join(kWorkspaceHistoryDir, kWorkspaceHistoryIndexFile);
 
   Map<String, Map<String, dynamic>>? getAllHistoryMetas() {
     final json = _readJsonSync(_historyMetasPath());
@@ -702,23 +775,124 @@ class WorkspaceStorage {
   }
 
   Future<void> clearAllHistory() async {
-    final historyDir = Directory(_path(kWorkspaceHistoryDir));
-    if (await historyDir.exists()) {
-      await for (final entity in historyDir.list()) {
-        if (entity is File) {
-          final name = p.basename(entity.path);
-          if (name == kWorkspaceHistoryIndexFile) {
-            continue;
-          }
-          if (name.endsWith(kJsonFileExtension)) {
-            await entity.delete();
-          }
-        } else if (entity is Directory) {
-          await entity.delete(recursive: true);
+    final requestHistoryDir = Directory(_path(_requestHistoryDir()));
+    if (await requestHistoryDir.exists()) {
+      await for (final entity in requestHistoryDir.list()) {
+        if (entity is File &&
+            p.basename(entity.path) != kWorkspaceRequestHistoryIndexFile &&
+            p.basename(entity.path).endsWith(kJsonFileExtension)) {
+          await entity.delete();
         }
       }
     }
     await setAllHistoryMetas(null);
+  }
+
+  Future<void> clearAllFlowHistory() async {
+    final flowHistoryDir = Directory(_path(_flowHistoryDir()));
+    if (await flowHistoryDir.exists()) {
+      await for (final entity in flowHistoryDir.list()) {
+        if (entity is File &&
+            p.basename(entity.path) != kWorkspaceFlowHistoryIndexFile &&
+            p.basename(entity.path).endsWith(kJsonFileExtension)) {
+          await entity.delete();
+        }
+      }
+    }
+    await setAllFlowHistoryMetas(null);
+  }
+
+  String _flowHistoryDir() =>
+      p.join(kWorkspaceHistoryDir, kWorkspaceFlowHistoryDir);
+
+  String _flowHistoryIndexPath() =>
+      p.join(_flowHistoryDir(), kWorkspaceFlowHistoryIndexFile);
+
+  String _flowHistoryRecordPath(String runId) =>
+      p.join(_flowHistoryDir(), '$runId$kJsonFileExtension');
+
+  Map<String, Map<String, dynamic>>? getAllFlowHistoryMetas() {
+    final json = _readJsonSync(_flowHistoryIndexPath());
+    if (json == null) {
+      return null;
+    }
+    final metas = json[kWorkspaceFlowHistoryMetasKey];
+    if (metas is! Map || metas.isEmpty) {
+      return null;
+    }
+    return Map<String, Map<String, dynamic>>.fromEntries(
+      metas.entries.map((e) {
+        final value = e.value;
+        if (value is! Map) {
+          return MapEntry(e.key.toString(), <String, dynamic>{});
+        }
+        return MapEntry(e.key.toString(), Map<String, dynamic>.from(value));
+      }),
+    );
+  }
+
+  Future<void> setAllFlowHistoryMetas(
+    Map<String, Map<String, dynamic>>? metas,
+  ) async {
+    await writeJsonAtomic(_path(_flowHistoryIndexPath()), {
+      kWorkspaceFlowHistoryMetasKey:
+          metas?.map((k, v) => MapEntry(k, Map<String, Object?>.from(v))) ??
+          <String, Map<String, Object?>>{},
+    });
+  }
+
+  Future<void> setFlowHistoryMeta(
+    String runId,
+    Map<String, dynamic>? metaJson,
+  ) async {
+    if (metaJson == null) {
+      await deleteFlowHistoryMeta(runId);
+      return;
+    }
+    final all = Map<String, Map<String, dynamic>>.from(
+      getAllFlowHistoryMetas() ?? {},
+    );
+    all[runId] = Map<String, dynamic>.from(metaJson);
+    await setAllFlowHistoryMetas(all);
+  }
+
+  Future<void> deleteFlowHistoryMeta(String runId) async {
+    final all = getAllFlowHistoryMetas();
+    if (all == null || !all.containsKey(runId)) {
+      return;
+    }
+    all.remove(runId);
+    await setAllFlowHistoryMetas(all.isEmpty ? null : all);
+  }
+
+  Future<Map<String, dynamic>?> getFlowHistoryRecord(String runId) async {
+    final json = await readJsonFile(_path(_flowHistoryRecordPath(runId)));
+    if (json == null) {
+      return null;
+    }
+    return Map<String, dynamic>.from(json);
+  }
+
+  Future<void> setFlowHistoryRecord(
+    String runId,
+    Map<String, dynamic>? recordJson,
+  ) async {
+    if (recordJson == null) {
+      await deleteFlowHistoryRecord(runId);
+      return;
+    }
+    await writeJsonAtomic(
+      _path(_flowHistoryRecordPath(runId)),
+      Map<String, Object?>.from(recordJson),
+    );
+  }
+
+  Future<void> deleteFlowHistoryRecord(String runId) async {
+    final recordFile = File(_path(_flowHistoryRecordPath(runId)));
+    if (await recordFile.exists()) {
+      await recordFile.delete();
+    }
+    await deleteFlowHistoryMeta(runId);
   }
 
   Future<void> clear() async {
@@ -762,6 +936,20 @@ class WorkspaceStorage {
     }
 
     await clearAllHistory();
+    await clearAllFlowHistory();
+
+    final workflowsDir = Directory(_path(kWorkspaceWorkflowsDir));
+    if (await workflowsDir.exists()) {
+      await for (final entity in workflowsDir.list()) {
+        if (entity is Directory) {
+          await entity.delete(recursive: true);
+        } else if (entity is File &&
+            p.basename(entity.path) != kWorkspaceWorkflowsIndexFile) {
+          await entity.delete();
+        }
+      }
+    }
+    await setWorkflowsIndex(const []);
   }
 
   Future<void> removeUnused(
@@ -806,6 +994,138 @@ class WorkspaceStorage {
           }
         }
       }
+    }
+  }
+
+  String _workflowFileName(String workflowId) =>
+      '$workflowId$kJsonFileExtension';
+
+  String _workflowFilePath(String workflowId) =>
+      p.join(kWorkspaceWorkflowsDir, _workflowFileName(workflowId));
+
+  bool workflowExistsOnDisk(String workflowId) {
+    return File(_path(_workflowFilePath(workflowId))).existsSync();
+  }
+
+  List<String> listWorkflowIdsOnDisk() {
+    final workflowsDir = Directory(_path(kWorkspaceWorkflowsDir));
+    if (!workflowsDir.existsSync()) {
+      return [];
+    }
+    final result = <String>[];
+    for (final entity in workflowsDir.listSync()) {
+      if (entity is! File) {
+        continue;
+      }
+      final fileName = p.basename(entity.path);
+      if (fileName == kWorkspaceWorkflowsIndexFile ||
+          !fileName.endsWith(kJsonFileExtension)) {
+        continue;
+      }
+      final id = fileName.substring(
+        0,
+        fileName.length - kJsonFileExtension.length,
+      );
+      if (id.isEmpty || id.startsWith('.')) {
+        continue;
+      }
+      result.add(id);
+    }
+    result.sort();
+    return result;
+  }
+
+  /// Union of index entries and on-disk workflow files.
+  List<String> getKnownWorkflowIds() {
+    return {
+      ...getWorkflowsIndex(),
+      ...listWorkflowIdsOnDisk(),
+    }.toList()
+      ..sort();
+  }
+
+  List<String> getWorkflowsIndex() {
+    final json = _readJsonSync(
+      p.join(kWorkspaceWorkflowsDir, kWorkspaceWorkflowsIndexFile),
+    );
+    if (json == null) {
+      return [];
+    }
+    final entries = json[kWorkspaceWorkflowsIndexKey];
+    if (entries is! List) {
+      return [];
+    }
+    final result = <String>[];
+    for (final item in entries) {
+      if (item is String && item.trim().isNotEmpty) {
+        result.add(item.trim());
+      }
+    }
+    return result;
+  }
+
+  Future<void> setWorkflowsIndex(List<String> workflows) async {
+    await writeJsonAtomic(
+      _path(p.join(kWorkspaceWorkflowsDir, kWorkspaceWorkflowsIndexFile)),
+      {
+        kWorkspaceWorkflowsIndexKey: workflows,
+      },
+    );
+  }
+
+  Future<void> renameWorkflow(String oldName, String newName) async {
+    if (oldName == newName) {
+      return;
+    }
+    final oldFile = File(_path(_workflowFilePath(oldName)));
+    final newFilePath = _path(_workflowFilePath(newName));
+    if (!await oldFile.exists()) {
+      return;
+    }
+    if (File(newFilePath).existsSync()) {
+      return;
+    }
+    await oldFile.rename(newFilePath);
+    final json = getWorkflow(newName);
+    if (json != null) {
+      json['name'] = newName;
+      await writeJsonAtomic(newFilePath, json);
+    }
+    final index = getWorkflowsIndex();
+    await setWorkflowsIndex([
+      for (final name in index)
+        if (name == oldName) newName else name,
+    ]);
+  }
+
+  Map<String, dynamic>? getWorkflow(String workflowId) {
+    final json = _readJsonSync(_workflowFilePath(workflowId));
+    if (json == null) {
+      return null;
+    }
+    json['id'] = workflowId;
+    json['name'] = workflowId;
+    return Map<String, dynamic>.from(json);
+  }
+
+  Future<void> setWorkflow(
+    String workflowId,
+    Map<String, dynamic> workflowJson,
+  ) async {
+    final workflowsDir = Directory(_path(kWorkspaceWorkflowsDir));
+    if (!await workflowsDir.exists()) {
+      await workflowsDir.create(recursive: true);
+    }
+    final payload = Map<String, Object?>.from(workflowJson)
+      ..['name'] = workflowId
+      ..remove('id');
+    await writeJsonAtomic(_path(_workflowFilePath(workflowId)), payload);
+  }
+
+  Future<void> deleteWorkflow(String workflowId) async {
+    final file = File(_path(_workflowFilePath(workflowId)));
+    if (await file.exists()) {
+      await file.delete();
     }
   }
 

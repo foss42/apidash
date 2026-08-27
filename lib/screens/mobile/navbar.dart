@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -33,7 +34,7 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 0,
+                    buttonIdx: kNavRailRequestsIndex,
                     selectedIcon: Icons.auto_awesome_mosaic_rounded,
                     icon: Icons.auto_awesome_mosaic_outlined,
                     label: 'Requests',
@@ -42,7 +43,16 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 1,
+                    buttonIdx: kNavRailWorkflowsIndex,
+                    selectedIcon: Icons.account_tree,
+                    icon: Icons.account_tree_outlined,
+                    label: 'Flows',
+                  ),
+                ),
+                Expanded(
+                  child: NavbarButton(
+                    railIdx: railIdx,
+                    buttonIdx: kNavRailVariablesIndex,
                     selectedIcon: Icons.laptop_windows,
                     icon: Icons.laptop_windows_outlined,
                     label: 'Variables',
@@ -51,7 +61,7 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 2,
+                    buttonIdx: kNavRailHistoryIndex,
                     selectedIcon: Icons.history_rounded,
                     icon: Icons.history_outlined,
                     label: 'History',
@@ -60,7 +70,7 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 3,
+                    buttonIdx: kNavRailCollaborationIndex,
                     selectedIcon: Icons.cloud_sync,
                     icon: Icons.cloud_sync,
                     label: 'Collab',
@@ -69,7 +79,7 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 4,
+                    buttonIdx: kNavRailLogsIndex,
                     selectedIcon: Icons.terminal,
                     icon: Icons.terminal,
                     label: 'Logs',
@@ -78,7 +88,7 @@ class BottomNavBar extends ConsumerWidget {
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
-                    buttonIdx: 5,
+                    buttonIdx: kNavRailSettingsIndex,
                     selectedIcon: Icons.settings,
                     icon: Icons.settings_outlined,
                     label: 'Settings',

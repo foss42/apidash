@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart' as apidash_consts;
 import 'api_key_auth_fields.dart';
 import 'basic_auth_fields.dart';
 import 'bearer_auth_fields.dart';
@@ -99,7 +100,8 @@ class AuthPage extends ConsumerWidget {
               const SizedBox(height: 24),
               AuthWarningTip(
                 onTap: () {
-                  ref.read(navRailIndexStateProvider.notifier).state = 1;
+                  ref.read(navRailIndexStateProvider.notifier).state =
+                      apidash_consts.kNavRailVariablesIndex;
                 },
               ),
             ],

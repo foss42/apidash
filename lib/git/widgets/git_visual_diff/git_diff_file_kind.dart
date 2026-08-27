@@ -8,6 +8,8 @@ enum GitDiffFileKind {
   collectionIndex,
   environment,
   environmentIndex,
+  workflow,
+  workflowIndex,
   unsupported,
 }
 
@@ -52,6 +54,21 @@ GitDiffFileKind detectGitDiffFileKind(String path) {
       fileName.endsWith(kJsonFileExtension) &&
       fileName != kWorkspaceEnvironmentIndexFile) {
     return GitDiffFileKind.environment;
+  }
+  if (fileName == kWorkspaceWorkflowsIndexFile &&
+      normalized.endsWith(
+        '$kWorkspaceWorkflowsDir/$kWorkspaceWorkflowsIndexFile',
+      )) {
+    return GitDiffFileKind.workflowIndex;
+  }
+  if (normalized.startsWith('$kWorkspaceWorkflowsDir/') &&
+      fileName.endsWith(kJsonFileExtension) &&
+      fileName != kWorkspaceWorkflowsIndexFile) {
+    // Flat layout only: workflows/<Name>.json
+    final relative = normalized.substring('$kWorkspaceWorkflowsDir/'.length);
+    if (!relative.contains('/')) {
+      return GitDiffFileKind.workflow;
+    }
   }
   return GitDiffFileKind.unsupported;
 }

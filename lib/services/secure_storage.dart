@@ -16,6 +16,9 @@ const _defaultAiApiKeyField = 'defaultAiApiKey';
 String _requestCompositeKey(String collectionId, String requestId) =>
     '$collectionId/$requestId';
 
+String _workflowCompositeKey(String workflowId, String requestId) =>
+    '$workflowId/$requestId';
+
 Map<String, String> _stringMap(Object? value) {
   if (value is! Map) {
     return {};
@@ -42,20 +45,25 @@ class _WorkspaceSlice {
     Map<String, Map<String, String>>? env,
     Map<String, String>? requests,
     Map<String, String>? history,
+    Map<String, String>? workflows,
   })  : env = env ?? {},
         requests = requests ?? {},
-        history = history ?? {};
+        history = history ?? {},
+        workflows = workflows ?? {};
 
   final Map<String, Map<String, String>> env;
   final Map<String, String> requests;
   final Map<String, String> history;
+  final Map<String, String> workflows;
 
-  bool get isEmpty => env.isEmpty && requests.isEmpty && history.isEmpty;
+  bool get isEmpty =>
+      env.isEmpty && requests.isEmpty && history.isEmpty && workflows.isEmpty;
 
   Map<String, Object?> toJson() => {
         'env': env,
         'requests': requests,
         'history': history,
+        'workflows': workflows,
       };
 
   factory _WorkspaceSlice.fromJson(Object? raw) {
@@ -66,6 +74,7 @@ class _WorkspaceSlice {
       env: _envMap(raw['env']),
       requests: _stringMap(raw['requests']),
       history: _stringMap(raw['history']),
+      workflows: _stringMap(raw['workflows']),
     );
   }
 
@@ -76,10 +85,10 @@ class _WorkspaceSlice {
         },
         requests: Map<String, String>.from(requests),
         history: Map<String, String>.from(history),
+        workflows: Map<String, String>.from(workflows),
       );
 }
 
-/// Single Keychain item for all secrets (all workspaces + default AI key).
 class _SecretsStore {
   _SecretsStore({FlutterSecureStorage? storage})
       : _storage = storage ?? _createSecureStorage();
@@ -377,6 +386,98 @@ class AiRequestSecretsStorage {
     });
   }
 
+  Future<String?> readWorkflowApiKey(
+    String workspacePath,
+    String workflowId,
+    String requestId,
+  ) async {
+    final slice = await _store.workspace(workspacePath);
+    return slice.workflows[_workflowCompositeKey(workflowId, requestId)];
+  }
+
+  Future<void> writeWorkflowApiKey(
+    String workspacePath,
+    String workflowId,
+    String requestId,
+    String value,
+  ) {
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.workflows[_workflowCompositeKey(workflowId, requestId)] = value;
+      return slice;
+    });
+  }
+
+  Future<void> deleteWorkflowApiKey(
+    String workspacePath,
+    String workflowId,
+    String requestId,
+  ) {
+    return _store.updateWorkspace(workspacePath, (slice) {
+      slice.workflows.remove(_workflowCompositeKey(workflowId, requestId));
+      return slice;
+    });
+  }
+
+  Future<void> rekeyWorkflowApiKeys(
+    String workspacePath,
+    String oldWorkflowId,
+    String newWorkflowId,
+  ) async {
+    if (oldWorkflowId == newWorkflowId) {
+      return;
+    }
+    final prefix = '$oldWorkflowId/';
+    final newPrefix = '$newWorkflowId/';
+    return _store.updateWorkspace(workspacePath, (slice) {
+      for (final key in slice.workflows.keys.toList()) {
+        if (!key.startsWith(prefix)) {
+          continue;
+        }
+        final requestId = key.substring(prefix.length);
+        final value = slice.workflows.remove(key);
+        if (value != null) {
+          slice.workflows['$newPrefix$requestId'] = value;
+        }
+      }
+      return slice;
+    });
+  }
+
+  Future<void> deleteOrphansForWorkflow(
+    String workspacePath,
+    String workflowId,
+    Set<String> activeRequestIds,
+  ) {
+    final prefix = '$workflowId/';
+    return _store.updateWorkspace(workspacePath, (slice) {
+      for (final key in slice.workflows.keys.toList()) {
+        if (!key.startsWith(prefix)) {
+          continue;
+        }
+        final requestId = key.substring(prefix.length);
+        if (!activeRequestIds.contains(requestId)) {
+          slice.workflows.remove(key);
+        }
+      }
+      return slice;
+    });
+  }
+
+  Future<void> deleteAllForWorkflow(
+    String workspacePath,
+    String workflowId,
+  ) {
+    final prefix = '$workflowId/';
+    return _store.updateWorkspace(workspacePath, (slice) {
+      for (final key in slice.workflows.keys.toList()) {
+        if (key.startsWith(prefix)) {
+          slice.workflows.remove(key);
+        }
+      }
+      return slice;
+    });
+  }
+
   Future<String?> readDefaultApiKey() => _store.readDefaultAiApiKey();
 
   Future<void> writeDefaultApiKey(String value) =>
@@ -388,6 +489,7 @@ class AiRequestSecretsStorage {
     return _store.updateWorkspace(workspacePath, (slice) {
       slice.requests.clear();
       slice.history.clear();
+      slice.workflows.clear();
       return slice;
     });
   }

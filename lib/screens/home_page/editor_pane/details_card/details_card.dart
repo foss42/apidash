@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
@@ -14,11 +15,14 @@ class EditorPaneRequestDetailsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final isDashbotPopped = ref.watch(dashbotWindowNotifierProvider).isPopped;
+    final onRequestsRail =
+        ref.watch(navRailIndexStateProvider) == kNavRailRequestsIndex;
+    final showDashbot = !isDashbotPopped && onRequestsRail;
     return RequestDetailsCard(
       child: EqualSplitView(
         leftWidget: const EditRequestPane(),
-        rightWidget: !isDashbotPopped
-            ? DashbotTab()
+        rightWidget: showDashbot
+            ? const DashbotTab()
             : codePaneVisible
                 ? const CodePane()
                 : const ResponsePane(),

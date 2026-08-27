@@ -39,6 +39,7 @@ const kMinRequestEditorDetailsCardPaneSize = 300.0;
 final kHomeScaffoldKey = GlobalKey<ScaffoldState>();
 final kEnvScaffoldKey = GlobalKey<ScaffoldState>();
 final kHisScaffoldKey = GlobalKey<ScaffoldState>();
+final kWorkflowScaffoldKey = GlobalKey<ScaffoldState>();
 final kAppScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
@@ -93,7 +94,14 @@ const kWorkspaceCollectionNameKey = 'name';
 const kWorkspaceEnvironmentsDir = 'environments';
 const kWorkspaceEnvironmentIndexFile = 'environment_index.json';
 const kWorkspaceHistoryDir = 'history';
-const kWorkspaceHistoryIndexFile = 'history_index.json';
+const kWorkspaceRequestHistoryDir = 'request_history';
+const kWorkspaceRequestHistoryIndexFile = 'request_history_index.json';
+const kWorkspaceFlowHistoryDir = 'workflow_history';
+const kWorkspaceFlowHistoryIndexFile = 'workflow_history_index.json';
+const kWorkspaceFlowHistoryMetasKey = 'workflow_history_meta';
+const kWorkspaceWorkflowsDir = 'workflows';
+const kWorkspaceWorkflowsIndexFile = 'workflow_index.json';
+const kWorkspaceWorkflowsIndexKey = 'workflows';
 const kJsonFileExtension = '.json';
 
 const kWorkspaceRequestsKey = 'requests';
@@ -498,6 +506,7 @@ const kLabelClose = "Close";
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
+const kLabelURL = "URL";
 const kLabelURLParams = "Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
@@ -579,9 +588,13 @@ const kMsgWorkspaceOpenFailed = 'Could not open that workspace folder.';
 const kMsgWorkspaceRecentMissing =
     'Workspace folder no longer exists on disk.';
 const kMsgRequestRemovedFromDisk =
-    'This request was deleted from disk.';
+    'A request was deleted from disk.';
 const kMsgCollectionRemovedFromDisk =
-    'This collection was deleted from disk.';
+    'A collection was deleted from disk.';
+const kMsgWorkflowRemovedFromDisk =
+    'A workflow was deleted from disk.';
+const kMsgEnvironmentRemovedFromDisk =
+    'An environment was deleted from disk.';
 const kWorkspaceMissingSnackDuration = Duration(seconds: 4);
 // History Page
 const kTitleClearHistory = 'Clear History';
@@ -597,6 +610,7 @@ const kMsgSendToView = 'Send a request to view its details in the console.';
 
 // Dashboard Navigation
 const kLabelRequests = "Requests";
+const kLabelWorkflows = "Workflows";
 const kLabelVariables = "Variables";
 const kLabelHistory = "History";
 const kLabelCollaboration = "Collaboration";
@@ -604,12 +618,17 @@ const kLabelLogs = "Logs";
 const kLabelAbout = "About";
 const kLabelSettings = "Settings";
 
-const kMobileNavCollaborationIndex = 3;
-const kMobileNavLogsIndex = 4;
-const kMobileNavSettingsIndex = 5;
-const kNavRailCollaborationIndex = 3;
-const kNavRailLogsIndex = 4;
-const kNavRailSettingsIndex = 5;
+const kNavRailRequestsIndex = 0;
+const kNavRailWorkflowsIndex = 1;
+const kNavRailVariablesIndex = 2;
+const kNavRailHistoryIndex = 3;
+const kNavRailCollaborationIndex = 4;
+const kNavRailLogsIndex = 5;
+const kNavRailSettingsIndex = 6;
+
+const kMobileNavCollaborationIndex = 4;
+const kMobileNavLogsIndex = 5;
+const kMobileNavSettingsIndex = 6;
 
 const kLabelFetch = "Fetch";
 const kLabelPull = "Pull";

@@ -82,7 +82,7 @@ class _RequestPaneState extends State<RequestPane>
               )
             : kVSpacer10,
         TabBar(
-          key: Key(widget.selectedId!),
+          key: Key(widget.selectedId ?? 'request-pane'),
           controller: controller,
           overlayColor: kColorTransparentState,
           labelPadding: kPh2,

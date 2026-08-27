@@ -62,10 +62,21 @@ class PromptBuilder {
     ChatMessageType type, {
     String? overrideLanguage,
   }) {
+    final prompts = dash.DashbotPrompts();
+    if (type == ChatMessageType.generateWorkflow) {
+      return prompts.generateWorkflowPrompt();
+    }
+    if (type == ChatMessageType.general) {
+      return prompts.generalInteractionPrompt();
+    }
+    if (type == ChatMessageType.importCurl ||
+        type == ChatMessageType.importOpenApi) {
+      return null;
+    }
     if (req == null) return null;
+
     final http = req.httpRequestModel;
     final resp = req.httpResponseModel;
-    final prompts = dash.DashbotPrompts();
     switch (type) {
       case ChatMessageType.explainResponse:
         return prompts.explainApiResponsePrompt(
@@ -127,12 +138,11 @@ class PromptBuilder {
             language: overrideLanguage,
           );
         }
+      case ChatMessageType.generateWorkflow:
       case ChatMessageType.importCurl:
-        return null;
       case ChatMessageType.importOpenApi:
-        return null;
       case ChatMessageType.general:
-        return prompts.generalInteractionPrompt();
+        return null;
     }
   }
 
@@ -161,6 +171,8 @@ class PromptBuilder {
         return "Can you generate tests for this request?";
       case ChatMessageType.generateCode:
         return "Can you generate code for this request?";
+      case ChatMessageType.generateWorkflow:
+        return "Can you help me create an API workflow?";
       case ChatMessageType.importCurl:
         return "I'd like to import a cURL command";
       case ChatMessageType.importOpenApi:

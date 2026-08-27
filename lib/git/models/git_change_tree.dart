@@ -95,7 +95,8 @@ String? gitFolderIdentityFileName(String folderPath) {
 
 bool isGitTreeSectionFolder(String path) {
   return path == kWorkspaceCollectionsDir ||
-      path == kWorkspaceEnvironmentsDir;
+      path == kWorkspaceEnvironmentsDir ||
+      path == kWorkspaceWorkflowsDir;
 }
 
 /// Sort so index / request / response sit with their parent folder in a
@@ -105,6 +106,7 @@ int gitTreeChildSortRank(GitTreeNode node) {
   return switch (node.name) {
     kWorkspaceCollectionsIndexFile ||
     kWorkspaceEnvironmentIndexFile ||
+    kWorkspaceWorkflowsIndexFile ||
     kWorkspaceRequestIndexFile =>
       0,
     kWorkspaceRequestFile => 1,
@@ -194,7 +196,8 @@ class GitTreeNode {
       final base = c.path.split('/').last;
       var rank = switch (base) {
         kWorkspaceCollectionsIndexFile ||
-        kWorkspaceEnvironmentIndexFile =>
+        kWorkspaceEnvironmentIndexFile ||
+        kWorkspaceWorkflowsIndexFile =>
           0,
         kWorkspaceRequestIndexFile => 1,
         kWorkspaceRequestFile => 2,

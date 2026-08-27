@@ -11,8 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 
 import 'collection_catalog_providers.dart';
+import 'environment_providers.dart';
 import 'settings_providers.dart';
 import 'workspace_lifecycle.dart';
+import '../workflow/providers/workflow_providers.dart';
 
 const _kDiskSyncDebounce = Duration(milliseconds: 180);
 const _kDiskSyncSuppressRetry = Duration(milliseconds: 200);
@@ -110,18 +112,30 @@ Future<void> _applyDiskSyncBatch(
   }
 
   final catalog = ref.read(collectionCatalogProvider.notifier);
+  final workflows = ref.read(workflowCatalogProvider.notifier);
+  final environments = ref.read(environmentsStateNotifierProvider.notifier);
   var removedRequest = false;
   var removedCollection = false;
+  var removedWorkflow = false;
+  var removedEnvironment = false;
 
   // Structural changes before index/content so order heals last.
   final ordered = [
     ...batch.whereType<CollectionRemovedFromDisk>(),
     ...batch.whereType<RequestRemovedFromDisk>(),
+    ...batch.whereType<WorkflowRemovedFromDisk>(),
+    ...batch.whereType<EnvironmentRemovedFromDisk>(),
     ...batch.whereType<CollectionAddedFromDisk>(),
     ...batch.whereType<RequestAddedFromDisk>(),
+    ...batch.whereType<WorkflowAddedFromDisk>(),
+    ...batch.whereType<EnvironmentAddedFromDisk>(),
     ...batch.whereType<RequestContentChangedOnDisk>(),
+    ...batch.whereType<WorkflowContentChangedOnDisk>(),
+    ...batch.whereType<EnvironmentContentChangedOnDisk>(),
     ...batch.whereType<CollectionIndexChangedOnDisk>(),
     ...batch.whereType<RequestIndexChangedOnDisk>(),
+    ...batch.whereType<WorkflowIndexChangedOnDisk>(),
+    ...batch.whereType<EnvironmentIndexChangedOnDisk>(),
   ];
 
   await runWithDiskSyncMuteAutosave(ref, () async {
@@ -170,6 +184,54 @@ Future<void> _applyDiskSyncBatch(
           await catalog.applyExternalCollectionIndexChanged();
         case RequestIndexChangedOnDisk(:final collectionId):
           catalog.applyExternalRequestIndexChanged(collectionId);
+        case WorkflowRemovedFromDisk(:final workflowId):
+          if (workspaceStorage.workflowExistsOnDisk(workflowId)) {
+            continue;
+          }
+          if (await workflows.applyExternalWorkflowRemoved(workflowId)) {
+            removedWorkflow = true;
+          }
+        case WorkflowAddedFromDisk(:final workflowId):
+          if (!workspaceStorage.workflowExistsOnDisk(workflowId)) {
+            await Future<void>.delayed(const Duration(milliseconds: 80));
+          }
+          if (!workspaceStorage.workflowExistsOnDisk(workflowId)) {
+            continue;
+          }
+          await workflows.applyExternalWorkflowAdded(workflowId);
+        case WorkflowContentChangedOnDisk(:final workflowId):
+          await workflows.applyExternalWorkflowContentChanged(workflowId);
+        case WorkflowIndexChangedOnDisk():
+          await workflows.applyExternalWorkflowIndexChanged();
+        case EnvironmentRemovedFromDisk(:final environmentId):
+          if (environmentId == kGlobalEnvironmentId) {
+            await environments.ensureGlobalEnvironment();
+            continue;
+          }
+          if (workspaceStorage.environmentExistsOnDisk(environmentId)) {
+            continue;
+          }
+          if (await environments
+              .applyExternalEnvironmentRemoved(environmentId)) {
+            removedEnvironment = true;
+          }
+        case EnvironmentAddedFromDisk(:final environmentId):
+          if (environmentId == kGlobalEnvironmentId) {
+            await environments.ensureGlobalEnvironment();
+            continue;
+          }
+          if (!workspaceStorage.environmentExistsOnDisk(environmentId)) {
+            await Future<void>.delayed(const Duration(milliseconds: 80));
+          }
+          if (!workspaceStorage.environmentExistsOnDisk(environmentId)) {
+            continue;
+          }
+          await environments.applyExternalEnvironmentAdded(environmentId);
+        case EnvironmentContentChangedOnDisk(:final environmentId):
+          await environments
+              .applyExternalEnvironmentContentChanged(environmentId);
+        case EnvironmentIndexChangedOnDisk():
+          await environments.applyExternalEnvironmentIndexChanged();
         case WorkspaceRootRemoved():
           break;
       }
@@ -180,6 +242,10 @@ Future<void> _applyDiskSyncBatch(
     _showDiskRemovalSnackBar(kMsgCollectionRemovedFromDisk);
   } else if (removedRequest) {
     _showDiskRemovalSnackBar(kMsgRequestRemovedFromDisk);
+  } else if (removedWorkflow) {
+    _showDiskRemovalSnackBar(kMsgWorkflowRemovedFromDisk);
+  } else if (removedEnvironment) {
+    _showDiskRemovalSnackBar(kMsgEnvironmentRemovedFromDisk);
   }
 }
 

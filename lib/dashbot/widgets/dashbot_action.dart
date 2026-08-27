@@ -33,6 +33,8 @@ class DashbotActionWidgetFactory {
         break;
       case ChatActionType.applyCurl:
         return DashbotApplyCurlButton(action: action);
+      case ChatActionType.applyWorkflow:
+        return DashbotApplyWorkflowButton(action: action);
       case ChatActionType.applyOpenApi:
         if (action.action == 'import_now_openapi') {
           return DashbotImportNowButton(action: action);
@@ -72,6 +74,9 @@ class DashbotActionWidgetFactory {
     }
     if (action.action == 'apply_curl') {
       return DashbotApplyCurlButton(action: action);
+    }
+    if (action.action == 'apply_workflow') {
+      return DashbotApplyWorkflowButton(action: action);
     }
     if (action.action.contains('update') ||
         action.action.contains('add') ||
