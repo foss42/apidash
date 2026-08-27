@@ -38,14 +38,14 @@ class WorkflowVariableBrowser extends ConsumerWidget {
           kLabelWorkflowVariables,
           style: Theme.of(context).textTheme.titleSmall,
         ),
-        kVSpacer4,
+        kVSpacer3,
         Text(
           'Extractions from upstream steps appear here for chaining.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.outline,
               ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         if (chained.isNotEmpty) ...[
           _SectionHeader(title: 'From upstream steps'),
           ...chained.map((entry) => _VariableTile(entry: entry)),

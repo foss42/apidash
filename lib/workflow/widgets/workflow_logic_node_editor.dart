@@ -1165,7 +1165,7 @@ class _RepeatCountFieldState extends State<_RepeatCountField> {
           },
         ),
         if (_selection == _custom) ...[
-          kVSpacer12,
+          kVSpacer10,
           TextField(
             controller: widget.iterationsController,
             keyboardType: TextInputType.number,
@@ -1509,7 +1509,7 @@ class _GuidePanel extends StatelessWidget {
         kVSpacer16,
         for (final section in sections) ...[
           Text(section.title, style: theme.textTheme.titleSmall),
-          kVSpacer4,
+          kVSpacer5,
           Text(
             section.body,
             style: theme.textTheme.bodyMedium?.copyWith(
