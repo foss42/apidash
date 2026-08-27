@@ -52,7 +52,7 @@ class DashboardKpiCard extends StatelessWidget {
             ),
           ),
           if (subtitle != null) ...[
-            kVSpacer2,
+            kVSpacer3,
             Text(
               subtitle!,
               style: textTheme.bodySmall?.copyWith(
@@ -128,7 +128,7 @@ class DashboardEmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.insights_outlined, size: 48, color: scheme.outline),
-            kVSpacer12,
+            kVSpacer10,
             Text(
               message,
               textAlign: TextAlign.center,

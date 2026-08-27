@@ -42,7 +42,7 @@ class DashboardPage extends ConsumerWidget {
                   ref.read(dashboardTabProvider.notifier).state = next.first;
                 },
               ),
-              kHSpacer16,
+              kHSpacer12,
               Text(
                 tab == DashboardTab.collections
                     ? 'Collection Dashboard'

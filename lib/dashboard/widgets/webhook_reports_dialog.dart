@@ -167,7 +167,7 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
                   border: const OutlineInputBorder(),
                 ),
               ),
-              kVSpacer12,
+              kVSpacer10,
               Row(
                 children: [
                   Text(
@@ -209,7 +209,7 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
                   ),
                 ),
               ),
-              kVSpacer12,
+              kVSpacer10,
               Text(
                 'Auto-send interval',
                 style: Theme.of(context).textTheme.labelLarge,

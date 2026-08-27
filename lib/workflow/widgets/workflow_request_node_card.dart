@@ -301,7 +301,7 @@ class WorkflowStartNodeCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  kVSpacer2,
+                  kVSpacer3,
                   Text(
                     isRunning ? 'Starting…' : 'Run workflow',
                     maxLines: 1,
@@ -546,7 +546,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
               style: theme.textTheme.bodySmall,
             ),
             if (itemLine != null) ...[
-              kVSpacer2,
+              kVSpacer3,
               Text(
                 itemLine,
                 maxLines: 1,
@@ -557,7 +557,7 @@ class WorkflowLoopNodeCard extends StatelessWidget {
               ),
             ],
             if (maxLine != null) ...[
-              kVSpacer2,
+              kVSpacer3,
               Text(
                 maxLine,
                 maxLines: 1,

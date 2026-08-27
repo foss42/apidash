@@ -305,7 +305,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         _AddNodeOptionTile(
           icon: Icons.auto_awesome_rounded,
           iconColor: theme.colorScheme.tertiary,
@@ -362,7 +362,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         _AddNodeOptionTile(
           icon: Icons.folder_copy_outlined,
           iconColor: theme.colorScheme.primary,
@@ -397,7 +397,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         _AddNodeOptionTile(
           icon: Icons.folder_copy_outlined,
           iconColor: theme.colorScheme.tertiary,
@@ -434,9 +434,9 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
               size: 48,
               color: theme.colorScheme.onSurfaceVariant,
             ),
-            kVSpacer12,
+            kVSpacer10,
             Text('No collections yet', style: theme.textTheme.titleSmall),
-            kVSpacer4,
+            kVSpacer5,
             Text(
               'Create a collection with requests first, then import them here.',
               textAlign: TextAlign.center,
@@ -503,7 +503,7 @@ class _WorkflowAddNodeSheetState extends ConsumerState<_WorkflowAddNodeSheet> {
               size: 48,
               color: theme.colorScheme.onSurfaceVariant,
             ),
-            kVSpacer12,
+            kVSpacer10,
             Text(
               emptyLabel,
               textAlign: TextAlign.center,
@@ -609,7 +609,7 @@ class _AddNodeOptionTileState extends State<_AddNodeOptionTile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(widget.title, style: theme.textTheme.titleSmall),
-                          kVSpacer2,
+                          kVSpacer3,
                           Text(
                             widget.subtitle,
                             style: theme.textTheme.bodySmall?.copyWith(

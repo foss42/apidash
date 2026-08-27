@@ -33,7 +33,7 @@ class WorkflowDashboardView extends ConsumerWidget {
                       'Run a workflow from the Workflows pane to populate the dashboard.',
                 ),
               ),
-              kVSpacer12,
+              kVSpacer10,
               ExecutionHistorySection(
                 scope: ExecutionHistoryFilter.workflows,
               ),
@@ -145,7 +145,7 @@ class _WorkflowBody extends ConsumerWidget {
             },
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         DashboardSection(
           title: 'Failing nodes',
           child: metrics.nodeFailures.isEmpty
@@ -191,7 +191,7 @@ class _WorkflowBody extends ConsumerWidget {
                   ],
                 ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         DashboardSection(
           title: 'Recent runs',
           child: _RecentRunsTable(
@@ -203,7 +203,7 @@ class _WorkflowBody extends ConsumerWidget {
             },
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         const ExecutionHistorySection(
           scope: ExecutionHistoryFilter.workflows,
         ),

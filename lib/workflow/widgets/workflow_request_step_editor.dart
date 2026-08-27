@@ -485,7 +485,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                   : ListView.separated(
                       padding: EdgeInsets.zero,
                       itemCount: extractions.length,
-                      separatorBuilder: (_, _) => kVSpacer4,
+                      separatorBuilder: (_, _) => kVSpacer5,
                       itemBuilder: (context, index) {
                         final extraction = extractions[index];
                         return _ExtractionRow(
@@ -522,7 +522,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
-                      kVSpacer4,
+                      kVSpacer5,
                       TextField(
                         controller: varController,
                         style: kCodeStyle.copyWith(
@@ -550,7 +550,7 @@ class _ExtractionsPanel extends ConsumerWidget {
                           color: scheme.onSurfaceVariant,
                         ),
                       ),
-                      kVSpacer4,
+                      kVSpacer5,
                       TextField(
                         controller: pathController,
                         style: kCodeStyle.copyWith(

@@ -34,9 +34,9 @@ class CollectionDashboardView extends ConsumerWidget {
                       'Send requests from the Requests pane, then check back here.',
                 ),
               ),
-              kVSpacer12,
+              kVSpacer10,
               ScriptCoverageSection(),
-              kVSpacer12,
+              kVSpacer10,
               ExecutionHistorySection(
                 scope: ExecutionHistoryFilter.requests,
               ),
@@ -184,7 +184,7 @@ class _CollectionBody extends ConsumerWidget {
             },
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         DashboardSection(
           title: 'Distributions',
           initiallyExpanded: false,
@@ -245,7 +245,7 @@ class _CollectionBody extends ConsumerWidget {
             ],
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         DashboardSection(
           title: 'Endpoints & slowest',
           initiallyExpanded: false,
@@ -263,14 +263,14 @@ class _CollectionBody extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(child: top),
-                  kHSpacer16,
+                  kHSpacer12,
                   Expanded(child: slow),
                 ],
               );
             },
           ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         DashboardSection(
           title: 'Recent errors',
           child: metrics.recentErrors.isEmpty
@@ -285,9 +285,9 @@ class _CollectionBody extends ConsumerWidget {
                   onOpen: (id) => _openHistory(ref, id),
                 ),
         ),
-        kVSpacer12,
+        kVSpacer10,
         const ScriptCoverageSection(),
-        kVSpacer12,
+        kVSpacer10,
         const ExecutionHistorySection(
           scope: ExecutionHistoryFilter.requests,
         ),
