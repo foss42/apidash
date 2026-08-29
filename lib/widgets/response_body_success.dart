@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
@@ -38,6 +39,7 @@ class ResponseBodySuccess extends StatefulWidget {
 
 class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
   int segmentIdx = 0;
+  bool _enableFormatting = true;
 
   @override
   Widget build(BuildContext context) {
@@ -143,16 +145,57 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                     ),
                   ),
                 ResponseBodyView.answer => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: SingleChildScrollView(
-                        child: SelectableText(
-                          widget.formattedBody ?? widget.body,
-                          style: kCodeStyle,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            ADCheckBox(
+                              keyId: 'format-markdown-checkbox',
+                              value: _enableFormatting,
+                              onChanged: (value) {
+                                setState(() {
+                                  _enableFormatting = value ?? false;
+                                });
+                              },
+                            ),
+                            kHSpacer4,
+                            Text(
+                              'Format Markdown',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ],
                         ),
-                      ),
+                        kVSpacer8,
+                        Expanded(
+                          child: Container(
+                            width: double.maxFinite,
+                            padding: kP8,
+                            decoration: textContainerdecoration,
+                            child: _enableFormatting
+                                ? Markdown(
+                                    data: widget.formattedBody ?? widget.body,
+                                    selectable: true,
+                                    styleSheet: MarkdownStyleSheet.fromTheme(
+                                      Theme.of(context),
+                                    ).copyWith(
+                                      p: Theme.of(context).textTheme.bodyMedium,
+                                      code: kCodeStyle.copyWith(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerHighest,
+                                      ),
+                                    ),
+                                  )
+                                : SingleChildScrollView(
+                                    child: SelectableText(
+                                      widget.formattedBody ?? widget.body,
+                                      style: kCodeStyle,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ResponseBodyView.raw => Expanded(
