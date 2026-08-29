@@ -184,13 +184,15 @@ class NodeViewModelState extends ChangeNotifier {
     return [];
   }
 
-  /// Sets the highlight property of this node and all of its children.
+  /// Sets the highlight property of this node.
   ///
   /// [notifyListeners] is called to notify all registered listeners.
-  void highlight({bool isHighlighted = true}) {
+  void highlight({bool isHighlighted = true, bool cascade = true}) {
     _isHighlighted = isHighlighted;
-    for (final children in children) {
-      children.highlight(isHighlighted: isHighlighted);
+    if (cascade) {
+      for (final children in children) {
+        children.highlight(isHighlighted: isHighlighted, cascade: true);
+      }
     }
     notifyListeners();
   }

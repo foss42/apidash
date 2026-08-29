@@ -281,11 +281,11 @@ class JsonAttribute extends StatelessWidget {
     return MouseRegion(
       cursor: hasInteraction ? SystemMouseCursors.click : MouseCursor.defer,
       onEnter: (event) {
-        node.highlight();
+        node.highlight(cascade: false);
         node.focus();
       },
       onExit: (event) {
-        node.highlight(isHighlighted: false);
+        node.highlight(isHighlighted: false, cascade: false);
         node.focus(isFocused: false);
       },
       child: GestureDetector(

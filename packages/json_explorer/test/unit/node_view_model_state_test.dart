@@ -204,6 +204,45 @@ void main() {
           isFalse,
         );
       });
+
+      test('highlight can avoid cascading to children', () {
+        final viewModel = NodeViewModelState.fromClass(
+          treeDepth: 0,
+          key: 'classKey',
+          parent: null,
+        );
+
+        final child = NodeViewModelState.fromClass(
+          treeDepth: 1,
+          key: 'childClass',
+          parent: viewModel,
+        );
+
+        final classMap = {
+          'childClass': child,
+        };
+
+        child.value = {
+          'leaf': NodeViewModelState.fromProperty(
+            treeDepth: 2,
+            key: 'leaf',
+            value: 123,
+            parent: child,
+          ),
+        };
+
+        viewModel.value = classMap;
+        viewModel.highlight(cascade: false);
+
+        expect(viewModel.isHighlighted, isTrue);
+        expect(child.isHighlighted, isFalse);
+        expect(child.value['leaf']!.isHighlighted, isFalse);
+
+        viewModel.highlight(isHighlighted: false, cascade: false);
+        expect(viewModel.isHighlighted, isFalse);
+        expect(child.isHighlighted, isFalse);
+        expect(child.value['leaf']!.isHighlighted, isFalse);
+      });
     });
 
     group('Array', () {
