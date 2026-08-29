@@ -197,6 +197,19 @@ void main() {
         [kvRow1, kvRow3],
       );
     });
+    test('Testing with duplicate rows (same name+value) at different positions',
+        () {
+      // kvRow1 appears at index 0 (disabled) and index 2 (enabled).
+      // The old indexOf()-based implementation would look up the first
+      // occurrence for both, effectively disabling index 2 as well.
+      expect(
+        getEnabledRows(
+          [kvRow1, kvRow2, kvRow1, kvRow4],
+          [false, true, true, false],
+        ),
+        [kvRow2, kvRow1], // kvRow1 at index 2 must be included
+      );
+    });
   });
 
   group('Testing getRequestBody', () {
