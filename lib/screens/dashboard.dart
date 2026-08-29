@@ -11,6 +11,8 @@ import 'home_page/home_page.dart';
 import 'history/history_page.dart';
 import 'settings_page.dart';
 import 'terminal/terminal_page.dart';
+import 'agentic_testing/agentic_testing_screen.dart';
+import 'agentic_history/agentic_history_screen.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -82,15 +84,15 @@ class Dashboard extends ConsumerWidget {
                     Badge(
                       backgroundColor: Theme.of(context).colorScheme.error,
                       isLabelVisible:
-                          ref.watch(showTerminalBadgeProvider) && railIdx != 3,
+                      ref.watch(showTerminalBadgeProvider) && railIdx != 3,
                       child: IconButton(
                         tooltip: kLabelLogs,
                         isSelected: railIdx == 3,
                         onPressed: () {
                           ref.read(navRailIndexStateProvider.notifier).state =
-                              3;
+                          3;
                           ref.read(showTerminalBadgeProvider.notifier).state =
-                              false;
+                          false;
                         },
                         icon: const Icon(Icons.terminal_outlined),
                         selectedIcon: const Icon(Icons.terminal),
@@ -98,6 +100,45 @@ class Dashboard extends ConsumerWidget {
                     ),
                     Text(
                       kLabelLogs,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
+                    Badge(
+                      label: const Text(
+                          'NEW',
+                          style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold)
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      isLabelVisible: ref.watch(showGenTestBadgeProvider) && railIdx != 4,
+                      offset: const Offset(-4, 2),
+                      child: IconButton(
+                        tooltip: 'Agentic\nTesting',
+                        isSelected: railIdx == 4,
+                        onPressed: () {
+                          ref.read(navRailIndexStateProvider.notifier).state = 4;
+                          ref.read(showGenTestBadgeProvider.notifier).state = false;
+                        },
+                        icon: const Icon(Icons.auto_awesome_outlined),
+                        selectedIcon: const Icon(Icons.auto_awesome),
+                      ),
+                    ),
+                    Text(
+                      'Agentic\nTesting',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
+                    // Agentic History
+                    IconButton(
+                      tooltip: 'Agentic\nHistory',
+                      isSelected: railIdx == 5,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 5;
+                      },
+                      icon: const Icon(Icons.manage_history_outlined),
+                      selectedIcon: const Icon(Icons.manage_history),
+                    ),
+                    Text(
+                      'Agentic\nHistory',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ],
@@ -124,7 +165,7 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 4,
+                          buttonIdx: 6,
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
                           label: kLabelSettings,
@@ -151,6 +192,8 @@ class Dashboard extends ConsumerWidget {
                   EnvironmentPage(),
                   HistoryPage(),
                   TerminalPage(),
+                  AgenticTestingScreen(),
+                  AgenticHistoryScreen(),
                   SettingsPage(),
                 ],
               ),
@@ -159,18 +202,18 @@ class Dashboard extends ConsumerWidget {
         ),
       ),
       floatingActionButton:
-          isDashBotEnabled && !isDashBotActive && isDashBotPopped
+      isDashBotEnabled && !isDashBotActive && isDashBotPopped
           ? FloatingActionButton(
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              onPressed: () => showDashbotWindow(context, ref),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6.0,
-                  horizontal: 10,
-                ),
-                child: DashbotIcons.getDashbotIcon1(),
-              ),
-            )
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        onPressed: () => showDashbotWindow(context, ref),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 6.0,
+            horizontal: 10,
+          ),
+          child: DashbotIcons.getDashbotIcon1(),
+        ),
+      )
           : null,
     );
   }

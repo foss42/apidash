@@ -20,7 +20,7 @@ class CollectionPane extends ConsumerWidget {
     }
     return Padding(
       padding:
-          (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
+      (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -81,7 +81,7 @@ class _RequestListState extends ConsumerState<RequestList> {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(
       settingsProvider.select(
-        (value) => value.alwaysShowCollectionPaneScrollbar,
+            (value) => value.alwaysShowCollectionPaneScrollbar,
       ),
     );
     final filterQuery = ref
@@ -95,70 +95,71 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: filterQuery.isEmpty
           ? ReorderableListView.builder(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              scrollController: controller,
-              buildDefaultDragHandles: false,
-              itemCount: requestSequence.length,
-              onReorder: (int oldIndex, int newIndex) {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                if (oldIndex != newIndex) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .reorder(oldIndex, newIndex);
-                }
-              },
-              itemBuilder: (context, index) {
-                var id = requestSequence[index];
-                if (kIsMobile) {
-                  return ReorderableDelayedDragStartListener(
-                    key: ValueKey(id),
-                    index: index,
-                    child: Padding(
-                      padding: kP1,
-                      child: RequestItem(
-                        id: id,
-                        requestModel: requestItems[id]!,
-                      ),
-                    ),
-                  );
-                }
-                return ReorderableDragStartListener(
-                  key: ValueKey(id),
-                  index: index,
-                  child: Padding(
-                    padding: kP1,
-                    child: RequestItem(id: id, requestModel: requestItems[id]!),
-                  ),
-                );
-              },
-            )
-          : ListView(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              controller: controller,
-              children: requestSequence.map((id) {
-                var item = requestItems[id]!;
-                if ((item.getUrl() ?? "").toLowerCase().contains(filterQuery) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
-                  return Padding(
-                    padding: kP1,
-                    child: RequestItem(id: id, requestModel: item),
-                  );
-                }
-                return kSizedBoxEmpty;
-              }).toList(),
+        padding: context.isMediumWindow
+            ? EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom,
+          right: 8,
+        )
+            : kPe8,
+        scrollController: controller,
+        buildDefaultDragHandles: false,
+        itemCount: requestSequence.length,
+        onReorder: (int oldIndex, int newIndex) {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          if (oldIndex != newIndex) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .reorder(oldIndex, newIndex);
+          }
+        },
+        itemBuilder: (context, index) {
+          var id = requestSequence[index];
+          if (kIsMobile) {
+            return ReorderableDelayedDragStartListener(
+              key: ValueKey(id),
+              index: index,
+              child: Padding(
+                padding: kP1,
+                child: RequestItem(
+                  id: id,
+                  requestModel: requestItems[id]!,
+                ),
+              ),
+            );
+          }
+          return ReorderableDragStartListener(
+            key: ValueKey(id),
+            index: index,
+            child: Padding(
+              padding: kP1,
+              child: RequestItem(id: id, requestModel: requestItems[id]!),
             ),
+          );
+        },
+      )
+          : ListView(
+        padding: context.isMediumWindow
+            ? EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom,
+          right: 8,
+        )
+            : kPe8,
+        controller: controller,
+        children: requestSequence.map((id) {
+          final item = requestItems[id];
+          if (item == null) return kSizedBoxEmpty;
+          if ((item.getUrl() ?? "").toLowerCase().contains(filterQuery) ||
+              item.name.toLowerCase().contains(filterQuery)) {
+            return Padding(
+              padding: kP1,
+              child: RequestItem(id: id, requestModel: item),
+            );
+          }
+          return kSizedBoxEmpty;
+        }).toList(),
+      ),
     );
   }
 }
@@ -215,7 +216,7 @@ class RequestItem extends ConsumerWidget {
           ref.read(selectedIdEditStateProvider.notifier).state = id;
           Future.delayed(
             const Duration(milliseconds: 150),
-            () => ref
+                () => ref
                 .read(nameTextFieldFocusNodeProvider.notifier)
                 .state
                 .requestFocus(),
