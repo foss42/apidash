@@ -53,6 +53,6 @@ class AnthropicModel extends ModelProvider {
 
   @override
   String? streamOutputFormatter(Map x) {
-    return x['text'];
+    return x['delta']?['text'] ?? x['text'];
   }
 }
