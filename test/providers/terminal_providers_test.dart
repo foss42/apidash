@@ -166,6 +166,26 @@ void main() {
       expect(idxMap[entries.first.id], 0);
     });
 
+    test('append trims terminal history to the latest 1000 entries', () {
+      for (var i = 0; i < 1005; i++) {
+        controller.append(
+          TerminalEntry(
+            id: 'entry-$i',
+            source: TerminalSource.system,
+            level: TerminalLevel.info,
+            system: SystemLogData(category: 'cat', message: 'msg-$i'),
+          ),
+        );
+      }
+
+      final state = container.read(terminalStateProvider);
+      expect(state.entries.length, 1000);
+      expect(state.entries.first.id, 'entry-1004');
+      expect(state.entries.last.id, 'entry-5');
+      expect(state.index['entry-1004'], 0);
+      expect(state.index['entry-5'], 999);
+    });
+
     test('serializeAll with provided entries includes ISO timestamps', () {
       final e1 = TerminalEntry(
         id: 'x1',
