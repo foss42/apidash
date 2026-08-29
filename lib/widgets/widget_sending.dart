@@ -35,6 +35,7 @@ class _SendingWidgetState extends State<SendingWidget> {
   }
 
   void _updateTimer(Timer timer) {
+    if (!mounted) return;
     setState(() {
       _millisecondsElapsed += 100;
     });
