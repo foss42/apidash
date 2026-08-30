@@ -206,9 +206,9 @@ Restart your AI client to spin up the bridge. You can now prompt it: *"Use API D
 
 | Feature | PR | Status | Comments |
 |---|---|---|---|
-| Initial MCP Server setup & NPM package scaffolding | [#1700](https://github.com/foss42/apidash/pull/1700) | Closed | Established the base architecture for `apidash-mcp`. |
-| Implementation of Agentic API Testing tools | [#1711](https://github.com/foss42/apidash/pull/1711) | Closed | Added `execute_request` and network handlers. |
-| SPA Workbench integration for visual data rendering | [#1720](https://github.com/foss42/apidash/pull/1720) | Closed | Enabled AI to serve interactive UI components. |
+| Initial MCP Server setup & NPM package scaffolding | [#1700](https://github.com/foss42/apidash/pull/1700) | Closed | Updated PR - [#1737](https://github.com/foss42/apidash/pull/1737) |
+| Implementation of Agentic API Testing tools | [#1711](https://github.com/foss42/apidash/pull/1711) | Closed | Updated PR - [#1737](https://github.com/foss42/apidash/pull/1737) |
+| SPA Workbench integration for visual data rendering | [#1720](https://github.com/foss42/apidash/pull/1720) | Closed | Updated PR - [#1737](https://github.com/foss42/apidash/pull/1737) |
 | Resolve a RenderFlex overflow in AI dialog on Android | [#1329](https://github.com/foss42/apidash/pull/1329) | Merged | Merged during the GSoC coding period. |
 | Enable streaming responses in dashbot | [#1344](https://github.com/foss42/apidash/pull/1344) | Under Review | Currently under review. |
 | NPM package release | [#82](https://github.com/foss42/poc-experiments/pull/82) | Merged | Added npm package source code files into the POC repository. |
