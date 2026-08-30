@@ -30,10 +30,10 @@ class SendRequestButton extends ConsumerWidget {
       activeLabel: apiType == APIType.websocket ? kLabelDisconnect : null,
       onTap: () {
         onTap?.call();
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        ref.read(activeCollectionProvider.notifier).sendRequest();
       },
       onCancel: () {
-        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+        ref.read(activeCollectionProvider.notifier).cancelRequest();
       },
     );
   }
