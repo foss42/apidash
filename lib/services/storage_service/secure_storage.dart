@@ -1,13 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import 'storage/workspace_storage.dart';
+import 'workspace_storage.dart';
 
 FlutterSecureStorage _createSecureStorage() => const FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      mOptions: MacOsOptions(useDataProtectionKeyChain: false),
-    );
+  aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  mOptions: MacOsOptions(useDataProtectionKeyChain: false),
+);
 
 String _workspaceId(String workspacePath) =>
     base64Url.encode(utf8.encode(workspacePath));
@@ -19,7 +17,7 @@ const _defaultAiApiKeyStorageKey = 'apidash_default_ai_api_key';
 
 class EnvironmentSecretsStorage {
   EnvironmentSecretsStorage({FlutterSecureStorage? storage})
-      : _storage = storage ?? _createSecureStorage();
+    : _storage = storage ?? _createSecureStorage();
 
   final FlutterSecureStorage _storage;
 
@@ -31,9 +29,7 @@ class EnvironmentSecretsStorage {
     String environmentId,
     String variableKey,
   ) {
-    return _storage.read(
-      key: _key(workspacePath, environmentId, variableKey),
-    );
+    return _storage.read(key: _key(workspacePath, environmentId, variableKey));
   }
 
   Future<void> writeSecret(
@@ -79,11 +75,7 @@ class EnvironmentSecretsStorage {
       }
     } catch (_) {
       for (final entry in _secretKeysByEnvironmentFromWorkspace().entries) {
-        await deleteAllForEnvironment(
-          workspacePath,
-          entry.key,
-          entry.value,
-        );
+        await deleteAllForEnvironment(workspacePath, entry.key, entry.value);
       }
     }
   }
@@ -120,7 +112,7 @@ class EnvironmentSecretsStorage {
 
 class AiRequestSecretsStorage {
   AiRequestSecretsStorage({FlutterSecureStorage? storage})
-      : _storage = storage ?? _createSecureStorage();
+    : _storage = storage ?? _createSecureStorage();
 
   final FlutterSecureStorage _storage;
 
@@ -215,7 +207,10 @@ class AiRequestSecretsStorage {
     String historyId,
     String value,
   ) {
-    return _storage.write(key: _historyKey(workspacePath, historyId), value: value);
+    return _storage.write(
+      key: _historyKey(workspacePath, historyId),
+      value: value,
+    );
   }
 
   Future<void> deleteHistoryApiKey(String workspacePath, String historyId) {
@@ -251,7 +246,8 @@ class AiRequestSecretsStorage {
   }
 
   Future<void> deleteAllHistoryForWorkspace(String workspacePath) async {
-    final prefix = '$_aiHistoryStorageKeyPrefix/${_workspaceId(workspacePath)}/';
+    final prefix =
+        '$_aiHistoryStorageKeyPrefix/${_workspaceId(workspacePath)}/';
     try {
       final all = await _storage.readAll();
       for (final key in all.keys) {

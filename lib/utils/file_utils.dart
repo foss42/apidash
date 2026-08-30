@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:mime_dart/mime_dart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+import '../consts.dart';
 
 const uuid = Uuid();
 
@@ -45,10 +46,7 @@ String _sanitizeForFileName(String name) {
   return cleaned.isEmpty ? 'request' : cleaned;
 }
 
-String makeHistoryId({
-  required DateTime timeStamp,
-  required String name,
-}) {
+String makeHistoryId({required DateTime timeStamp, required String name}) {
   final label = _sanitizeForFileName(name);
   final stamp = DateFormat('yyyy-MM-dd hh.mm.ss a').format(timeStamp);
   return '$label $stamp';
@@ -114,7 +112,9 @@ Future<String?> getFileDownloadpath(String? name, String? ext) async {
 }
 
 Future<String?> getApplicationSupportDirectoryFilePath(
-    String name, String? ext) async {
+  String name,
+  String? ext,
+) async {
   final Directory tempDir = await getApplicationSupportDirectory();
   name = name;
   ext = (ext != null) ? ".$ext" : "";
@@ -177,4 +177,18 @@ Future<bool> deleteFileFromPath(String filePath) async {
   } catch (e) {
     return false;
   }
+}
+
+Future<String?> resolveWorkspaceRoot({
+  required bool useDesktopPath,
+  String? desktopPath,
+}) async {
+  if (useDesktopPath) {
+    if (desktopPath == null || desktopPath.isEmpty) {
+      return null;
+    }
+    return desktopPath;
+  }
+  final documents = await getApplicationDocumentsDirectory();
+  return p.join(documents.path, kDefaultMobileWorkspaceSubpath);
 }

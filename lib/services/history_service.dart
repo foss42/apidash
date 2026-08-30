@@ -1,6 +1,6 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
-import 'storage/workspace_storage.dart';
+import 'storage_service/storage_service.dart';
 
 Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
   final historyRetentionPeriod = settingsModel?.historyRetentionPeriod;

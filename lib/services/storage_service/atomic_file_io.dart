@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 
 Future<void> writeFileAtomic(String path, List<int> bytes) async {
@@ -29,7 +29,7 @@ Future<void> writeFileAtomic(String path, List<int> bytes) async {
 }
 
 Future<void> writeJsonAtomic(String path, Map<String, Object?> json) async {
-  final encoded = const JsonEncoder.withIndent('  ').convert(json);
+  final encoded = kJsonEncoder.convert(json);
   await writeFileAtomic(path, utf8.encode(encoded));
 }
 

@@ -3,12 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/file_utils.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
-
 import 'atomic_file_io.dart';
-import 'workspace_paths.dart';
 
 Directory? _workspaceRoot;
 
@@ -23,20 +21,16 @@ String _collectionDir(String collectionId) =>
 String _collectionFilePath(String collectionId) =>
     p.join(_collectionDir(collectionId), kWorkspaceRequestIndexFile);
 
-String _requestDirRelative(String collectionId, String requestId) => p.join(
-      _collectionDir(collectionId),
-      requestId,
-    );
+String _requestDirRelative(String collectionId, String requestId) =>
+    p.join(_collectionDir(collectionId), requestId);
 
-String _requestJsonRelative(String collectionId, String requestId) => p.join(
-      _requestDirRelative(collectionId, requestId),
-      kWorkspaceRequestFile,
-    );
+String _requestJsonRelative(String collectionId, String requestId) =>
+    p.join(_requestDirRelative(collectionId, requestId), kWorkspaceRequestFile);
 
 String _responseJsonRelative(String collectionId, String requestId) => p.join(
-      _requestDirRelative(collectionId, requestId),
-      kWorkspaceResponseFile,
-    );
+  _requestDirRelative(collectionId, requestId),
+  kWorkspaceResponseFile,
+);
 
 const Set<String> _kMediaFileTypes = {'image', 'audio', 'video'};
 
@@ -136,17 +130,15 @@ Future<bool> initWorkspaceStorage(
 }
 
 Future<void> _ensureWorkspaceStructure(Directory root) async {
-  final collectionsRoot = Directory(p.join(root.path, kWorkspaceCollectionsDir));
+  final collectionsRoot = Directory(
+    p.join(root.path, kWorkspaceCollectionsDir),
+  );
   if (!await collectionsRoot.exists()) {
     await collectionsRoot.create(recursive: true);
   }
 
   final indexFile = File(
-    p.join(
-      root.path,
-      kWorkspaceCollectionsDir,
-      kWorkspaceCollectionsIndexFile,
-    ),
+    p.join(root.path, kWorkspaceCollectionsDir, kWorkspaceCollectionsIndexFile),
   );
   // Seed the default collection only for a brand-new workspace (no index file
   // yet). Once the index exists we respect it verbatim, including an empty
@@ -161,11 +153,7 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
     });
 
     final defaultCollectionDir = Directory(
-      p.join(
-        root.path,
-        kWorkspaceCollectionsDir,
-        kDefaultCollectionName,
-      ),
+      p.join(root.path, kWorkspaceCollectionsDir, kDefaultCollectionName),
     );
     if (!await defaultCollectionDir.exists()) {
       await defaultCollectionDir.create(recursive: true);
@@ -187,7 +175,9 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
     }
   }
 
-  final environmentsDir = Directory(p.join(root.path, kWorkspaceEnvironmentsDir));
+  final environmentsDir = Directory(
+    p.join(root.path, kWorkspaceEnvironmentsDir),
+  );
   if (!await environmentsDir.exists()) {
     await environmentsDir.create(recursive: true);
   }
@@ -197,7 +187,11 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
   }
 
   final envIndexFile = File(
-    p.join(root.path, kWorkspaceEnvironmentsDir, kWorkspaceEnvironmentIndexFile),
+    p.join(
+      root.path,
+      kWorkspaceEnvironmentsDir,
+      kWorkspaceEnvironmentIndexFile,
+    ),
   );
   if (!await envIndexFile.exists()) {
     await writeJsonAtomic(envIndexFile.path, {
@@ -219,7 +213,6 @@ Future<void> _ensureWorkspaceStructure(Directory root) async {
       'values': <Map<String, Object?>>[],
     });
   }
-
 }
 
 final workspaceStorage = WorkspaceStorage();
@@ -269,9 +262,7 @@ class WorkspaceStorage {
     List<({String id, String name})> collections,
   ) async {
     await writeJsonAtomic(
-      _path(
-        p.join(kWorkspaceCollectionsDir, kWorkspaceCollectionsIndexFile),
-      ),
+      _path(p.join(kWorkspaceCollectionsDir, kWorkspaceCollectionsIndexFile)),
       {
         kWorkspaceCollectionsIndexKey: [
           for (final entry in collections)
@@ -302,10 +293,7 @@ class WorkspaceStorage {
     }
     final payload = Map<String, Object?>.from(collectionJson)
       ..remove(kWorkspaceCollectionIdKey);
-    await writeJsonAtomic(
-      _path(_collectionFilePath(collectionId)),
-      payload,
-    );
+    await writeJsonAtomic(_path(_collectionFilePath(collectionId)), payload);
   }
 
   Future<void> deleteCollection(String collectionId) async {
@@ -360,8 +348,10 @@ class WorkspaceStorage {
     final responseJson = _readJsonSync(_responseJsonRelative(collectionId, id));
     if (responseJson != null) {
       final requestDirPath = _path(_requestDirRelative(collectionId, id));
-      merged['httpResponseModel'] =
-          _inlineResponseBodyFile(requestDirPath, responseJson);
+      merged['httpResponseModel'] = _inlineResponseBodyFile(
+        requestDirPath,
+        responseJson,
+      );
     }
     return Map<String, dynamic>.from(_fixBodyBytesForFromJson(merged));
   }
@@ -414,7 +404,8 @@ class WorkspaceStorage {
 
     final contentType = _contentTypeFromResponseMap(response);
     final bytes = _bytesFromJsonList(response['bodyBytes']);
-    final shouldExtract = saveMediaAsFiles &&
+    final shouldExtract =
+        saveMediaAsFiles &&
         bytes != null &&
         bytes.isNotEmpty &&
         _isBinaryMediaContentType(contentType);
@@ -477,9 +468,7 @@ class WorkspaceStorage {
     result.remove(kWorkspaceResponseBodyFileKey);
     final bodyFile = _resolveSafeResponseBodyFile(requestDirPath, fileName);
     if (bodyFile == null) {
-      debugPrint(
-        'Ignoring unsafe response bodyFile path for read: $fileName',
-      );
+      debugPrint('Ignoring unsafe response bodyFile path for read: $fileName');
       return result;
     }
     try {
@@ -522,10 +511,7 @@ class WorkspaceStorage {
       return;
     }
     final json = _readJsonSync(
-      p.join(
-        _requestDirRelative(collectionId, newId),
-        kWorkspaceRequestFile,
-      ),
+      p.join(_requestDirRelative(collectionId, newId), kWorkspaceRequestFile),
     );
     if (json == null) {
       return;
@@ -614,9 +600,7 @@ class WorkspaceStorage {
     final json = getEnvironment(newId);
     if (json != null) {
       json['id'] = newId;
-      unawaited(
-        writeJsonAtomic(newPath, Map<String, Object?>.from(json)),
-      );
+      unawaited(writeJsonAtomic(newPath, Map<String, Object?>.from(json)));
     }
   }
 
@@ -638,10 +622,7 @@ class WorkspaceStorage {
         if (value is! Map) {
           return MapEntry(e.key.toString(), <String, dynamic>{});
         }
-        return MapEntry(
-          e.key.toString(),
-          Map<String, dynamic>.from(value),
-        );
+        return MapEntry(e.key.toString(), Map<String, dynamic>.from(value));
       }),
     );
   }
@@ -653,14 +634,11 @@ class WorkspaceStorage {
   Future<void> setAllHistoryMetas(
     Map<String, Map<String, dynamic>>? metas,
   ) async {
-    await writeJsonAtomic(
-      _path(_historyMetasPath()),
-      {
-        kWorkspaceHistoryMetasKey:
-            metas?.map((k, v) => MapEntry(k, Map<String, Object?>.from(v))) ??
-                <String, Map<String, Object?>>{},
-      },
-    );
+    await writeJsonAtomic(_path(_historyMetasPath()), {
+      kWorkspaceHistoryMetasKey:
+          metas?.map((k, v) => MapEntry(k, Map<String, Object?>.from(v))) ??
+          <String, Map<String, Object?>>{},
+    });
   }
 
   Future<void> setHistoryMeta(
@@ -716,7 +694,6 @@ class WorkspaceStorage {
     }
   }
 
-
   Future<void> clearAllHistory() async {
     final historyDir = Directory(_path(kWorkspaceHistoryDir));
     if (await historyDir.exists()) {
@@ -748,9 +725,9 @@ class WorkspaceStorage {
         kWorkspaceCollectionIdKey: collectionId,
         kWorkspaceCollectionNameKey:
             existing?[kWorkspaceCollectionNameKey] as String? ??
-                (collectionId == kDefaultCollectionName
-                    ? kDefaultCollectionName
-                    : collectionId),
+            (collectionId == kDefaultCollectionName
+                ? kDefaultCollectionName
+                : collectionId),
         kWorkspaceRequestsKey: <Object?>[],
       });
       final collectionDir = Directory(_path(_collectionDir(collectionId)));
@@ -817,14 +794,17 @@ class WorkspaceStorage {
     }
   }
 
-  static Map<String, Object?> _fixBodyBytesForFromJson(Map<String, Object?> json) {
+  static Map<String, Object?> _fixBodyBytesForFromJson(
+    Map<String, Object?> json,
+  ) {
     final http = json['httpResponseModel'];
     if (http is Map) {
       final response = Map<String, Object?>.from(http);
       final bytes = response['bodyBytes'];
       if (bytes is List && bytes is! List<int>) {
-        response['bodyBytes'] =
-            bytes.map((e) => (e as num).toInt()).toList(growable: false);
+        response['bodyBytes'] = bytes
+            .map((e) => (e as num).toInt())
+            .toList(growable: false);
       }
       return {...json, 'httpResponseModel': response};
     }
