@@ -146,6 +146,7 @@ Furthermore, you enjoy full control and smooth navigation through your past agen
   <br>
   <em>Viewing test executions neatly grouped by Suite Name in the dedicated history pane</em>
 </p>
+
 ---
 
 ## How to Setup the MCP Environment (Part 1 Only)
@@ -235,4 +236,4 @@ Google Summer of Code 2026 with API Dash has been an incredibly rewarding journe
 
 This experience taught me the rigor required to publish public packages, the importance of robust state management (Riverpod), and how to optimize heavy Flutter workloads using isolates. Collaborating with my mentors and the API Dash community has vastly improved my technical communication and architectural decision-making. 
 
-I am deeply grateful to Ashita P, Ankit M, and Ragul Raj M for their constant support, code reviews, and mentorship. I look forward to continuing my contributions to open source and seeing how the community leverages these new agentic capabilities.
+I am deeply grateful to my mentors for their constant support, code reviews, and mentorship. I look forward to continuing my contributions to open source and seeing how the community leverages these new agentic capabilities.
