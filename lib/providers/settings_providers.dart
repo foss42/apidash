@@ -50,7 +50,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
-    List<SavedWorkspaceEntry>? savedWorkspaces,
+    List<NamePathModel>? savedWorkspaces,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
@@ -79,26 +79,23 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
   }
 
   Future<void> rememberWorkspace({
-    required String path,
     required String name,
+    required String path,
   }) async {
     final normalized = p.normalize(path);
     final rest = state.savedWorkspaces
         .where((e) => p.normalize(e.path) != normalized)
         .toList();
     final list = [
-      SavedWorkspaceEntry(path: normalized, name: name),
+      NamePathModel(name: name, path: normalized),
       ...rest,
     ].take(kMaxSavedWorkspaces).toList();
-    await update(
-      workspaceFolderPath: normalized,
-      savedWorkspaces: list,
-    );
+    await update(workspaceFolderPath: normalized, savedWorkspaces: list);
   }
 }
 
 String? savedWorkspaceNameForPath(
-  List<SavedWorkspaceEntry> saved,
+  List<NamePathModel> saved,
   String? workspaceFolderPath,
 ) {
   if (workspaceFolderPath == null || workspaceFolderPath.isEmpty) {

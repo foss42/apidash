@@ -1,4 +1,4 @@
-import 'package:apidash/utils/ui_utils.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'request_model.dart';
 
