@@ -211,7 +211,7 @@ Restart your AI client to spin up the bridge. You can now prompt it: *"Use API D
 | SPA Workbench integration for visual data rendering | [#1720](https://github.com/foss42/apidash/pull/1720) | Closed | Enabled AI to serve interactive UI components. |
 | Resolve a RenderFlex overflow in AI dialog on Android | [#1329](https://github.com/foss42/apidash/pull/1329) | Merged | Merged during the GSoC coding period. |
 | Enable streaming responses in dashbot | [#1344](https://github.com/foss42/apidash/pull/1344) | Under Review | Currently under review. |
-| NPM package release | [#82](https://github.com/foss42/poc-experiments/pull/82) | Under Review | Added npm package source code files into the POC repository. |
+| NPM package release | [#82](https://github.com/foss42/poc-experiments/pull/82) | Merged | Added npm package source code files into the POC repository. |
 | MCP server & MCP App final code release with documentation. | [#1737](https://github.com/foss42/apidash/pull/1737) | Under Review | Finalized the NPM publish pipeline and user guides. |
 | In-App Agentic Testing Co-Pilot & History Integration | [#1783](https://github.com/foss42/apidash/pull/1783) | Under Review | Built a native, Riverpod-powered Agentic Testing dashboard utilizing the Gemini API for OpenAPI contextualization and chained test suite generation. |
 
