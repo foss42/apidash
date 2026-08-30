@@ -1,14 +1,28 @@
 import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 import '../routes/dashbot_routes.dart';
 
-/// Computes the base Dashbot route for a given request based on whether a
-/// response exists.
+/// Computes the base Dashbot route for a given request.
+/// - For WebSocket requests, returns [DashbotRoutes.dashbotHome] once the
+///   connection has been attempted/established at least once (lifecycle
+///   events land in `messageHistory` on connect, so any connect attempt
+///   populates it; `isStreaming` covers a live connection). This mirrors the
+///   HTTP gate below: "sent" for WS means "connected at least once".
 /// - Returns [DashbotRoutes.dashbotHome] if the request has a response (either
 ///   statusCode or responseStatus present).
 /// - Otherwise returns [DashbotRoutes.dashbotDefault].
 String computeDashbotBaseRoute(RequestModel? req) {
-  final hasResponse = (req?.httpResponseModel?.statusCode != null) ||
+  if (req?.apiType == APIType.websocket) {
+    final hasWsActivity =
+        (req?.wsRequestModel?.messageHistory.isNotEmpty ?? false) ||
+        (req?.isStreaming ?? false);
+    return hasWsActivity
+        ? DashbotRoutes.dashbotHome
+        : DashbotRoutes.dashbotDefault;
+  }
+  final hasResponse =
+      (req?.httpResponseModel?.statusCode != null) ||
       (req?.responseStatus != null);
   return hasResponse ? DashbotRoutes.dashbotHome : DashbotRoutes.dashbotDefault;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/active_collection_providers.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/ai_ui_designer/generate_ui_dialog.dart';
 import 'package:apidash/screens/common_widgets/agentic_ui_features/tool_generation/generate_tool_dialog.dart';
@@ -15,6 +16,11 @@ class DashbotTaskButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.read(chatViewmodelProvider.notifier);
+    final isWs =
+        ref.watch(
+          selectedRequestModelProvider.select((value) => value?.apiType),
+        ) ==
+        APIType.websocket;
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       child: Column(
@@ -22,9 +28,9 @@ class DashbotTaskButtons extends ConsumerWidget {
         children: [
           Text(
             'Do you want assistance with any of these tasks?',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -32,41 +38,115 @@ class DashbotTaskButtons extends ConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              HomeScreenTaskButton(
-                label: '🔎 Explain me this response',
-                onPressed: () {
-                  vm.sendTaskMessage(ChatMessageType.explainResponse);
-                  onTaskSelected?.call();
-                },
-              ),
-              HomeScreenTaskButton(
-                label: '🐞 Help me debug this error',
-                onPressed: () {
-                  vm.sendTaskMessage(ChatMessageType.debugError);
-                  onTaskSelected?.call();
-                },
-              ),
-              HomeScreenTaskButton(
-                label: '📄 Generate documentation',
-                onPressed: () {
-                  vm.sendTaskMessage(ChatMessageType.generateDoc);
-                  onTaskSelected?.call();
-                },
-              ),
-              HomeScreenTaskButton(
-                label: '📝 Generate Tests',
-                onPressed: () {
-                  vm.sendTaskMessage(ChatMessageType.generateTest);
-                  onTaskSelected?.call();
-                },
-              ),
-              HomeScreenTaskButton(
-                label: '🧩 Generate Code',
-                onPressed: () {
-                  vm.sendTaskMessage(ChatMessageType.generateCode);
-                  onTaskSelected?.call();
-                },
-              ),
+              if (isWs) ...[
+                HomeScreenTaskButton(
+                  label: '🔌 Explain this connection',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.explainWsConnection);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🛠️ Help me fix my connection',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.debugWsConnection);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📡 What is the server sending?',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.summarizeWsMessages);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🔍 Find in messages',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.findInWsMessages);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '✉️ Explain my message',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.explainWsMessage);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '❓ Why did my message fail?',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.debugWsMessage);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '❤️ Connection health',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.wsConnectionHealth);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📄 Generate documentation',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.generateWsDoc);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📝 Generate Tests',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.generateWsTest);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🧩 Generate Code',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.generateWsCode);
+                    onTaskSelected?.call();
+                  },
+                ),
+              ],
+              if (!isWs) ...[
+                HomeScreenTaskButton(
+                  label: '🔎 Explain me this response',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.explainResponse);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🐞 Help me debug this error',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.debugError);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📄 Generate documentation',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.generateDoc);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '📝 Generate Tests',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.generateTest);
+                    onTaskSelected?.call();
+                  },
+                ),
+                HomeScreenTaskButton(
+                  label: '🧩 Generate Code',
+                  onPressed: () {
+                    vm.sendTaskMessage(ChatMessageType.generateCode);
+                    onTaskSelected?.call();
+                  },
+                ),
+              ],
               HomeScreenTaskButton(
                 label: '📥 Import cURL',
                 onPressed: () {
@@ -84,39 +164,45 @@ class DashbotTaskButtons extends ConsumerWidget {
               HomeScreenTaskButton(
                 label: '🛠️ Generate Tool',
                 onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
+                  final notifier = ref.read(
+                    dashbotWindowNotifierProvider.notifier,
+                  );
                   notifier.hide();
                   await GenerateToolDialog.show(context, ref);
                   notifier.show();
                   onTaskSelected?.call();
                 },
               ),
-              HomeScreenTaskButton(
-                label: '📱 Generate UI',
-                onPressed: () async {
-                  final notifier =
-                      ref.read(dashbotWindowNotifierProvider.notifier);
-                  notifier.hide();
-                  final model = ref.watch(selectedRequestModelProvider
-                      .select((value) => value?.httpResponseModel));
-                  if (model != null) {
-                    String data = '';
-                    if (model.sseOutput != null) {
-                      data = model.sseOutput!.join('');
-                    } else {
-                      data = model.formattedBody ?? '<>';
-                    }
-                    await showCustomDialog(
-                      context,
-                      GenerateUIDialog(content: data),
-                      useRootNavigator: true,
+              if (!isWs)
+                HomeScreenTaskButton(
+                  label: '📱 Generate UI',
+                  onPressed: () async {
+                    final notifier = ref.read(
+                      dashbotWindowNotifierProvider.notifier,
                     );
-                  }
-                  notifier.show();
-                  onTaskSelected?.call();
-                },
-              ),
+                    notifier.hide();
+                    final model = ref.watch(
+                      selectedRequestModelProvider.select(
+                        (value) => value?.httpResponseModel,
+                      ),
+                    );
+                    if (model != null) {
+                      String data = '';
+                      if (model.sseOutput != null) {
+                        data = model.sseOutput!.join('');
+                      } else {
+                        data = model.formattedBody ?? '<>';
+                      }
+                      await showCustomDialog(
+                        context,
+                        GenerateUIDialog(content: data),
+                        useRootNavigator: true,
+                      );
+                    }
+                    notifier.show();
+                    onTaskSelected?.call();
+                  },
+                ),
             ],
           ),
         ],
