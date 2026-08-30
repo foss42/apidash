@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../consts.dart';
 import '../models/models.dart';
-import 'active_collection_providers.dart';
+import 'collection_providers.dart';
 import 'collection_catalog_providers.dart';
 import 'environment_providers.dart';
 import 'ui_providers.dart';

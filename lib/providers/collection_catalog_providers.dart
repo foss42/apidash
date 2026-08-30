@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../services/services.dart';
-import 'active_collection_providers.dart';
+import 'collection_providers.dart';
 
 final selectedCollectionIdStateProvider = StateProvider<String?>((ref) {
   final index = workspaceStorage.getCollectionsIndex();
