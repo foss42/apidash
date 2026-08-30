@@ -313,7 +313,7 @@ class _WsMessageEditorState extends ConsumerState<WsMessageEditor> {
                   final selectedId = ref.read(selectedIdStateProvider);
                   if (value.isNotEmpty && selectedId != null) {
                     ref
-                        .read(activeCollectionProvider.notifier)
+                        .read(collectionStateNotifierProvider.notifier)
                         .sendWebSocketMessage(selectedId, value);
                     setState(() {
                       _draft = "";

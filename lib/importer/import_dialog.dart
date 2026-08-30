@@ -36,7 +36,7 @@ void importToCollectionPane(
               } else {
                 for (var model in importedRequestModels.reversed) {
                   ref
-                      .read(activeCollectionProvider.notifier)
+                      .read(collectionStateNotifierProvider.notifier)
                       .addRequestModel(
                         model.$2,
                         name: model.$1,

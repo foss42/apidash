@@ -55,7 +55,7 @@ void main() {
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -86,7 +86,7 @@ void main() {
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -110,7 +110,7 @@ void main() {
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -146,7 +146,7 @@ void main() {
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -178,7 +178,7 @@ void main() {
               (ref) => MockHistoryMetaStateNotifier({'1': historyMeta}),
             ),
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],

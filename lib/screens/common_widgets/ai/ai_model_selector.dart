@@ -33,7 +33,7 @@ class AIModelSelector extends ConsumerWidget {
       aiRequestModel: aiRequestModel,
       onModelUpdated: (newAIRequestModel) {
         ref
-            .read(activeCollectionProvider.notifier)
+            .read(collectionStateNotifierProvider.notifier)
             .update(aiRequestModel: newAIRequestModel.copyWith());
       },
     );

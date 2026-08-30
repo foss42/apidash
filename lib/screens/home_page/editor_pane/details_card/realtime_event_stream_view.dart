@@ -90,7 +90,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
               tooltip: "Clear messages",
               onPressed: () {
                 if (wsModel != null) {
-                  ref.read(activeCollectionProvider.notifier).update(
+                  ref.read(collectionStateNotifierProvider.notifier).update(
                         wsRequestModel:
                             wsModel.copyWith(messageHistory: []),
                       );

@@ -31,7 +31,7 @@ class EditAIRequestPane extends ConsumerWidget {
       },
       onTapTabBar: (index) {
         ref
-            .read(activeCollectionProvider.notifier)
+            .read(collectionStateNotifierProvider.notifier)
             .update(requestTabIndex: index);
       },
       showIndicators: [false, false, false],

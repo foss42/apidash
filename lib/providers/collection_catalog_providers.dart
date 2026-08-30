@@ -123,7 +123,7 @@ class CollectionCatalogNotifier
           (ids) => {...ids, id},
         );
     await ref
-        .read(activeCollectionProvider.notifier)
+        .read(collectionStateNotifierProvider.notifier)
         .ensureActive(id);
   }
 
@@ -192,7 +192,7 @@ class CollectionCatalogNotifier
       final nextId =
           collectionSequence.isNotEmpty ? collectionSequence.first : null;
       await ref
-          .read(activeCollectionProvider.notifier)
+          .read(collectionStateNotifierProvider.notifier)
           .ensureActive(nextId);
     }
   }
@@ -202,7 +202,7 @@ class CollectionCatalogNotifier
     final activeId = ref.read(selectedCollectionIdStateProvider);
     final activeSequence = ref.read(requestSequenceProvider);
     final collectionNotifier =
-        ref.read(activeCollectionProvider.notifier);
+        ref.read(collectionStateNotifierProvider.notifier);
     for (final entry in state!.entries) {
       if (!_loadedCollectionIds.contains(entry.key)) {
         continue;

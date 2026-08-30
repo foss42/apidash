@@ -15,7 +15,7 @@ class APITypeDropdown extends ConsumerWidget {
       apiType: apiType,
       onChanged: (type) {
         ref
-            .read(activeCollectionProvider.notifier)
+            .read(collectionStateNotifierProvider.notifier)
             .update(apiType: type);
       },
     );

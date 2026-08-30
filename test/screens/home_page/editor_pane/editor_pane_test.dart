@@ -45,7 +45,7 @@ void main() {
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',

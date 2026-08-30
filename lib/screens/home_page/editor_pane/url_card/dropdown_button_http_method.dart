@@ -18,7 +18,7 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
       method: method,
       onChanged: (HTTPVerb? value) {
         ref
-            .read(activeCollectionProvider.notifier)
+            .read(collectionStateNotifierProvider.notifier)
             .update(method: value);
       },
     );

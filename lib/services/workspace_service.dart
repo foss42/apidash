@@ -37,7 +37,7 @@ Future<bool> activateWorkspace(
 
 void _invalidateWorkspaceProviders(WidgetRef ref) {
   ref.invalidate(collectionCatalogProvider);
-  ref.invalidate(activeCollectionProvider);
+  ref.invalidate(collectionStateNotifierProvider);
   ref.invalidate(environmentsStateNotifierProvider);
   ref.invalidate(historyMetaStateNotifier);
   ref.invalidate(selectedIdStateProvider);

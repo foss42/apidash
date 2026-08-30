@@ -82,7 +82,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
                 onPressed: () async {
                   ref.read(autoSaveNotifierProvider.notifier).cancelPending();
                   await ref
-                      .read(activeCollectionProvider.notifier)
+                      .read(collectionStateNotifierProvider.notifier)
                       .saveData();
                   Navigator.of(context).pop();
                   await windowManager.setPreventClose(false);

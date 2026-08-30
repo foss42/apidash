@@ -102,7 +102,7 @@ class ResponseDetails extends ConsumerWidget {
           message: message,
           time: responseModel?.time,
           onClearResponse: () {
-            ref.read(activeCollectionProvider.notifier).clearResponse();
+            ref.read(collectionStateNotifierProvider.notifier).clearResponse();
           },
         ),
         const Expanded(

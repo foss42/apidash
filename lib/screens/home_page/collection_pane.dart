@@ -16,7 +16,7 @@ class CollectionPane extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(autoSaveNotifierProvider);
     ref.watch(collectionCatalogProvider);
-    final collection = ref.watch(activeCollectionProvider);
+    final collection = ref.watch(collectionStateNotifierProvider);
     var sm = ScaffoldMessenger.of(context);
     if (collection == null) {
       return const Center(child: CircularProgressIndicator());
@@ -193,10 +193,10 @@ class _CollectionSection extends ConsumerWidget {
     if (!isActive) {
       return collection.requests;
     }
-    ref.watch(activeCollectionProvider);
+    ref.watch(collectionStateNotifierProvider);
     final sequence = ref.watch(requestSequenceProvider);
     return ref
-        .read(activeCollectionProvider.notifier)
+        .read(collectionStateNotifierProvider.notifier)
         .summariesForSequence(collectionId, sequence);
   }
 
@@ -362,7 +362,7 @@ class _CollectionSectionHeader extends ConsumerWidget {
         onTap: () async {
           if (!isActive) {
             await ref
-                .read(activeCollectionProvider.notifier)
+                .read(collectionStateNotifierProvider.notifier)
                 .ensureActive(collectionId);
           }
           ref.read(expandedCollectionIdsProvider.notifier).update(
@@ -426,9 +426,9 @@ class _CollectionSectionHeader extends ConsumerWidget {
                 iconSize: 18,
                 onPressed: () async {
                   await ref
-                      .read(activeCollectionProvider.notifier)
+                      .read(collectionStateNotifierProvider.notifier)
                       .ensureActive(collectionId);
-                  ref.read(activeCollectionProvider.notifier).add();
+                  ref.read(collectionStateNotifierProvider.notifier).add();
                   ref.read(expandedCollectionIdsProvider.notifier).update(
                         (ids) => {...ids, collectionId},
                       );
@@ -514,9 +514,9 @@ class RequestItem extends ConsumerWidget {
       editRequestId: editRequestId,
       onTap: () async {
         await ref
-            .read(activeCollectionProvider.notifier)
+            .read(collectionStateNotifierProvider.notifier)
             .ensureActive(collectionId);
-        ref.read(activeCollectionProvider.notifier).loadRequest(id);
+        ref.read(collectionStateNotifierProvider.notifier).loadRequest(id);
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
@@ -527,7 +527,7 @@ class RequestItem extends ConsumerWidget {
       onChangedNameEditor: (value) {
         value = value.trim();
         ref
-            .read(activeCollectionProvider.notifier)
+            .read(collectionStateNotifierProvider.notifier)
             .update(id: editRequestId!, name: value);
       },
       onTapOutsideNameEditor: () {
@@ -545,10 +545,10 @@ class RequestItem extends ConsumerWidget {
           );
         }
         if (item == ItemMenuOption.delete) {
-          ref.read(activeCollectionProvider.notifier).remove(id: id);
+          ref.read(collectionStateNotifierProvider.notifier).remove(id: id);
         }
         if (item == ItemMenuOption.duplicate) {
-          ref.read(activeCollectionProvider.notifier).duplicate(id: id);
+          ref.read(collectionStateNotifierProvider.notifier).duplicate(id: id);
         }
       },
     );

@@ -50,7 +50,7 @@ class EditGraphQLRequestPane extends ConsumerWidget {
       },
       onTapTabBar: (index) {
         ref
-            .read(activeCollectionProvider.notifier)
+            .read(collectionStateNotifierProvider.notifier)
             .update(requestTabIndex: index);
       },
       showIndicators: [

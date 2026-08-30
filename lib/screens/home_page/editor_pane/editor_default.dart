@@ -54,7 +54,7 @@ class RequestEditorDefault extends ConsumerWidget {
                 final hasCollections =
                     ref.read(collectionSequenceProvider).isNotEmpty;
                 if (hasCollections) {
-                  ref.read(activeCollectionProvider.notifier).add();
+                  ref.read(collectionStateNotifierProvider.notifier).add();
                 } else {
                   ref
                       .read(collectionCatalogProvider.notifier)

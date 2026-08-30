@@ -81,7 +81,7 @@ void main() {
         ProviderScope(
           overrides: [
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -110,7 +110,7 @@ void main() {
         ProviderScope(
           overrides: [
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -134,7 +134,7 @@ void main() {
         ProviderScope(
           overrides: [
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -159,7 +159,7 @@ void main() {
         ProviderScope(
           overrides: [
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],

@@ -14,7 +14,7 @@ final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
-  final collection = ref.watch(activeCollectionProvider);
+  final collection = ref.watch(collectionStateNotifierProvider);
   if (selectedId == null || collection == null) {
     return null;
   } else {
@@ -38,14 +38,14 @@ final selectedSubstitutedHttpRequestModelProvider =
       }
     });
 
-final StateNotifierProvider<ActiveCollectionNotifier, Map<String, RequestModel>?>
-activeCollectionProvider = StateNotifierProvider(
-  (ref) => ActiveCollectionNotifier(ref, workspaceStorage),
+final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
+collectionStateNotifierProvider = StateNotifierProvider(
+  (ref) => CollectionStateNotifier(ref, workspaceStorage),
 );
 
-class ActiveCollectionNotifier
+class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  ActiveCollectionNotifier(this.ref, this.workspaceStorage) : super(null) {
+  CollectionStateNotifier(this.ref, this.workspaceStorage) : super(null) {
     Future.microtask(() {
       activateCollection(ref.read(selectedCollectionIdStateProvider));
     });

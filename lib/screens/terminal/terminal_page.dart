@@ -34,7 +34,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(terminalStateProvider);
-    final collection = ref.watch(activeCollectionProvider);
+    final collection = ref.watch(collectionStateNotifierProvider);
     final allEntries = state.entries;
     final filtered = _applyFilters(allEntries);
 

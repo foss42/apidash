@@ -30,7 +30,7 @@ class URLTextField extends ConsumerWidget {
       ),
     );
     final requestModel = ref
-        .read(activeCollectionProvider.notifier)
+        .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
 
     return EnvURLField(
@@ -54,7 +54,7 @@ class URLTextField extends ConsumerWidget {
         // Re-read the latest model here: the build-time `requestModel` goes
         // stale when non-watched fields change (e.g. a live WS appending to
         // messageHistory), and writing a stale sub-model back clobbers them.
-        final notifier = ref.read(activeCollectionProvider.notifier);
+        final notifier = ref.read(collectionStateNotifierProvider.notifier);
         final latestModel = ref.read(selectedRequestModelProvider);
         if (latestModel == null) return;
         if (latestModel.apiType == APIType.ai) {
@@ -71,7 +71,7 @@ class URLTextField extends ConsumerWidget {
         }
       },
       onFieldSubmitted: (value) {
-        ref.read(activeCollectionProvider.notifier).sendRequest();
+        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
     );
   }

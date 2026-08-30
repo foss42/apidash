@@ -32,7 +32,7 @@ void main() {
         ProviderScope(
           overrides: [
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {
                 'req-1': RequestModel(
                   id: 'req-1',
@@ -72,7 +72,7 @@ void main() {
         ProviderScope(
           overrides: [
             selectedCollectionIdStateProvider.overrideWith((ref) => null),
-            activeCollectionProvider.overrideWith(
+            collectionStateNotifierProvider.overrideWith(
               (ref) => MockActiveCollectionNotifier(ref, {}),
             ),
           ],
@@ -99,7 +99,7 @@ void main() {
           ProviderScope(
             overrides: [
               selectedCollectionIdStateProvider.overrideWith((ref) => null),
-              activeCollectionProvider.overrideWith(
+              collectionStateNotifierProvider.overrideWith(
                 (ref) => MockActiveCollectionNotifier(ref, {}),
               ),
             ],

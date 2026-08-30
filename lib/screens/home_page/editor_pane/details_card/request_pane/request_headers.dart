@@ -29,7 +29,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   }
 
   void _onFieldChange() {
-    ref.read(activeCollectionProvider.notifier).update(
+    ref.read(collectionStateNotifierProvider.notifier).update(
           headers: headerRows.sublist(0, headerRows.length - 1),
           isHeaderEnabledList:
               isRowEnabledList.sublist(0, headerRows.length - 1),

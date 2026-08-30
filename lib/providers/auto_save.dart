@@ -26,7 +26,7 @@ class AutoSaveNotifier extends Notifier<void> {
     }
 
     ref.listen<Map<String, RequestModel>?>(
-      activeCollectionProvider,
+      collectionStateNotifierProvider,
       (previous, next) {
         if (previous == null) {
           return;
@@ -102,7 +102,7 @@ class AutoSaveNotifier extends Notifier<void> {
     if (ref.read(saveDataStateProvider) || ref.read(clearDataStateProvider)) {
       return;
     }
-    await ref.read(activeCollectionProvider.notifier).saveData();
+    await ref.read(collectionStateNotifierProvider.notifier).saveData();
     await ref.read(collectionCatalogProvider.notifier).saveCollections();
     await ref.read(environmentsStateNotifierProvider.notifier).saveEnvironments();
   }

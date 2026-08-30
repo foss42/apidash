@@ -125,7 +125,7 @@ void main() {
     final container = createContainer();
     await ensureCollectionReady(container, tester);
 
-    container.read(activeCollectionProvider.notifier).state = {
+    container.read(collectionStateNotifierProvider.notifier).state = {
       reqId: RequestModel(id: reqId, name: ''),
     };
 

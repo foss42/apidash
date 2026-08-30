@@ -20,7 +20,7 @@ void main() async {
     (WidgetTester tester) async {
       // Set up the test environment
       final container = createContainer();
-      final notifier = container.read(activeCollectionProvider.notifier);
+      final notifier = container.read(collectionStateNotifierProvider.notifier);
 
       // Ensure the initial request is a GET request with no body
       final id = notifier.state!.entries.first.key;
@@ -61,7 +61,7 @@ void main() async {
 
     final container = createContainer();
     await ensureCollectionReady(container);
-    final notifier = container.read(activeCollectionProvider.notifier);
+    final notifier = container.read(collectionStateNotifierProvider.notifier);
 
     const model = HttpRequestModel(
       url: 'https://sse-demo.netlify.app/sse',
@@ -122,12 +122,12 @@ void main() async {
 
   group('ActiveCollectionNotifier Auth Tests', () {
     late ProviderContainer container;
-    late ActiveCollectionNotifier notifier;
+    late CollectionStateNotifier notifier;
 
     setUp(() async {
       container = createContainer();
       await ensureCollectionReady(container);
-      notifier = container.read(activeCollectionProvider.notifier);
+      notifier = container.read(collectionStateNotifierProvider.notifier);
     });
 
     test('should update request with basic authentication', () {
@@ -435,7 +435,7 @@ void main() async {
     });
 
     test('should save and load auth data correctly', () async {
-      final notifier = container.read(activeCollectionProvider.notifier);
+      final notifier = container.read(collectionStateNotifierProvider.notifier);
 
       final id = notifier.state!.entries.first.key;
       const jwtAuth = AuthJwtModel(
@@ -473,7 +473,7 @@ void main() async {
         await ensureCollectionReady(newContainer);
 
         final newNotifier = newContainer.read(
-          activeCollectionProvider.notifier,
+          collectionStateNotifierProvider.notifier,
         );
         newNotifier.loadRequest(id);
 
@@ -767,12 +767,12 @@ void main() async {
 
   group('ActiveCollectionNotifier Scripting Tests', () {
     late ProviderContainer container;
-    late ActiveCollectionNotifier notifier;
+    late CollectionStateNotifier notifier;
 
     setUp(() async {
       container = createContainer();
       await ensureCollectionReady(container);
-      notifier = container.read(activeCollectionProvider.notifier);
+      notifier = container.read(collectionStateNotifierProvider.notifier);
     });
 
     test('should update request with pre-request script', () {
@@ -975,7 +975,7 @@ void main() async {
         newContainer = ProviderContainer();
         await ensureCollectionReady(newContainer);
         final newNotifier = newContainer.read(
-          activeCollectionProvider.notifier,
+          collectionStateNotifierProvider.notifier,
         );
         newNotifier.loadRequest(id);
 

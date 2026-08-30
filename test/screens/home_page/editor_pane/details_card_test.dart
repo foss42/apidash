@@ -26,7 +26,7 @@ void main() {
           ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
@@ -76,7 +76,7 @@ void main() {
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           codePaneVisibleStateProvider.overrideWith((ref) => true),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
@@ -126,7 +126,7 @@ void main() {
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           codePaneVisibleStateProvider.overrideWith((ref) => false),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',

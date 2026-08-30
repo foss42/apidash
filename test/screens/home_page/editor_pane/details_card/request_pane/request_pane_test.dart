@@ -27,7 +27,7 @@ void main() {
             (ref) => DashbotWindowNotifier(),
           ),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
@@ -67,7 +67,7 @@ void main() {
             (ref) => DashbotWindowNotifier(),
           ),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
@@ -107,7 +107,7 @@ void main() {
             (ref) => DashbotWindowNotifier(),
           ),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(id: 'test_id', apiType: APIType.ai),
             }),
@@ -151,7 +151,7 @@ void main() {
             (ref) => DashbotWindowNotifier()..togglePopped(),
           ),
           selectedCollectionIdStateProvider.overrideWith((ref) => null),
-          activeCollectionProvider.overrideWith(
+          collectionStateNotifierProvider.overrideWith(
             (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',

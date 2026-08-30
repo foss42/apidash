@@ -34,13 +34,13 @@ class _EditRequestScriptsState extends ConsumerState<EditRequestScripts> {
 
     preReqCodeController.addListener(() {
       ref
-          .read(activeCollectionProvider.notifier)
+          .read(collectionStateNotifierProvider.notifier)
           .update(preRequestScript: preReqCodeController.text);
     });
 
     postResCodeController.addListener(() {
       ref
-          .read(activeCollectionProvider.notifier)
+          .read(collectionStateNotifierProvider.notifier)
           .update(postRequestScript: postResCodeController.text);
     });
 

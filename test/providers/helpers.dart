@@ -8,8 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Seeds [activeCollectionProvider] without loading from disk.
-class MockActiveCollectionNotifier extends ActiveCollectionNotifier {
+/// Seeds [collectionStateNotifierProvider] without loading from disk.
+class MockActiveCollectionNotifier extends CollectionStateNotifier {
   MockActiveCollectionNotifier(
     Ref ref, [
     Map<String, RequestModel>? initial,
@@ -39,7 +39,7 @@ List<Override> mockActiveCollectionOverrides([
   return [
     // Avoid selectedCollectionIdStateProvider reading workspaceStorage.
     selectedCollectionIdStateProvider.overrideWith((ref) => null),
-    activeCollectionProvider.overrideWith(
+    collectionStateNotifierProvider.overrideWith(
       (ref) => MockActiveCollectionNotifier(ref, initial),
     ),
   ];
@@ -122,16 +122,16 @@ Future<void> ensureCollectionReady(
     await Future<void>.delayed(Duration.zero);
   }
   for (var i = 0; i < 100; i++) {
-    final state = container.read(activeCollectionProvider);
+    final state = container.read(collectionStateNotifierProvider);
     if (state != null) {
       if (state.isEmpty) {
         final ids = container.read(requestSequenceProvider);
-        final notifier = container.read(activeCollectionProvider.notifier);
+        final notifier = container.read(collectionStateNotifierProvider.notifier);
         for (final id in ids) {
           notifier.loadRequest(id);
         }
       }
-      if (container.read(activeCollectionProvider)!.isNotEmpty ||
+      if (container.read(collectionStateNotifierProvider)!.isNotEmpty ||
           container.read(requestSequenceProvider).isEmpty) {
         return;
       }
@@ -142,5 +142,5 @@ Future<void> ensureCollectionReady(
       await Future<void>.delayed(const Duration(milliseconds: 10));
     }
   }
-  throw StateError('activeCollectionProvider did not initialize');
+  throw StateError('collectionStateNotifierProvider did not initialize');
 }

@@ -25,7 +25,7 @@ class HistoryActionButtons extends ConsumerWidget {
           onPressed: requestId != null
               ? () {
                   ref
-                      .read(activeCollectionProvider.notifier)
+                      .read(collectionStateNotifierProvider.notifier)
                       .duplicateFromHistory(historyRequestModel!);
                   ref.read(navRailIndexStateProvider.notifier).state = 0;
                 }
@@ -38,7 +38,7 @@ class HistoryActionButtons extends ConsumerWidget {
           onPressed: isAvailable
               ? () {
                   ref
-                      .read(activeCollectionProvider.notifier)
+                      .read(collectionStateNotifierProvider.notifier)
                       .loadRequest(requestId);
                   ref.read(selectedIdStateProvider.notifier).state = requestId;
                   ref.read(navRailIndexStateProvider.notifier).state = 0;

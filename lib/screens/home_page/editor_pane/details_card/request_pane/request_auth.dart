@@ -31,7 +31,7 @@ class EditAuthType extends ConsumerWidget {
       onChangedAuthType: (newType) {
         final selectedRequest = ref.read(selectedRequestModelProvider);
         if (newType != null) {
-          ref.read(activeCollectionProvider.notifier).update(
+          ref.read(collectionStateNotifierProvider.notifier).update(
                 authModel: selectedRequest?.httpRequestModel?.authModel
                         ?.copyWith(type: newType) ??
                     AuthModel(type: newType),
@@ -40,11 +40,11 @@ class EditAuthType extends ConsumerWidget {
       },
       updateAuthData: (model) {
         if (model == null) {
-          ref.read(activeCollectionProvider.notifier).update(
+          ref.read(collectionStateNotifierProvider.notifier).update(
                 authModel: AuthModel(type: APIAuthType.none),
               );
         }
-        ref.read(activeCollectionProvider.notifier).update(
+        ref.read(collectionStateNotifierProvider.notifier).update(
               authModel: model,
             );
       },
