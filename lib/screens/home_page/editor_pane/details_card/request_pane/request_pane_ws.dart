@@ -46,7 +46,7 @@ class EditWSRequestPane extends ConsumerWidget {
       tabIndex: tabIndex,
       onTapTabBar: (index) {
         ref
-            .read(collectionStateNotifierProvider.notifier)
+            .read(activeCollectionProvider.notifier)
             .update(requestTabIndex: index);
       },
       showIndicators: [

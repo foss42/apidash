@@ -17,7 +17,7 @@ class WsConnectionSettings extends ConsumerWidget {
     final wsModel = ref.read(selectedRequestModelProvider)?.wsRequestModel;
     if (wsModel == null) return;
     ref
-        .read(collectionStateNotifierProvider.notifier)
+        .read(activeCollectionProvider.notifier)
         .update(wsRequestModel: updater(wsModel));
   }
 
