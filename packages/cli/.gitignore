@@ -1,0 +1,7 @@
+# Compiled standalone binary
+apidash
+*.exe
+
+.dart_tool/
+.packages
+pubspec.lock

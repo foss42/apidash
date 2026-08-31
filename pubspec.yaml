@@ -11,6 +11,7 @@ workspace:
   - packages/apidash_core
   - packages/apidash_design_system
   - packages/better_networking
+  - packages/cli
   - packages/curl_parser
   - packages/genai
   - packages/har

@@ -1,0 +1,23 @@
+name: apidash_cli
+description: "Pure-Dart command line interface for API Dash. Reuses API Dash's own better_networking engine and shares the desktop workspace."
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+resolution: workspace
+
+dependencies:
+  # The send engine + models (HttpRequestModel, APIType, sendHttpRequest).
+  # apidash_core transitively re-exports better_networking (via genai).
+  apidash_core: any
+  better_networking: any
+  args: ^2.5.0
+  mason_logger: ^0.3.1
+  hive_ce: ^2.1.2
+  path: ^1.9.0
+
+dev_dependencies:
+  test: ^1.29.0
+  lints: ^6.0.0
