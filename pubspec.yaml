@@ -25,6 +25,7 @@ dependencies:
   flutter:
     sdk: flutter
   apidash_core: any
+  better_networking: any
   apidash_design_system: any
   carousel_slider: ^5.1.2
   code_builder: ^4.11.1
@@ -87,6 +88,9 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  mcp_dart: ^2.2.2
+  genui: ^0.9.0
+  google_generative_ai: ^0.4.7
 
 dependency_overrides:
   pdf_widget_wrapper: ^1.0.4

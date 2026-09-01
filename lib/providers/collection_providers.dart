@@ -119,6 +119,26 @@ class CollectionStateNotifier
     unsave();
   }
 
+  void addModel(RequestModel requestModel) {
+    final id = requestModel.id;
+
+    // 1. Add the cloned model to the main state map
+    var map = {...state!};
+    map[id] = requestModel;
+    state = map;
+
+    // 2. Insert it at the top of the sidebar sequence
+    var itemIds = ref.read(requestSequenceProvider);
+    itemIds.insert(0, id);
+    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+
+    // 3. Set it as the active tab in the workspace
+    ref.read(selectedIdStateProvider.notifier).state = id;
+
+    // 4. Trigger the save pipeline
+    unsave();
+  }
+
   void reorder(int oldIdx, int newIdx) {
     var itemIds = ref.read(requestSequenceProvider);
     final itemId = itemIds.removeAt(oldIdx);
