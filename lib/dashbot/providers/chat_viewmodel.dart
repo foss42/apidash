@@ -31,13 +31,15 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   HttpRequestModel? get _currentSubstitutedHttpRequestModel =>
       _ref.read(selectedSubstitutedHttpRequestModelProvider);
   AIRequestModel? get _selectedAIModel {
-    final json = _ref.read(settingsProvider).defaultAIModel;
+    final settings = _ref.read(settingsProvider);
+    final json = settings.defaultAIModel;
     if (json == null) return null;
-    try {
-      return AIRequestModel.fromJson(json);
-    } catch (_) {
+    final model = safeAIRequestModelFromJson(json);
+    if (model.modelApiProvider == null &&
+        (model.model == null || model.model!.isEmpty)) {
       return null;
     }
+    return applyProviderCredentials(model, settings.aiProviders);
   }
 
   List<ChatMessage> get currentMessages {

@@ -1,4 +1,3 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,29 +113,7 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              ListTile(
-                hoverColor: kColorTransparent,
-                title: const Text(kLabelDefaultLLM),
-                trailing: AIModelSelectorButton(
-                  aiRequestModel: AIRequestModel.fromJson(
-                    settings.defaultAIModel ?? {},
-                  ),
-                  onModelUpdated: (d) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .update(
-                          defaultAIModel: d
-                              .copyWith(
-                                modelConfigs: [],
-                                stream: null,
-                                systemPrompt: '',
-                                userPrompt: '',
-                              )
-                              .toJson(),
-                        );
-                  },
-                ),
-              ),
+              const AIProvidersSettingsSection(),
               CheckboxListTile(
                 title: const Text(kLabelSaveResponses),
                 subtitle: const Text(kLabelSaveResponsesSubtitle),

@@ -20,6 +20,7 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.aiProviders,
     this.maxConnectionMessages = 1000,
   });
 
@@ -37,6 +38,7 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
+  final Map<String, Map<String, Object?>>? aiProviders;
   final int maxConnectionMessages;
 
   SettingsModel copyWith({
@@ -54,6 +56,7 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    Map<String, Map<String, Object?>>? aiProviders,
     int? maxConnectionMessages,
   }) {
     return SettingsModel(
@@ -73,7 +76,9 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
-      maxConnectionMessages: maxConnectionMessages ?? this.maxConnectionMessages,
+      aiProviders: aiProviders ?? this.aiProviders,
+      maxConnectionMessages:
+          maxConnectionMessages ?? this.maxConnectionMessages,
     );
   }
 
@@ -95,6 +100,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      aiProviders: aiProviders,
       maxConnectionMessages: maxConnectionMessages,
     );
   }
@@ -154,9 +160,22 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+
+    Map<String, Map<String, Object?>>? aiProviders;
+    final rawProviders = data["aiProviders"];
+    if (rawProviders is Map) {
+      aiProviders = rawProviders.map(
+        (key, value) => MapEntry(
+          key.toString(),
+          value is Map
+              ? Map<String, Object?>.from(value)
+              : <String, Object?>{},
+        ),
+      );
+    }
+
     // Backward-compat: this setting was previously stored as "maxWebSocketEvents".
-    final maxConnectionMessages =
-        data["maxConnectionMessages"] as int? ??
+    final maxConnectionMessages = data["maxConnectionMessages"] as int? ??
         data["maxWebSocketEvents"] as int?;
     const sm = SettingsModel();
 
@@ -176,6 +195,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      aiProviders: aiProviders,
       maxConnectionMessages: maxConnectionMessages ?? 1000,
     );
   }
@@ -198,6 +218,7 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "aiProviders": aiProviders,
       "maxConnectionMessages": maxConnectionMessages,
     };
   }
@@ -226,6 +247,7 @@ class SettingsModel {
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
         mapEquals(other.defaultAIModel, defaultAIModel) &&
+        _aiProvidersEquals(other.aiProviders, aiProviders) &&
         other.maxConnectionMessages == maxConnectionMessages;
   }
 
@@ -247,7 +269,21 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      aiProviders,
       maxConnectionMessages,
     );
   }
+}
+
+bool _aiProvidersEquals(
+  Map<String, Map<String, Object?>>? a,
+  Map<String, Map<String, Object?>>? b,
+) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (final entry in a.entries) {
+    if (!mapEquals(entry.value, b[entry.key])) return false;
+  }
+  return true;
 }

@@ -40,6 +40,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    Map<String, Map<String, Object?>>? aiProviders,
     int? maxConnectionMessages,
   }) async {
     state = state.copyWith(
@@ -57,6 +58,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      aiProviders: aiProviders,
       maxConnectionMessages: maxConnectionMessages,
     );
     await setSettingsToSharedPrefs(state);

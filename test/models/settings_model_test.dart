@@ -20,6 +20,10 @@ void main() {
     isSSLDisabled: true,
     isDashBotEnabled: true,
     defaultAIModel: {"model": "llama"},
+    aiProviders: {
+      "openai": {"apiKey": "sk-test"},
+    },
+    maxConnectionMessages: 1000,
   );
 
   test('Testing toJson()', () {
@@ -40,7 +44,10 @@ void main() {
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
       "defaultAIModel": {"model": "llama"},
-      "maxConnectionMessages": 1000
+      "aiProviders": {
+        "openai": {"apiKey": "sk-test"},
+      },
+      "maxConnectionMessages": 1000,
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -63,6 +70,10 @@ void main() {
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
       "defaultAIModel": {"model": "llama"},
+      "aiProviders": {
+        "openai": {"apiKey": "sk-test"},
+      },
+      "maxConnectionMessages": 1000,
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -82,6 +93,10 @@ void main() {
       isSSLDisabled: false,
       isDashBotEnabled: false,
       defaultAIModel: {"model": "llama"},
+      aiProviders: {
+        "openai": {"apiKey": "sk-test"},
+      },
+      maxConnectionMessages: 1000,
     );
     expect(
       sm.copyWith(
@@ -114,9 +129,32 @@ void main() {
   "defaultAIModel": {
     "model": "llama"
   },
+  "aiProviders": {
+    "openai": {
+      "apiKey": "sk-test"
+    }
+  },
   "maxConnectionMessages": 1000
 }''';
     expect(sm.toString(), expectedResult);
+  });
+
+  test('Testing fromJson with custom aiProviders entry', () {
+    const input = {
+      "aiProviders": {
+        "custom_abc": {
+          "compat": "openai",
+          "displayName": "Custom",
+          "apiKey": "custom-key",
+          "url": "https://llm.example.com/v1/chat/completions",
+          "models": ["my-model"],
+          "lastModel": "my-model",
+        },
+      },
+    };
+    final result = SettingsModel.fromJson(input);
+    expect(result.aiProviders?['custom_abc']?['displayName'], 'Custom');
+    expect(result.aiProviders?['custom_abc']?['compat'], 'openai');
   });
 
   test('Testing hashcode', () {
