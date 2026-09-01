@@ -53,6 +53,10 @@ class Codegen {
       url = "${defaultUriScheme.name}://$url";
     }
     var rM = httpRequestModel.copyWith(url: url);
+    if (rM.bodyContentType == ContentType.formUrlEncoded &&
+        rM.hasFormUrlEncodedData) {
+      rM = rM.copyWith(body: rM.formUrlEncodedBody);
+    }
 
     switch (codegenLanguage) {
       case CodegenLanguage.curl:
