@@ -45,6 +45,7 @@ export 'overlay_widget.dart';
 export 'popup_menu_api_type.dart';
 export 'popup_menu_codegen.dart';
 export 'popup_menu_env.dart';
+export 'popup_menu_workspace.dart';
 export 'popup_menu_history.dart';
 export 'popup_menu_uri.dart';
 export 'previewer.dart';

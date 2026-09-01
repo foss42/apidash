@@ -25,8 +25,9 @@ void main() {
             (ref) => DashbotWindowNotifier()..togglePopped(),
           ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
           collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 httpRequestModel: HttpRequestModel(),
@@ -74,8 +75,9 @@ void main() {
           ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           codePaneVisibleStateProvider.overrideWith((ref) => true),
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
           collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 httpRequestModel: HttpRequestModel(),
@@ -123,8 +125,9 @@ void main() {
           ),
           chatViewmodelProvider.overrideWith((ref) => DummyChatViewmodel(ref)),
           codePaneVisibleStateProvider.overrideWith((ref) => false),
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
           collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 httpRequestModel: HttpRequestModel(),

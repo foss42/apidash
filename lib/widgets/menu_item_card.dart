@@ -5,6 +5,7 @@ class ItemCardMenu extends StatelessWidget {
   const ItemCardMenu({
     super.key,
     this.onSelected,
+    this.availableOptions,
     this.child,
     this.offset = Offset.zero,
     this.splashRadius = 14,
@@ -16,11 +17,12 @@ class ItemCardMenu extends StatelessWidget {
   final double splashRadius;
   final String? tooltip;
   final ShapeBorder? shape;
-
   final Function(ItemMenuOption)? onSelected;
+  final List<ItemMenuOption>? availableOptions;
 
   @override
   Widget build(BuildContext context) {
+    final options = availableOptions ?? ItemMenuOption.values;
     return PopupMenuButton<ItemMenuOption>(
       tooltip: tooltip,
       padding: EdgeInsets.zero,
@@ -29,7 +31,7 @@ class ItemCardMenu extends StatelessWidget {
       offset: offset,
       onSelected: onSelected,
       shape: shape,
-      itemBuilder: (BuildContext context) => ItemMenuOption.values
+      itemBuilder: (BuildContext context) => options
           .map<PopupMenuEntry<ItemMenuOption>>(
             (e) => PopupMenuItem<ItemMenuOption>(
               value: e,
@@ -46,6 +48,7 @@ class ItemCardMenu extends StatelessWidget {
 Future<void> showItemCardMenu(
   BuildContext context,
   TapUpDetails details,
+  List<ItemMenuOption> availableOptions,
   Function(ItemMenuOption)? onSelected,
 ) async {
   showMenu(
@@ -56,7 +59,7 @@ Future<void> showItemCardMenu(
       details.globalPosition.dx,
       details.globalPosition.dy,
     ),
-    items: ItemMenuOption.values
+    items: availableOptions
         .map<PopupMenuEntry<ItemMenuOption>>(
           (e) => PopupMenuItem<ItemMenuOption>(
             onTap: () => onSelected?.call(e),

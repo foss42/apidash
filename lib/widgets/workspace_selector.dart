@@ -12,7 +12,7 @@ class WorkspaceSelector extends HookWidget {
     this.onCancel,
   });
 
-  final Future<void> Function(String)? onContinue;
+  final Future<void> Function(String path)? onContinue;
   final Future<void> Function()? onCancel;
 
   @override
