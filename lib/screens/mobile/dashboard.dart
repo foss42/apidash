@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/dashboard/dashboard.dart';
 import '../envvar/environment_page.dart';
 import '../history/history_page.dart';
 import '../settings_page.dart';
@@ -45,7 +46,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
           ),
           if (context.isMediumWindow)
             AnimatedPositioned(
-              bottom: railIdx >= kNavRailCollaborationIndex
+              bottom: railIdx >= kNavRailDashboardIndex
                   ? 0
                   : isLeftDrawerOpen
                       ? 0
@@ -79,6 +80,11 @@ class PageBranch extends ConsumerWidget {
         return const EnvironmentPage();
       case kNavRailHistoryIndex:
         return const HistoryPage();
+      case kNavRailDashboardIndex:
+        return const PageBase(
+          title: kLabelDashboard,
+          scaffoldBody: DashboardPage(),
+        );
       case kNavRailCollaborationIndex:
         return MobileCollaborationPage(
           onScan: () {
@@ -104,3 +110,4 @@ class PageBranch extends ConsumerWidget {
     }
   }
 }
+

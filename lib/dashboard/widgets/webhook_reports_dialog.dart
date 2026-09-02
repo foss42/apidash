@@ -96,8 +96,8 @@ class _WebhookReportsDialogState extends ConsumerState<_WebhookReportsDialog> {
             ),
         ],
       ),
-      content: SizedBox(
-        width: 560,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 560),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,

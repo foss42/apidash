@@ -117,25 +117,25 @@ class Dashboard extends ConsumerWidget {
                       textAlign: TextAlign.center,
                     ),
                     kVSpacer10,
+                    IconButton(
+                      tooltip: kLabelDashboard,
+                      isSelected: railIdx == kNavRailDashboardIndex,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state =
+                            kNavRailDashboardIndex;
+                      },
+                      icon: const Icon(Icons.insights_outlined),
+                      selectedIcon: const Icon(Icons.insights),
+                    ),
+                    Text(
+                      kLabelDashboard,
+                      style: Theme.of(context).textTheme.labelSmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                    kVSpacer10,
                     if (kIsDesktop) ...[
-                      IconButton(
-                        tooltip: kLabelDashboard,
-                        isSelected: railIdx == kNavRailDashboardIndex,
-                        onPressed: () {
-                          ref.read(navRailIndexStateProvider.notifier).state =
-                              kNavRailDashboardIndex;
-                        },
-                        icon: const Icon(Icons.insights_outlined),
-                        selectedIcon: const Icon(Icons.insights),
-                      ),
-                      Text(
-                        kLabelDashboard,
-                        style: Theme.of(context).textTheme.labelSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                      ),
-                      kVSpacer10,
                       IconButton(
                         tooltip: kLabelCollaboration,
                         isSelected: railIdx == kNavRailCollaborationIndex,

@@ -10,12 +10,13 @@ class BottomNavBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+    final screenWidth = MediaQuery.sizeOf(context).width;
     return Wrap(
       children: [
         Container(
           alignment: Alignment.topCenter,
           height: 70 + MediaQuery.paddingOf(context).bottom,
-          width: MediaQuery.sizeOf(context).width,
+          width: screenWidth,
           padding:
               EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
           decoration: BoxDecoration(
@@ -28,73 +29,72 @@ class BottomNavBar extends ConsumerWidget {
           ),
           child: Material(
             type: MaterialType.transparency,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: NavbarButton(
-                    railIdx: railIdx,
-                    buttonIdx: kNavRailRequestsIndex,
-                    selectedIcon: Icons.auto_awesome_mosaic_rounded,
-                    icon: Icons.auto_awesome_mosaic_outlined,
-                    label: 'Requests',
-                  ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: screenWidth),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailRequestsIndex,
+                      selectedIcon: Icons.auto_awesome_mosaic_rounded,
+                      icon: Icons.auto_awesome_mosaic_outlined,
+                      label: 'Requests',
+                    ),
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailWorkflowsIndex,
+                      selectedIcon: Icons.account_tree,
+                      icon: Icons.account_tree_outlined,
+                      label: 'Flows',
+                    ),
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailVariablesIndex,
+                      selectedIcon: Icons.laptop_windows,
+                      icon: Icons.laptop_windows_outlined,
+                      label: 'Variables',
+                    ),
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailHistoryIndex,
+                      selectedIcon: Icons.history_rounded,
+                      icon: Icons.history_outlined,
+                      label: 'History',
+                    ),
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailDashboardIndex,
+                      selectedIcon: Icons.insights,
+                      icon: Icons.insights_outlined,
+                      label: 'Dash',
+                    ),
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailCollaborationIndex,
+                      selectedIcon: Icons.cloud_sync,
+                      icon: Icons.cloud_sync,
+                      label: 'Collab',
+                    ),
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailLogsIndex,
+                      selectedIcon: Icons.terminal,
+                      icon: Icons.terminal,
+                      label: 'Logs',
+                    ),
+                    NavbarButton(
+                      railIdx: railIdx,
+                      buttonIdx: kNavRailSettingsIndex,
+                      selectedIcon: Icons.settings,
+                      icon: Icons.settings_outlined,
+                      label: 'Settings',
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: NavbarButton(
-                    railIdx: railIdx,
-                    buttonIdx: kNavRailWorkflowsIndex,
-                    selectedIcon: Icons.account_tree,
-                    icon: Icons.account_tree_outlined,
-                    label: 'Flows',
-                  ),
-                ),
-                Expanded(
-                  child: NavbarButton(
-                    railIdx: railIdx,
-                    buttonIdx: kNavRailVariablesIndex,
-                    selectedIcon: Icons.laptop_windows,
-                    icon: Icons.laptop_windows_outlined,
-                    label: 'Variables',
-                  ),
-                ),
-                Expanded(
-                  child: NavbarButton(
-                    railIdx: railIdx,
-                    buttonIdx: kNavRailHistoryIndex,
-                    selectedIcon: Icons.history_rounded,
-                    icon: Icons.history_outlined,
-                    label: 'History',
-                  ),
-                ),
-                Expanded(
-                  child: NavbarButton(
-                    railIdx: railIdx,
-                    buttonIdx: kNavRailCollaborationIndex,
-                    selectedIcon: Icons.cloud_sync,
-                    icon: Icons.cloud_sync,
-                    label: 'Collab',
-                  ),
-                ),
-                Expanded(
-                  child: NavbarButton(
-                    railIdx: railIdx,
-                    buttonIdx: kNavRailLogsIndex,
-                    selectedIcon: Icons.terminal,
-                    icon: Icons.terminal,
-                    label: 'Logs',
-                  ),
-                ),
-                Expanded(
-                  child: NavbarButton(
-                    railIdx: railIdx,
-                    buttonIdx: kNavRailSettingsIndex,
-                    selectedIcon: Icons.settings,
-                    icon: Icons.settings_outlined,
-                    label: 'Settings',
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -102,3 +102,4 @@ class BottomNavBar extends ConsumerWidget {
     );
   }
 }
+

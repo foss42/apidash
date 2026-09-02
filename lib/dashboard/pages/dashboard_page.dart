@@ -17,6 +17,120 @@ class DashboardPage extends ConsumerWidget {
     final range = ref.watch(dashboardTimeRangeProvider);
     final scheme = Theme.of(context).colorScheme;
 
+    if (context.isMediumWindow) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: SegmentedButton<DashboardTab>(
+                        segments: const [
+                          ButtonSegment(
+                            value: DashboardTab.collections,
+                            label: Text('Collections'),
+                            icon: Icon(Icons.folder_outlined, size: 16),
+                          ),
+                          ButtonSegment(
+                            value: DashboardTab.workflows,
+                            label: Text('Workflows'),
+                            icon: Icon(Icons.account_tree_outlined, size: 16),
+                          ),
+                        ],
+                        selected: {tab},
+                        onSelectionChanged: (next) {
+                          ref.read(dashboardTabProvider.notifier).state =
+                              next.first;
+                        },
+                      ),
+                    ),
+                    kHSpacer8,
+                    Builder(
+                      builder: (context) {
+                        final auto = ref.watch(webhookAutoSendProvider);
+                        return Badge(
+                          isLabelVisible: auto.active,
+                          label: Text(auto.interval.label),
+                          child: IconButton.filledTonal(
+                            tooltip: auto.active
+                                ? 'Webhook · auto'
+                                : 'Webhook reports',
+                            onPressed: () =>
+                                showWebhookReportsDialog(context, ref),
+                            icon: Icon(
+                              auto.active
+                                  ? Icons.schedule_send_outlined
+                                  : Icons.webhook_outlined,
+                              size: 20,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                kVSpacer8,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: scheme.surfaceContainerHigh
+                              .withValues(alpha: 0.5),
+                          borderRadius: kBorderRadius8,
+                        ),
+                        child: tab == DashboardTab.collections
+                            ? const _CollectionFilter()
+                            : const _WorkflowFilter(),
+                      ),
+                    ),
+                  ],
+                ),
+                kVSpacer8,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Text(
+                        'Range',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                      ),
+                      kHSpacer12,
+                      for (final r in DashboardTimeRange.values) ...[
+                        ChoiceChip(
+                          label: Text(r.label),
+                          selected: range == r,
+                          onSelected: (_) {
+                            ref.read(dashboardTimeRangeProvider.notifier).state =
+                                r;
+                          },
+                        ),
+                        kHSpacer6,
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: tab == DashboardTab.collections
+                ? const CollectionDashboardView()
+                : const WorkflowDashboardView(),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
