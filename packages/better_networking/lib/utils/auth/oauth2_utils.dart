@@ -22,6 +22,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   required File? credentialsFile,
   String? state,
   String? scope,
+  String? codeVerifier,
 }) async {
   // Check for existing credentials first
   if (credentialsFile != null && await credentialsFile.exists()) {
@@ -62,11 +63,14 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
       tokenEndpoint,
       secret: secret,
       httpClient: baseClient,
+      // A null verifier makes package:oauth2 generate a cryptographically
+      // random one. The challenge method is always S256.
+      codeVerifier: (codeVerifier?.isNotEmpty ?? false) ? codeVerifier : null,
     );
 
     final authorizationUrl = grant.getAuthorizationUrl(
       actualRedirectUrl,
-      scopes: scope != null ? [scope] : null,
+      scopes: (scope != null && scope.isNotEmpty) ? [scope] : null,
       state: state,
     );
 

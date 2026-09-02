@@ -152,6 +152,13 @@ const kHintOAuth2AccessToken = "Access Token";
 const kInfoOAuth2AccessToken =
     "The token used to access protected resources on behalf of the user.";
 const kLabelOAuth2CodeChallengeMethod = "Code Challenge Method";
+
+/// PKCE code challenge methods, mapped from stored value to display label.
+///
+/// Only S256 is offered because `package:oauth2` hardcodes
+/// `code_challenge_method=S256` on the authorization request, so listing a
+/// `plaintext` option would let users pick a method that is never sent.
+const kOAuth2CodeChallengeMethods = <String, String>{'sha-256': 'SHA-256'};
 const kTooltipOAuth2CodeChallengeMethod =
     "Code challenge method for PKCE (Proof Key for Code Exchange)";
 const kButtonClearOAuth2Session = "Clear OAuth2 Session";

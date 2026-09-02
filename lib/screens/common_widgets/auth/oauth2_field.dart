@@ -246,11 +246,14 @@ class _OAuth2FieldsState extends ConsumerState<OAuth2Fields> {
           ),
           kVSpacer5,
           ADPopupMenu<String>(
-            value: _codeChallengeMethod.toUpperCase(),
-            values: const [
-              ('SHA-256', 'sha-256'),
-              ('Plaintext', 'plaintext'),
-            ],
+            // ADPopupMenu renders `value` verbatim, so it has to be the
+            // display label rather than the stored value.
+            value:
+                kOAuth2CodeChallengeMethods[_codeChallengeMethod] ??
+                kOAuth2CodeChallengeMethods.values.first,
+            values: kOAuth2CodeChallengeMethods.entries
+                .map((e) => (e.key, e.value))
+                .toList(),
             tooltip: kTooltipOAuth2CodeChallengeMethod,
             isOutlined: true,
             onChanged: widget.readOnly

@@ -206,6 +206,12 @@ Future<HttpRequestModel> handleAuth(
             tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
             credentialsFile: credentialsFile,
             scope: oauth2.scope,
+            // These are configured in the auth UI and persisted on the model,
+            // so they must reach the grant instead of being dropped here.
+            state: (oauth2.state?.isNotEmpty ?? false) ? oauth2.state : null,
+            codeVerifier: (oauth2.codeVerifier?.isNotEmpty ?? false)
+                ? oauth2.codeVerifier
+                : null,
           );
 
           // Clean up the callback server if it exists and is still running
