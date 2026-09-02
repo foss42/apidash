@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert' show HtmlEscape;
 import 'dart:developer' show log;
+
+/// Escapes text that originates from the authorization server's query
+/// parameters before it is written into the response page.
+const _htmlEscape = HtmlEscape();
 
 /// A lightweight HTTP server for handling OAuth callbacks on desktop platforms.
 /// This provides a standard localhost callback URL that's compatible with most OAuth providers.
@@ -166,8 +171,20 @@ class OAuthCallbackServer {
         return;
       }
 
-      // Check if this is an authorization callback (has 'code' or 'error' parameters)
       final uri = request.uri;
+
+      // Only the registered callback path is served. Anything else is a stray
+      // request and must not be able to complete the OAuth flow.
+      if (_path != null && uri.path != _path) {
+        request.response
+          ..statusCode = HttpStatus.notFound
+          ..headers.contentType = ContentType.text
+          ..write('Not Found')
+          ..close();
+        return;
+      }
+
+      // Check if this is an authorization callback (has 'code' or 'error' parameters)
       final hasCode = uri.queryParameters.containsKey('code');
       final hasError = uri.queryParameters.containsKey('error');
 
@@ -318,8 +335,8 @@ class OAuthCallbackServer {
       Please try again from API Dash.
     </div>
     <div class="details">
-      <strong>Error:</strong> $error<br>
-      <strong>Description:</strong> $errorDescription
+      <strong>Error:</strong> ${_htmlEscape.convert(error)}<br>
+      <strong>Description:</strong> ${_htmlEscape.convert(errorDescription)}
     </div>
     <div class="countdown" id="countdown">This window will close automatically in <span id="timer">10</span> seconds...</div>
   </div>
