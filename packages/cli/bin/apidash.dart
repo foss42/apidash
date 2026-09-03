@@ -7,9 +7,6 @@ import 'package:apidash_cli/apidash_cli.dart';
 ///
 /// Exit codes: 0 ok, 1 network/send error, 2 unsupported request,
 /// 3 not found, 64 usage error, 70 unexpected error.
-///
-/// codegen / collection import are out of MVP scope; they'd plug in here as
-/// new `Command` subclasses (reusing apidash_core's import_export + codegen).
 Future<void> main(List<String> args) async {
   final logger = Logger();
   final runner =
@@ -24,9 +21,17 @@ Future<void> main(List<String> args) async {
           abbr: 'w',
           help: 'Override the API Dash data dir (defaults to the desktop app\'s).',
         )
+        ..argParser.addOption(
+          'env',
+          help: 'Apply an environment (by name or id): {{key}} substitution '
+              'on url/headers/body before sending.',
+        )
         ..addCommand(SendCommand(logger))
+        ..addCommand(GraphqlCommand(logger))
+        ..addCommand(AiCommand(logger))
         ..addCommand(ListCommand(logger))
-        ..addCommand(RunCommand(logger));
+        ..addCommand(RunCommand(logger))
+        ..addCommand(EnvCommand(logger));
 
   try {
     final code = await runner.run(args);

@@ -10,9 +10,15 @@ resolution: workspace
 
 dependencies:
   # The send engine + models (HttpRequestModel, APIType, sendHttpRequest).
-  # apidash_core transitively re-exports better_networking (via genai).
-  apidash_core: any
+  # We depend on better_networking directly, not apidash_core: apidash_core's
+  # barrel pulls genai, which exports Flutter widgets and so cannot be compiled
+  # by a pure-Dart `dart run`/`dart compile`.
   better_networking: any
+  # genai for the `ai` command. Import ONLY its Flutter-free subpaths
+  # (models/, interface/, utils/) — never the genai.dart barrel, which
+  # re-exports widgets/ and would drag Flutter into this pure-Dart compile.
+  # genai itself declares no Flutter dependency, so narrow imports stay clean.
+  genai: any
   args: ^2.5.0
   mason_logger: ^0.3.1
   hive_ce: ^2.1.2

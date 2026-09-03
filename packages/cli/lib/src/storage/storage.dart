@@ -17,21 +17,28 @@ class StorageHelper {
         'apidash_cli_${DateTime.now().microsecondsSinceEpoch}');
   }
 
-  bool get exists =>
-      File(p.join(dataDir, 'apidash-data.hive')).existsSync();
+  bool _boxExists(String box) =>
+      File(p.join(dataDir, '$box.hive')).existsSync();
 
-  Future<Box> _open() async {
+  bool get exists => _boxExists('apidash-data');
+
+  /// Whether the desktop `apidash-environments` box file is present.
+  bool get envExists => _boxExists('apidash-environments');
+
+  // Shadow-copy the given Hive box file into the temp dir and open it there,
+  // so it works even while the desktop app holds the original open.
+  Future<Box> _open(String box) async {
     Directory(tempPath).createSync(recursive: true);
     Hive.init(tempPath);
-    File(p.join(dataDir, 'apidash-data.hive'))
-        .copySync(p.join(tempPath, 'apidash-data.hive'));
-    return Hive.openBox('apidash-data');
+    File(p.join(dataDir, '$box.hive'))
+        .copySync(p.join(tempPath, '$box.hive'));
+    return Hive.isBoxOpen(box) ? Hive.box(box) : await Hive.openBox(box);
   }
 
   /// All saved requests as JSON-clean maps (RequestModel.toJson shape).
   Future<List<Map<String, dynamic>>> getRequests() async {
     if (!exists) return [];
-    final box = await _open();
+    final box = await _open('apidash-data');
     final ids = box.get('ids') as List?;
     if (ids == null) return [];
     return [
@@ -43,9 +50,21 @@ class StorageHelper {
   /// One saved request by id, JSON-clean; null if absent.
   Future<Map<String, dynamic>?> getRequest(String id) async {
     if (!exists) return null;
-    final box = await _open();
+    final box = await _open('apidash-data');
     final data = box.get(id);
     return data == null ? null : _clean(data);
+  }
+
+  /// All environments as JSON-clean maps (EnvironmentModel.toJson shape).
+  Future<List<Map<String, dynamic>>> getEnvironments() async {
+    if (!envExists) return [];
+    final box = await _open('apidash-environments');
+    final ids = box.get('environmentIds') as List?;
+    if (ids == null) return [];
+    return [
+      for (final id in ids)
+        if (box.get(id) != null) _clean(box.get(id)),
+    ];
   }
 
   // Hive returns Map<dynamic,dynamic> with nested dynamic maps; the values

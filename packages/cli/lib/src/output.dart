@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:better_networking/better_networking.dart' show HttpResponse;
+import 'package:better_networking/better_networking.dart'
+    show HttpResponse, HttpStreamOutput;
 import 'package:mason_logger/mason_logger.dart';
 
 const _enc = JsonEncoder.withIndent('  ');
@@ -28,12 +29,7 @@ int printResponse(
   final body = resp.body;
 
   if (json) {
-    stdout.writeln(_enc.convert({
-      'status': resp.statusCode,
-      'timeMs': timeMs,
-      'headers': resp.headers,
-      'body': _maybeJson(body),
-    }));
+    stdout.writeln(_enc.convert(responseToMap(resp, dur, err)));
     return 0;
   }
 
@@ -52,6 +48,67 @@ int printResponse(
     logger.info(_pretty(body));
   }
   return 0;
+}
+
+/// Consumes a `--stream` response (from `streamHttpRequest`) and prints it as
+/// it arrives. Human mode writes each chunk's body live to stdout; `--json`
+/// mode emits one compact JSON object per chunk (JSONL:
+/// `{streaming,status,timeMs,body}`). Returns the exit code (0 ok, 1 if any
+/// chunk carried an error). A non-streaming endpoint yields a single chunk
+/// with the full body, so this prints it once.
+Future<int> printStream(
+  Logger logger,
+  Stream<HttpStreamOutput> stream, {
+  required bool json,
+}) async {
+  var sawError = false;
+  var wroteBody = false;
+  await for (final out in stream) {
+    if (out == null) continue;
+    final (streaming, resp, dur, err) = out;
+    if (err != null) {
+      sawError = true;
+      if (json) {
+        stdout.writeln(jsonEncode({'error': err}));
+      } else {
+        logger.err('${wroteBody ? '\n' : ''}Stream error: $err');
+      }
+      break;
+    }
+    if (resp == null) continue;
+    if (json) {
+      stdout.writeln(jsonEncode({
+        'streaming': streaming ?? false,
+        'status': resp.statusCode,
+        'timeMs': dur?.inMilliseconds ?? 0,
+        'body': _maybeJson(resp.body),
+      }));
+    } else {
+      stdout.write(resp.body);
+      // Flush per chunk so a piped/redirected live tail actually streams
+      // (Dart fully-buffers non-TTY stdout otherwise). Ignore a broken pipe.
+      try {
+        await stdout.flush();
+      } catch (_) {}
+      wroteBody = true;
+    }
+  }
+  if (!json && wroteBody) stdout.write('\n');
+  return sawError ? 1 : 0;
+}
+
+/// The `--json` shape of a send/run result — `{status,timeMs,headers,body}`
+/// or `{error}`. Used by [printResponse] and by `import --run --json` (which
+/// collects these into a single array).
+Map<String, dynamic> responseToMap(
+    HttpResponse? resp, Duration? dur, String? err) {
+  if (err != null || resp == null) return {'error': err ?? 'No response'};
+  return {
+    'status': resp.statusCode,
+    'timeMs': dur?.inMilliseconds ?? 0,
+    'headers': resp.headers,
+    'body': _maybeJson(resp.body),
+  };
 }
 
 /// Returns decoded JSON if the string is valid JSON, else the raw string.

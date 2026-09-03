@@ -1,6 +1,10 @@
+export 'src/commands/ai.dart';
+export 'src/commands/env.dart';
+export 'src/commands/graphql.dart';
 export 'src/commands/list.dart';
 export 'src/commands/run.dart';
 export 'src/commands/send.dart';
 export 'src/output.dart';
 export 'src/storage/storage.dart';
+export 'src/utils/substitute.dart';
 export 'src/utils/workspace.dart';

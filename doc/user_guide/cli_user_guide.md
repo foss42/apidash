@@ -9,9 +9,13 @@ CI pipelines, and AI agents.
 
 ## What it is
 
-- **Send ad-hoc requests** from the command line, no setup required.
+- **Send ad-hoc requests** from the command line, no setup required —
+  HTTP/REST (`send`), GraphQL (`graphql`) and AI prompts (`ai`).
 - **Run requests you saved in the desktop app** — the CLI reads the same
-  workspace, so anything you created in the GUI is available by name or id.
+  workspace, so anything you created in the GUI is available by name or id
+  (REST, GraphQL and AI requests all route automatically).
+- **Stream responses** live with `--stream` (SSE / streaming endpoints).
+- **Apply saved environments** with `--env` for `{{key}}` substitution.
 - **Two output modes:** a readable, colourised view for humans, and a
   structured `--json` mode for pipes, scripts, and agents.
 
@@ -45,6 +49,7 @@ The compiled `apidash` binary can be copied anywhere on your `PATH`.
 | :--- | :--- |
 | `--json` | Emit structured JSON instead of the human view. Forces machine output even in a terminal. |
 | `-w, --workspace <path>` | Use a specific API Dash data directory (the folder containing `apidash-data.hive`). Defaults to the desktop app's configured workspace. |
+| `--env <name\|id>` | Apply a saved environment: `{{key}}` tokens in the url, headers and body are substituted before sending. See [Environments](#env--saved-environments). |
 | `-h, --help` | Show usage. |
 
 The CLI is **non-interactive**: it never prompts. On success it exits `0`; on
@@ -60,6 +65,7 @@ Builds a request and sends it. No workspace needed.
 | :--- | :--- |
 | `-H "Key: Value"` | Add a header. Repeatable. |
 | `-d, --body <data>` | Request body. Content type is auto-detected: valid JSON is sent as `application/json`, anything else as `text/plain` (override with `-H "Content-Type: ..."`). |
+| `--stream` | Stream the response, printing each chunk as it arrives. See [Streaming responses](#stream--streaming--sse-responses). |
 
 If you omit the URL scheme, `https://` is assumed (same default as the GUI).
 
@@ -85,14 +91,93 @@ Size:   22 bytes
 }
 ```
 
+### `graphql <url>` — send a GraphQL query
+
+Sends a GraphQL request through the same engine (as `APIType.graphql`, exactly
+like the desktop app: the query is wrapped into `{"query": ...}`).
+
+| Option | Description |
+| :--- | :--- |
+| `-q, --query "<gql>"` | The GraphQL document. **Required.** Pass `-` to read the query from stdin. |
+| `--variables '<json>'` | GraphQL variables as a JSON object. When present, the CLI sends `{"query", "variables"}` as a direct JSON POST (the shared query wrapper is query-only). |
+| `-H "Key: Value"` | Add a header (e.g. `Authorization`). Repeatable. |
+
+```bash
+# A public GraphQL API
+apidash graphql https://countries.trevorblades.com/ \
+  --query "{ countries { code name } }"
+
+# With variables
+apidash graphql https://countries.trevorblades.com/ \
+  --query 'query($c:ID!){ country(code:$c){ name capital } }' \
+  --variables '{"c":"IN"}'
+
+# Read the query from stdin
+echo '{ countries { code } }' | apidash graphql https://countries.trevorblades.com/ --query -
+```
+
+Output uses the same human / `--json` shapes as `send` (status, time, size,
+body). The `--env` flag applies to the url, headers and body.
+
+### `ai <prompt>` — ad-hoc AI request
+
+Sends a prompt to an AI provider and prints the **model's answer** (not the raw
+provider JSON). It builds the provider's request the same way the desktop app
+does and parses the reply with the provider's own formatter.
+
+| Option | Description |
+| :--- | :--- |
+| `-p, --provider <id>` | Provider: `openai`, `anthropic`, `gemini`, `azureopenai`, `ollama`. **Required.** |
+| `--model <name>` | Model name, e.g. `gpt-4o-mini`. **Required.** |
+| `-m, --message "<prompt>"` | User prompt. **Required.** Repeatable (lines are joined). |
+| `--system "<prompt>"` | Optional system prompt. |
+| `--key <apiKey>` | API key. If omitted, falls back to the `<PROVIDER>_API_KEY` env var (e.g. `OPENAI_API_KEY`), then `OPENAI_API_KEY`. `ollama` needs no key. |
+| `--url <url>` | Override the provider endpoint URL. |
+
+```bash
+export OPENAI_API_KEY=sk-...
+apidash ai --provider openai --model gpt-4o-mini \
+  -m "Give me a one-line summary of what HTTP is."
+
+# Local Ollama (no key needed)
+apidash ai --provider ollama --model llama3 -m "Say hi in one word."
+```
+
+Human output prints just the answer text. With `--json`:
+
+```json
+{
+  "status": 200,
+  "timeMs": 1203,
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "answer": "HTTP is the protocol browsers and servers use to exchange web data."
+}
+```
+
+If no API key is available, the CLI fails immediately with a clear message and
+a non-zero exit — it never hangs waiting for input. AI requests are sent
+non-streaming (the `--stream` flag is for HTTP/SSE responses).
+
 ### `run <name|id>` — send a saved request
 
 Loads a request from the workspace (matched by `name` or `id`) and sends it
-through the same engine as `send`.
+through the same engine as `send`. It routes by the saved request type:
+
+- **REST** and **GraphQL** requests go through the HTTP engine (GraphQL keeps
+  its saved query and is sent as `APIType.graphql`).
+- **AI** requests are rebuilt and answered like the [`ai`](#ai-prompt--ad-hoc-ai-request)
+  command — the printed output is the model's answer. If the saved request has
+  no key, the CLI falls back to the `<PROVIDER>_API_KEY` env var.
+
+| Option | Description |
+| :--- | :--- |
+| `--stream` | Stream the response live (ignored for AI). See [Streaming responses](#stream--streaming--sse-responses). |
 
 ```bash
 apidash run "Get current user"
 apidash run 076adf90-36ae-11f1-9a98-69fc428529a8
+apidash run "My streaming endpoint" --stream
 ```
 
 If the name/id is not in the workspace, the CLI prints
@@ -113,6 +198,55 @@ POST    Create order      ->  https://api.apidash.dev/orders    [c3d4...]
 
 An empty list (no saved requests, or no desktop workspace yet) is not an error
 — it prints a short notice and exits `0`.
+
+### `--stream` — streaming / SSE responses
+
+`send` and `run` accept `--stream` for endpoints that stream their response
+(Server-Sent Events / `text/event-stream`, chunked JSON streams, etc.). Instead
+of waiting for the whole body, the CLI prints each chunk **as it arrives** and
+returns when the stream closes.
+
+```bash
+# Live-tail an SSE endpoint
+apidash send GET https://sse.dev/test --stream
+
+# Stream a saved request
+apidash run "My streaming endpoint" --stream
+```
+
+- **Human mode** writes each chunk's body straight to stdout as it comes in.
+- **`--json` mode** emits **JSONL** — one compact JSON object per chunk, one per
+  line: `{"streaming":true,"status":200,"timeMs":812,"body":...}`. This is
+  friendlier to stream-process than a single giant array (read it line by line).
+- A **non-streaming** endpoint used with `--stream` simply yields one chunk with
+  the full body, so it still works — you just get one line / one print.
+- On a stream error the CLI prints the error and exits `1`.
+
+### `env` — saved environments
+
+Environments hold `{{key}}` variables you can substitute into requests. The CLI
+reads the **same** environments you created in the desktop app (read-only).
+
+```bash
+# List environments (name, id, variable count)
+apidash env list
+
+# Show one environment's variables (by name or id)
+apidash env show "Development"
+```
+
+Apply an environment to any `send` / `run` / `graphql` call with the global
+`--env` flag — `{{key}}` tokens in the url, headers and body are replaced before
+the request is sent:
+
+```bash
+apidash --env "Development" send GET "{{base_url}}/users/me"
+apidash --env prod run "Get current user"
+```
+
+Only **enabled, non-secret** variables are substituted (matching the app's
+substitution map). Unknown `{{tokens}}` are left untouched. An unknown `--env`
+name/id exits `3`.
 
 ## Human vs `--json` (agent) output
 
@@ -163,14 +297,16 @@ file, so `list` and `run` see exactly the requests you created in the app.
 | :--- | :--- |
 | `0` | Success. |
 | `1` | Network / send error (connection failed, invalid URL, timeout). |
-| `2` | Unsupported request (e.g. an AI request, or a saved entry with no HTTP model). |
+| `2` | Unsupported request (a saved entry with no request model, or an unknown AI provider). |
 | `3` | `run`: request name/id not found in the workspace. |
 | `64` | Usage error (bad arguments / unknown method). |
 | `70` | Unexpected error. |
 
 ## Not yet in the CLI
 
-Code generation (`apidash_core`'s codegen) and collection import/export
-(Postman/Insomnia/HAR/OpenAPI, also in `apidash_core`) are not wired into the
-CLI yet. They reuse existing engine packages and would be added as new
-subcommands.
+- **WebSocket, gRPC, MQTT** — these transports aren't packaged as a reusable,
+  Flutter-free engine yet, so the CLI can't send them. `send`/`run`/`graphql`
+  cover HTTP/REST, GraphQL, SSE/streaming and AI.
+- **Code generation** (`apidash_core`'s codegen) and **collection import/export**
+  (Postman/Insomnia/HAR/OpenAPI) are not wired in yet. They reuse existing
+  engine packages and would be added as new subcommands.

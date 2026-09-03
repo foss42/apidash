@@ -4,6 +4,8 @@ import 'package:args/command_runner.dart';
 import 'package:better_networking/better_networking.dart';
 import 'package:mason_logger/mason_logger.dart';
 import '../output.dart';
+import '../utils/substitute.dart';
+import 'env.dart';
 
 /// `apidash send <METHOD> <url>` — ad-hoc request, no workspace needed.
 /// Builds an [HttpRequestModel] and sends it through better_networking's
@@ -14,7 +16,11 @@ class SendCommand extends Command<int> {
     argParser
       ..addMultiOption('header',
           abbr: 'H', help: 'Request header "Key: Value" (repeatable).')
-      ..addOption('body', abbr: 'd', help: 'Request body data.');
+      ..addOption('body', abbr: 'd', help: 'Request body data.')
+      ..addFlag('stream',
+          negatable: false,
+          help: 'Stream the response, printing each chunk live (SSE/streaming '
+              'endpoints). --json emits one JSON object per chunk (JSONL).');
   }
 
   @override
@@ -37,7 +43,7 @@ class SendCommand extends Command<int> {
     final headers = _parseHeaders(argResults!['header'] as List<String>);
     final body = argResults!['body'] as String?;
 
-    final model = HttpRequestModel(
+    var model = HttpRequestModel(
       method: method,
       url: url,
       headers: headers.isEmpty ? null : headers,
@@ -45,12 +51,23 @@ class SendCommand extends Command<int> {
       bodyContentType: _detectContentType(body),
     );
 
+    // Global --env: substitute {{key}} tokens before sending.
+    final (vars, envErr) = await resolveEnvVars(globalResults, logger);
+    if (envErr != null) return envErr;
+    model = applyEnv(model, vars);
+
     if (!json && stdout.hasTerminal) {
       logger.detail('Sending ${method.name.toUpperCase()} $url');
     }
 
+    final requestId = 'cli-${DateTime.now().microsecondsSinceEpoch}';
+    if (argResults!['stream'] == true) {
+      final stream = await streamHttpRequest(requestId, APIType.rest, model);
+      return printStream(logger, stream, json: json);
+    }
+
     final (resp, dur, err) = await sendHttpRequest(
-      'cli-${DateTime.now().microsecondsSinceEpoch}',
+      requestId,
       APIType.rest,
       model,
     );
