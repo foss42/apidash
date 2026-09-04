@@ -339,7 +339,7 @@ One loop node: for-each and repeat. Sequence produces lists for for-each only (S
 
 #### Dashbot Generate Workflow
 
-Describe → `apply_workflow` → confirm Create New / Change Current → lean JSON on disk. Apply accepts `connections` as an alias for `edges`, auto-chains when edges are missing, and auto-arranges.
+Describe → `apply_workflow` → confirm Create New / Change Current → lean JSON on disk. Auto-chains when edges are missing, and auto-arranges.
 
 ![Dashbot generate workflow](./GIFs/workflow-dashbot.gif)  
 *Dashbot prompt → confirm → canvas*
@@ -370,7 +370,7 @@ Port-into-empty-space creation and connection cleanup on top of Vyuh.
 
 ## Layer 3: Analytics Dashboard
 
-`Associated Pull Request`: [#1791](https://github.com/foss42/apidash/pull/1791) (builds on [#1781](https://github.com/foss42/apidash/pull/1781))  
+`Associated Pull Request`: [#1791](https://github.com/foss42/apidash/pull/1791)
 `Documentation`: [Dashboard Guide](../../user_guide/dashboard_guide.md)
 
 The Dashboard aggregates `history/request_history` and `history/workflow_history`. Collection health score: `75% × successRate + 25% × (1 − errorRatio)` with success = status `< 400`.
