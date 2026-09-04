@@ -139,7 +139,9 @@ class ConnectionManager {
       port: port,
       options: ChannelOptions(
         credentials: model.useTLS
-            ? const ChannelCredentials.secure()
+            ? (model.allowInvalidCertificates
+                ? ChannelCredentials.secure(onBadCertificate: (cert, host) => true)
+                : const ChannelCredentials.secure())
             : const ChannelCredentials.insecure(),
       ),
     );

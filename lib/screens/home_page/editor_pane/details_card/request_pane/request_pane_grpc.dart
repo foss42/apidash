@@ -396,6 +396,23 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                               );
                         },
                       ),
+                      SwitchListTile(
+                        title: const Text("Allow Invalid Certificates"),
+                        subtitle: const Text(
+                            "Accept self-signed / untrusted TLS certificates"),
+                        value: grpcModel.allowInvalidCertificates,
+                        onChanged: grpcModel.useTLS
+                            ? (val) {
+                                ref
+                                    .read(collectionStateNotifierProvider
+                                        .notifier)
+                                    .update(
+                                      grpcRequestModel: grpcModel.copyWith(
+                                          allowInvalidCertificates: val),
+                                    );
+                              }
+                            : null,
+                      ),
                       kVSpacer20,
                       Row(
                         children: [

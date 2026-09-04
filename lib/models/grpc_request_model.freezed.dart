@@ -301,7 +301,7 @@ as List<String>?,
 /// @nodoc
 mixin _$GrpcRequestModel {
 
- String get url; String? get service; String? get method; String? get protoFile; bool get useTLS; GrpcStreamingType get streamingType; List<WebSocketMessage> get messageHistory; String get requestBody; bool get useReflection; List<NameValueModel>? get metadata; List<bool>? get isMetadataEnabled; AuthModel? get authModel; List<String> get availableServices; List<String> get availableMethods; List<GrpcParameterModel> get parameters;
+ String get url; String? get service; String? get method; String? get protoFile; bool get useTLS; bool get allowInvalidCertificates; GrpcStreamingType get streamingType; List<WebSocketMessage> get messageHistory; String get requestBody; bool get useReflection; List<NameValueModel>? get metadata; List<bool>? get isMetadataEnabled; AuthModel? get authModel; List<String> get availableServices; List<String> get availableMethods; List<GrpcParameterModel> get parameters;
 /// Create a copy of GrpcRequestModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -314,16 +314,16 @@ $GrpcRequestModelCopyWith<GrpcRequestModel> get copyWith => _$GrpcRequestModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GrpcRequestModel&&(identical(other.url, url) || other.url == url)&&(identical(other.service, service) || other.service == service)&&(identical(other.method, method) || other.method == method)&&(identical(other.protoFile, protoFile) || other.protoFile == protoFile)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.streamingType, streamingType) || other.streamingType == streamingType)&&const DeepCollectionEquality().equals(other.messageHistory, messageHistory)&&(identical(other.requestBody, requestBody) || other.requestBody == requestBody)&&(identical(other.useReflection, useReflection) || other.useReflection == useReflection)&&const DeepCollectionEquality().equals(other.metadata, metadata)&&const DeepCollectionEquality().equals(other.isMetadataEnabled, isMetadataEnabled)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other.availableServices, availableServices)&&const DeepCollectionEquality().equals(other.availableMethods, availableMethods)&&const DeepCollectionEquality().equals(other.parameters, parameters));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GrpcRequestModel&&(identical(other.url, url) || other.url == url)&&(identical(other.service, service) || other.service == service)&&(identical(other.method, method) || other.method == method)&&(identical(other.protoFile, protoFile) || other.protoFile == protoFile)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.allowInvalidCertificates, allowInvalidCertificates) || other.allowInvalidCertificates == allowInvalidCertificates)&&(identical(other.streamingType, streamingType) || other.streamingType == streamingType)&&const DeepCollectionEquality().equals(other.messageHistory, messageHistory)&&(identical(other.requestBody, requestBody) || other.requestBody == requestBody)&&(identical(other.useReflection, useReflection) || other.useReflection == useReflection)&&const DeepCollectionEquality().equals(other.metadata, metadata)&&const DeepCollectionEquality().equals(other.isMetadataEnabled, isMetadataEnabled)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other.availableServices, availableServices)&&const DeepCollectionEquality().equals(other.availableMethods, availableMethods)&&const DeepCollectionEquality().equals(other.parameters, parameters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,url,service,method,protoFile,useTLS,streamingType,const DeepCollectionEquality().hash(messageHistory),requestBody,useReflection,const DeepCollectionEquality().hash(metadata),const DeepCollectionEquality().hash(isMetadataEnabled),authModel,const DeepCollectionEquality().hash(availableServices),const DeepCollectionEquality().hash(availableMethods),const DeepCollectionEquality().hash(parameters));
+int get hashCode => Object.hash(runtimeType,url,service,method,protoFile,useTLS,allowInvalidCertificates,streamingType,const DeepCollectionEquality().hash(messageHistory),requestBody,useReflection,const DeepCollectionEquality().hash(metadata),const DeepCollectionEquality().hash(isMetadataEnabled),authModel,const DeepCollectionEquality().hash(availableServices),const DeepCollectionEquality().hash(availableMethods),const DeepCollectionEquality().hash(parameters));
 
 @override
 String toString() {
-  return 'GrpcRequestModel(url: $url, service: $service, method: $method, protoFile: $protoFile, useTLS: $useTLS, streamingType: $streamingType, messageHistory: $messageHistory, requestBody: $requestBody, useReflection: $useReflection, metadata: $metadata, isMetadataEnabled: $isMetadataEnabled, authModel: $authModel, availableServices: $availableServices, availableMethods: $availableMethods, parameters: $parameters)';
+  return 'GrpcRequestModel(url: $url, service: $service, method: $method, protoFile: $protoFile, useTLS: $useTLS, allowInvalidCertificates: $allowInvalidCertificates, streamingType: $streamingType, messageHistory: $messageHistory, requestBody: $requestBody, useReflection: $useReflection, metadata: $metadata, isMetadataEnabled: $isMetadataEnabled, authModel: $authModel, availableServices: $availableServices, availableMethods: $availableMethods, parameters: $parameters)';
 }
 
 
@@ -334,7 +334,7 @@ abstract mixin class $GrpcRequestModelCopyWith<$Res>  {
   factory $GrpcRequestModelCopyWith(GrpcRequestModel value, $Res Function(GrpcRequestModel) _then) = _$GrpcRequestModelCopyWithImpl;
 @useResult
 $Res call({
- String url, String? service, String? method, String? protoFile, bool useTLS, GrpcStreamingType streamingType, List<WebSocketMessage> messageHistory, String requestBody, bool useReflection, List<NameValueModel>? metadata, List<bool>? isMetadataEnabled, AuthModel? authModel, List<String> availableServices, List<String> availableMethods, List<GrpcParameterModel> parameters
+ String url, String? service, String? method, String? protoFile, bool useTLS, bool allowInvalidCertificates, GrpcStreamingType streamingType, List<WebSocketMessage> messageHistory, String requestBody, bool useReflection, List<NameValueModel>? metadata, List<bool>? isMetadataEnabled, AuthModel? authModel, List<String> availableServices, List<String> availableMethods, List<GrpcParameterModel> parameters
 });
 
 
@@ -351,13 +351,14 @@ class _$GrpcRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of GrpcRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? url = null,Object? service = freezed,Object? method = freezed,Object? protoFile = freezed,Object? useTLS = null,Object? streamingType = null,Object? messageHistory = null,Object? requestBody = null,Object? useReflection = null,Object? metadata = freezed,Object? isMetadataEnabled = freezed,Object? authModel = freezed,Object? availableServices = null,Object? availableMethods = null,Object? parameters = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? url = null,Object? service = freezed,Object? method = freezed,Object? protoFile = freezed,Object? useTLS = null,Object? allowInvalidCertificates = null,Object? streamingType = null,Object? messageHistory = null,Object? requestBody = null,Object? useReflection = null,Object? metadata = freezed,Object? isMetadataEnabled = freezed,Object? authModel = freezed,Object? availableServices = null,Object? availableMethods = null,Object? parameters = null,}) {
   return _then(_self.copyWith(
 url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,service: freezed == service ? _self.service : service // ignore: cast_nullable_to_non_nullable
 as String?,method: freezed == method ? _self.method : method // ignore: cast_nullable_to_non_nullable
 as String?,protoFile: freezed == protoFile ? _self.protoFile : protoFile // ignore: cast_nullable_to_non_nullable
 as String?,useTLS: null == useTLS ? _self.useTLS : useTLS // ignore: cast_nullable_to_non_nullable
+as bool,allowInvalidCertificates: null == allowInvalidCertificates ? _self.allowInvalidCertificates : allowInvalidCertificates // ignore: cast_nullable_to_non_nullable
 as bool,streamingType: null == streamingType ? _self.streamingType : streamingType // ignore: cast_nullable_to_non_nullable
 as GrpcStreamingType,messageHistory: null == messageHistory ? _self.messageHistory : messageHistory // ignore: cast_nullable_to_non_nullable
 as List<WebSocketMessage>,requestBody: null == requestBody ? _self.requestBody : requestBody // ignore: cast_nullable_to_non_nullable
@@ -465,10 +466,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String url,  String? service,  String? method,  String? protoFile,  bool useTLS,  GrpcStreamingType streamingType,  List<WebSocketMessage> messageHistory,  String requestBody,  bool useReflection,  List<NameValueModel>? metadata,  List<bool>? isMetadataEnabled,  AuthModel? authModel,  List<String> availableServices,  List<String> availableMethods,  List<GrpcParameterModel> parameters)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String url,  String? service,  String? method,  String? protoFile,  bool useTLS,  bool allowInvalidCertificates,  GrpcStreamingType streamingType,  List<WebSocketMessage> messageHistory,  String requestBody,  bool useReflection,  List<NameValueModel>? metadata,  List<bool>? isMetadataEnabled,  AuthModel? authModel,  List<String> availableServices,  List<String> availableMethods,  List<GrpcParameterModel> parameters)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GrpcRequestModel() when $default != null:
-return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTLS,_that.streamingType,_that.messageHistory,_that.requestBody,_that.useReflection,_that.metadata,_that.isMetadataEnabled,_that.authModel,_that.availableServices,_that.availableMethods,_that.parameters);case _:
+return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTLS,_that.allowInvalidCertificates,_that.streamingType,_that.messageHistory,_that.requestBody,_that.useReflection,_that.metadata,_that.isMetadataEnabled,_that.authModel,_that.availableServices,_that.availableMethods,_that.parameters);case _:
   return orElse();
 
 }
@@ -486,10 +487,10 @@ return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTL
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String url,  String? service,  String? method,  String? protoFile,  bool useTLS,  GrpcStreamingType streamingType,  List<WebSocketMessage> messageHistory,  String requestBody,  bool useReflection,  List<NameValueModel>? metadata,  List<bool>? isMetadataEnabled,  AuthModel? authModel,  List<String> availableServices,  List<String> availableMethods,  List<GrpcParameterModel> parameters)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String url,  String? service,  String? method,  String? protoFile,  bool useTLS,  bool allowInvalidCertificates,  GrpcStreamingType streamingType,  List<WebSocketMessage> messageHistory,  String requestBody,  bool useReflection,  List<NameValueModel>? metadata,  List<bool>? isMetadataEnabled,  AuthModel? authModel,  List<String> availableServices,  List<String> availableMethods,  List<GrpcParameterModel> parameters)  $default,) {final _that = this;
 switch (_that) {
 case _GrpcRequestModel():
-return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTLS,_that.streamingType,_that.messageHistory,_that.requestBody,_that.useReflection,_that.metadata,_that.isMetadataEnabled,_that.authModel,_that.availableServices,_that.availableMethods,_that.parameters);case _:
+return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTLS,_that.allowInvalidCertificates,_that.streamingType,_that.messageHistory,_that.requestBody,_that.useReflection,_that.metadata,_that.isMetadataEnabled,_that.authModel,_that.availableServices,_that.availableMethods,_that.parameters);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -506,10 +507,10 @@ return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTL
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String url,  String? service,  String? method,  String? protoFile,  bool useTLS,  GrpcStreamingType streamingType,  List<WebSocketMessage> messageHistory,  String requestBody,  bool useReflection,  List<NameValueModel>? metadata,  List<bool>? isMetadataEnabled,  AuthModel? authModel,  List<String> availableServices,  List<String> availableMethods,  List<GrpcParameterModel> parameters)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String url,  String? service,  String? method,  String? protoFile,  bool useTLS,  bool allowInvalidCertificates,  GrpcStreamingType streamingType,  List<WebSocketMessage> messageHistory,  String requestBody,  bool useReflection,  List<NameValueModel>? metadata,  List<bool>? isMetadataEnabled,  AuthModel? authModel,  List<String> availableServices,  List<String> availableMethods,  List<GrpcParameterModel> parameters)?  $default,) {final _that = this;
 switch (_that) {
 case _GrpcRequestModel() when $default != null:
-return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTLS,_that.streamingType,_that.messageHistory,_that.requestBody,_that.useReflection,_that.metadata,_that.isMetadataEnabled,_that.authModel,_that.availableServices,_that.availableMethods,_that.parameters);case _:
+return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTLS,_that.allowInvalidCertificates,_that.streamingType,_that.messageHistory,_that.requestBody,_that.useReflection,_that.metadata,_that.isMetadataEnabled,_that.authModel,_that.availableServices,_that.availableMethods,_that.parameters);case _:
   return null;
 
 }
@@ -521,7 +522,7 @@ return $default(_that.url,_that.service,_that.method,_that.protoFile,_that.useTL
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _GrpcRequestModel extends GrpcRequestModel {
-  const _GrpcRequestModel({this.url = "", this.service, this.method, this.protoFile, this.useTLS = false, this.streamingType = GrpcStreamingType.unary, final  List<WebSocketMessage> messageHistory = const [], this.requestBody = "", this.useReflection = false, final  List<NameValueModel>? metadata = const [], final  List<bool>? isMetadataEnabled = const [], this.authModel, final  List<String> availableServices = const [], final  List<String> availableMethods = const [], final  List<GrpcParameterModel> parameters = const []}): _messageHistory = messageHistory,_metadata = metadata,_isMetadataEnabled = isMetadataEnabled,_availableServices = availableServices,_availableMethods = availableMethods,_parameters = parameters,super._();
+  const _GrpcRequestModel({this.url = "", this.service, this.method, this.protoFile, this.useTLS = false, this.allowInvalidCertificates = false, this.streamingType = GrpcStreamingType.unary, final  List<WebSocketMessage> messageHistory = const [], this.requestBody = "", this.useReflection = false, final  List<NameValueModel>? metadata = const [], final  List<bool>? isMetadataEnabled = const [], this.authModel, final  List<String> availableServices = const [], final  List<String> availableMethods = const [], final  List<GrpcParameterModel> parameters = const []}): _messageHistory = messageHistory,_metadata = metadata,_isMetadataEnabled = isMetadataEnabled,_availableServices = availableServices,_availableMethods = availableMethods,_parameters = parameters,super._();
   factory _GrpcRequestModel.fromJson(Map<String, dynamic> json) => _$GrpcRequestModelFromJson(json);
 
 @override@JsonKey() final  String url;
@@ -529,6 +530,7 @@ class _GrpcRequestModel extends GrpcRequestModel {
 @override final  String? method;
 @override final  String? protoFile;
 @override@JsonKey() final  bool useTLS;
+@override@JsonKey() final  bool allowInvalidCertificates;
 @override@JsonKey() final  GrpcStreamingType streamingType;
  final  List<WebSocketMessage> _messageHistory;
 @override@JsonKey() List<WebSocketMessage> get messageHistory {
@@ -593,16 +595,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GrpcRequestModel&&(identical(other.url, url) || other.url == url)&&(identical(other.service, service) || other.service == service)&&(identical(other.method, method) || other.method == method)&&(identical(other.protoFile, protoFile) || other.protoFile == protoFile)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.streamingType, streamingType) || other.streamingType == streamingType)&&const DeepCollectionEquality().equals(other._messageHistory, _messageHistory)&&(identical(other.requestBody, requestBody) || other.requestBody == requestBody)&&(identical(other.useReflection, useReflection) || other.useReflection == useReflection)&&const DeepCollectionEquality().equals(other._metadata, _metadata)&&const DeepCollectionEquality().equals(other._isMetadataEnabled, _isMetadataEnabled)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other._availableServices, _availableServices)&&const DeepCollectionEquality().equals(other._availableMethods, _availableMethods)&&const DeepCollectionEquality().equals(other._parameters, _parameters));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GrpcRequestModel&&(identical(other.url, url) || other.url == url)&&(identical(other.service, service) || other.service == service)&&(identical(other.method, method) || other.method == method)&&(identical(other.protoFile, protoFile) || other.protoFile == protoFile)&&(identical(other.useTLS, useTLS) || other.useTLS == useTLS)&&(identical(other.allowInvalidCertificates, allowInvalidCertificates) || other.allowInvalidCertificates == allowInvalidCertificates)&&(identical(other.streamingType, streamingType) || other.streamingType == streamingType)&&const DeepCollectionEquality().equals(other._messageHistory, _messageHistory)&&(identical(other.requestBody, requestBody) || other.requestBody == requestBody)&&(identical(other.useReflection, useReflection) || other.useReflection == useReflection)&&const DeepCollectionEquality().equals(other._metadata, _metadata)&&const DeepCollectionEquality().equals(other._isMetadataEnabled, _isMetadataEnabled)&&(identical(other.authModel, authModel) || other.authModel == authModel)&&const DeepCollectionEquality().equals(other._availableServices, _availableServices)&&const DeepCollectionEquality().equals(other._availableMethods, _availableMethods)&&const DeepCollectionEquality().equals(other._parameters, _parameters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,url,service,method,protoFile,useTLS,streamingType,const DeepCollectionEquality().hash(_messageHistory),requestBody,useReflection,const DeepCollectionEquality().hash(_metadata),const DeepCollectionEquality().hash(_isMetadataEnabled),authModel,const DeepCollectionEquality().hash(_availableServices),const DeepCollectionEquality().hash(_availableMethods),const DeepCollectionEquality().hash(_parameters));
+int get hashCode => Object.hash(runtimeType,url,service,method,protoFile,useTLS,allowInvalidCertificates,streamingType,const DeepCollectionEquality().hash(_messageHistory),requestBody,useReflection,const DeepCollectionEquality().hash(_metadata),const DeepCollectionEquality().hash(_isMetadataEnabled),authModel,const DeepCollectionEquality().hash(_availableServices),const DeepCollectionEquality().hash(_availableMethods),const DeepCollectionEquality().hash(_parameters));
 
 @override
 String toString() {
-  return 'GrpcRequestModel(url: $url, service: $service, method: $method, protoFile: $protoFile, useTLS: $useTLS, streamingType: $streamingType, messageHistory: $messageHistory, requestBody: $requestBody, useReflection: $useReflection, metadata: $metadata, isMetadataEnabled: $isMetadataEnabled, authModel: $authModel, availableServices: $availableServices, availableMethods: $availableMethods, parameters: $parameters)';
+  return 'GrpcRequestModel(url: $url, service: $service, method: $method, protoFile: $protoFile, useTLS: $useTLS, allowInvalidCertificates: $allowInvalidCertificates, streamingType: $streamingType, messageHistory: $messageHistory, requestBody: $requestBody, useReflection: $useReflection, metadata: $metadata, isMetadataEnabled: $isMetadataEnabled, authModel: $authModel, availableServices: $availableServices, availableMethods: $availableMethods, parameters: $parameters)';
 }
 
 
@@ -613,7 +615,7 @@ abstract mixin class _$GrpcRequestModelCopyWith<$Res> implements $GrpcRequestMod
   factory _$GrpcRequestModelCopyWith(_GrpcRequestModel value, $Res Function(_GrpcRequestModel) _then) = __$GrpcRequestModelCopyWithImpl;
 @override @useResult
 $Res call({
- String url, String? service, String? method, String? protoFile, bool useTLS, GrpcStreamingType streamingType, List<WebSocketMessage> messageHistory, String requestBody, bool useReflection, List<NameValueModel>? metadata, List<bool>? isMetadataEnabled, AuthModel? authModel, List<String> availableServices, List<String> availableMethods, List<GrpcParameterModel> parameters
+ String url, String? service, String? method, String? protoFile, bool useTLS, bool allowInvalidCertificates, GrpcStreamingType streamingType, List<WebSocketMessage> messageHistory, String requestBody, bool useReflection, List<NameValueModel>? metadata, List<bool>? isMetadataEnabled, AuthModel? authModel, List<String> availableServices, List<String> availableMethods, List<GrpcParameterModel> parameters
 });
 
 
@@ -630,13 +632,14 @@ class __$GrpcRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of GrpcRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? url = null,Object? service = freezed,Object? method = freezed,Object? protoFile = freezed,Object? useTLS = null,Object? streamingType = null,Object? messageHistory = null,Object? requestBody = null,Object? useReflection = null,Object? metadata = freezed,Object? isMetadataEnabled = freezed,Object? authModel = freezed,Object? availableServices = null,Object? availableMethods = null,Object? parameters = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? url = null,Object? service = freezed,Object? method = freezed,Object? protoFile = freezed,Object? useTLS = null,Object? allowInvalidCertificates = null,Object? streamingType = null,Object? messageHistory = null,Object? requestBody = null,Object? useReflection = null,Object? metadata = freezed,Object? isMetadataEnabled = freezed,Object? authModel = freezed,Object? availableServices = null,Object? availableMethods = null,Object? parameters = null,}) {
   return _then(_GrpcRequestModel(
 url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,service: freezed == service ? _self.service : service // ignore: cast_nullable_to_non_nullable
 as String?,method: freezed == method ? _self.method : method // ignore: cast_nullable_to_non_nullable
 as String?,protoFile: freezed == protoFile ? _self.protoFile : protoFile // ignore: cast_nullable_to_non_nullable
 as String?,useTLS: null == useTLS ? _self.useTLS : useTLS // ignore: cast_nullable_to_non_nullable
+as bool,allowInvalidCertificates: null == allowInvalidCertificates ? _self.allowInvalidCertificates : allowInvalidCertificates // ignore: cast_nullable_to_non_nullable
 as bool,streamingType: null == streamingType ? _self.streamingType : streamingType // ignore: cast_nullable_to_non_nullable
 as GrpcStreamingType,messageHistory: null == messageHistory ? _self._messageHistory : messageHistory // ignore: cast_nullable_to_non_nullable
 as List<WebSocketMessage>,requestBody: null == requestBody ? _self.requestBody : requestBody // ignore: cast_nullable_to_non_nullable

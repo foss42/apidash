@@ -35,6 +35,7 @@ abstract class GrpcRequestModel with _$GrpcRequestModel {
     String? method,
     String? protoFile,
     @Default(false) bool useTLS,
+    @Default(false) bool allowInvalidCertificates,
     @Default(GrpcStreamingType.unary) GrpcStreamingType streamingType,
     @Default([]) List<WebSocketMessage> messageHistory,
     @Default("") String requestBody,

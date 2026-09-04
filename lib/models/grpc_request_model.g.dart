@@ -34,6 +34,7 @@ _GrpcRequestModel _$GrpcRequestModelFromJson(Map json) => _GrpcRequestModel(
   method: json['method'] as String?,
   protoFile: json['protoFile'] as String?,
   useTLS: json['useTLS'] as bool? ?? false,
+  allowInvalidCertificates: json['allowInvalidCertificates'] as bool? ?? false,
   streamingType:
       $enumDecodeNullable(_$GrpcStreamingTypeEnumMap, json['streamingType']) ??
       GrpcStreamingType.unary,
@@ -90,6 +91,7 @@ Map<String, dynamic> _$GrpcRequestModelToJson(_GrpcRequestModel instance) =>
       'method': instance.method,
       'protoFile': instance.protoFile,
       'useTLS': instance.useTLS,
+      'allowInvalidCertificates': instance.allowInvalidCertificates,
       'streamingType': _$GrpcStreamingTypeEnumMap[instance.streamingType]!,
       'messageHistory': instance.messageHistory.map((e) => e.toJson()).toList(),
       'requestBody': instance.requestBody,

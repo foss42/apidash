@@ -291,11 +291,18 @@ Steps:
 2. Turn **Use TLS** on.
 3. Make sure the address uses the server's **TLS port**, then **Send**.
 
+### Allow Invalid Certificates
+
+- **UI label:** **Allow Invalid Certificates**.
+- **Default:** off.
+- **What it does:** accepts self-signed or otherwise untrusted server certificates instead of rejecting them, letting you connect to a server whose certificate isn't signed by a trusted certificate authority.
+- **When to use it:** only relevant when **Use TLS** is on (the switch is disabled otherwise). Use it for local or testing servers with a self-signed certificate. **Caution:** it disables certificate verification, so the connection is no longer protected against man-in-the-middle attacks — don't use it against production servers.
+
 ### Port
 
 The **Settings** tab also has a **Port** field. It mirrors the port in your address; set it here if you prefer, or leave the address as `host:port`. If no port is given anywhere, API Dash uses `50051`.
 
-> **Self-signed / invalid certificates:** gRPC in API Dash currently validates TLS against the system's trusted certificate authorities. There is **no "Allow Invalid Certificates" toggle** for gRPC (unlike WebSocket and MQTT), so a server with a self-signed or untrusted certificate won't connect over TLS yet. For local testing, use the plaintext port with **Use TLS** off.
+> **Self-signed / invalid certificates:** to connect to a server with a self-signed or untrusted certificate, turn on **Use TLS** and then **Allow Invalid Certificates**. This skips certificate verification, so use it only for local or testing servers.
 
 ![The Settings tab with the Port field and Use TLS switch](images/grpc/grpc_tls.png)
 
@@ -364,7 +371,7 @@ Every time you send a gRPC call, API Dash records it in **History**. You can reo
 
 - **Button says "Reflect", not "Send"?** That's expected until you pick a method. Click **Reflect** (or import a `.proto`), choose a service and method, and the button becomes **Send**.
 - **Reflect returns nothing?** The server probably has reflection disabled. Check the response log for the exact reason (*"Reflection failed: …"*) and use **Settings → Select .proto → Fetch services** instead.
-- **Can't connect over TLS?** Confirm **Use TLS** matches the port (secure servers use a different port from plaintext). Note that self-signed/untrusted certificates aren't supported for gRPC yet — for local testing use the plaintext port with TLS off.
+- **Can't connect over TLS?** Confirm **Use TLS** matches the port (secure servers use a different port from plaintext). If the server has a self-signed or untrusted certificate, also turn on **Allow Invalid Certificates**.
 - **Included a scheme in the address?** Don't. gRPC uses `host:port` only — no `http://`, `https://`, or `grpc://`.
 - **Auth not working?** Check the Auth tab type and value. If you *also* typed an `authorization` row on the Metadata tab, the Auth tab overrides it — set the token in just one place.
 - **Streaming method only sends one message?** Make sure the **Type** is set to **Client streaming** or **Bidirectional**, then use the Body tab's **Send message** / **Finish sending** buttons.
@@ -384,7 +391,7 @@ Every time you send a gRPC call, API Dash records it in **History**. You can reo
 - **Where do I see the server's response metadata?**
   - For single responses, the response "Metadata" tab. For streaming responses, click the **Metadata** button in the log — entries are marked `[Initial]` or `[Trailing]`.
 - **Can I connect to a server with a self-signed certificate?**
-  - Not over TLS yet — gRPC validates against trusted CAs and has no "allow invalid certificates" option. Use the plaintext port for local testing.
+  - Yes — turn on **Use TLS** and then **Allow Invalid Certificates** on the Settings tab. This skips certificate verification, so use it only for local or testing servers.
 - **Will my saved request remember everything?**
   - Yes — address, service, method, Type, message, Metadata, Auth, TLS, and the `.proto` path are all saved.
 
