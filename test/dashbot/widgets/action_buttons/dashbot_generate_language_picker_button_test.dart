@@ -80,5 +80,84 @@ void main() {
       expect(find.text('Go (net/http)'), findsOneWidget);
       expect(find.text('cURL'), findsOneWidget);
     });
+
+    testWidgets('websocket picker action routes to generateWsCode', (
+      tester,
+    ) async {
+      const action = ChatAction(
+        action: 'show_languages',
+        target: 'codegen',
+        path: 'websocket',
+        value: ['Python (websockets)', 'Node.js (ws)'],
+        actionType: ChatActionType.showLanguages,
+        targetType: ChatActionTarget.codegen,
+      );
+
+      late TestChatViewmodel notifier;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            chatViewmodelProvider.overrideWith((ref) {
+              notifier = TestChatViewmodel(ref);
+              return notifier;
+            }),
+          ],
+          child: MaterialApp(
+            theme: kThemeDataLight,
+            home: Scaffold(body: DashbotGenerateLanguagePicker(action: action)),
+          ),
+        ),
+      );
+
+      expect(find.text('Python (websockets)'), findsOneWidget);
+      expect(find.text('Node.js (ws)'), findsOneWidget);
+
+      await tester.tap(find.text('Node.js (ws)'));
+      await tester.pump();
+
+      expect(notifier.sendMessageCalls, hasLength(1));
+      final call = notifier.sendMessageCalls.single;
+      expect(call.text, 'Please generate code in Node.js (ws)');
+      expect(call.type, ChatMessageType.generateWsCode);
+    });
+
+    testWidgets('non-websocket path keeps dispatching generateCode', (
+      tester,
+    ) async {
+      // Locks the branch condition to exactly path == 'websocket'.
+      const action = ChatAction(
+        action: 'show_languages',
+        target: 'codegen',
+        path: 'http',
+        value: ['cURL'],
+        actionType: ChatActionType.showLanguages,
+        targetType: ChatActionTarget.codegen,
+      );
+
+      late TestChatViewmodel notifier;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            chatViewmodelProvider.overrideWith((ref) {
+              notifier = TestChatViewmodel(ref);
+              return notifier;
+            }),
+          ],
+          child: MaterialApp(
+            theme: kThemeDataLight,
+            home: Scaffold(body: DashbotGenerateLanguagePicker(action: action)),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('cURL'));
+      await tester.pump();
+
+      expect(notifier.sendMessageCalls, hasLength(1));
+      expect(
+        notifier.sendMessageCalls.single.type,
+        ChatMessageType.generateCode,
+      );
+    });
   });
 }
