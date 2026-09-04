@@ -31,7 +31,23 @@ Future<void> main(List<String> args) async {
         ..addCommand(AiCommand(logger))
         ..addCommand(ListCommand(logger))
         ..addCommand(RunCommand(logger))
-        ..addCommand(EnvCommand(logger));
+        ..addCommand(EnvCommand(logger))
+        ..addCommand(TuiCommand(logger));
+
+  // No args on a terminal → launch the interactive TUI ("pick and run").
+  // No args without a TTY → keep today's behavior: print usage, exit 64.
+  if (args.isEmpty) {
+    if (stdout.hasTerminal) {
+      try {
+        exit(await runTui(logger, runner.parse(const [])));
+      } catch (e) {
+        logger.err(e.toString());
+        exit(70);
+      }
+    }
+    logger.info(runner.usage);
+    exit(64);
+  }
 
   try {
     final code = await runner.run(args);

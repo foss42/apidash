@@ -29,11 +29,24 @@ dart run packages/cli/bin/apidash.dart ai --provider openai --model gpt-4o-mini 
 dart run packages/cli/bin/apidash.dart list
 dart run packages/cli/bin/apidash.dart run <name|id>
 dart run packages/cli/bin/apidash.dart env list
+dart run packages/cli/bin/apidash.dart tui   # interactive; or just run with no args
 ```
 
-Commands: `send`, `graphql`, `ai`, `run`, `list`, `env`. Global flags:
+Commands: `send`, `graphql`, `ai`, `run`, `list`, `env`, `tui`. Global flags:
 `--json`, `-w/--workspace <path>`, `--env <name|id>`. `send`/`run` take
 `--stream` for SSE/streaming responses.
+
+### Interactive mode (TUI)
+
+Run `apidash` with **no arguments** on a terminal (or `apidash tui`) to launch
+an interactive "pick and run" loop over your saved requests — no flags to
+remember. Pick a request, then choose an action: **Run**, **Edit URL**, **Edit
+Method**, **Edit Headers**, **Edit Body/Params**, **Generate curl**, or
+**Back**. Edits are **in-memory only** (the workspace is opened read-only, so
+they are not saved back — write-back is a future feature); "Run" executes the
+edited request through the same engine as `run`. `--env`/`--workspace` apply.
+Terminal-only (needs raw keyboard input); with no args and no TTY it prints
+usage and exits 64.
 
 Build a standalone binary (git-ignored):
 
@@ -55,9 +68,11 @@ cd packages/cli && dart test
 | `lib/src/commands/send.dart` | Ad-hoc request → builds `HttpRequestModel`, sends via `sendHttpRequest` (or streams via `streamHttpRequest` with `--stream`). |
 | `lib/src/commands/graphql.dart` | Ad-hoc GraphQL query (`APIType.graphql`; `--variables` uses a direct JSON POST). |
 | `lib/src/commands/ai.dart` | Ad-hoc AI prompt + `runAiRequest` helper (provider `createRequest` → send → response parser). |
-| `lib/src/commands/run.dart` | Loads a saved request and routes it by `apiType` (rest/graphql/ai). |
+| `lib/src/commands/run.dart` | Loads a saved request and runs it via the shared `executeSavedRequest`. |
 | `lib/src/commands/list.dart` | Lists saved requests. |
 | `lib/src/commands/env.dart` | Lists/shows environments; resolves the global `--env`. |
+| `lib/src/executor.dart` | `executeSavedRequest` — single execution path (routes by `apiType`) shared by `run` and the TUI. |
+| `lib/src/tui.dart` | Interactive "pick and run" loop (`mason_logger` only), request-display formatters, curl builder, inline field editor. |
 | `lib/src/storage/storage.dart` | Read-only shadow copy of the desktop `apidash-data` Hive box. |
 | `lib/src/output.dart` | Shared response formatting: `printResponse` (human + `--json`) and `printStream` (live/JSONL). |
 | `lib/src/utils/workspace.dart` | Workspace auto-detection / resolution. |

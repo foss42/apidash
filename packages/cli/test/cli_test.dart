@@ -127,4 +127,84 @@ void main() {
     expect(model.httpRequestModel, isNotNull);
     expect(model.httpRequestModel!.method, HTTPVerb.post);
   });
+
+  // ---- Interactive TUI: pure display formatters + curl builder ----
+
+  test('requestChoiceLabel renders rest/graphql/ai entries', () {
+    expect(
+      requestChoiceLabel({
+        'apiType': 'rest',
+        'name': 'Get user',
+        'httpRequestModel': {'method': 'get', 'url': 'https://api.apidash.dev'},
+      }),
+      startsWith('GET    Get user'),
+    );
+    expect(
+      requestChoiceLabel({
+        'apiType': 'graphql',
+        'name': 'Search',
+        'httpRequestModel': {'url': 'https://x/gql'},
+      }),
+      startsWith('[graphql] Search'),
+    );
+    expect(
+      requestChoiceLabel({
+        'apiType': 'ai',
+        'name': 'Ask',
+        'aiRequestModel': {'model': 'gpt-4o-mini'},
+      }),
+      '[ai] Ask  (gpt-4o-mini)',
+    );
+    // Unnamed request still gets a readable label.
+    expect(
+      requestChoiceLabel({
+        'apiType': 'rest',
+        'httpRequestModel': {'method': 'post', 'url': ''},
+      }),
+      startsWith('POST   (unnamed)'),
+    );
+  });
+
+  test('requestSummary reflects the edited model over the stored entry', () {
+    final entry = {
+      'apiType': 'rest',
+      'name': 'Get',
+      'httpRequestModel': {'method': 'get', 'url': 'https://a/', 'headers': []},
+    };
+    expect(requestSummary(entry), contains('Method:   GET'));
+    final edited = HttpRequestModel(
+      method: HTTPVerb.post,
+      url: 'https://b/',
+      headers: const [NameValueModel(name: 'X', value: '1')],
+    );
+    final s = requestSummary(entry, model: edited);
+    expect(s, contains('Method:   POST'));
+    expect(s, contains('URL:      https://b/'));
+    expect(s, contains('Headers:  1'));
+  });
+
+  test('buildCurl reflects method, url, params, headers and body', () {
+    final model = HttpRequestModel(
+      method: HTTPVerb.post,
+      url: 'https://api.apidash.dev/case/lower',
+      headers: const [NameValueModel(name: 'Content-Type', value: 'application/json')],
+      params: const [NameValueModel(name: 'q', value: 'a b')],
+      body: '{"text":"HELLO"}',
+    );
+    final curl = buildCurl(model);
+    expect(curl, startsWith("curl -X POST 'https://api.apidash.dev/case/lower?q=a+b'"));
+    expect(curl, contains("-H 'Content-Type: application/json'"));
+    expect(curl, contains("--data '{\"text\":\"HELLO\"}'"));
+  });
+
+  test('buildCurl for graphql wraps the query as the JSON body', () {
+    final model = HttpRequestModel(
+      method: HTTPVerb.post,
+      url: 'https://countries.trevorblades.com/',
+      query: '{ countries { code } }',
+    );
+    final curl = buildCurl(model, apiType: 'graphql');
+    expect(curl, contains("-H 'Content-Type: application/json'"));
+    expect(curl, contains('"query"'));
+  });
 }

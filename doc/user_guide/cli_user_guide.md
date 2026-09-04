@@ -18,6 +18,9 @@ CI pipelines, and AI agents.
 - **Apply saved environments** with `--env` for `{{key}}` substitution.
 - **Two output modes:** a readable, colourised view for humans, and a
   structured `--json` mode for pipes, scripts, and agents.
+- **Interactive mode** — run `apidash` with no arguments to browse and run your
+  saved requests from a menu, no flags to remember (see
+  [Interactive mode (TUI)](#interactive-mode-tui)).
 
 ## Install / Build
 
@@ -52,8 +55,10 @@ The compiled `apidash` binary can be copied anywhere on your `PATH`.
 | `--env <name\|id>` | Apply a saved environment: `{{key}}` tokens in the url, headers and body are substituted before sending. See [Environments](#env--saved-environments). |
 | `-h, --help` | Show usage. |
 
-The CLI is **non-interactive**: it never prompts. On success it exits `0`; on
-failure it prints a clear message and exits non-zero (see [Exit codes](#exit-codes)).
+In command mode the CLI is **non-interactive**: it never prompts. On success it
+exits `0`; on failure it prints a clear message and exits non-zero (see
+[Exit codes](#exit-codes)). The one exception is the no-argument
+[interactive mode (TUI)](#interactive-mode-tui), which is menu-driven.
 
 ## Commands
 
@@ -198,6 +203,43 @@ POST    Create order      ->  https://api.apidash.dev/orders    [c3d4...]
 
 An empty list (no saved requests, or no desktop workspace yet) is not an error
 — it prints a short notice and exits `0`.
+
+### Interactive mode (TUI)
+
+For non-technical use there's an interactive "pick and run" mode — no commands
+or flags to memorise. Launch it by running `apidash` **with no arguments** on a
+terminal, or explicitly:
+
+```bash
+apidash          # no args on a terminal → launches the TUI
+apidash tui      # the same, explicitly
+```
+
+It reads your saved requests from the workspace and walks you through:
+
+1. **Select a request** — an arrow-key menu of everything you've saved (e.g.
+   `GET   Get user   (https://…)`, `[graphql] Search`, `[ai] Summarize`), plus
+   a **Quit** entry.
+2. It shows the request's details (name, type, method, url, header count) and
+   an **Action** menu:
+   - **Run** — send it and print the response (status, time, coloured body),
+     exactly like [`run`](#run-nameid--send-a-saved-request).
+   - **Edit URL / Edit Method / Edit Headers / Edit Body/Params** — tweak the
+     request before running it. (For AI requests only Run / Generate curl are
+     offered.)
+   - **Generate curl** — print an equivalent `curl` command (reflects any edits).
+   - **Back** — return to the request list.
+3. Repeat until you choose **Quit** (or press `Ctrl+C`).
+
+> **Edits are local and not saved.** The CLI opens the desktop workspace
+> **read-only**, so any edits you make in the TUI apply only to that one run and
+> are **not written back** to your saved requests (write-back is a future
+> feature). Change and keep requests in the API Dash desktop app.
+
+The global `--env` and `--workspace` options apply (e.g.
+`apidash --env Prod tui`). The TUI needs a real terminal for keyboard input;
+running `apidash` with no arguments in a non-interactive context (a pipe or
+script) prints usage and exits `64` instead.
 
 ### `--stream` — streaming / SSE responses
 
