@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
@@ -568,6 +569,56 @@ func main() {
   });
 
   group('POST Request', () {
+    test('escapes a backtick in the request body', () {
+      const requestModel = RequestModel(
+        id: 'post-with-backtick',
+        apiType: APIType.rest,
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.apidash.dev/messages',
+          body: r'{"message":"Use `code` here"}',
+        ),
+      );
+      const expectedCode = r'''package main
+
+import (
+  "fmt"
+  "io"
+  "net/http"
+  "net/url"
+  "bytes"
+)
+
+func main() {
+  client := &http.Client{}
+  url, _ := url.Parse("https://api.apidash.dev/messages")
+  payload := bytes.NewBuffer([]byte("{\"message\":\"Use `code` here\"}"))
+  req, _ := http.NewRequest("POST", url.String(), payload)
+
+  req.Header.Set("Content-Type", "application/json")
+
+  response, err := client.Do(req)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
+}''';
+
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModel,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
     test('POST 1', () {
       const expectedCode = r'''package main
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 
@@ -25,7 +27,7 @@ func main() {
 """;
 
   String kTemplateBody = """
-  {% if body %}payload := bytes.NewBuffer([]byte(`{{body}}`)){% endif %}
+  {% if body %}payload := bytes.NewBuffer([]byte({{body}})){% endif %}
 
 """;
 
@@ -115,7 +117,10 @@ func main() {
         if (requestModel.hasTextData || requestModel.hasJsonData) {
           hasBody = true;
           var templateRawBody = jj.Template(kTemplateBody);
-          result += templateRawBody.render({"body": requestModel.body});
+          final body = requestModel.body!;
+          result += templateRawBody.render({
+            "body": body.contains('`') ? jsonEncode(body) : '`$body`',
+          });
         } else if (requestModel.hasFormData) {
           hasBody = true;
           var templateFormData = jj.Template(kTemplateFormData);
