@@ -5,7 +5,7 @@
 ## Project Details
 
 1. **Contributor:** [Shashwat Pratap Singh](https://github.com/ShashwatXD)
-2. **Mentors:** Ashita P., Ankit Mahato, Ragul Raj M , Manas Hejmandi
+2. **Mentors:** Ankit Mahato, Ashita Prasad, Ragul Raj M, Manas Hejmandi
 3. **Organization:** [API Dash](https://github.com/foss42/apidash)
 4. **Project:** [Git Support, UI Workflow Builder & Collection Dashboard](https://summerofcode.withgoogle.com/programs/2026/projects/Qnk4Mkow)
 
@@ -31,8 +31,9 @@
 7. [Related: Multi-Provider LLM Settings](#related-multi-provider-llm-settings)
 8. [Challenges & Design Decisions](#challenges--design-decisions)
 9. [Pull Requests](#pull-requests)
-10. [Future Work](#future-work)
-11. [Conclusion](#conclusion)
+10. [Skills Demonstrated](#skills-demonstrated)
+11. [Future Work](#future-work)
+12. [Conclusion](#conclusion)
 
 ---
 
@@ -58,42 +59,32 @@ This project delivers that stack for API Dash on one shared substrate: a **files
 
 ## System Architecture
 
-The app is centered on a **workspace folder**. Collections, environments, and workflows are pretty-printed JSON in that folder. History stays local under `history/`. Workspace identity and Sync baselines live in `.apidash/`. Env secrets and AI API keys stay in `flutter_secure_storage` (OS Keychain backed).
+Each feature is a **layer over one workspace folder**. Features sit on top, the folder is the source of truth in the middle, and local-only data sits under it.
 
 ```mermaid
 flowchart TB
-  UI[UI: Collaboration / Workflows / Dashboard / Dashbot]
-  RP[Riverpod]
-  AS[Autosave]
-  DW[Disk watch desktop]
-  WS[WorkspaceStorage]
-  GS[GitService]
-  SY[Sync session / apply]
-  WR[WorkflowRunner]
-  FOLDER[Workspace JSON]
-  SEC[Secure storage]
-  HIST[Local history]
+  GIT["Git<br/>commit · push/pull · visual diff"]
+  SYNC["Scan Sync<br/>QR · one-way Send/Receive"]
+  FLOW["Workflows<br/>canvas · runner · Dashbot"]
+  DASH["Dashboard<br/>KPIs · webhook reports"]
 
-  UI --> RP
-  RP --> AS
-  RP --> DW
-  RP --> GS
-  RP --> SY
-  RP --> WR
-  AS --> WS
-  DW --> WS
-  WR --> WS
-  WS --> FOLDER
-  WS --> SEC
+  WS["Workspace folder<br/>collections · environments · workflows"]
+
+  HIST["history/<br/>request + workflow runs"]
+  SEC["Secure storage<br/>env secrets · AI keys"]
+
+  GIT --> WS
+  SYNC --> WS
+  FLOW --> WS
+  DASH -->|script coverage| WS
   WS --> HIST
-  GS --> FOLDER
-  SY --> FOLDER
-  RP -.->|reads| HIST
+  DASH -.->|aggregates| HIST
+  WS -.->|secrets stripped out of JSON| SEC
 ```
 
 
 
-Edits flush through debounced autosave. Passive disk watch updates memory surgically when files change outside the app. Git pull and Sync apply flush first, change the tree, then call `reloadWorkspaceFromDisk` so Riverpod state matches disk.
+Read it top down: Git versions the folder, Sync transfers it between devices, Workflows run graphs stored in it, and the Dashboard measures what those runs produced. `history/` lives inside the folder but is excluded from Git and Sync, and secret values are pulled out of the JSON into OS-backed storage, so pushing or syncing a workspace cannot leak them. `.apidash/` keeps workspace identity and Sync baselines.
 
 
 | Code             | Path                                                                            |
@@ -166,11 +157,8 @@ Desktop: user-picked folder. Mobile: Documents sandbox, with path rebase when th
 
 First launch and workspace switches go through a selector: **New local**, **Open**, or **Clone** a remote Apidash workspace, then load the collection catalog. Recent workspaces stay on the sidebar for quick reopen.
 
-<p align="center">
-  <img src="./GIFs/onboarding.gif" alt="Workspace onboarding" width="720" />
-  <br>
-  <em>Selector → New / Open / Clone → collection catalog</em>
-</p>
+![Workspace onboarding](./GIFs/onboarding.gif)  
+*Selector → New / Open / Clone → collection catalog*
 
 #### Atomic writes and write journal
 
@@ -210,18 +198,15 @@ Desktop Collaboration is the hub for Git and Sync. Mobile Collaboration is Sync-
 
 The workspace folder is the repository root. `GitService` uses `Process.run` against system `git`, so Credential Manager / SSH agents apply. Interactive prompts are off (`GIT_TERMINAL_PROMPT=0`).
 
-**Tracked Apidash paths:** `collections/**`, `environments/**` (except `*.local.json`), `workflows/**`, and `.gitignore` (written on init).  
+**Tracked Apidash paths:** `collections/`, `environments/` (except `*.local.json`), `workflows/`, and `.gitignore` (written on init).  
 **Init ignore template:** `history/`, `.apidash/`, `environments/*.local.json`, OAuth credential JSON, `*.tmp`, OS junk.
 
 #### Clone and setup guide
 
-Clone validates Apidash indexes on the remote. For an existing local workspace, the Collaboration setup guide walks **install Git → `git init` → add remote → first fetch/push**, so a folder becomes a shareable repo without leaving the app.
+Clone validates Apidash indexes on the remote. For an existing local workspace, the Collaboration setup guide walks **install Git →** `git init` **→ add remote → first fetch/push**, so a folder becomes a shareable repo without leaving the app.
 
-<p align="center">
-  <img src="./GIFs/git-init.gif" alt="Git init and add remote" width="720" />
-  <br>
-  <em>Init workspace repo → add remote</em>
-</p>
+![Git init and add remote](./GIFs/git-init.gif)  
+*Init workspace repo → add remote*
 
 #### Status, commit, fetch, pull, push
 
@@ -231,11 +216,8 @@ Porcelain v2 status drives ahead/behind and the change list. Apidash paths (plus
 
 Field-level visual diffs for requests, responses, indexes, environments, and workflows (changed fields only), plus raw unified toggle. Workflow diffs include node/edge add/remove and position changes.
 
-<p align="center">
-  <img src="./GIFs/git-visual-commit.gif" alt="Visual diff, commit, and push" width="720" />
-  <br>
-  <em>Visual / Raw diff → commit → push</em>
-</p>
+![Visual diff, commit, and push](./GIFs/git-visual-commit.gif)  
+*Visual / Raw diff → commit → push*
 
 ### Scan Sync (LAN QR)
 
@@ -262,13 +244,13 @@ Syncable paths: `collections/`, `environments/`, `workflows/` only. History and 
 
 First pairing is phone-driven adopt/replace. Later sessions with the same workspace id and a stored baseline are incremental. Same id without baseline still replaces; it does not fake an incremental merge.
 
-<p align="center">
-  <img src="./images/scan-sync-first-pair.jpg" alt="First-time Scan Sync: desktop QR host and phone Switch & sync" width="720" />
-  <br>
-  <em>First pair: desktop QR host ↔ phone Switch & sync</em>
-</p>
+![First-time Scan Sync: desktop QR host and phone Switch & sync](./images/scan-sync-first-pair.jpg)  
+*First pair: desktop QR host ↔ phone Switch & sync*
 
 **Baseline correctness:** after apply, both sides persist the **agreed** map from `applyComplete`. Re-hashing only the local tree left asymmetric baselines (empty Send / Receive on both with no real edits). Receive rebuilds baseline from post-write local hashes.
+
+![Scan Sync change tree and visual diff before apply](./GIFs/scan-sync-diff.gif)  
+*Incremental session: change tree → visual diff → apply*
 
 ### Collaboration UI
 
@@ -335,17 +317,14 @@ One flat document humans and models can emit. Request + `extract` live on the no
 
 #### Vyuh canvas, Riverpod source of truth
 
-`[vyuh_node_flow](https://pub.dev/packages/vyuh_node_flow)` for pan/zoom/ports/wires. `WorkflowVyuhAdapter` hydrates ephemerally; persistence goes through `WorkflowDocument` in Riverpod. Stretch-to-add uses `onConnectEnd`.
+[`vyuh_node_flow`](https://pub.dev/packages/vyuh_node_flow) for pan/zoom/ports/wires. `WorkflowVyuhAdapter` hydrates ephemerally; persistence goes through `WorkflowDocument` in Riverpod. Stretch-to-add uses `onConnectEnd`.
 
 #### Chaining via extractions
 
 Paths such as `data.0.id` become scoped `{{vars}}` for later HTTP/AI steps. Env vars apply at run time; extractions win on name clash.
 
-<p align="center">
-  <img src="./GIFs/workflow-chain.gif" alt="Workflow request chaining run" width="720" />
-  <br>
-  <em>Chained requests → Run → inspector + run-path</em>
-</p>
+![Workflow request chaining run](./GIFs/workflow-chain.gif)  
+*Chained requests → Run → inspector + run-path*
 
 #### Implicit parallel and AND-join
 
@@ -355,21 +334,15 @@ Multiple outs on one handle run concurrently. Convergence waits on reachability,
 
 One loop node: for-each and repeat. Sequence produces lists for for-each only (Seq port), not a generic add-node type.
 
-<p align="center">
-  <img src="./GIFs/workflow-parallel.gif" alt="Parallel join and Sequence for-each" width="720" />
-  <br>
-  <em>Parallel Workflows</em>
-</p>
+![Parallel join and Sequence for-each](./GIFs/workflow-parallel.gif)  
+*Parallel Workflows*
 
 #### Dashbot Generate Workflow
 
 Describe → `apply_workflow` → confirm Create New / Change Current → lean JSON on disk. Apply accepts `connections` as an alias for `edges`, auto-chains when edges are missing, and auto-arranges.
 
-<p align="center">
-  <img src="./GIFs/workflow-dashbot.gif" alt="Dashbot generate workflow" width="720" />
-  <br>
-  <em>Dashbot prompt → confirm → canvas</em>
-</p>
+![Dashbot generate workflow](./GIFs/workflow-dashbot.gif)  
+*Dashbot prompt → confirm → canvas*
 
 #### Run inspector and run-path
 
@@ -410,21 +383,15 @@ Time range `24h` / `7d` / `30d` / `All`, optional filter. Collections: health, s
 
 Trends open by default. Distributions, hot/slow endpoints, recent 4xx/5xx (→ History), workflow node failures.
 
-<p align="center">
-  <img src="./GIFs/dashboard-overview.gif" alt="Dashboard KPIs and trends" width="720" />
-  <br>
-  <em>KPIs, scope controls, and trends</em>
-</p>
+![Dashboard KPIs and trends](./GIFs/dashboard-overview.gif)  
+*KPIs, scope controls, and trends*
 
 #### Combined webhooks
 
 One `type: dashboard` payload for Collections and Workflows: JSON, Slack Block Kit, or Discord embeds. Preview, copy, send now, interval auto-send.
 
-<p align="center">
-  <img src="./GIFs/dashboard-webhook.gif" alt="Dashboard webhook send" width="720" />
-  <br>
-  <em>Webhook preview → Send → success</em>
-</p>
+![Dashboard webhook send](./GIFs/dashboard-webhook.gif)  
+*Webhook preview → Send → success*
 
 #### Script coverage
 
@@ -495,31 +462,16 @@ Delivery order:
 5. [#1779](https://github.com/foss42/apidash/pull/1779) Multi-provider LLM settings
 
 
-| PR                                                                                                          | What it landed                                                                                   |
-| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [#1695](https://github.com/foss42/apidash/pull/1695)                                                        | Workspace layout, autosave, multi-collection, secure secrets, atomic IO, disk watch              |
-| [#1734](https://github.com/foss42/apidash/pull/1734)                                                        | System Git, visual diffs, QR Sync, shared change UI, reload discipline                           |
-| [#1781](https://github.com/foss42/apidash/pull/1781)                                                        | Lean workflows, Vyuh canvas, runner (parallel/loop/Sequence), Dashbot apply, mobile view-and-run |
-| [#1791](https://github.com/foss42/apidash/pull/1791)                                                        | KPIs, trends, coverage, combined webhooks                                                        |
-| [#1779](https://github.com/foss42/apidash/pull/1779)                                                        | Multi-provider LLM config and model selector                                                     |
-| [#1474](https://github.com/foss42/apidash/pull/1474) / [#1258](https://github.com/foss42/apidash/pull/1258) | Proposal and idea documents                                                                      |
+| PR                                                   | What it landed                                                                                   | Status       |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------ |
+| [#1695](https://github.com/foss42/apidash/pull/1695) | Workspace layout, autosave, multi-collection, secure secrets, atomic IO, disk watch              | Under review |
+| [#1734](https://github.com/foss42/apidash/pull/1734) | System Git, visual diffs, QR Sync, shared change UI, reload discipline                           | Open         |
+| [#1781](https://github.com/foss42/apidash/pull/1781) | Lean workflows, Vyuh canvas, runner (parallel/loop/Sequence), Dashbot apply, mobile view-and-run | Open         |
+| [#1791](https://github.com/foss42/apidash/pull/1791) | KPIs, trends, coverage, combined webhooks                                                        | Open         |
+| [#1779](https://github.com/foss42/apidash/pull/1779) | Multi-provider LLM config and model selector                                                     | Open         |
 
 
 ---
-
-
-
-## Documentation
-
-**User guides**
-
-- [Collaboration](../../user_guide/collaboration_guide.md)
-- [Workflows](../../user_guide/workflows_guide.md)
-- [Dashboard](../../user_guide/dashboard_guide.md)
-
----
-
-
 
 ## Skills Demonstrated
 
@@ -558,3 +510,4 @@ Teams can version collections with **Git**, move a desk workspace to a phone wit
 I thank my mentors and the API Dash community for their reviews and guidance. I look forward to iterating with real-world usage.
 
 ---
+
