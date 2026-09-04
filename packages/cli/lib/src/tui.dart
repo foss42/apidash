@@ -151,12 +151,8 @@ Future<int?> _requestMenu(
         break;
 
       case 'Edit Headers':
-        final name = logger.prompt('Header name (empty to cancel)');
-        if (name.isNotEmpty) {
-          final value = logger.prompt('Value for "$name" (empty to remove)');
-          model = model!.copyWith(headers: _upsert(model.headers, name, value));
-          edited = true;
-        }
+        model = model!.copyWith(headers: _editRows(logger, model.headers, 'header'));
+        edited = true;
         break;
 
       case 'Edit Body/Params':
@@ -166,17 +162,13 @@ Future<int?> _requestMenu(
           edited = true;
         } else {
           final what = logger.chooseOne<String>('Edit what?',
-              choices: ['Body', 'Add/Update param', back], defaultValue: 'Body');
+              choices: ['Body', 'Params', back], defaultValue: 'Body');
           if (what == 'Body') {
             model = model!.copyWith(body: interactiveEdit('Body', model.body ?? ''));
             edited = true;
-          } else if (what == 'Add/Update param') {
-            final name = logger.prompt('Param name (empty to cancel)');
-            if (name.isNotEmpty) {
-              final value = logger.prompt('Value for "$name" (empty to remove)');
-              model = model!.copyWith(params: _upsert(model.params, name, value));
-              edited = true;
-            }
+          } else if (what == 'Params') {
+            model = model!.copyWith(params: _editRows(logger, model.params, 'param'));
+            edited = true;
           }
         }
         break;
@@ -194,20 +186,44 @@ HttpRequestModel? _modelOf(Map<String, dynamic> entry) {
       : HttpRequestModel.fromJson(m as Map<String, Object?>);
 }
 
-/// Upserts (or removes, when [value] is empty) a name/value row by name
-/// (case-insensitive). Used for header/param edits.
-List<NameValueModel> _upsert(
-    List<NameValueModel>? rows, String name, String value) {
+/// Interactive editor for a list of name/value rows (headers or params).
+/// Lists the EXISTING rows so the user can pick one to edit its value or
+/// remove it, plus an "Add new" option — then loops until "Done". Returns the
+/// updated list. This is the real "edit" UX (not add-only): you see what's
+/// there and act on it.
+List<NameValueModel> _editRows(
+    Logger logger, List<NameValueModel>? rows, String label) {
   final list = [...?rows];
-  final i = list.indexWhere((r) => r.name.toLowerCase() == name.toLowerCase());
-  if (value.isEmpty) {
-    if (i >= 0) list.removeAt(i);
-  } else if (i >= 0) {
-    list[i] = list[i].copyWith(value: value);
-  } else {
-    list.add(NameValueModel(name: name, value: value));
+  const addNew = 'Add new';
+  const done = 'Done';
+  while (true) {
+    final selected = logger.chooseOne<Object>(
+      'Edit ${label}s (${list.length})',
+      choices: [...list, addNew, done],
+      defaultValue: done,
+      display: (c) =>
+          c is String ? c : '${(c as NameValueModel).name}: ${c.value ?? ''}',
+    );
+    if (selected == done) return list;
+    if (selected == addNew) {
+      final name = logger.prompt('New $label name (empty to cancel)').trim();
+      if (name.isEmpty) continue;
+      final value = logger.prompt('Value for "$name"');
+      list.add(NameValueModel(name: name, value: value));
+      continue;
+    }
+    // An existing row was picked → edit its value or remove it.
+    final row = selected as NameValueModel;
+    final i = list.indexOf(row);
+    final act = logger.chooseOne<String>('"${row.name}"',
+        choices: ['Edit value', 'Remove', 'Back'], defaultValue: 'Edit value');
+    if (act == 'Edit value') {
+      final v = interactiveEdit(row.name, row.value?.toString() ?? '');
+      list[i] = row.copyWith(value: v);
+    } else if (act == 'Remove') {
+      list.removeAt(i);
+    }
   }
-  return list;
 }
 
 /// One-line label for a request in the picker, e.g.
