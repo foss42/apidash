@@ -222,6 +222,7 @@ class CollectionStateNotifier
       aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpRequestModel:
           currentModel.httpRequestModel?.copyWith() ?? HttpRequestModel(),
+      mqttRequestModel: currentModel.mqttRequestModel?.copyWith(),
       wsRequestModel: currentModel.wsRequestModel?.copyWith(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
@@ -264,6 +265,7 @@ class CollectionStateNotifier
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
     WebSocketRequestModel? wsRequestModel,
+    MQTTRequestModel? mqttRequestModel,
     bool? isStreaming,
     bool? isWorking,
   }) {
@@ -308,6 +310,17 @@ class CollectionStateNotifier
           httpRequestModel: null,
           aiRequestModel: null,
           wsRequestModel: const WebSocketRequestModel(),
+          mqttRequestModel: null,
+        ),
+        APIType.mqtt => currentModel.copyWith(
+          apiType: apiType,
+          requestTabIndex: 0,
+          name: name ?? currentModel.name,
+          description: description ?? currentModel.description,
+          httpRequestModel: null,
+          aiRequestModel: null,
+          wsRequestModel: null,
+          mqttRequestModel: const MQTTRequestModel(brokerUrl: ''),
         ),
       };
     } else {
@@ -352,20 +365,25 @@ class CollectionStateNotifier
                 //   1. the explicit top-level arg (caller-supplied merge),
                 //   2. the just-passed wsRequestModel's own field,
                 //   3. the existing model's field.
-                headers: headers ??
+                headers:
+                    headers ??
                     wsRequestModel?.headers ??
                     currentModel.wsRequestModel?.headers,
-                isHeaderEnabledList: isHeaderEnabledList ??
+                isHeaderEnabledList:
+                    isHeaderEnabledList ??
                     wsRequestModel?.isHeaderEnabledList ??
                     currentModel.wsRequestModel?.isHeaderEnabledList,
-                params: params ??
+                params:
+                    params ??
                     wsRequestModel?.params ??
                     currentModel.wsRequestModel?.params,
-                isParamEnabledList: isParamEnabledList ??
+                isParamEnabledList:
+                    isParamEnabledList ??
                     wsRequestModel?.isParamEnabledList ??
                     currentModel.wsRequestModel?.isParamEnabledList,
               )
             : (wsRequestModel ?? currentModel.wsRequestModel),
+        mqttRequestModel: mqttRequestModel ?? currentModel.mqttRequestModel,
         isStreaming: isStreaming ?? currentModel.isStreaming,
         isWorking: isWorking ?? currentModel.isWorking,
       );
@@ -388,8 +406,10 @@ class CollectionStateNotifier
         // Protocol-level ping interval (mutable on a live connection).
         if (oldWs?.enableHeartbeat != newWs.enableHeartbeat ||
             oldWs?.heartbeatInterval != newWs.heartbeatInterval) {
-          ConnectionManager.instance
-              .updatePingInterval(rId, _wsPingInterval(newWs));
+          ConnectionManager.instance.updatePingInterval(
+            rId,
+            _wsPingInterval(newWs),
+          );
         }
         // App-level repeating-message heartbeat (restart timer on any change,
         // without reconnecting). Fires independently of the ping change above.
@@ -406,9 +426,7 @@ class CollectionStateNotifier
   /// Heartbeat ping interval for [ws], or `null` when heartbeats are disabled.
   /// Falls back to 30s when the interval is non-positive (mirrors connect()).
   Duration? _wsPingInterval(WebSocketRequestModel ws) => ws.enableHeartbeat
-      ? Duration(
-          seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30,
-        )
+      ? Duration(seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30)
       : null;
 
   /// Builds the combined env-var map (global env overlaid by active env),
@@ -447,10 +465,40 @@ class CollectionStateNotifier
           final combined = _buildCombinedEnvVarMap();
           final substituted =
               substituteVariables(ws.messageHeartbeatPayload, combined) ??
-                  ws.messageHeartbeatPayload;
+              ws.messageHeartbeatPayload;
           sendWebSocketMessage(requestId, substituted);
         },
       );
+    }
+  }
+
+  void subscribeMqttTopic(String requestId, String topic, int qos) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null && currentRequest.apiType == APIType.mqtt) {
+      final mqttModel = currentRequest.mqttRequestModel;
+      if (mqttModel == null) return;
+      ConnectionManager.instance.subscribeMqtt(requestId, topic, qos);
+    }
+  }
+
+  void unsubscribeMqttTopic(String requestId, String topic) {
+    final currentRequest = state?[requestId];
+    if (currentRequest != null && currentRequest.apiType == APIType.mqtt) {
+      final mqttModel = currentRequest.mqttRequestModel;
+      if (mqttModel == null) return;
+      ConnectionManager.instance.unsubscribeMqtt(requestId, topic);
+
+      final logMsg = WebSocketMessage(
+        payload: "Unsubscribed from topic: $topic",
+        timestamp: DateTime.now(),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      );
+
+      final updatedModel = mqttModel.copyWith(
+        messageHistory: [...mqttModel.messageHistory, logMsg],
+      );
+      update(id: requestId, mqttRequestModel: updatedModel);
     }
   }
 
@@ -490,12 +538,70 @@ class CollectionStateNotifier
     }
   }
 
+  /// Returns the enabled v5 User Properties for [mqttModel] as a flat list,
+  /// honouring the per-row enabled flags (defaults to enabled when the flag
+  /// list is shorter than the property list).
+  List<NameValueModel> _enabledUserProperties(MQTTRequestModel mqttModel) {
+    final props = mqttModel.userProperties;
+    final enabled = mqttModel.isUserPropertyEnabledList;
+    final result = <NameValueModel>[];
+    for (int i = 0; i < props.length; i++) {
+      final isOn = i < enabled.length ? enabled[i] : true;
+      if (isOn && props[i].name.trim().isNotEmpty) {
+        result.add(props[i]);
+      }
+    }
+    return result;
+  }
+
+  /// Send a text message over an active MQTT connection.
+  void sendMqttMessage(String requestId, String message, String topic) {
+    final currentRequest = state?[requestId];
+    if (currentRequest == null || currentRequest.apiType != APIType.mqtt) {
+      return;
+    }
+    final mqttModel = currentRequest.mqttRequestModel;
+    if (mqttModel == null) return;
+
+    try {
+      ConnectionManager.instance.sendMqtt(
+        requestId,
+        topic,
+        message,
+        qos: mqttModel.qos,
+        retain: mqttModel.retainMessage,
+        // v5-only extras (ignored on the v3 path by ConnectionManager).
+        userProperties: _enabledUserProperties(mqttModel),
+        responseTopic: mqttModel.responseTopic,
+        correlationData: mqttModel.correlationData,
+        messageExpiryInterval: mqttModel.messageExpiryInterval,
+      );
+
+      final newMessage = WebSocketMessage(
+        payload: message,
+        timestamp: DateTime.now(),
+        outgoing: true,
+        messageType: WebSocketMessageType.sent,
+        metadata: topic,
+      );
+
+      update(
+        id: requestId,
+        mqttRequestModel: mqttModel.copyWith(
+          messageHistory: [...mqttModel.messageHistory, newMessage],
+        ),
+      );
+    } catch (e) {
+      debugPrint('MQTT publish error: $e');
+    }
+  }
+
   Future<void> _connectWebSocket(
     String requestId,
     RequestModel requestModel,
-    WebSocketRequestModel wsModel,
-    {String? historyId}
-  ) async {
+    WebSocketRequestModel wsModel, {
+    String? historyId,
+  }) async {
     final Map<String, String> combinedEnvVarMap = _buildCombinedEnvVarMap();
 
     final substitutedUrl =
@@ -588,6 +694,7 @@ class CollectionStateNotifier
         requestId: (latestRequest ?? requestModel).copyWith(
           isWorking: false,
           isStreaming: true,
+          httpResponseModel: null,
           wsRequestModel: currentWs.copyWith(
             messageHistory: [...currentWs.messageHistory, connectedMessage],
           ),
@@ -641,9 +748,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, errMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, errMsg]),
+              );
             }
           }
         },
@@ -671,7 +779,12 @@ class CollectionStateNotifier
             );
             final latestReq = state?[requestId];
             if (latestReq != null) {
-              _connectWebSocket(requestId, latestReq, updatedWs, historyId: historyId);
+              _connectWebSocket(
+                requestId,
+                latestReq,
+                updatedWs,
+                historyId: historyId,
+              );
             }
           } else {
             final discMsg = WebSocketMessage(
@@ -688,9 +801,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, discMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, discMsg]),
+              );
             }
           }
         },
@@ -725,14 +839,18 @@ class CollectionStateNotifier
         ),
       };
       if (historyId != null) {
-        _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-          messageHistory: [...ws.messageHistory, errMsg, discMsg],
-        ));
+        _updateWebSocketHistoryRecord(
+          historyId,
+          ws.copyWith(messageHistory: [...ws.messageHistory, errMsg, discMsg]),
+        );
       }
     }
   }
 
-  void _updateWebSocketHistoryRecord(String historyId, WebSocketRequestModel wsRequestModel) {
+  void _updateWebSocketHistoryRecord(
+    String historyId,
+    WebSocketRequestModel wsRequestModel,
+  ) {
     final historyMap = ref.read(historyMetaStateNotifier);
     if (historyMap != null && historyMap.containsKey(historyId)) {
       final historyMeta = historyMap[historyId]!;
@@ -741,7 +859,27 @@ class CollectionStateNotifier
         metaData: historyMeta,
         wsRequestModel: wsRequestModel,
       );
-      ref.read(historyMetaStateNotifier.notifier).editHistoryRequest(historyModel);
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .editHistoryRequest(historyModel);
+    }
+  }
+
+  void _updateMqttHistoryRecord(
+    String historyId,
+    MQTTRequestModel mqttRequestModel,
+  ) {
+    final historyMap = ref.read(historyMetaStateNotifier);
+    if (historyMap != null && historyMap.containsKey(historyId)) {
+      final historyMeta = historyMap[historyId]!;
+      final historyModel = HistoryRequestModel(
+        historyId: historyId,
+        metaData: historyMeta,
+        mqttRequestModel: mqttRequestModel,
+      );
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .editHistoryRequest(historyModel);
     }
   }
 
@@ -756,7 +894,8 @@ class CollectionStateNotifier
     RequestModel? requestModel = state![requestId];
     if (requestModel?.httpRequestModel == null &&
         requestModel?.aiRequestModel == null &&
-        requestModel?.wsRequestModel == null) {
+        requestModel?.wsRequestModel == null &&
+        requestModel?.mqttRequestModel == null) {
       return;
     }
 
@@ -786,9 +925,241 @@ class CollectionStateNotifier
             .read(historyMetaStateNotifier.notifier)
             .addHistoryRequest(historyModel);
 
-        await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
+        await _connectWebSocket(
+          requestId,
+          requestModel,
+          wsModel,
+          historyId: newHistoryId,
+        );
       } else {
         update(id: requestId, message: "Invalid WebSocket model");
+      }
+      return;
+    }
+
+    if (requestModel.apiType == APIType.mqtt) {
+      var mqttModel = requestModel.mqttRequestModel;
+      if (mqttModel != null) {
+        // Generate a default Client ID ONCE per request and persist it to the
+        // model. A fresh id per connect would present a new identity to the
+        // broker every time, so persistent sessions (offline QoS 1/2 message
+        // queueing) could never be resumed. Persisting also makes the id
+        // visible/editable in Settings > Client ID.
+        if (mqttModel.clientId == null || mqttModel.clientId!.trim().isEmpty) {
+          mqttModel = mqttModel.copyWith(
+            clientId: 'apidash_${DateTime.now().millisecondsSinceEpoch}',
+          );
+          unsave();
+        }
+        state = {
+          ...state!,
+          requestId: requestModel.copyWith(
+            isWorking: true,
+            isStreaming: false,
+            sendingTime: DateTime.now(),
+            message: null,
+            mqttRequestModel: mqttModel,
+          ),
+        };
+
+        // Save history for MQTT connection attempt first (mirrors WebSocket).
+        String newHistoryId = getNewUuid();
+        final historyModel = HistoryRequestModel(
+          historyId: newHistoryId,
+          metaData: HistoryMetaModel(
+            historyId: newHistoryId,
+            requestId: requestId,
+            apiType: APIType.mqtt,
+            name: requestModel.name,
+            url: mqttModel.brokerUrl,
+            method: HTTPVerb.get, // MQTT has no HTTP verb; mirror WS's default.
+            responseStatus: 0,
+            timeStamp: DateTime.now(),
+          ),
+          mqttRequestModel: mqttModel.copyWith(messageHistory: []),
+          preRequestScript: requestModel.preRequestScript,
+          postRequestScript: requestModel.postRequestScript,
+        );
+
+        ref
+            .read(historyMetaStateNotifier.notifier)
+            .addHistoryRequest(historyModel);
+
+        try {
+          await ConnectionManager.instance.connectMqtt(
+            requestId,
+            mqttModel.brokerUrl,
+            mqttModel.port,
+            version: mqttModel.version,
+            clientId: mqttModel.clientId,
+            username: mqttModel.username,
+            password: mqttModel.password,
+            useTLS: mqttModel.useTLS,
+            useWebSocket: mqttModel.useWebSocket,
+            allowInvalidCertificates: mqttModel.allowInvalidCertificates,
+            userProperties: _enabledUserProperties(mqttModel),
+            sessionExpiryInterval: mqttModel.sessionExpiryInterval,
+            keepAlivePeriod: mqttModel.keepAlivePeriod,
+            willTopic: mqttModel.willTopic.trim().isNotEmpty
+                ? mqttModel.willTopic.trim()
+                : null,
+            willMessage: mqttModel.willMessage.trim().isNotEmpty
+                ? mqttModel.willMessage
+                : null,
+            willRetain: mqttModel.willRetain,
+            willQos: mqttModel.willQos,
+            onInfo: (info) {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: info,
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.connected,
+              );
+              update(
+                id: requestId,
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
+            onSubscribed: (topic) {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: "Subscribed to topic: $topic",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.connected,
+                metadata: topic,
+              );
+              update(
+                id: requestId,
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
+            onMessage: (topic, payload) {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: payload,
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.received,
+                metadata: topic,
+              );
+              update(
+                id: requestId,
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
+            onDisconnected: () {
+              final currentModel = state![requestId]?.mqttRequestModel;
+              if (currentModel == null) return;
+              final msg = WebSocketMessage(
+                payload: "Disconnected from broker",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.disconnected,
+              );
+              update(
+                id: requestId,
+                isStreaming: false,
+                isWorking: false,
+                message: "MQTT disconnected",
+                mqttRequestModel: currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+              _updateMqttHistoryRecord(
+                newHistoryId,
+                currentModel.copyWith(
+                  messageHistory: [...currentModel.messageHistory, msg],
+                ),
+              );
+            },
+          );
+
+          // Once connected, explicitly log the broker connection success
+          final latestModelAfterConnect =
+              state![requestId]?.mqttRequestModel ?? mqttModel;
+          final connectedMsg = WebSocketMessage(
+            payload: "Connected to broker: ${mqttModel.brokerUrl}",
+            timestamp: DateTime.now(),
+            outgoing: false,
+            messageType: WebSocketMessageType.connected,
+          );
+
+          update(
+            id: requestId,
+            isWorking: false,
+            isStreaming: true,
+            message: "MQTT connected to ${mqttModel.brokerUrl}",
+            httpResponseModel: null,
+            mqttRequestModel: latestModelAfterConnect.copyWith(
+              messageHistory: [
+                ...latestModelAfterConnect.messageHistory,
+                connectedMsg,
+              ],
+            ),
+          );
+
+          // Now subscribe to the active topics
+          final subModel =
+              state![requestId]?.mqttRequestModel ?? latestModelAfterConnect;
+          for (int i = 0; i < subModel.subscribedTopics.length; i++) {
+            final topic = subModel.subscribedTopics[i];
+            final isEnabled = i < subModel.isTopicEnabledList.length
+                ? subModel.isTopicEnabledList[i]
+                : false;
+
+            if (isEnabled && topic.name.trim().isNotEmpty) {
+              final rawQos = topic.value;
+              int tQos = subModel.qos;
+              if (rawQos is int && rawQos >= 0 && rawQos <= 2) {
+                tQos = rawQos;
+              } else {
+                final p = int.tryParse('${rawQos ?? ''}');
+                if (p != null && p >= 0 && p <= 2) tQos = p;
+              }
+              ConnectionManager.instance.subscribeMqtt(
+                requestId,
+                topic.name,
+                tQos,
+              );
+            }
+          }
+        } catch (e) {
+          final errModel = state![requestId]?.mqttRequestModel ?? mqttModel;
+          final errMsg = WebSocketMessage(
+            payload: "Connection failed: $e",
+            timestamp: DateTime.now(),
+            outgoing: false,
+            messageType: WebSocketMessageType.error,
+          );
+          update(
+            id: requestId,
+            isWorking: false,
+            isStreaming: false,
+            message: "MQTT Error",
+            mqttRequestModel: errModel.copyWith(
+              messageHistory: [...errModel.messageHistory, errMsg],
+            ),
+          );
+          _updateMqttHistoryRecord(
+            newHistoryId,
+            errModel.copyWith(
+              messageHistory: [...errModel.messageHistory, errMsg],
+            ),
+          );
+        }
+      } else {
+        update(id: requestId, message: "Invalid MQTT model");
       }
       return;
     }
@@ -1062,6 +1433,12 @@ class CollectionStateNotifier
       }
       _stopMessageHeartbeat(id);
       ConnectionManager.instance.disconnect(id);
+    } else if (requestModel?.apiType == APIType.mqtt) {
+      final mqttModel = requestModel?.mqttRequestModel;
+      if (mqttModel != null) {
+        ConnectionManager.instance.disconnectMqtt(id);
+      }
+      update(id: id, isStreaming: false, isWorking: false);
     } else {
       cancelHttpRequest(id);
     }

@@ -87,6 +87,8 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  mqtt_client: ^10.11.11
+  mqtt5_client: ^4.10.0
 
 dependency_overrides:
   pdf_widget_wrapper: ^1.0.4

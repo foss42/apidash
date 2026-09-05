@@ -146,6 +146,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         overrideLanguage: detectedLang,
         history: currentMessages,
       );
+    } else if (type == ChatMessageType.generateMqttCode) {
+      final detectedLang = promptBuilder.detectMqttLanguage(text);
+      systemPrompt = promptBuilder.buildSystemPrompt(
+        substitutedReq,
+        type,
+        overrideLanguage: detectedLang,
+        history: currentMessages,
+      );
     } else if (type == ChatMessageType.importCurl) {
       final rqId = _currentRequest?.id ?? 'global';
       // Briefly toggle loading to indicate processing of the import flow prompt

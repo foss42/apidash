@@ -1,6 +1,7 @@
 import 'package:apidash/dashbot/constants.dart';
 import 'package:apidash/dashbot/models/models.dart';
 import 'package:apidash/dashbot/services/services.dart';
+import 'package:apidash/models/mqtt_request_model.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -844,6 +845,412 @@ void main() {
       expect(
         builder.getUserMessageForTask(ChatMessageType.generateWsCode),
         'Can you generate code for this connection?',
+      );
+    });
+  });
+
+  group('PromptBuilder MQTT', () {
+    late PromptBuilder builder;
+
+    const brokerUrl = 'test.mosquitto.org';
+    final baseTime = DateTime(2026, 1, 1, 12, 0, 0);
+
+    setUp(() {
+      builder = PromptBuilder();
+    });
+
+    // MQTT reuses WebSocketMessage; the topic rides in `metadata`.
+    WebSocketMessage mqttMsg(
+      WebSocketMessageType type,
+      String payload,
+      int seconds, {
+      String? topic,
+      bool withTimestamp = true,
+    }) {
+      return WebSocketMessage(
+        payload: payload,
+        timestamp: withTimestamp
+            ? baseTime.add(Duration(seconds: seconds))
+            : null,
+        outgoing: type == WebSocketMessageType.sent,
+        messageType: type,
+        metadata: topic,
+      );
+    }
+
+    // Lifecycle + topic-tagged data messages.
+    List<WebSocketMessage> mqttHistory() => [
+      mqttMsg(WebSocketMessageType.connected, 'Connected to broker', 0),
+      mqttMsg(WebSocketMessageType.received, '23.5', 5, topic: 'home/temp'),
+      mqttMsg(
+        WebSocketMessageType.received,
+        'door opened',
+        10,
+        topic: 'alerts/door',
+      ),
+      mqttMsg(WebSocketMessageType.sent, 'ping', 15, topic: 'home/ping'),
+    ];
+
+    MQTTRequestModel mqttModel({
+      List<WebSocketMessage>? history,
+      String? username,
+      String? password,
+      MQTTVersion version = MQTTVersion.v5,
+    }) {
+      return MQTTRequestModel(
+        brokerUrl: brokerUrl,
+        port: 8883,
+        clientId: 'apidash-client',
+        username: username,
+        password: password,
+        version: version,
+        subscribedTopics: const [
+          NameValueModel(name: 'home/temp', value: ''),
+          NameValueModel(name: 'alerts/#', value: ''),
+        ],
+        isTopicEnabledList: const [true, false],
+        useTLS: true,
+        qos: 1,
+        publishTopic: 'home/ping',
+        keepAlivePeriod: 60,
+        sessionExpiryInterval: 0,
+        messageHistory: history ?? mqttHistory(),
+      );
+    }
+
+    RequestModel mqttRequest({
+      MQTTRequestModel? mqtt,
+      bool isStreaming = false,
+    }) {
+      return RequestModel(
+        id: 'mqtt1',
+        name: 'Sensor Feed',
+        apiType: APIType.mqtt,
+        isStreaming: isStreaming,
+        mqttRequestModel: mqtt ?? mqttModel(),
+      );
+    }
+
+    group('MQTT context block', () {
+      test(
+        'includes broker, settings, topics, version, qos; no HTTP fields',
+        () {
+          final block = builder.buildContextBlock(mqttRequest());
+          expect(block, isNotNull);
+          expect(block!, contains('Type: MQTT connection'));
+          expect(block, contains('Broker Address: $brokerUrl'));
+          expect(block, contains('Connection Status: Connection was closed'));
+          expect(block, contains('Port: 8883'));
+          expect(block, contains('Client ID: apidash-client'));
+          expect(block, contains('MQTT Version: v5'));
+          expect(block, contains('Secure (TLS): on'));
+          expect(block, contains('Delivery care (QoS): 1'));
+          expect(block, contains('Publish Topic: home/ping'));
+          expect(block, contains('Keep-Alive: 60 seconds'));
+          expect(block, contains('Session Expiry: 0 seconds'));
+          // Topics with enabled/disabled state from isTopicEnabledList.
+          expect(block, contains('"home/temp" (enabled)'));
+          expect(block, contains('"alerts/#" (disabled)'));
+          expect(block, contains('Message Log:'));
+          // No HTTP-only fields leak into the MQTT context block.
+          expect(block, isNot(contains('Method:')));
+          expect(block, isNot(contains('Content-Type:')));
+          expect(block, isNot(contains('Response:')));
+        },
+      );
+
+      test(
+        'SECRETS: username/password shown as presence only, never values',
+        () {
+          final withCreds = builder.buildContextBlock(
+            mqttRequest(
+              mqtt: mqttModel(username: 'admin', password: 'hunter2'),
+            ),
+          );
+          expect(withCreds, contains('Sign-in details: provided'));
+          expect(withCreds, isNot(contains('admin')));
+          expect(withCreds, isNot(contains('hunter2')));
+
+          final noCreds = builder.buildContextBlock(mqttRequest());
+          expect(noCreds, contains('Sign-in details: none'));
+        },
+      );
+
+      test('message log surfaces the per-message topic (includeTopic)', () {
+        final block = builder.buildContextBlock(mqttRequest());
+        expect(block, contains('RECEIVED on home/temp: 23.5'));
+        expect(block, contains('RECEIVED on alerts/door: door opened'));
+        expect(block, contains('SENT on home/ping: ping'));
+        // Lifecycle events carry no topic suffix.
+        expect(block, contains('CONNECTED: Connected to broker'));
+        expect(block, isNot(contains('CONNECTED on')));
+      });
+
+      test('v3.1.1 omits the v5-only Session Expiry line', () {
+        final block = builder.buildContextBlock(
+          mqttRequest(mqtt: mqttModel(version: MQTTVersion.v3_1_1)),
+        );
+        expect(block, contains('MQTT Version: v3.1.1'));
+        expect(block, isNot(contains('Session Expiry')));
+      });
+
+      test('status variant: Currently connected while streaming', () {
+        final block = builder.buildContextBlock(mqttRequest(isStreaming: true));
+        expect(block, contains('Connection Status: Currently connected'));
+      });
+
+      test('buildSystemPrompt for an MQTT request includes the MQTT block', () {
+        final prompt = builder.buildSystemPrompt(
+          mqttRequest(),
+          ChatMessageType.general,
+        );
+        expect(prompt, contains('Type: MQTT connection'));
+        expect(prompt, contains('Broker Address: $brokerUrl'));
+      });
+    });
+
+    group('formatWsMessageLog topic parameter', () {
+      test('includeTopic:false stays byte-identical to the WS path', () {
+        // Same history, once as WS (no metadata rendering) and once with the
+        // flag off — must produce identical output regardless of metadata.
+        final history = mqttHistory();
+        final withoutFlag = builder.formatWsMessageLog(history);
+        expect(withoutFlag, contains('RECEIVED: 23.5'));
+        expect(withoutFlag, isNot(contains('on home/temp')));
+        expect(withoutFlag, isNot(contains('RECEIVED on')));
+      });
+
+      test('includeTopic:true renders "on <topic>" for data lines only', () {
+        final log = builder.formatWsMessageLog(
+          mqttHistory(),
+          includeTopic: true,
+        );
+        expect(log, contains('RECEIVED on home/temp: 23.5'));
+        expect(log, contains('SENT on home/ping: ping'));
+        expect(log, contains('CONNECTED: Connected to broker'));
+        expect(log, isNot(contains('CONNECTED on')));
+      });
+
+      test('includeTopic:true with no metadata renders no topic suffix', () {
+        final log = builder.formatWsMessageLog([
+          mqttMsg(WebSocketMessageType.received, 'plain', 0),
+        ], includeTopic: true);
+        expect(log, contains('RECEIVED: plain'));
+        expect(log, isNot(contains(' on ')));
+      });
+    });
+
+    group('MQTT task-prompt routing', () {
+      test('explainMqttConnection routes to the explain prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.explainMqttConnection,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Connection Analyst'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        expect(p, contains('"home/temp" (enabled)'));
+        // Explain is advisory: no MQTT action vocabulary.
+        expect(p, isNot(contains('mqttRequestModel')));
+      });
+
+      test('debugMqttConnection routes to the debug prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.debugMqttConnection,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Connection Debugging Assistant'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+      });
+
+      test('whyNoMqttMessages routes to the delivery-analyst prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.whyNoMqttMessages,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Message Delivery Analyst'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        // Advisory only — no action vocabulary.
+        expect(p, isNot(contains('mqttRequestModel')));
+      });
+
+      test(
+        'MQTT task prompts degrade gracefully without a mqttRequestModel',
+        () {
+          final req = RequestModel(id: 'mqtt-null', apiType: APIType.mqtt);
+          final p = builder.buildTaskPrompt(
+            req,
+            ChatMessageType.explainMqttConnection,
+          );
+          expect(p, isNotNull);
+          expect(p!, contains('Broker Address: N/A'));
+        },
+      );
+    });
+
+    group('MQTT wave 2 task-prompt routing', () {
+      test('summarizeMqttMessages routes to the traffic-analyst prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.summarizeMqttMessages,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Message Traffic Analyst'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        // Group-by-channel summary is advisory: zero action vocabulary.
+        expect(p, isNot(contains('mqttRequestModel')));
+      });
+
+      test('explainMqttTopics routes to the subscription-advisor prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.explainMqttTopics,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Subscription Advisor'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        expect(p, isNot(contains('mqttRequestModel')));
+      });
+
+      test('mqttSessionAdvisor routes to the persistence-advisor prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.mqttSessionAdvisor,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Session Persistence Advisor'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        // The advisor legitimately whitelists the one-field fix.
+        expect(p, contains('sessionExpiryInterval'));
+      });
+
+      test('explainMqttLwt routes to the Last Will prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.explainMqttLwt,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('goodbye note'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        expect(p, isNot(contains('mqttRequestModel')));
+      });
+
+      test('explainMqttV5 routes to the v5 features prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.explainMqttV5,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('User Properties'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        expect(p, isNot(contains('mqttRequestModel')));
+      });
+
+      test('findInMqttMessages routes to the log-analyst prompt', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.findInMqttMessages,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Message Log Analyst'));
+        expect(p, contains('Broker Address: $brokerUrl'));
+        expect(p, isNot(contains('mqttRequestModel')));
+      });
+
+      test('generateMqttCode without language uses the intro picker', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.generateMqttCode,
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('MQTT Code Generator'));
+        expect(p, contains('"action":"show_languages"'));
+        expect(p, contains('"path":"mqtt"'));
+      });
+
+      test('generateMqttCode with language omits the picker', () {
+        final p = builder.buildTaskPrompt(
+          mqttRequest(),
+          ChatMessageType.generateMqttCode,
+          overrideLanguage: 'Dart (mqtt_client)',
+        );
+        expect(p, isNotNull);
+        expect(p!, contains('Requested Language: Dart (mqtt_client)'));
+        expect(p, isNot(contains('show_languages')));
+      });
+    });
+
+    test('mqttMessagesByTopic groups the history by channel', () {
+      final history = [
+        mqttMsg(WebSocketMessageType.connected, 'Connected', 0),
+        mqttMsg(WebSocketMessageType.received, '23.5', 5, topic: 'home/temp'),
+        mqttMsg(WebSocketMessageType.received, '24.1', 10, topic: 'home/temp'),
+        mqttMsg(
+          WebSocketMessageType.received,
+          'door opened',
+          15,
+          topic: 'alerts/door',
+        ),
+      ];
+      final grouped = builder.mqttMessagesByTopic(history);
+      expect(grouped, contains('Messages grouped by channel:'));
+      expect(grouped, contains('home/temp: 2 messages'));
+      expect(grouped, contains('alerts/door: 1 message'));
+    });
+
+    test('detectMqttLanguage maps to MQTT client library labels', () {
+      expect(builder.detectMqttLanguage('use python'), 'Python (paho-mqtt)');
+      expect(builder.detectMqttLanguage('paho'), 'Python (paho-mqtt)');
+      expect(builder.detectMqttLanguage('node please'), 'JavaScript (mqtt.js)');
+      expect(builder.detectMqttLanguage('mqtt.js'), 'JavaScript (mqtt.js)');
+      expect(builder.detectMqttLanguage('javascript'), 'JavaScript (mqtt.js)');
+      expect(builder.detectMqttLanguage('dart'), 'Dart (mqtt_client)');
+      expect(builder.detectMqttLanguage('flutter'), 'Dart (mqtt_client)');
+      expect(builder.detectMqttLanguage('random text'), isNull);
+    });
+
+    test('getUserMessageForTask returns the MQTT task phrasing', () {
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.explainMqttConnection),
+        "Can you explain what's happening with this connection?",
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.debugMqttConnection),
+        "My connection isn't working. Can you help me fix it?",
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.whyNoMqttMessages),
+        'Why am I not receiving any messages?',
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.summarizeMqttMessages),
+        "What's coming in on my topics?",
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.explainMqttTopics),
+        'Help me pick a topic to listen on.',
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.mqttSessionAdvisor),
+        'Should I turn on offline message saving?',
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.generateMqttCode),
+        'Can you generate code for this connection?',
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.explainMqttLwt),
+        'What is a Last Will message?',
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.explainMqttV5),
+        'What extra features does version 5 give me?',
+      );
+      expect(
+        builder.getUserMessageForTask(ChatMessageType.findInMqttMessages),
+        'Help me find something in my messages.',
       );
     });
   });

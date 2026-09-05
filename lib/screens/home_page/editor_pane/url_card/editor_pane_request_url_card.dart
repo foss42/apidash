@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import '../../../common_widgets/common_widgets.dart';
 import 'dropdown_button_http_method.dart';
+import 'dropdown_button_mqtt_version.dart';
 import 'send_request_button.dart';
 import 'url_text_field.dart';
 
@@ -40,6 +41,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.websocket => kSizedBoxEmpty,
+                    APIType.mqtt => const DropdownButtonMQTTVersion(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -56,6 +58,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.graphql => kSizedBoxEmpty,
                     APIType.ai => const AIModelSelector(),
                     APIType.websocket => kSizedBoxEmpty,
+                    APIType.mqtt => const DropdownButtonMQTTVersion(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {

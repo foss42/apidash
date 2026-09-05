@@ -177,4 +177,110 @@ void main() {
       expect(historyRequestModel.httpResponseModel, isNull);
     });
   });
+
+  group('Testing History Meta Models (MQTT)', () {
+    test("Testing HistoryMetaModel copyWith", () {
+      var historyMetaModel = historyMetaModelMqtt;
+      final historyMetaModelcopyWith = historyMetaModel.copyWith(
+        url: 'mqtts://changed.broker.org',
+      );
+      expect(historyMetaModelcopyWith.url, 'mqtts://changed.broker.org');
+      // other fields preserved
+      expect(historyMetaModelcopyWith.apiType, APIType.mqtt);
+      expect(historyMetaModelcopyWith.method, HTTPVerb.get);
+      expect(historyMetaModelcopyWith.responseStatus, 0);
+      // original model unchanged
+      expect(historyMetaModel.url, 'mqtts://broker.example.org');
+    });
+
+    test("Testing HistoryMetaModel toJson", () {
+      var historyMetaModel = historyMetaModelMqtt;
+      expect(historyMetaModel.toJson(), historyMetaModelMqttJson);
+    });
+
+    test("Testing HistoryMetaModel fromJson", () {
+      var historyMetaModel = historyMetaModelMqtt;
+      final modelFromJson = HistoryMetaModel.fromJson(historyMetaModelMqttJson);
+      expect(modelFromJson, historyMetaModel);
+      expect(modelFromJson.apiType, APIType.mqtt);
+      expect(modelFromJson.timeStamp, DateTime(2024, 1, 1));
+      expect(modelFromJson.responseStatus, 0);
+    });
+
+    test("Testing HistoryMetaModel getters", () {
+      var historyMetaModel = historyMetaModelMqtt;
+      expect(historyMetaModel.historyId, 'historyIdMqtt');
+      expect(historyMetaModel.requestId, 'requestIdMqtt');
+      expect(historyMetaModel.apiType, APIType.mqtt);
+      expect(historyMetaModel.url, 'mqtts://broker.example.org');
+      expect(historyMetaModel.method, HTTPVerb.get);
+      expect(historyMetaModel.timeStamp, DateTime(2024, 1, 1));
+      expect(historyMetaModel.responseStatus, 0);
+    });
+  });
+
+  group('Testing History Request Models (MQTT)', () {
+    test("Testing HistoryRequestModel copyWith", () {
+      var historyRequestModel = historyRequestModelMqtt;
+      final historyRequestModelcopyWith = historyRequestModel.copyWith(
+        historyId: 'historyIdMqttChanged',
+      );
+      expect(historyRequestModelcopyWith.historyId, 'historyIdMqttChanged');
+      // other fields preserved
+      expect(historyRequestModelcopyWith.metaData, historyMetaModelMqtt);
+      expect(
+          historyRequestModelcopyWith.mqttRequestModel, historyMqttRequestModel);
+      expect(historyRequestModelcopyWith.wsRequestModel, isNull);
+      expect(historyRequestModelcopyWith.httpRequestModel, isNull);
+      // original model unchanged
+      expect(historyRequestModel.historyId, 'historyIdMqtt');
+    });
+
+    test("Testing HistoryRequestModel toJson", () {
+      var historyRequestModel = historyRequestModelMqtt;
+      final json = historyRequestModel.toJson();
+      expect(json, historyRequestModelMqttJson);
+      // mqttRequestModel is serialized; ws/http are null.
+      expect(json['mqttRequestModel'], historyMqttRequestModelJson);
+      expect(json['wsRequestModel'], isNull);
+      expect(json['httpRequestModel'], isNull);
+    });
+
+    test("Testing HistoryRequestModel fromJson", () {
+      var historyRequestModel = historyRequestModelMqtt;
+      final modelFromJson =
+          HistoryRequestModel.fromJson(historyRequestModelMqttJson);
+      expect(modelFromJson, historyRequestModel);
+      expect(modelFromJson.metaData, historyMetaModelMqtt);
+      expect(modelFromJson.metaData.apiType, APIType.mqtt);
+      expect(modelFromJson.wsRequestModel, isNull);
+      expect(modelFromJson.httpRequestModel, isNull);
+      // mqttRequestModel persisted fields survive the round-trip.
+      final mqtt = modelFromJson.mqttRequestModel!;
+      expect(mqtt.brokerUrl, 'mqtts://broker.example.org');
+      expect(mqtt.port, 8883);
+      expect(mqtt.version, MQTTVersion.v5);
+      expect(mqtt.subscribedTopics, const [
+        NameValueModel(name: 'sensors/temp', value: 'q0'),
+        NameValueModel(name: 'sensors/humidity', value: 'q1'),
+      ]);
+      expect(mqtt.isTopicEnabledList, [true, false]);
+      // messageHistory is round-tripped via JSON (non-empty fixture).
+      expect(mqtt.messageHistory.length, 2);
+      expect(mqtt.messageHistory[0].payload, 'hello');
+      expect(mqtt.messageHistory[0].metadata, 'sensors/temp');
+      expect(mqtt.messageHistory[1].payload, 'world');
+      expect(mqtt.messageHistory[1].outgoing, false);
+    });
+
+    test("Testing HistoryRequestModel getters", () {
+      var historyRequestModel = historyRequestModelMqtt;
+      expect(historyRequestModel.historyId, 'historyIdMqtt');
+      expect(historyRequestModel.metaData, historyMetaModelMqtt);
+      expect(historyRequestModel.mqttRequestModel, historyMqttRequestModel);
+      expect(historyRequestModel.wsRequestModel, isNull);
+      expect(historyRequestModel.httpRequestModel, isNull);
+      expect(historyRequestModel.httpResponseModel, isNull);
+    });
+  });
 }
