@@ -24,16 +24,17 @@
 
 1. [Project Description](#project-description)
 2. [System Architecture](#system-architecture)
-3. [Foundation: Filesystem Workspaces](#foundation-filesystem-workspaces)
-4. [Layer 1: Git Collaboration & Scan Sync](#layer-1-git-collaboration--scan-sync)
-5. [Layer 2: Visual Workflow Builder](#layer-2-visual-workflow-builder)
-6. [Layer 3: Analytics Dashboard](#layer-3-analytics-dashboard)
-7. [Related: Multi-Provider LLM Settings](#related-multi-provider-llm-settings)
-8. [Challenges & Design Decisions](#challenges--design-decisions)
-9. [Pull Requests](#pull-requests)
-10. [Skills Demonstrated](#skills-demonstrated)
-11. [Future Work](#future-work)
-12. [Conclusion](#conclusion)
+3. [Part 1: Filesystem Workspaces](#part-1-filesystem-workspaces)
+4. [Part 2: Git Collaboration](#part-2-git-collaboration)
+5. [Part 3: Scan Sync](#part-3-scan-sync)
+6. [Part 4: Visual Workflow Builder](#part-4-visual-workflow-builder)
+7. [Part 5: Analytics Dashboard](#part-5-analytics-dashboard)
+8. [Part 6: Multi-Provider LLM Settings](#part-6-multi-provider-llm-settings)
+9. [Challenges & Design Decisions](#challenges--design-decisions)
+10. [Pull Requests](#pull-requests)
+11. [Skills Demonstrated](#skills-demonstrated)
+12. [Future Work](#future-work)
+13. [Conclusion](#conclusion)
 
 ---
 
@@ -41,17 +42,21 @@
 
 ## Project Description
 
-API clients are strongest when a team can **version** collections, **move work between devices**, **automate multi-step API flows**, and **see whether those APIs are healthy**, in a local-first tool.
+This project adds four capabilities to API Dash: **versioning** collections, **moving a workspace between devices**, **automating multi-step API flows**, and **reporting on API health**. All of them run locally, with no server component.
 
-This project delivers that stack for API Dash on one shared substrate: a **filesystem workspace** (pretty-printed JSON on disk). On top of it:
+Before this project, API Dash stored everything in a binary Hive database. That made collections impossible to read, review, or put under version control. This project rebuilds the storage layer as a **filesystem workspace**, plain pretty-printed JSON in a folder you choose, and then builds four features on top of that one shared substrate.
 
 
-| Layer                             | Outcome                                                                            |
-| --------------------------------- | ---------------------------------------------------------------------------------- |
-| **Git Collaboration & Scan Sync** | Desktop Git on the workspace root; LAN QR one-way sync with a phone                |
-| **Visual Workflow Builder**       | Node-based multi-step flows with a runner, history, and Dashbot-assisted authoring |
-| **Analytics Dashboard**           | Request and workflow health from existing history, plus combined webhook reports   |
+| Part                        | What it does                                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| **Filesystem Workspaces**   | Your collections, environments, and workflows as readable JSON files on disk             |
+| **Git Collaboration**       | Commit, push, pull, branch, and field-level visual diffs, from inside the app            |
+| **Scan Sync**               | Move a desktop workspace to your phone over Wi-Fi by scanning a QR code                  |
+| **Visual Workflow Builder** | A node canvas for multi-step API scenarios, with a runner and Dashbot-assisted authoring |
+| **Analytics Dashboard**     | Health, trends, and script coverage from local history, plus webhook reports             |
 
+
+Everything stays local-first. Nothing is uploaded, and secrets never enter the JSON files.
 
 ---
 
@@ -102,13 +107,22 @@ Read it top down: Git versions the folder, Sync transfers it between devices, Wo
 
 
 
-## Foundation: Filesystem Workspaces
+## Part 1: Filesystem Workspaces
 
 `Associated Pull Request`: [#1695](https://github.com/foss42/apidash/pull/1695)
 
-Collections, environments, workflows, and history live as pretty-printed JSON in a workspace folder (optional media sidecars for binary responses). App settings remain in SharedPreferences. Secret env values and AI API keys are stripped from JSON and stored in a per-workspace secure-storage blob, so Git push and Scan Sync never carry those secrets.
+Every other part builds on this layer. A workspace is a directory of pretty-printed JSON that any editor can open.
 
-### On-disk layout
+### 1. Choose a workspace when the app starts
+
+The workspace location is chosen by the user rather than fixed by the app. The selector offers **New workspace**, **Open** an existing folder, or **Clone** one from a Git remote, then loads the collection catalog. Recent workspaces remain in the sidebar for reopening.
+
+![Get started screen with New, Open, and Clone workspace options](./GIFs/onboarding.gif)  
+*Name a workspace, choose its folder, and the app opens with it loaded*
+
+### 2. Everything is readable JSON on disk
+
+Each collection is a directory and each request is its own subdirectory, so a reviewer can understand a change by reading the file, with no app required.
 
 ```
 <workspace>/
@@ -135,155 +149,177 @@ Collections, environments, workflows, and history live as pretty-printed JSON in
     sync.json                          # Sync baseline hashes
 ```
 
+**Under the hood:** index files let the app find collections and requests without walking the whole tree, while still discovering folders that appear after a Git clone or a Sync apply.
 
+### 3. Request-level autosave
 
-#### Multi-collection catalog and request identity
+There is no Save button any more. Edits debounce for about a second and then flush the active collection, catalog, and environments. Collaboration actions still flush explicitly before a commit, pull, or Sync apply, so what is on disk always matches what you see.
 
-Each collection is a directory. Each request is a `slug_<hex>` subdirectory with `request.json` / `response.json`. Indexes avoid full-tree walks while still discovering folders that appear after clone or Sync.
+### 4. Secrets never enter the JSON
 
-#### Request-level autosave
+Environment secret values and AI `apiKey` fields are emptied or stripped on write and rehydrated from OS-backed secure storage on load. As a result a Git push cannot carry a key, and copying the workspace folder elsewhere does not copy its secrets.
 
-Edits debounce (~1s) and flush the active collection, catalog, and environments. Manual sidebar Save was removed. Collaboration ops still flush explicitly before commit / pull / Sync apply so disk matches memory.
+### 5. Atomic writes and media sidecars
 
-#### Secure secrets
+JSON is written to a temp file and renamed into place, so a crash mid-write cannot corrupt a collection. A short write journal lets the desktop file watcher ignore the app's own writes, so autosave and disk-watching do not fight each other. Binary response bodies are stored as `response_body.<ext>` sidecars referenced by a `bodyFile` pointer, resolved only to basenames that stay inside the request directory.
 
-Env secret fields and AI `apiKey` values are emptied or stripped on write and rehydrated on load from secure storage. Copying a folder does not move those secrets.
-
-#### Desktop and mobile roots
-
-Desktop: user-picked folder. Mobile: Documents sandbox, with path rebase when the OS container identity changes.
-
-#### Workspace selector onboarding
-
-First launch and workspace switches go through a selector: **New local**, **Open**, or **Clone** a remote Apidash workspace, then load the collection catalog. Recent workspaces stay on the sidebar for quick reopen.
-
-![Workspace onboarding](./GIFs/onboarding.gif)  
-*Selector → New / Open / Clone → collection catalog*
-
-#### Atomic writes and write journal
-
-JSON uses temp file + rename. A short journal lets `Directory.watch` ignore self-writes so autosave and disk sync do not fight.
-
-#### Media response sidecars
-
-Optional `response_body.<ext>` with a `bodyFile` pointer. Read/delete resolve only basenames that stay inside the request directory.
+**Platform roots:** desktop uses a folder you pick; mobile uses the Documents sandbox, with a path rebase when the OS container identity changes between launches.
 
 ---
 
 
 
-## Layer 1: Git Collaboration & Scan Sync
+## Part 2: Git Collaboration
 
-`Associated Pull Request`: [#1734](https://github.com/foss42/apidash/pull/1734) (builds on [#1695](https://github.com/foss42/apidash/pull/1695))  
+`Associated Pull Request`: [#1734](https://github.com/foss42/apidash/pull/1734) (builds on [#1695](https://github.com/foss42/apidash/pull/1695))
 `Documentation`: [Collaboration Guide](../../user_guide/collaboration_guide.md)
 
-Desktop Collaboration is the hub for Git and Sync. Mobile Collaboration is Sync-only. Both backends reuse the same change-tree and visual-diff UI.
+Because the workspace is a folder of JSON, it can be a Git repository. The Collaboration page is a Git client scoped to that workspace: it operates on Apidash paths and the operations a collection actually needs, rather than exposing the full Git surface.
 
+### 1. Turn a workspace into a shareable repo
 
-|           | Git                                | Scan Sync                              |
-| --------- | ---------------------------------- | -------------------------------------- |
-| Transport | Remotes (GitHub, GitLab, …)        | Same Wi‑Fi WebSocket + QR              |
-| Semantics | Full VCS history                   | One Send or Receive, then session ends |
-| Platforms | Desktop                            | Desktop host + mobile client           |
-| Shared UI | `GitChangesTree`, visual/raw diffs | Same chrome via `sync_change_adapter`  |
+If the folder is not a repo yet, a three-step guide handles it: verify Git is installed, run `git init`, then connect a remote. The whole sequence runs inside the app.
 
+![Initializing a repo and connecting a remote from the setup guide](./GIFs/git-init.gif)  
+*The guide initializes the repo, takes a remote URL, and confirms the connection*
 
+### 2. See exactly which fields changed
 
+A unified JSON diff reports brace and indentation noise alongside the one field that actually changed. Changes are therefore rendered field by field for requests, responses, indexes, environments, and workflows, showing only what moved, with the raw unified view one toggle away. Workflow diffs also report added and removed nodes and edges.
 
-### Git (Desktop)
+![Field-level visual diff of a changed request](./GIFs/git-diff.gif)  
+*Pick a changed request and read the old and new values side by side*
 
+### 3. Commit and push without leaving the app
 
+Your Apidash paths are pre-selected, so committing is: write a message, commit, push. **Check remote** does a fetch only, and **Pull** is emphasized when you are behind.
 
-#### Workspace as repo root via system Git
+![Writing a commit message, committing, and the Push button appearing](./GIFs/git-commit.gif)  
+*After the commit the workspace goes clean and Push origin appears, one commit ahead*
 
-The workspace folder is the repository root. `GitService` uses `Process.run` against system `git`, so Credential Manager / SSH agents apply. Interactive prompts are off (`GIT_TERMINAL_PROMPT=0`).
+### 4. Branches, restore, and reset
 
-**Tracked Apidash paths:** `collections/`, `environments/` (except `*.local.json`), `workflows/`, and `.gitignore` (written on init).  
-**Init ignore template:** `history/`, `.apidash/`, `environments/*.local.json`, OAuth credential JSON, `*.tmp`, OS junk.
+Create and switch branches, restore an earlier commit, or reset the workspace (`reset --hard` plus cleaning untracked files, while keeping ignored ones). An overflow menu can reveal the folder or open it in VS Code.
 
-#### Clone and setup guide
+### 5. Git status badge
 
-Clone validates Apidash indexes on the remote. For an existing local workspace, the Collaboration setup guide walks **install Git →** `git init` **→ add remote → first fetch/push**, so a folder becomes a shareable repo without leaving the app.
+The editor shows dirty, ahead, and behind counts, deep-linked to the Collaboration page.
 
-![Git init and add remote](./GIFs/git-init.gif)  
-*Init workspace repo → add remote*
+**Under the hood**
 
-#### Status, commit, fetch, pull, push
+- `GitService` shells out to the **system `git`** binary via `Process.run`, so existing Credential Manager and SSH agent configuration applies. Interactive prompts are disabled with `GIT_TERMINAL_PROMPT=0`, and status is parsed from porcelain v2.
+- Tracked paths are `collections/`, `environments/` (except `*.local.json`), `workflows/`, and the `.gitignore` written at init. That template excludes `history/`, `.apidash/`, local env files, OAuth credential JSON, `*.tmp`, and OS junk.
+- Mutating operations flush autosave first and call `reloadWorkspaceFromDisk` afterwards, so memory matches disk after a pull, checkout, restore, or reset.
+- Cloning checks that the remote actually contains Apidash indexes before adopting it.
 
-Porcelain v2 status drives ahead/behind and the change list. Apidash paths (plus `.gitignore`) are auto-selected for commit. **Check remote** is `fetch` only. **Pull** is emphasized when behind. Mutating ops flush autosave and call `reloadWorkspaceFromDisk` after pull / checkout / restore / reset.
-
-#### Visual JSON diffs
-
-Field-level visual diffs for requests, responses, indexes, environments, and workflows (changed fields only), plus raw unified toggle. Workflow diffs include node/edge add/remove and position changes.
-
-![Visual diff, commit, and push](./GIFs/git-visual-commit.gif)  
-*Visual / Raw diff → commit → push*
-
-### Scan Sync (LAN QR)
+---
 
 
 
-#### One-way apply sessions
+## Part 3: Scan Sync
 
-Desktop hosts `SyncSessionServer` (default port `4571`, ~5 min listen, one peer; second peer → HTTP 409). Phone joins via QR (`host`, `port`, `token`, workspace meta) over cleartext LAN `ws://`; the token is the session capability.
+`Associated Pull Request`: [#1734](https://github.com/foss42/apidash/pull/1734)
 
-#### Wire protocol
+Git covers team collaboration, but routing a workspace to a phone through a remote is heavy for a one-off transfer. Scan Sync moves it directly over the local network: the desktop hosts a session and renders a QR code, the phone scans it, and the syncable paths are copied. No account or cloud service is involved.
+
+### 1. Pair by scanning a QR code
+
+The desktop opens a session and shows a QR holding its host, port, a session token, and workspace details. The phone scans it, and the desktop reports how many files are ready to copy while the phone asks whether to adopt the workspace.
+
+![Desktop hosting a sync session, phone scanning the QR, and the workspace arriving](./GIFs/sync-pair.gif)  
+*The desktop waits on the QR, the phone scans and confirms, and the workspace lands on the phone*
+
+### 2. Change something on the phone
+
+Once the workspace has landed, the phone is not a read-only viewer. Requests and environment values can be edited there, and the phone counts what it has changed against the last synced copy, so you know there is something to send before you open a session.
+
+![Editing an environment value on the phone, then the sync screen reporting one change waiting](./GIFs/sync-phone-edit.gif)  
+*An empty environment variable gets filled in on the phone, and the sync screen then reports one change waiting*
+
+### 3. Review the change list before anything is written
+
+Sync reuses the same change tree and diff UI as Git, so you can see precisely which requests and environments differ between the two devices before committing to anything.
+
+![Reviewing the sync change list, then the same file as a field diff and as raw JSON](./GIFs/sync-diff.gif)  
+*A returning session finds one changed file; the same change reads as a field diff or as raw JSON against the last synced copy*
+
+### 4. Apply in one direction, then the session ends
+
+You choose the direction, send to phone or receive from phone, and it applies once. The session is not persistent and no background service keeps listening.
+
+![Applying a one-way sync, then the new value visible in Global Variables](./GIFs/sync-apply.gif)  
+*Update from phone writes the change and closes the session, and the new value is there in Global Variables*
+
+### 5. Wire protocol
+
+**Under the hood:** the desktop hosts `SyncSessionServer` (default port `4571`, roughly a 5-minute listen window, exactly one peer, and a second peer gets HTTP 409). The phone joins over cleartext LAN `ws://`, and the QR token is the session capability.
 
 
 | Step      | Messages                                                         |
 | --------- | ---------------------------------------------------------------- |
 | Handshake | `hello` → `helloAck`                                             |
-| Diff      | both send `manifest` (`path` → `sha256:…`)                       |
+| Diff      | both sides send a `manifest` (`path` → `sha256:…`)               |
 | Transfer  | `fileRequest` / `fileContent`, or bulk writes in `applyComplete` |
 | End       | `applyComplete` / `error` / `bye`                                |
 
 
-Syncable paths: `collections/`, `environments/`, `workflows/` only. History and `.apidash/` never go on the wire.
+Only `collections/`, `environments/`, and `workflows/` are syncable. History and `.apidash/` never go on the wire. First pairing is a phone-driven adopt/replace; later sessions with the same workspace id and a stored baseline are incremental. The same id without a baseline still replaces, rather than pretending to merge.
 
-#### First pair vs incremental
-
-First pairing is phone-driven adopt/replace. Later sessions with the same workspace id and a stored baseline are incremental. Same id without baseline still replaces; it does not fake an incremental merge.
-
-![First-time Scan Sync: desktop QR host and phone Switch & sync](./images/scan-sync-first-pair.jpg)  
-*First pair: desktop QR host ↔ phone Switch & sync*
-
-**Baseline correctness:** after apply, both sides persist the **agreed** map from `applyComplete`. Re-hashing only the local tree left asymmetric baselines (empty Send / Receive on both with no real edits). Receive rebuilds baseline from post-write local hashes.
-
-![Scan Sync change tree and visual diff before apply](./GIFs/scan-sync-diff.gif)  
-*Incremental session: change tree → visual diff → apply*
-
-### Collaboration UI
-
-
-
-#### Branches, restore, reset
-
-Create/switch branches; restore a commit; reset workspace (`reset --hard` + clean untracked, keep ignored). Overflow: reveal folder / open in VS Code.
-
-#### Git status badge
-
-Dirty / ahead / behind in the editor, deep-linked to Collaboration.
-
-#### Sync unsynced indicator
-
-Outgoing drift vs stored baseline without opening a session.
-
-#### Mobile scope
-
-Scan, adopt, apply only. No full Git client on phone.
+**Mobile scope:** the phone can scan, adopt, and apply. It is deliberately not a full Git client.
 
 ---
 
 
 
-## Layer 2: Visual Workflow Builder
+## Part 4: Visual Workflow Builder
 
-`Associated Pull Request`: [#1781](https://github.com/foss42/apidash/pull/1781)  
+`Associated Pull Request`: [#1781](https://github.com/foss42/apidash/pull/1781)
 `Documentation`: [Workflows Guide](../../user_guide/workflows_guide.md)
 
-Multi-step API scenarios become versionable documents plus an interactive canvas. Desktop edits fully. Medium/mobile layouts **view and run** the same files (including workflows received via Sync).
+Multi-step scenarios (log in, take the token, fetch a list, act on each item) had no representation in API Dash. The Workflow Builder stores them as versionable JSON documents and executes them from a node canvas.
 
-### Lean on-disk shape
+### 1. Chain requests on a canvas
+
+Nodes are dragged out and wired together, and a value from one response can be extracted for the next. An extraction such as `data.0.id` becomes a scoped `{{var}}` readable by every later step, so an id from one response can be referenced directly instead of copied by hand.
+
+![Extracting a value from a response and wiring it into the next request](./GIFs/workflow-chain-build.gif)  
+*Name an extraction from the first response, then wire it into the request that follows*
+
+### 2. Run it and inspect every step
+
+A run paints its path on the canvas, colouring each node as running, completed, failed, or never taken. Step chips underneath open the real request and response for any step, and a past run replays into the same view.
+
+![Running a workflow and inspecting a step's response](./GIFs/workflow-chain-run.gif)  
+*Run it, then open any step to see what was actually sent and returned*
+
+### 3. Turn a list into a loop
+
+A Sequence node holds a list, and one loop node walks it as either **for-each** or **repeat**. Hitting an endpoint once per id in an array becomes two nodes instead of a script.
+
+![Configuring a Sequence node and then a for-each loop](./GIFs/workflow-sequence-loop.gif)  
+*Sequence saves the list as a variable; the loop node walks it one item at a time*
+
+### 4. Run branches in parallel
+
+There is no "parallel" node to add. Wire several edges out of one handle and those branches run at the same time. Where they meet again, the run waits for every branch that could still arrive, then merges their variables; a real conflict fails the run instead of quietly picking a winner. Condition nodes stay exclusive, True or False and never both.
+
+![Parallel branches executing and joining](./GIFs/workflow-parallel-run.gif)  
+*Branches run together, and each one's response is a separate chip in the inspector*
+
+### 5. Describe a workflow and let Dashbot build it
+
+Type what you want in plain English. Dashbot proposes a workflow and asks whether to create a new one or change the current one. It never writes to your workspace without confirmation. Once you confirm, the proposal becomes real nodes and edges, auto-arranged and ready to run.
+
+![Asking Dashbot to generate a workflow and running the result](./GIFs/workflow-dashbot-generate.gif)  
+*Describe the flow, confirm the proposal, and the generated workflow runs*
+
+### 6. View and run on a phone
+
+Medium and mobile layouts open the same files in inspect mode: no Add, Arrange, or Dashbot, but workflows received over Sync can still be run from your phone.
+
+### 7. Lean on-disk shape
+
+**Under the hood:** a workflow is one flat JSON document that both humans and language models can write. The request and its extractions live on the node, and the filename stem is both the id and the display name.
 
 ```json
 {
@@ -309,111 +345,72 @@ Multi-step API scenarios become versionable documents plus an interactive canvas
 }
 ```
 
-Filename stem = id = display name.
+Ports, sizes, and other editor bookkeeping are deliberately absent, because persisting those would pollute every Git diff and force Dashbot to invent layout.
 
-#### Schema for Git and Dashbot
-
-One flat document humans and models can emit. Request + `extract` live on the node. Methods normalize to lowercase enums on load/apply.
-
-#### Vyuh canvas, Riverpod source of truth
-
-[`vyuh_node_flow`](https://pub.dev/packages/vyuh_node_flow) for pan/zoom/ports/wires. `WorkflowVyuhAdapter` hydrates ephemerally; persistence goes through `WorkflowDocument` in Riverpod. Stretch-to-add uses `onConnectEnd`.
-
-#### Chaining via extractions
-
-Paths such as `data.0.id` become scoped `{{vars}}` for later HTTP/AI steps. Env vars apply at run time; extractions win on name clash.
-
-![Workflow request chaining run](./GIFs/workflow-chain.gif)  
-*Chained requests → Run → inspector + run-path*
-
-#### Implicit parallel and AND-join
-
-Multiple outs on one handle run concurrently. Convergence waits on reachability, then merges variables; conflicts fail the run. Condition True/False stays exclusive.
-
-#### Loops and Sequence
-
-One loop node: for-each and repeat. Sequence produces lists for for-each only (Seq port), not a generic add-node type.
-
-![Parallel join and Sequence for-each](./GIFs/workflow-parallel.gif)  
-*Parallel Workflows*
-
-#### Dashbot Generate Workflow
-
-Describe → `apply_workflow` → confirm Create New / Change Current → lean JSON on disk. Auto-chains when edges are missing, and auto-arranges.
-
-![Dashbot generate workflow](./GIFs/workflow-dashbot.gif)  
-*Dashbot prompt → confirm → canvas*
-
-#### Run inspector and run-path
-
-Step chips with request/response detail. Live or historical runs paint running / completed / failed / untaken paths on the canvas.
-
-#### Medium/mobile view-and-run
-
-Inspect mode: no Add / Arrange / Dashbot. Sync’d workflows can still be run on a phone.
-
-#### Workflow history
-
-`history/workflow_history/` (Git/Sync excluded), drawer → inspector.
-
-#### AI credentials on workflows
-
-Same strip-on-disk / hydrate-in-memory pattern as collection AI requests.
-
-#### Stretch-to-add and connection editing
-
-Port-into-empty-space creation and connection cleanup on top of Vyuh.
+- The canvas is [`vyuh_node_flow`](https://pub.dev/packages/vyuh_node_flow) for pan, zoom, ports, and wires. `WorkflowVyuhAdapter` hydrates it ephemerally while `WorkflowDocument` in Riverpod stays the source of truth.
+- Dashbot's apply accepts `connections` as an alias for `edges`, auto-chains when edges are missing, and auto-arranges.
+- Runs are recorded under `history/workflow_history/`, excluded from Git and Sync.
+- AI credentials on workflow nodes use the same strip-on-disk, hydrate-in-memory pattern as collection AI requests.
 
 ---
 
 
 
-## Layer 3: Analytics Dashboard
+## Part 5: Analytics Dashboard
 
-`Associated Pull Request`: [#1791](https://github.com/foss42/apidash/pull/1791)
+`Associated Pull Request`: [#1791](https://github.com/foss42/apidash/pull/1791) (builds on [#1781](https://github.com/foss42/apidash/pull/1781))
 `Documentation`: [Dashboard Guide](../../user_guide/dashboard_guide.md)
 
-The Dashboard aggregates `history/request_history` and `history/workflow_history`. Collection health score: `75% × successRate + 25% × (1 − errorRatio)` with success = status `< 400`.
+The Dashboard reads the run history already stored in the workspace and reports collection and workflow health from it. It issues no new requests and sends nothing anywhere unless you configure a webhook.
 
-#### Collections and Workflows health
+### 1. Collection health and trends
 
-Time range `24h` / `7d` / `30d` / `All`, optional filter. Collections: health, success, volume, failures, latency. Workflows: run outcomes and failing nodes.
+A time range (`24h`, `7d`, `30d`, or `All`) scopes a health score, success rate, request volume, failures, and average latency. Below that are response-time distributions, the hottest and slowest endpoints, and recent 4xx/5xx responses.
 
-#### Trends and diagnostics
+Health score is `75% × successRate + 25% × (1 − errorRatio)`, where success means a status below 400.
 
-Trends open by default. Distributions, hot/slow endpoints, recent 4xx/5xx (→ History), workflow node failures.
+![Collection dashboard health score, trends, and endpoint distributions](./GIFs/dashboard-collections.gif)  
+*A health score for the collection, then the trend and the endpoints behind it*
 
-![Dashboard KPIs and trends](./GIFs/dashboard-overview.gif)  
-*KPIs, scope controls, and trends*
+### 2. Script coverage
 
-#### Combined webhooks
+Post-response scripts act as assertions, so the Dashboard reports them as coverage: the percentage of requests that have one, and which requests do not.
 
-One `type: dashboard` payload for Collections and Workflows: JSON, Slack Block Kit, or Discord embeds. Preview, copy, send now, interval auto-send.
+![Script coverage percentage and list of requests missing scripts](./GIFs/dashboard-coverage.gif)  
+*The coverage number, and the exact requests that have no script yet*
 
-![Dashboard webhook send](./GIFs/dashboard-webhook.gif)  
-*Webhook preview → Send → success*
+### 3. Workflow health
 
-#### Script coverage
+Workflows get their own view: how many runs passed or failed, how long they took, and which nodes break most often.
 
-Post-response scripts treated as tests; coverage % and missing list.
+![Workflow dashboard with run outcomes and failing nodes](./GIFs/dashboard-workflows.gif)  
+*Runs split into passed and failed, with a duration trend and the nodes at fault*
 
-#### Execution history deep links
+### 4. Build a webhook report
 
-Opens History or Workflows with the matching run inspector.
+One `type: dashboard` payload covers both Collections and Workflows, and can be formatted as raw JSON, Slack Block Kit, or Discord embeds. You can preview the exact payload, copy it, send it now, or have it auto-send on an interval.
 
-#### Mobile/medium Dashboard
+![Configuring a webhook report and previewing the payload](./GIFs/dashboard-webhook.gif)  
+*Pick a format and preview the exact payload before sending*
 
-Same metrics pipeline; no second analytics engine.
+### 5. Delivery to Slack and Discord
+
+![The webhook report arriving as a Discord embed](./GIFs/dashboard-webhook-result.gif)  
+*Send now, and the health report shows up as an embed in the channel*
+
+### 6. Deep links from metrics to runs
+
+Clicking a failure or a slow endpoint opens History or Workflows with the matching run inspector already loaded. Mobile and medium layouts reuse the same metrics pipeline, so there is no second analytics implementation to keep in sync.
 
 ---
 
 
 
-## Related: Multi-Provider LLM Settings
+## Part 6: Multi-Provider LLM Settings
 
 `Associated Pull Request`: [#1779](https://github.com/foss42/apidash/pull/1779)
 
-Multi-provider LLM configuration (`aiProviders`), settings UI / model selector, and genai model-manager support for live and known models. Dashbot workflow generation and other AI request surfaces share one configuration path instead of a single hard-wired provider. Delivered in parallel with the workspace stack.
+Delivered in parallel with the workspace stack: multi-provider LLM configuration (`aiProviders`), a settings UI and model selector, and genai model-manager support for both live and known models. Dashbot's workflow generation and every other AI surface now share one configuration path instead of a single hard-wired provider.
 
 ---
 
@@ -425,27 +422,27 @@ Multi-provider LLM configuration (`aiProviders`), settings UI / model selector, 
 
 #### Workspace folder as the shared substrate
 
-Versioning, phone handoff, workflows, and analytics all need the same durable tree. A pretty-printed workspace folder gives honest diffs, offline use, and Sync manifests. Cost: atomic IO, path safety, disk watch vs autosave races, and mobile path rebase.
+Versioning, phone handoff, workflows, and analytics all need the same durable tree. A pretty-printed workspace folder gives honest diffs, offline use, and Sync manifests. Cost: atomic IO, path safety, disk watch versus autosave races, and mobile path rebase.
 
 #### System `git` CLI instead of an embedded git library
 
-Matches Credential Manager / SSH agents and cuts library maintenance. Cost: desktop-only Git, non-interactive auth, and careful CLI error mapping.
+Matches Credential Manager and SSH agents, and avoids maintaining a bundled git implementation. Cost: Git is desktop-only, auth must be non-interactive, and CLI errors need careful mapping.
 
 #### One-way Scan Sync instead of CRDT
 
-LAN QR needs a simple trust model: pair, apply once, close. The hard bug was baseline agreement after one-way apply. Fix: both peers store the agreed `applyComplete` map; receive rebuilds from post-write local hashes.
+A QR-based LAN session needs a trust model that is simple to reason about: pair, apply once, close. The hard bug was baseline agreement after a one-way apply. Re-hashing only the local tree left the two peers with asymmetric baselines, which showed up as an empty Send *and* an empty Receive despite real edits. The fix: both peers persist the **agreed** map from `applyComplete`, and a receive rebuilds its baseline from post-write local hashes.
 
 #### Shared change UI for two backends
 
-Git porcelain and Sync hashes look different internally. Mapping Sync into `GitChange` keeps one change-tree and one add/mod/delete visual language.
+Git porcelain output and Sync manifest hashes look nothing alike internally. Mapping Sync into `GitChange` keeps one change tree and one add/modify/delete visual language, so users learn the screen once.
 
 #### Lean workflow JSON vs full editor graph schema
 
-Persisting ports and sizes would pollute Git and force Dashbot to invent layout. Riverpod `WorkflowDocument` is source of truth; Vyuh is a view. Parallelism is implicit on multi-out handles with reachability AND-join.
+Persisting ports and sizes would pollute Git and force Dashbot to invent layout. Riverpod's `WorkflowDocument` is the source of truth and Vyuh is only a view. Parallelism is implicit on multi-out handles with a reachability AND-join.
 
 #### Passive disk watch vs Git/Sync reload
 
-Finder edits must not wipe selection. Pull and Sync apply need an authoritative reload after autosave flush. Mute/suppress flags keep self-writes and hydration from fighting each other.
+An edit made in Finder must not wipe your selection, but a pull or Sync apply *does* need an authoritative reload after autosave flushes. Mute and suppress flags keep self-writes and hydration from fighting each other.
 
 ---
 
@@ -472,6 +469,8 @@ Delivery order:
 
 
 ---
+
+
 
 ## Skills Demonstrated
 
