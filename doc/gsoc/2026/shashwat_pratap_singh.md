@@ -33,8 +33,9 @@
 9. [Challenges & Design Decisions](#challenges--design-decisions)
 10. [Pull Requests](#pull-requests)
 11. [Skills Demonstrated](#skills-demonstrated)
-12. [Future Work](#future-work)
-13. [Conclusion](#conclusion)
+12. [Technical Blog](#technical-blog)
+13. [Future Work](#future-work)
+14. [Conclusion](#conclusion)
 
 ---
 
@@ -66,28 +67,7 @@ Everything stays local-first. Nothing is uploaded, and secrets never enter the J
 
 Each feature is a **layer over one workspace folder**. Features sit on top, the folder is the source of truth in the middle, and local-only data sits under it.
 
-```mermaid
-flowchart TB
-  GIT["Git<br/>commit · push/pull · visual diff"]
-  SYNC["Scan Sync<br/>QR · one-way Send/Receive"]
-  FLOW["Workflows<br/>canvas · runner · Dashbot"]
-  DASH["Dashboard<br/>KPIs · webhook reports"]
-
-  WS["Workspace folder<br/>collections · environments · workflows"]
-
-  HIST["history/<br/>request + workflow runs"]
-  SEC["Secure storage<br/>env secrets · AI keys"]
-
-  GIT --> WS
-  SYNC --> WS
-  FLOW --> WS
-  DASH -->|script coverage| WS
-  WS --> HIST
-  DASH -.->|aggregates| HIST
-  WS -.->|secrets stripped out of JSON| SEC
-```
-
-
+![System architecture: Git, Scan Sync, Workflows, and Dashboard over one workspace folder, with history and secure storage below](./images/system-architecture.jpg)
 
 Read it top down: Git versions the folder, Sync transfers it between devices, Workflows run graphs stored in it, and the Dashboard measures what those runs produced. `history/` lives inside the folder but is excluded from Git and Sync, and secret values are pulled out of the JSON into OS-backed storage, so pushing or syncing a workspace cannot leak them. `.apidash/` keeps workspace identity and Sync baselines.
 
@@ -473,22 +453,14 @@ An edit made in Finder must not wipe your selection, but a pull or Sync apply *d
 
 ## Pull Requests
 
-Delivery order:
-
-1. [#1695](https://github.com/foss42/apidash/pull/1695) Storage / filesystem workspaces
-2. [#1734](https://github.com/foss42/apidash/pull/1734) Git + Scan Sync
-3. [#1781](https://github.com/foss42/apidash/pull/1781) Workflow Builder
-4. [#1791](https://github.com/foss42/apidash/pull/1791) Analytics Dashboard
-5. [#1779](https://github.com/foss42/apidash/pull/1779) Multi-provider LLM settings
-
-
-| PR                                                   | What it landed                                                                                   | Status       |
+| PR                                                   | Description                                                                                      | Status       |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------ |
 | [#1695](https://github.com/foss42/apidash/pull/1695) | Workspace layout, autosave, multi-collection, secure secrets, atomic IO, disk watch              | Under review |
-| [#1734](https://github.com/foss42/apidash/pull/1734) | System Git, visual diffs, QR Sync, shared change UI, reload discipline                           | Open         |
-| [#1781](https://github.com/foss42/apidash/pull/1781) | Lean workflows, Vyuh canvas, runner (parallel/loop/Sequence), Dashbot apply, mobile view-and-run | Open         |
-| [#1791](https://github.com/foss42/apidash/pull/1791) | KPIs, trends, coverage, combined webhooks                                                        | Open         |
-| [#1779](https://github.com/foss42/apidash/pull/1779) | Multi-provider LLM config and model selector                                                     | Open         |
+| [#1734](https://github.com/foss42/apidash/pull/1734) | System Git, visual diffs, QR Sync, shared change UI, reload discipline                           | Under review |
+| [#1781](https://github.com/foss42/apidash/pull/1781) | Lean workflows, Vyuh canvas, runner (parallel/loop/Sequence), Dashbot apply, mobile view-and-run | Under review |
+| [#1791](https://github.com/foss42/apidash/pull/1791) | KPIs, trends, coverage, combined webhooks                                                        | Under review |
+| [#1779](https://github.com/foss42/apidash/pull/1779) | Multi-provider LLM config and model selector                                                     | Under review |
+| [#1755](https://github.com/foss42/apidash/pull/1755) | Paste a cURL command to fill the current request                                                 | Under review |
 
 
 ---
@@ -509,6 +481,14 @@ Delivery order:
 | Cross-platform product design | Desktop Git + Sync; mobile Sync and workflow view-and-run                              |
 | Engineering hygiene           | Stacked delivery, user guides, subsystem unit tests                                    |
 
+
+---
+
+
+
+## Technical Blog
+
+During the coding period, I published a midterm progress blog on the foundation work behind Git and Scan Sync. It covers why Hive could not support the collaboration we wanted, the decision to own a filesystem workspace, how Git and Scan Sync share that same folder, and what watching the disk taught us about keeping the UI honest. You can read the full article here: [Building the Foundation for Git and Scan Sync in API Dash (GSoC 2026)](https://dev.to/foss42/building-the-foundation-for-git-and-scan-sync-in-api-dash-gsoc-2026-3nk9).
 
 ---
 
