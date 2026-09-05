@@ -120,6 +120,11 @@ The workspace location is chosen by the user rather than fixed by the app. The s
 ![Get started screen with New, Open, and Clone workspace options](./GIFs/onboarding.gif)  
 *Name a workspace, choose its folder, and the app opens with it loaded*
 
+**Clone** takes a remote URL and a parent folder, validates that the remote is an Apidash workspace, then checks it out as a new local workspace already on its Git branch.
+
+![Cloning a remote Apidash workspace into a local folder](./GIFs/git-clone.gif)  
+*Pick Clone, paste the remote URL, and the workspace opens with its collections and the branch badge already set*
+
 ### 2. Everything is readable JSON on disk
 
 Each collection is a directory and each request is its own subdirectory, so a reviewer can understand a change by reading the file, with no app required.
@@ -199,7 +204,15 @@ Your Apidash paths are pre-selected, so committing is: write a message, commit, 
 
 ### 4. Branches, restore, and reset
 
-Create and switch branches, restore an earlier commit, or reset the workspace (`reset --hard` plus cleaning untracked files, while keeping ignored ones). An overflow menu can reveal the folder or open it in VS Code.
+Create and switch branches from the branch picker, including **+ New branch**. Restore an earlier commit when you need an older snapshot back, or reset the workspace (`reset --hard` plus cleaning untracked files, while keeping ignored ones).
+
+![Branch picker open on main with feature branches and New branch](./images/git-branches.jpg)  
+*Switch branches from the picker, or create a new one without leaving the app*
+
+The overflow menu opens the workspace folder in Finder, opens it in VS Code, or resets the workspace when you need a clean slate.
+
+![Overflow menu with Reveal in Finder, Open in VS Code, and Reset Workspace](./images/git-overflow.jpg)  
+*Reveal the folder, open it in VS Code, or reset the workspace from one menu*
 
 ### 5. Git status badge
 
@@ -296,15 +309,15 @@ A run paints its path on the canvas, colouring each node as running, completed, 
 
 A Sequence node holds a list, and one loop node walks it as either **for-each** or **repeat**. Hitting an endpoint once per id in an array becomes two nodes instead of a script.
 
-![Configuring a Sequence node and then a for-each loop](./GIFs/workflow-sequence-loop.gif)  
-*Sequence saves the list as a variable; the loop node walks it one item at a time*
+![Configuring a Sequence list, running for-each, and inspecting each iteration](./GIFs/workflow-sequence-loop.gif)  
+*Sequence stores the list as a variable; for-each walks it, and each iteration is its own step in the inspector*
 
 ### 4. Run branches in parallel
 
 There is no "parallel" node to add. Wire several edges out of one handle and those branches run at the same time. Where they meet again, the run waits for every branch that could still arrive, then merges their variables; a real conflict fails the run instead of quietly picking a winner. Condition nodes stay exclusive, True or False and never both.
 
-![Parallel branches executing and joining](./GIFs/workflow-parallel-run.gif)  
-*Branches run together, and each one's response is a separate chip in the inspector*
+![Several request nodes leaving Start together, then inspected as separate chips](./GIFs/workflow-parallel-run.gif)  
+*Several edges leave Start at once; the inspector shows each branch as its own chip, including which ones returned 200 and which one failed*
 
 ### 5. Describe a workflow and let Dashbot build it
 
@@ -411,6 +424,16 @@ Clicking a failure or a slow endpoint opens History or Workflows with the matchi
 `Associated Pull Request`: [#1779](https://github.com/foss42/apidash/pull/1779)
 
 Delivered in parallel with the workspace stack: multi-provider LLM configuration (`aiProviders`), a settings UI and model selector, and genai model-manager support for both live and known models. Dashbot's workflow generation and every other AI surface now share one configuration path instead of a single hard-wired provider.
+
+Settings → **Manage** under LLMs opens the profile list. **Basic** covers a known provider and model; **Custom** takes a model id, base URL, and API key for OpenRouter, Groq, DeepSeek, vLLM, or any other OpenAI-compatible endpoint. Secrets stay masked in the form and are stored through the same secure path as environment secrets.
+
+![Adding a custom LLM profile with model, base URL, and API key](./GIFs/llm-settings.gif)  
+*Add a Custom profile, save it, and it joins the list next to the built-in providers*
+
+Configured profiles then appear in the AI request model picker, so Dashbot and AI requests switch providers without a second settings path.
+
+![AI request model picker listing the configured LLM profiles](./images/llm-model-picker.jpg)  
+*The same profiles show up in the model picker on an AI request*
 
 ---
 
