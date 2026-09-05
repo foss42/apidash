@@ -550,6 +550,9 @@ const kLabelClear = "Clear";
 const kLabelAboutSubtitle =
     "Release Details, Support Channel, Report Bug / Request New Feature";
 const kMsgRequestsDataCleared = "Requests Data Cleared";
+const kMsgCurlPasteApplied = "cURL imported into the current request";
+const kMsgCurlPasteFailed =
+    "Unable to parse cURL. Ensure it starts with \"curl \" and is complete.";
 const kLabelCurrentSelectionPrefix = "Current selection: ";
 const kLabelDarkMode = "Dark Mode";
 const kLabelLightMode = "Light mode";

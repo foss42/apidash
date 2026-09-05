@@ -1,5 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
@@ -33,7 +35,7 @@ class URLTextField extends ConsumerWidget {
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
 
-    return EnvURLField(
+    final field = EnvURLField(
       // ValueKey encodes both the selected request and its protocol type.
       // This forces Flutter to discard the old widget and create a fresh one
       // whenever the user switches between requests or between protocol types,
@@ -74,5 +76,54 @@ class URLTextField extends ConsumerWidget {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
     );
+    return Actions(
+      actions: <Type, Action<Intent>>{
+        PasteTextIntent: _CurlPasteAction(
+          onCurl: (curlText) async {
+            final messenger = ScaffoldMessenger.maybeOf(context);
+            final url = ref
+                .read(collectionStateNotifierProvider.notifier)
+                .applyCurlToSelectedRequest(curlText);
+            if (url != null) {
+              messenger?.showSnackBar(getSnackBar(kMsgCurlPasteApplied));
+            } else {
+              messenger?.showSnackBar(
+                getSnackBar(kMsgCurlPasteFailed, small: false),
+              );
+            }
+          },
+        ),
+      },
+      child: field,
+    );
+  }
+}
+
+class _CurlPasteAction extends Action<PasteTextIntent> {
+  _CurlPasteAction({required this.onCurl});
+
+  final Future<void> Function(String curlText) onCurl;
+
+  @override
+  bool get isActionEnabled => callingAction?.isActionEnabled ?? true;
+
+  @override
+  bool consumesKey(PasteTextIntent intent) =>
+      callingAction?.consumesKey(intent) ?? true;
+
+  @override
+  Object? invoke(PasteTextIntent intent) {
+    return _invokeAsync(intent);
+  }
+
+  Future<Object?> _invokeAsync(PasteTextIntent intent) async {
+    final Action<PasteTextIntent>? defaultPaste = callingAction;
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final text = data?.text?.trim() ?? '';
+    if (text.startsWith('curl ')) {
+      await onCurl(text);
+      return null;
+    }
+    return defaultPaste?.invoke(intent);
   }
 }

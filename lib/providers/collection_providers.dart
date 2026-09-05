@@ -240,6 +240,45 @@ class CollectionStateNotifier
     unsave();
   }
 
+  String? applyCurlToSelectedRequest(String curlText, {String? id}) {
+    final parsedList = CurlIO().getHttpRequestModelList(curlText);
+    if (parsedList == null || parsedList.isEmpty) {
+      return null;
+    }
+
+    final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null || state == null || !state!.containsKey(rId)) {
+      return null;
+    }
+
+    final currentModel = state![rId]!;
+    if (currentModel.apiType == APIType.websocket) {
+      _stopMessageHeartbeat(rId);
+      ConnectionManager.instance.disconnect(rId);
+    }
+
+    final parsed = parsedList.first;
+    final headerCount = parsed.headers?.length ?? 0;
+    final paramCount = parsed.params?.length ?? 0;
+    final httpRequestModel = parsed.copyWith(
+      isHeaderEnabledList: List<bool>.filled(headerCount, true),
+      isParamEnabledList: List<bool>.filled(paramCount, true),
+    );
+
+    state = {
+      ...state!,
+      rId: currentModel.copyWith(
+        apiType: APIType.rest,
+        requestTabIndex: 0,
+        httpRequestModel: httpRequestModel,
+        aiRequestModel: null,
+        wsRequestModel: null,
+      ),
+    };
+    unsave();
+    return httpRequestModel.url;
+  }
+
   void update({
     APIType? apiType,
     String? id,
