@@ -95,6 +95,7 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
     APIType.graphql => getGraphQLBody(httpRequestModel),
     APIType.ai => null, //TODO: TAKE A LOOK
     APIType.websocket => null,
+    APIType.grpc => null,
   };
 }
 

@@ -1,3 +1,4 @@
+import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,11 +43,31 @@ class ResponsePane extends ConsumerWidget {
       if (isStreaming || hasMessages) {
         return const _WsResponsePanel();
       }
-
       return const NotSentWidget();
     }
 
-    // ── HTTP / GraphQL / AI response ─────────────────────────────────
+    // ── gRPC response: stream view if multiple ───────────────────────
+    if (apiType == APIType.grpc) {
+      // While the request is in flight (connecting / awaiting the first
+      // response) show the same "sending" animation HTTP uses — for every
+      // streaming type. `isWorking` is cleared on the first received message
+      // (see _connectGrpc), at which point we fall through to the stream view
+      // (streaming) or the single-response view (unary).
+      if (isWorking) {
+        return SendingWidget(
+          startSendingTime: startSendingTime,
+        );
+      }
+      final grpcModel = ref.watch(selectedRequestModelProvider.select((value) => value?.grpcRequestModel));
+      final receivedCount = grpcModel?.messageHistory.where((m) => m.messageType == WebSocketMessageType.received).length ?? 0;
+      final httpModel = ref.watch(selectedRequestModelProvider.select((value) => value?.httpResponseModel));
+      final hasClearedStream = responseStatus == 200 && receivedCount == 0 && httpModel == null;
+      if (isStreaming || receivedCount > 1 || hasClearedStream) {
+        return const _WsResponsePanel();
+      }
+    }
+
+    // ── HTTP / GraphQL / AI / gRPC (single) response ─────────────────
     if (isWorking) {
       return SendingWidget(
         startSendingTime: startSendingTime,
@@ -71,15 +92,45 @@ class ResponsePane extends ConsumerWidget {
 }
 
 /// Panel showing the WS event log.
-class _WsResponsePanel extends ConsumerWidget {
+class _WsResponsePanel extends ConsumerStatefulWidget {
   const _WsResponsePanel();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_WsResponsePanel> createState() => _WsResponsePanelState();
+}
+
+class _WsResponsePanelState extends ConsumerState<_WsResponsePanel> {
+  bool _showMetadata = false;
+
+  @override
+  Widget build(BuildContext context) {
     // Keyed by request id (stable across URL edits) so each request keeps its
     // own event-stream State; mirrors ResponseTabView on the HTTP side.
     final selectedId = ref.watch(selectedIdStateProvider);
-    return RealtimeEventStreamView(key: ValueKey(selectedId));
+    if (_showMetadata) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 4.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () => setState(() => _showMetadata = false),
+                icon: const Icon(Icons.arrow_back, size: 16),
+                label: const Text("Back to Stream"),
+              ),
+            ),
+          ),
+          const Expanded(child: ResponseHeadersTab()),
+        ],
+      );
+    }
+
+    return RealtimeEventStreamView(
+      key: ValueKey(selectedId),
+      onViewMetadata: () => setState(() => _showMetadata = true),
+    );
   }
 }
 
@@ -119,8 +170,11 @@ class ResponseTabs extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final apiType = ref.watch(selectedRequestModelProvider.select((value) => value?.apiType));
+
     return ResponseTabView(
       selectedId: selectedId,
+      headersTitle: apiType == APIType.grpc ? "Metadata" : kLabelHeaders,
       children: const [
         ResponseBodyTab(),
         ResponseHeadersTab(),
@@ -148,13 +202,13 @@ class ResponseHeadersTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final requestHeaders =
         ref.watch(selectedRequestModelProvider.select((value) {
-              return value?.httpResponseModel!.requestHeaders;
+              return value?.httpResponseModel?.requestHeaders;
             })) ??
             {};
 
     final responseHeaders =
         ref.watch(selectedRequestModelProvider.select((value) {
-              return value?.httpResponseModel!.headers;
+              return value?.httpResponseModel?.headers;
             })) ??
             {};
 

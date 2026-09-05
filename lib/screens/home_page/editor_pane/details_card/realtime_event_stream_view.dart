@@ -12,9 +12,10 @@ import 'package:apidash/widgets/button_copy.dart';
 /// expands it (works with mouse and touch), and once expanded the text is
 /// selectable so part of it can be copied. "Show less" collapses it again.
 class RealtimeEventStreamView extends ConsumerStatefulWidget {
-  const RealtimeEventStreamView({super.key, this.historyMessages});
+  const RealtimeEventStreamView({super.key, this.historyMessages, this.onViewMetadata});
 
   final List<WebSocketMessage>? historyMessages;
+  final VoidCallback? onViewMetadata;
 
   @override
   ConsumerState<RealtimeEventStreamView> createState() => _RealtimeEventStreamViewState();
@@ -34,7 +35,8 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
   Widget build(BuildContext context) {
     final requestModel = widget.historyMessages == null ? ref.watch(selectedRequestModelProvider) : null;
     final wsModel = requestModel?.wsRequestModel;
-    final history = widget.historyMessages ?? wsModel?.messageHistory ?? [];
+    final grpcModel = requestModel?.grpcRequestModel;
+    final history = widget.historyMessages ?? wsModel?.messageHistory ?? grpcModel?.messageHistory ?? [];
 
     final settings = ref.watch(settingsProvider);
     final maxEvents = settings.maxConnectionMessages;
@@ -85,6 +87,13 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
           ),
           if (widget.historyMessages == null) ...[
             kHSpacer5,
+            if (grpcModel != null && widget.onViewMetadata != null)
+              TextButton.icon(
+                icon: const Icon(Icons.info_outline, size: 16),
+                label: const Text("Metadata"),
+                onPressed: widget.onViewMetadata,
+              ),
+            kHSpacer5,
             IconButton(
               icon: const Icon(Icons.delete_outline, size: 18),
               tooltip: "Clear messages",
@@ -94,6 +103,9 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                         wsRequestModel:
                             wsModel.copyWith(messageHistory: []),
                       );
+                }
+                if (grpcModel != null) {
+                  ref.read(collectionStateNotifierProvider.notifier).clearGrpcHistory();
                 }
               },
             ),

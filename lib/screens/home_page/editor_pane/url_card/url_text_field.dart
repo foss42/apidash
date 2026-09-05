@@ -29,6 +29,11 @@ class URLTextField extends ConsumerWidget {
         (value) => value?.wsRequestModel?.url,
       ),
     );
+    ref.watch(
+      selectedRequestModelProvider.select(
+        (value) => value?.grpcRequestModel?.url,
+      ),
+    );
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!)!;
@@ -44,10 +49,12 @@ class URLTextField extends ConsumerWidget {
       initialValue: switch (requestModel.apiType) {
         APIType.ai => requestModel.aiRequestModel?.url,
         APIType.websocket => requestModel.wsRequestModel?.url,
+        APIType.grpc => requestModel.grpcRequestModel?.url,
         _ => requestModel.httpRequestModel?.url,
       },
       hintText: switch (requestModel.apiType) {
         APIType.websocket => kHintTextWsCard,
+        APIType.grpc => 'Enter gRPC URL',
         _ => kHintTextUrlCard,
       },
       onChanged: (value) {
@@ -65,6 +72,11 @@ class URLTextField extends ConsumerWidget {
           final wsModel = latestModel.wsRequestModel;
           if (wsModel != null) {
             notifier.update(wsRequestModel: wsModel.copyWith(url: value));
+          }
+        } else if (latestModel.apiType == APIType.grpc) {
+          final grpcModel = latestModel.grpcRequestModel;
+          if (grpcModel != null) {
+            notifier.update(grpcRequestModel: grpcModel.copyWith(url: value));
           }
         } else {
           notifier.update(url: value);
