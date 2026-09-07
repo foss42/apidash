@@ -72,6 +72,38 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
+const kAutoSaveDebounceDuration = Duration(seconds: 1);
+
+const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
+
+const kMaxSavedWorkspaces = 10;
+
+const kDefaultCollectionName = 'Collection 1';
+const kWorkspaceCollectionsDir = 'collections';
+const kWorkspaceCollectionsIndexFile = 'collection_index.json';
+const kWorkspaceRequestFile = 'request.json';
+const kWorkspaceResponseFile = 'response.json';
+const kWorkspaceResponseBodyFilePrefix = 'response_body';
+const kWorkspaceResponseBodyFileKey = 'bodyFile';
+const kWorkspaceRequestIndexFile = 'request_index.json';
+const kWorkspaceCollectionsIndexKey = 'collections';
+const kWorkspaceCollectionIdKey = 'id';
+const kWorkspaceCollectionNameKey = 'name';
+const kWorkspaceEnvironmentsDir = 'environments';
+const kWorkspaceEnvironmentIndexFile = 'environment_index.json';
+const kWorkspaceHistoryDir = 'history';
+const kWorkspaceHistoryIndexFile = 'history_index.json';
+const kJsonFileExtension = '.json';
+
+const kWorkspaceRequestsKey = 'requests';
+const kWorkspaceEnvironmentIdsKey = 'environmentIds';
+const kWorkspaceHistoryMetasKey = 'historyMeta';
+const kWorkspaceActiveEnvironmentIdKey = 'activeEnvironmentId';
+const kWorkspaceSaveResponsesKey = 'saveResponses';
+const kWorkspaceHistoryRetentionPeriodKey = 'historyRetentionPeriod';
+
+const kGlobalEnvironmentName = 'Global Variables';
+
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),
@@ -433,6 +465,15 @@ const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kHintTextWsCard =
     "Enter WebSocket endpoint like wss://echo.websocket.org";
 const kLabelPlusNew = "+ New";
+const kLabelNewCollection = "New collection";
+const kLabelRenameCollection = "Rename collection";
+const kLabelDeleteCollection = "Delete collection";
+const kLabelCreateCollection = "Create collection";
+const kMsgNoCollections = "No collections yet";
+const kLabelCollectionName = "Collection name";
+const kMsgCollectionNameInUse = "This collection name already exists";
+const kMsgCollectionNameInvalidChars =
+    r'Name cannot contain / \ : * ? " < > |';
 const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
@@ -499,6 +540,9 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+const kLabelSelectWorkspace = "Select workspace";
+const kLabelOpenWorkspaceMenu = "Open workspace…";
+const kMsgWorkspaceOpenFailed = 'Could not open that workspace folder.';
 // History Page
 const kTitleClearHistory = 'Clear History';
 const kMsgClearHistory =
@@ -530,6 +574,9 @@ const kLabelDefaultLLM = "Default Large Language Model (LLM)";
 const kLabelSaveResponses = "Save Responses";
 const kLabelSaveResponsesSubtitle =
     "Save disk space by not storing API responses";
+const kLabelSaveMediaResponsesAsFiles = "Save Media Responses as Files";
+const kLabelSaveMediaResponsesAsFilesSubtitle =
+    "Store image, audio, video & binary responses as standalone files ";
 const kLabelShowSaveAlert = "Show Save Alert on App Close";
 const kLabelShowSaveAlertSubtitle =
     "Show a confirmation dialog to save workspace when the user closes the app";

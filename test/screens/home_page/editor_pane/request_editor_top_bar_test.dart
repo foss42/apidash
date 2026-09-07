@@ -17,8 +17,9 @@ void main() {
       ProviderScope(
         overrides: [
           selectedIdStateProvider.overrideWith((ref) => 'test_id'),
+          selectedCollectionIdStateProvider.overrideWith((ref) => null),
           collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({
+            (ref) => MockActiveCollectionNotifier(ref, {
               'test_id': const RequestModel(
                 id: 'test_id',
                 name: 'Test Request Name',

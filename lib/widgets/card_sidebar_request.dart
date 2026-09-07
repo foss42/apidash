@@ -76,7 +76,12 @@ class SidebarRequestCard extends StatelessWidget {
           // onDoubleTap: inEditMode ? null : onDoubleTap,
           onSecondaryTapUp: (details) {
             onSecondaryTap?.call();
-            showItemCardMenu(context, details, onMenuSelected);
+            showItemCardMenu(
+              context,
+              details,
+              ItemMenuOption.values,
+              onMenuSelected,
+            );
           },
           child: Padding(
             padding: EdgeInsets.only(

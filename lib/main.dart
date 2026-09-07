@@ -50,15 +50,15 @@ Future<bool> initApp(
   try {
     debugPrint("initializeUsingPath: $initializeUsingPath");
     debugPrint("workspaceFolderPath: ${settingsModel?.workspaceFolderPath}");
-    final openBoxesStatus = await initHiveBoxes(
+    final workspaceReady = await initWorkspaceStorage(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );
-    debugPrint("openBoxesStatus: $openBoxesStatus");
-    if (openBoxesStatus) {
+    debugPrint("workspaceReady: $workspaceReady");
+    if (workspaceReady) {
       await autoClearHistory(settingsModel: settingsModel);
     }
-    return openBoxesStatus;
+    return workspaceReady;
   } catch (e) {
     debugPrint("initApp failed due to $e");
     return false;

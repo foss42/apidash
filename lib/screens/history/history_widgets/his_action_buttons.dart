@@ -12,13 +12,10 @@ class HistoryActionButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final collectionStateNotifier = ref.watch(collectionStateNotifierProvider);
-    final isAvailable =
-        collectionStateNotifier?.values.any(
-          (element) => element.id == historyRequestModel?.metaData.requestId,
-        ) ??
-        false;
     final requestId = historyRequestModel?.metaData.requestId;
+    final isAvailable =
+        requestId != null &&
+        ref.watch(requestSequenceProvider).contains(requestId);
 
     return FilledButtonGroup(
       buttons: [
@@ -38,8 +35,11 @@ class HistoryActionButtons extends ConsumerWidget {
         ButtonData(
           icon: Icons.north_east_rounded,
           label: kLabelRequest,
-          onPressed: isAvailable && requestId != null
+          onPressed: isAvailable
               ? () {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .loadRequest(requestId);
                   ref.read(selectedIdStateProvider.notifier).state = requestId;
                   ref.read(navRailIndexStateProvider.notifier).state = 0;
                 }

@@ -57,11 +57,12 @@ String? substituteVariables(
 HttpRequestModel substituteHttpRequestModel(
   HttpRequestModel httpRequestModel,
   Map<String?, List<EnvironmentVariableModel>> envMap,
-  String? activeEnvironmentId,
-) {
+  String? activeEnvironmentId, {
+  String globalEnvironmentId = kGlobalEnvironmentId,
+}) {
   final Map<String, String> combinedEnvVarMap = {};
   final activeEnv = envMap[activeEnvironmentId] ?? [];
-  final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
+  final globalEnv = envMap[globalEnvironmentId] ?? [];
 
   for (var variable in globalEnv) {
     combinedEnvVarMap[variable.key] = variable.value;
@@ -216,9 +217,11 @@ AuthModel? substituteAuthModel(
 }
 
 List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
-    String query,
-    Map<String, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
+  String query,
+  Map<String, List<EnvironmentVariableModel>> envMap,
+  String? activeEnvironmentId, {
+  String globalEnvironmentId = kGlobalEnvironmentId,
+}) {
   final suggestions = <EnvironmentVariableSuggestion>[];
   final Set<String> addedVariableKeys = {};
 
@@ -233,11 +236,11 @@ List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
     }
   }
 
-  envMap[kGlobalEnvironmentId]?.forEach((variable) {
+  envMap[globalEnvironmentId]?.forEach((variable) {
     if ((query.isEmpty || variable.key.contains(query)) &&
         !addedVariableKeys.contains(variable.key)) {
       suggestions.add(EnvironmentVariableSuggestion(
-          environmentId: kGlobalEnvironmentId, variable: variable));
+          environmentId: globalEnvironmentId, variable: variable));
       addedVariableKeys.add(variable.key);
     }
   });
@@ -246,9 +249,11 @@ List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
 }
 
 EnvironmentVariableSuggestion getVariableStatus(
-    String key,
-    Map<String, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
+  String key,
+  Map<String, List<EnvironmentVariableModel>> envMap,
+  String? activeEnvironmentId, {
+  String globalEnvironmentId = kGlobalEnvironmentId,
+}) {
   if (activeEnvironmentId != null) {
     final variable =
         envMap[activeEnvironmentId]!.firstWhereOrNull((v) => v.key == key);
@@ -262,10 +267,10 @@ EnvironmentVariableSuggestion getVariableStatus(
   }
 
   final globalVariable =
-      envMap[kGlobalEnvironmentId]?.firstWhereOrNull((v) => v.key == key);
+      envMap[globalEnvironmentId]?.firstWhereOrNull((v) => v.key == key);
   if (globalVariable != null) {
     return EnvironmentVariableSuggestion(
-      environmentId: kGlobalEnvironmentId,
+      environmentId: globalEnvironmentId,
       variable: globalVariable,
       isUnknown: false,
     );

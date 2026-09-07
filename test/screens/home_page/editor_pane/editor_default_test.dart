@@ -4,21 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:apidash/models/models.dart';
-import 'test_utils.dart';
+import '../../../providers/helpers.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() async {
+    await testSetUpWorkspaceStorage();
+  });
+
   testWidgets('Testing RequestEditorDefault', (tester) async {
+    final container = createContainer();
+    await ensureCollectionReady(container, tester);
+
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          collectionStateNotifierProvider.overrideWith(
-            (ref) => MockCollectionStateNotifier({}),
-          ),
-        ],
+      UncontrolledProviderScope(
+        container: container,
         child: const MaterialApp(home: Scaffold(body: RequestEditorDefault())),
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(find.text('Get Started with API Dash'), findsOneWidget);
     expect(
@@ -28,7 +33,6 @@ void main() {
     expect(find.byType(ElevatedButton), findsOneWidget);
     expect(find.text('Quick Tips'), findsOneWidget);
 
-    // Tap + New
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
   });
