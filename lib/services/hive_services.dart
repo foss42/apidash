@@ -4,6 +4,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 enum HiveBoxType { normal, lazy }
 
 const String kDataBox = "apidash-data";
+const String kAgenticDataBox = "internal_agent_history"; // NEW: Agentic history box constant
 const String kKeyDataBoxIds = "ids";
 
 const String kEnvironmentBox = "apidash-environments";
@@ -20,6 +21,7 @@ const String kKeyDashBotBoxIds = 'messages';
 
 const kHiveBoxes = [
   (kDataBox, HiveBoxType.normal),
+  (kAgenticDataBox, HiveBoxType.normal), // NEW: Ensures the box is opened on startup
   (kEnvironmentBox, HiveBoxType.normal),
   (kHistoryMetaBox, HiveBoxType.normal),
   (kHistoryLazyBox, HiveBoxType.lazy),
@@ -27,9 +29,9 @@ const kHiveBoxes = [
 ];
 
 Future<bool> initHiveBoxes(
-  bool initializeUsingPath,
-  String? workspaceFolderPath,
-) async {
+    bool initializeUsingPath,
+    String? workspaceFolderPath,
+    ) async {
   try {
     if (initializeUsingPath) {
       if (workspaceFolderPath != null) {
@@ -96,18 +98,21 @@ Future<void> deleteHiveBoxes() async {
   }
 }
 
+// The global handler defaults to kDataBox, keeping the main app untouched
 final hiveHandler = HiveHandler();
 
 class HiveHandler {
+  final String boxName; // NEW: dynamic box name variable
   late final Box dataBox;
   late final Box environmentBox;
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
   late final LazyBox dashBotBox;
 
-  HiveHandler() {
+  // NEW: Constructor accepts boxName, defaulting to the original kDataBox
+  HiveHandler({this.boxName = kDataBox}) {
     debugPrint("Trying to open Hive boxes");
-    dataBox = Hive.box(kDataBox);
+    dataBox = Hive.box(boxName); // Use the dynamic variable instead of the hardcoded constant
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
@@ -123,7 +128,7 @@ class HiveHandler {
 
   dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(
-          String id, Map<String, dynamic>? requestModelJson) =>
+      String id, Map<String, dynamic>? requestModelJson) =>
       dataBox.put(id, requestModelJson);
 
   void delete(String key) => dataBox.delete(key);
@@ -134,7 +139,7 @@ class HiveHandler {
 
   dynamic getEnvironment(String id) => environmentBox.get(id);
   Future<void> setEnvironment(
-          String id, Map<String, dynamic>? environmentJson) =>
+      String id, Map<String, dynamic>? environmentJson) =>
       environmentBox.put(id, environmentJson);
 
   Future<void> deleteEnvironment(String id) => environmentBox.delete(id);
@@ -145,7 +150,7 @@ class HiveHandler {
 
   dynamic getHistoryMeta(String id) => historyMetaBox.get(id);
   Future<void> setHistoryMeta(
-          String id, Map<String, dynamic>? historyMetaJson) =>
+      String id, Map<String, dynamic>? historyMetaJson) =>
       historyMetaBox.put(id, historyMetaJson);
 
   Future<void> deleteHistoryMeta(String id) => historyMetaBox.delete(id);
@@ -153,7 +158,7 @@ class HiveHandler {
   Future<dynamic> getHistoryRequest(String id) async =>
       await historyLazyBox.get(id);
   Future<void> setHistoryRequest(
-          String id, Map<String, dynamic>? historyRequestJson) =>
+      String id, Map<String, dynamic>? historyRequestJson) =>
       historyLazyBox.put(id, historyRequestJson);
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
