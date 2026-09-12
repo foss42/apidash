@@ -438,6 +438,45 @@ void main() {
       );
       expect(getVariableStatus(query, envMap, activeEnvironmentId), expected);
     });
+
+    test(
+        "Testing getVariableStatus with stale activeEnvironmentId not in envMap",
+        () {
+      const query = "num";
+      Map<String, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+      };
+      const staleActiveEnvironmentId = "deletedEnvId";
+      const expected = EnvironmentVariableSuggestion(
+        environmentId: kGlobalEnvironmentId,
+        variable: EnvironmentVariableModel(key: "num", value: "5670000"),
+      );
+      expect(
+        getVariableStatus(query, envMap, staleActiveEnvironmentId),
+        expected,
+      );
+    });
+
+    test(
+        "Testing getVariableStatus with stale activeEnvironmentId and unavailable variable",
+        () {
+      const query = "unknown_key";
+      Map<String, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+      };
+      const staleActiveEnvironmentId = "deletedEnvId";
+      const expected = EnvironmentVariableSuggestion(
+        isUnknown: true,
+        environmentId: "unknown",
+        variable: EnvironmentVariableModel(key: query, value: "unknown"),
+      );
+      expect(
+        getVariableStatus(query, envMap, staleActiveEnvironmentId),
+        expected,
+      );
+    });
   });
 
   group("Testing auth model environment variable substitution", () {
