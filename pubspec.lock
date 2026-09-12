@@ -1059,10 +1059,10 @@ packages:
     dependency: transitive
     description:
       name: mason_logger
-      sha256: "6d5a989ff41157915cb5162ed6e41196d5e31b070d2f86e1c2edf216996a158c"
+      sha256: "1d46102c6f299c0df7fe986dd3dd3271d57c2ec7c00ae590660b7c3018810048"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3"
+    version: "0.3.5"
   matcher:
     dependency: transitive
     description:
