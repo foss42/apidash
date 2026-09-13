@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'ws_request_model.dart';
 import 'mqtt_request_model.dart';
+import 'grpc_request_model.dart';
 
 part 'request_model.freezed.dart';
 
@@ -35,6 +36,7 @@ abstract class RequestModel with _$RequestModel {
     AIRequestModel? aiRequestModel,
     WebSocketRequestModel? wsRequestModel,
     MQTTRequestModel? mqttRequestModel,
+    GrpcRequestModel? grpcRequestModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>
@@ -46,7 +48,8 @@ abstract class RequestModel with _$RequestModel {
       APIType.graphql => httpRequestModel?.url,
       APIType.ai => aiRequestModel?.url,
       APIType.websocket => wsRequestModel?.url,
-      APIType.mqtt => mqttRequestModel?.brokerUrl,
+      APIType.mqtt => mqttRequestModel?.brokerUrl,,
+      APIType.grpc => grpcRequestModel?.url,
     };
   }
 }

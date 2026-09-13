@@ -8,6 +8,49 @@ import '../models/history_models.dart';
 
 void main() {
   group('Testing getRequestModelFromHistoryModel function', () {
+    test('carries grpcRequestModel for a gRPC history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModelGrpc,
+      );
+
+      expect(requestModel.id, 'historyIdGrpc');
+      expect(requestModel.apiType, APIType.grpc);
+      // The actual fix: grpcRequestModel is carried through.
+      expect(requestModel.grpcRequestModel, isNotNull);
+      expect(requestModel.grpcRequestModel, historyGrpcRequestModel);
+      expect(requestModel.grpcRequestModel!.url, 'localhost:50051');
+      expect(requestModel.grpcRequestModel!.service, 'GreeterService');
+      expect(requestModel.grpcRequestModel!.method, 'SayHello');
+      expect(requestModel.grpcRequestModel!.messageHistory.length, 2);
+      // Sibling protocol models stay null on a gRPC restore.
+      expect(requestModel.wsRequestModel, isNull);
+      expect(requestModel.httpRequestModel, isNull);
+      expect(requestModel.aiRequestModel, isNull);
+    });
+
+    test('carries wsRequestModel for a WebSocket history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModelWs,
+      );
+
+      expect(requestModel.apiType, APIType.websocket);
+      // wsRequestModel passthrough (added alongside the gRPC fix).
+      expect(requestModel.wsRequestModel, isNotNull);
+      expect(requestModel.wsRequestModel, historyWsRequestModel);
+      expect(requestModel.grpcRequestModel, isNull);
+    });
+
+    test('carries httpRequestModel for a REST history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModel1,
+      );
+
+      expect(requestModel.apiType, APIType.rest);
+      expect(requestModel.httpRequestModel, isNotNull);
+      expect(requestModel.grpcRequestModel, isNull);
+      expect(requestModel.wsRequestModel, isNull);
+    });
+
     test('returns correct RequestModel', () {
       final model = HistoryRequestModel(
         historyId: 'h1',

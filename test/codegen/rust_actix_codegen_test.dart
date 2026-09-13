@@ -13,10 +13,8 @@ void main() {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .send()
+    let mut request = client.get(url);
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -43,12 +41,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/country/data";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .query(&[("code", "US")])
-        .unwrap()
-        .send()
+    let mut request = client.get(url);    
+    let query_params = [
+        ("code", "US"),
+    ];
+    request = request.query(&query_params).unwrap();
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -75,12 +73,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/country/data";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .query(&[("code", "IND")])
-        .unwrap()
-        .send()
+    let mut request = client.get(url);    
+    let query_params = [
+        ("code", "IND"),
+        ("code", "US"),
+    ];
+    request = request.query(&query_params).unwrap();
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -107,12 +106,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .query(&[("num", "8700000"), ("digits", "3"), ("system", "SS"), ("add_space", "true"), ("trailing_zeros", "true")])
-        .unwrap()
-        .send()
+    let mut request = client.get(url);    
+    let query_params = [
+        ("num", "8700000"),
+        ("digits", "3"),
+        ("system", "SS"),
+        ("add_space", "true"),
+        ("trailing_zeros", "true"),
+    ];
+    request = request.query(&query_params).unwrap();
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -139,11 +142,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.github.com/repos/foss42/apidash";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .insert_header(("User-Agent", "Test Agent"))
-        .send()
+    let mut request = client.get(url);
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -170,13 +172,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.github.com/repos/foss42/apidash";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .query(&[("raw", "true")])
-        .unwrap()
-        .insert_header(("User-Agent", "Test Agent"))
-        .send()
+    let mut request = client.get(url);    
+    let query_params = [
+        ("raw", "true"),
+    ];
+    request = request.query(&query_params).unwrap();
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -203,10 +206,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .send()
+    let mut request = client.get(url);
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -233,13 +234,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.github.com/repos/foss42/apidash";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .query(&[("raw", "true")])
-        .unwrap()
-        .insert_header(("User-Agent", "Test Agent"))
-        .send()
+    let mut request = client.get(url);    
+    let query_params = [
+        ("raw", "true"),
+    ];
+    request = request.query(&query_params).unwrap();
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -266,12 +268,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .query(&[("num", "8700000"), ("add_space", "true")])
-        .unwrap()
-        .send()
+    let mut request = client.get(url);    
+    let query_params = [
+        ("num", "8700000"),
+        ("add_space", "true"),
+    ];
+    request = request.query(&query_params).unwrap();
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -298,11 +301,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .insert_header(("User-Agent", "Test Agent"))
-        .send()
+    let mut request = client.get(url);
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -329,13 +331,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .query(&[("num", "8700000"), ("digits", "3")])
-        .unwrap()
-        .insert_header(("User-Agent", "Test Agent"))
-        .send()
+    let mut request = client.get(url);    
+    let query_params = [
+        ("num", "8700000"),
+        ("digits", "3"),
+    ];
+    request = request.query(&query_params).unwrap();
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -362,10 +366,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
-
-    let mut response = client
-        .get(url)
-        .send()
+    let mut request = client.get(url);
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -394,10 +396,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev";
     let client = awc::Client::default();
-
-    let mut response = client
-        .head(url)
-        .send()
+    let mut request = client.head(url);
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -424,10 +424,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "http://api.apidash.dev";
     let client = awc::Client::default();
-
-    let mut response = client
-        .head(url)
-        .send()
+    let mut request = client.head(url);
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -456,15 +454,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/case/lower";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     let payload = r#"{
 "text": "I LOVE Flutter"
 }"#;
 
-    let mut response = client
-        .post(url)
-        .insert_header(("content-type", "text/plain"))
-        .send_body(payload)
+    request = request.insert_header(("content-type", "text/plain"));
+    
+    let mut response = request.send_body(payload)
         .await
         .unwrap();
 
@@ -491,7 +488,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/case/lower";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     let payload = serde_json::json!({
 "text": "I LOVE Flutter",
 "flag": null,
@@ -501,9 +498,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 "arr": ["null", "true", "false", null]
 });
 
-    let mut response = client
-        .post(url)
-        .send_json(&payload)
+    let mut response = request.send_json(&payload)
         .await
         .unwrap();
 
@@ -530,15 +525,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/case/lower";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     let payload = serde_json::json!({
 "text": "I LOVE Flutter"
 });
 
-    let mut response = client
-        .post(url)
-        .insert_header(("User-Agent", "Test Agent"))
-        .send_json(&payload)
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    
+    let mut response = request.send_json(&payload)
         .await
         .unwrap();
 
@@ -566,7 +560,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/io/form";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     struct FormDataItem {
         name: String,
         value: String,
@@ -621,10 +615,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
   
     let payload = build_data_list(form_data_items);
-    let mut response = client
-        .post(url)
-        .insert_header(("content-type", "multipart/form-data; boundary=test"))
-        .send_body(payload)
+    request = request.insert_header(("content-type", "multipart/form-data; boundary=test"));
+    
+    let mut response = request.send_body(payload)
         .await
         .unwrap();
 
@@ -652,7 +645,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/io/form";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     struct FormDataItem {
         name: String,
         value: String,
@@ -707,11 +700,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
   
     let payload = build_data_list(form_data_items);
-    let mut response = client
-        .post(url)
-        .insert_header(("User-Agent", "Test Agent"))
-        .insert_header(("content-type", "multipart/form-data; boundary=test"))
-        .send_body(payload)
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    request = request.insert_header(("content-type", "multipart/form-data; boundary=test"));
+    
+    let mut response = request.send_body(payload)
         .await
         .unwrap();
 
@@ -739,7 +731,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/io/img";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     struct FormDataItem {
         name: String,
         value: String,
@@ -789,10 +781,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
   
     let payload = build_data_list(form_data_items);
-    let mut response = client
-        .post(url)
-        .insert_header(("content-type", "multipart/form-data; boundary=test"))
-        .send_body(payload)
+    request = request.insert_header(("content-type", "multipart/form-data; boundary=test"));
+    
+    let mut response = request.send_body(payload)
         .await
         .unwrap();
 
@@ -820,7 +811,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/io/img";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     struct FormDataItem {
         name: String,
         value: String,
@@ -870,10 +861,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
   
     let payload = build_data_list(form_data_items);
-    let mut response = client
-        .post(url)
-        .insert_header(("content-type", "multipart/form-data; boundary=test"))
-        .send_body(payload)
+    request = request.insert_header(("content-type", "multipart/form-data; boundary=test"));
+    
+    let mut response = request.send_body(payload)
         .await
         .unwrap();
 
@@ -901,7 +891,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/io/form";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     struct FormDataItem {
         name: String,
         value: String,
@@ -955,13 +945,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         data_list
     }
   
-    let payload = build_data_list(form_data_items);
-    let mut response = client
-        .post(url)
-        .query(&[("size", "2"), ("len", "3")])
-        .unwrap()
-        .insert_header(("content-type", "multipart/form-data; boundary=test"))
-        .send_body(payload)
+    let payload = build_data_list(form_data_items);    
+    let query_params = [
+        ("size", "2"),
+        ("len", "3"),
+    ];
+    request = request.query(&query_params).unwrap();
+    request = request.insert_header(("content-type", "multipart/form-data; boundary=test"));
+    
+    let mut response = request.send_body(payload)
         .await
         .unwrap();
 
@@ -989,7 +981,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://api.apidash.dev/io/img";
     let client = awc::Client::default();
-
+    let mut request = client.post(url);
     struct FormDataItem {
         name: String,
         value: String,
@@ -1038,15 +1030,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         data_list
     }
   
-    let payload = build_data_list(form_data_items);
-    let mut response = client
-        .post(url)
-        .query(&[("size", "2"), ("len", "3")])
-        .unwrap()
-        .insert_header(("User-Agent", "Test Agent"))
-        .insert_header(("Keep-Alive", "true"))
-        .insert_header(("content-type", "multipart/form-data; boundary=test"))
-        .send_body(payload)
+    let payload = build_data_list(form_data_items);    
+    let query_params = [
+        ("size", "2"),
+        ("len", "3"),
+    ];
+    request = request.query(&query_params).unwrap();
+    request = request.insert_header(("User-Agent", "Test Agent"));
+    request = request.insert_header(("Keep-Alive", "true"));
+    request = request.insert_header(("content-type", "multipart/form-data; boundary=test"));
+    
+    let mut response = request.send_body(payload)
         .await
         .unwrap();
 
@@ -1076,15 +1070,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://reqres.in/api/users/2";
     let client = awc::Client::default();
-
+    let mut request = client.put(url);
     let payload = serde_json::json!({
 "name": "morpheus",
 "job": "zion resident"
 });
 
-    let mut response = client
-        .put(url)
-        .send_json(&payload)
+    request = request.insert_header(("x-api-key", "reqres-free-v1"));
+    
+    let mut response = request.send_json(&payload)
         .await
         .unwrap();
 
@@ -1113,15 +1107,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://reqres.in/api/users/2";
     let client = awc::Client::default();
-
+    let mut request = client.patch(url);
     let payload = serde_json::json!({
 "name": "marfeus",
 "job": "accountant"
 });
 
-    let mut response = client
-        .patch(url)
-        .send_json(&payload)
+    request = request.insert_header(("x-api-key", "reqres-free-v1"));
+    
+    let mut response = request.send_json(&payload)
         .await
         .unwrap();
 
@@ -1150,10 +1144,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://reqres.in/api/users/2";
     let client = awc::Client::default();
-
-    let mut response = client
-        .delete(url)
-        .send()
+    let mut request = client.delete(url);
+    request = request.insert_header(("x-api-key", "reqres-free-v1"));
+    
+    let mut response = request.send()
         .await
         .unwrap();
 
@@ -1180,15 +1174,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://reqres.in/api/users/2";
     let client = awc::Client::default();
-
+    let mut request = client.delete(url);
     let payload = serde_json::json!({
 "name": "marfeus",
 "job": "accountant"
 });
 
-    let mut response = client
-        .delete(url)
-        .send_json(&payload)
+    request = request.insert_header(("x-api-key", "reqres-free-v1"));
+    
+    let mut response = request.send_json(&payload)
         .await
         .unwrap();
 

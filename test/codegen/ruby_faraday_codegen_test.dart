@@ -46,8 +46,8 @@ end
 
 response = conn.get(REQUEST_URL) do |req|
   req.params = {
-    "code" => "US",
-  }
+    "code" => ["US"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -75,8 +75,8 @@ end
 
 response = conn.get(REQUEST_URL) do |req|
   req.params = {
-    "code" => "IND",
-  }
+    "code" => ["IND", "US"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -104,12 +104,12 @@ end
 
 response = conn.get(REQUEST_URL) do |req|
   req.params = {
-    "num" => "8700000",
-    "digits" => "3",
-    "system" => "SS",
-    "add_space" => "true",
-    "trailing_zeros" => "true",
-  }
+    "num" => ["8700000"],
+    "digits" => ["3"],
+    "system" => ["SS"],
+    "add_space" => ["true"],
+    "trailing_zeros" => ["true"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -169,8 +169,8 @@ response = conn.get(REQUEST_URL) do |req|
     "User-Agent" => "Test Agent",
   }
   req.params = {
-    "raw" => "true",
-  }
+    "raw" => ["true"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -227,8 +227,8 @@ response = conn.get(REQUEST_URL) do |req|
     "User-Agent" => "Test Agent",
   }
   req.params = {
-    "raw" => "true",
-  }
+    "raw" => ["true"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -256,9 +256,9 @@ end
 
 response = conn.get(REQUEST_URL) do |req|
   req.params = {
-    "num" => "8700000",
-    "add_space" => "true",
-  }
+    "num" => ["8700000"],
+    "add_space" => ["true"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -318,9 +318,9 @@ response = conn.get(REQUEST_URL) do |req|
     "User-Agent" => "Test Agent",
   }
   req.params = {
-    "num" => "8700000",
-    "digits" => "3",
-  }
+    "num" => ["8700000"],
+    "digits" => ["3"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -676,9 +676,9 @@ end
 
 response = conn.post(REQUEST_URL, PAYLOAD) do |req|
   req.params = {
-    "size" => "2",
-    "len" => "3",
-  }
+    "size" => ["2"],
+    "len" => ["3"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -716,9 +716,9 @@ response = conn.post(REQUEST_URL, PAYLOAD) do |req|
     "Keep-Alive" => "true",
   }
   req.params = {
-    "size" => "2",
-    "len" => "3",
-  }
+    "size" => ["2"],
+    "len" => ["3"],
+    }
 end
 
 puts "Status Code: #{response.status}"
@@ -755,6 +755,7 @@ end
 
 response = conn.put(REQUEST_URL, PAYLOAD) do |req|
   req.headers = {
+    "x-api-key" => "reqres-free-v1",
     "Content-Type" => "application/json",
   }
 end
@@ -793,6 +794,7 @@ end
 
 response = conn.patch(REQUEST_URL, PAYLOAD) do |req|
   req.headers = {
+    "x-api-key" => "reqres-free-v1",
     "Content-Type" => "application/json",
   }
 end
@@ -823,6 +825,9 @@ conn = Faraday.new do |faraday|
 end
 
 response = conn.delete(REQUEST_URL) do |req|
+  req.headers = {
+    "x-api-key" => "reqres-free-v1",
+  }
 end
 
 puts "Status Code: #{response.status}"
@@ -857,6 +862,7 @@ end
 
 response = conn.delete(REQUEST_URL) do |req|
   req.headers = {
+    "x-api-key" => "reqres-free-v1",
     "Content-Type" => "application/json",
   }
   req.body = PAYLOAD

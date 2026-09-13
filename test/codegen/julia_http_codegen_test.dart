@@ -15,7 +15,7 @@ url = "https://api.apidash.dev"
 
 response = HTTP.request("GET", url, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -33,12 +33,12 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.apidash.dev/country/data"
 
 params = Dict(
-    "code" => "US",
+    "code" =>["US"],
 )
 
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -56,12 +56,12 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.apidash.dev/country/data"
 
 params = Dict(
-    "code" => "IND",
+    "code" =>["IND","US"],
 )
 
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -79,16 +79,16 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.apidash.dev/humanize/social"
 
 params = Dict(
-    "num" => "8700000",
-    "digits" => "3",
-    "system" => "SS",
-    "add_space" => "true",
-    "trailing_zeros" => "true",
+    "num" =>["8700000"],
+    "digits" =>["3"],
+    "system" =>["SS"],
+    "add_space" =>["true"],
+    "trailing_zeros" =>["true"],
 )
 
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -112,7 +112,7 @@ headers = Dict(
 
 response = HTTP.request("GET", url, headers=headers, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -131,7 +131,7 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.github.com/repos/foss42/apidash"
 
 params = Dict(
-    "raw" => "true",
+    "raw" =>["true"],
 )
 
 headers = Dict(
@@ -140,7 +140,7 @@ headers = Dict(
 
 response = HTTP.request("GET", url, headers=headers, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -160,7 +160,7 @@ url = "https://api.apidash.dev"
 
 response = HTTP.request("GET", url, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -179,7 +179,7 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.github.com/repos/foss42/apidash"
 
 params = Dict(
-    "raw" => "true",
+    "raw" =>["true"],
 )
 
 headers = Dict(
@@ -188,7 +188,7 @@ headers = Dict(
 
 response = HTTP.request("GET", url, headers=headers, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -207,13 +207,13 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.apidash.dev/humanize/social"
 
 params = Dict(
-    "num" => "8700000",
-    "add_space" => "true",
+    "num" =>["8700000"],
+    "add_space" =>["true"],
 )
 
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -237,7 +237,7 @@ headers = Dict(
 
 response = HTTP.request("GET", url, headers=headers, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -256,8 +256,8 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.apidash.dev/humanize/social"
 
 params = Dict(
-    "num" => "8700000",
-    "digits" => "3",
+    "num" =>["8700000"],
+    "digits" =>["3"],
 )
 
 headers = Dict(
@@ -266,7 +266,7 @@ headers = Dict(
 
 response = HTTP.request("GET", url, headers=headers, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -286,7 +286,7 @@ url = "https://api.apidash.dev/humanize/social"
 
 response = HTTP.request("GET", url, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -308,7 +308,7 @@ url = "https://api.apidash.dev"
 
 response = HTTP.request("HEAD", url, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -328,7 +328,7 @@ url = "http://api.apidash.dev"
 
 response = HTTP.request("HEAD", url, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -358,7 +358,7 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 ''';
       expect(
@@ -391,7 +391,7 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 ''';
       expect(
@@ -419,7 +419,7 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 ''';
       expect(
@@ -447,7 +447,7 @@ payload = HTTP.Form(data)
 
 response = HTTP.request("POST", url, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -479,7 +479,7 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -505,7 +505,7 @@ payload = HTTP.Form(data)
 
 response = HTTP.request("POST", url, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -531,7 +531,7 @@ payload = HTTP.Form(data)
 
 response = HTTP.request("POST", url, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -549,8 +549,8 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.apidash.dev/io/form"
 
 params = Dict(
-    "size" => "2",
-    "len" => "3",
+    "size" =>["2"],
+    "len" =>["3"],
 )
 
 data = Dict(
@@ -563,7 +563,7 @@ payload = HTTP.Form(data)
 
 response = HTTP.request("POST", url, body=payload, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -581,8 +581,8 @@ println("Response Body: \n$(String(response.body))")
 url = "https://api.apidash.dev/io/img"
 
 params = Dict(
-    "size" => "2",
-    "len" => "3",
+    "size" =>["2"],
+    "len" =>["3"],
 )
 
 data = Dict(
@@ -599,7 +599,7 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, query=params, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -624,12 +624,13 @@ payload = """{
 }"""
 
 headers = Dict(
+    "x-api-key" => "reqres-free-v1",
     "content-type" => "application/json",
 )
 
 response = HTTP.request("PUT", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 ''';
       expect(
@@ -654,12 +655,13 @@ payload = """{
 }"""
 
 headers = Dict(
+    "x-api-key" => "reqres-free-v1",
     "content-type" => "application/json",
 )
 
 response = HTTP.request("PATCH", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 ''';
       expect(
@@ -678,9 +680,13 @@ println("Response Body: \n$(String(response.body))")
 
 url = "https://reqres.in/api/users/2"
 
-response = HTTP.request("DELETE", url, status_exception=false)
+headers = Dict(
+    "x-api-key" => "reqres-free-v1",
+)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+response = HTTP.request("DELETE", url, headers=headers, status_exception=false)
+
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
       expect(
@@ -703,12 +709,13 @@ payload = """{
 }"""
 
 headers = Dict(
+    "x-api-key" => "reqres-free-v1",
     "content-type" => "application/json",
 )
 
 response = HTTP.request("DELETE", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 ''';
       expect(

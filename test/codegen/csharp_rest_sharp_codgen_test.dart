@@ -95,6 +95,7 @@ class Program
       var request = new RestRequest("/country/data", Method.Get);
 
       request.AddQueryParameter("code", "IND");
+      request.AddQueryParameter("code", "US");
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -935,6 +936,7 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Put);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
       request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {
@@ -980,6 +982,7 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Patch);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
       request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {
@@ -1025,6 +1028,8 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Delete);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
+
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
@@ -1059,6 +1064,7 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Delete);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
       request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {

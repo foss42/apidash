@@ -167,17 +167,15 @@ void main() {
     });
 
     test('params update', () async {
-      await auto.apply(
-        const ChatAction(
-          action: 'update_field',
-          target: 'httpRequestModel',
-          field: 'params',
-          value: {'limit': '5'},
-          actionType: ChatActionType.updateField,
-          targetType: ChatActionTarget.httpRequestModel,
-        ),
-      );
-      expect(http.paramsMap['limit'], '5');
+      await auto.apply(const ChatAction(
+        action: 'update_field',
+        target: 'httpRequestModel',
+        field: 'params',
+        value: {'limit': '5'},
+        actionType: ChatActionType.updateField,
+        targetType: ChatActionTarget.httpRequestModel,
+      ));
+      expect(http.paramsMap['limit'], ['5']);
     });
 
     test('applyCurl dispatches to requestApply', () async {

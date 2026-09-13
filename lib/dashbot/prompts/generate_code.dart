@@ -1,10 +1,10 @@
 String buildGenerateCodePrompt({
   String? url,
   String? method,
-  Map<String, String>? headersMap,
+  Map<String,String>? headersMap,
   String? body,
   String? bodyContentType,
-  Map<String, String>? paramsMap,
+  Map<String, List<String>>? paramsMap,
   String? authType,
   String? language,
 }) {

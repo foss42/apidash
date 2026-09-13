@@ -43,10 +43,15 @@ use GuzzleHttp\Psr7\Request;
 
 
 $queryParams = [
-'code' => 'US'
+'code' => ['US']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $client = new Client();
 
 $request = new Request('get', 'https://api.apidash.dev/country/data'. $queryParamsStr);
@@ -74,10 +79,15 @@ use GuzzleHttp\Psr7\Request;
 
 
 $queryParams = [
-'code' => 'IND'
+'code' => ['IND', 'US']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $client = new Client();
 
 $request = new Request('get', 'https://api.apidash.dev/country/data'. $queryParamsStr);
@@ -105,14 +115,19 @@ use GuzzleHttp\Psr7\Request;
 
 
 $queryParams = [
-'num' => '8700000',
-'digits' => '3',
-'system' => 'SS',
-'add_space' => 'true',
-'trailing_zeros' => 'true'
+'num' => ['8700000'],
+'digits' => ['3'],
+'system' => ['SS'],
+'add_space' => ['true'],
+'trailing_zeros' => ['true']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $client = new Client();
 
 $request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr);
@@ -170,10 +185,15 @@ use GuzzleHttp\Psr7\Request;
 
 
 $queryParams = [
-'raw' => 'true'
+'raw' => ['true']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $headers = [
 'User-Agent' => 'Test Agent'
 ];
@@ -231,10 +251,15 @@ use GuzzleHttp\Psr7\Request;
 
 
 $queryParams = [
-'raw' => 'true'
+'raw' => ['true']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $headers = [
 'User-Agent' => 'Test Agent'
 ];
@@ -266,11 +291,16 @@ use GuzzleHttp\Psr7\Request;
 
 
 $queryParams = [
-'num' => '8700000',
-'add_space' => 'true'
+'num' => ['8700000'],
+'add_space' => ['true']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $client = new Client();
 
 $request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr);
@@ -328,11 +358,16 @@ use GuzzleHttp\Psr7\Request;
 
 
 $queryParams = [
-'num' => '8700000',
-'digits' => '3'
+'num' => ['8700000'],
+'digits' => ['3']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $headers = [
 'User-Agent' => 'Test Agent'
 ];
@@ -748,11 +783,16 @@ $body = new MultipartStream([
 ]);
 
 $queryParams = [
-'size' => '2',
-'len' => '3'
+'size' => ['2'],
+'len' => ['3']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $headers = [
 'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
 ];
@@ -795,11 +835,16 @@ $body = new MultipartStream([
 ]);
 
 $queryParams = [
-'size' => '2',
-'len' => '3'
+'size' => ['2'],
+'len' => ['3']
 ];
-$queryParamsStr = '?' . http_build_query($queryParams);
-
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
 $headers = [
 'User-Agent' => 'Test Agent',
 'Keep-Alive' => 'true',
@@ -835,6 +880,7 @@ use GuzzleHttp\Psr7\Request;
 
 
 $headers = [
+'x-api-key' => 'reqres-free-v1',
 'Content-Type' => 'application/json'
 ];
 
@@ -874,6 +920,7 @@ use GuzzleHttp\Psr7\Request;
 
 
 $headers = [
+'x-api-key' => 'reqres-free-v1',
 'Content-Type' => 'application/json'
 ];
 
@@ -912,9 +959,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
+$headers = [
+'x-api-key' => 'reqres-free-v1'
+];
+
 $client = new Client();
 
-$request = new Request('delete', 'https://reqres.in/api/users/2');
+$request = new Request('delete', 'https://reqres.in/api/users/2', $headers);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -939,6 +990,7 @@ use GuzzleHttp\Psr7\Request;
 
 
 $headers = [
+'x-api-key' => 'reqres-free-v1',
 'Content-Type' => 'application/json'
 ];
 

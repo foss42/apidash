@@ -26,9 +26,20 @@ class SendRequestButton extends ConsumerWidget {
     return SendButton(
       isStreaming: isStreaming ?? false,
       isWorking: isWorking ?? false,
-      sendLabel: apiType == APIType.websocket || apiType == APIType.mqtt
+      sendLabel: apiType == APIType.websocket
+          || apiType == APIType.mqtt
           ? kLabelConnect
-          : kLabelSend,
+         
+          : (apiType == APIType.grpc
+              ? (ref.watch(
+                          selectedRequestModelProvider.select(
+                            (value) => value?.grpcRequestModel?.method,
+                          ),
+                        ) ==
+                        null
+                    ? "Reflect"
+                    : kLabelSend)
+              : kLabelSend),
       activeLabel: apiType == APIType.websocket || apiType == APIType.mqtt
           ? kLabelDisconnect
           : null,

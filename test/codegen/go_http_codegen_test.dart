@@ -59,11 +59,11 @@ import (
 func main() {
   client := &http.Client{}
   url, _ := url.Parse("https://api.apidash.dev/country/data")
-  query := url.Query()
-  
-  query.Set("code", "US")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("code", "US")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("GET", url.String(), nil)
 
   response, err := client.Do(req)
@@ -99,12 +99,13 @@ import (
 
 func main() {
   client := &http.Client{}
-  url, _ := url.Parse("https://api.apidash.dev/country/data?code=US")
-  query := url.Query()
-  
-  query.Set("code", "IND")
+  url, _ := url.Parse("https://api.apidash.dev/country/data")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("code", "IND")
+query.Add("code", "US")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("GET", url.String(), nil)
 
   response, err := client.Do(req)
@@ -141,15 +142,15 @@ import (
 func main() {
   client := &http.Client{}
   url, _ := url.Parse("https://api.apidash.dev/humanize/social")
-  query := url.Query()
-  
-  query.Set("num", "8700000")
-  query.Set("digits", "3")
-  query.Set("system", "SS")
-  query.Set("add_space", "true")
-  query.Set("trailing_zeros", "true")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("num", "8700000")
+query.Add("digits", "3")
+query.Add("system", "SS")
+query.Add("add_space", "true")
+query.Add("trailing_zeros", "true")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("GET", url.String(), nil)
 
   response, err := client.Do(req)
@@ -224,11 +225,11 @@ import (
 func main() {
   client := &http.Client{}
   url, _ := url.Parse("https://api.github.com/repos/foss42/apidash")
-  query := url.Query()
-  
-  query.Set("raw", "true")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("raw", "true")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
@@ -303,11 +304,11 @@ import (
 func main() {
   client := &http.Client{}
   url, _ := url.Parse("https://api.github.com/repos/foss42/apidash")
-  query := url.Query()
-  
-  query.Set("raw", "true")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("raw", "true")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
@@ -346,12 +347,12 @@ import (
 func main() {
   client := &http.Client{}
   url, _ := url.Parse("https://api.apidash.dev/humanize/social")
-  query := url.Query()
-  
-  query.Set("num", "8700000")
-  query.Set("add_space", "true")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("num", "8700000")
+query.Add("add_space", "true")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("GET", url.String(), nil)
 
   response, err := client.Do(req)
@@ -426,12 +427,12 @@ import (
 func main() {
   client := &http.Client{}
   url, _ := url.Parse("https://api.apidash.dev/humanize/social")
-  query := url.Query()
-  
-  query.Set("num", "8700000")
-  query.Set("digits", "3")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("num", "8700000")
+query.Add("digits", "3")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
@@ -979,12 +980,12 @@ func main() {
   writer.WriteField("times", "3")
   writer.Close()
 
-  query := url.Query()
-  
-  query.Set("size", "2")
-  query.Set("len", "3")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("size", "2")
+query.Add("len", "3")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("POST", url.String(), payload)
   req.Header.Set("Content-Type", writer.FormDataContentType())
 
@@ -1039,12 +1040,12 @@ func main() {
   
   writer.Close()
 
-  query := url.Query()
-  
-  query.Set("size", "2")
-  query.Set("len", "3")
+query := url.Query()
 
-  url.RawQuery = query.Encode()
+query.Add("size", "2")
+query.Add("len", "3")
+
+url.RawQuery = query.Encode()
   req, _ := http.NewRequest("POST", url.String(), payload)
 
   req.Header.Set("User-Agent", "Test Agent")
@@ -1093,6 +1094,7 @@ func main() {
 }`))
   req, _ := http.NewRequest("PUT", url.String(), payload)
 
+  req.Header.Set("x-api-key", "reqres-free-v1")
   req.Header.Set("Content-Type", "application/json")
 
   response, err := client.Do(req)
@@ -1138,6 +1140,7 @@ func main() {
 }`))
   req, _ := http.NewRequest("PATCH", url.String(), payload)
 
+  req.Header.Set("x-api-key", "reqres-free-v1")
   req.Header.Set("Content-Type", "application/json")
 
   response, err := client.Do(req)
@@ -1177,6 +1180,8 @@ func main() {
   client := &http.Client{}
   url, _ := url.Parse("https://reqres.in/api/users/2")
   req, _ := http.NewRequest("DELETE", url.String(), nil)
+
+  req.Header.Set("x-api-key", "reqres-free-v1")
 
   response, err := client.Do(req)
   if err != nil {
@@ -1219,6 +1224,7 @@ func main() {
 }`))
   req, _ := http.NewRequest("DELETE", url.String(), payload)
 
+  req.Header.Set("x-api-key", "reqres-free-v1")
   req.Header.Set("Content-Type", "application/json")
 
   response, err := client.Do(req)
