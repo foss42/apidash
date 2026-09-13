@@ -21,6 +21,18 @@ String computeDashbotBaseRoute(RequestModel? req) {
         ? DashbotRoutes.dashbotHome
         : DashbotRoutes.dashbotDefault;
   }
+  if (req?.apiType == APIType.mqtt) {
+    // MQTT gates exactly like WebSocket: task buttons appear only once the
+    // connection has been attempted. Lifecycle events land in messageHistory
+    // on connect, so any connect attempt populates it; isStreaming covers a
+    // live connection.
+    final hasMqttActivity =
+        (req?.mqttRequestModel?.messageHistory.isNotEmpty ?? false) ||
+        (req?.isStreaming ?? false);
+    return hasMqttActivity
+        ? DashbotRoutes.dashbotHome
+        : DashbotRoutes.dashbotDefault;
+  }
   final hasResponse =
       (req?.httpResponseModel?.statusCode != null) ||
       (req?.responseStatus != null);

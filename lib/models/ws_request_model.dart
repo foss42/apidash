@@ -10,14 +10,18 @@ enum WebSocketMessageType { connected, sent, received, error, disconnected }
 ///
 /// Each message carries a [payload] (the raw text), a [timestamp], whether it
 /// was [outgoing] (sent by the client) or incoming (received from the server),
-/// and a [messageType] that categorises the event for display in the UI log.
+/// whether it [isAutomatic] (sent by the app, e.g. a repeating heartbeat
+/// message, rather than by the user), and a [messageType] that categorises the
+/// event for display in the UI log.
 @freezed
 abstract class WebSocketMessage with _$WebSocketMessage {
   const factory WebSocketMessage({
     required String payload,
     DateTime? timestamp,
     @Default(true) bool outgoing,
+    @Default(false) bool isAutomatic,
     @Default(WebSocketMessageType.received) WebSocketMessageType messageType,
+    String? metadata, // e.g., MQTT topic
   }) = _WebSocketMessage;
 
   factory WebSocketMessage.fromJson(Map<String, dynamic> json) =>

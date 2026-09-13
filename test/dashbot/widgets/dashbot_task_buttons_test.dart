@@ -3,6 +3,7 @@ import 'package:apidash/dashbot/models/chat_state.dart';
 import 'package:apidash/dashbot/providers/chat_viewmodel.dart';
 import 'package:apidash/dashbot/providers/dashbot_window_notifier.dart';
 import 'package:apidash/dashbot/widgets/dashbot_task_buttons.dart';
+import 'package:apidash/models/mqtt_request_model.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash/providers/collection_providers.dart';
@@ -248,6 +249,100 @@ void main() {
         '❤️ Connection health',
       ]) {
         expect(find.text(label), findsNothing, reason: label);
+      }
+    });
+  });
+
+  group('DashbotTaskButtons MQTT task set', () {
+    final mqttRequest = RequestModel(
+      id: 'mqtt-1',
+      apiType: APIType.mqtt,
+      mqttRequestModel: const MQTTRequestModel(brokerUrl: 'test.mosquitto.org'),
+    );
+
+    // Label -> dispatched task type, verified against
+    // lib/dashbot/widgets/dashbot_task_buttons.dart.
+    const mqttSequence = {
+      '🔌 Explain this connection': ChatMessageType.explainMqttConnection,
+      '🛠️ Help me fix my connection': ChatMessageType.debugMqttConnection,
+      '📭 Why am I not receiving messages?': ChatMessageType.whyNoMqttMessages,
+      '📊 What\'s on my topics?': ChatMessageType.summarizeMqttMessages,
+      '🌳 Topics & wildcards': ChatMessageType.explainMqttTopics,
+      '💾 Session & offline messages': ChatMessageType.mqttSessionAdvisor,
+      '🧩 Generate Code': ChatMessageType.generateMqttCode,
+      '📜 Last Will': ChatMessageType.explainMqttLwt,
+      '✨ v5 features': ChatMessageType.explainMqttV5,
+      '🔍 Find in messages': ChatMessageType.findInMqttMessages,
+    };
+
+    Future<SpyChatViewmodel> pumpWithModel(
+      WidgetTester tester,
+      RequestModel? model,
+    ) async {
+      late SpyChatViewmodel spy;
+      tester.view.physicalSize = const Size(1400, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            chatViewmodelProvider.overrideWith((ref) {
+              spy = SpyChatViewmodel(ref);
+              spy.setState(const ChatState());
+              return spy;
+            }),
+            dashbotWindowNotifierProvider.overrideWith(
+              (ref) => RecordingDashbotWindowNotifier(),
+            ),
+            selectedRequestModelProvider.overrideWith((ref) => model),
+          ],
+          child: const MaterialApp(home: Scaffold(body: DashbotTaskButtons())),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return spy;
+    }
+
+    testWidgets('MQTT request shows MQTT tasks and hides WS/HTTP-only ones', (
+      tester,
+    ) async {
+      await pumpWithModel(tester, mqttRequest);
+
+      for (final label in mqttSequence.keys) {
+        expect(find.text(label), findsOneWidget, reason: label);
+      }
+      // Shared tasks stay available.
+      expect(find.text('📥 Import cURL'), findsOneWidget);
+      expect(find.text('📄 Import OpenAPI'), findsOneWidget);
+      expect(find.text('🛠️ Generate Tool'), findsOneWidget);
+      // HTTP-only and WS-only tasks are hidden for MQTT.
+      expect(find.text('🔎 Explain me this response'), findsNothing);
+      expect(find.text('🐞 Help me debug this error'), findsNothing);
+      expect(find.text('📱 Generate UI'), findsNothing);
+      expect(find.text('📡 What is the server sending?'), findsNothing);
+      expect(find.text('❤️ Connection health'), findsNothing);
+      // MQTT now offers its own Generate Code button.
+      expect(find.text('🧩 Generate Code'), findsOneWidget);
+    });
+
+    testWidgets('MQTT task buttons dispatch the matching task types', (
+      tester,
+    ) async {
+      final spy = await pumpWithModel(tester, mqttRequest);
+
+      for (final entry in mqttSequence.entries) {
+        spy.sendMessageCalls.clear();
+        await tester.tap(find.text(entry.key));
+        await tester.pump();
+
+        expect(
+          spy.sendMessageCalls.length,
+          1,
+          reason: 'Expected a call for ${entry.key}',
+        );
+        expect(spy.sendMessageCalls.single.type, entry.value);
+        expect(spy.sendMessageCalls.single.countAsUser, isFalse);
       }
     });
   });

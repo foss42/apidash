@@ -120,8 +120,12 @@ class HarParserIO {
 
       // Ensure the pair contains both key and value
       if (separatorIndex != -1) {
-        var key = Uri.decodeComponent(pair.substring(0, separatorIndex));
-        var value = Uri.decodeComponent(pair.substring(separatorIndex + 1));
+        var key = Uri.decodeComponent(
+          pair.substring(0, separatorIndex).replaceAll('+', ' '),
+        );
+        var value = Uri.decodeComponent(
+          pair.substring(separatorIndex + 1).replaceAll('+', ' '),
+        );
 
         result[key] = value;
       }

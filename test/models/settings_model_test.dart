@@ -11,6 +11,7 @@ void main() {
     size: Size(300, 200),
     offset: Offset(100, 150),
     defaultUriScheme: SupportedUriSchemes.http,
+    defaultWsScheme: SupportedWsSchemes.ws,
     defaultCodeGenLang: CodegenLanguage.curl,
     saveResponses: true,
     promptBeforeClosing: true,
@@ -31,6 +32,7 @@ void main() {
       "dx": 100.0,
       "dy": 150.0,
       "defaultUriScheme": "http",
+      "defaultWsScheme": "ws",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
       "promptBeforeClosing": true,
@@ -54,6 +56,7 @@ void main() {
       "dx": 100.0,
       "dy": 150.0,
       "defaultUriScheme": "http",
+      "defaultWsScheme": "ws",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
       "promptBeforeClosing": true,
@@ -67,6 +70,15 @@ void main() {
     expect(SettingsModel.fromJson(input), sm);
   });
 
+  test('Testing defaultWsScheme json round-trip and missing-key default', () {
+    // Older settings on disk have no "defaultWsScheme": must fall back to wss.
+    expect(
+      SettingsModel.fromJson(const {"isDark": true}).defaultWsScheme,
+      SupportedWsSchemes.wss,
+    );
+    expect(SettingsModel.fromJson(sm.toJson()), sm);
+  });
+
   test('Testing copyWith()', () {
     const expectedResult = SettingsModel(
       isDark: true,
@@ -74,6 +86,7 @@ void main() {
       size: Size(300, 200),
       offset: Offset(100, 150),
       defaultUriScheme: SupportedUriSchemes.http,
+      defaultWsScheme: SupportedWsSchemes.ws,
       defaultCodeGenLang: CodegenLanguage.curl,
       saveResponses: false,
       promptBeforeClosing: true,
@@ -103,6 +116,7 @@ void main() {
   "dx": 100.0,
   "dy": 150.0,
   "defaultUriScheme": "http",
+  "defaultWsScheme": "ws",
   "defaultCodeGenLang": "curl",
   "saveResponses": true,
   "promptBeforeClosing": true,

@@ -177,6 +177,34 @@ void main() {
     });
   });
 
+  group("Testing getWebSocketUrl", () {
+    test('adds wss:// by default when scheme is missing', () {
+      expect(
+        getWebSocketUrl("api.apidash.dev/ws/echo"),
+        "wss://api.apidash.dev/ws/echo",
+      );
+    });
+    test('adds ws:// when the default WebSocket scheme is ws', () {
+      expect(
+        getWebSocketUrl(
+          "api.apidash.dev/ws/echo",
+          defaultWsScheme: SupportedWsSchemes.ws,
+        ),
+        "ws://api.apidash.dev/ws/echo",
+      );
+    });
+    test('localhost and bare IPs get ws://', () {
+      expect(getWebSocketUrl("localhost:8765/ws"), "ws://localhost:8765/ws");
+      expect(getWebSocketUrl("127.0.0.1:8765"), "ws://127.0.0.1:8765");
+    });
+    test('leaves an existing scheme untouched and trims whitespace', () {
+      expect(getWebSocketUrl(" ws://a.b/c "), "ws://a.b/c");
+      expect(getWebSocketUrl("wss://a.b/c"), "wss://a.b/c");
+      expect(getWebSocketUrl("http://a.b/c"), "http://a.b/c");
+      expect(getWebSocketUrl(""), "");
+    });
+  });
+
   group("Testing stripUriParams", () {
     test('Removes query parameters from Uri with query', () {
       final uri = Uri.parse(

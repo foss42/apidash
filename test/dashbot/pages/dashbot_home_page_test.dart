@@ -3,6 +3,7 @@ import 'package:apidash/dashbot/pages/pages.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/routes/routes.dart';
 import 'package:apidash/dashbot/widgets/widgets.dart';
+import 'package:apidash/models/mqtt_request_model.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash/providers/collection_providers.dart';
@@ -450,6 +451,93 @@ void main() {
         '❤️ Connection health',
       ]) {
         expect(find.text(label), findsNothing, reason: label);
+      }
+    });
+  });
+
+  group('DashbotHomePage MQTT task set', () {
+    final mqttRequest = RequestModel(
+      id: 'mqtt-1',
+      apiType: APIType.mqtt,
+      mqttRequestModel: const MQTTRequestModel(brokerUrl: 'test.mosquitto.org'),
+    );
+
+    // Label -> chat route argument, verified against
+    // lib/dashbot/pages/dashbot_home_page.dart.
+    const mqttRouteArgs = {
+      '🔌 Explain this connection': ChatMessageType.explainMqttConnection,
+      '🛠️ Help me fix my connection': ChatMessageType.debugMqttConnection,
+      '📭 Why am I not receiving messages?': ChatMessageType.whyNoMqttMessages,
+      '📊 What\'s on my topics?': ChatMessageType.summarizeMqttMessages,
+      '🌳 Topics & wildcards': ChatMessageType.explainMqttTopics,
+      '💾 Session & offline messages': ChatMessageType.mqttSessionAdvisor,
+      '🧩 Generate Code': ChatMessageType.generateMqttCode,
+      '📜 Last Will': ChatMessageType.explainMqttLwt,
+      '✨ v5 features': ChatMessageType.explainMqttV5,
+      '🔍 Find in messages': ChatMessageType.findInMqttMessages,
+    };
+
+    void useLargeSurface(WidgetTester tester) {
+      tester.view.physicalSize = const Size(1400, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+    }
+
+    testWidgets('MQTT request shows MQTT quick actions, no WS/HTTP-only ones', (
+      tester,
+    ) async {
+      useLargeSurface(tester);
+      await _pumpHomePage(
+        tester,
+        selectedModel: mqttRequest,
+        onRoute: (_, _) {},
+      );
+
+      for (final label in mqttRouteArgs.keys) {
+        expect(find.text(label), findsOneWidget, reason: label);
+      }
+      // Shared tasks stay available.
+      expect(find.text('📥 Import cURL'), findsOneWidget);
+      expect(find.text('📄 Import OpenAPI'), findsOneWidget);
+      expect(find.text('🛠️ Generate Tool'), findsOneWidget);
+      // HTTP-only and WS-only tasks are hidden for MQTT.
+      expect(find.text('🔎 Explain me this response'), findsNothing);
+      expect(find.text('🐞 Help me debug this error'), findsNothing);
+      expect(find.text('📱 Generate UI'), findsNothing);
+      expect(find.text('📡 What is the server sending?'), findsNothing);
+      expect(find.text('❤️ Connection health'), findsNothing);
+    });
+
+    testWidgets('MQTT quick actions navigate to chat with the task argument', (
+      tester,
+    ) async {
+      useLargeSurface(tester);
+
+      for (final entry in mqttRouteArgs.entries) {
+        String? capturedRoute;
+        Object? capturedArgs;
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        await _pumpHomePage(
+          tester,
+          selectedModel: mqttRequest,
+          onRoute: (name, arguments) {
+            capturedRoute = name;
+            capturedArgs = arguments;
+          },
+        );
+
+        final buttonFinder = _taskButton(entry.key);
+        expect(buttonFinder, findsOneWidget, reason: entry.key);
+
+        await tester.tap(
+          find.descendant(of: buttonFinder, matching: find.byType(TextButton)),
+        );
+        await tester.pumpAndSettle();
+
+        expect(capturedRoute, DashbotRoutes.dashbotChat, reason: entry.key);
+        expect(capturedArgs, entry.value, reason: entry.key);
       }
     });
   });

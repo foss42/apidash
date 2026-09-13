@@ -35,7 +35,7 @@ const _$APITypeEnumMap = {
   APIType.ai: 'ai',
   APIType.graphql: 'graphql',
   APIType.websocket: 'websocket',
-  APIType.grpc: 'grpc',
+  APIType.mqtt: 'mqtt',
 };
 
 const _$HTTPVerbEnumMap = {

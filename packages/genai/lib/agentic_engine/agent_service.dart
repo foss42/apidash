@@ -60,7 +60,7 @@ class AIAgentService {
           }
         }
       } catch (e) {
-        "AIAgentService::Governor: Exception Occurred: $e";
+        debugPrint("AIAgentService::Governor: Exception Occurred: $e");
       }
       // Exponential Backoff
       if (RETRY_COUNT < backoffDelays.length) {

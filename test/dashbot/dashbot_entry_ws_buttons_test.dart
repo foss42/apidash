@@ -150,6 +150,93 @@ void main() {
     },
   );
 
+  /// An MQTT request that has "connected at least once": mirrors WS by seeding
+  /// a connected lifecycle event in messageHistory. This is the MQTT equivalent
+  /// of HTTP's "a response exists" gate in `computeDashbotBaseRoute`.
+  MQTTRequestModel mqttModelWithConnectActivity() => MQTTRequestModel(
+    brokerUrl: 'test.mosquitto.org',
+    messageHistory: [
+      WebSocketMessage(
+        payload: 'Connected to test.mosquitto.org',
+        timestamp: DateTime(2026, 7, 7, 12),
+        outgoing: false,
+        messageType: WebSocketMessageType.connected,
+      ),
+    ],
+  );
+
+  testWidgets('floating-icon entry shows the MQTT task buttons for an MQTT '
+      'request with connection activity', (tester) async {
+    final container = await pumpDashbotWindow(tester);
+    final notifier = container.read(collectionStateNotifierProvider.notifier);
+    final id = container.read(selectedIdStateProvider)!;
+
+    notifier.update(id: id, apiType: APIType.mqtt);
+    notifier.update(id: id, mqttRequestModel: mqttModelWithConnectActivity());
+    await tester.pumpAndSettle();
+
+    expect(
+      container.read(dashbotActiveRouteProvider),
+      DashbotRoutes.dashbotHome,
+    );
+    expect(
+      find.textContaining("haven't made any Requests yet"),
+      findsNothing,
+      reason: 'DashBot landed on the default page for an MQTT request',
+    );
+
+    // All 3 MQTT task buttons are visible.
+    for (final label in [
+      '🔌 Explain this connection',
+      '🛠️ Help me fix my connection',
+      '📭 Why am I not receiving messages?',
+    ]) {
+      expect(
+        find.text(label),
+        findsOneWidget,
+        reason: 'MQTT task button "$label" missing on the DashBot home page',
+      );
+    }
+
+    // HTTP-only and WS-only tasks stay hidden for MQTT; shared imports remain.
+    expect(find.text('🔎 Explain me this response'), findsNothing);
+    expect(find.text('📱 Generate UI'), findsNothing);
+    expect(find.text('❤️ Connection health'), findsNothing);
+    expect(find.text('📥 Import cURL'), findsOneWidget);
+    expect(find.text('📄 Import OpenAPI'), findsOneWidget);
+  });
+
+  testWidgets(
+    'floating-icon entry shows the default page for an MQTT request with NO '
+    'connection activity (never connected)',
+    (tester) async {
+      final container = await pumpDashbotWindow(tester);
+      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      final id = container.read(selectedIdStateProvider)!;
+
+      notifier.update(id: id, apiType: APIType.mqtt);
+      notifier.update(
+        id: id,
+        mqttRequestModel: const MQTTRequestModel(
+          brokerUrl: 'test.mosquitto.org',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        container.read(dashbotActiveRouteProvider),
+        DashbotRoutes.dashbotDefault,
+      );
+      expect(
+        find.textContaining("haven't made any Requests yet"),
+        findsOneWidget,
+      );
+      expect(find.text('🤖 Open Chat'), findsOneWidget);
+      expect(find.text('🔌 Explain this connection'), findsNothing);
+      expect(find.text('📭 Why am I not receiving messages?'), findsNothing);
+    },
+  );
+
   testWidgets(
     'floating-icon entry still shows the default page for a REST request '
     'without a response',
@@ -175,7 +262,6 @@ void main() {
     },
   );
 
-  
   /// The 3 HTTP-exclusive task labels (absent from the WS set).
   const httpOnlyLabels = [
     '🔎 Explain me this response',

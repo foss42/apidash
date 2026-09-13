@@ -1,6 +1,7 @@
 import 'package:apidash/dashbot/constants.dart';
 import 'package:apidash/dashbot/models/models.dart';
 import 'package:apidash/dashbot/services/services.dart';
+import 'package:apidash/models/mqtt_request_model.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -425,7 +426,9 @@ void main() {
             targetType: ChatActionTarget.wsRequestModel,
           ),
         );
-        expect(updateWsUrlCalls, [(id: 'ws1', url: 'wss://api.apidash.dev/ws/echo')]);
+        expect(updateWsUrlCalls, [
+          (id: 'ws1', url: 'wss://api.apidash.dev/ws/echo'),
+        ]);
         expect(updateSelectedCalls, 0);
       },
     );
@@ -514,5 +517,171 @@ void main() {
       );
       expect(updateSelectedCalls, 0);
     });
+  });
+
+  group('AutoFixService MQTT apply', () {
+    final urlEnv = UrlEnvService();
+    final requestApply = RequestApplyService(urlEnv: urlEnv);
+
+    late RequestModel mqttReqModel;
+    late List<({String id, String field, String value})> updateMqttCalls;
+    late int updateSelectedCalls;
+
+    AutoFixService buildService({bool withUpdateMqtt = true}) {
+      return AutoFixService(
+        requestApply: requestApply,
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {
+              updateSelectedCalls++;
+            },
+        addNewRequest: (_, {name}) {},
+        readCurrentRequestId: () => 'mqtt1',
+        ensureBaseUrl: (b) async => b,
+        readCurrentRequest: () => mqttReqModel,
+        updateMqttField: withUpdateMqtt
+            ? ({
+                required String id,
+                required String field,
+                required String value,
+              }) {
+                updateMqttCalls.add((id: id, field: field, value: value));
+              }
+            : null,
+      );
+    }
+
+    setUp(() {
+      updateMqttCalls = [];
+      updateSelectedCalls = 0;
+      mqttReqModel = RequestModel(
+        id: 'mqtt1',
+        name: 'MQTT Req',
+        apiType: APIType.mqtt,
+        mqttRequestModel: const MQTTRequestModel(
+          brokerUrl: 'test.mosquitto.org',
+          port: 1883,
+        ),
+      );
+    });
+
+    test('update_url routes to updateMqttField as brokerUrl', () async {
+      final auto = buildService();
+      await auto.apply(
+        const ChatAction(
+          action: 'update_url',
+          target: 'mqttRequestModel',
+          field: 'brokerUrl',
+          value: 'secure.mosquitto.org',
+          actionType: ChatActionType.updateUrl,
+          targetType: ChatActionTarget.mqttRequestModel,
+        ),
+      );
+      expect(updateMqttCalls, [
+        (id: 'mqtt1', field: 'brokerUrl', value: 'secure.mosquitto.org'),
+      ]);
+      // The HTTP url path must never run for an MQTT request.
+      expect(updateSelectedCalls, 0);
+    });
+
+    test('update_field useTLS routes to updateMqttField', () async {
+      final auto = buildService();
+      await auto.apply(
+        const ChatAction(
+          action: 'update_field',
+          target: 'mqttRequestModel',
+          field: 'useTLS',
+          value: 'true',
+          actionType: ChatActionType.updateField,
+          targetType: ChatActionTarget.mqttRequestModel,
+        ),
+      );
+      expect(updateMqttCalls, [(id: 'mqtt1', field: 'useTLS', value: 'true')]);
+      expect(updateSelectedCalls, 0);
+    });
+
+    test('update_field clientId routes to updateMqttField', () async {
+      final auto = buildService();
+      await auto.apply(
+        const ChatAction(
+          action: 'update_field',
+          target: 'mqttRequestModel',
+          field: 'clientId',
+          value: 'apidash-01',
+          actionType: ChatActionType.updateField,
+          targetType: ChatActionTarget.mqttRequestModel,
+        ),
+      );
+      expect(updateMqttCalls, [
+        (id: 'mqtt1', field: 'clientId', value: 'apidash-01'),
+      ]);
+      expect(updateSelectedCalls, 0);
+    });
+
+    test(
+      'update_field sessionExpiryInterval routes to updateMqttField',
+      () async {
+        final auto = buildService();
+        await auto.apply(
+          const ChatAction(
+            action: 'update_field',
+            target: 'mqttRequestModel',
+            field: 'sessionExpiryInterval',
+            value: '3600',
+            actionType: ChatActionType.updateField,
+            targetType: ChatActionTarget.mqttRequestModel,
+          ),
+        );
+        expect(updateMqttCalls, [
+          (id: 'mqtt1', field: 'sessionExpiryInterval', value: '3600'),
+        ]);
+        expect(updateSelectedCalls, 0);
+      },
+    );
+
+    test('non-whitelisted update_field is ignored for MQTT', () async {
+      final auto = buildService();
+      await auto.apply(
+        const ChatAction(
+          action: 'update_field',
+          target: 'mqttRequestModel',
+          field: 'qos',
+          value: '2',
+          actionType: ChatActionType.updateField,
+          targetType: ChatActionTarget.mqttRequestModel,
+        ),
+      );
+      expect(updateMqttCalls, isEmpty);
+      expect(updateSelectedCalls, 0);
+    });
+
+    test(
+      'update_url without an injected updateMqttField is a safe no-op',
+      () async {
+        final auto = buildService(withUpdateMqtt: false);
+        await auto.apply(
+          const ChatAction(
+            action: 'update_url',
+            target: 'mqttRequestModel',
+            field: 'brokerUrl',
+            value: 'secure.mosquitto.org',
+            actionType: ChatActionType.updateUrl,
+            targetType: ChatActionTarget.mqttRequestModel,
+          ),
+        );
+        expect(updateSelectedCalls, 0);
+      },
+    );
   });
 }

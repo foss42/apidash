@@ -524,6 +524,7 @@ const kLabelSwitchThemeMode = "Switch Theme Mode";
 const kLabelDashBotSetting = "DashBot";
 const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visiblity";
 const kLabelDefaultUriScheme = "Default URI Scheme";
+const kLabelDefaultWsScheme = "Default WebSocket Scheme";
 const kLabelDisableSSL = "Disable SSL verification";
 const kLabelDefaultCodeGen = "Default Code Generator";
 const kLabelDefaultLLM = "Default Large Language Model (LLM)";

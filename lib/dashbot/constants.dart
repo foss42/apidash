@@ -19,6 +19,16 @@ enum ChatMessageType {
   explainWsMessage,
   debugWsMessage,
   wsConnectionHealth,
+  explainMqttConnection,
+  debugMqttConnection,
+  whyNoMqttMessages,
+  summarizeMqttMessages,
+  explainMqttTopics,
+  mqttSessionAdvisor,
+  generateMqttCode,
+  explainMqttLwt,
+  explainMqttV5,
+  findInMqttMessages,
   general,
 }
 
@@ -45,6 +55,7 @@ enum ChatActionType {
 enum ChatActionTarget {
   httpRequestModel,
   wsRequestModel,
+  mqttRequestModel,
   codegen,
   test,
   code,

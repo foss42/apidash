@@ -22,11 +22,11 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   @override
   Widget build(BuildContext context) {
-    final isWs =
-        ref.watch(
-          selectedRequestModelProvider.select((value) => value?.apiType),
-        ) ==
-        APIType.websocket;
+    final apiType = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.apiType),
+    );
+    final isWs = apiType == APIType.websocket;
+    final isMqtt = apiType == APIType.mqtt;
     return Container(
       padding: const EdgeInsets.all(16),
       child: LayoutBuilder(
@@ -186,7 +186,129 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                           },
                         ),
                       ],
-                      if (!isWs) ...[
+                      if (isMqtt) ...[
+                        HomeScreenTaskButton(
+                          label: "🔌 Explain this connection",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.explainMqttConnection,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🛠️ Help me fix my connection",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.debugMqttConnection,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📭 Why am I not receiving messages?",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.whyNoMqttMessages,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📊 What's on my topics?",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.summarizeMqttMessages,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🌳 Topics & wildcards",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.explainMqttTopics,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "💾 Session & offline messages",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.mqttSessionAdvisor,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🧩 Generate Code",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.generateMqttCode,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "📜 Last Will",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.explainMqttLwt,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "✨ v5 features",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.explainMqttV5,
+                            );
+                          },
+                        ),
+                        HomeScreenTaskButton(
+                          label: "🔍 Find in messages",
+                          onPressed: () {
+                            ref
+                                .read(dashbotActiveRouteProvider.notifier)
+                                .goToChat();
+                            Navigator.of(context).pushNamed(
+                              DashbotRoutes.dashbotChat,
+                              arguments: ChatMessageType.findInMqttMessages,
+                            );
+                          },
+                        ),
+                      ],
+                      if (!isWs && !isMqtt) ...[
                         HomeScreenTaskButton(
                           label: "🔎 Explain me this response",
                           onPressed: () {
@@ -283,7 +405,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
                           notifier.show();
                         },
                       ),
-                      if (!isWs)
+                      if (!isWs && !isMqtt)
                         HomeScreenTaskButton(
                           label: "📱 Generate UI",
                           onPressed: () async {

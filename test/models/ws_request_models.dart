@@ -12,7 +12,9 @@ const wsMessage1Json = {
   'payload': 'Hello',
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'sent',
+  'metadata': null,
 };
 
 final wsMessage2 = WebSocketMessage(
@@ -26,7 +28,9 @@ const wsMessage2Json = {
   'payload': 'Hi',
   'timestamp': '2023-01-01T00:00:00.000',
   'outgoing': false,
+  'isAutomatic': false,
   'messageType': 'received',
+  'metadata': null,
 };
 
 const wsMessage3 = WebSocketMessage(payload: 'Test');
@@ -57,8 +61,10 @@ const wsRequestModel1Json = {
       'payload': 'Ping',
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'sent',
-    },
+      'metadata': null,
+    }
   ],
   'headers': [
     {'name': 'Auth', 'value': 'Bearer 123'},
@@ -109,7 +115,9 @@ const wsMessageNullTimestampJson = {
   'payload': 'NoTime',
   'timestamp': null,
   'outgoing': false,
+  'isAutomatic': false,
   'messageType': 'error',
+  'metadata': null,
 };
 
 // One message fixture per WebSocketMessageType enum value, with matching JSON.
@@ -121,7 +129,9 @@ const wsMessageConnectedJson = {
   'payload': 'conn',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'connected',
+  'metadata': null,
 };
 
 const wsMessageSent = WebSocketMessage(
@@ -132,7 +142,9 @@ const wsMessageSentJson = {
   'payload': 'snt',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'sent',
+  'metadata': null,
 };
 
 const wsMessageReceived = WebSocketMessage(
@@ -143,7 +155,9 @@ const wsMessageReceivedJson = {
   'payload': 'rcv',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'received',
+  'metadata': null,
 };
 
 const wsMessageError = WebSocketMessage(
@@ -154,7 +168,9 @@ const wsMessageErrorJson = {
   'payload': 'err',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'error',
+  'metadata': null,
 };
 
 const wsMessageDisconnected = WebSocketMessage(
@@ -165,7 +181,9 @@ const wsMessageDisconnectedJson = {
   'payload': 'disc',
   'timestamp': null,
   'outgoing': true,
+  'isAutomatic': false,
   'messageType': 'disconnected',
+  'metadata': null,
 };
 
 // A model whose messageHistory holds multiple messages (covers list round-trip).
@@ -198,19 +216,25 @@ const wsRequestModelMultiHistoryJson = {
       'payload': 'first',
       'timestamp': '2023-01-01T00:00:00.000',
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'sent',
+      'metadata': null,
     },
     {
       'payload': 'second',
       'timestamp': '2023-01-02T00:00:00.000',
       'outgoing': false,
+      'isAutomatic': false,
       'messageType': 'received',
+      'metadata': null,
     },
     {
       'payload': 'third',
       'timestamp': null,
       'outgoing': true,
+      'isAutomatic': false,
       'messageType': 'error',
+      'metadata': null,
     },
   ],
   'headers': null,
