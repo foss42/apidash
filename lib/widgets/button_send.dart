@@ -9,12 +9,16 @@ class SendButton extends StatelessWidget {
     required this.isWorking,
     required this.onTap,
     this.onCancel,
+    this.sendLabel = kLabelSend,
+    this.activeLabel,
   });
 
   final bool isStreaming;
   final bool isWorking;
   final void Function() onTap;
   final void Function()? onCancel;
+  final String sendLabel;
+  final String? activeLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +29,23 @@ class SendButton extends StatelessWidget {
           ? [
               kHSpacer8,
               Text(
-                isStreaming ? kLabelStop : kLabelCancel,
+                activeLabel ?? (isStreaming ? kLabelStop : kLabelCancel),
                 style: kTextStyleButton,
               ),
               kHSpacer6,
             ]
-          : const [
+          : [
               Text(
-                kLabelSend,
+                sendLabel,
                 style: kTextStyleButton,
               ),
-              kHSpacer10,
-              Icon(
-                size: 16,
-                Icons.send,
-              ),
+              if (sendLabel == kLabelSend) ...[
+                kHSpacer10,
+                const Icon(
+                  size: 16,
+                  Icons.send,
+                ),
+              ],
             ],
     );
   }

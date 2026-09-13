@@ -10,7 +10,7 @@ part 'http_request_model.freezed.dart';
 part 'http_request_model.g.dart';
 
 @freezed
-class HttpRequestModel with _$HttpRequestModel {
+abstract class HttpRequestModel with _$HttpRequestModel {
   const HttpRequestModel._();
 
   @JsonSerializable(explicitToJson: true, anyMap: true)

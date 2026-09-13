@@ -337,11 +337,11 @@ void main() {
 
         final firstClassFirstClassFieldArrayField =
             NodeViewModelState.fromProperty(
-          treeDepth: 4,
-          key: 'key',
-          value: 'value',
-          parent: firstClassFirstClassFieldArray,
-        );
+              treeDepth: 4,
+              key: 'key',
+              value: 'value',
+              parent: firstClassFirstClassFieldArray,
+            );
 
         firstClass.value = firstClassFirstField;
         firstClassFirstField.value = firstClassFirstClassField;

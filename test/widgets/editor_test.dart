@@ -13,16 +13,18 @@ void main() {
         title: 'Editor',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: Column(children: [
-            Expanded(
-              child: TextFieldEditor(
-                fieldKey: '2',
-                onChanged: (value) {
-                  changedValue = value;
-                },
+          body: Column(
+            children: [
+              Expanded(
+                child: TextFieldEditor(
+                  fieldKey: '2',
+                  onChanged: (value) {
+                    changedValue = value;
+                  },
+                ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );
@@ -50,17 +52,19 @@ void main() {
         title: 'Editor Dark',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: Column(children: [
-            Expanded(
-              child: TextFieldEditor(
-                fieldKey: '2',
-                onChanged: (value) {
-                  changedValue = value;
-                },
-                initialValue: 'initial',
+          body: Column(
+            children: [
+              Expanded(
+                child: TextFieldEditor(
+                  fieldKey: '2',
+                  onChanged: (value) {
+                    changedValue = value;
+                  },
+                  initialValue: 'initial',
+                ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
     );
@@ -80,5 +84,45 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle();
     expect(changedValue, 'entering 123 for testing content body  ');
+
+    // Test onTapOutside
+    await tester.tapAt(
+      const Offset(10, 10),
+    ); // Tap somewhere outside the editor if possible
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('Testing Editor onTapOutside', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              const SizedBox(
+                height: 100,
+                width: 100,
+                child: TextFieldEditor(fieldKey: 'editor_key'),
+              ),
+              GestureDetector(
+                key: const Key('outside'),
+                onTap: () {},
+                child: const SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: Text('Outside'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(const Key('editor_key')));
+    await tester.pumpAndSettle();
+
+    // Tap outside to trigger onTapOutside
+    await tester.tap(find.byKey(const Key('outside')));
+    await tester.pumpAndSettle();
   });
 }

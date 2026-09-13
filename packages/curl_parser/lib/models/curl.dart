@@ -24,7 +24,6 @@ class UriJsonConverter implements JsonConverter<Uri, String> {
 /// The Curl class provides methods for parsing a cURL command string
 /// and formatting a Curl object back into a cURL command.
 @freezed
-@JsonSerializable(explicitToJson: true)
 abstract class Curl with _$Curl {
   /// Private constructor to allow custom methods in a freezed class.
   const Curl._();
@@ -33,6 +32,7 @@ abstract class Curl with _$Curl {
   ///
   /// The [method] and [uri] parameters are required, while the remaining
   /// parameters are optional.
+  @JsonSerializable(explicitToJson: true)
   const factory Curl({
     /// Specifies the HTTP request method (e.g., GET, POST, PUT, DELETE).
     required String method,

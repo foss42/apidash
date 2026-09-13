@@ -4,7 +4,7 @@ part 'auth_jwt_model.freezed.dart';
 part 'auth_jwt_model.g.dart';
 
 @freezed
-class AuthJwtModel with _$AuthJwtModel {
+abstract class AuthJwtModel with _$AuthJwtModel {
   const factory AuthJwtModel({
     required String secret,
     String? privateKey,

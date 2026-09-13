@@ -34,9 +34,7 @@ const HttpRequestModel basePostRequest = HttpRequestModel(
 const HttpRequestModel baseGraphQLRequest = HttpRequestModel(
   method: HTTPVerb.post,
   url: 'https://api.apidash.dev/graphql',
-  headers: [
-    NameValueModel(name: 'Content-Type', value: 'application/json'),
-  ],
+  headers: [NameValueModel(name: 'Content-Type', value: 'application/json')],
   query: r'query GetUser($id: ID!) { user(id: $id) { name email } }',
   body: '{"variables": {"id": "123"}}',
 );
@@ -89,10 +87,7 @@ const HttpResponseModel successLoginResponse = HttpResponseModel(
 // HTTP Response Model for error case
 const HttpResponseModel errorResponse = HttpResponseModel(
   statusCode: 401,
-  headers: {
-    'content-type': 'application/json',
-    'www-authenticate': 'Bearer',
-  },
+  headers: {'content-type': 'application/json', 'www-authenticate': 'Bearer'},
   body:
       '{"error": "invalid_credentials", "message": "Invalid username or password"}',
   time: Duration(milliseconds: 89),
@@ -396,41 +391,41 @@ void main() {
       );
     });
 
-    test('should execute pre-request script and return updated request model',
-        () async {
-      bool updateEnvCalled = false;
-      EnvironmentModel? capturedEnvModel;
-      List<EnvironmentVariableModel>? capturedValues;
+    test(
+      'should execute pre-request script and return updated request model',
+      () async {
+        bool updateEnvCalled = false;
+        EnvironmentModel? capturedEnvModel;
+        List<EnvironmentVariableModel>? capturedValues;
 
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        updateEnvCalled = true;
-        capturedEnvModel = envModel;
-        capturedValues = values;
-      }
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          updateEnvCalled = true;
+          capturedEnvModel = envModel;
+          capturedValues = values;
+        }
 
-      final result = await handlePreRequestScript(
-        baseRequestModel,
-        testEnvironmentModel,
-        mockUpdateEnv,
-      );
-      expect(result, isA<RequestModel>());
-      expect(result.id, equals(baseRequestModel.id));
-      expect(result.httpRequestModel, isNotNull);
-      expect(result.httpRequestModel!.url, equals(testHttpRequest.url));
-      expect(result.httpRequestModel!.method, equals(testHttpRequest.method));
+        final result = await handlePreRequestScript(
+          baseRequestModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        );
+        expect(result, isA<RequestModel>());
+        expect(result.id, equals(baseRequestModel.id));
+        expect(result.httpRequestModel, isNotNull);
+        expect(result.httpRequestModel!.url, equals(testHttpRequest.url));
+        expect(result.httpRequestModel!.method, equals(testHttpRequest.method));
 
-      expect(updateEnvCalled, isTrue);
-      expect(capturedEnvModel, equals(testEnvironmentModel));
-      expect(capturedValues, isNotNull);
-    });
+        expect(updateEnvCalled, isTrue);
+        expect(capturedEnvModel, equals(testEnvironmentModel));
+        expect(capturedValues, isNotNull);
+      },
+    );
 
     test('should handle null environment model gracefully', () async {
-      final result = await handlePreRequestScript(
-        baseRequestModel,
-        null,
-        null,
-      );
+      final result = await handlePreRequestScript(baseRequestModel, null, null);
       expect(result, isA<RequestModel>());
       expect(result.id, equals(baseRequestModel.id));
       expect(result.httpRequestModel, isNotNull);
@@ -446,67 +441,78 @@ void main() {
       expect(result.id, equals(baseRequestModel.id));
     });
 
-    test('should update environment variables when script modifies them',
-        () async {
-      bool updateEnvCalled = false;
-      EnvironmentModel? capturedEnvModel;
-      List<EnvironmentVariableModel>? capturedValues;
+    test(
+      'should update environment variables when script modifies them',
+      () async {
+        bool updateEnvCalled = false;
+        EnvironmentModel? capturedEnvModel;
+        List<EnvironmentVariableModel>? capturedValues;
 
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        updateEnvCalled = true;
-        capturedEnvModel = envModel;
-        capturedValues = values;
-      }
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          updateEnvCalled = true;
+          capturedEnvModel = envModel;
+          capturedValues = values;
+        }
 
-      final modifiedRequestModel = baseRequestModel.copyWith(
-        preRequestScript: 'ad.environment.set("newVar", "newValue");',
-      );
-      final result = await handlePreRequestScript(
-        modifiedRequestModel,
-        testEnvironmentModel,
-        mockUpdateEnv,
-      );
-      expect(result, isA<RequestModel>());
-      expect(updateEnvCalled, isTrue);
-      expect(capturedEnvModel, equals(testEnvironmentModel));
-      expect(capturedValues, isNotNull);
-    });
+        final modifiedRequestModel = baseRequestModel.copyWith(
+          preRequestScript: 'ad.environment.set("newVar", "newValue");',
+        );
+        final result = await handlePreRequestScript(
+          modifiedRequestModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        );
+        expect(result, isA<RequestModel>());
+        expect(updateEnvCalled, isTrue);
+        expect(capturedEnvModel, equals(testEnvironmentModel));
+        expect(capturedValues, isNotNull);
+      },
+    );
 
     //TODO: Fix this test misbehaviour
     test(
-        'should preserve existing environment variables when script adds new ones',
-        () async {
-      List<EnvironmentVariableModel>? capturedValues;
+      'should preserve existing environment variables when script adds new ones',
+      () async {
+        List<EnvironmentVariableModel>? capturedValues;
 
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          capturedValues = values;
+        }
 
-      await handlePreRequestScript(
-        baseRequestModel,
-        testEnvironmentModel,
-        mockUpdateEnv,
-      );
-      expect(capturedValues, isNotNull);
-      expect(capturedValues!.length,
-          greaterThanOrEqualTo(2)); // At least the enabled variables
+        await handlePreRequestScript(
+          baseRequestModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        );
+        expect(capturedValues, isNotNull);
+        expect(
+          capturedValues!.length,
+          greaterThanOrEqualTo(2),
+        ); // At least the enabled variables
 
-      final apiUrlVar = capturedValues!.firstWhere((v) => v.key == 'apiUrl');
-      expect(apiUrlVar.value, equals('https://api.apidash.dev'));
-      expect(apiUrlVar.enabled, isTrue);
+        final apiUrlVar = capturedValues!.firstWhere((v) => v.key == 'apiUrl');
+        expect(apiUrlVar.value, equals('https://api.apidash.dev'));
+        expect(apiUrlVar.enabled, isTrue);
 
-      final apiKeyVar = capturedValues!.firstWhere((v) => v.key == 'apiKey');
-      expect(apiKeyVar.value, equals('test-api-key'));
-      expect(apiKeyVar.enabled, isTrue);
-    });
+        final apiKeyVar = capturedValues!.firstWhere((v) => v.key == 'apiKey');
+        expect(apiKeyVar.value, equals('test-api-key'));
+        expect(apiKeyVar.enabled, isTrue);
+      },
+    );
 
     test('should handle environment variable removal correctly', () async {
       List<EnvironmentVariableModel>? capturedValues;
 
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -527,7 +533,9 @@ void main() {
       List<EnvironmentVariableModel>? capturedValues;
 
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -573,18 +581,19 @@ void main() {
     });
 
     test(
-        'should return the same original request model when no environment and script updates environment',
-        () async {
-      final scriptWithEnvUpdate = baseRequestModel.copyWith(
-        preRequestScript: 'ad.environment.set("newVar", "value");',
-      );
-      final result = await handlePreRequestScript(
-        scriptWithEnvUpdate,
-        null,
-        null,
-      );
-      expect(result, equals(scriptWithEnvUpdate));
-    });
+      'should return the same original request model when no environment and script updates environment',
+      () async {
+        final scriptWithEnvUpdate = baseRequestModel.copyWith(
+          preRequestScript: 'ad.environment.set("newVar", "value");',
+        );
+        final result = await handlePreRequestScript(
+          scriptWithEnvUpdate,
+          null,
+          null,
+        );
+        expect(result, equals(scriptWithEnvUpdate));
+      },
+    );
   });
 
   group('Post-response Script Handler Tests', () {
@@ -642,30 +651,34 @@ void main() {
       );
     });
 
-    test('should execute post-response script and return updated request model',
-        () async {
-      // Arrange
-      bool updateEnvCalled = false;
+    test(
+      'should execute post-response script and return updated request model',
+      () async {
+        // Arrange
+        bool updateEnvCalled = false;
 
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        updateEnvCalled = true;
-      }
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          updateEnvCalled = true;
+        }
 
-      // Act
-      final result = await handlePostResponseScript(
-        baseRequestModel,
-        testEnvironmentModel,
-        mockUpdateEnv,
-      );
+        // Act
+        final result = await handlePostResponseScript(
+          baseRequestModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        );
 
-      // Assert
-      expect(result, isA<RequestModel>());
-      expect(result.id, equals(baseRequestModel.id));
-      expect(result.httpResponseModel, isNotNull);
-      expect(result.httpResponseModel!.statusCode, equals(200));
-      expect(updateEnvCalled, isTrue);
-    });
+        // Assert
+        expect(result, isA<RequestModel>());
+        expect(result.id, equals(baseRequestModel.id));
+        expect(result.httpResponseModel, isNotNull);
+        expect(result.httpResponseModel!.statusCode, equals(200));
+        expect(updateEnvCalled, isTrue);
+      },
+    );
 
     test('should handle null environment model gracefully', () async {
       // Act
@@ -686,7 +699,9 @@ void main() {
       List<EnvironmentVariableModel>? capturedValues;
 
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -718,7 +733,9 @@ void main() {
       List<EnvironmentVariableModel>? capturedValues;
 
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -751,7 +768,9 @@ void main() {
       List<EnvironmentVariableModel>? capturedValues;
 
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -785,7 +804,9 @@ void main() {
       List<EnvironmentVariableModel>? capturedValues;
 
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -805,38 +826,42 @@ void main() {
       expect(baseUrlVar.enabled, isTrue);
     });
 
-    test('should handle environment variable updates with different data types',
-        () async {
-      // Arrange
-      List<EnvironmentVariableModel>? capturedValues;
+    test(
+      'should handle environment variable updates with different data types',
+      () async {
+        // Arrange
+        List<EnvironmentVariableModel>? capturedValues;
 
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          capturedValues = values;
+        }
 
-      // There's a bug in the post-response script handler - it's missing the value assignment
-      // Let's test this to verify the bug
-      final dataTypeModel = baseRequestModel.copyWith(
-        postRequestScript: '''
+        // There's a bug in the post-response script handler - it's missing the value assignment
+        // Let's test this to verify the bug
+        final dataTypeModel = baseRequestModel.copyWith(
+          postRequestScript: '''
           ad.environment.set("stringVar", "hello");
           ad.environment.set("numberVar", 123);
           ad.environment.set("boolVar", false);
           ad.environment.set("nullVar", null);
         ''',
-      );
+        );
 
-      // Act
-      await handlePostResponseScript(
-        dataTypeModel,
-        testEnvironmentModel,
-        mockUpdateEnv,
-      );
+        // Act
+        await handlePostResponseScript(
+          dataTypeModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        );
 
-      // Assert
-      expect(capturedValues, isNotNull);
-      // Note: This test reveals a bug in handlePostResponseScript where value is not being set
-    });
+        // Assert
+        expect(capturedValues, isNotNull);
+        // Note: This test reveals a bug in handlePostResponseScript where value is not being set
+      },
+    );
 
     test('should handle empty post-response script', () async {
       // Arrange
@@ -856,8 +881,9 @@ void main() {
 
     test('should handle null post-response script', () async {
       // Arrange
-      final nullScriptModel =
-          baseRequestModel.copyWith(postRequestScript: null);
+      final nullScriptModel = baseRequestModel.copyWith(
+        postRequestScript: null,
+      );
 
       // Act
       final result = await handlePostResponseScript(
@@ -872,24 +898,25 @@ void main() {
     });
 
     test(
-        'should return updated model when no environment but script updates environment',
-        () async {
-      // Arrange
-      final scriptWithEnvUpdate = baseRequestModel.copyWith(
-        postRequestScript: 'ad.environment.set("responseVar", "value");',
-      );
+      'should return updated model when no environment but script updates environment',
+      () async {
+        // Arrange
+        final scriptWithEnvUpdate = baseRequestModel.copyWith(
+          postRequestScript: 'ad.environment.set("responseVar", "value");',
+        );
 
-      // Act
-      final result = await handlePostResponseScript(
-        scriptWithEnvUpdate,
-        null, // No environment
-        null,
-      );
+        // Act
+        final result = await handlePostResponseScript(
+          scriptWithEnvUpdate,
+          null, // No environment
+          null,
+        );
 
-      // Assert
-      expect(result, isA<RequestModel>());
-      expect(result.id, equals(baseRequestModel.id));
-    });
+        // Assert
+        expect(result, isA<RequestModel>());
+        expect(result.id, equals(baseRequestModel.id));
+      },
+    );
 
     test('should handle null updateEnv callback gracefully', () async {
       // Act
@@ -904,13 +931,14 @@ void main() {
       expect(result.id, equals(baseRequestModel.id));
     });
 
-    test('should test the bug in post-response handler value assignment',
-        () async {
+    test('should test the bug in post-response handler value assignment', () async {
       // This test specifically tests for the bug where value is not being assigned in post-response handler
       List<EnvironmentVariableModel>? capturedValues;
 
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -935,17 +963,18 @@ void main() {
   });
 
   group('Both Pre-request and Post-response testing together', () {
-    test('should handle complex workflow with both pre and post scripts',
-        () async {
-      // Arrange
-      final complexRequest = RequestModel(
-        id: 'complex-request',
-        name: 'Complex Workflow',
-        preRequestScript: '''
+    test(
+      'should handle complex workflow with both pre and post scripts',
+      () async {
+        // Arrange
+        final complexRequest = RequestModel(
+          id: 'complex-request',
+          name: 'Complex Workflow',
+          preRequestScript: '''
           ad.environment.set("requestStartTime", Date.now());
           ad.request.headers.set("X-Request-ID", "req-" + Math.random());
         ''',
-        postRequestScript: '''
+          postRequestScript: '''
           const startTime = ad.environment.get("requestStartTime");
           const endTime = Date.now();
           ad.environment.set("requestDuration", endTime - startTime);
@@ -954,103 +983,110 @@ void main() {
             ad.environment.set("lastSuccessfulRequest", Date.now());
           }
         ''',
-        httpRequestModel: const HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.apidash.dev/data',
-        ),
-        httpResponseModel: const HttpResponseModel(
-          statusCode: 200,
-          body: '{"success": true}',
-        ),
-      );
+          httpRequestModel: const HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.apidash.dev/data',
+          ),
+          httpResponseModel: const HttpResponseModel(
+            statusCode: 200,
+            body: '{"success": true}',
+          ),
+        );
 
-      final environment = const EnvironmentModel(
-        id: 'integration-env',
-        name: 'Integration Environment',
-        values: [],
-      );
+        final environment = const EnvironmentModel(
+          id: 'integration-env',
+          name: 'Integration Environment',
+          values: [],
+        );
 
-      void preUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        // Mock function for testing
-      }
+        void preUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          // Mock function for testing
+        }
 
-      void postUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        // Mock function for testing
-      }
+        void postUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          // Mock function for testing
+        }
 
-      final afterPre = await handlePreRequestScript(
-        complexRequest,
-        environment,
-        preUpdateEnv,
-      );
+        final afterPre = await handlePreRequestScript(
+          complexRequest,
+          environment,
+          preUpdateEnv,
+        );
 
-      final afterPost = await handlePostResponseScript(
-        afterPre,
-        environment,
-        postUpdateEnv,
-      );
-      expect(afterPre, isA<RequestModel>());
-      expect(afterPost, isA<RequestModel>());
-      expect(afterPost.id, equals(complexRequest.id));
-    });
+        final afterPost = await handlePostResponseScript(
+          afterPre,
+          environment,
+          postUpdateEnv,
+        );
+        expect(afterPre, isA<RequestModel>());
+        expect(afterPost, isA<RequestModel>());
+        expect(afterPost.id, equals(complexRequest.id));
+      },
+    );
 
-    test('should handle environment variable dependencies between scripts',
-        () async {
-      // This test ensures that environment changes from pre-request scripts
-      // are available to post-response scripts
-      final dependentRequest = RequestModel(
-        id: 'dependent-request',
-        name: 'Dependent Request',
-        preRequestScript: 'ad.environment.set("requestId", "12345");',
-        postRequestScript: '''
+    test(
+      'should handle environment variable dependencies between scripts',
+      () async {
+        // This test ensures that environment changes from pre-request scripts
+        // are available to post-response scripts
+        final dependentRequest = RequestModel(
+          id: 'dependent-request',
+          name: 'Dependent Request',
+          preRequestScript: 'ad.environment.set("requestId", "12345");',
+          postRequestScript: '''
           const requestId = ad.environment.get("requestId");
           ad.environment.set("completedRequestId", requestId);
         ''',
-        httpRequestModel: const HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.apidash.dev/test',
-        ),
-        httpResponseModel: const HttpResponseModel(
-          statusCode: 200,
-          body: '{"data": "test"}',
-        ),
-      );
+          httpRequestModel: const HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.apidash.dev/test',
+          ),
+          httpResponseModel: const HttpResponseModel(
+            statusCode: 200,
+            body: '{"data": "test"}',
+          ),
+        );
 
-      final environment = const EnvironmentModel(
-        id: 'dependent-env',
-        name: 'Dependent Environment',
-        values: [],
-      );
+        final environment = const EnvironmentModel(
+          id: 'dependent-env',
+          name: 'Dependent Environment',
+          values: [],
+        );
 
-      List<EnvironmentVariableModel>? preValues;
-      List<EnvironmentVariableModel>? postValues;
+        List<EnvironmentVariableModel>? preValues;
+        List<EnvironmentVariableModel>? postValues;
 
-      void preUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        preValues = values;
-      }
+        void preUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          preValues = values;
+        }
 
-      void postUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        postValues = values;
-      }
+        void postUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          postValues = values;
+        }
 
-      final afterPre = await handlePreRequestScript(
-        dependentRequest,
-        environment,
-        preUpdateEnv,
-      );
+        final afterPre = await handlePreRequestScript(
+          dependentRequest,
+          environment,
+          preUpdateEnv,
+        );
 
-      await handlePostResponseScript(
-        afterPre,
-        environment,
-        postUpdateEnv,
-      );
-      expect(preValues, isNotNull);
-      expect(postValues, isNotNull);
-    });
+        await handlePostResponseScript(afterPre, environment, postUpdateEnv);
+        expect(preValues, isNotNull);
+        expect(postValues, isNotNull);
+      },
+    );
   });
 
   group('Error Handling Tests', () {
@@ -1099,7 +1135,9 @@ void main() {
       List<EnvironmentVariableModel>? capturedValues;
 
       void updateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1113,31 +1151,34 @@ void main() {
       expect(capturedValues?.length, 1);
     });
 
-    test('should handle accessing non-existent environment variables',
-        () async {
-      final scriptWithMissingVar = RequestModel(
-        id: 'missing-var-request',
-        name: 'Missing Variable Test',
-        httpRequestModel: baseGetRequest,
-        preRequestScript: '''
+    test(
+      'should handle accessing non-existent environment variables',
+      () async {
+        final scriptWithMissingVar = RequestModel(
+          id: 'missing-var-request',
+          name: 'Missing Variable Test',
+          httpRequestModel: baseGetRequest,
+          preRequestScript: '''
           const missingVar = ad.environment.get('nonExistentVar');
           ad.request.headers.set('X-Missing-Var', missingVar || 'default-value');
           ad.console.log('Missing variable handled: ' + (missingVar || 'undefined'));
         ''',
-      );
+        );
 
-      final result = await handlePreRequestScript(
-        scriptWithMissingVar,
-        testEnvironment,
-        null,
-      );
+        final result = await handlePreRequestScript(
+          scriptWithMissingVar,
+          testEnvironment,
+          null,
+        );
 
-      expect(result, isA<RequestModel>());
-      final headers = result.httpRequestModel!.headers!;
-      final missingVarHeader =
-          headers.firstWhere((h) => h.name == 'X-Missing-Var');
-      expect(missingVarHeader.value, equals('default-value'));
-    });
+        expect(result, isA<RequestModel>());
+        final headers = result.httpRequestModel!.headers!;
+        final missingVarHeader = headers.firstWhere(
+          (h) => h.name == 'X-Missing-Var',
+        );
+        expect(missingVarHeader.value, equals('default-value'));
+      },
+    );
 
     test('should handle JSON parsing errors in post-response script', () async {
       const invalidJsonResponse = HttpResponseModel(
@@ -1165,7 +1206,9 @@ void main() {
 
       List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1176,8 +1219,9 @@ void main() {
       );
 
       expect(capturedValues, isNotNull);
-      final parsedDataVar =
-          capturedValues!.firstWhere((v) => v.key == 'parsedData');
+      final parsedDataVar = capturedValues!.firstWhere(
+        (v) => v.key == 'parsedData',
+      );
       expect(parsedDataVar.value, equals('failed'));
     });
 
@@ -1203,7 +1247,9 @@ void main() {
 
       List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1214,8 +1260,9 @@ void main() {
       );
 
       expect(capturedValues, isNotNull);
-      final bodyExistsVar =
-          capturedValues!.firstWhere((v) => v.key == 'bodyExists');
+      final bodyExistsVar = capturedValues!.firstWhere(
+        (v) => v.key == 'bodyExists',
+      );
       expect(bodyExistsVar.value, equals('false'));
     });
   });
@@ -1223,13 +1270,14 @@ void main() {
   group('Performance Tests', () {
     test('should handle large environment efficiently', () async {
       final largeEnvValues = List.generate(
-          1000,
-          (index) => EnvironmentVariableModel(
-                key: 'var$index',
-                value: 'value$index',
-                enabled: index % 2 == 0, // Half enabled, half disabled
-                type: EnvironmentVariableType.variable,
-              ));
+        1000,
+        (index) => EnvironmentVariableModel(
+          key: 'var$index',
+          value: 'value$index',
+          enabled: index % 2 == 0, // Half enabled, half disabled
+          type: EnvironmentVariableType.variable,
+        ),
+      );
 
       final largeEnvironment = EnvironmentModel(
         id: 'large-env',
@@ -1256,31 +1304,34 @@ void main() {
 
       stopwatch.stop();
       expect(result, isA<RequestModel>());
-      expect(stopwatch.elapsedMilliseconds,
-          lessThan(5000)); // Should complete within 5 seconds
+      expect(
+        stopwatch.elapsedMilliseconds,
+        lessThan(5000),
+      ); // Should complete within 5 seconds
     });
 
     test('should handle multiple rapid script executions', () async {
       final requests = List.generate(
-          10,
-          (index) => RequestModel(
-                id: 'rapid-test-$index',
-                name: 'Rapid Test $index',
-                preRequestScript:
-                    'ad.environment.set("rapidVar$index", "$index");',
-                httpRequestModel: HttpRequestModel(
-                  method: HTTPVerb.get,
-                  url: 'https://api.apidash.dev/test$index',
-                ),
-              ));
+        10,
+        (index) => RequestModel(
+          id: 'rapid-test-$index',
+          name: 'Rapid Test $index',
+          preRequestScript: 'ad.environment.set("rapidVar$index", "$index");',
+          httpRequestModel: HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.apidash.dev/test$index',
+          ),
+        ),
+      );
 
       final environment = const EnvironmentModel(
         id: 'rapid-env',
         name: 'Rapid Environment',
         values: [],
       );
-      final futures = requests
-          .map((request) => handlePreRequestScript(request, environment, null));
+      final futures = requests.map(
+        (request) => handlePreRequestScript(request, environment, null),
+      );
 
       final results = await Future.wait(futures);
       expect(results.length, equals(10));
@@ -1293,7 +1344,9 @@ void main() {
   group('Pre-request Script - Request Modification Tests', () {
     test('should modify headers correctly', () async {
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {}
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {}
 
       final result = await handlePreRequestScript(
         requestWithHeaderModificationScript,
@@ -1311,8 +1364,9 @@ void main() {
       expect(authHeader.value, equals('Bearer secret-api-key-123'));
 
       // Check custom header was added
-      final customHeader =
-          headers.firstWhere((h) => h.name == 'X-Custom-Header');
+      final customHeader = headers.firstWhere(
+        (h) => h.name == 'X-Custom-Header',
+      );
       expect(customHeader.value, equals('custom-value'));
 
       // Check User-Agent header was removed
@@ -1330,8 +1384,10 @@ void main() {
       expect(result.httpRequestModel, isNotNull);
 
       // Check URL was modified
-      expect(result.httpRequestModel!.url,
-          equals('https://api.apidash.dev/v2/users'));
+      expect(
+        result.httpRequestModel!.url,
+        equals('https://api.apidash.dev/v2/users'),
+      );
 
       // Check params were modified
       final params = result.httpRequestModel!.params!;
@@ -1398,7 +1454,9 @@ void main() {
     test('should update environment variables correctly', () async {
       List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1411,12 +1469,14 @@ void main() {
       expect(capturedValues, isNotNull);
 
       // Check new variables were added
-      final requestIdVar =
-          capturedValues!.firstWhere((v) => v.key == 'requestId');
+      final requestIdVar = capturedValues!.firstWhere(
+        (v) => v.key == 'requestId',
+      );
       expect(requestIdVar.value, startsWith('req_'));
 
-      final retryCountVar =
-          capturedValues!.firstWhere((v) => v.key == 'retryCount');
+      final retryCountVar = capturedValues!.firstWhere(
+        (v) => v.key == 'retryCount',
+      );
       expect(retryCountVar.value, equals('0'));
 
       final newVar = capturedValues!.firstWhere((v) => v.key == 'newVariable');
@@ -1433,7 +1493,9 @@ void main() {
     test('should handle complex script with multiple modifications', () async {
       List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1451,13 +1513,16 @@ void main() {
       final authHeader = headers.firstWhere((h) => h.name == 'Authorization');
       expect(authHeader.value, equals('Bearer secret-api-key-123'));
 
-      final requestIdHeader =
-          headers.firstWhere((h) => h.name == 'X-Request-ID');
+      final requestIdHeader = headers.firstWhere(
+        (h) => h.name == 'X-Request-ID',
+      );
       expect(requestIdHeader.value, startsWith('req_'));
 
       // Check URL
-      expect(result.httpRequestModel!.url,
-          equals('https://api.apidash.dev/auth/login'));
+      expect(
+        result.httpRequestModel!.url,
+        equals('https://api.apidash.dev/auth/login'),
+      );
 
       // Check body
       final bodyString = result.httpRequestModel!.body;
@@ -1467,48 +1532,57 @@ void main() {
 
       // Check environment updates
       expect(capturedValues, isNotNull);
-      final lastRequestTimeVar =
-          capturedValues!.firstWhere((v) => v.key == 'lastRequestTime');
+      final lastRequestTimeVar = capturedValues!.firstWhere(
+        (v) => v.key == 'lastRequestTime',
+      );
       expect(lastRequestTimeVar.value, isNotNull);
 
-      final requestCountVar =
-          capturedValues!.firstWhere((v) => v.key == 'requestCount');
+      final requestCountVar = capturedValues!.firstWhere(
+        (v) => v.key == 'requestCount',
+      );
       expect(requestCountVar.value, equals('1'));
     });
   });
 
   group('Post-response Script - Data Extraction Tests', () {
-    test('should extract token and user data from successful login response',
-        () async {
-      List<EnvironmentVariableModel>? capturedValues;
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
+    test(
+      'should extract token and user data from successful login response',
+      () async {
+        List<EnvironmentVariableModel>? capturedValues;
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          capturedValues = values;
+        }
 
-      final result = await handlePostResponseScript(
-        requestWithTokenExtractionScript,
-        testEnvironment,
-        mockUpdateEnv,
-      );
+        final result = await handlePostResponseScript(
+          requestWithTokenExtractionScript,
+          testEnvironment,
+          mockUpdateEnv,
+        );
 
-      expect(result, isA<RequestModel>());
-      expect(capturedValues, isNotNull);
+        expect(result, isA<RequestModel>());
+        expect(capturedValues, isNotNull);
 
-      // Check token was extracted
-      final authTokenVar =
-          capturedValues!.firstWhere((v) => v.key == 'authToken');
-      expect(authTokenVar.value, equals('jwt-token-abc123'));
+        // Check token was extracted
+        final authTokenVar = capturedValues!.firstWhere(
+          (v) => v.key == 'authToken',
+        );
+        expect(authTokenVar.value, equals('jwt-token-abc123'));
 
-      // Check user ID was extracted
-      final userIdVar = capturedValues!.firstWhere((v) => v.key == 'userId');
-      expect(userIdVar.value, equals('user_123'));
-    });
+        // Check user ID was extracted
+        final userIdVar = capturedValues!.firstWhere((v) => v.key == 'userId');
+        expect(userIdVar.value, equals('user_123'));
+      },
+    );
 
     test('should extract headers correctly', () async {
       List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1521,20 +1595,24 @@ void main() {
       expect(capturedValues, isNotNull);
 
       // Check auth token header was extracted
-      final extractedTokenVar =
-          capturedValues!.firstWhere((v) => v.key == 'extractedAuthToken');
+      final extractedTokenVar = capturedValues!.firstWhere(
+        (v) => v.key == 'extractedAuthToken',
+      );
       expect(extractedTokenVar.value, equals('Bearer jwt-token-abc123'));
 
       // Check session ID was extracted from cookie
-      final sessionIdVar =
-          capturedValues!.firstWhere((v) => v.key == 'sessionId');
+      final sessionIdVar = capturedValues!.firstWhere(
+        (v) => v.key == 'sessionId',
+      );
       expect(sessionIdVar.value, equals('sess_123'));
     });
 
     test('should handle error responses correctly', () async {
       List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1547,28 +1625,33 @@ void main() {
       expect(capturedValues, isNotNull);
 
       // Check status was recorded
-      final statusVar =
-          capturedValues!.firstWhere((v) => v.key == 'lastResponseStatus');
+      final statusVar = capturedValues!.firstWhere(
+        (v) => v.key == 'lastResponseStatus',
+      );
       expect(statusVar.value, equals('401'));
 
       // Check response time was recorded
-      final timeVar =
-          capturedValues!.firstWhere((v) => v.key == 'lastResponseTime');
+      final timeVar = capturedValues!.firstWhere(
+        (v) => v.key == 'lastResponseTime',
+      );
       expect(timeVar.value, equals('89'));
 
       // Check error details were extracted
       final errorVar = capturedValues!.firstWhere((v) => v.key == 'lastError');
       expect(errorVar.value, equals('invalid_credentials'));
 
-      final errorMessageVar =
-          capturedValues!.firstWhere((v) => v.key == 'lastErrorMessage');
+      final errorMessageVar = capturedValues!.firstWhere(
+        (v) => v.key == 'lastErrorMessage',
+      );
       expect(errorMessageVar.value, equals('Invalid username or password'));
     });
 
     test('should process response data correctly', () async {
       List<EnvironmentVariableModel>? capturedValues;
       void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         capturedValues = values;
       }
 
@@ -1581,32 +1664,37 @@ void main() {
       expect(capturedValues, isNotNull);
 
       // Check processed data
-      final activeCountVar =
-          capturedValues!.firstWhere((v) => v.key == 'activeUserCount');
+      final activeCountVar = capturedValues!.firstWhere(
+        (v) => v.key == 'activeUserCount',
+      );
       expect(activeCountVar.value, equals('1'));
 
-      final totalUsersVar =
-          capturedValues!.firstWhere((v) => v.key == 'totalUsers');
+      final totalUsersVar = capturedValues!.firstWhere(
+        (v) => v.key == 'totalUsers',
+      );
       expect(totalUsersVar.value, equals('150'));
 
-      final currentPageVar =
-          capturedValues!.firstWhere((v) => v.key == 'currentPage');
+      final currentPageVar = capturedValues!.firstWhere(
+        (v) => v.key == 'currentPage',
+      );
       expect(currentPageVar.value, equals('1'));
 
-      final firstActiveUserVar =
-          capturedValues!.firstWhere((v) => v.key == 'firstActiveUserId');
+      final firstActiveUserVar = capturedValues!.firstWhere(
+        (v) => v.key == 'firstActiveUserId',
+      );
       expect(firstActiveUserVar.value, equals('1'));
     });
   });
 
   group('Data Type Conversion Tests', () {
-    test('should convert different data types to strings in environment',
-        () async {
-      final dataTypeScript = RequestModel(
-        id: 'data-type-request',
-        name: 'Data Type Conversion Test',
-        httpRequestModel: baseGetRequest,
-        preRequestScript: '''
+    test(
+      'should convert different data types to strings in environment',
+      () async {
+        final dataTypeScript = RequestModel(
+          id: 'data-type-request',
+          name: 'Data Type Conversion Test',
+          httpRequestModel: baseGetRequest,
+          preRequestScript: '''
           ad.environment.set('stringVar', 'hello');
           ad.environment.set('numberVar', 42);
           ad.environment.set('booleanVar', true);
@@ -1615,35 +1703,43 @@ void main() {
           ad.environment.set('nullVar', null);
           ad.environment.set('undefinedVar', undefined);
         ''',
-      );
+        );
 
-      List<EnvironmentVariableModel>? capturedValues;
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
+        List<EnvironmentVariableModel>? capturedValues;
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          capturedValues = values;
+        }
 
-      await handlePreRequestScript(
-        dataTypeScript,
-        testEnvironment,
-        mockUpdateEnv,
-      );
+        await handlePreRequestScript(
+          dataTypeScript,
+          testEnvironment,
+          mockUpdateEnv,
+        );
 
-      expect(capturedValues, isNotNull);
+        expect(capturedValues, isNotNull);
 
-      final stringVar = capturedValues!.firstWhere((v) => v.key == 'stringVar');
-      expect(stringVar.value, equals('hello'));
+        final stringVar = capturedValues!.firstWhere(
+          (v) => v.key == 'stringVar',
+        );
+        expect(stringVar.value, equals('hello'));
 
-      final numberVar = capturedValues!.firstWhere((v) => v.key == 'numberVar');
-      expect(numberVar.value, equals('42'));
+        final numberVar = capturedValues!.firstWhere(
+          (v) => v.key == 'numberVar',
+        );
+        expect(numberVar.value, equals('42'));
 
-      final booleanVar =
-          capturedValues!.firstWhere((v) => v.key == 'booleanVar');
-      expect(booleanVar.value, equals('true'));
+        final booleanVar = capturedValues!.firstWhere(
+          (v) => v.key == 'booleanVar',
+        );
+        expect(booleanVar.value, equals('true'));
 
-      final nullVar = capturedValues!.firstWhere((v) => v.key == 'nullVar');
-      expect(nullVar.value, equals(''));
-    });
+        final nullVar = capturedValues!.firstWhere((v) => v.key == 'nullVar');
+        expect(nullVar.value, equals(''));
+      },
+    );
 
     test('should handle various header value types', () async {
       final headerTypeScript = RequestModel(
@@ -1667,16 +1763,19 @@ void main() {
       expect(result, isA<RequestModel>());
       final headers = result.httpRequestModel!.headers!;
 
-      final stringHeader =
-          headers.firstWhere((h) => h.name == 'X-String-Header');
+      final stringHeader = headers.firstWhere(
+        (h) => h.name == 'X-String-Header',
+      );
       expect(stringHeader.value, equals('string-value'));
 
-      final numberHeader =
-          headers.firstWhere((h) => h.name == 'X-Number-Header');
+      final numberHeader = headers.firstWhere(
+        (h) => h.name == 'X-Number-Header',
+      );
       expect(numberHeader.value, equals('123'));
 
-      final booleanHeader =
-          headers.firstWhere((h) => h.name == 'X-Boolean-Header');
+      final booleanHeader = headers.firstWhere(
+        (h) => h.name == 'X-Boolean-Header',
+      );
       expect(booleanHeader.value, equals('true'));
 
       final nullHeader = headers.firstWhere((h) => h.name == 'X-Null-Header');
@@ -1698,7 +1797,9 @@ void main() {
 
       List<EnvironmentVariableModel>? preValues;
       void preUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         preValues = values;
       }
 
@@ -1717,8 +1818,9 @@ void main() {
       final authHeader = headers.firstWhere((h) => h.name == 'Authorization');
       expect(authHeader.value, equals('Bearer secret-api-key-123'));
 
-      final requestIdHeader =
-          headers.firstWhere((h) => h.name == 'X-Request-ID');
+      final requestIdHeader = headers.firstWhere(
+        (h) => h.name == 'X-Request-ID',
+      );
       expect(requestIdHeader.value, startsWith('req_'));
 
       // Simulate response and add post-response script
@@ -1737,7 +1839,9 @@ void main() {
 
       List<EnvironmentVariableModel>? postValues;
       void postUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        EnvironmentModel envModel,
+        List<EnvironmentVariableModel> values,
+      ) {
         postValues = values;
       }
 
@@ -1758,8 +1862,9 @@ void main() {
       final userIdVar = postValues!.firstWhere((v) => v.key == 'userId');
       expect(userIdVar.value, equals('user_123'));
 
-      final statusVar =
-          postValues!.firstWhere((v) => v.key == 'responseStatus');
+      final statusVar = postValues!.firstWhere(
+        (v) => v.key == 'responseStatus',
+      );
       expect(statusVar.value, equals('200'));
 
       expect(afterPost.id, equals(preRequestModel.id));

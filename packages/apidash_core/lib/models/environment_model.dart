@@ -6,7 +6,7 @@ part 'environment_model.freezed.dart';
 part 'environment_model.g.dart';
 
 @freezed
-class EnvironmentModel with _$EnvironmentModel {
+abstract class EnvironmentModel with _$EnvironmentModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -22,7 +22,7 @@ class EnvironmentModel with _$EnvironmentModel {
 }
 
 @freezed
-class EnvironmentVariableModel with _$EnvironmentVariableModel {
+abstract class EnvironmentVariableModel with _$EnvironmentVariableModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,

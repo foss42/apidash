@@ -11,6 +11,7 @@ class EnvURLField extends StatelessWidget {
     this.onChanged,
     this.onFieldSubmitted,
     this.focusNode,
+    this.hintText,
   });
 
   final String selectedId;
@@ -18,6 +19,7 @@ class EnvURLField extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
+  final String? hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class EnvURLField extends StatelessWidget {
       focusNode: focusNode,
       style: kCodeStyle,
       decoration: InputDecoration(
-        hintText: kHintTextUrlCard,
+        hintText: hintText ?? kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
           color: Theme.of(context).colorScheme.outlineVariant,
         ),

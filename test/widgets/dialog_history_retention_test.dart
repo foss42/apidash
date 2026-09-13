@@ -31,8 +31,10 @@ void main() {
       expect(find.text('Manage History'), findsOneWidget);
       expect(find.byIcon(Icons.manage_history_rounded), findsOneWidget);
 
-      expect(find.byType(RadioListTile<HistoryRetentionPeriod>),
-          findsNWidgets(HistoryRetentionPeriod.values.length));
+      expect(
+        find.byType(RadioListTile<HistoryRetentionPeriod>),
+        findsNWidgets(HistoryRetentionPeriod.values.length),
+      );
     });
 
     testWidgets('updates selected retention period correctly', (tester) async {
@@ -44,13 +46,9 @@ void main() {
             builder: (context) {
               return ElevatedButton(
                 onPressed: () {
-                  showHistoryRetentionDialog(
-                    context,
-                    selectedPeriod,
-                    (period) {
-                      selectedPeriod = period;
-                    },
-                  );
+                  showHistoryRetentionDialog(context, selectedPeriod, (period) {
+                    selectedPeriod = period;
+                  });
                 },
                 child: const Text('Show Dialog'),
               );
@@ -71,80 +69,79 @@ void main() {
       expect(selectedPeriod, HistoryRetentionPeriod.oneWeek);
     });
 
-    testWidgets('Cancel button closes dialog without changing retention period',
-        (tester) async {
-      HistoryRetentionPeriod selectedPeriod = HistoryRetentionPeriod.oneWeek;
+    testWidgets(
+      'Cancel button closes dialog without changing retention period',
+      (tester) async {
+        HistoryRetentionPeriod selectedPeriod = HistoryRetentionPeriod.oneWeek;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) {
-              return ElevatedButton(
-                onPressed: () {
-                  showHistoryRetentionDialog(
-                    context,
-                    selectedPeriod,
-                    (period) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    showHistoryRetentionDialog(context, selectedPeriod, (
+                      period,
+                    ) {
                       selectedPeriod = period;
-                    },
-                  );
-                },
-                child: const Text('Show Dialog'),
-              );
-            },
+                    });
+                  },
+                  child: const Text('Show Dialog'),
+                );
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      await tester.tap(find.text('Show Dialog'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Show Dialog'));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsNothing);
-      expect(selectedPeriod, HistoryRetentionPeriod.oneWeek);
-    });
+        expect(find.byType(AlertDialog), findsNothing);
+        expect(selectedPeriod, HistoryRetentionPeriod.oneWeek);
+      },
+    );
 
     testWidgets(
-        'Confirm button closes dialog and calls onRetentionPeriodChange',
-        (tester) async {
-      HistoryRetentionPeriod selectedPeriod =
-          HistoryRetentionPeriod.threeMonths;
-      HistoryRetentionPeriod newPeriod = HistoryRetentionPeriod.oneWeek;
+      'Confirm button closes dialog and calls onRetentionPeriodChange',
+      (tester) async {
+        HistoryRetentionPeriod selectedPeriod =
+            HistoryRetentionPeriod.threeMonths;
+        HistoryRetentionPeriod newPeriod = HistoryRetentionPeriod.oneWeek;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Builder(
-            builder: (context) {
-              return ElevatedButton(
-                onPressed: () {
-                  showHistoryRetentionDialog(
-                    context,
-                    selectedPeriod,
-                    (period) {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () {
+                    showHistoryRetentionDialog(context, selectedPeriod, (
+                      period,
+                    ) {
                       selectedPeriod = period;
-                    },
-                  );
-                },
-                child: const Text('Show Dialog'),
-              );
-            },
+                    });
+                  },
+                  child: const Text('Show Dialog'),
+                );
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      await tester.tap(find.text('Show Dialog'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Show Dialog'));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text(newPeriod.label));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text(newPeriod.label));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Confirm'));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AlertDialog), findsNothing);
-      expect(selectedPeriod, newPeriod);
-    });
+        expect(find.byType(AlertDialog), findsNothing);
+        expect(selectedPeriod, newPeriod);
+      },
+    );
   });
 }

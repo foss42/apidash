@@ -11,7 +11,7 @@ String insomniaCollectionToJsonStr(InsomniaCollection data) =>
     JsonEncoder.withIndent('  ').convert(data);
 
 @freezed
-class InsomniaCollection with _$InsomniaCollection {
+abstract class InsomniaCollection with _$InsomniaCollection {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -30,7 +30,7 @@ class InsomniaCollection with _$InsomniaCollection {
 }
 
 @freezed
-class Resource with _$Resource {
+abstract class Resource with _$Resource {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -80,7 +80,7 @@ class Resource with _$Resource {
 }
 
 @freezed
-class Body with _$Body {
+abstract class Body with _$Body {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -96,7 +96,7 @@ class Body with _$Body {
 }
 
 @freezed
-class Formdatum with _$Formdatum {
+abstract class Formdatum with _$Formdatum {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -114,7 +114,7 @@ class Formdatum with _$Formdatum {
 }
 
 @freezed
-class Parameter with _$Parameter {
+abstract class Parameter with _$Parameter {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -133,7 +133,7 @@ class Parameter with _$Parameter {
 }
 
 @freezed
-class Header with _$Header {
+abstract class Header with _$Header {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -149,7 +149,7 @@ class Header with _$Header {
 }
 
 @freezed
-class Cookie with _$Cookie {
+abstract class Cookie with _$Cookie {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -173,7 +173,7 @@ class Cookie with _$Cookie {
 }
 
 @freezed
-class KVPairDatum with _$KVPairDatum {
+abstract class KVPairDatum with _$KVPairDatum {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,

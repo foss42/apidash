@@ -33,6 +33,16 @@ class CodePane extends ConsumerWidget {
       return const ErrorMessage(message: kMsgCodegenAINotAvailable);
     }
 
+    // TODO: Add WebSocket Codegen
+    // WebSocket (and any non-http type) has no `httpRequestModel`, so guard
+    // before the `.httpRequestModel!` dereference below to avoid a null-check
+    // crash when viewing code for a WebSocket history entry.
+    if (selectedRequestModel?.apiType == APIType.websocket ||
+        (selectedRequestModel != null &&
+            selectedRequestModel.httpRequestModel == null)) {
+      return const ErrorMessage(message: kMsgCodegenWebSocketNotAvailable);
+    }
+
     final defaultUriScheme = ref.watch(
       settingsProvider.select((value) => value.defaultUriScheme),
     );

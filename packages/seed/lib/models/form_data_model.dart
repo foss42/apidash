@@ -5,7 +5,7 @@ part 'form_data_model.freezed.dart';
 part 'form_data_model.g.dart';
 
 @freezed
-class FormDataModel with _$FormDataModel {
+abstract class FormDataModel with _$FormDataModel {
   const factory FormDataModel({
     required String name,
     required String value,

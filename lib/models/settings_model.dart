@@ -11,6 +11,7 @@ class SettingsModel {
     this.size,
     this.offset,
     this.defaultUriScheme = kDefaultUriScheme,
+    this.defaultWsScheme = kDefaultWsScheme,
     this.defaultCodeGenLang = CodegenLanguage.curl,
     this.saveResponses = true,
     this.promptBeforeClosing = true,
@@ -20,6 +21,7 @@ class SettingsModel {
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
     this.defaultAIModel,
+    this.maxConnectionMessages = 1000,
   });
 
   final bool isDark;
@@ -27,6 +29,7 @@ class SettingsModel {
   final Size? size;
   final Offset? offset;
   final SupportedUriSchemes defaultUriScheme;
+  final SupportedWsSchemes defaultWsScheme;
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
   final bool promptBeforeClosing;
@@ -36,6 +39,7 @@ class SettingsModel {
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
+  final int maxConnectionMessages;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -43,6 +47,7 @@ class SettingsModel {
     Size? size,
     Offset? offset,
     SupportedUriSchemes? defaultUriScheme,
+    SupportedWsSchemes? defaultWsScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
@@ -52,6 +57,7 @@ class SettingsModel {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    int? maxConnectionMessages,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -59,6 +65,7 @@ class SettingsModel {
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
+      defaultWsScheme: defaultWsScheme ?? this.defaultWsScheme,
       defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
@@ -70,6 +77,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
+      maxConnectionMessages: maxConnectionMessages ?? this.maxConnectionMessages,
     );
   }
 
@@ -81,6 +89,7 @@ class SettingsModel {
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       defaultUriScheme: defaultUriScheme,
+      defaultWsScheme: defaultWsScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       offset: offset,
       saveResponses: saveResponses,
@@ -91,6 +100,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      maxConnectionMessages: maxConnectionMessages,
     );
   }
 
@@ -116,6 +126,15 @@ class SettingsModel {
       try {
         defaultUriScheme =
             SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+      } catch (e) {
+        // pass
+      }
+    }
+    final defaultWsSchemeStr = data["defaultWsScheme"] as String?;
+    SupportedWsSchemes? defaultWsScheme;
+    if (defaultWsSchemeStr != null) {
+      try {
+        defaultWsScheme = SupportedWsSchemes.values.byName(defaultWsSchemeStr);
       } catch (e) {
         // pass
       }
@@ -149,6 +168,10 @@ class SettingsModel {
     final defaultAIModel = data["defaultAIModel"] == null
         ? null
         : Map<String, Object?>.from(data["defaultAIModel"]);
+    // Backward-compat: this setting was previously stored as "maxWebSocketEvents".
+    final maxConnectionMessages =
+        data["maxConnectionMessages"] as int? ??
+        data["maxWebSocketEvents"] as int?;
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -157,6 +180,7 @@ class SettingsModel {
       size: size,
       offset: offset,
       defaultUriScheme: defaultUriScheme,
+      defaultWsScheme: defaultWsScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
@@ -167,6 +191,7 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      maxConnectionMessages: maxConnectionMessages ?? 1000,
     );
   }
 
@@ -179,6 +204,7 @@ class SettingsModel {
       "dx": offset?.dx,
       "dy": offset?.dy,
       "defaultUriScheme": defaultUriScheme.name,
+      "defaultWsScheme": defaultWsScheme.name,
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
@@ -188,6 +214,7 @@ class SettingsModel {
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
+      "maxConnectionMessages": maxConnectionMessages,
     };
   }
 
@@ -206,6 +233,7 @@ class SettingsModel {
         other.size == size &&
         other.offset == offset &&
         other.defaultUriScheme == defaultUriScheme &&
+        other.defaultWsScheme == defaultWsScheme &&
         other.defaultCodeGenLang == defaultCodeGenLang &&
         other.saveResponses == saveResponses &&
         other.promptBeforeClosing == promptBeforeClosing &&
@@ -214,7 +242,8 @@ class SettingsModel {
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
-        mapEquals(other.defaultAIModel, defaultAIModel);
+        mapEquals(other.defaultAIModel, defaultAIModel) &&
+        other.maxConnectionMessages == maxConnectionMessages;
   }
 
   @override
@@ -226,6 +255,7 @@ class SettingsModel {
       size,
       offset,
       defaultUriScheme,
+      defaultWsScheme,
       defaultCodeGenLang,
       saveResponses,
       promptBeforeClosing,
@@ -235,6 +265,7 @@ class SettingsModel {
       isSSLDisabled,
       isDashBotEnabled,
       defaultAIModel,
+      maxConnectionMessages,
     );
   }
 }

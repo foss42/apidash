@@ -51,20 +51,23 @@ void main() {
       expect(result2.$2, "xml");
     });
     test(
-        'Testing getResponseBodyViewOptions for message/news a format currently not supported',
-        () {
-      MediaType mediaType3 = MediaType("message", "news");
-      var result3 = getResponseBodyViewOptions(mediaType3);
-      expect(result3.$1, kNoBodyViewOptions);
-      expect(result3.$2, null);
-    });
-    test('Testing getResponseBodyViewOptions for application/calendar+json',
-        () {
-      MediaType mediaType4 = MediaType("application", "calendar+json");
-      var result4 = getResponseBodyViewOptions(mediaType4);
-      expect(result4.$1, kPreviewRawBodyViewOptions);
-      expect(result4.$2, "json");
-    });
+      'Testing getResponseBodyViewOptions for message/news a format currently not supported',
+      () {
+        MediaType mediaType3 = MediaType("message", "news");
+        var result3 = getResponseBodyViewOptions(mediaType3);
+        expect(result3.$1, kNoBodyViewOptions);
+        expect(result3.$2, null);
+      },
+    );
+    test(
+      'Testing getResponseBodyViewOptions for application/calendar+json',
+      () {
+        MediaType mediaType4 = MediaType("application", "calendar+json");
+        var result4 = getResponseBodyViewOptions(mediaType4);
+        expect(result4.$1, kPreviewRawBodyViewOptions);
+        expect(result4.$2, "json");
+      },
+    );
     test('Testing getResponseBodyViewOptions for image/svg+xml', () {
       MediaType mediaType5 = MediaType("image", "svg+xml");
       var result5 = getResponseBodyViewOptions(mediaType5);
@@ -78,14 +81,17 @@ void main() {
       expect(result6.$2, "xml");
     });
     test(
-        'Testing getResponseBodyViewOptions for application/xml-external-parsed-entity',
-        () {
-      MediaType mediaType7 =
-          MediaType("application", "xml-external-parsed-entity");
-      var result7 = getResponseBodyViewOptions(mediaType7);
-      expect(result7.$1, kCodeRawBodyViewOptions);
-      expect(result7.$2, "xml");
-    });
+      'Testing getResponseBodyViewOptions for application/xml-external-parsed-entity',
+      () {
+        MediaType mediaType7 = MediaType(
+          "application",
+          "xml-external-parsed-entity",
+        );
+        var result7 = getResponseBodyViewOptions(mediaType7);
+        expect(result7.$1, kCodeRawBodyViewOptions);
+        expect(result7.$2, "xml");
+      },
+    );
     test('Testing getResponseBodyViewOptions for text/html', () {
       MediaType mediaType8 = MediaType("text", "html");
       var result8 = getResponseBodyViewOptions(mediaType8);

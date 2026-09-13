@@ -33,12 +33,14 @@ void main() {
       expect(result.headers?.length, 2);
       expect(
         result.headers?.any(
-            (h) => h.name == 'Content-Type' && h.value == 'application/json'),
+          (h) => h.name == 'Content-Type' && h.value == 'application/json',
+        ),
         true,
       );
       expect(
         result.headers?.any(
-            (h) => h.name == 'X-Custom-Header' && h.value == 'CustomValue'),
+          (h) => h.name == 'X-Custom-Header' && h.value == 'CustomValue',
+        ),
         true,
       );
     });
@@ -54,8 +56,10 @@ void main() {
 
       expect(result.headers?.length, 1);
       expect(
-        result.headers?.any((h) =>
-            h.name == 'Cookie' && h.value == 'session=abc123; token=xyz789'),
+        result.headers?.any(
+          (h) =>
+              h.name == 'Cookie' && h.value == 'session=abc123; token=xyz789',
+        ),
         true,
       );
     });
@@ -72,8 +76,9 @@ void main() {
 
       expect(result.headers?.length, 1);
       expect(
-        result.headers
-            ?.any((h) => h.name == 'Cookie' && h.value == 'existing=cookie'),
+        result.headers?.any(
+          (h) => h.name == 'Cookie' && h.value == 'existing=cookie',
+        ),
         true,
       );
     });
@@ -90,29 +95,33 @@ void main() {
       expect(result.headers?.length, 1);
       expect(
         result.headers?.any(
-            (h) => h.name == 'User-Agent' && h.value == 'MyCustomAgent/1.0'),
+          (h) => h.name == 'User-Agent' && h.value == 'MyCustomAgent/1.0',
+        ),
         true,
       );
     });
 
-    test('Should not override existing User-Agent header (case insensitive)',
-        () {
-      final curl = Curl(
-        method: 'GET',
-        uri: Uri.parse('https://api.example.com/users'),
-        headers: {'user-agent': 'ExistingAgent/2.0'},
-        userAgent: 'MyCustomAgent/1.0',
-      );
+    test(
+      'Should not override existing User-Agent header (case insensitive)',
+      () {
+        final curl = Curl(
+          method: 'GET',
+          uri: Uri.parse('https://api.example.com/users'),
+          headers: {'user-agent': 'ExistingAgent/2.0'},
+          userAgent: 'MyCustomAgent/1.0',
+        );
 
-      final result = convertCurlToHttpRequestModel(curl);
+        final result = convertCurlToHttpRequestModel(curl);
 
-      expect(result.headers?.length, 1);
-      expect(
-        result.headers?.any(
-            (h) => h.name == 'user-agent' && h.value == 'ExistingAgent/2.0'),
-        true,
-      );
-    });
+        expect(result.headers?.length, 1);
+        expect(
+          result.headers?.any(
+            (h) => h.name == 'user-agent' && h.value == 'ExistingAgent/2.0',
+          ),
+          true,
+        );
+      },
+    );
 
     test('Should map referer to Referer header', () {
       final curl = Curl(
@@ -125,8 +134,9 @@ void main() {
 
       expect(result.headers?.length, 1);
       expect(
-        result.headers?.any((h) =>
-            h.name == 'Referer' && h.value == 'https://example.com/source'),
+        result.headers?.any(
+          (h) => h.name == 'Referer' && h.value == 'https://example.com/source',
+        ),
         true,
       );
     });
@@ -144,7 +154,8 @@ void main() {
       expect(result.headers?.length, 1);
       expect(
         result.headers?.any(
-            (h) => h.name == 'Referer' && h.value == 'https://existing.com'),
+          (h) => h.name == 'Referer' && h.value == 'https://existing.com',
+        ),
         true,
       );
     });
@@ -162,8 +173,9 @@ void main() {
           'Basic ${base64.encode(utf8.encode('username:password'))}';
       expect(result.headers?.length, 1);
       expect(
-        result.headers
-            ?.any((h) => h.name == 'Authorization' && h.value == expectedAuth),
+        result.headers?.any(
+          (h) => h.name == 'Authorization' && h.value == expectedAuth,
+        ),
         true,
       );
     });
@@ -180,8 +192,10 @@ void main() {
 
       expect(result.headers?.length, 1);
       expect(
-        result.headers?.any((h) =>
-            h.name == 'Authorization' && h.value == 'Bearer existing-token'),
+        result.headers?.any(
+          (h) =>
+              h.name == 'Authorization' && h.value == 'Bearer existing-token',
+        ),
         true,
       );
     });
@@ -206,34 +220,17 @@ void main() {
         userAgent: 'MyApp/1.0',
         referer: 'https://example.com',
         user: 'admin:secret',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
       );
 
       final result = convertCurlToHttpRequestModel(curl);
 
       expect(result.headers?.length, 5);
-      expect(
-        result.headers?.any((h) => h.name == 'Cookie'),
-        true,
-      );
-      expect(
-        result.headers?.any((h) => h.name == 'User-Agent'),
-        true,
-      );
-      expect(
-        result.headers?.any((h) => h.name == 'Referer'),
-        true,
-      );
-      expect(
-        result.headers?.any((h) => h.name == 'Authorization'),
-        true,
-      );
-      expect(
-        result.headers?.any((h) => h.name == 'Content-Type'),
-        true,
-      );
+      expect(result.headers?.any((h) => h.name == 'Cookie'), true);
+      expect(result.headers?.any((h) => h.name == 'User-Agent'), true);
+      expect(result.headers?.any((h) => h.name == 'Referer'), true);
+      expect(result.headers?.any((h) => h.name == 'Authorization'), true);
+      expect(result.headers?.any((h) => h.name == 'Content-Type'), true);
     });
 
     test('Request with query parameters should parse them correctly', () {

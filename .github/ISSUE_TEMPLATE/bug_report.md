@@ -9,7 +9,7 @@ assignees: ''
 #### Describe the bug/problem
 _Please describe the bug/problem here_
 
-#### Steps to Reproduce the bug/problem
+#### Screenshot(s)/image(s)/Video demonstrating the bug/problem
 _Please provide the steps to reproduce the behaviour. Screenshot(s)/image(s) are preferred to help explain it better_
 
 #### Expected behavior

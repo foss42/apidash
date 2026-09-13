@@ -30,25 +30,28 @@ void main() async {
         title: 'CodeGen Previewer',
         theme: kThemeDataLight,
         home: Scaffold(
-            body: Column(
-          children: [
-            Expanded(
-              child: CodeGenPreviewer(
-                code: code,
-                theme: kLightCodeTheme,
-                language: 'dart',
-                textStyle: kCodeStyle,
+          body: Column(
+            children: [
+              Expanded(
+                child: CodeGenPreviewer(
+                  code: code,
+                  theme: kLightCodeTheme,
+                  language: 'dart',
+                  textStyle: kCodeStyle,
+                ),
               ),
-            ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Error Status Code', findRichText: true),
-        findsOneWidget);
+    expect(
+      find.textContaining('Error Status Code', findRichText: true),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Testing for View Code Pane', (tester) async {
@@ -57,27 +60,29 @@ void main() async {
         title: 'ViewCodePane',
         theme: kThemeDataDark,
         home: Scaffold(
-            body: Column(
-          children: [
-            Expanded(
-              child: ViewCodePane(
-                code: code,
-                codegenLanguage: CodegenLanguage.dartHttp,
-                onChangedCodegenLanguage: (p0) {},
+          body: Column(
+            children: [
+              Expanded(
+                child: ViewCodePane(
+                  code: code,
+                  codegenLanguage: CodegenLanguage.dartHttp,
+                  onChangedCodegenLanguage: (p0) {},
+                ),
               ),
-            ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
 
     await tester.pumpAndSettle();
     expect(find.byType(DropdownButton<CodegenLanguage>), findsOneWidget);
     expect(
-        (tester.widget(find.byType(DropdownButton<CodegenLanguage>))
-                as DropdownButton)
-            .value,
-        equals(CodegenLanguage.dartHttp));
+      (tester.widget(find.byType(DropdownButton<CodegenLanguage>))
+              as DropdownButton)
+          .value,
+      equals(CodegenLanguage.dartHttp),
+    );
 
     await tester.tap(find.text('Dart (http)'));
     await tester.pump();
@@ -87,8 +92,10 @@ void main() async {
     expect(find.text('Go (http)'), findsWidgets);
     expect(find.text('JavaScript (axios)'), findsWidgets);
 
-    expect(find.textContaining('Error Status Code', findRichText: true),
-        findsOneWidget);
+    expect(
+      find.textContaining('Error Status Code', findRichText: true),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.content_copy), findsOneWidget);
     expect(find.text('Copy'), findsOneWidget);
   });
@@ -99,25 +106,28 @@ void main() async {
         title: 'ViewCodePane',
         theme: kThemeDataLight,
         home: Scaffold(
-            body: Column(
-          children: [
-            Expanded(
-              child: ViewCodePane(
-                code: code,
-                codegenLanguage: CodegenLanguage.dartHttp,
-                onChangedCodegenLanguage: (p0) {},
+          body: Column(
+            children: [
+              Expanded(
+                child: ViewCodePane(
+                  code: code,
+                  codegenLanguage: CodegenLanguage.dartHttp,
+                  onChangedCodegenLanguage: (p0) {},
+                ),
               ),
-            ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
     );
 
     await tester.pumpAndSettle();
     expect(find.text('Dart (http)'), findsOneWidget);
 
-    expect(find.textContaining('Error Status Code', findRichText: true),
-        findsOneWidget);
+    expect(
+      find.textContaining('Error Status Code', findRichText: true),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.content_copy), findsOneWidget);
     expect(find.text('Copy'), findsOneWidget);
   });

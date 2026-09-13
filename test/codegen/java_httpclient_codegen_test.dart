@@ -33,12 +33,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET2', () {
       const expectedCode = r'''
@@ -65,12 +66,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET3', () {
       const expectedCode = r'''import java.net.URI;
@@ -96,12 +98,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET4', () {
       const expectedCode = r'''
@@ -128,12 +131,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET5', () {
       const expectedCode = r'''
@@ -163,12 +167,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET6', () {
       const expectedCode = r'''
@@ -198,12 +203,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET7', () {
       const expectedCode = r'''
@@ -230,12 +236,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET8', () {
       const expectedCode = r'''
@@ -265,12 +272,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET9', () {
       const expectedCode = r'''
@@ -297,12 +305,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET10', () {
       const expectedCode = r'''
@@ -332,12 +341,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET11', () {
       const expectedCode = r'''
@@ -367,12 +377,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('GET12', () {
       const expectedCode = r'''
@@ -399,12 +410,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -434,12 +446,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('HEAD2', () {
       const expectedCode = r'''
@@ -466,12 +479,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -507,12 +521,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST2', () {
       const expectedCode = r'''
@@ -550,12 +565,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST3', () {
       const expectedCode = r'''
@@ -589,12 +605,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST4', () {
       const expectedCode = r'''
@@ -660,10 +677,14 @@ public class Main {
   }
 }''';
       expect(
-          codeGen.getCode(CodegenLanguage.javaHttpClient, requestModelPost4,
-              SupportedUriSchemes.https,
-              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+          boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
     test('POST5', () {
       const expectedCode = r'''
@@ -730,10 +751,14 @@ public class Main {
   }
 }''';
       expect(
-          codeGen.getCode(CodegenLanguage.javaHttpClient, requestModelPost5,
-              SupportedUriSchemes.https,
-              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+          boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
     test('POST6', () {
       const expectedCode = r'''
@@ -798,10 +823,14 @@ public class Main {
   }
 }''';
       expect(
-          codeGen.getCode(CodegenLanguage.javaHttpClient, requestModelPost6,
-              SupportedUriSchemes.https,
-              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+          boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
     test('POST7', () {
       const expectedCode = r'''
@@ -866,10 +895,14 @@ public class Main {
   }
 }''';
       expect(
-          codeGen.getCode(CodegenLanguage.javaHttpClient, requestModelPost7,
-              SupportedUriSchemes.https,
-              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+          boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
     test('POST8', () {
       const expectedCode = r'''
@@ -935,10 +968,14 @@ public class Main {
   }
 }''';
       expect(
-          codeGen.getCode(CodegenLanguage.javaHttpClient, requestModelPost8,
-              SupportedUriSchemes.https,
-              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+          boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
     test('POST9', () {
       const expectedCode = r'''
@@ -1005,10 +1042,14 @@ public class Main {
   }
 }''';
       expect(
-          codeGen.getCode(CodegenLanguage.javaHttpClient, requestModelPost9,
-              SupportedUriSchemes.https,
-              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+          boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3",
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1046,12 +1087,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1089,12 +1131,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1127,12 +1170,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('DELETE2', () {
       const expectedCode = r'''
@@ -1167,12 +1211,13 @@ public class Main {
   
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaHttpClient,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

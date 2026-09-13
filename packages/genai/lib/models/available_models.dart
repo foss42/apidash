@@ -17,7 +17,7 @@ String availableModelsToJson(AvailableModels data) =>
     json.encode(data.toJson());
 
 @freezed
-class AvailableModels with _$AvailableModels {
+abstract class AvailableModels with _$AvailableModels {
   const AvailableModels._();
   const factory AvailableModels({
     @JsonKey(name: "version") required double version,
@@ -35,7 +35,7 @@ class AvailableModels with _$AvailableModels {
 }
 
 @freezed
-class AIModelProvider with _$AIModelProvider {
+abstract class AIModelProvider with _$AIModelProvider {
   const AIModelProvider._();
 
   const factory AIModelProvider({
@@ -58,7 +58,7 @@ class AIModelProvider with _$AIModelProvider {
 }
 
 @freezed
-class Model with _$Model {
+abstract class Model with _$Model {
   const factory Model({
     @JsonKey(name: "id") String? id,
     @JsonKey(name: "name") String? name,

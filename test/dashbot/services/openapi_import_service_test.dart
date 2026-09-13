@@ -31,9 +31,10 @@ void main() {
       expect(summary, contains('POST'));
     });
 
-    test('tryParseSpec handles problematic security field with empty arrays',
-        () {
-      const specWithEmptySecurityArray = '''
+    test(
+      'tryParseSpec handles problematic security field with empty arrays',
+      () {
+        const specWithEmptySecurityArray = '''
 {
   "openapi": "3.0.0",
   "info": {
@@ -54,18 +55,21 @@ void main() {
   "security": [[]]
 }''';
 
-      final result =
-          OpenApiImportService.tryParseSpec(specWithEmptySecurityArray);
-      expect(result, isNotNull);
-      expect(result!.info.title, equals('Cat Fact API'));
-      expect(result.info.version, equals('1.0.0'));
-      expect(result.paths, isNotNull);
-      expect(result.paths!.keys, contains('/fact'));
-    });
+        final result = OpenApiImportService.tryParseSpec(
+          specWithEmptySecurityArray,
+        );
+        expect(result, isNotNull);
+        expect(result!.info.title, equals('Cat Fact API'));
+        expect(result.info.version, equals('1.0.0'));
+        expect(result.paths, isNotNull);
+        expect(result.paths!.keys, contains('/fact'));
+      },
+    );
 
-    test('tryParseSpec handles valid security field with actual requirements',
-        () {
-      const specWithRealSecurity = '''
+    test(
+      'tryParseSpec handles valid security field with actual requirements',
+      () {
+        const specWithRealSecurity = '''
 {
   "openapi": "3.0.0",
   "info": {
@@ -90,10 +94,11 @@ void main() {
   ]
 }''';
 
-      final result = OpenApiImportService.tryParseSpec(specWithRealSecurity);
-      expect(result, isNotNull);
-      expect(result!.info.title, equals('Secured API'));
-    });
+        final result = OpenApiImportService.tryParseSpec(specWithRealSecurity);
+        expect(result, isNotNull);
+        expect(result!.info.title, equals('Secured API'));
+      },
+    );
 
     test('tryParseSpec returns null for invalid JSON', () {
       const invalidSpec = 'not valid json';
@@ -202,55 +207,59 @@ void main() {
 ''';
 
     test(
-        'extractSpecMeta captures tags, content types, trimming and noteworthy routes',
-        () {
-      final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
-      final meta = OpenApiImportService.extractSpecMeta(spec,
-          maxRoutes: 1); // trigger trimming branch
-      // endpointsCount should reflect all operations (GET, POST on /search, POST on /upload) = 3
-      expect(meta['endpointsCount'], 3);
-      // routes trimmed to 1
-      expect((meta['routes'] as List).length, 1);
-      // noteworthyRoutes should include /search and possibly /upload depending on heuristic; ensure contains user/search keyword logic
-      final noteworthy = (meta['noteworthyRoutes'] as List);
-      expect(
-        noteworthy.any((r) => (r['path'] as String).contains('search')),
-        true,
-      );
-      // methods & tags include expected values
-      final methods = (meta['methods'] as List);
-      expect(methods.contains('GET'), true);
-      expect(methods.contains('POST'), true);
-      final tags = (meta['tags'] as List);
-      expect(tags.contains('search'), true);
-      // request/response content types captured
-      final reqCts = (meta['requestContentTypes'] as List);
-      expect(reqCts.isNotEmpty, true);
-      final respCts = (meta['responseContentTypes'] as List);
-      expect(respCts.contains('application/json'), true);
-    });
+      'extractSpecMeta captures tags, content types, trimming and noteworthy routes',
+      () {
+        final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
+        final meta = OpenApiImportService.extractSpecMeta(
+          spec,
+          maxRoutes: 1,
+        ); // trigger trimming branch
+        // endpointsCount should reflect all operations (GET, POST on /search, POST on /upload) = 3
+        expect(meta['endpointsCount'], 3);
+        // routes trimmed to 1
+        expect((meta['routes'] as List).length, 1);
+        // noteworthyRoutes should include /search and possibly /upload depending on heuristic; ensure contains user/search keyword logic
+        final noteworthy = (meta['noteworthyRoutes'] as List);
+        expect(
+          noteworthy.any((r) => (r['path'] as String).contains('search')),
+          true,
+        );
+        // methods & tags include expected values
+        final methods = (meta['methods'] as List);
+        expect(methods.contains('GET'), true);
+        expect(methods.contains('POST'), true);
+        final tags = (meta['tags'] as List);
+        expect(tags.contains('search'), true);
+        // request/response content types captured
+        final reqCts = (meta['requestContentTypes'] as List);
+        expect(reqCts.isNotEmpty, true);
+        final respCts = (meta['responseContentTypes'] as List);
+        expect(respCts.contains('application/json'), true);
+      },
+    );
 
     test(
-        'payloadForOperation covers json request body & header param & baseUrl slash trimming',
-        () {
-      final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
-      final getOp = spec.paths!['/search']!.get!;
-      final payload = OpenApiImportService.payloadForOperation(
-        baseUrl: spec.servers!.first.url!, // ends with slash
-        path: '/search',
-        method: 'get',
-        op: getOp,
-      );
-      // baseUrl with trailing slash should not duplicate
-      expect(payload['url'], 'https://api.apidash.dev/search');
-      final headers = (payload['headers'] as Map<String, dynamic>);
-      // header param captured (value placeholder empty)
-      expect(headers.containsKey('X-Test'), true);
-      // JSON content type set and example serialized
-      expect(headers['Content-Type'], 'application/json');
-      expect(payload['body'], contains('"q"'));
-      expect(payload['form'], false);
-    });
+      'payloadForOperation covers json request body & header param & baseUrl slash trimming',
+      () {
+        final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
+        final getOp = spec.paths!['/search']!.get!;
+        final payload = OpenApiImportService.payloadForOperation(
+          baseUrl: spec.servers!.first.url!, // ends with slash
+          path: '/search',
+          method: 'get',
+          op: getOp,
+        );
+        // baseUrl with trailing slash should not duplicate
+        expect(payload['url'], 'https://api.apidash.dev/search');
+        final headers = (payload['headers'] as Map<String, dynamic>);
+        // header param captured (value placeholder empty)
+        expect(headers.containsKey('X-Test'), true);
+        // JSON content type set and example serialized
+        expect(headers['Content-Type'], 'application/json');
+        expect(payload['body'], contains('"q"'));
+        expect(payload['form'], false);
+      },
+    );
 
     test('payloadForOperation covers form request body variants', () {
       final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
@@ -263,7 +272,9 @@ void main() {
       );
       expect(payload1['form'], true);
       expect(
-          (payload1['headers'] as Map)['Content-Type'], 'multipart/form-data');
+        (payload1['headers'] as Map)['Content-Type'],
+        'multipart/form-data',
+      );
 
       final uploadOp = spec.paths!['/upload']!.post!; // urlencoded form
       final payload2 = OpenApiImportService.payloadForOperation(
@@ -273,14 +284,18 @@ void main() {
         op: uploadOp,
       );
       expect(payload2['form'], true);
-      expect((payload2['headers'] as Map)['Content-Type'],
-          'application/x-www-form-urlencoded');
+      expect(
+        (payload2['headers'] as Map)['Content-Type'],
+        'application/x-www-form-urlencoded',
+      );
     });
 
     test('buildOperationPicker with insights branch', () {
       final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
-      final picker = OpenApiImportService.buildOperationPicker(spec,
-          insights: 'Some insights');
+      final picker = OpenApiImportService.buildOperationPicker(
+        spec,
+        insights: 'Some insights',
+      );
       expect(picker['explanation'], contains('Some insights'));
     });
 

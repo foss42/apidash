@@ -15,37 +15,43 @@ void main() {
 
   group('DashbotActionWidgetFactory.build', () {
     group('ChatActionType.other cases', () {
-      test('returns DashbotImportNowButton when action is import_now_openapi',
-          () {
-        const action = ChatAction(
-          action: 'import_now_openapi',
-          target: 'httpRequestModel',
-          actionType: ChatActionType.other,
-          targetType: ChatActionTarget.httpRequestModel,
-        );
+      test(
+        'returns DashbotImportNowButton when action is import_now_openapi',
+        () {
+          const action = ChatAction(
+            action: 'import_now_openapi',
+            target: 'httpRequestModel',
+            actionType: ChatActionType.other,
+            targetType: ChatActionTarget.httpRequestModel,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotImportNowButton>());
-        expect((widget as DashbotImportNowButton).action, equals(action));
-      });
+          expect(widget, isA<DashbotImportNowButton>());
+          expect((widget as DashbotImportNowButton).action, equals(action));
+        },
+      );
 
       test(
-          'returns DashbotSelectOperationButton when field is select_operation',
-          () {
-        const action = ChatAction(
-          action: 'some_action',
-          target: 'httpRequestModel',
-          field: 'select_operation',
-          actionType: ChatActionType.other,
-          targetType: ChatActionTarget.httpRequestModel,
-        );
+        'returns DashbotSelectOperationButton when field is select_operation',
+        () {
+          const action = ChatAction(
+            action: 'some_action',
+            target: 'httpRequestModel',
+            field: 'select_operation',
+            actionType: ChatActionType.other,
+            targetType: ChatActionTarget.httpRequestModel,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotSelectOperationButton>());
-        expect((widget as DashbotSelectOperationButton).action, equals(action));
-      });
+          expect(widget, isA<DashbotSelectOperationButton>());
+          expect(
+            (widget as DashbotSelectOperationButton).action,
+            equals(action),
+          );
+        },
+      );
 
       test('returns DashbotAddTestButton when targetType is test', () {
         const action = ChatAction(
@@ -75,38 +81,44 @@ void main() {
         expect((widget as DashbotGeneratedCodeBlock).action, equals(action));
       });
 
-      test('returns null when no conditions match for ChatActionType.other',
-          () {
-        const action = ChatAction(
-          action: 'unknown_action',
-          target: 'httpRequestModel',
-          field: 'unknown_field',
-          actionType: ChatActionType.other,
-          targetType: ChatActionTarget.httpRequestModel,
-        );
+      test(
+        'returns null when no conditions match for ChatActionType.other',
+        () {
+          const action = ChatAction(
+            action: 'unknown_action',
+            target: 'httpRequestModel',
+            field: 'unknown_field',
+            actionType: ChatActionType.other,
+            targetType: ChatActionTarget.httpRequestModel,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isNull);
-      });
+          expect(widget, isNull);
+        },
+      );
     });
 
     group('ChatActionType.showLanguages cases', () {
-      test('returns DashbotGenerateLanguagePicker when targetType is codegen',
-          () {
-        const action = ChatAction(
-          action: 'show_languages',
-          target: 'codegen',
-          actionType: ChatActionType.showLanguages,
-          targetType: ChatActionTarget.codegen,
-        );
+      test(
+        'returns DashbotGenerateLanguagePicker when targetType is codegen',
+        () {
+          const action = ChatAction(
+            action: 'show_languages',
+            target: 'codegen',
+            actionType: ChatActionType.showLanguages,
+            targetType: ChatActionTarget.codegen,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotGenerateLanguagePicker>());
-        expect(
-            (widget as DashbotGenerateLanguagePicker).action, equals(action));
-      });
+          expect(widget, isA<DashbotGenerateLanguagePicker>());
+          expect(
+            (widget as DashbotGenerateLanguagePicker).action,
+            equals(action),
+          );
+        },
+      );
 
       test('returns null when targetType is not codegen for showLanguages', () {
         const action = ChatAction(
@@ -139,20 +151,22 @@ void main() {
     });
 
     group('ChatActionType.applyOpenApi cases', () {
-      test('returns DashbotImportNowButton when action is import_now_openapi',
-          () {
-        const action = ChatAction(
-          action: 'import_now_openapi',
-          target: 'httpRequestModel',
-          actionType: ChatActionType.applyOpenApi,
-          targetType: ChatActionTarget.httpRequestModel,
-        );
+      test(
+        'returns DashbotImportNowButton when action is import_now_openapi',
+        () {
+          const action = ChatAction(
+            action: 'import_now_openapi',
+            target: 'httpRequestModel',
+            actionType: ChatActionType.applyOpenApi,
+            targetType: ChatActionTarget.httpRequestModel,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotImportNowButton>());
-        expect((widget as DashbotImportNowButton).action, equals(action));
-      });
+          expect(widget, isA<DashbotImportNowButton>());
+          expect((widget as DashbotImportNowButton).action, equals(action));
+        },
+      );
 
       test('returns null when action is not import_now_openapi', () {
         const action = ChatAction(
@@ -185,20 +199,22 @@ void main() {
     });
 
     group('ChatActionType.noAction cases', () {
-      test('returns DashbotImportNowButton when action is import_now_openapi',
-          () {
-        const action = ChatAction(
-          action: 'import_now_openapi',
-          target: 'httpRequestModel',
-          actionType: ChatActionType.noAction,
-          targetType: ChatActionTarget.httpRequestModel,
-        );
+      test(
+        'returns DashbotImportNowButton when action is import_now_openapi',
+        () {
+          const action = ChatAction(
+            action: 'import_now_openapi',
+            target: 'httpRequestModel',
+            actionType: ChatActionType.noAction,
+            targetType: ChatActionTarget.httpRequestModel,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotImportNowButton>());
-        expect((widget as DashbotImportNowButton).action, equals(action));
-      });
+          expect(widget, isA<DashbotImportNowButton>());
+          expect((widget as DashbotImportNowButton).action, equals(action));
+        },
+      );
 
       test('returns null when action is not import_now_openapi', () {
         const action = ChatAction(
@@ -315,87 +331,97 @@ void main() {
     });
 
     group('ChatActionType.uploadAsset cases', () {
-      test('returns DashbotUploadRequestButton when targetType is attachment',
-          () {
-        const action = ChatAction(
-          action: 'upload_asset',
-          target: 'attachment',
-          actionType: ChatActionType.uploadAsset,
-          targetType: ChatActionTarget.attachment,
-        );
+      test(
+        'returns DashbotUploadRequestButton when targetType is attachment',
+        () {
+          const action = ChatAction(
+            action: 'upload_asset',
+            target: 'attachment',
+            actionType: ChatActionType.uploadAsset,
+            targetType: ChatActionTarget.attachment,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotUploadRequestButton>());
-        expect((widget as DashbotUploadRequestButton).action, equals(action));
-      });
+          expect(widget, isA<DashbotUploadRequestButton>());
+          expect((widget as DashbotUploadRequestButton).action, equals(action));
+        },
+      );
 
-      test('returns null when targetType is not attachment for uploadAsset',
-          () {
-        const action = ChatAction(
-          action: 'upload_asset',
-          target: 'httpRequestModel',
-          actionType: ChatActionType.uploadAsset,
-          targetType: ChatActionTarget.httpRequestModel,
-        );
+      test(
+        'returns null when targetType is not attachment for uploadAsset',
+        () {
+          const action = ChatAction(
+            action: 'upload_asset',
+            target: 'httpRequestModel',
+            actionType: ChatActionType.uploadAsset,
+            targetType: ChatActionTarget.httpRequestModel,
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isNull);
-      });
+          expect(widget, isNull);
+        },
+      );
     });
 
     group('Fallback cases (legacy string-based checks)', () {
-      test('returns DashbotAddTestButton when action=other and target=test',
-          () {
-        const action = ChatAction(
-          action: 'other',
-          target: 'test',
-          actionType: ChatActionType.other,
-          targetType: ChatActionTarget
-              .httpRequestModel, // Different target type to test fallback
-        );
+      test(
+        'returns DashbotAddTestButton when action=other and target=test',
+        () {
+          const action = ChatAction(
+            action: 'other',
+            target: 'test',
+            actionType: ChatActionType.other,
+            targetType: ChatActionTarget
+                .httpRequestModel, // Different target type to test fallback
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotAddTestButton>());
-        expect((widget as DashbotAddTestButton).action, equals(action));
-      });
+          expect(widget, isA<DashbotAddTestButton>());
+          expect((widget as DashbotAddTestButton).action, equals(action));
+        },
+      );
 
       test(
-          'returns DashbotGeneratedCodeBlock when action=other and target=code',
-          () {
-        const action = ChatAction(
-          action: 'other',
-          target: 'code',
-          actionType: ChatActionType.other,
-          targetType: ChatActionTarget
-              .httpRequestModel, // Different target type to test fallback
-        );
+        'returns DashbotGeneratedCodeBlock when action=other and target=code',
+        () {
+          const action = ChatAction(
+            action: 'other',
+            target: 'code',
+            actionType: ChatActionType.other,
+            targetType: ChatActionTarget
+                .httpRequestModel, // Different target type to test fallback
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotGeneratedCodeBlock>());
-        expect((widget as DashbotGeneratedCodeBlock).action, equals(action));
-      });
+          expect(widget, isA<DashbotGeneratedCodeBlock>());
+          expect((widget as DashbotGeneratedCodeBlock).action, equals(action));
+        },
+      );
 
       test(
-          'returns DashbotGenerateLanguagePicker when action=show_languages and target=codegen',
-          () {
-        const action = ChatAction(
-          action: 'show_languages',
-          target: 'codegen',
-          actionType: ChatActionType.other,
-          targetType: ChatActionTarget
-              .httpRequestModel, // Different target type to test fallback
-        );
+        'returns DashbotGenerateLanguagePicker when action=show_languages and target=codegen',
+        () {
+          const action = ChatAction(
+            action: 'show_languages',
+            target: 'codegen',
+            actionType: ChatActionType.other,
+            targetType: ChatActionTarget
+                .httpRequestModel, // Different target type to test fallback
+          );
 
-        final widget = DashbotActionWidgetFactory.build(action);
+          final widget = DashbotActionWidgetFactory.build(action);
 
-        expect(widget, isA<DashbotGenerateLanguagePicker>());
-        expect(
-            (widget as DashbotGenerateLanguagePicker).action, equals(action));
-      });
+          expect(widget, isA<DashbotGenerateLanguagePicker>());
+          expect(
+            (widget as DashbotGenerateLanguagePicker).action,
+            equals(action),
+          );
+        },
+      );
 
       test('returns DashbotApplyCurlButton when action=apply_curl', () {
         const action = ChatAction(
@@ -479,11 +505,11 @@ class TestActionWidget extends Widget with DashbotActionMixin {
 
   @override
   ChatAction get action => const ChatAction(
-        action: 'test',
-        target: 'test',
-        actionType: ChatActionType.other,
-        targetType: ChatActionTarget.httpRequestModel,
-      );
+    action: 'test',
+    target: 'test',
+    actionType: ChatActionType.other,
+    targetType: ChatActionTarget.httpRequestModel,
+  );
 
   @override
   Element createElement() => throw UnimplementedError();

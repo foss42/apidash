@@ -17,9 +17,7 @@ void main() {
           child: MaterialApp(
             title: 'Save button',
             theme: kThemeDataLight,
-            home: const Scaffold(
-              body: SaveButton(),
-            ),
+            home: const Scaffold(body: SaveButton()),
           ),
         ),
       );
@@ -27,8 +25,9 @@ void main() {
       expect(icon, findsOneWidget);
 
       final saveButton = find.ancestor(
-          of: icon,
-          matching: find.byWidgetPredicate((widget) => widget is TextButton));
+        of: icon,
+        matching: find.byWidgetPredicate((widget) => widget is TextButton),
+      );
       expect(saveButton, findsOneWidget);
 
       final saveButtonWidget = tester.widget<TextButton>(saveButton);
@@ -45,9 +44,7 @@ void main() {
           child: MaterialApp(
             title: 'Save button',
             theme: kThemeDataLight,
-            home: const Scaffold(
-              body: SaveButton(),
-            ),
+            home: const Scaffold(body: SaveButton()),
           ),
         ),
       );
@@ -56,8 +53,9 @@ void main() {
       expect(icon, findsOneWidget);
 
       final saveButton = find.ancestor(
-          of: icon,
-          matching: find.byWidgetPredicate((widget) => widget is TextButton));
+        of: icon,
+        matching: find.byWidgetPredicate((widget) => widget is TextButton),
+      );
       expect(saveButton, findsOneWidget);
 
       final saveButtonWidget = tester.widget<TextButton>(saveButton);

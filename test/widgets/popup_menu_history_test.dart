@@ -4,8 +4,9 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
 void main() {
-  testWidgets('Testing HistoryRetentionPopupMenu widget',
-      (WidgetTester tester) async {
+  testWidgets('Testing HistoryRetentionPopupMenu widget', (
+    WidgetTester tester,
+  ) async {
     const historyPeriod1 = HistoryRetentionPeriod.oneMonth;
     const historyPeriod2 = HistoryRetentionPeriod.threeMonths;
     const HistoryRetentionPeriod initialValue = HistoryRetentionPeriod.oneWeek;

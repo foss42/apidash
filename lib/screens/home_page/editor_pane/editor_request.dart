@@ -4,7 +4,7 @@ import 'package:apidash/consts.dart';
 import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';
 import 'request_editor_top_bar.dart';
-import 'url_card.dart';
+import 'url_card/url_card.dart';
 
 class RequestEditor extends StatelessWidget {
   const RequestEditor({super.key});
@@ -17,11 +17,7 @@ class RequestEditor extends StatelessWidget {
             child: Column(
               children: [
                 kVSpacer20,
-                Expanded(
-                  child: EditRequestPane(
-                    showViewCodeButton: false,
-                  ),
-                ),
+                Expanded(child: EditRequestPane(showViewCodeButton: false)),
               ],
             ),
           )
@@ -32,9 +28,7 @@ class RequestEditor extends StatelessWidget {
                 RequestEditorTopBar(),
                 EditorPaneRequestURLCard(),
                 kVSpacer10,
-                Expanded(
-                  child: EditorPaneRequestDetailsCard(),
-                ),
+                Expanded(child: EditorPaneRequestDetailsCard()),
               ],
             ),
           );

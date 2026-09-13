@@ -27,6 +27,13 @@ final kColorHttpMethodOptions = Colors.deepPurple.shade800;
 
 final kColorGQL = Colors.pink.shade600;
 
+// Realtime (WebSocket) event-stream status colors.
+final kColorWsConnected = Colors.teal.shade400;
+final kColorWsSent = Colors.blue.shade400;
+final kColorWsReceived = Colors.green.shade400;
+final kColorWsError = Colors.red.shade400;
+final kColorWsDisconnected = Colors.orange.shade400;
+
 const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 const kOverlayBackgroundOpacity = 0.5;

@@ -26,28 +26,29 @@ void main() {
         },
         target: 'apply_to_selected',
         requestId: 'r1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {
-          lastUpdate = {
-            'id': id,
-            'method': method,
-            'url': url,
-            'headers': headers,
-            'body': body,
-            'bodyContentType': bodyContentType,
-          };
-        },
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {
+              lastUpdate = {
+                'id': id,
+                'method': method,
+                'url': url,
+                'headers': headers,
+                'body': body,
+                'bodyContentType': bodyContentType,
+              };
+            },
         addNewRequest: (model, {name}) => newModel = model,
         ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
       );
@@ -66,19 +67,20 @@ void main() {
         },
         target: 'apply_to_new',
         requestId: 'r1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {},
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {},
         addNewRequest: (model, {name}) => newModel = model,
         ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
       );
@@ -99,26 +101,27 @@ void main() {
             {
               'name': 'field2',
               'value': 'v2',
-              'type': 'unknownType'
+              'type': 'unknownType',
             }, // fallback
             'not-a-map',
           ],
         },
         target: 'apply_to_new',
         requestId: 'r1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {},
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {},
         addNewRequest: (model, {name}) => newModel = model,
         ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
       );
@@ -130,64 +133,65 @@ void main() {
       expect(newModel!.formData![1].type, FormDataType.text); // fallback
     });
 
-    test('apply_to_selected with unknown method fallback + empty body -> text',
-        () async {
-      result = await service.applyCurl(
-        payload: {
-          'method': 'PATCHX', // unknown -> fallback to GET
-          'url': 'https://api.apidash.dev/sel',
-          'headers': {'X-Test': '1'},
-          'body': '   ', // trimmed empty triggers text content type
-        },
-        target: 'apply_to_selected',
-        requestId: 'sel1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {
-          lastUpdate = {
-            'method': method,
-            'bodyContentType': bodyContentType,
-          };
-        },
-        addNewRequest: (_, {name}) {},
-        ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
-      );
-      expect(result!.systemMessage, contains('Applied cURL'));
-      expect(lastUpdate!['method'], HTTPVerb.get); // fallback
-      expect(lastUpdate!['bodyContentType'], ContentType.text);
-    });
+    test(
+      'apply_to_selected with unknown method fallback + empty body -> text',
+      () async {
+        result = await service.applyCurl(
+          payload: {
+            'method': 'PATCHX', // unknown -> fallback to GET
+            'url': 'https://api.apidash.dev/sel',
+            'headers': {'X-Test': '1'},
+            'body': '   ', // trimmed empty triggers text content type
+          },
+          target: 'apply_to_selected',
+          requestId: 'sel1',
+          updateSelected:
+              ({
+                required String id,
+                HTTPVerb? method,
+                String? url,
+                List<NameValueModel>? headers,
+                List<bool>? isHeaderEnabledList,
+                String? body,
+                ContentType? bodyContentType,
+                List<FormDataModel>? formData,
+                List<NameValueModel>? params,
+                List<bool>? isParamEnabledList,
+                String? postRequestScript,
+              }) {
+                lastUpdate = {
+                  'method': method,
+                  'bodyContentType': bodyContentType,
+                };
+              },
+          addNewRequest: (_, {name}) {},
+          ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
+        );
+        expect(result!.systemMessage, contains('Applied cURL'));
+        expect(lastUpdate!['method'], HTTPVerb.get); // fallback
+        expect(lastUpdate!['bodyContentType'], ContentType.text);
+      },
+    );
 
     test('unknown target returns null', () async {
       final res = await service.applyCurl(
-        payload: {
-          'method': 'GET',
-          'url': 'https://api.apidash.dev/none',
-        },
+        payload: {'method': 'GET', 'url': 'https://api.apidash.dev/none'},
         target: 'unrecognized',
         requestId: 'r1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {},
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {},
         addNewRequest: (_, {name}) {},
         ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
       );
@@ -212,19 +216,20 @@ void main() {
         field: 'apply_to_new',
         path: '/users',
         requestId: 'r1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {},
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {},
         addNewRequest: (model, {name}) => newModel = model,
         ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
       );
@@ -232,58 +237,61 @@ void main() {
       expect(newModel!.url, contains('{{BASE_URL_'));
     });
 
-    test('apply_to_selected with routePath else-branch, formData & json body',
-        () async {
-      Map<String, dynamic>? captured;
-      result = await service.applyOpenApi(
-        payload: {
-          'method': 'CUSTOMVERB', // fallback to GET
-          'url': 'https://api.apidash.dev/v1/users?id=1',
-          'baseUrl':
-              'https://different-base.dev', // does not match -> else branch
-          'headers': {'Accept': 'application/json'},
-          'body': '{"a":1}', // json detection path
-          'formData': [
-            {'name': 'f1', 'value': 'v1', 'type': 'text'},
-            {
-              'name': 'f2',
-              'value': 'v2',
-              'type': 'unknownType'
-            }, // fallback type
-          ],
-        },
-        field: 'apply_to_selected',
-        path: '/v1/users',
-        requestId: 'openSel1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {
-          captured = {
-            'method': method,
-            'url': url,
-            'bodyType': bodyContentType,
-            'formDataLen': formData?.length,
-          };
-        },
-        addNewRequest: (_, {name}) {},
-        ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
-      );
-      expect(result!.systemMessage, contains('Applied OpenAPI'));
-      expect(captured!['method'], HTTPVerb.get); // fallback method
-      // Since formData provided, content type should resolve to formdata (branch: formFlag/formData.isNotEmpty)
-      expect(captured!['bodyType'], ContentType.formdata);
-      expect(captured!['formDataLen'], 2);
-    });
+    test(
+      'apply_to_selected with routePath else-branch, formData & json body',
+      () async {
+        Map<String, dynamic>? captured;
+        result = await service.applyOpenApi(
+          payload: {
+            'method': 'CUSTOMVERB', // fallback to GET
+            'url': 'https://api.apidash.dev/v1/users?id=1',
+            'baseUrl':
+                'https://different-base.dev', // does not match -> else branch
+            'headers': {'Accept': 'application/json'},
+            'body': '{"a":1}', // json detection path
+            'formData': [
+              {'name': 'f1', 'value': 'v1', 'type': 'text'},
+              {
+                'name': 'f2',
+                'value': 'v2',
+                'type': 'unknownType',
+              }, // fallback type
+            ],
+          },
+          field: 'apply_to_selected',
+          path: '/v1/users',
+          requestId: 'openSel1',
+          updateSelected:
+              ({
+                required String id,
+                HTTPVerb? method,
+                String? url,
+                List<NameValueModel>? headers,
+                List<bool>? isHeaderEnabledList,
+                String? body,
+                ContentType? bodyContentType,
+                List<FormDataModel>? formData,
+                List<NameValueModel>? params,
+                List<bool>? isParamEnabledList,
+                String? postRequestScript,
+              }) {
+                captured = {
+                  'method': method,
+                  'url': url,
+                  'bodyType': bodyContentType,
+                  'formDataLen': formData?.length,
+                };
+              },
+          addNewRequest: (_, {name}) {},
+          ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
+        );
+        expect(result!.systemMessage, contains('Applied OpenAPI'));
+        expect(captured!['method'], HTTPVerb.get); // fallback method
+        // Since formData provided, content type should resolve to formdata (branch: formFlag/formData.isNotEmpty)
+        expect(captured!['bodyType'], ContentType.formdata);
+        expect(captured!['formDataLen'], 2);
+      },
+    );
 
     test('apply_to_selected JSON body detection (no formData)', () async {
       Map<String, dynamic>? captured;
@@ -298,24 +306,22 @@ void main() {
         field: 'apply_to_selected',
         path: '/users',
         requestId: 'openSel2',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {
-          captured = {
-            'bodyType': bodyContentType,
-            'url': url,
-          };
-        },
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {
+              captured = {'bodyType': bodyContentType, 'url': url};
+            },
         addNewRequest: (_, {name}) {},
         ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
       );
@@ -334,19 +340,20 @@ void main() {
         field: 'select_operation',
         path: '/users',
         requestId: 'r1',
-        updateSelected: ({
-          required String id,
-          HTTPVerb? method,
-          String? url,
-          List<NameValueModel>? headers,
-          List<bool>? isHeaderEnabledList,
-          String? body,
-          ContentType? bodyContentType,
-          List<FormDataModel>? formData,
-          List<NameValueModel>? params,
-          List<bool>? isParamEnabledList,
-          String? postRequestScript,
-        }) {},
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {},
         addNewRequest: (_, {name}) {},
         ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
       );

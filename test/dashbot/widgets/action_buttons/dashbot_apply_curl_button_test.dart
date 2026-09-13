@@ -12,8 +12,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('DashbotApplyCurlButton', () {
-    testWidgets('uses default Apply label and triggers auto-fix',
-        (tester) async {
+    testWidgets('uses default Apply label and triggers auto-fix', (
+      tester,
+    ) async {
       const action = ChatAction(
         action: 'apply_curl',
         target: 'httpRequestModel',
@@ -32,9 +33,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotApplyCurlButton(action: action),
-            ),
+            home: Scaffold(body: DashbotApplyCurlButton(action: action)),
           ),
         ),
       );
@@ -48,8 +47,9 @@ void main() {
       expect(notifier.applyAutoFixCalls.single, same(action));
     });
 
-    testWidgets('shows Create New Request when field=apply_to_new',
-        (tester) async {
+    testWidgets('shows Create New Request when field=apply_to_new', (
+      tester,
+    ) async {
       const action = ChatAction(
         action: 'apply_curl',
         target: 'httpRequestModel',
@@ -65,9 +65,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotApplyCurlButton(action: action),
-            ),
+            home: Scaffold(body: DashbotApplyCurlButton(action: action)),
           ),
         ),
       );
@@ -92,9 +90,7 @@ void main() {
           ],
           child: MaterialApp(
             theme: kThemeDataLight,
-            home: Scaffold(
-              body: DashbotApplyCurlButton(action: action),
-            ),
+            home: Scaffold(body: DashbotApplyCurlButton(action: action)),
           ),
         ),
       );

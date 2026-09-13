@@ -38,12 +38,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 2', () {
@@ -79,12 +80,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 3', () {
@@ -121,12 +123,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 4', () {
@@ -166,12 +169,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 5', () {
@@ -205,12 +209,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 6', () {
@@ -247,12 +252,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 7', () {
@@ -285,12 +291,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 8', () {
@@ -327,12 +334,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 9', () {
@@ -369,12 +377,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 10', () {
@@ -408,12 +417,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 11', () {
@@ -451,12 +461,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 12', () {
@@ -489,12 +500,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -529,12 +541,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('HEAD 2', () {
@@ -567,12 +580,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -613,12 +627,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 2', () {
@@ -657,12 +672,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 3', () {
@@ -702,12 +718,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 4', () {
@@ -747,12 +764,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 5', () {
@@ -793,12 +811,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 6', () {
@@ -837,12 +856,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 7', () {
@@ -881,12 +901,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 8', () {
@@ -930,12 +951,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 9', () {
@@ -980,12 +1002,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPost9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1027,12 +1050,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1074,12 +1098,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1115,12 +1140,13 @@ public class Main {
 }
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('DELETE 2', () {
@@ -1160,12 +1186,13 @@ public class Main {
 }
 ''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.javaOkHttp,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

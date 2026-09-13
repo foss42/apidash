@@ -1,6 +1,6 @@
 name: json_field_editor
 description: "JSON field editor allows easy editing of JSON text. Unlock the full capabilities of JSON syntax highlighting, validation & formatting."
-version: 1.2.2
+version: 1.2.3
 repository: https://github.com/foss42/apidash/tree/main/packages/json_field_editor
 homepage: https://github.com/foss42/apidash/tree/main/packages/json_field_editor
 issue_tracker: https://github.com/foss42/apidash/issues
@@ -15,7 +15,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  extended_text_field: ^16.0.2
+  extended_text_field: ^17.0.0
 
 dev_dependencies:
   flutter_test:

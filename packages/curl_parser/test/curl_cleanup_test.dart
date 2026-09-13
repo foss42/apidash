@@ -13,10 +13,7 @@ void main() {
     test('can be used in a const context', () {
       // The const keyword here would fail at compile time if the constructor
       // were not const.
-      const curl = Curl(
-        method: 'GET',
-        uri: _constUri,
-      );
+      const curl = Curl(method: 'GET', uri: _constUri);
       expect(curl.method, 'GET');
     });
 
@@ -36,10 +33,7 @@ void main() {
     });
 
     test('throws FormatException when URL is missing', () {
-      expect(
-        () => Curl.parse('curl -X GET'),
-        throwsA(isA<FormatException>()),
-      );
+      expect(() => Curl.parse('curl -X GET'), throwsA(isA<FormatException>()));
     });
 
     test('throws FormatException for header without colon', () {
@@ -133,10 +127,7 @@ void main() {
 
   group('toCurlString (StringBuffer implementation)', () {
     test('produces identical output for simple GET', () {
-      const curl = Curl(
-        method: 'GET',
-        uri: _constUri,
-      );
+      const curl = Curl(method: 'GET', uri: _constUri);
       expect(curl.toCurlString(), 'curl "https://example.com"');
     });
 
@@ -264,8 +255,7 @@ class _ConstUri implements Uri {
     String? query,
     Map<String, dynamic>? queryParameters,
     String? fragment,
-  }) =>
-      this;
+  }) => this;
   @override
   Uri removeFragment() => this;
   @override

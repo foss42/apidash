@@ -1,9 +1,11 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/realtime_event_stream_view.dart';
 
 class HistoryResponsePane extends ConsumerWidget {
   const HistoryResponsePane({super.key});
@@ -17,9 +19,36 @@ class HistoryResponsePane extends ConsumerWidget {
 
     final historyHttpResponseModel = selectedHistoryRequest?.httpResponseModel;
 
-    if (selectedId != null) {
+    if (selectedId != null && selectedHistoryRequest != null) {
+      final apiType = selectedHistoryRequest.metaData.apiType;
+
+      if (apiType == APIType.websocket) {
+        final wsModel = selectedHistoryRequest.wsRequestModel;
+        return RealtimeEventStreamView(
+          // Fresh event-stream State per history entry (mirrors ResponseTabView).
+          key: ValueKey(selectedId),
+          historyMessages: wsModel?.messageHistory ?? [],
+        );
+      }
+
+      if (apiType == APIType.mqtt) {
+        final mqttModel = selectedHistoryRequest.mqttRequestModel;
+        return RealtimeEventStreamView(
+          // Fresh event-stream State per history entry (mirrors ResponseTabView).
+          key: ValueKey(selectedId),
+          historyMessages: mqttModel?.messageHistory ?? [],
+        );
+      }
+
+      if (apiType == APIType.grpc) {
+        final grpcModel = selectedHistoryRequest.grpcRequestModel;
+        return RealtimeEventStreamView(
+          historyMessages: grpcModel?.messageHistory ?? [],
+        );
+      }
+
       final requestModel = getRequestModelFromHistoryModel(
-        selectedHistoryRequest!,
+        selectedHistoryRequest,
       );
 
       final statusCode = historyHttpResponseModel?.statusCode;
@@ -34,6 +63,7 @@ class HistoryResponsePane extends ConsumerWidget {
           Expanded(
             child: ResponseTabView(
               selectedId: selectedId,
+              headersTitle: requestModel?.apiType == APIType.grpc ? "Metadata" : kLabelHeaders,
               children: [
                 ResponseBody(
                   selectedRequestModel: requestModel,

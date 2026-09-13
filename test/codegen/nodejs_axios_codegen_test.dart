@@ -26,12 +26,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 2', () {
@@ -60,12 +61,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 3', () {
@@ -95,12 +97,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 4', () {
@@ -141,12 +144,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 5', () {
@@ -170,12 +174,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 6', () {
@@ -207,12 +212,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 7', () {
@@ -233,12 +239,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 8', () {
@@ -270,12 +277,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 9', () {
@@ -307,12 +315,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 10', () {
@@ -336,12 +345,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 11', () {
@@ -376,12 +386,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 12', () {
@@ -402,12 +413,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -430,12 +442,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('HEAD 2', () {
@@ -456,12 +469,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -488,12 +502,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 2', () {
@@ -518,12 +533,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 3', () {
@@ -549,12 +565,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 4', () {
       const expectedCode = r"""import axios from 'axios';
@@ -582,12 +599,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 5', () {
@@ -617,12 +635,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 6', () {
       const expectedCode = r"""import axios from 'axios';
@@ -650,12 +669,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 7', () {
       const expectedCode = r"""import axios from 'axios';
@@ -683,12 +703,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 8', () {
       const expectedCode = r"""import axios from 'axios';
@@ -727,12 +748,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test('POST 9', () {
       const expectedCode = r"""import axios from 'axios';
@@ -773,12 +795,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPost9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -806,12 +829,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -839,12 +863,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -870,12 +895,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('DELETE 2', () {
@@ -901,12 +927,13 @@ axios(config)
   });
 """;
       expect(
-          codeGen.getCode(
-            CodegenLanguage.nodejsAxios,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

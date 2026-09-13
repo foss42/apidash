@@ -226,7 +226,7 @@ var collectionApiDashJson = {
     "name": "API Dash",
     "schema":
         "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "26763819"
+    "_exporter_id": "26763819",
   },
   "item": [
     {
@@ -240,10 +240,10 @@ var collectionApiDashJson = {
             "url": {
               "raw": "https://api.apidash.dev",
               "protocol": "https",
-              "host": ["api", "apidash", "dev"]
-            }
+              "host": ["api", "apidash", "dev"],
+            },
           },
-          "response": []
+          "response": [],
         },
         {
           "name": "Country Data",
@@ -256,11 +256,11 @@ var collectionApiDashJson = {
               "host": ["api", "apidash", "dev"],
               "path": ["country", "data"],
               "query": [
-                {"key": "code", "value": "US"}
-              ]
-            }
+                {"key": "code", "value": "US"},
+              ],
+            },
           },
-          "response": []
+          "response": [],
         },
         {
           "name": "Humanize Rank",
@@ -278,13 +278,13 @@ var collectionApiDashJson = {
                 {"key": "digits", "value": "3"},
                 {"key": "system", "value": "SS"},
                 {"key": "add_space", "value": "true"},
-                {"key": "trailing_zeros", "value": "true"}
-              ]
-            }
+                {"key": "trailing_zeros", "value": "true"},
+              ],
+            },
           },
-          "response": []
-        }
-      ]
+          "response": [],
+        },
+      ],
     },
     {
       "name": "POST Requests",
@@ -298,41 +298,41 @@ var collectionApiDashJson = {
               "mode": "raw",
               "raw": "{\n\"text\": \"I LOVE Flutter\"\n}",
               "options": {
-                "raw": {"language": "json"}
-              }
+                "raw": {"language": "json"},
+              },
             },
             "url": {
               "raw": "https://api.apidash.dev/case/lower",
               "protocol": "https",
               "host": ["api", "apidash", "dev"],
-              "path": ["case", "lower"]
-            }
+              "path": ["case", "lower"],
+            },
           },
-          "response": []
+          "response": [],
         },
         {
           "name": "Form Example",
           "request": {
             "method": "POST",
             "header": [
-              {"key": "User-Agent", "value": "Test Agent", "type": "text"}
+              {"key": "User-Agent", "value": "Test Agent", "type": "text"},
             ],
             "body": {
               "mode": "formdata",
               "formdata": [
                 {"key": "text", "value": "API", "type": "text"},
                 {"key": "sep", "value": "|", "type": "text"},
-                {"key": "times", "value": "3", "type": "text"}
-              ]
+                {"key": "times", "value": "3", "type": "text"},
+              ],
             },
             "url": {
               "raw": "https://api.apidash.dev/io/form",
               "protocol": "https",
               "host": ["api", "apidash", "dev"],
-              "path": ["io", "form"]
-            }
+              "path": ["io", "form"],
+            },
           },
-          "response": []
+          "response": [],
         },
         {
           "name": "Form with File",
@@ -346,20 +346,20 @@ var collectionApiDashJson = {
                 {
                   "key": "imfile",
                   "type": "file",
-                  "src": "/Users/ashitaprasad/Downloads/hire AI.jpeg"
-                }
-              ]
+                  "src": "/Users/ashitaprasad/Downloads/hire AI.jpeg",
+                },
+              ],
             },
             "url": {
               "raw": "https://api.apidash.dev/io/img",
               "protocol": "https",
               "host": ["api", "apidash", "dev"],
-              "path": ["io", "img"]
-            }
+              "path": ["io", "img"],
+            },
           },
-          "response": []
-        }
-      ]
-    }
-  ]
+          "response": [],
+        },
+      ],
+    },
+  ],
 };

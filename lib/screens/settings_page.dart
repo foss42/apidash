@@ -88,6 +88,21 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text(kLabelDefaultWsScheme),
+                subtitle: Text(
+                  '$kDefaultUri/ws → ${settings.defaultWsScheme.name}://$kDefaultUri/ws',
+                ),
+                trailing: DefaultWsSchemePopupMenu(
+                  value: settings.defaultWsScheme,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultWsScheme: value);
+                  },
+                ),
+              ),
               !kIsWeb
                   ? ADListTile(
                       type: ListTileType.switchOnOff,
@@ -170,6 +185,30 @@ class SettingsPage extends ConsumerWidget {
                         .read(settingsProvider.notifier)
                         .update(historyRetentionPeriod: value);
                   },
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text(kLabelMaxConnectionMessages),
+                subtitle: const Text(kLabelMaxConnectionMessagesSubtitle),
+                trailing: SizedBox(
+                  width: 100,
+                  child: ADOutlinedTextField(
+                    initialValue: settings.maxConnectionMessages.toString(),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    onChanged: (val) {
+                      final parsed = int.tryParse(val);
+                      if (parsed != null && parsed > 0) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(maxConnectionMessages: parsed);
+                      }
+                    },
+                  ),
                 ),
               ),
               ListTile(

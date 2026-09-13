@@ -22,20 +22,23 @@ void main() {
       expect(iconButton, findsOneWidget);
 
       Icon icon = tester.widget<Icon>(
-          find.descendant(of: iconButton, matching: find.byType(Icon)));
+        find.descendant(of: iconButton, matching: find.byType(Icon)),
+      );
       expect(icon.icon, Icons.visibility);
 
       await tester.tap(iconButton);
       await tester.pump();
 
       icon = tester.widget<Icon>(
-          find.descendant(of: iconButton, matching: find.byType(Icon)));
+        find.descendant(of: iconButton, matching: find.byType(Icon)),
+      );
       expect(icon.icon, Icons.visibility_off);
     },
   );
 
-  testWidgets('ObscurableCellField calls onChanged when text is changed',
-      (WidgetTester tester) async {
+  testWidgets('ObscurableCellField calls onChanged when text is changed', (
+    WidgetTester tester,
+  ) async {
     String? changedValue;
 
     await tester.pumpWidget(

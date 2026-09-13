@@ -83,7 +83,7 @@ void main() {
         "Access-Control-Allow-Origin",
         "Access-Control-Max-Age",
         "Access-Control-Request-Headers",
-        "Access-Control-Request-Method"
+        "Access-Control-Request-Method",
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
@@ -93,7 +93,7 @@ void main() {
       List<String> expected = [
         "Access-Control-Allow-Headers",
         "Access-Control-Allow-Methods",
-        "Access-Control-Allow-Origin"
+        "Access-Control-Allow-Origin",
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
@@ -106,7 +106,7 @@ void main() {
         'Content-Length',
         'Content-Security-Policy',
         'Content-Type',
-        'X-Content-Type-Options'
+        'X-Content-Type-Options',
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });

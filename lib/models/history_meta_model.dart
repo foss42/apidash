@@ -5,7 +5,7 @@ part 'history_meta_model.freezed.dart';
 part 'history_meta_model.g.dart';
 
 @freezed
-class HistoryMetaModel with _$HistoryMetaModel {
+abstract class HistoryMetaModel with _$HistoryMetaModel {
   const factory HistoryMetaModel({
     required String historyId,
     required String requestId,

@@ -5,7 +5,7 @@ part 'auth_oauth1_model.g.dart';
 part 'auth_oauth1_model.freezed.dart';
 
 @freezed
-class AuthOAuth1Model with _$AuthOAuth1Model {
+abstract class AuthOAuth1Model with _$AuthOAuth1Model {
   const factory AuthOAuth1Model({
     required String consumerKey,
     required String consumerSecret,

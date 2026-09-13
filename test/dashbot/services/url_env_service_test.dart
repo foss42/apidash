@@ -6,20 +6,28 @@ void main() {
   group('UrlEnvService.inferBaseUrl', () {
     final svc = UrlEnvService();
     test('basic https with path', () {
-      expect(svc.inferBaseUrl('https://api.apidash.dev/v1/users?id=1'),
-          'https://api.apidash.dev');
+      expect(
+        svc.inferBaseUrl('https://api.apidash.dev/v1/users?id=1'),
+        'https://api.apidash.dev',
+      );
     });
     test('with port', () {
-      expect(svc.inferBaseUrl('http://localhost:8080/api'),
-          'http://localhost:8080');
+      expect(
+        svc.inferBaseUrl('http://localhost:8080/api'),
+        'http://localhost:8080',
+      );
     });
     test('with port 0 (default port)', () {
-      expect(svc.inferBaseUrl('https://api.apidash.dev:0/api'),
-          'https://api.apidash.dev');
+      expect(
+        svc.inferBaseUrl('https://api.apidash.dev:0/api'),
+        'https://api.apidash.dev',
+      );
     });
     test('without port (hasPort false)', () {
-      expect(svc.inferBaseUrl('https://api.apidash.dev/api'),
-          'https://api.apidash.dev');
+      expect(
+        svc.inferBaseUrl('https://api.apidash.dev/api'),
+        'https://api.apidash.dev',
+      );
     });
     test('url without scheme', () {
       expect(svc.inferBaseUrl('api.apidash.dev/path'), '');
@@ -30,8 +38,10 @@ void main() {
     test('fallback regex match', () {
       // This will hit the regex fallback path since Uri.parse will fail
       // to extract proper scheme/host for malformed URLs but regex can still match
-      expect(svc.inferBaseUrl('https://malformed..host/path'),
-          'https://malformed..host');
+      expect(
+        svc.inferBaseUrl('https://malformed..host/path'),
+        'https://malformed..host',
+      );
     });
     test('invalid returns empty', () {
       expect(svc.inferBaseUrl('not a url'), '');
@@ -78,8 +88,11 @@ void main() {
 
     test('uses global environment when activeId is null', () async {
       final envs = <String, EnvironmentModel>{
-        'global':
-            const EnvironmentModel(id: 'global', name: 'Global', values: []),
+        'global': const EnvironmentModel(
+          id: 'global',
+          name: 'Global',
+          values: [],
+        ),
       };
       EnvironmentModel? updated;
 
@@ -104,8 +117,11 @@ void main() {
         enabled: true,
       );
       final envs = <String, EnvironmentModel>{
-        envId:
-            EnvironmentModel(id: 'env1', name: 'Env1', values: [existingVar]),
+        envId: EnvironmentModel(
+          id: 'env1',
+          name: 'Env1',
+          values: [existingVar],
+        ),
       };
       String? activeId = envId;
       bool updateCalled = false;
@@ -120,7 +136,9 @@ void main() {
       );
       expect(key, 'BASE_URL_API_APIDASH_DEV');
       expect(
-          updateCalled, false); // Should not call update since variable exists
+        updateCalled,
+        false,
+      ); // Should not call update since variable exists
     });
 
     test('handles null envs', () async {
@@ -182,29 +200,32 @@ void main() {
       expect(replaced, '{{$key}}/v1/users');
     });
 
-    test('maybeSubstituteBaseUrl returns original URL when baseUrl is empty',
-        () async {
-      final url = 'https://api.apidash.dev/v1/users';
-      final result = await svc.maybeSubstituteBaseUrl(
-        url,
-        '',
-        ensure: (_) async => 'BASE_URL_API',
-      );
-      expect(result, url);
-    });
+    test(
+      'maybeSubstituteBaseUrl returns original URL when baseUrl is empty',
+      () async {
+        final url = 'https://api.apidash.dev/v1/users';
+        final result = await svc.maybeSubstituteBaseUrl(
+          url,
+          '',
+          ensure: (_) async => 'BASE_URL_API',
+        );
+        expect(result, url);
+      },
+    );
 
     test(
-        'maybeSubstituteBaseUrl returns original URL when URL does not start with baseUrl',
-        () async {
-      final url = 'https://different.com/v1/users';
-      final baseUrl = 'https://api.apidash.dev';
-      final result = await svc.maybeSubstituteBaseUrl(
-        url,
-        baseUrl,
-        ensure: (_) async => 'BASE_URL_API',
-      );
-      expect(result, url);
-    });
+      'maybeSubstituteBaseUrl returns original URL when URL does not start with baseUrl',
+      () async {
+        final url = 'https://different.com/v1/users';
+        final baseUrl = 'https://api.apidash.dev';
+        final result = await svc.maybeSubstituteBaseUrl(
+          url,
+          baseUrl,
+          ensure: (_) async => 'BASE_URL_API',
+        );
+        expect(result, url);
+      },
+    );
 
     test('maybeSubstituteBaseUrl handles path without leading slash', () async {
       final result = await svc.maybeSubstituteBaseUrl(
@@ -230,8 +251,11 @@ void main() {
 
     test('handles empty baseUrl with title', () async {
       final envs = <String, EnvironmentModel>{
-        'global':
-            const EnvironmentModel(id: 'global', name: 'Global', values: []),
+        'global': const EnvironmentModel(
+          id: 'global',
+          name: 'Global',
+          values: [],
+        ),
       };
       EnvironmentModel? updated;
 
@@ -250,13 +274,18 @@ void main() {
       expect(updated!.values.any((v) => v.key == key), true);
       final createdVar = updated!.values.firstWhere((v) => v.key == key);
       expect(
-          createdVar.value, ''); // Empty baseUrl should result in empty value
+        createdVar.value,
+        '',
+      ); // Empty baseUrl should result in empty value
     });
 
     test('handles "/" baseUrl with title', () async {
       final envs = <String, EnvironmentModel>{
-        'global':
-            const EnvironmentModel(id: 'global', name: 'Global', values: []),
+        'global': const EnvironmentModel(
+          id: 'global',
+          name: 'Global',
+          values: [],
+        ),
       };
       EnvironmentModel? updated;
 
@@ -279,8 +308,11 @@ void main() {
 
     test('handles path-only baseUrl (no scheme) with title', () async {
       final envs = <String, EnvironmentModel>{
-        'global':
-            const EnvironmentModel(id: 'global', name: 'Global', values: []),
+        'global': const EnvironmentModel(
+          id: 'global',
+          name: 'Global',
+          values: [],
+        ),
       };
       EnvironmentModel? updated;
 
@@ -303,8 +335,11 @@ void main() {
 
     test('handles variable server URL with title', () async {
       final envs = <String, EnvironmentModel>{
-        'global':
-            const EnvironmentModel(id: 'global', name: 'Global', values: []),
+        'global': const EnvironmentModel(
+          id: 'global',
+          name: 'Global',
+          values: [],
+        ),
       };
       EnvironmentModel? updated;
 
@@ -327,8 +362,11 @@ void main() {
 
     test('handles full URL with host extraction', () async {
       final envs = <String, EnvironmentModel>{
-        'global':
-            const EnvironmentModel(id: 'global', name: 'Global', values: []),
+        'global': const EnvironmentModel(
+          id: 'global',
+          name: 'Global',
+          values: [],
+        ),
       };
       EnvironmentModel? updated;
 
@@ -351,8 +389,11 @@ void main() {
 
     test('handles malformed URL with title fallback', () async {
       final envs = <String, EnvironmentModel>{
-        'global':
-            const EnvironmentModel(id: 'global', name: 'Global', values: []),
+        'global': const EnvironmentModel(
+          id: 'global',
+          name: 'Global',
+          values: [],
+        ),
       };
       EnvironmentModel? updated;
 
@@ -381,7 +422,10 @@ void main() {
       );
       final envs = <String, EnvironmentModel>{
         'global': EnvironmentModel(
-            id: 'global', name: 'Global', values: [existingVar]),
+          id: 'global',
+          name: 'Global',
+          values: [existingVar],
+        ),
       };
       bool updateCalled = false;
 
@@ -399,32 +443,37 @@ void main() {
       expect(updateCalled, false); // Should not update since variable exists
     });
 
-    test('does not add variable if it already exists (full URL case)',
-        () async {
-      final existingVar = EnvironmentVariableModel(
-        key: 'BASE_URL_PETSTORE_SWAGGER_IO',
-        value: 'existing value',
-        enabled: true,
-      );
-      final envs = <String, EnvironmentModel>{
-        'global': EnvironmentModel(
-            id: 'global', name: 'Global', values: [existingVar]),
-      };
-      bool updateCalled = false;
+    test(
+      'does not add variable if it already exists (full URL case)',
+      () async {
+        final existingVar = EnvironmentVariableModel(
+          key: 'BASE_URL_PETSTORE_SWAGGER_IO',
+          value: 'existing value',
+          enabled: true,
+        );
+        final envs = <String, EnvironmentModel>{
+          'global': EnvironmentModel(
+            id: 'global',
+            name: 'Global',
+            values: [existingVar],
+          ),
+        };
+        bool updateCalled = false;
 
-      final key = await svc.ensureBaseUrlEnvForOpenApi(
-        'https://petstore.swagger.io/v2',
-        title: 'Pet Store API',
-        readEnvs: () => envs,
-        readActiveEnvId: () => null,
-        updateEnv: (id, {values}) {
-          updateCalled = true;
-        },
-      );
+        final key = await svc.ensureBaseUrlEnvForOpenApi(
+          'https://petstore.swagger.io/v2',
+          title: 'Pet Store API',
+          readEnvs: () => envs,
+          readActiveEnvId: () => null,
+          updateEnv: (id, {values}) {
+            updateCalled = true;
+          },
+        );
 
-      expect(key, 'BASE_URL_PETSTORE_SWAGGER_IO');
-      expect(updateCalled, false);
-    });
+        expect(key, 'BASE_URL_PETSTORE_SWAGGER_IO');
+        expect(updateCalled, false);
+      },
+    );
 
     test('handles null envModel (trivial case)', () async {
       final key = await svc.ensureBaseUrlEnvForOpenApi(
@@ -472,8 +521,11 @@ void main() {
         '',
         title: 'Pet Store API',
         readEnvs: () => <String, EnvironmentModel>{
-          'global':
-              const EnvironmentModel(id: 'global', name: 'Global', values: []),
+          'global': const EnvironmentModel(
+            id: 'global',
+            name: 'Global',
+            values: [],
+          ),
         },
         readActiveEnvId: () => null,
         updateEnv: (id, {values}) {},
@@ -487,15 +539,20 @@ void main() {
         '',
         title: 'My-Orders Service',
         readEnvs: () => <String, EnvironmentModel>{
-          'global':
-              const EnvironmentModel(id: 'global', name: 'Global', values: []),
+          'global': const EnvironmentModel(
+            id: 'global',
+            name: 'Global',
+            values: [],
+          ),
         },
         readActiveEnvId: () => null,
         updateEnv: (id, {values}) {},
       );
 
-      expect(key,
-          'BASE_URL_MY_ORDERS'); // First word "My-Orders" -> "MY_ORDERS" (hyphens become underscores)
+      expect(
+        key,
+        'BASE_URL_MY_ORDERS',
+      ); // First word "My-Orders" -> "MY_ORDERS" (hyphens become underscores)
     });
 
     test('handles empty title', () async {
@@ -503,8 +560,11 @@ void main() {
         '',
         title: '',
         readEnvs: () => <String, EnvironmentModel>{
-          'global':
-              const EnvironmentModel(id: 'global', name: 'Global', values: []),
+          'global': const EnvironmentModel(
+            id: 'global',
+            name: 'Global',
+            values: [],
+          ),
         },
         readActiveEnvId: () => null,
         updateEnv: (id, {values}) {},
@@ -518,8 +578,11 @@ void main() {
         '',
         title: '   \t\n  ',
         readEnvs: () => <String, EnvironmentModel>{
-          'global':
-              const EnvironmentModel(id: 'global', name: 'Global', values: []),
+          'global': const EnvironmentModel(
+            id: 'global',
+            name: 'Global',
+            values: [],
+          ),
         },
         readActiveEnvId: () => null,
         updateEnv: (id, {values}) {},
@@ -533,8 +596,11 @@ void main() {
         '',
         title: '--- ### !!!',
         readEnvs: () => <String, EnvironmentModel>{
-          'global':
-              const EnvironmentModel(id: 'global', name: 'Global', values: []),
+          'global': const EnvironmentModel(
+            id: 'global',
+            name: 'Global',
+            values: [],
+          ),
         },
         readActiveEnvId: () => null,
         updateEnv: (id, {values}) {},
@@ -543,37 +609,49 @@ void main() {
       expect(key, 'BASE_URL_API');
     });
 
-    test('handles title with leading/trailing underscores after cleaning',
-        () async {
-      final key = await svc.ensureBaseUrlEnvForOpenApi(
-        '',
-        title: '__Test___API__',
-        readEnvs: () => <String, EnvironmentModel>{
-          'global':
-              const EnvironmentModel(id: 'global', name: 'Global', values: []),
-        },
-        readActiveEnvId: () => null,
-        updateEnv: (id, {values}) {},
-      );
+    test(
+      'handles title with leading/trailing underscores after cleaning',
+      () async {
+        final key = await svc.ensureBaseUrlEnvForOpenApi(
+          '',
+          title: '__Test___API__',
+          readEnvs: () => <String, EnvironmentModel>{
+            'global': const EnvironmentModel(
+              id: 'global',
+              name: 'Global',
+              values: [],
+            ),
+          },
+          readActiveEnvId: () => null,
+          updateEnv: (id, {values}) {},
+        );
 
-      expect(key,
-          'BASE_URL_TEST_API'); // First word "__Test___API__" -> "TEST_API" (cleaned)
-    });
+        expect(
+          key,
+          'BASE_URL_TEST_API',
+        ); // First word "__Test___API__" -> "TEST_API" (cleaned)
+      },
+    );
 
     test('handles multiple consecutive underscores', () async {
       final key = await svc.ensureBaseUrlEnvForOpenApi(
         '',
         title: 'Test___Multiple___Underscores',
         readEnvs: () => <String, EnvironmentModel>{
-          'global':
-              const EnvironmentModel(id: 'global', name: 'Global', values: []),
+          'global': const EnvironmentModel(
+            id: 'global',
+            name: 'Global',
+            values: [],
+          ),
         },
         readActiveEnvId: () => null,
         updateEnv: (id, {values}) {},
       );
 
-      expect(key,
-          'BASE_URL_TEST_MULTIPLE_UNDERSCORES'); // First word "Test___Multiple___Underscores" -> "TEST_MULTIPLE_UNDERSCORES"
+      expect(
+        key,
+        'BASE_URL_TEST_MULTIPLE_UNDERSCORES',
+      ); // First word "Test___Multiple___Underscores" -> "TEST_MULTIPLE_UNDERSCORES"
     });
   });
 }

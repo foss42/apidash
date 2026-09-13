@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
@@ -36,12 +37,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 2', () {
@@ -76,12 +78,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 3', () {
@@ -117,12 +120,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 4', () {
@@ -161,12 +165,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 5', () {
@@ -198,12 +203,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 6', () {
@@ -240,12 +246,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 7', () {
@@ -275,12 +282,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 8', () {
@@ -317,12 +325,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 9', () {
@@ -358,12 +367,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 10', () {
@@ -395,12 +405,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codegen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 11', () {
@@ -438,12 +449,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('GET 12', () {
@@ -473,12 +485,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -510,12 +523,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('HEAD 2', () {
@@ -545,16 +559,67 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
   group('POST Request', () {
+    test('escapes a backtick in the request body', () {
+      const requestModel = RequestModel(
+        id: 'post-with-backtick',
+        apiType: APIType.rest,
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.apidash.dev/messages',
+          body: r'{"message":"Use `code` here"}',
+        ),
+      );
+      const expectedCode = r'''package main
+
+import (
+  "fmt"
+  "io"
+  "net/http"
+  "net/url"
+  "bytes"
+)
+
+func main() {
+  client := &http.Client{}
+  url, _ := url.Parse("https://api.apidash.dev/messages")
+  payload := bytes.NewBuffer([]byte("{\"message\":\"Use `code` here\"}"))
+  req, _ := http.NewRequest("POST", url.String(), payload)
+
+  req.Header.Set("Content-Type", "application/json")
+
+  response, err := client.Do(req)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
+}''';
+
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModel,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
     test('POST 1', () {
       const expectedCode = r'''package main
 
@@ -588,12 +653,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 2', () {
@@ -634,12 +700,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 3', () {
@@ -676,12 +743,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 4', () {
@@ -722,12 +790,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelPost4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('POST 5', () {
@@ -770,12 +839,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelPost5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -825,12 +895,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
     expect(
-        codeGen.getCode(
-          CodegenLanguage.goHttp,
-          requestModelPost6,
-          SupportedUriSchemes.https,
-        ),
-        expectedCode);
+      codeGen.getCode(
+        CodegenLanguage.goHttp,
+        requestModelPost6,
+        SupportedUriSchemes.https,
+      ),
+      expectedCode,
+    );
   });
   test("POST 7", () {
     const expectedCode = r'''package main
@@ -878,12 +949,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
     expect(
-        codeGen.getCode(
-          CodegenLanguage.goHttp,
-          requestModelPost7,
-          SupportedUriSchemes.https,
-        ),
-        expectedCode);
+      codeGen.getCode(
+        CodegenLanguage.goHttp,
+        requestModelPost7,
+        SupportedUriSchemes.https,
+      ),
+      expectedCode,
+    );
   });
   test("POST 8", () {
     const expectedCode = r'''package main
@@ -929,12 +1001,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }''';
     expect(
-        codeGen.getCode(
-          CodegenLanguage.goHttp,
-          requestModelPost8,
-          SupportedUriSchemes.https,
-        ),
-        expectedCode);
+      codeGen.getCode(
+        CodegenLanguage.goHttp,
+        requestModelPost8,
+        SupportedUriSchemes.https,
+      ),
+      expectedCode,
+    );
   });
   test("POST 9", () {
     const expectedCode = r'''package main
@@ -991,12 +1064,13 @@ url.RawQuery = query.Encode()
   fmt.Println("Response body:", string(body))
 }''';
     expect(
-        codeGen.getCode(
-          CodegenLanguage.goHttp,
-          requestModelPost9,
-          SupportedUriSchemes.https,
-        ),
-        expectedCode);
+      codeGen.getCode(
+        CodegenLanguage.goHttp,
+        requestModelPost9,
+        SupportedUriSchemes.https,
+      ),
+      expectedCode,
+    );
   });
 
   group('PUT Request', () {
@@ -1035,12 +1109,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1080,12 +1155,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1119,12 +1195,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }""";
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test('DELETE 2', () {
@@ -1162,12 +1239,13 @@ func main() {
   fmt.Println("Response body:", string(body))
 }''';
       expect(
-          codeGen.getCode(
-            CodegenLanguage.goHttp,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

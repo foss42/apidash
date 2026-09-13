@@ -6,8 +6,9 @@ import 'package:apidash/terminal/models/models.dart';
 import 'package:apidash/terminal/widgets/widgets.dart';
 
 void main() {
-  testWidgets('SystemLogTile renders message and optional stack',
-      (tester) async {
+  testWidgets('SystemLogTile renders message and optional stack', (
+    tester,
+  ) async {
     final entry = TerminalEntry(
       id: 's1',
       source: TerminalSource.system,
@@ -16,11 +17,15 @@ void main() {
     );
 
     await tester.pumpWidget(
-        MaterialApp(home: Scaffold(body: SystemLogTile(entry: entry))));
+      MaterialApp(
+        home: Scaffold(body: SystemLogTile(entry: entry)),
+      ),
+    );
     expect(find.textContaining('[ui] Updated'), findsOneWidget);
     // Stack is rendered using HighlightedSelectableText which internally uses SelectableText
-    final stackSelectable =
-        tester.widget<SelectableText>(find.byType(SelectableText).last);
+    final stackSelectable = tester.widget<SelectableText>(
+      find.byType(SelectableText).last,
+    );
     expect(stackSelectable.data, 'trace');
   });
 
@@ -29,32 +34,50 @@ void main() {
       id: 's1',
       source: TerminalSource.system,
       level: TerminalLevel.info,
-      system:
-          SystemLogData(category: 'networking', message: 'Request completed'),
+      system: SystemLogData(
+        category: 'networking',
+        message: 'Request completed',
+      ),
     );
 
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(
+      MaterialApp(
         home: Scaffold(
-            body: SystemLogTile(entry: entry, searchQuery: 'network'))));
+          body: SystemLogTile(entry: entry, searchQuery: 'network'),
+        ),
+      ),
+    );
 
     // Should find the highlighted text
     expect(
-        find.textContaining('[networking] Request completed'), findsOneWidget);
+      find.textContaining('[networking] Request completed'),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('JsLogTile composes body text with context and requestName',
-      (tester) async {
+  testWidgets('JsLogTile composes body text with context and requestName', (
+    tester,
+  ) async {
     final entry = TerminalEntry(
       id: 'j1',
       source: TerminalSource.js,
       level: TerminalLevel.warn,
       js: JsLogData(
-          level: 'warn', args: ['Hello', 'World'], context: 'preRequest'),
+        level: 'warn',
+        args: ['Hello', 'World'],
+        context: 'preRequest',
+      ),
     );
-    await tester.pumpWidget(MaterialApp(
-        home: Scaffold(body: JsLogTile(entry: entry, requestName: 'TestReq'))));
-    final selectable =
-        tester.widget<SelectableText>(find.byType(SelectableText).first);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: JsLogTile(entry: entry, requestName: 'TestReq'),
+        ),
+      ),
+    );
+    final selectable = tester.widget<SelectableText>(
+      find.byType(SelectableText).first,
+    );
     expect(selectable.data, '[TestReq] (preRequest) Hello World');
     // Background color for warn renders but we only assert presence of text
   });
@@ -65,27 +88,39 @@ void main() {
       source: TerminalSource.js,
       level: TerminalLevel.info,
       js: JsLogData(
-          level: 'info',
-          args: ['API', 'response', 'success'],
-          context: 'postRequest'),
+        level: 'info',
+        args: ['API', 'response', 'success'],
+        context: 'postRequest',
+      ),
     );
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(
+      MaterialApp(
         home: Scaffold(
-            body: JsLogTile(
-                entry: entry, requestName: 'TestAPI', searchQuery: 'API'))));
+          body: JsLogTile(
+            entry: entry,
+            requestName: 'TestAPI',
+            searchQuery: 'API',
+          ),
+        ),
+      ),
+    );
 
     // Should find the text containing API in SelectableText widgets
     // When highlighting is applied, the content is in textSpan
-    final selectables =
-        tester.widgetList<SelectableText>(find.byType(SelectableText)).toList();
-    final hasAPIText = selectables.any((s) =>
-        (s.data != null && s.data!.contains('API')) ||
-        (s.textSpan != null && s.textSpan!.toPlainText().contains('API')));
+    final selectables = tester
+        .widgetList<SelectableText>(find.byType(SelectableText))
+        .toList();
+    final hasAPIText = selectables.any(
+      (s) =>
+          (s.data != null && s.data!.contains('API')) ||
+          (s.textSpan != null && s.textSpan!.toPlainText().contains('API')),
+    );
     expect(hasAPIText, isTrue);
   });
 
-  testWidgets('NetworkLogTile expands to show details and status/duration',
-      (tester) async {
+  testWidgets('NetworkLogTile expands to show details and status/duration', (
+    tester,
+  ) async {
     final n = NetworkLogData(
       phase: NetworkPhase.completed,
       apiType: APIType.rest,
@@ -99,18 +134,25 @@ void main() {
       responseBodyPreview: '[1]',
     );
     final entry = TerminalEntry(
-        id: 'n1',
-        source: TerminalSource.network,
-        level: TerminalLevel.info,
-        network: n);
+      id: 'n1',
+      source: TerminalSource.network,
+      level: TerminalLevel.info,
+      network: n,
+    );
 
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(
+      MaterialApp(
         home: Scaffold(
-            body: NetworkLogTile(entry: entry, requestName: 'Users'))));
+          body: NetworkLogTile(entry: entry, requestName: 'Users'),
+        ),
+      ),
+    );
     // Leading row content is a RichText; check combined plain text
     final rich = tester.widget<RichText>(find.byType(RichText).first);
-    expect(rich.text.toPlainText(),
-        contains('[Users] GET https://example.com/users'));
+    expect(
+      rich.text.toPlainText(),
+      contains('[Users] GET https://example.com/users'),
+    );
     expect(find.text('200'), findsOneWidget);
     expect(find.text('150 ms'), findsOneWidget);
 
@@ -126,12 +168,17 @@ void main() {
     // Open the 'Network' section to reveal key-value body
     await tester.tap(find.text('Network'));
     await tester.pumpAndSettle();
-    final selectables =
-        tester.widgetList<SelectableText>(find.byType(SelectableText)).toList();
+    final selectables = tester
+        .widgetList<SelectableText>(find.byType(SelectableText))
+        .toList();
     expect(
-        selectables.any((w) => (w.data ?? '').contains('Method: GET')), isTrue);
+      selectables.any((w) => (w.data ?? '').contains('Method: GET')),
+      isTrue,
+    );
     expect(
-        selectables.any((w) => (w.data ?? '').contains('Status: 200')), isTrue);
+      selectables.any((w) => (w.data ?? '').contains('Status: 200')),
+      isTrue,
+    );
   });
 
   testWidgets('NetworkLogTile shows search query in URL', (tester) async {
@@ -148,24 +195,31 @@ void main() {
       responseBodyPreview: '{"id": 123}',
     );
     final entry = TerminalEntry(
-        id: 'n1',
-        source: TerminalSource.network,
-        level: TerminalLevel.info,
-        network: n);
+      id: 'n1',
+      source: TerminalSource.network,
+      level: TerminalLevel.info,
+      network: n,
+    );
 
-    await tester.pumpWidget(MaterialApp(
+    await tester.pumpWidget(
+      MaterialApp(
         home: Scaffold(
-            body: NetworkLogTile(
-                entry: entry,
-                requestName: 'TestAPI',
-                searchQuery: 'example'))));
+          body: NetworkLogTile(
+            entry: entry,
+            requestName: 'TestAPI',
+            searchQuery: 'example',
+          ),
+        ),
+      ),
+    );
 
     await tester.pumpAndSettle();
 
     // The RichText should contain the search query "example" in the URL
     final richTexts = tester.widgetList<RichText>(find.byType(RichText));
-    final hasExampleText =
-        richTexts.any((rt) => rt.text.toPlainText().contains('example'));
+    final hasExampleText = richTexts.any(
+      (rt) => rt.text.toPlainText().contains('example'),
+    );
     expect(hasExampleText, isTrue);
   });
 }

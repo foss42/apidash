@@ -430,6 +430,8 @@ const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
+const kHintTextWsCard =
+    "Enter WebSocket endpoint like wss://echo.websocket.org";
 const kLabelPlusNew = "+ New";
 const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
@@ -522,6 +524,7 @@ const kLabelSwitchThemeMode = "Switch Theme Mode";
 const kLabelDashBotSetting = "DashBot";
 const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visiblity";
 const kLabelDefaultUriScheme = "Default URI Scheme";
+const kLabelDefaultWsScheme = "Default WebSocket Scheme";
 const kLabelDisableSSL = "Disable SSL verification";
 const kLabelDefaultCodeGen = "Default Code Generator";
 const kLabelDefaultLLM = "Default Large Language Model (LLM)";
@@ -532,6 +535,9 @@ const kLabelShowSaveAlert = "Show Save Alert on App Close";
 const kLabelShowSaveAlertSubtitle =
     "Show a confirmation dialog to save workspace when the user closes the app";
 const kLabelHistoryRetention = "History Retention Period";
+const kLabelMaxConnectionMessages = "Max Connection Messages";
+const kLabelMaxConnectionMessagesSubtitle =
+    "Maximum number of messages to keep in the connection log";
 const kLabelExportData = "Export Data";
 const kLabelExportDataSubtitle =
     "Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.";
@@ -559,7 +565,6 @@ const kLabelSSLEnabled = "SSL Verification Enabled";
 const kHintSearchLogs = "Search logs";
 const kTooltipShowTimestamps = "Show timestamps";
 const kTooltipClearLogs = "Clear logs";
-const kLabelUntitled = "Untitled";
 
 // History Page Labels
 const kTooltipClearHistory = "Clear History";
@@ -652,6 +657,8 @@ const kMsgCodegenAINotAvailable =
     "Code generation for AI Requests is currently not available.";
 const kMsgCodegenGraphQLNotAvailable =
     "Code generation for GraphQL is currently not available.";
+const kMsgCodegenWebSocketNotAvailable =
+    "Code generation for WebSocket requests is currently not available.";
 const kMsgCodegenError =
     "An error was encountered while generating code. $kRaiseIssue";
 
@@ -682,3 +689,7 @@ const kHintEnterSystemPrompt = "Enter System Prompt";
 const kLabelUserPromptInput = "User Prompt / Input";
 const kHintEnterUserPrompt = "Enter User Prompt";
 const kHintEnterApiKey = "Enter API key or Authorization Credentials";
+
+// Websocket
+const kLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";

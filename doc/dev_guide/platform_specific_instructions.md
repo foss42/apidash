@@ -97,6 +97,37 @@ For more information on:
 
 Note : It is highly recommended that always ensure gradle and agp versions are compatible with your JDK version not the vice-versa and having at least JDK 17 is recommended.
 
+If the audio/MP3 preview keeps loading or fails to play on Android, you may see an error similar to:
+
+```text
+HttpDataSource$CleartextNotPermittedException: Cleartext HTTP traffic to 127.0.0.1 not permitted
+```
+
+This happens because `just_audio` uses a local HTTP proxy on `127.0.0.1` to serve `StreamAudioSource` audio bytes to the Android player. Starting with Android 9 (API 28), cleartext traffic is blocked by default, so the proxy request is rejected.
+
+To fix this, add a Network Security Config that permits cleartext traffic only for localhost. Create the file `android/app/src/main/res/xml/network_security_config.xml`:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+    </domain-config>
+</network-security-config>
+```
+
+Then reference it in the `<application>` tag in `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<application
+    ...
+    android:networkSecurityConfig="@xml/network_security_config">
+```
+
+Alternatively, you can enable cleartext traffic globally by adding `android:usesCleartextTraffic="true"` to the `<application>` tag, but this is less secure.
+
+For more information, see the [just_audio Android setup guide](https://pub.dev/packages/just_audio).
+
 ## Web  
 
 If you're building a Flutter app for the web, you may encounter a build error like:  

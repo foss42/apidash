@@ -31,6 +31,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     Size? size,
     Offset? offset,
     SupportedUriSchemes? defaultUriScheme,
+    SupportedWsSchemes? defaultWsScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
@@ -40,6 +41,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
+    int? maxConnectionMessages,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -47,6 +49,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       size: size,
       offset: offset,
       defaultUriScheme: defaultUriScheme,
+      defaultWsScheme: defaultWsScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
@@ -56,6 +59,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
+      maxConnectionMessages: maxConnectionMessages,
     );
     await setSettingsToSharedPrefs(state);
   }

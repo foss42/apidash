@@ -5,7 +5,7 @@ import '../../../consts.dart';
 import '../../common_widgets/common_widgets.dart';
 import '../../home_page/editor_pane/details_card/response_pane.dart';
 import '../../home_page/editor_pane/editor_request.dart';
-import '../../home_page/editor_pane/url_card.dart';
+import '../../home_page/editor_pane/url_card/url_card.dart';
 import '../../../dashbot/dashbot_tab.dart';
 
 class RequestTabs extends StatelessWidget {
@@ -22,10 +22,7 @@ class RequestTabs extends StatelessWidget {
     return Column(
       children: [
         kVSpacer3,
-        const Padding(
-          padding: kPh4,
-          child: EditorPaneRequestURLCard(),
-        ),
+        const Padding(padding: kPh4, child: EditorPaneRequestURLCard()),
         kVSpacer10,
         if (!showDashbot)
           SegmentedTabbar(
@@ -37,11 +34,10 @@ class RequestTabs extends StatelessWidget {
             ],
           ),
         Expanded(
-            child: showDashbot
-                ? DashbotTab(
-                    showTopBar: false,
-                  )
-                : RequestTabviews(controller: controller)),
+          child: showDashbot
+              ? DashbotTab(showTopBar: false)
+              : RequestTabviews(controller: controller),
+        ),
       ],
     );
   }
@@ -57,10 +53,7 @@ class RequestTabviews extends StatelessWidget {
       controller: controller,
       children: const [
         RequestEditor(),
-        Padding(
-          padding: kPt8,
-          child: ResponsePane(),
-        ),
+        Padding(padding: kPt8, child: ResponsePane()),
         CodePane(),
       ],
     );

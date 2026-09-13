@@ -45,11 +45,10 @@ class HistorySplitViewState extends State<HistorySplitView> {
         sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
         sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
         builder: (context, area) {
-          return switch (area.id) {
-            "sidebar" => widget.sidebarWidget,
-            "main" => widget.mainWidget,
-            _ => Container(),
-          };
+          if (area.id == "sidebar") {
+            return widget.sidebarWidget;
+          }
+          return widget.mainWidget;
         },
       ),
     );

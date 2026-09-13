@@ -5,38 +5,49 @@ import '../consts.dart';
 import 'markdown.dart';
 import 'error_message.dart';
 
-class IntroMessage extends StatelessWidget {
-  const IntroMessage({
-    super.key,
-  });
+class IntroMessage extends StatefulWidget {
+  const IntroMessage({super.key});
+
+  @override
+  State<IntroMessage> createState() => _IntroMessageState();
+}
+
+class _IntroMessageState extends State<IntroMessage> {
+  late Future<void> _introDataFuture;
+  late String text;
+  late String version;
+
+  @override
+  void initState() {
+    super.initState();
+    _introDataFuture = _loadIntroData();
+  }
+
+  Future<void> _loadIntroData() async {
+    text = await rootBundle.loadString(kAssetIntroMd, cache: false);
+    version = (await PackageInfo.fromPlatform()).version;
+  }
 
   @override
   Widget build(BuildContext context) {
-    late String text;
-    late final String version;
-
-    Future<void> introData() async {
-      text = await rootBundle.loadString(kAssetIntroMd);
-      version = (await PackageInfo.fromPlatform()).version;
-    }
-
     return FutureBuilder(
-      future: introData(),
+      future: _introDataFuture,
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.hasError) {
           return const ErrorMessage(message: "An error occurred");
         }
         if (snapshot.connectionState == ConnectionState.done) {
+          String renderedText = text;
           if (Theme.of(context).brightness == Brightness.dark) {
-            text = text.replaceAll("{{mode}}", "dark");
+            renderedText = renderedText.replaceAll("{{mode}}", "dark");
           } else {
-            text = text.replaceAll("{{mode}}", "light");
+            renderedText = renderedText.replaceAll("{{mode}}", "light");
           }
 
-          text = text.replaceAll("{{version}}", version);
+          renderedText = renderedText.replaceAll("{{version}}", version);
 
           return CustomMarkdown(
-            data: text,
+            data: renderedText,
             padding: EdgeInsets.zero,
           );
         }

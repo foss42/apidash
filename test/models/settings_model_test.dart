@@ -11,6 +11,7 @@ void main() {
     size: Size(300, 200),
     offset: Offset(100, 150),
     defaultUriScheme: SupportedUriSchemes.http,
+    defaultWsScheme: SupportedWsSchemes.ws,
     defaultCodeGenLang: CodegenLanguage.curl,
     saveResponses: true,
     promptBeforeClosing: true,
@@ -31,6 +32,7 @@ void main() {
       "dx": 100.0,
       "dy": 150.0,
       "defaultUriScheme": "http",
+      "defaultWsScheme": "ws",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
       "promptBeforeClosing": true,
@@ -39,7 +41,8 @@ void main() {
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
-      "defaultAIModel": {"model": "llama"}
+      "defaultAIModel": {"model": "llama"},
+      "maxConnectionMessages": 1000
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -53,6 +56,7 @@ void main() {
       "dx": 100.0,
       "dy": 150.0,
       "defaultUriScheme": "http",
+      "defaultWsScheme": "ws",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
       "promptBeforeClosing": true,
@@ -61,9 +65,18 @@ void main() {
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
-      "defaultAIModel": {"model": "llama"}
+      "defaultAIModel": {"model": "llama"},
     };
     expect(SettingsModel.fromJson(input), sm);
+  });
+
+  test('Testing defaultWsScheme json round-trip and missing-key default', () {
+    // Older settings on disk have no "defaultWsScheme": must fall back to wss.
+    expect(
+      SettingsModel.fromJson(const {"isDark": true}).defaultWsScheme,
+      SupportedWsSchemes.wss,
+    );
+    expect(SettingsModel.fromJson(sm.toJson()), sm);
   });
 
   test('Testing copyWith()', () {
@@ -73,6 +86,7 @@ void main() {
       size: Size(300, 200),
       offset: Offset(100, 150),
       defaultUriScheme: SupportedUriSchemes.http,
+      defaultWsScheme: SupportedWsSchemes.ws,
       defaultCodeGenLang: CodegenLanguage.curl,
       saveResponses: false,
       promptBeforeClosing: true,
@@ -83,13 +97,14 @@ void main() {
       defaultAIModel: {"model": "llama"},
     );
     expect(
-        sm.copyWith(
-          isDark: true,
-          saveResponses: false,
-          isSSLDisabled: false,
-          isDashBotEnabled: false,
-        ),
-        expectedResult);
+      sm.copyWith(
+        isDark: true,
+        saveResponses: false,
+        isSSLDisabled: false,
+        isDashBotEnabled: false,
+      ),
+      expectedResult,
+    );
   });
 
   test('Testing toString()', () {
@@ -101,6 +116,7 @@ void main() {
   "dx": 100.0,
   "dy": 150.0,
   "defaultUriScheme": "http",
+  "defaultWsScheme": "ws",
   "defaultCodeGenLang": "curl",
   "saveResponses": true,
   "promptBeforeClosing": true,
@@ -111,7 +127,8 @@ void main() {
   "isDashBotEnabled": true,
   "defaultAIModel": {
     "model": "llama"
-  }
+  },
+  "maxConnectionMessages": 1000
 }''';
     expect(sm.toString(), expectedResult);
   });

@@ -18,13 +18,13 @@
 ### Motivation & Past Experience
 
 1. **Have you worked on or contributed to a FOSS project before?**
-   - Yes. I've contributed to [NetworkX](https://github.com/networkx/networkx), a widely-used Python library for graph algorithms and network analysis. Apart from that, I built the [Professor Mailing Bot](https://github.com/DeepBuha06/prof_mailing_bot) as an open-source tool - it uses LangChain, Chroma vector stores, and Playwright+Gemini scraping to help students find and contact professors across IITs via semantic search. On the development side, I've worked on websites like TEDx IITGn, which is a responsive website with a frontend themed around a phoenix, made using React. [WEBSITE](https://tedxiitgandhinagar.com/)
+   - Yes. I've contributed to [NetworkX](https://github.com/networkx/networkx), a Python library for graph algorithms with 15k+ GitHub stars. I also built and open-sourced the [Professor Mailing Bot](https://github.com/DeepBuha06/prof_mailing_bot) - a tool that helps students find professors with matching research interests across IITs. It's deployed and publicly available at [prof-mailing-bot.streamlit.app](https://prof-mailing-bot.streamlit.app/).
 
 2. **What is your one project/achievement that you are most proud of? Why?**
    - The [Professor Mailing Bot](https://github.com/DeepBuha06/prof_mailing_bot). It started as a personal need - finding professors with matching research interests across multiple IITs. It evolved into a full system with a three-stage scraping pipeline (basic Scrapy, then Playwright, then Playwright + Gemini AI), a semantic search engine using Chroma vector store with cosine similarity, and a Streamlit frontend. What makes me proud is the scraping evolution: I went from basic crawling to AI-assisted scraping where Gemini automatically detects department and faculty page URLs, making it work across any college website. It's deployed at [prof-mailing-bot.streamlit.app](https://prof-mailing-bot.streamlit.app/).
 
 3. **What kind of problems or challenges motivate you the most?**
-   - I like problems where i have to think from every angle - every edge case, every possible scenario. I find it fascinating to map out all the possibilities and come up with a solution that handles all of them. Finding the best, most complete solution is what keeps me going.
+   - Making things work across messy edge cases. For example, when I was building the Prof Mailing Bot, basic scraping worked for 3 colleges but broke on the remaining 20 because every college website has a completely different structure. So I kept going - first Playwright for JS-rendered pages, then plugging in Gemini to auto-detect faculty page URLs on any website. That kind of "it works for 80% of cases, now make it work for 100%" problem is what I enjoy most.
 
 4. **Will you be working on GSoC full-time?**
    - Yes, primarily full-time. The GSoC period lines up with my summer break (May to July). There might be some end-semester exams at the start of May but I can manage them alongside the project.
@@ -33,7 +33,7 @@
    - Not at all. I'm available after 5 PM IST on weekdays and flexible on weekends.
 
 6. **What interests you the most about API Dash?**
-   - Two things: the clean monorepo architecture and the fact that business logic is separated from the UI layer. `packages/seed`, `apidash_core`, and `better_networking` are all pure Dart with zero Flutter imports - which is exactly what makes the Dart-to-TypeScript converter possible. For my work, I only need to deal with the logic code, not the UI framework.
+   - Two things: the clean monorepo architecture and the fact that business logic is separated from the UI layer. `packages/seed`, `apidash_core`, and `better_networking` are all pure Dart with zero Flutter imports. The logic code is clearly separated from the Flutter UI, which makes it straightforward to understand and rewrite natively in TypeScript for the VS Code extension.
 
 7. **Can you mention some areas where the project can be improved?**
    - **No VS Code presence:** most developers use VS Code or a similar IDE. Having to leave the editor to test APIs is unnecessary friction. An in-editor extension would capture this audience.
@@ -44,7 +44,7 @@
 
 ## Project Details
 
-- **Project Title:** VS Code Extension for API Dash via AST-based Dart-to-TypeScript Converter
+- **Project Title:** VS Code Extension for API Dash
 - **Relevant Issues:** New idea proposal, [discussion PR](https://github.com/foss42/apidash/pull/1342)
 - **PoC:** [Working Extension](https://github.com/DeepBuha06/APIDASH-Extension) | [Demo Video](https://youtu.be/zzto-fWGIdE)
 
@@ -52,25 +52,25 @@
 
 ## Abstract
 
-This project brings API Dash into VS Code through two parts: an **AST-based Dart-to-TypeScript converter** that automates porting API Dash's business logic, and the **VS Code extension** itself built from the converter's output. The converter uses Dart's official `analyzer` package to parse source files into an AST, then applies ~65 pattern-matching rules across 7 modules to produce TypeScript. The extension uses VS Code's Extension Host (Node.js) for logic and a Webview for UI, communicating via `postMessage`. A working PoC already shows HTTP requests, code generation in 3 languages (using templates identical to API Dash's Dart code), and a sidebar with saved requests.
+This project brings API Dash into VS Code as a TypeScript extension, written natively from scratch. The codegen templates are the same ones API Dash uses (Jinja `{{ }}` syntax = Nunjucks `{{ }}` syntax, so they copy over directly). Requests are stored as **`.http` files** in the user's project folder - plain text, committable to git, visible in the file explorer. The extension uses VS Code's Extension Host (Node.js) for logic and a Webview for the UI, talking via `postMessage`. A working PoC already handles HTTP requests, code generation in 3 languages, and a sidebar with saved requests.
 
 ## Project Goals
 
 **Core Deliverables (Weeks 1-12):**
 
-1. Build an AST-based Dart-to-TypeScript converter that auto-ports API Dash's models, enums, codegen templates, and utility functions
-2. Build a fully functional VS Code extension with all core API Dash features
+1. Build the VS Code extension with all core API Dash features, written in TypeScript
+2. **`.http` file-based request management** - requests saved as plain text files in the workspace, browsable through the sidebar
 3. Port all 33 code generators using the same Nunjucks template approach proven in the PoC
 4. Add VS Code-native features: environment variables, cURL/Postman/Insomnia import, request history
 5. Import `.env` files with auto-sync from the user's project directory
 6. Request troubleshooting console that logs the full request/response lifecycle (resolved URLs, sent headers, redirects, timing)
+7. Collection Runner: run all requests in a collection with a single click, summary report with pass/fail
 
-**Stretch Goals (if core is completed ahead of schedule):**
+**Stretch Goal (if core is completed ahead of schedule):**
 
-7. **Visual Workflow Builder:** A node-based canvas where users can drag API request nodes, connect them into chains, and run the entire workflow with a single click
-8. **Collection Runner:** Run all requests in a collection sequentially or in parallel with a single click, with a summary report showing pass/fail status for each request
+8. **Visual Workflow Builder:** A node-based canvas where users can drag API request nodes, connect them into chains, and run the entire workflow with a single click
 
-Stretch goals won't be started until all 6 core deliverables are working, tested, and documented. If time doesn't permit, they'll be cut cleanly without affecting the core extension.
+The stretch goal won't be started until all 7 core deliverables are working, tested, and documented. If time doesn't permit, it'll be cut cleanly without affecting the core extension.
 
 ---
 
@@ -78,104 +78,127 @@ Stretch goals won't be started until all 6 core deliverables are working, tested
 
 ### Deliverables
 
-1. **Dart2Ts Converter Tool:** A Dart CLI program with 7 converter modules that reads `.dart` files from API Dash's packages and outputs `.ts` files. Re-runnable whenever API Dash's upstream code changes.
-2. **VS Code Extension Core:** Extension Host setup, commands, sidebar, storage - all the plumbing that has no Dart equivalent.
-3. **HTTP Client:** Axios-based client replacing `better_networking`, with URL sanitization, error handling, and timeout support.
-4. **Code Generation (33 languages):** All generators ported via Nunjucks (same `{{ }}` syntax as API Dash's Jinja), proven by PoC to work with identical templates.
+1. **`.http` File Parser & Writer:** Read and write requests in the standard `.http` format. Plain text files that live in the workspace - you can commit them to git and share them like any other file.
+2. **VS Code Extension Core:** Extension Host setup, commands, sidebar, file watcher - the full extension plumbing.
+3. **HTTP Client:** Axios-based client with URL sanitization, error handling, timeout, and request cancellation.
+4. **Code Generation (33 languages):** All generators written in TypeScript using Nunjucks (same `{{ }}` syntax as API Dash's Jinja), proven by PoC to work with identical templates.
 5. **Webview Request Editor:** Full request editor with URL bar, method dropdown, params/headers/body tabs, response viewer with syntax highlighting.
-6. **Environment Variable System:** `{{variable}}` substitution, env switching (dev/staging/prod), workspace-level configs.
-7. **Import/Export:** cURL import, Postman collection import, Insomnia export import, `.env` file sync, export as `.json`.
+6. **Environment Variable System:** `{{variable}}` substitution, env switching (dev/staging/prod), workspace-level configs, `.env` file sync.
+7. **Import/Export:** cURL import, Postman collection import, Insomnia import, `.env` file sync, export as `.http` and `.json`.
 8. **Request Troubleshooting Console:** A log panel showing the resolved request details, response headers, timing, and redirects for every request sent.
+9. **Collection Runner:** Run all requests in a collection sequentially with a summary report showing pass/fail status.
 
-### Stretch Goals (If Time Permits)
+### Stretch Goal (If Time Permits)
 
 1. **Visual Workflow Builder (Canvas):** A React Flow node-based canvas where users can drag API request nodes, connect them into chains, and map responses to subsequent requests.
-2. **Collection Runner:** Execute all requests in a collection sequentially or in parallel with a single click, providing a summary report showing pass/fail status.
 ---
 
 ### Technical Details
 
-### Part 1: Dart2Ts Converter Architecture
+### Part 1: `.http` File-Based Request Management
 
-![Converter Flow](./images/converter_flow.png)
+Postman and Insomnia store requests inside their own database. You can't see the files, can't commit them to git, and sharing means exporting JSON blobs back and forth.
 
-The converter reads API Dash's Dart source files using the official `analyzer` package, walks the AST, and applies pattern-matching rules to output TypeScript. Using the AST means the converter understands code structure - it knows `String` in `String url` is a type (convert to `string`) but `String` in `myStringBuilder` is part of a variable name (leave it alone). Regex can't make this distinction.
+We're doing it differently: **requests are just `.http` files in your project folder.** You can see them in the file explorer, commit them to git, share them like any other file. No database, no export/import headaches.
 
-**7 Converter Modules:**
+**The `.http` file format:**
 
-| Module | What It Converts | How It Works |
-|---|---|---|
-| Type Converter | `String` to `string`, `List<T>` to `T[]`, `Map<K,V>` to `Record<K,V>` | Lookup table with around 20 type mappings |
-| Enum Converter | Dart enums to TypeScript string enums | Reads AST `EnumDeclaration` nodes |
-| Freezed Model Converter | `@freezed` classes to TS classes with `copyWith()`, `toJson()`, `fromJson()` | Detects `@freezed`, extracts factory params, converts getters |
-| Extension Method Converter | Dart extensions to standalone utility functions | Reads `ExtensionDeclaration`, rewrites call sites |
-| Function Converter | Named params, return types, method calls | `.contains()` to `.includes()`, `.isNotEmpty` to `.length > 0` |
-| Template String Converter | `"""..."""` / `'''...'''` / `r'...'` to JS backtick literals | Direct syntax swap |
-| Import Remapper | `package:jinja` to `nunjucks`, `package:http` to `axios` | Reads from YAML config |
+```http
+### Get all users
+GET https://api.example.com/users
+Authorization: Bearer {{token}}
 
-**Core Implementation - AST Visitor:**
+### Create a new user
+POST https://api.example.com/users
+Content-Type: application/json
 
-```dart
-class Dart2TsVisitor extends RecursiveAstVisitor<void> {
-  final StringBuffer output = StringBuffer();
+{
+    "name": "Deep",
+    "email": "deep@example.com"
+}
 
-  @override
-  void visitClassDeclaration(ClassDeclaration node) {
-    // Check for @freezed annotation
-    if (_hasFreezedAnnotation(node)) {
-      _convertFreezedClass(node);
-    } else {
-      output.writeln('export class ${node.name.lexeme} {');
-      super.visitClassDeclaration(node);
-      output.writeln('}');
-    }
-  }
+### Delete user by ID
+DELETE https://api.example.com/users/42
+Authorization: Bearer {{token}}
+```
 
-  @override
-  void visitMethodInvocation(MethodInvocation node) {
-    final method = node.methodName.name;
-    // Pattern match: .contains() to .includes()
-    if (_dartToTsMethodMap.containsKey(method)) {
-      output.write('.${_dartToTsMethodMap[method]}(');
-      node.argumentList.arguments.forEach((arg) => arg.accept(this));
-      output.write(')');
-    } else {
-      super.visitMethodInvocation(node);
-    }
-  }
+Each request starts with `###` followed by a name. Then the method and URL on the next line, headers below that, and a blank line before the body. Multiple requests in one file, separated by `###`. This is the same format used by the REST Client extension, so any existing `.http` files work out of the box.
+
+**Why this makes sense in VS Code:**
+
+VS Code already has folders, search, and git built in. Instead of building our own storage system, we just use what's already there:
+
+- **Collections = folders.** A folder called `api/users/` with `get-users.http` and `create-user.http` inside it IS your "Users" collection.
+- **Git just works.** The `.http` files get committed with your code. Teammates pull the repo and get all the API requests too.
+- **Search just works.** `Ctrl+Shift+F` for `POST /users` across all `.http` files.
+
+```
+my-project/
+  src/
+  api-requests/
+    auth/
+      login.http
+      register.http
+    users/
+      crud.http
+      search.http
+    orders/
+      list-orders.http
+```
+
+**Parser implementation:**
+
+```typescript
+interface ParsedRequest {
+    name: string;
+    method: string;
+    url: string;
+    headers: Record<string, string>;
+    body?: string;
+}
+
+function parseHttpFile(content: string): ParsedRequest[] {
+    const blocks = content.split(/^###\s*/m).filter(b => b.trim());
+    return blocks.map(block => {
+        const lines = block.split('\n');
+        const name = lines[0].trim();
+        const [method, url] = lines[1].trim().split(/\s+/, 2);
+
+        const headers: Record<string, string> = {};
+        let bodyStart = -1;
+
+        for (let i = 2; i < lines.length; i++) {
+            if (lines[i].trim() === '') {
+                bodyStart = i + 1;
+                break;
+            }
+            const [key, ...val] = lines[i].split(':');
+            headers[key.trim()] = val.join(':').trim();
+        }
+
+        const body = bodyStart > 0 ? lines.slice(bodyStart).join('\n').trim() : undefined;
+        return { name, method, url, headers, body };
+    });
 }
 ```
 
-**Example Conversion - HttpRequestModel getter:**
+**File watcher:** The extension uses `vscode.workspace.createFileSystemWatcher('**/*.http')` to watch for changes. When you edit a `.http` file outside the extension (say, in a text editor or through git pull), the sidebar and request editor auto-refresh. When you edit through the extension's Webview, the changes are written back to the `.http` file.
 
-```dart
-// INPUT: Dart (from packages/apidash_core/lib/models/)
-get hasFormData => kMethodsWithBody.contains(method) && formDataMapList.isNotEmpty
-```
+**Writing requests back:**
+
 ```typescript
-// OUTPUT: TypeScript (auto-generated)
-get hasFormData() { return kMethodsWithBody.includes(this.method) && this.formDataMapList.length > 0; }
+function serializeRequest(req: ParsedRequest): string {
+    let result = `### ${req.name}\n${req.method} ${req.url}\n`;
+    for (const [key, value] of Object.entries(req.headers)) {
+        result += `${key}: ${value}\n`;
+    }
+    if (req.body) {
+        result += `\n${req.body}\n`;
+    }
+    return result;
+}
 ```
 
-**What gets auto-converted:**
-
-| Source | Files | Output |
-|---|---|---|
-| `packages/seed/lib/models/` | 3 | `src/models/seed.ts` |
-| `packages/better_networking/lib/models/` | 7 | `src/models/networking.ts` |
-| `packages/apidash_core/lib/models/` | 4 | `src/models/core.ts` |
-| `lib/codegen/**/` | 30+ | `src/codegen/**/*.ts` |
-| `packages/*/lib/extensions/` | 2 | `src/utils/*.ts` |
-| `packages/*/lib/utils/` | 5 | `src/utils/*.ts` |
-| All `consts.dart` | 3 | `src/consts.ts` |
-
-Around 55-60 files total, producing around 3000+ lines of TypeScript.
-
-**Why a converter instead of manual rewrite?** Two reasons:
-1. Saves time - 70% of translation is automated
-2. **Sustainability** - when API Dash adds a new codegen language or updates a model, re-run the converter and get updated TypeScript instantly
-
-**Why not dart2js or dart compile wasm?** I looked into this early on. Dart can compile to JavaScript via `dart2js` and to WebAssembly via `dart compile wasm`. But both produce optimized, minified output that isn't human-readable. `dart2js` does aggressive dead code elimination, function inlining, and minification - so while the output runs fine, no one can actually read, debug, or extend it. The whole point of the converter is to produce **clean, readable TypeScript** that works with VS Code's TypeScript tooling - IntelliSense, type checking, debugging all work naturally. A `dart2js` blob wouldn't give us any of that. `dart compile wasm` targets WasmGC which is designed for browser environments, not Node.js Extension Hosts. The Dart Dev Compiler (DDC) produces more readable output, but it's meant for development only and still doesn't generate TypeScript types. The custom converter is more work upfront (weeks 1-3), but it produces output that's actually maintainable - which matters for a project that needs to keep up with API Dash's core.
 
 ---
 
@@ -183,9 +206,13 @@ Around 55-60 files total, producing around 3000+ lines of TypeScript.
 
 ![Extension Architecture](./images/extension_arch_diagram.png)
 
+Two layers: the **Extension Host** (Node.js) does all the logic - parsing `.http` files, sending requests, running codegen, managing environments. The **Webview** (basically a browser panel) does the UI - request editor, response viewer, codegen panel. They talk via `postMessage`.
+
+The actual flow: you open a `.http` file from the sidebar -> extension parses it -> Webview shows the editor -> you hit Send -> Extension Host fires the request with axios -> response comes back -> Webview shows it with syntax highlighting. Edits in the Webview get written back to the `.http` file.
+
 **Key Technical Decision - Nunjucks for Code Generation:**
 
-The PoC already proves this works. API Dash's Dart codegen uses Jinja templates with `jj.Template(tmpl).render(data)`. The TypeScript version uses Nunjucks with `nunjucks.renderString(tmpl, data)`. The template strings are byte-for-byte identical:
+The PoC already proves this works. API Dash uses Jinja templates (`jj.Template(tmpl).render(data)`), and in TypeScript we use Nunjucks (`nunjucks.renderString(tmpl, data)`). The actual template strings don't change at all:
 
 ```dart
 // API Dash (Dart) - lib/codegen/python/requests.dart
@@ -204,19 +231,19 @@ Same templates, different rendering engine. This is proven in the [PoC](https://
 
 **Webview Request Editor Wireframe:**
 
-The request editor is the main panel where you compose and send API requests. It has a method dropdown, URL bar with environment variable support, and tabs for params, headers, body, and auth.
+This is where you write and send requests. Method dropdown, URL bar with `{{variable}}` support, tabs for params, headers, body, and auth.
 
 ![Request Editor Wireframe](./images/request_editor_wireframe.png)
 
 **Sidebar Wireframe:**
 
-The sidebar organizes collections, environments, and request history in a tree view. You can browse, create, rename, delete, and reorder requests without leaving the sidebar.
+The sidebar shows your `.http` files organized by folder. Create, rename, delete requests, switch environments, and check history - all from here.
 
 ![Sidebar Wireframe](./images/sidebar_wireframe.png)
 
 **Response Viewer Wireframe:**
 
-After sending a request, the response viewer shows the status code with color-coded badges, response time, body size, and a syntax-highlighted response body with pretty/raw toggle.
+Shows the response after you send a request - status code badge (green for 2xx, red for 4xx/5xx), response time, body size, and the response with syntax highlighting. You can toggle between pretty and raw view.
 
 ![Response Viewer Wireframe](./images/response_viewer_wireframe.png)
 
@@ -230,7 +257,7 @@ When building an API, the same endpoint exists in multiple places. During develo
 
 Without environment variables, switching between these means manually editing the URL every time. Working on a feature locally, change the URL to localhost. Need to check if it works on staging? Go back and change it again. Ready to test production? Change it one more time. Multiply this by 20 saved requests in a collection, and you're wasting time doing the same edit over and over - and risking accidentally hitting the wrong server.
 
-**Environment variables solve this completely.** Instead of hardcoding `https://api.prod.com/api/users`, you write `{{base_url}}/api/users`. Then you define what `base_url` means in each environment:
+**Environment variables fix this.** Instead of hardcoding `https://api.prod.com/api/users`, you write `{{base_url}}/api/users`. Then you set what `base_url` means in each environment:
 
 | Variable | Development | Staging | Production |
 |---|---|---|---|
@@ -257,7 +284,7 @@ function resolveVariables(url: string, env: Environment): string {
 }
 ```
 
-The environment dropdown lives in the Webview header. Switching environments triggers re-resolution of all `{{variables}}` across URL, headers, and body.
+The environment dropdown sits in the Webview header. When you switch environments, all `{{variables}}` in the URL, headers, and body update automatically.
 
 **Storage:** Environments are saved per-workspace in `.vscode/apidash-envs.json`, allowing different projects to have different environment configs.
 
@@ -340,7 +367,7 @@ The workflow builder solves this with a drag-and-drop canvas. You place API requ
 [Login POST] --$.data.token--> [Get User GET] --$.user.id--> [Get Orders GET]
 ```
 
-Each node is a `RequestModel`. Edges define data mappings (JSONPath from response to target field in next request). Execution runs in topological order.
+Each node points to a `.http` file. The workflow definition itself (which nodes, which connections, which JSONPath mappings) is stored as a `.workflow.json` file in the same folder. This is separate from the requests - the `.http` files stay standard and compatible, while the `.workflow.json` stores the graph structure and data mappings that only our extension understands. Execution runs in topological order.
 
 **Why VS Code works well for this:** React Flow is a well-established library for node-based UIs. Flutter would need a custom canvas drawing solution. VS Code's Webview supports React out of the box, making this much simpler to build. Plus, you're already in your editor - build a workflow, run it, see failures, fix your code, and re-run without switching windows.
 
@@ -348,9 +375,9 @@ This feature is deliberately placed in the later weeks to ensure core features a
 
 ---
 
-### Part 7: Collection Runner (Extra Feature)
+### Part 7: Collection Runner
 
-> This feature lets developers run every request in a collection with a single click, providing a summary report at the end.
+> Run every request in a collection with one click and get a summary at the end.
 
 **The problem with existing tools:** Postman already has a Collection Runner, but it's buried deep in the interface - hidden behind menus and extra screens that most people never find unless someone shows them. A lot of Postman users don't even know the feature exists. A powerful testing capability goes unused just because it's hard to discover.
 
@@ -366,9 +393,21 @@ If you have a collection of 15 API requests for a "User Management" module, you 
 | DELETE /users/:id | 204 No Content | 45ms | Pass |
 | GET /users/:id | 404 Not Found | 23ms | Pass (expected) |
 
-Developers can define expected status codes per request, so a `404` after deleting a user counts as a pass, not a failure. The summary report highlights failures in red so issues are immediately visible.
+You can set expected status codes per request using inline comments in the `.http` file:
 
-**Implementation:** This uses the existing HTTP client and collection storage. The runner goes through each request, fires it, collects the result, and renders a summary table in the Webview. A progress bar shows real-time execution status, and you can cancel mid-run if you spot a failure early.
+```http
+### Delete user by ID
+# @expect 204
+DELETE https://api.example.com/users/42
+
+### Verify user is gone
+# @expect 404
+GET https://api.example.com/users/42
+```
+
+The `# @expect` comments are ignored by other tools like REST Client (they're just comments), so the files stay compatible. The Collection Runner reads them to decide pass/fail. If no `# @expect` is set, it defaults to 2xx = pass. Failures show up in red so you spot them right away.
+
+**Implementation:** The runner goes through each `.http` file in the folder, fires each request, checks the status against `# @expect` (if present), and renders a summary table in the Webview. A progress bar shows real-time execution status, and you can cancel mid-run.
 
 ---
 
@@ -399,81 +438,57 @@ I've already built and submitted a working PoC:
 
 | Package | Purpose |
 |---|---|
-| [`analyzer`](https://pub.dev/packages/analyzer) | Parses Dart code into AST for the converter |
 | [`nunjucks`](https://www.npmjs.com/package/nunjucks) | Template engine (same `{{ }}` syntax as Jinja) |
-| [`axios`](https://www.npmjs.com/package/axios) | HTTP client with interceptors, cancellation |
+| [`axios`](https://www.npmjs.com/package/axios) | HTTP client with interceptors, cancellation, AbortController |
 | [`highlight.js`](https://www.npmjs.com/package/highlight.js) | Syntax highlighting in response viewer |
 | [`curlconverter`](https://www.npmjs.com/package/curlconverter) | cURL command parser for import |
 | [`@vscode/test-electron`](https://www.npmjs.com/package/@vscode/test-electron) | Extension integration testing |
-| [`reactflow`](https://www.npmjs.com/package/reactflow) | Node-based canvas for visual workflow builder |
 | [`dotenv`](https://www.npmjs.com/package/dotenv) | Parsing `.env` files for environment variable sync |
+| [`reactflow`](https://www.npmjs.com/package/reactflow) | Node-based canvas for visual workflow builder (stretch goal) |
 
 ---
 
 ## Weekly Timeline (175 hours over 12 weeks)
 
-### Week 1: Converter Foundation
-- Set up `dart2ts` project with `analyzer` package integration
-- Implement the AST visitor skeleton (`RecursiveAstVisitor`)
-- Build the **Type Converter** module (around 20 Dart-to-TS type mappings)
-- Build the **Enum Converter** module (read `EnumDeclaration` nodes)
-- Write unit tests for both modules against API Dash's actual enum and type files
-
-**DELIVERABLE:** A tool that reads API Dash's `.dart` files and correctly converts all type annotations and enum declarations to TypeScript.
-
-### Week 2: Converter Core Models
-- Build the **Freezed Model Converter** - extract factory constructor params, generate TypeScript class with `copyWith()`, `toJson()`, `fromJson()`
-- Convert all 20 computed getters in `HttpRequestModel` using the method mapping table
-- Build the **Extension Method Converter** - read `ExtensionDeclaration`, generate standalone functions, rewrite call sites across codebase
-- Test against `packages/seed/lib/models/`, `packages/apidash_core/lib/models/`
-
-**DELIVERABLE:** All API Dash models and extension methods auto-converted to TypeScript. `HttpRequestModel` with all 20 getters working.
-
-### Week 3: Converter Complete + Verify
-- Build the **Function Converter** - handle named parameters, return types, body method calls (`.contains()` to `.includes()`, `.isNotEmpty` to `.length > 0`, etc.)
-- Build the **Template String Converter** - `"""..."""` to backtick, `r'...'` to raw string
-- Build the **Import Remapper** - `package:jinja` to `nunjucks`, `package:http` to `axios`, skip `dart:io`
-- Run the complete converter on API Dash's full codebase and verify output compiles with `tsc`
-- Fix edge cases discovered during full-codebase run
-
-**DELIVERABLE:** Complete converter that processes all 55-60 Dart files and produces compiling TypeScript. Converter is re-runnable for future updates.
-
-### Week 4: Extension Scaffold + Converter Output Integration
+### Week 1: Extension Scaffold + `.http` File Parser
 - Scaffold the VS Code extension with `yo code` - `package.json`, `tsconfig.json`, Activity Bar icon
-- Plug in the converter's TypeScript output and verify it compiles
 - Set up the Extension Host entry point (`activate()`/`deactivate()`)
-- Register commands (New Request, Open Request, Delete Request)
+- Build the `.http` file parser - read `###`-separated request blocks, extract method, URL, headers, body
+- Build the `.http` file writer - serialize requests back to the standard format
+- Register core commands (New Request, Open `.http` File, Delete Request)
 - Set up CI: lint + compile check on every push
 
-**DELIVERABLE:** A VS Code extension that loads, shows the Activity Bar icon, and has registered commands. Converter output is integrated and compiling.
+**DELIVERABLE:** Extension that loads, parses `.http` files correctly, and has registered commands.
 
-### Week 5: HTTP Client + Storage
+### Week 2: File Watcher + Workspace Integration
+- Implement `FileSystemWatcher` for `**/*.http` to detect file changes, creates, deletes
+- Build the sidebar `TreeDataProvider` that mirrors the workspace folder structure, filtered to `.http` files
+- Collections are just folders - a folder with `.http` files IS a collection
+- Implement create, rename, delete operations on `.http` files through the sidebar
+- Add method-specific icons in the sidebar (GET = green, POST = yellow, DELETE = red)
+- Connect sidebar clicks to opening the request in the Webview editor
+
+**DELIVERABLE:** A sidebar that shows all `.http` files in the workspace, organized by folder, with file watching and CRUD operations.
+
+### Week 3: HTTP Client + Request Execution
 - Build the HTTP client using `axios` - request construction, URL sanitization, timeout, error handling, response timing, JSON pretty-printing
 - Add request cancellation support using `AbortController`
-- Build the storage service - each request collection saved as JSON via `globalState`
-- Write unit tests for HTTP client (mock server) and storage (round-trip persistence)
+- Wire up the full flow: parse `.http` file -> construct request -> send via axios -> return formatted response
+- Write unit tests for the HTTP client (mock server) and `.http` parser (sample files)
 
-**DELIVERABLE:** A working HTTP client that sends requests and returns formatted responses, plus a storage layer that persists requests across sessions.
+**DELIVERABLE:** A working HTTP client that reads requests from `.http` files, sends them, and returns formatted responses.
 
-### Week 6: Sidebar + Collections
-- Implement `TreeDataProvider` for saved requests with method-specific icons
-- Add collection support - group requests into folders
-- Implement drag-to-reorder, rename, delete operations
-- Register context menu commands (Right-click to Delete, Duplicate, Move to Collection)
-- Connect sidebar clicks to opening requests in the Webview
-
-**DELIVERABLE:** A fully functional sidebar showing collections and requests with all CRUD operations.
-
-### Week 7: Webview Request Editor
+### Week 4: Webview Request Editor
 - Build the Webview UI - URL bar, method dropdown, Send button
 - Implement tabs for Params, Headers, Body with key-value table
 - Add body type selector (none, JSON, text, form-data)
 - Build `postMessage` communication between Webview and Extension Host
 - Style using VS Code CSS variables for automatic theme support (dark, light, high contrast)
+- When user edits in the Webview, changes are written back to the `.http` file on disk
 
-**DELIVERABLE:** A complete request editor UI that collects user input and communicates with the Extension Host.
+**DELIVERABLE:** A complete request editor UI that reads from and writes to `.http` files.
 
-### Week 8: Response Viewer + Syntax Highlighting
+### Week 5: Response Viewer + Syntax Highlighting
 - Display response with status badge (color-coded: green 2xx, yellow 3xx, red 4xx/5xx), response time, size
 - Integrate `highlight.js` for syntax-highlighted response body (JSON, XML, HTML)
 - Add raw/preview toggle for response body
@@ -482,44 +497,66 @@ I've already built and submitted a working PoC:
 
 **DELIVERABLE:** A polished response viewer with syntax highlighting, status indicators, and all response metadata.
 
-### Week 9: Code Generation (All 33 Languages)
-- Wire up all 30+ Nunjucks generators from the converter output
-- Build the code generation panel in the Webview - language picker dropdown, Generate button, Copy button
-- Test each generator against sample requests to verify output is valid
-- Add URL sanitization before code generation (proven in PoC)
+### Week 6: Code Generation (All 33 Languages)
+- Write the codegen engine in TypeScript using Nunjucks - the template strings copy directly from API Dash's Dart code, only the render call changes
+- Port all 33 languages in one go since the pattern is the same for each: build data object from request, render through template. The PoC already proves this works for 3 languages, so the remaining 30 follow the same pattern
+- Build the code generation panel in the Webview - language picker dropdown, Generate button, Copy to clipboard
+- Test each generator against sample requests to verify the output is valid code
 
-**DELIVERABLE:** All 33 code generators working - Python, JavaScript, cURL, Rust, Go, Java, C#, Kotlin, Swift, Dart, PHP, Ruby, and more.
+**DELIVERABLE:** All 33 code generators working. Code generation panel in the Webview.
 
-### Week 10: Environment Variables + Import
+### Week 7: Environment Variables + Midterm
 - Build the environment variable system - `{{variable}}` substitution in URL, headers, body
 - Add environment dropdown in the Webview header (dev, staging, prod)
 - Store environments per-workspace in `.vscode/apidash-envs.json`
 - Implement `.env` file sync - watch for changes, auto-import variables
-- Implement cURL import using `curlconverter` package
-- Implement Postman collection and environment import (parse JSON schema to `RequestModel[]`)
-- Build the request troubleshooting console (Output Channel with structured logging)
+- Variables in `.http` files (`{{base_url}}`) resolve based on the selected environment
+- Midterm evaluation prep and documentation
 
-**DELIVERABLE:** Working environment variable switching, `.env` file sync, import from cURL/Postman, and request troubleshooting console.
+**DELIVERABLE:** Working environment variable switching with `.env` file sync. Midterm report submitted.
 
-### Week 11: History + Collection Runner + Polish
+### Week 8: Import/Export + Troubleshooting Console
+- Implement cURL import using `curlconverter` package - paste a cURL command, get a request added to a `.http` file
+- Implement Postman collection import - parse JSON, generate `.http` files from the collection items
+- Implement Insomnia import - parse JSON/YAML, generate `.http` files
+- Export: save current requests as `.http`, Postman collection JSON, or cURL commands
+- Build the request troubleshooting console (Output Channel with structured logging - resolved URL, sent headers, redirect chain, timing)
+
+**DELIVERABLE:** Import from cURL/Postman/Insomnia, export to `.http`/JSON/cURL, and troubleshooting console.
+
+### Week 9: Collection Runner + Request History
+- Build the Collection Runner - run all `.http` files in a folder with a single click
+- Generate summary report showing pass/fail status, response times, status codes
+- Read `# @expect` comments from `.http` files to determine expected status codes
+- Progress bar with cancel support
 - Implement request history with date grouping (Today, Yesterday, Last Week)
-- Build the Collection Runner - execute all requests in a collection, generate summary report
-- Add keyboard shortcuts - `Ctrl+Enter` to send, `Ctrl+N` for new request
+
+**DELIVERABLE:** Collection Runner that executes all requests in a folder and shows a summary report. Request history sidebar.
+
+### Week 10: Polish + Keyboard Shortcuts + Error Handling
+- Add keyboard shortcuts - `Ctrl+Enter` to send, `Ctrl+N` for new request, `Ctrl+Shift+C` to copy as cURL
 - Add status bar item showing active environment
-- Error handling polish - friendly messages for network errors, timeouts, invalid URLs
-- Fix edge cases and UI bugs discovered during testing
+- Better error messages for network errors, timeouts, invalid URLs, broken `.http` files
+- Fix edge cases and UI bugs found during testing
+- Make sure it doesn't slow down when a workspace has lots of `.http` files
 
-**DELIVERABLE:** A polished extension with history, collection runner, keyboard shortcuts, and comprehensive error handling.
+**DELIVERABLE:** A polished extension with keyboard shortcuts, status bar, and error handling.
 
-### Week 12: Testing + Documentation + Release
-- Write unit tests using Mocha for HTTP client, storage, codegen
+### Week 11: Testing + Documentation + Release
+- Write unit tests using Mocha for HTTP client, `.http` parser, codegen
 - Write integration tests using `@vscode/test-electron` for end-to-end flows
 - Write user documentation - README with screenshots, keyboard shortcut reference
-- Write developer documentation - converter architecture, how to add new generators
+- Write developer documentation - extension architecture, how to add new generators
 - Package as `.vsix` and prepare for VS Code Marketplace submission
-- Begin Visual Workflow Builder scaffolding (React Flow setup in Webview) if time permits
 
-**DELIVERABLE:** Fully tested, documented extension ready for marketplace. Technical documentation and final GSoC report.
+**DELIVERABLE:** Fully tested, documented extension ready for marketplace. Final GSoC report.
+
+### Week 12: Buffer + Visual Workflow Builder (Stretch Goal)
+- This week is kept as buffer for anything that overflows from earlier weeks
+- If all core features are done: begin Visual Workflow Builder scaffolding (React Flow setup in Webview, `.workflow.json` format, basic node layout)
+- Final polish, bug fixes, and release prep
+
+**DELIVERABLE:** Fully tested, documented extension ready for marketplace. Final GSoC report.
 
 ---
 
@@ -557,7 +594,8 @@ I've already built and submitted a working PoC:
 
 - Forked the repo, set up the dev environment, and ran the app on Windows
 - Went through the codebase to understand how it's structured and how the packages fit together
+- Researched the `.http` file format and how REST Client handles it to plan our file-based approach
 - Looked into alternatives for the key technology choices
 - **Built a working PoC** - a VS Code extension that sends HTTP requests, generates code in 3 languages, and has a sidebar with saved requests
-- **Proven the key insight** - Nunjucks templates are byte-for-byte identical to API Dash's Jinja templates, which means all 33 codegen languages can be ported using the same approach
+- **Proven that Nunjucks = Jinja** - the template strings copy over directly, so all 33 codegen languages can be ported the same way
 - [PoC Repository](https://github.com/DeepBuha06/APIDASH-Extension) | [Demo Video](https://youtu.be/zzto-fWGIdE)

@@ -12,9 +12,7 @@ void main() {
       MaterialApp(
         title: 'Save in Downloads button',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: SaveInDownloadsButton(),
-        ),
+        home: const Scaffold(body: SaveInDownloadsButton()),
       ),
     );
 
@@ -24,8 +22,9 @@ void main() {
     Finder button;
     expect(find.text(kLabelDownload), findsOneWidget);
     button = find.ancestor(
-        of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is TextButton));
+      of: icon,
+      matching: find.byWidgetPredicate((widget) => widget is TextButton),
+    );
     expect(button, findsOneWidget);
     expect(tester.widget<TextButton>(button).enabled, isFalse);
   });
@@ -51,5 +50,8 @@ void main() {
     button = find.byType(IconButton);
     expect(button, findsOneWidget);
     expect(tester.widget<IconButton>(button).onPressed == null, isFalse);
+
+    await tester.tap(button);
+    await tester.pumpAndSettle();
   });
 }

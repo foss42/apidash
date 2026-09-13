@@ -8,10 +8,12 @@ class ResponseTabView extends StatefulWidget {
     super.key,
     this.selectedId,
     required this.children,
+    this.headersTitle = kLabelHeaders,
   });
 
   final String? selectedId;
   final List<Widget> children;
+  final String headersTitle;
   @override
   State<ResponseTabView> createState() => _ResponseTabViewState();
 }
@@ -40,12 +42,12 @@ class _ResponseTabViewState extends State<ResponseTabView>
           labelPadding: kPh2,
           overlayColor: kColorTransparentState,
           onTap: (index) {},
-          tabs: const [
-            TabLabel(
+          tabs: [
+            const TabLabel(
               text: kLabelResponseBody,
             ),
             TabLabel(
-              text: kLabelHeaders,
+              text: widget.headersTitle,
             ),
           ],
         ),

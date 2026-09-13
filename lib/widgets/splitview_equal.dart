@@ -46,11 +46,10 @@ class EqualSplitView extends StatelessWidget {
               ],
             ),
             builder: (context, area) {
-              return switch (area.id) {
-                "left" => leftWidget,
-                "right" => rightWidget,
-                _ => Container(),
-              };
+              if (area.id == "left") {
+                return leftWidget;
+              }
+              return rightWidget;
             },
           );
         },

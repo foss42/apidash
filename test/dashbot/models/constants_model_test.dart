@@ -31,6 +31,8 @@ void main() {
     test('ChatActionTarget round-trip mapping', () {
       final map = <ChatActionTarget, String>{
         ChatActionTarget.httpRequestModel: 'httpRequestModel',
+        ChatActionTarget.wsRequestModel: 'wsRequestModel',
+        ChatActionTarget.mqttRequestModel: 'mqttRequestModel',
         ChatActionTarget.codegen: 'codegen',
         ChatActionTarget.test: 'test',
         ChatActionTarget.code: 'code',
@@ -42,8 +44,58 @@ void main() {
         expect(chatActionTargetFromString(strVal), enumVal);
       });
       // unknown maps to default httpRequestModel
-      expect(chatActionTargetFromString('weird'),
-          ChatActionTarget.httpRequestModel);
+      expect(
+        chatActionTargetFromString('weird'),
+        ChatActionTarget.httpRequestModel,
+      );
+    });
+
+    test('wsRequestModel target round-trips', () {
+      expect(ChatActionTarget.wsRequestModel.name, 'wsRequestModel');
+      expect(
+        chatActionTargetFromString('wsRequestModel'),
+        ChatActionTarget.wsRequestModel,
+      );
+    });
+
+    test('mqttRequestModel target round-trips', () {
+      expect(ChatActionTarget.mqttRequestModel.name, 'mqttRequestModel');
+      expect(
+        chatActionTargetFromString('mqttRequestModel'),
+        ChatActionTarget.mqttRequestModel,
+      );
+    });
+
+    test('ChatMessageType includes all MQTT task members', () {
+      const mqttTypes = [
+        ChatMessageType.explainMqttConnection,
+        ChatMessageType.debugMqttConnection,
+        ChatMessageType.whyNoMqttMessages,
+        ChatMessageType.summarizeMqttMessages,
+        ChatMessageType.explainMqttTopics,
+        ChatMessageType.mqttSessionAdvisor,
+        ChatMessageType.generateMqttCode,
+        ChatMessageType.explainMqttLwt,
+        ChatMessageType.explainMqttV5,
+        ChatMessageType.findInMqttMessages,
+      ];
+      expect(ChatMessageType.values, containsAll(mqttTypes));
+    });
+
+    test('ChatMessageType includes all WebSocket task members', () {
+      const wsTypes = [
+        ChatMessageType.explainWsConnection,
+        ChatMessageType.debugWsConnection,
+        ChatMessageType.summarizeWsMessages,
+        ChatMessageType.generateWsCode,
+        ChatMessageType.findInWsMessages,
+        ChatMessageType.generateWsDoc,
+        ChatMessageType.generateWsTest,
+        ChatMessageType.explainWsMessage,
+        ChatMessageType.debugWsMessage,
+        ChatMessageType.wsConnectionHealth,
+      ];
+      expect(ChatMessageType.values, containsAll(wsTypes));
     });
   });
 }

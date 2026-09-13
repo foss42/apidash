@@ -1770,132 +1770,102 @@ cargo run
 - For more information, refer to the [Actix Web Client documentation](https://docs.rs/awc/).
 
 ## Swift (URLSession)
+Here are the detailed instructions for running the generated API Dash code in **Swift (using `URLSession`)** for macOS and Linux:
+### 1. Set Up the Environment
 
-###  Set Up the Environment
-#### MacBook (macOS)
+#### macOS
 
-Verify Swift :  
-```
+Verify Swift is installed:
+```bash
 swift --version
 ```
 
-
-#### Linux(Multipartformdata is not supported)
-
-Download Swift for Linux (e.g., Ubuntu) from Swift.org.
-
-```
-tar xzf filename
-export PATH=$PWD/filename/usr/bin:$PATH
-
-```
-Verify: 
-```
-swift --version
+If Swift is not installed, download and install Xcode from the [Mac App Store](https://apps.apple.com/us/app/xcode/id497799835) or install the Command Line Tools:
+```bash
+xcode-select --install
 ```
 
+#### Linux
 
-
-
-
-Install Dependencies:
+1. Download the Swift toolchain for your Linux distribution from [Swift.org](https://swift.org/download/).
+2. Extract the archive (replace `swift-x.x.x-RELEASE-ubuntu22.04` with your downloaded filename):
+```bash
+   tar xzf swift-x.x.x-RELEASE-ubuntu22.04.tar.gz
+   export PATH=$PWD/swift-x.x.x-RELEASE-ubuntu22.04/usr/bin:$PATH
 ```
-sudo apt-get update
-sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+3. Install required dependencies:
+```bash
+   sudo apt-get update
+   sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+```
+4. Verify installation:
+```bash
+   swift --version
 ```
 
+ **Note:** Multipart form data is not supported on Linux.
 
-### Create a Project:
-```
+### 2. Create a Project
+```bash
 mkdir URLSessionDemo
 cd URLSessionDemo
 swift package init --type executable
 ```
 
+### 3. Run the Generated Code
 
-
-
-### Run the Code
-Ensure main.swift is in Sources/URLSessionDemo.
-
-
-Run:
-```
-swift run
+1. Copy the generated code from API Dash.
+2. Paste it into `Sources/URLSessionDemo/main.swift`.
+3. Run the project:
+```bash
+   swift run
 ```
 
 ## Swift (Alamofire)
+Here are the detailed instructions for running the generated API Dash code in **Swift (using `Alamofire`)** for macOS and Linux:
 
-###  Set Up the Environment
-#### MacBook (macOS)
+### 1. Set Up the Environment
 
-Verify Swift :  
-```
+Follow the instructions from the [Swift (URLSession)](#swift-urlsession) section above to install Swift for your operating system.
+
+Verify installation:
+```bash
 swift --version
 ```
 
+**Note:** Multipart form data is not supported on Linux.
 
-#### Linux (Multipartformdata is not supported)
-
-Download Swift for Linux (e.g., Ubuntu) from Swift.org.
-
-```
-tar xzf filename
-export PATH=$PWD/filename/usr/bin:$PATH
-
-```
-Verify: 
-```
-swift --version
-```
-
-
-
-
-
- Install Dependencies for swift:
-```
-sudo apt-get update
-sudo apt-get install clang libicu-dev libcurl4-openssl-dev
-```
-
-
-### Create a Project:
-```
-mkdir URLSessionDemo
-cd URLSessionDemo
+### 2. Create a Project
+```bash
+mkdir AlamofireDemo
+cd AlamofireDemo
 swift package init --type executable
 ```
 
+### 3. Add Alamofire Dependency
 
-### Adding alamofire
- open `package.swift` and add following dependencies and target(replace `project-name` with your project name)
-```
- dependencies: [
-        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.6.4")
-    ],
- targets: [
-        .executableTarget(
-            name: "project-name",
-            dependencies: [
-                "Alamofire" 
-            ]
-        )
-    ]
-
-
+Open `Package.swift` and update it to include Alamofire (replace `project-name` with your project name):
+```swift
+dependencies: [
+    .package(url: "https://github.com/Alamofire/Alamofire", from: "5.6.4")
+],
+targets: [
+    .executableTarget(
+        name: "project-name",
+        dependencies: [
+            "Alamofire"
+        ]
+    )
+]
 ```
 
+### 4. Run the Generated Code
 
-
-### Run the Code
-Ensure main.swift is in Sources/URLSessionDemo.
-
-
-Run:
+1. Copy the generated code from API Dash.
+2. Paste it into `Sources/AlamofireDemo/main.swift`.
+3. Run the project:
+```bash
+   swift run
 ```
-swift run
-```
-
 
 

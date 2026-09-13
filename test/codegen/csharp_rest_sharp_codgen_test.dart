@@ -32,12 +32,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 2", () {
@@ -69,12 +70,13 @@ class Program
 """;
 
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 3", () {
@@ -107,12 +109,13 @@ class Program
 """;
 
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 4", () {
@@ -148,12 +151,13 @@ class Program
 """;
 
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 5", () {
@@ -185,12 +189,13 @@ class Program
 """;
 
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 6", () {
@@ -224,12 +229,13 @@ class Program
 """;
 
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 7", () {
@@ -259,12 +265,13 @@ class Program
 """;
 
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 8", () {
@@ -297,12 +304,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 9", () {
@@ -334,12 +342,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 10", () {
@@ -370,12 +379,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet10,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet10,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 11", () {
@@ -409,12 +419,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet11,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet11,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Get 12", () {
@@ -443,12 +454,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelGet12,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -479,12 +491,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelHead1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelHead1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
 
     test("Head 2", () {
@@ -513,12 +526,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelHead2,
-            SupportedUriSchemes.http,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelHead2,
+          SupportedUriSchemes.http,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -554,12 +568,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 2", () {
       const expectedCode = """
@@ -599,12 +614,13 @@ arr = "[null, true, false, null]"
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 3", () {
       const expectedCode = """
@@ -640,12 +656,13 @@ text = "I LOVE Flutter"
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost3,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost3,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 4", () {
       const expectedCode = r"""
@@ -678,12 +695,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost4,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 5", () {
       const expectedCode = r"""
@@ -718,12 +736,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost5,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 6", () {
       const expectedCode = r"""
@@ -759,12 +778,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost6,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost6,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 7", () {
       const expectedCode = r"""
@@ -800,12 +820,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost7,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost7,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 8", () {
       const expectedCode = r"""
@@ -841,12 +862,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost8,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost8,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Post 9", () {
       const expectedCode = r"""
@@ -888,12 +910,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPost9,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -933,12 +956,13 @@ job = "zion resident"
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPut1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPut1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -978,12 +1002,13 @@ job = "accountant"
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelPatch1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPatch1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 
@@ -1016,12 +1041,13 @@ class Program
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelDelete1,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelDelete1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
     test("Delete 2", () {
       const expectedCode = """
@@ -1058,12 +1084,13 @@ job = "accountant"
 }
 """;
       expect(
-          codegen.getCode(
-            CodegenLanguage.cSharpRestSharp,
-            requestModelDelete2,
-            SupportedUriSchemes.https,
-          ),
-          expectedCode);
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelDelete2,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
     });
   });
 }

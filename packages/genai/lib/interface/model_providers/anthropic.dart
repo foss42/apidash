@@ -30,9 +30,15 @@ class AnthropicModel extends ModelProvider {
             ),
       body: kJsonEncoder.convert({
         "model": aiRequestModel.model,
+        if (aiRequestModel.systemPrompt.isNotEmpty)
+          "system": aiRequestModel.systemPrompt,
         "messages": [
-          {"role": "system", "content": aiRequestModel.systemPrompt},
-          {"role": "user", "content": aiRequestModel.userPrompt},
+          {
+            "role": "user",
+            "content": aiRequestModel.userPrompt.isNotEmpty
+                ? aiRequestModel.userPrompt
+                : "Generate",
+          },
         ],
         ...aiRequestModel.getModelConfigMap(),
         if (aiRequestModel.stream ?? false) ...{'stream': true},

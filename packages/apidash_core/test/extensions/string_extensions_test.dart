@@ -9,10 +9,11 @@ void main() {
       });
 
       test(
-          'should capitalize the first letter and lowercase the rest of an uppercase word',
-          () {
-        expect('HELLO'.capitalize(), 'Hello');
-      });
+        'should capitalize the first letter and lowercase the rest of an uppercase word',
+        () {
+          expect('HELLO'.capitalize(), 'Hello');
+        },
+      );
 
       test('should return the same string if it is already capitalized', () {
         expect('Hello'.capitalize(), 'Hello');
@@ -33,18 +34,20 @@ void main() {
 
     group('Testing clip', () {
       test(
-          'should return the same string if its length is less than or equal to the limit',
-          () {
-        expect('hello'.clip(5), 'hello');
-        expect('hello'.clip(10), 'hello');
-      });
+        'should return the same string if its length is less than or equal to the limit',
+        () {
+          expect('hello'.clip(5), 'hello');
+          expect('hello'.clip(10), 'hello');
+        },
+      );
 
       test(
-          'should clip the string and add ellipsis if its length is greater than the limit',
-          () {
-        expect('hello world'.clip(5), 'hello...');
-        expect('hello world'.clip(8), 'hello wo...');
-      });
+        'should clip the string and add ellipsis if its length is greater than the limit',
+        () {
+          expect('hello world'.clip(5), 'hello...');
+          expect('hello world'.clip(8), 'hello wo...');
+        },
+      );
 
       test('should return an empty string if the input is empty', () {
         expect(''.clip(5), '');
