@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/utils/ai_provider_utils.dart';
 import 'ai_model_selector_button.dart';
 
 class AIModelSelector extends ConsumerWidget {
@@ -23,18 +24,31 @@ class AIModelSelector extends ConsumerWidget {
       aiRequestModel = readOnlyModel;
     }
 
-    if (aiRequestModel == null) {
-      return Container();
+    if (aiRequestModel == null && readOnlyModel != null) {
+      return const SizedBox.shrink();
     }
 
+    final settings = ref.watch(settingsProvider);
+    final base = aiRequestModel ?? const AIRequestModel();
+    final displayModel = applyProviderCredentials(
+      base,
+      settings.aiProviders,
+      preferStored: false,
+    );
+
     return AIModelSelectorButton(
-      readonly: (readOnlyModel != null),
+      readonly: readOnlyModel != null,
       key: ValueKey(ref.watch(selectedIdStateProvider)),
-      aiRequestModel: aiRequestModel,
+      aiRequestModel: displayModel,
+      showAddWhenEmpty: true,
       onModelUpdated: (newAIRequestModel) {
+        final withCreds = applyProviderCredentials(
+          newAIRequestModel,
+          settings.aiProviders,
+        );
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(aiRequestModel: newAIRequestModel.copyWith());
+            .update(aiRequestModel: withCreds.copyWith());
       },
     );
   }
