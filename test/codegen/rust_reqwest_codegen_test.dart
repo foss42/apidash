@@ -39,10 +39,12 @@ void main() {
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.apidash.dev/country/data";
-
+    let query_params = [
+        ("code", "US"),
+    ];
     let response = client
         .get(url)
-        .query(&[("code", "US")])
+        .query(&query_params)
         .send()?;
 
     println!("Status Code: {}", response.status()); 
@@ -66,10 +68,13 @@ void main() {
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.apidash.dev/country/data";
-
+    let query_params = [
+        ("code", "IND"),
+        ("code", "US"),
+    ];
     let response = client
         .get(url)
-        .query(&[("code", "IND")])
+        .query(&query_params)
         .send()?;
 
     println!("Status Code: {}", response.status()); 
@@ -93,10 +98,16 @@ void main() {
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.apidash.dev/humanize/social";
-
+    let query_params = [
+        ("num", "8700000"),
+        ("digits", "3"),
+        ("system", "SS"),
+        ("add_space", "true"),
+        ("trailing_zeros", "true"),
+    ];
     let response = client
         .get(url)
-        .query(&[("num", "8700000"), ("digits", "3"), ("system", "SS"), ("add_space", "true"), ("trailing_zeros", "true")])
+        .query(&query_params)
         .send()?;
 
     println!("Status Code: {}", response.status()); 
@@ -147,10 +158,12 @@ void main() {
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.github.com/repos/foss42/apidash";
-
+    let query_params = [
+        ("raw", "true"),
+    ];
     let response = client
         .get(url)
-        .query(&[("raw", "true")])
+        .query(&query_params)
         .header("User-Agent", "Test Agent")
         .send()?;
 
@@ -201,10 +214,12 @@ void main() {
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.github.com/repos/foss42/apidash";
-
+    let query_params = [
+        ("raw", "true"),
+    ];
     let response = client
         .get(url)
-        .query(&[("raw", "true")])
+        .query(&query_params)
         .header("User-Agent", "Test Agent")
         .send()?;
 
@@ -229,10 +244,13 @@ void main() {
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.apidash.dev/humanize/social";
-
+    let query_params = [
+        ("num", "8700000"),
+        ("add_space", "true"),
+    ];
     let response = client
         .get(url)
-        .query(&[("num", "8700000"), ("add_space", "true")])
+        .query(&query_params)
         .send()?;
 
     println!("Status Code: {}", response.status()); 
@@ -283,10 +301,13 @@ void main() {
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.apidash.dev/humanize/social";
-
+    let query_params = [
+        ("num", "8700000"),
+        ("digits", "3"),
+    ];
     let response = client
         .get(url)
-        .query(&[("num", "8700000"), ("digits", "3")])
+        .query(&query_params)
         .header("User-Agent", "Test Agent")
         .send()?;
 
@@ -397,7 +418,6 @@ void main() {
     let payload = r#"{
 "text": "I LOVE Flutter"
 }"#;
-
     let response = client
         .post(url)
         .header("content-type", "text/plain")
@@ -434,7 +454,6 @@ void main() {
 "no": 1.2,
 "arr": ["null", "true", "false", null]
 });
-
     let response = client
         .post(url)
         .json(&payload)
@@ -465,7 +484,6 @@ void main() {
     let payload = serde_json::json!({
 "text": "I LOVE Flutter"
 });
-
     let response = client
         .post(url)
         .header("User-Agent", "Test Agent")
@@ -756,10 +774,13 @@ void main() {
         } else if item.field_type == "file" {
             form = form.file(item.name, &item.value)?; 
         }
-    }
+    }    let query_params = [
+        ("size", "2"),
+        ("len", "3"),
+    ];
     let response = client
         .post(url)
-        .query(&[("size", "2"), ("len", "3")])
+        .query(&query_params)
         .multipart(form)
         .send()?;
 
@@ -812,10 +833,13 @@ void main() {
         } else if item.field_type == "file" {
             form = form.file(item.name, &item.value)?; 
         }
-    }
+    }    let query_params = [
+        ("size", "2"),
+        ("len", "3"),
+    ];
     let response = client
         .post(url)
-        .query(&[("size", "2"), ("len", "3")])
+        .query(&query_params)
         .header("User-Agent", "Test Agent")
         .header("Keep-Alive", "true")
         .multipart(form)
@@ -850,9 +874,9 @@ void main() {
 "name": "morpheus",
 "job": "zion resident"
 });
-
     let response = client
         .put(url)
+        .header("x-api-key", "reqres-free-v1")
         .json(&payload)
         .send()?;
 
@@ -884,9 +908,9 @@ void main() {
 "name": "marfeus",
 "job": "accountant"
 });
-
     let response = client
         .patch(url)
+        .header("x-api-key", "reqres-free-v1")
         .json(&payload)
         .send()?;
 
@@ -916,6 +940,7 @@ void main() {
 
     let response = client
         .delete(url)
+        .header("x-api-key", "reqres-free-v1")
         .send()?;
 
     println!("Status Code: {}", response.status()); 
@@ -944,9 +969,9 @@ void main() {
 "name": "marfeus",
 "job": "accountant"
 });
-
     let response = client
         .delete(url)
+        .header("x-api-key", "reqres-free-v1")
         .json(&payload)
         .send()?;
 

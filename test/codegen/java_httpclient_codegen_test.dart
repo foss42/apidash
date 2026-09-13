@@ -75,8 +75,7 @@ public class Main {
       );
     });
     test('GET3', () {
-      const expectedCode = r'''
-import java.net.URI;
+      const expectedCode = r'''import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -86,7 +85,7 @@ public class Main {
   public static void main(String[] args) {
     try {
       HttpClient client = HttpClient.newHttpClient();
-      URI uri = URI.create("https://api.apidash.dev/country/data?code=IND");
+      URI uri = URI.create("https://api.apidash.dev/country/data?code=US&code=IND");
 
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).GET();
       HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
@@ -1075,6 +1074,7 @@ public class Main {
 }""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).PUT(bodyPublisher);
       requestBuilder = requestBuilder.headers(
+        "x-api-key", "reqres-free-v1",
         "Content-Type", "application/json"
       );
       HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
@@ -1118,6 +1118,7 @@ public class Main {
 }""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("PATCH", bodyPublisher);
       requestBuilder = requestBuilder.headers(
+        "x-api-key", "reqres-free-v1",
         "Content-Type", "application/json"
       );
       HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
@@ -1156,6 +1157,9 @@ public class Main {
       URI uri = URI.create("https://reqres.in/api/users/2");
 
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("DELETE", HttpRequest.BodyPublishers.noBody());
+      requestBuilder = requestBuilder.headers(
+        "x-api-key", "reqres-free-v1"
+      );
       HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
       System.out.println("Response body: " + response.body());
       System.out.println("Response code: " + response.statusCode());
@@ -1194,6 +1198,7 @@ public class Main {
 }""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("DELETE", bodyPublisher);
       requestBuilder = requestBuilder.headers(
+        "x-api-key", "reqres-free-v1",
         "Content-Type", "application/json"
       );
       HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());

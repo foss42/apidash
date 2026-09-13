@@ -47,8 +47,8 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.apidash.dev/country/data".toHttpUrl().newBuilder()
-        .addQueryParameter("code", "US")
-        .build()
+            .addQueryParameter("code", "US")
+            .build()
 
     val request = Request.Builder()
         .url(url)
@@ -80,8 +80,9 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.apidash.dev/country/data".toHttpUrl().newBuilder()
-        .addQueryParameter("code", "IND")
-        .build()
+            .addQueryParameter("code", "IND")
+            .addQueryParameter("code", "US")
+            .build()
 
     val request = Request.Builder()
         .url(url)
@@ -113,12 +114,12 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
-        .addQueryParameter("num", "8700000")
-        .addQueryParameter("digits", "3")
-        .addQueryParameter("system", "SS")
-        .addQueryParameter("add_space", "true")
-        .addQueryParameter("trailing_zeros", "true")
-        .build()
+            .addQueryParameter("num", "8700000")
+            .addQueryParameter("digits", "3")
+            .addQueryParameter("system", "SS")
+            .addQueryParameter("add_space", "true")
+            .addQueryParameter("trailing_zeros", "true")
+            .build()
 
     val request = Request.Builder()
         .url(url)
@@ -181,8 +182,8 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.github.com/repos/foss42/apidash".toHttpUrl().newBuilder()
-        .addQueryParameter("raw", "true")
-        .build()
+            .addQueryParameter("raw", "true")
+            .build()
 
     val request = Request.Builder()
         .url(url)
@@ -245,8 +246,8 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.github.com/repos/foss42/apidash".toHttpUrl().newBuilder()
-        .addQueryParameter("raw", "true")
-        .build()
+            .addQueryParameter("raw", "true")
+            .build()
 
     val request = Request.Builder()
         .url(url)
@@ -279,9 +280,9 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
-        .addQueryParameter("num", "8700000")
-        .addQueryParameter("add_space", "true")
-        .build()
+            .addQueryParameter("num", "8700000")
+            .addQueryParameter("add_space", "true")
+            .build()
 
     val request = Request.Builder()
         .url(url)
@@ -344,9 +345,9 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
-        .addQueryParameter("num", "8700000")
-        .addQueryParameter("digits", "3")
-        .build()
+            .addQueryParameter("num", "8700000")
+            .addQueryParameter("digits", "3")
+            .build()
 
     val request = Request.Builder()
         .url(url)
@@ -733,9 +734,9 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.apidash.dev/io/form".toHttpUrl().newBuilder()
-        .addQueryParameter("size", "2")
-        .addQueryParameter("len", "3")
-        .build()
+            .addQueryParameter("size", "2")
+            .addQueryParameter("len", "3")
+            .build()
     val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text","API")
           .addFormDataPart("sep","|")
           .addFormDataPart("times","3")
@@ -773,9 +774,9 @@ fun main() {
     val client = OkHttpClient()
 
     val url = "https://api.apidash.dev/io/img".toHttpUrl().newBuilder()
-        .addQueryParameter("size", "2")
-        .addQueryParameter("len", "3")
-        .build()
+            .addQueryParameter("size", "2")
+            .addQueryParameter("len", "3")
+            .build()
     val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token","xyz")
           
           .addFormDataPart("imfile",File("Documents/up/1.png").name,File("Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
@@ -825,6 +826,7 @@ fun main() {
 
     val request = Request.Builder()
         .url(url)
+        .addHeader("x-api-key", "reqres-free-v1")
         .put(body)
         .build()
 
@@ -866,6 +868,7 @@ fun main() {
 
     val request = Request.Builder()
         .url(url)
+        .addHeader("x-api-key", "reqres-free-v1")
         .patch(body)
         .build()
 
@@ -898,6 +901,7 @@ fun main() {
 
     val request = Request.Builder()
         .url(url)
+        .addHeader("x-api-key", "reqres-free-v1")
         .delete()
         .build()
 
@@ -937,6 +941,7 @@ fun main() {
 
     val request = Request.Builder()
         .url(url)
+        .addHeader("x-api-key", "reqres-free-v1")
         .delete(body)
         .build()
 

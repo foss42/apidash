@@ -32,11 +32,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 
 url = 'https://api.apidash.dev/country/data'
-
-params = {
-  "code": "US"
-}
-
+params = { 'code': ['US'] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -56,11 +52,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 
 url = 'https://api.apidash.dev/country/data'
-
-params = {
-  "code": "IND"
-}
-
+params = { 'code': ['IND', 'US'] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -80,15 +72,11 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 
 url = 'https://api.apidash.dev/humanize/social'
-
-params = {
-  "num": "8700000",
-  "digits": "3",
-  "system": "SS",
-  "add_space": "true",
-  "trailing_zeros": "true"
-}
-
+params = { 'num': ['8700000'],
+'digits': ['3'],
+'system': ['SS'],
+'add_space': ['true'],
+'trailing_zeros': ['true'] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -132,11 +120,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 
 url = 'https://api.github.com/repos/foss42/apidash'
-
-params = {
-  "raw": "true"
-}
-
+params = { 'raw': ['true'] }
 headers = {
   "User-Agent": "Test Agent"
 }
@@ -180,11 +164,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 
 url = 'https://api.github.com/repos/foss42/apidash'
-
-params = {
-  "raw": "true"
-}
-
+params = { 'raw': ['true'] }
 headers = {
   "User-Agent": "Test Agent"
 }
@@ -208,12 +188,8 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 
 url = 'https://api.apidash.dev/humanize/social'
-
-params = {
-  "num": "8700000",
-  "add_space": "true"
-}
-
+params = { 'num': ['8700000'],
+'add_space': ['true'] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -257,12 +233,8 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 
 url = 'https://api.apidash.dev/humanize/social'
-
-params = {
-  "num": "8700000",
-  "digits": "3"
-}
-
+params = { 'num': ['8700000'],
+'digits': ['3'] }
 headers = {
   "User-Agent": "Test Agent"
 }
@@ -559,12 +531,8 @@ print('Response Body:', response.text)
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 url = 'https://api.apidash.dev/io/form'
-
-params = {
-  "size": "2",
-  "len": "3"
-}
-
+params = { 'size': ['2'],
+'len': ['3'] }
 payload = MultipartEncoder({
   "text": "API",
   "sep": "|",
@@ -595,12 +563,8 @@ print('Response Body:', response.text)
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 url = 'https://api.apidash.dev/io/img'
-
-params = {
-  "size": "2",
-  "len": "3"
-}
-
+params = { 'size': ['2'],
+'len': ['3'] }
 payload = MultipartEncoder({
   "token": "xyz",
   "imfile": ("1.png", open("/Documents/up/1.png", "rb")),
@@ -639,7 +603,11 @@ payload = {
 "job": "zion resident"
 }
 
-response = requests.put(url, json=payload)
+headers = {
+  "x-api-key": "reqres-free-v1"
+}
+
+response = requests.put(url, json=payload, headers=headers)
 
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
@@ -666,7 +634,11 @@ payload = {
 "job": "accountant"
 }
 
-response = requests.patch(url, json=payload)
+headers = {
+  "x-api-key": "reqres-free-v1"
+}
+
+response = requests.patch(url, json=payload, headers=headers)
 
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
@@ -688,7 +660,11 @@ print('Response Body:', response.text)
 
 url = 'https://reqres.in/api/users/2'
 
-response = requests.delete(url)
+headers = {
+  "x-api-key": "reqres-free-v1"
+}
+
+response = requests.delete(url, headers=headers)
 
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
@@ -713,7 +689,11 @@ payload = {
 "job": "accountant"
 }
 
-response = requests.delete(url, json=payload)
+headers = {
+  "x-api-key": "reqres-free-v1"
+}
+
+response = requests.delete(url, json=payload, headers=headers)
 
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)

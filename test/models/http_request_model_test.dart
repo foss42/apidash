@@ -34,7 +34,7 @@ void main() {
       'User-Agent': 'Test Agent',
       'Content-Type': 'application/json; charset=utf-8',
     });
-    expect(httpRequestModel.paramsMap, {'size': '2', 'len': '3'});
+    expect(httpRequestModel.paramsMap, {'size': ['2'], 'len': ['3']});
     expect(httpRequestModel.enabledHeaders, const [
       NameValueModel(
         name: 'Content-Type',
@@ -45,10 +45,9 @@ void main() {
       NameValueModel(name: 'size', value: '2'),
       NameValueModel(name: 'len', value: '3'),
     ]);
-    expect(httpRequestModel.enabledHeadersMap, {
-      'Content-Type': 'application/json; charset=utf-8',
-    });
-    expect(httpRequestModel.enabledParamsMap, {'size': '2', 'len': '3'});
+    expect(httpRequestModel.enabledHeadersMap,
+        {'Content-Type': 'application/json; charset=utf-8'});
+    expect(httpRequestModel.enabledParamsMap, {'size': ['2'], 'len': ['3']});
     expect(httpRequestModel.hasContentTypeHeader, true);
 
     expect(httpRequestModel.hasFormDataContentType, false);

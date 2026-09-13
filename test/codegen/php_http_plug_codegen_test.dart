@@ -35,19 +35,23 @@ echo $response->getBody();
       );
     });
     test('GET2', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/country/data";
-$queryParams = [
- "code" => "US"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+  $queryParams = [
+  'code' => ['US']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -65,19 +69,23 @@ echo $response->getBody();
       );
     });
     test('GET3', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/country/data";
-$queryParams = [
- "code" => "IND"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+  $queryParams = [
+  'code' => ['IND', 'US']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -95,23 +103,27 @@ echo $response->getBody();
       );
     });
     test('GET4', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/humanize/social";
-$queryParams = [
- "num" => "8700000",
- "digits" => "3",
- "system" => "SS",
- "add_space" => "true",
- "trailing_zeros" => "true"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+  $queryParams = [
+  'num' => ['8700000'],
+'digits' => ['3'],
+'system' => ['SS'],
+'add_space' => ['true'],
+'trailing_zeros' => ['true']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -161,19 +173,23 @@ echo $response->getBody();
       );
     });
     test('GET6', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.github.com/repos/foss42/apidash";
-$queryParams = [
- "raw" => "true"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+  $queryParams = [
+  'raw' => ['true']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
     'User-Agent' => 'Test Agent',
 ];
@@ -223,19 +239,23 @@ echo $response->getBody();
       );
     });
     test('GET8', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.github.com/repos/foss42/apidash";
-$queryParams = [
- "raw" => "true"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+  $queryParams = [
+  'raw' => ['true']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
     'User-Agent' => 'Test Agent',
 ];
@@ -259,20 +279,24 @@ echo $response->getBody();
       );
     });
     test('GET9', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/humanize/social";
-$queryParams = [
- "num" => "8700000",
- "add_space" => "true"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+  $queryParams = [
+  'num' => ['8700000'],
+'add_space' => ['true']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -322,20 +346,24 @@ echo $response->getBody();
       );
     });
     test('GET11', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/humanize/social";
-$queryParams = [
- "num" => "8700000",
- "digits" => "3"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+  $queryParams = [
+  'num' => ['8700000'],
+'digits' => ['3']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
     'User-Agent' => 'Test Agent',
 ];
@@ -719,20 +747,24 @@ echo $response->getBody();
       );
     });
     test('POST8', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/form";
-$queryParams = [
- "size" => "2",
- "len" => "3"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+  $queryParams = [
+  'size' => ['2'],
+'len' => ['3']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
 $builder = new MultipartStreamBuilder();
 $builder->addResource('text', 'API');
 $builder->addResource('sep', '|');
@@ -762,20 +794,24 @@ echo $response->getBody();
       );
     });
     test('POST9', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/img";
-$queryParams = [
- "size" => "2",
- "len" => "3"
-];
-$uri .= '?' . http_build_query($queryParams);
-$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+  $queryParams = [
+  'size' => ['2'],
+'len' => ['3']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
 $builder = new MultipartStreamBuilder();
 $builder->addResource('token', 'xyz');
 
@@ -810,8 +846,7 @@ echo $response->getBody();
 
   group('PUT Request', () {
     test('PUT1', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -828,6 +863,7 @@ EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $headers = [
+    'x-api-key' => 'reqres-free-v1',
     'Content-Type' => 'application/json',
 ];
 foreach ($headers as $name => $value) {
@@ -853,8 +889,7 @@ echo $response->getBody();
 
   group('PATCH Request', () {
     test('PATCH1', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -871,6 +906,7 @@ EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $headers = [
+    'x-api-key' => 'reqres-free-v1',
     'Content-Type' => 'application/json',
 ];
 foreach ($headers as $name => $value) {
@@ -896,8 +932,7 @@ echo $response->getBody();
 
   group('DELETE Request', () {
     test('DELETE1', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -905,6 +940,12 @@ use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('DELETE', $uri);
+$headers = [
+    'x-api-key' => 'reqres-free-v1',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -922,8 +963,7 @@ echo $response->getBody();
       );
     });
     test('DELETE2', () {
-      const expectedCode = r'''
-<?php
+      const expectedCode = r'''<?php
 require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -940,6 +980,7 @@ EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $headers = [
+    'x-api-key' => 'reqres-free-v1',
     'Content-Type' => 'application/json',
 ];
 foreach ($headers as $name => $value) {

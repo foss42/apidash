@@ -13,7 +13,7 @@ const httpRequestModelGet2 = HttpRequestModel(
   params: [NameValueModel(name: 'code', value: 'US')],
 );
 
-/// GET request model with override query params
+/// GET request model with  query param having multiple values (The code should  handle both paramaters)
 const httpRequestModelGet3 = HttpRequestModel(
   url: 'https://api.apidash.dev/country/data?code=US',
   method: HTTPVerb.get,
@@ -312,6 +312,9 @@ const httpRequestModelPost10 = HttpRequestModel(
 const httpRequestModelPut1 = HttpRequestModel(
   method: HTTPVerb.put,
   url: 'https://reqres.in/api/users/2',
+  headers:[
+  NameValueModel(name: 'x-api-key', value: 'reqres-free-v1')
+  ],
   bodyContentType: ContentType.json,
   body: r"""{
 "name": "morpheus",
@@ -324,6 +327,9 @@ const httpRequestModelPatch1 = HttpRequestModel(
   method: HTTPVerb.patch,
   url: 'https://reqres.in/api/users/2',
   bodyContentType: ContentType.json,
+  headers:[
+  NameValueModel(name: 'x-api-key', value: 'reqres-free-v1')
+  ],
   body: r"""{
 "name": "marfeus",
 "job": "accountant"
@@ -333,6 +339,9 @@ const httpRequestModelPatch1 = HttpRequestModel(
 /// Basic DELETE request model
 const httpRequestModelDelete1 = HttpRequestModel(
   method: HTTPVerb.delete,
+  headers:[
+  NameValueModel(name: 'x-api-key', value: 'reqres-free-v1')
+  ],
   url: 'https://reqres.in/api/users/2',
 );
 
@@ -341,6 +350,9 @@ const httpRequestModelDelete2 = HttpRequestModel(
   method: HTTPVerb.delete,
   url: 'https://reqres.in/api/users/2',
   bodyContentType: ContentType.json,
+  headers:[
+  NameValueModel(name: 'x-api-key', value: 'reqres-free-v1')
+  ],
   body: r"""{
 "name": "marfeus",
 "job": "accountant"
