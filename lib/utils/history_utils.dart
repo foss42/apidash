@@ -18,6 +18,7 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     httpResponseModel: model.httpResponseModel,
     wsRequestModel: model.wsRequestModel,
     mqttRequestModel: model.mqttRequestModel,
+    grpcRequestModel: model.grpcRequestModel,
   );
 }
 

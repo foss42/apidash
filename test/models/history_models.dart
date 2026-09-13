@@ -1,5 +1,12 @@
 import 'package:apidash/models/models.dart'
-    show HistoryMetaModel, HistoryRequestModel, WebSocketRequestModel;
+    show
+        HistoryMetaModel,
+        HistoryRequestModel,
+        WebSocketRequestModel,
+        WebSocketMessage,
+        WebSocketMessageType,
+        GrpcRequestModel,
+        GrpcStreamingType;
 import 'package:apidash_core/apidash_core.dart';
 
 import 'http_request_models.dart';
@@ -93,6 +100,56 @@ final historyRequestModelMqtt = HistoryRequestModel(
   authModel: AuthModel(type: APIAuthType.none),
 );
 
+/// gRPC History Meta model
+final historyMetaModelGrpc = HistoryMetaModel(
+  historyId: 'historyIdGrpc',
+  requestId: 'requestIdGrpc',
+  apiType: APIType.grpc,
+  url: 'localhost:50051',
+  method: HTTPVerb.get, // gRPC has no HTTP verb; mirrors WebSocket default
+  timeStamp: DateTime(2024, 1, 1),
+  responseStatus: 0,
+);
+
+/// gRPC request model fixture for history. Carries service/method/streamingType,
+/// a couple of messageHistory entries (WebSocketMessage) and some metadata
+/// (NameValueModel) so the toJson -> fromJson round-trip is meaningful.
+/// timestamps are left null so the whole fixture stays `const` and the
+/// round-trip is unambiguous.
+const historyGrpcRequestModel = GrpcRequestModel(
+  url: 'localhost:50051',
+  service: 'GreeterService',
+  method: 'SayHello',
+  streamingType: GrpcStreamingType.bidi,
+  requestBody: '{"name":"Dash"}',
+  useReflection: true,
+  messageHistory: [
+    WebSocketMessage(
+      payload: 'Connected to gRPC host: localhost:50051',
+      outgoing: false,
+      messageType: WebSocketMessageType.connected,
+    ),
+    WebSocketMessage(
+      payload: '{"name":"Dash"}',
+      outgoing: true,
+      messageType: WebSocketMessageType.sent,
+    ),
+  ],
+  metadata: [
+    NameValueModel(name: 'Authorization', value: 'Bearer token'),
+    NameValueModel(name: 'x-trace-id', value: 'abc-123'),
+  ],
+  isMetadataEnabled: [true, false],
+);
+
+/// gRPC History Request model carrying a non-null grpcRequestModel.
+final historyRequestModelGrpc = HistoryRequestModel(
+  historyId: 'historyIdGrpc',
+  metaData: historyMetaModelGrpc,
+  grpcRequestModel: historyGrpcRequestModel,
+  authModel: AuthModel(type: APIAuthType.none),
+);
+
 final historyRequestModel2 = HistoryRequestModel(
   historyId: 'historyId2',
   metaData: historyMetaModel2,
@@ -120,6 +177,7 @@ final Map<String, dynamic> historyRequestModelJson1 = {
   'aiRequestModel': null,
   'wsRequestModel': null,
   'mqttRequestModel': null,
+  'grpcRequestModel': null,
   "httpResponseModel": responseModelJson,
   'preRequestScript': null,
   'postRequestScript': null,
@@ -188,6 +246,7 @@ final Map<String, dynamic> historyRequestModelWsJson = {
   'aiRequestModel': null,
   'wsRequestModel': historyWsRequestModelJson,
   'mqttRequestModel': null,
+  'grpcRequestModel': null,
   "httpResponseModel": null,
   'preRequestScript': null,
   'postRequestScript': null,

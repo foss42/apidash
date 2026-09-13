@@ -5,7 +5,8 @@ enum APIType {
   ai("AI", "AI"),
   graphql("GraphQL", "GQL"),
   websocket("WebSocket", "WS"),
-  mqtt("MQTT", "MQTT");
+  mqtt("MQTT", "MQTT"),
+  grpc("gRPC", "gRPC");
 
   const APIType(this.label, this.abbr);
   final String label;
