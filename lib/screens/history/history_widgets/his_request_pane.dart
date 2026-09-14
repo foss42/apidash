@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import '../../common_widgets/common_widgets.dart';
 import 'ai_history_page.dart';
 import 'ws_history_page.dart';
@@ -186,9 +187,16 @@ class HistoryRequestPane extends ConsumerWidget {
         if (param.name.isNotEmpty) param.name: param.value,
     };
 
+    final codeButtonTooltip = apiType == null
+        ? null
+        : apiType.hasNativeCodegen
+        ? kTooltipViewCode
+        : apiType.codegenViaDashbotMessage;
+
     return switch (apiType) {
       APIType.rest => RequestPane(
           key: const Key("history-request-pane-rest"),
+          codeButtonTooltip: codeButtonTooltip,
           selectedId: selectedId,
           codePaneVisible: codePaneVisible,
           onPressedCodeButton: () {
@@ -229,6 +237,7 @@ class HistoryRequestPane extends ConsumerWidget {
         ),
       APIType.graphql => RequestPane(
           key: const Key("history-request-pane-graphql"),
+          codeButtonTooltip: codeButtonTooltip,
           selectedId: selectedId,
           codePaneVisible: codePaneVisible,
           onPressedCodeButton: () {
@@ -263,6 +272,7 @@ class HistoryRequestPane extends ConsumerWidget {
         ),
       APIType.ai => RequestPane(
         key: const Key("history-request-pane-ai"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -284,15 +294,16 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.websocket => RequestPane(
         key: const Key("history-request-pane-websocket"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
           ref.read(historyCodePaneVisibleStateProvider.notifier).state =
               !codePaneVisible;
         },
-        // WebSocket requests have no code generation, so the "View Code"
-        // button is always hidden (mirrors request_pane_ws.dart:44).
-        showViewCodeButton: false,
+        // No WebSocket codegen yet: the button stays visible so the tooltip
+        // and the code pane can say so, like AI and GraphQL above.
+        showViewCodeButton: !isCompact,
         showIndicators: [paramLength > 0, headerLength > 0, true],
         tabLabels: const [kLabelURLParams, kLabelHeaders, kLabelSettings],
         children: [
@@ -303,6 +314,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.mqtt => RequestPane(
         key: const Key("history-request-pane-mqtt"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -324,6 +336,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.grpc => RequestPane(
         key: const Key("history-request-pane-grpc"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {

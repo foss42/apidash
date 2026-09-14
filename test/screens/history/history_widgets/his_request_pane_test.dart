@@ -5,6 +5,7 @@ import 'package:apidash/screens/history/history_widgets/his_request_pane.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -67,7 +68,45 @@ void main() {
     httpResponseModel: HttpResponseModel(statusCode: 200),
   );
 
+  final wsHistoryModel = HistoryRequestModel(
+    historyId: '4',
+    metaData: HistoryMetaModel(
+      historyId: '4',
+      requestId: 'req-4',
+      timeStamp: DateTime.now(),
+      method: HTTPVerb.get,
+      url: 'wss://example.com/ws',
+      apiType: APIType.websocket,
+      responseStatus: 101,
+    ),
+    wsRequestModel: const WebSocketRequestModel(url: 'wss://example.com/ws'),
+  );
+
   group('HistoryRequestPane Tests', () {
+    testWidgets('WebSocket history shows View Code with DashBot tooltip',
+        (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            selectedHistoryIdStateProvider.overrideWith((ref) => '4'),
+            historyCodePaneVisibleStateProvider.overrideWith((ref) => false),
+            selectedHistoryRequestModelProvider.overrideWith(
+              (ref) => wsHistoryModel,
+            ),
+          ],
+          child: const MaterialApp(home: Scaffold(body: HistoryRequestPane())),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text(kLabelViewCode), findsOneWidget);
+      expect(
+        find.byTooltip(APIType.websocket.codegenViaDashbotMessage),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('renders HistoryRequestPane for REST API correctly', (
       tester,
     ) async {

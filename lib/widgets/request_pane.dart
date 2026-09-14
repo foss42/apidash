@@ -16,6 +16,7 @@ class RequestPane extends StatefulHookWidget {
     required this.children,
     this.showIndicators = const [false, false, false],
     this.showViewCodeButton,
+    this.codeButtonTooltip,
   });
 
   final String? selectedId;
@@ -27,6 +28,7 @@ class RequestPane extends StatefulHookWidget {
   final List<Widget> children;
   final List<bool> showIndicators;
   final bool? showViewCodeButton;
+  final String? codeButtonTooltip;
 
   @override
   State<RequestPane> createState() => _RequestPaneState();
@@ -53,26 +55,31 @@ class _RequestPaneState extends State<RequestPane>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      FilledButton.tonalIcon(
-                        style: FilledButton.styleFrom(
-                          padding: kPh12,
-                          minimumSize: const Size(44, 44),
-                        ),
-                        onPressed: widget.onPressedCodeButton,
-                        icon: Icon(
-                          widget.codePaneVisible
-                              ? Icons.code_off_rounded
-                              : Icons.code_rounded,
-                          size: 18,
-                        ),
-                        label: SizedBox(
-                          width: 80,
-                          child: Text(
+                      Tooltip(
+                        // Empty message renders nothing, so no tooltip when
+                        // the caller has nothing to say.
+                        message: widget.codeButtonTooltip ?? "",
+                        child: FilledButton.tonalIcon(
+                          style: FilledButton.styleFrom(
+                            padding: kPh12,
+                            minimumSize: const Size(44, 44),
+                          ),
+                          onPressed: widget.onPressedCodeButton,
+                          icon: Icon(
                             widget.codePaneVisible
-                                ? kLabelHideCode
-                                : kLabelViewCode,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                                ? Icons.code_off_rounded
+                                : Icons.code_rounded,
+                            size: 18,
+                          ),
+                          label: SizedBox(
+                            width: 80,
+                            child: Text(
+                              widget.codePaneVisible
+                                  ? kLabelHideCode
+                                  : kLabelViewCode,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
                         ),
                       ),

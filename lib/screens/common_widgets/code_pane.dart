@@ -1,6 +1,8 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/dashbot/dashbot.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/codegen/codegen.dart';
@@ -27,6 +29,12 @@ class CodePane extends ConsumerWidget {
     final selectedRequestModel = isHistoryRequest
         ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
         : ref.watch(selectedRequestModelProvider);
+
+    // In History, anything without native codegen is handed to DashBot.
+    final apiType = selectedRequestModel?.apiType;
+    if (isHistoryRequest && apiType != null && !apiType.hasNativeCodegen) {
+      return CodegenUnavailable(apiType: apiType);
+    }
 
     // TODO: Add AI Request Codegen
     if (selectedRequestModel?.apiType == APIType.ai) {
@@ -77,6 +85,54 @@ class CodePane extends ConsumerWidget {
       onChangedCodegenLanguage: (CodegenLanguage? value) {
         ref.read(codegenLanguageStateProvider.notifier).state = value!;
       },
+    );
+  }
+}
+
+/// History code pane for API types without native codegen: says the code
+/// comes from DashBot and starts its generate-code task for that entry.
+class CodegenUnavailable extends ConsumerWidget {
+  const CodegenUnavailable({super.key, required this.apiType});
+
+  final APIType apiType;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDashBotEnabled = ref.watch(
+      settingsProvider.select((value) => value.isDashBotEnabled),
+    );
+    return Padding(
+      padding: kPh20v10,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SelectableText(
+              apiType.codegenViaDashbotMessage,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            if (isDashBotEnabled) ...[
+              kVSpacer20,
+              ADFilledButton(
+                isTonal: true,
+                icon: Icons.auto_awesome,
+                label: kLabelGenerateCodeDashbot,
+                onPressed: () {
+                  ref.read(dashbotActiveRouteProvider.notifier).goToChat();
+                  ref
+                      .read(chatViewmodelProvider.notifier)
+                      .sendTaskMessage(apiType.dashbotCodegenTask);
+                  ref.read(dashbotWindowNotifierProvider.notifier).show();
+                  showDashbotWindow(context, ref);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
