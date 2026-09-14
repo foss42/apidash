@@ -295,6 +295,7 @@ final Map<String, dynamic> historyRequestModelMqttJson = {
   'aiRequestModel': null,
   'wsRequestModel': null,
   'mqttRequestModel': historyMqttRequestModelJson,
+  'grpcRequestModel': null,
   "httpResponseModel": null,
   'preRequestScript': null,
   'postRequestScript': null,

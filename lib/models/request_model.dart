@@ -48,7 +48,7 @@ abstract class RequestModel with _$RequestModel {
       APIType.graphql => httpRequestModel?.url,
       APIType.ai => aiRequestModel?.url,
       APIType.websocket => wsRequestModel?.url,
-      APIType.mqtt => mqttRequestModel?.brokerUrl,,
+      APIType.mqtt => mqttRequestModel?.brokerUrl,
       APIType.grpc => grpcRequestModel?.url,
     };
   }
