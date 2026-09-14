@@ -3,13 +3,6 @@
 <a href="https://discord.com/invite/bBeSdtJ6Ue" target="_blank"><img src="https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white" alt="Discord Server Invite"></a><br>
 <img src="https://trendshift.io/api/badge/repositories/9734" alt="foss42%2Fapidash | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/> &nbsp;&nbsp;&nbsp; <a href="https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash" target="_blank"><img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="400"></a>
 
-| GSoC 2026         | Link                                                       |
-| ----------------- | ---------------------------------------------------------- |
-| List of Ideas     | [Link](https://github.com/foss42/apidash/discussions/1054)                |
-| Application Guide | [Link](https://github.com/foss42/apidash/discussions/1048) |
-| Weekly Connect Meeting for GSoC Participants | [Link](https://luma.com/embed/calendar/cal-ZTW02O2EsWRs6V4/events) |
-| Discord Channel   | [Link](https://discord.com/invite/bBeSdtJ6Ue)              |
-
 ### Please support this initiative by giving this project a Star ⭐️
 
 API Dash is a beautiful **AI powered open-source cross-platform** API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
@@ -83,9 +76,9 @@ API Dash can be downloaded from the links below:
 | GraphQL | ✅ |
 | SSE/Streaming | ✅ | 
 | AI | ✅ | 
-| WebSocket | https://github.com/foss42/apidash/issues/15 |
-| MQTT | https://github.com/foss42/apidash/issues/115 |
-| gRPC | https://github.com/foss42/apidash/issues/14 |
+| WebSocket | ✅ |
+| MQTT | ✅ |
+| gRPC | ✅ |
 
 | Import Collection From | Supported |
 | --- | --- |
