@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
 import 'helpers.dart';
 
 void main() async {
@@ -1326,6 +1327,100 @@ void main() async {
         expect(currentRequest?.preRequestScript, equals(preRequestScript));
       },
     );
+
+    tearDown(() {
+      container.dispose();
+    });
+  });
+
+  group('Test CollectionStateNotifier applyCurlToSelectedRequest', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+    });
+
+    test('applies method, url, headers, params and body to selected request',
+        () {
+      final id = notifier.state!.entries.first.key;
+      container.read(selectedIdStateProvider.notifier).state = id;
+
+      const curl = '''
+curl -X POST 'https://api.example.com/users?active=true' \\
+  -H 'Content-Type: application/json' \\
+  -H 'Authorization: Bearer token123' \\
+  -d '{"name":"Ada"}'
+''';
+
+      final url = notifier.applyCurlToSelectedRequest(curl);
+
+      expect(url, 'https://api.example.com/users');
+      final updated = notifier.getRequestModel(id)!;
+      expect(updated.apiType, APIType.rest);
+      expect(updated.httpRequestModel?.method, HTTPVerb.post);
+      expect(updated.httpRequestModel?.url, 'https://api.example.com/users');
+      expect(updated.httpRequestModel?.body, '{"name":"Ada"}');
+      expect(updated.httpRequestModel?.params?.length, 1);
+      expect(updated.httpRequestModel?.params?.first.name, 'active');
+      expect(updated.httpRequestModel?.headers?.length, 2);
+      expect(
+        updated.httpRequestModel?.isHeaderEnabledList,
+        List<bool>.filled(2, true),
+      );
+      expect(
+        updated.httpRequestModel?.isParamEnabledList,
+        List<bool>.filled(1, true),
+      );
+    });
+
+    test('preserves name and scripts while switching from websocket to rest',
+        () {
+      final id = notifier.state!.entries.first.key;
+      container.read(selectedIdStateProvider.notifier).state = id;
+
+      notifier.update(
+        id: id,
+        name: 'Keep me',
+        description: 'desc',
+        preRequestScript: 'console.log(1)',
+      );
+      notifier.update(id: id, apiType: APIType.websocket);
+      notifier.update(
+        id: id,
+        wsRequestModel: const WebSocketRequestModel(
+          url: 'wss://echo.websocket.org',
+        ),
+      );
+
+      final url = notifier.applyCurlToSelectedRequest(
+        'curl -X GET https://api.apidash.dev/hello',
+      );
+
+      expect(url, 'https://api.apidash.dev/hello');
+      final updated = notifier.getRequestModel(id)!;
+      expect(updated.apiType, APIType.rest);
+      expect(updated.name, 'Keep me');
+      expect(updated.description, 'desc');
+      expect(updated.preRequestScript, 'console.log(1)');
+      expect(updated.wsRequestModel, isNull);
+      expect(updated.httpRequestModel?.method, HTTPVerb.get);
+      expect(updated.httpRequestModel?.url, 'https://api.apidash.dev/hello');
+    });
+
+    test('returns null for invalid curl without mutating the request', () {
+      final id = notifier.state!.entries.first.key;
+      container.read(selectedIdStateProvider.notifier).state = id;
+      notifier.update(id: id, url: 'https://api.apidash.dev/original');
+
+      final before = notifier.getRequestModel(id)!;
+      final url = notifier.applyCurlToSelectedRequest('not a curl command');
+
+      expect(url, isNull);
+      final after = notifier.getRequestModel(id)!;
+      expect(after.httpRequestModel?.url, before.httpRequestModel?.url);
+    });
 
     tearDown(() {
       container.dispose();
