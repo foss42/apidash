@@ -54,6 +54,53 @@ void main() async {
     skip: true,
   );
 
+  test(
+    'Non-streaming AI response with a non-JSON body does not leave the request stuck in isWorking (#1741)',
+    () async {
+      HttpOverrides.global = null; //enable networking in flutter_test
+
+      // A 200 whose body is not JSON. Real providers do this on proxy error
+      // pages and empty bodies; the formatter must not take the request down.
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      server.listen((req) {
+        req.response
+          ..statusCode = 200
+          ..headers.set('content-type', 'text/plain')
+          ..write('not json');
+        req.response.close();
+      });
+
+      final container = createContainer();
+      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      notifier.addRequestModel(const HttpRequestModel(), name: 'ai');
+      final id = notifier.state!.entries.last.key;
+      notifier.update(id: id, apiType: APIType.ai);
+      notifier.update(
+        id: id,
+        aiRequestModel: OllamaModel.instance.defaultAIRequestModel.copyWith(
+          url:
+              'http://${server.address.address}:${server.port}/v1/chat/completions',
+          model: 'test-model',
+          userPrompt: 'hi',
+          stream: false,
+        ),
+      );
+
+      await notifier.sendRequest();
+
+      final rm = notifier.getRequestModel(id)!;
+      expect(rm.isWorking, isFalse);
+      expect(rm.responseStatus, 200);
+      expect(rm.httpResponseModel?.body, 'not json');
+      expect(rm.httpResponseModel?.formattedBody, isNull);
+
+      // The response stream's onDone fires after sendRequest() returns; let it
+      // land before the container is disposed.
+      await Future.delayed(const Duration(milliseconds: 500));
+    },
+  );
+
   testWidgets('SSE Output is rendered correctly in UI', (
     WidgetTester tester,
   ) async {

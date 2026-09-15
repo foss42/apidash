@@ -1547,10 +1547,23 @@ class CollectionStateNotifier
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
-        final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
-          kJsonDecoder.convert(httpResponseModel?.body ?? "Error parsing body"),
-        );
-        httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+        // A 200 whose body is not the provider's JSON (empty body, proxy
+        // error page, unexpected shape) must not abort the request: the raw
+        // response is still shown, only the formatted view is skipped.
+        // Otherwise the exception skips `isWorking: false` below and the
+        // request stays stuck in the working state. See #1741.
+        try {
+          final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
+            kJsonDecoder.convert(httpResponseModel?.body ?? ""),
+          );
+          httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+        } catch (e) {
+          terminal.logSystem(
+            category: 'provider',
+            message: 'Could not format AI response: $e',
+            level: TerminalLevel.warn,
+          );
+        }
       }
 
       newRequestModel = newRequestModel.copyWith(
