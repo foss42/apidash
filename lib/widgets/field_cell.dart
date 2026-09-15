@@ -1,7 +1,7 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-class CellField extends StatelessWidget {
+class CellField extends StatefulWidget {
   const CellField({
     super.key,
     required this.keyId,
@@ -18,15 +18,48 @@ class CellField extends StatelessWidget {
   final ColorScheme? colorScheme;
 
   @override
+  State<CellField> createState() => _CellFieldState();
+}
+
+class _CellFieldState extends State<CellField> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(CellField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialValue != widget.initialValue &&
+        widget.initialValue != null &&
+        controller.text != widget.initialValue) {
+      final currentSelection = controller.selection;
+      controller.text = widget.initialValue!;
+      if (currentSelection.baseOffset <= controller.text.length) {
+        controller.selection = currentSelection;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ADOutlinedTextField(
-      key: ValueKey('$keyId-$initialValue'),
-      keyId: keyId,
-      initialValue: initialValue,
-      hintText: hintText,
+      key: ValueKey(widget.keyId),
+      keyId: widget.keyId,
+      controller: controller,
+      hintText: widget.hintText,
       hintTextFontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-      onChanged: onChanged,
-      colorScheme: colorScheme,
+      onChanged: widget.onChanged,
+      colorScheme: widget.colorScheme,
     );
   }
 }
