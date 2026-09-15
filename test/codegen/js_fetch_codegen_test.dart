@@ -15,12 +15,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -45,12 +47,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -76,12 +80,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -110,12 +116,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -142,12 +150,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -175,12 +185,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -203,12 +215,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -236,12 +250,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -267,12 +283,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -299,12 +317,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -333,12 +353,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -362,12 +384,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -392,12 +416,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -420,12 +446,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -454,12 +482,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -486,12 +516,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -519,12 +551,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -552,12 +586,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -589,12 +625,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -624,12 +662,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -659,12 +699,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -694,12 +736,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -735,12 +779,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -770,12 +816,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -805,12 +853,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -838,12 +888,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
@@ -871,12 +923,14 @@ const options = {
 };
 
 fetch(url, options)
-  .then(res => {
+  .then(async res => {
     console.log(res.status);
-    return res.text()
-  })
-  .then(body => {
-    console.log(body);
+    const body = await res.text();
+    try {
+      console.log(JSON.stringify(JSON.parse(body), null, 2));
+    } catch {
+      console.log(body);
+    }
   })
   .catch(err => {
     console.error(`error:${err}`);
