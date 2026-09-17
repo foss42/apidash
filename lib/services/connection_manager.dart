@@ -20,6 +20,22 @@ import 'package:mqtt5_client/mqtt5_client.dart' as mqtt5;
 import 'package:mqtt5_client/mqtt5_server_client.dart' as mqtt5;
 import 'dart:async';
 
+/// Thrown by [ConnectionManager.connect] when a newer [ConnectionManager.connect]
+/// or [ConnectionManager.disconnect] call for the same requestId ran while this
+/// attempt's handshake was still in flight. The now-stale socket has already
+/// been closed; callers should treat this like any other failed connection
+/// attempt and must not touch connection state for [requestId] in response,
+/// since a newer attempt may already own it.
+class SupersededConnectionException implements Exception {
+  SupersededConnectionException(this.requestId);
+  final String requestId;
+
+  @override
+  String toString() =>
+      'SupersededConnectionException: a newer connect() or disconnect() call '
+      'for "$requestId" ran before this handshake finished';
+}
+
 /// TODO: it should also be usable for other Protocols
 /// A singleton service that holds active WebSocket connections.
 ///
@@ -33,6 +49,17 @@ class ConnectionManager {
 
   /// Maps request ID → active WebSocket channel.
   final Map<String, WebSocketChannel> _channels = {};
+
+  /// Maps request ID → a monotonically increasing counter, bumped by every
+  /// [connect] and [disconnect] call for that requestId.
+  ///
+  /// [connect] captures the counter right after its own [disconnect] call,
+  /// before awaiting the handshake. If the counter has moved on by the time
+  /// the handshake resolves, a *newer* attempt (or an explicit disconnect)
+  /// ran in the meantime, so this attempt is stale: it closes the socket it
+  /// just opened and throws instead of clobbering `_channels`/`_sockets` or
+  /// leaving that socket leaked and untracked. See GH issue #1765.
+  final Map<String, int> _connectGeneration = {};
   
   /// Maps request ID → active MQTT v3.1.1 client (`mqtt_client` package).
   final Map<String, MqttServerClient> _mqttClients = {};
@@ -74,8 +101,12 @@ class ConnectionManager {
     Map<String, String>? headers,
     Duration? pingInterval,
   }) async {
-    // Tear down any pre-existing connection for the same tab.
+    // Tear down any pre-existing connection for the same tab and claim this
+    // attempt's generation. Both happen synchronously (no `await` in
+    // between), so two connect() calls issued back to back can never read
+    // the same generation value.
     disconnect(requestId);
+    final generation = _connectGeneration[requestId]!;
 
     debugPrint('WS: connecting to $url');
     // Connect via the dart:io WebSocket directly (rather than
@@ -83,6 +114,19 @@ class ConnectionManager {
     // socket. WebSocket.pingInterval is mutable at runtime, which lets us
     // change the heartbeat on a live connection (see [updatePingInterval]).
     final webSocket = await WebSocket.connect(url, headers: headers);
+
+    if (_connectGeneration[requestId] != generation) {
+      // A newer connect() (or an explicit disconnect()) for this requestId
+      // ran while we were handshaking. Whatever it did — installed its own
+      // channel, or left nothing at all — is not ours to overwrite, and
+      // this socket is not tracked anywhere yet, so close it here or it
+      // leaks: still open, still receiving frames, with nothing reading
+      // from it.
+      debugPrint('WS: discarding stale connection for $requestId');
+      unawaited(webSocket.close());
+      throw SupersededConnectionException(requestId);
+    }
+
     webSocket.pingInterval = pingInterval;
     final channel = IOWebSocketChannel(webSocket);
     _channels[requestId] = channel;
@@ -115,7 +159,12 @@ class ConnectionManager {
   }
 
   /// Closes the WebSocket connection for [requestId].
+  ///
+  /// Also bumps [_connectGeneration] for [requestId], so a [connect] call
+  /// still handshaking for this requestId discards its result instead of
+  /// resurrecting a connection this call just tore down.
   void disconnect(String requestId) {
+    _connectGeneration[requestId] = (_connectGeneration[requestId] ?? 0) + 1;
     final channel = _channels.remove(requestId);
     _sockets.remove(requestId);
     if (channel != null) {

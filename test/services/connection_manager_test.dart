@@ -152,6 +152,68 @@ void main() {
       manager.send(id, probe);
       expect(await echoed, probe);
     });
+
+    // Regression coverage for GH issue #1765: two connect() calls for the
+    // same requestId issued back to back (no await between them, e.g. an
+    // auto-reconnect racing a manual reconnect) must not both end up
+    // tracked, and the loser's socket must not leak.
+    test(
+        'overlapping connect() calls for the same id: the later call wins, '
+        'the earlier one is superseded and closed, not leaked', () async {
+      final manager = ConnectionManager.instance;
+      const id = 'req-race';
+
+      // Both start before either awaits, so both see the same starting
+      // state — this is the scenario disconnect()'s own guard inside
+      // connect() cannot prevent on its own.
+      //
+      // `stale`'s own handshake can resolve at any point relative to
+      // `fresh`'s, including while we're still awaiting `fresh` below — so
+      // the expectation is attached synchronously, right here, rather than
+      // after `await fresh`. Otherwise `stale` can complete with its error
+      // before anything is listening for it, and the test zone reports an
+      // unhandled exception instead of letting `expectLater` catch it.
+      final stale = manager.connect(id, wsUrl);
+      final staleExpectation = expectLater(
+        stale,
+        throwsA(isA<SupersededConnectionException>()),
+      );
+      final fresh = await manager.connect(id, wsUrl);
+      await fresh.ready;
+
+      await staleExpectation;
+
+      // Only the later call's channel is tracked.
+      expect(manager.hasConnection(id), isTrue);
+      expect(identical(manager.getChannel(id), fresh), isTrue);
+
+      // The winning channel is fully usable.
+      const probe = 'race-winner-alive';
+      final echoed = fresh.stream.first.timeout(receiveTimeout);
+      manager.send(id, probe);
+      expect(await echoed, probe);
+    });
+
+    test(
+        'disconnect() while a connect() is still handshaking discards that '
+        'attempt instead of resurrecting a connection the caller tore down',
+        () async {
+      final manager = ConnectionManager.instance;
+      const id = 'req-cancel-during-connect';
+
+      final pending = manager.connect(id, wsUrl);
+      // Cancels before the handshake above has had a chance to resolve.
+      manager.disconnect(id);
+
+      await expectLater(
+        pending,
+        throwsA(isA<SupersededConnectionException>()),
+      );
+
+      // No connection was resurrected after the explicit disconnect.
+      expect(manager.hasConnection(id), isFalse);
+      expect(manager.getChannel(id), isNull);
+    });
   });
 
   group('ConnectionManager.send', () {

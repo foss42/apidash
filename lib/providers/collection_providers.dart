@@ -953,6 +953,11 @@ class CollectionStateNotifier
         },
       );
     } catch (e) {
+      // Guard: a superseded attempt (see ConnectionManager.connect) is not
+      // this tab's current connection attempt anymore — a newer connect() or
+      // an explicit disconnect() already decided this tab's state. Touching
+      // `state` here would clobber whatever that newer call already did.
+      if (e is SupersededConnectionException) return;
       // Guard: the connect future can complete (throw) after the notifier is
       // disposed; touching `state` below would throw "used after dispose".
       if (!mounted) return;
