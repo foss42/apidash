@@ -1679,6 +1679,11 @@ class CollectionStateNotifier
     ref.read(clearDataStateProvider.notifier).state = true;
     ref.read(selectedIdStateProvider.notifier).state = null;
     await hiveHandler.clear();
+    // hiveHandler.clear() wipes the environment box on disk, but
+    // environmentsStateNotifierProvider keeps its own in-memory copy that
+    // isn't invalidated by that call — without this, a deleted variable
+    // still resolves in requests until the app restarts (#1770).
+    ref.read(environmentsStateNotifierProvider.notifier).clearEnvironments();
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};

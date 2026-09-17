@@ -107,6 +107,19 @@ class EnvironmentsStateNotifier
     }
   }
 
+  /// Resyncs in-memory environment state with the (now-cleared) Hive box so
+  /// a variable removed by "Clear Data" stops resolving in requests
+  /// immediately, instead of remaining active until the app restarts.
+  void clearEnvironments() {
+    loadEnvironments();
+    ref.read(environmentSequenceProvider.notifier).state = [
+      ...state!.keys,
+    ];
+    ref.read(selectedEnvironmentIdStateProvider.notifier).state =
+        kGlobalEnvironmentId;
+    ref.read(activeEnvironmentIdStateProvider.notifier).state = null;
+  }
+
   void addEnvironment() {
     final id = getNewUuid();
     final newEnvironmentModel = EnvironmentModel(id: id, values: []);
