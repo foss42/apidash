@@ -8,6 +8,7 @@ class TabLabel extends StatelessWidget {
     required this.text,
     this.showIndicator = false,
   });
+
   final String text;
   final bool showIndicator;
 
@@ -18,12 +19,15 @@ class TabLabel extends StatelessWidget {
       child: Stack(
         children: [
           Center(
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.fade,
-              softWrap: false,
-              style: kTextStyleTab,
+            child: Tooltip( //  NEW
+              message: text,
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis, //  improved
+                maxLines: 1, // NEW
+                style: kTextStyleTab,
+              ),
             ),
           ),
           if (showIndicator)
