@@ -12,8 +12,37 @@ class StacToFlutterBot extends AIAgent {
 
   @override
   Future<bool> validator(String aiResponse) async {
-    //Add any specific validations here as needed
-    return true;
+    final response = aiResponse.replaceAll(RegExp(r'```(?:dart)?'), '').trim();
+
+    if (response.isEmpty) {
+      return false;
+    }
+
+    final lowerCaseResponse = response.toLowerCase();
+    const refusalPhrases = [
+      'i cannot',
+      "i can't",
+      'i am unable',
+      "i'm unable",
+      'cannot provide',
+      'can\'t provide',
+      'unable to provide',
+    ];
+
+    if (refusalPhrases.any(lowerCaseResponse.startsWith)) {
+      return false;
+    }
+
+    final hasDartCode = RegExp(
+      r'\b(?:class|import|export)\s+[A-Za-z_]|'
+      r'\b(?:final|const|void)\s+[A-Za-z_]|'
+      r'\bWidget\s+[A-Za-z_]|'
+      r'\bbuild\s*\([^)]*\)|'
+      r'=>|'
+      r'\b[A-Z][A-Za-z0-9_]*\(',
+    ).hasMatch(response);
+
+    return hasDartCode;
   }
 
   @override
@@ -23,8 +52,6 @@ class StacToFlutterBot extends AIAgent {
         .replaceAll('```dart\n', '')
         .replaceAll('```', '');
 
-    return {
-      'CODE': validatedResponse,
-    };
+    return {'CODE': validatedResponse};
   }
 }
