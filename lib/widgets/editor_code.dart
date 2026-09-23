@@ -36,11 +36,14 @@ class CodeEditor extends StatelessWidget {
         smartQuotesType: SmartQuotesType.enabled,
         background: Theme.of(context).colorScheme.surfaceContainerLowest,
         gutterStyle: GutterStyle(
-          width: 0, // TODO: Fix numbers size
-          margin: 2,
-          textAlign: TextAlign.left,
+          margin: 8,
+          textAlign: TextAlign.right,
           showFoldingHandles: false,
-          showLineNumbers: false,
+          showLineNumbers: true,
+          textStyle: kCodeStyle.copyWith(
+            fontSize: Theme.of(context).textTheme.labelSmall?.fontSize,
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.6),
+          ),
         ),
         cursorColor: Theme.of(context).colorScheme.primary,
         controller: controller,
