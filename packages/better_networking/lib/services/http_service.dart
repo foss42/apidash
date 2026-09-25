@@ -26,6 +26,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  OAuth2CallbackHandler? customCallbackHandler,
 }) async {
   final authData = requestModel.authModel;
   if (httpClientManager.wasRequestCancelled(requestId)) {
@@ -37,7 +38,11 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
 
   try {
     if (authData != null && authData.type != APIAuthType.none) {
-      authenticatedRequestModel = await handleAuth(requestModel, authData);
+      authenticatedRequestModel = await handleAuth(
+        requestModel,
+        authData,
+        customCallbackHandler: customCallbackHandler,
+      );
     }
   } catch (e) {
     return (null, null, e.toString());
@@ -161,6 +166,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  OAuth2CallbackHandler? customCallbackHandler,
 }) async {
   final stream = await streamHttpRequest(
     requestId,
@@ -168,6 +174,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     requestModel,
     defaultUriScheme: defaultUriScheme,
     noSSL: noSSL,
+    customCallbackHandler: customCallbackHandler,
   );
   final output = await stream.first;
   return (output?.$2, output?.$3, output?.$4);
@@ -216,6 +223,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
   HttpRequestModel httpRequestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  OAuth2CallbackHandler? customCallbackHandler,
 }) async {
   final authData = httpRequestModel.authModel;
   final controller = StreamController<HttpStreamOutput>();
@@ -267,6 +275,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
       authenticatedHttpRequestModel = await handleAuth(
         httpRequestModel,
         authData,
+        customCallbackHandler: customCallbackHandler,
       );
     }
   } catch (e) {

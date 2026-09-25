@@ -13,6 +13,7 @@ import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
+import '../services/oauth_services.dart';
 import '../utils/utils.dart';
 
 /// Builds the metadata map for a gRPC call by merging the user's Metadata-table
@@ -1449,6 +1450,7 @@ class CollectionStateNotifier
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      customCallbackHandler: flutterOAuth2CallbackHandler,
     );
 
     HttpResponseModel? httpResponseModel;
