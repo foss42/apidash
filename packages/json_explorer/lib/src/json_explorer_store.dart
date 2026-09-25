@@ -624,6 +624,17 @@ class JsonExplorerStore extends ChangeNotifier {
     }
   }
 
+  /// Unfocuses all nodes except the given [node].
+  /// [notifyListeners] is called to notify all registered listeners.
+  void unfocusAllExcept(NodeViewModelState node) {
+    for (final n in _allNodes) {
+      if (n != node && n.isFocused) {
+        n.focus(isFocused: false);
+        n.highlight(isHighlighted: false);
+      }
+    }
+  }
+
   /// Uses the given [jsonObject] to build the [displayNodes] list.
   ///
   /// If [areAllCollapsed] is true, then all nodes will be collapsed, and
