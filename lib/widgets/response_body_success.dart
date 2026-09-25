@@ -68,31 +68,52 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                 children: [
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
-                      : SegmentedButton<ResponseBodyView>(
-                          style: SegmentedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                          ),
-                          selectedIcon: Icon(currentSeg.icon),
-                          segments: widget.options
-                              .map<ButtonSegment<ResponseBodyView>>(
-                                (e) => ButtonSegment<ResponseBodyView>(
-                                  value: e,
-                                  label: Text(e.label),
-                                  icon: constraints.maxWidth >
-                                          kMinWindowSize.width
-                                      ? Icon(e.icon)
-                                      : null,
+                      : Flexible(
+                          child: LayoutBuilder(
+                            builder: (context, segmentConstraints) {
+                              final showSegmentIcons =
+                                  segmentConstraints.maxWidth.isFinite &&
+                                  segmentConstraints.maxWidth >
+                                      widget.options.length * 96;
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: SegmentedButton<ResponseBodyView>(
+                                  showSelectedIcon: false,
+                                  style: SegmentedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                  ),
+                                  segments: widget.options
+                                      .map<ButtonSegment<ResponseBodyView>>(
+                                        (e) => ButtonSegment<ResponseBodyView>(
+                                          value: e,
+                                          label: Text(
+                                            e.label,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          icon: showSegmentIcons
+                                              ? Icon(e.icon)
+                                              : null,
+                                        ),
+                                      )
+                                      .toList(),
+                                  selected: {currentSeg},
+                                  onSelectionChanged: (newSelection) {
+                                    setState(() {
+                                      segmentIdx =
+                                          widget.options.indexOf(
+                                            newSelection.first,
+                                          );
+                                    });
+                                  },
                                 ),
-                              )
-                              .toList(),
-                          selected: {currentSeg},
-                          onSelectionChanged: (newSelection) {
-                            setState(() {
-                              segmentIdx =
-                                  widget.options.indexOf(newSelection.first);
-                            });
-                          },
+                              );
+                            },
+                          ),
                         ),
+                  if (widget.options != kRawBodyViewOptions) kHSpacer8,
                   const Spacer(),
                   ((widget.options == kPreviewRawBodyViewOptions) ||
                           kCodeRawBodyViewOptions.contains(currentSeg))
