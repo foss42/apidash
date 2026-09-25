@@ -18,9 +18,11 @@ class cURLCodeGen {
   --data '{{body}}'
 """;
 
-  String? getCode(
-    HttpRequestModel requestModel,
-  ) {
+  String kTemplateFileBody = """ \\
+  --data-binary '@{{body}}'
+""";
+
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
 
@@ -34,7 +36,7 @@ class cURLCodeGen {
         "method": switch (harJson["method"]) {
           "GET" => "",
           "HEAD" => " --head",
-          _ => " --request ${harJson["method"]} \\\n "
+          _ => " --request ${harJson["method"]} \\\n ",
         },
         "url": harJson["url"],
       });
@@ -46,14 +48,19 @@ class cURLCodeGen {
             continue;
           }
           var templateHeader = jj.Template(kTemplateHeader);
-          result += templateHeader
-              .render({"name": item["name"], "value": item["value"]});
+          result += templateHeader.render({
+            "name": item["name"],
+            "value": item["value"],
+          });
         }
       }
 
       if (requestModel.hasJsonData || requestModel.hasTextData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({"body": requestModel.body});
+      } else if (requestModel.hasFileData) {
+        var templateFileBody = jj.Template(kTemplateFileBody);
+        result += templateFileBody.render({"body": requestModel.bodyFile});
       } else if (requestModel.hasFormData) {
         for (var formData in requestModel.formDataList) {
           var templateFormData = jj.Template(kTemplateFormData);

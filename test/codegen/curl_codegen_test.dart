@@ -347,6 +347,20 @@ void main() {
         expectedCode,
       );
     });
+
+    test('POST 10', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/img' \
+  --data-binary '@/Documents/up/1.png'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

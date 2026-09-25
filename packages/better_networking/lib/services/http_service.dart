@@ -61,10 +61,22 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;
 
+        var isFileRequest =
+            requestModel.bodyContentType == ContentType.file;
+
         if (kMethodsWithBody.contains(authenticatedRequestModel.method)) {
           var requestBody = authenticatedRequestModel.body;
-          if (requestBody != null &&
+          if (isFileRequest && authenticatedRequestModel.hasFileData) {
+            // file is read below in prepareHttpRequest as it requires bytes
+            if (authenticatedRequestModel.hasContentTypeHeader) {
+              overrideContentType = true;
+            } else {
+              headers[HttpHeaders.contentTypeHeader] =
+                  authenticatedRequestModel.bodyContentType.header;
+            }
+          } else if (requestBody != null &&
               !isMultiPartRequest &&
+              !isFileRequest &&
               requestBody.isNotEmpty) {
             body = requestBody;
             if (authenticatedRequestModel.hasContentTypeHeader) {
@@ -114,11 +126,16 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
           case HTTPVerb.patch:
           case HTTPVerb.delete:
           case HTTPVerb.options:
+            List<int>? bodyBytes;
+            if (isFileRequest && authenticatedRequestModel.hasFileData) {
+              bodyBytes = File(authenticatedRequestModel.bodyFile!).readAsBytesSync();
+            }
             final request = prepareHttpRequest(
               url: requestUrl,
               method: authenticatedRequestModel.method.name.toUpperCase(),
               headers: headers,
               body: body,
+              bodyBytes: bodyBytes,
               overrideContentType: overrideContentType,
             );
             final streamed = await client.send(request);
@@ -182,6 +199,7 @@ http.Request prepareHttpRequest({
   required String method,
   required Map<String, String> headers,
   required String? body,
+  List<int>? bodyBytes,
   bool overrideContentType = false,
 }) {
   var request = http.Request(method, url);
@@ -194,7 +212,11 @@ http.Request prepareHttpRequest({
     request.headers[HttpHeaders.contentTypeHeader] = contentType;
   }
 
-  if (body != null) {
+  if (bodyBytes != null) {
+    request.bodyBytes = bodyBytes;
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
+  } else if (body != null) {
     request.body = body;
     headers[HttpHeaders.contentLengthHeader] =
         request.bodyBytes.length.toString();
@@ -351,6 +373,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
   final headers = requestModel.enabledHeadersMap;
   final hasBody = kMethodsWithBody.contains(requestModel.method);
   final isMultipart = requestModel.bodyContentType == ContentType.formdata;
+  final isFile = requestModel.bodyContentType == ContentType.file;
 
   http.StreamedResponse streamedResponse;
 
@@ -392,8 +415,17 @@ Future<http.StreamedResponse> makeStreamedRequest({
   } else {
     //Handling regular REST Requests
     String? body;
+    List<int>? bodyBytes;
     bool overrideContentType = false;
-    if (hasBody && requestModel.body?.isNotEmpty == true) {
+    if (hasBody && isFile && requestModel.hasFileData) {
+      bodyBytes = File(requestModel.bodyFile!).readAsBytesSync();
+      if (!requestModel.hasContentTypeHeader) {
+        headers[HttpHeaders.contentTypeHeader] =
+            requestModel.bodyContentType.header;
+      } else {
+        overrideContentType = true;
+      }
+    } else if (hasBody && requestModel.body?.isNotEmpty == true) {
       body = requestModel.body;
       if (!requestModel.hasContentTypeHeader) {
         headers[HttpHeaders.contentTypeHeader] =
@@ -407,6 +439,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
       method: requestModel.method.name.toUpperCase(),
       headers: headers,
       body: body,
+      bodyBytes: bodyBytes,
       overrideContentType: overrideContentType,
     );
     streamedResponse = await client.send(request);
