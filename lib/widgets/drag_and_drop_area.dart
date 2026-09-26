@@ -50,8 +50,8 @@ class _DragAndDropAreaState extends State<DragAndDropArea> {
             color: Theme.of(context).colorScheme.primaryContainer,
           ),
         ),
-        width: 600,
-        height: 400,
+        width: double.infinity,
+        height: double.infinity,
         child: _list.isEmpty
             ? Center(
                 child: Column(
