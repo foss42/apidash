@@ -46,6 +46,9 @@ class EditEnvironmentVariablesState
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(clearDataStateProvider, (previous, clearing) {
+      if (clearing) seed++;
+    });
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
     ref.watch(
