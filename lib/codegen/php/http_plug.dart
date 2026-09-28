@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class PhpHttpPlugCodeGen {
   final String kTemplateStart = """
@@ -14,7 +15,7 @@ use Http\\Discovery\\Psr18ClientDiscovery;
 """;
 
   final String kTemplateUri = """
-\$uri = "{{uri}}";
+\$uri = {{uri}};
 
 """;
 
@@ -36,9 +37,7 @@ use Http\\Discovery\\Psr18ClientDiscovery;
 """;
 
   String kTemplateBody = """
-\$body = <<<'EOF'
-{{body}}
-EOF;
+\$body = {{body}};
 
 \$request = \$request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream(\$body));
 
@@ -93,7 +92,8 @@ echo \$response->getBody();
         });
 
         var templateUri = jj.Template(kTemplateUri);
-        result += templateUri.render({"uri": stripUriParams(uri)});
+        result += templateUri
+            .render({"uri": phpDoubleQuotedStringLiteral(stripUriParams(uri))});
 
       var params = requestModel.enabledParamsMap;
       if (params.isNotEmpty) {
@@ -101,7 +101,8 @@ echo \$response->getBody();
         List<String> paramList = [];
 
         params.forEach((key, value) {
-          paramList.add("'$key' => [${value.map((v) => "'$v'").join(", ")}]");
+          paramList.add(
+              "${phpStringLiteral(key)} => [${value.map(phpStringLiteral).join(", ")}]");
                 });
 
         result += templateParams.render({
@@ -120,7 +121,7 @@ echo \$response->getBody();
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             var templateBody = jj.Template(kTemplateBody);
-            result += templateBody.render({"body": requestBody});
+            result += templateBody.render({"body": phpHeredoc(requestBody, "EOF")});
           }
         } else if (requestModel.hasFormData) {
           String formDataFields = "";
@@ -129,10 +130,10 @@ echo \$response->getBody();
           for (var formData in requestModel.formDataMapList) {
             if (formData['type'] == 'text') {
               formDataFields +=
-                  "\$builder->addResource('${formData['name']}', '${formData['value']}');\n";
+                  "\$builder->addResource(${phpStringLiteral(formData['name'] ?? '')}, ${phpStringLiteral(formData['value'] ?? '')});\n";
             } else if (formData['type'] == 'file') {
               formDataFiles +=
-                  "\$builder->addResource('${formData['name']}', fopen('${formData['value']}', 'r'), ['filename' => '${formData['value']}']);\n";
+                  "\$builder->addResource(${phpStringLiteral(formData['name'] ?? '')}, fopen(${phpStringLiteral(formData['value'] ?? '')}, 'r'), ['filename' => ${phpStringLiteral(formData['value'] ?? '')}]);\n";
             }
           }
 
@@ -152,7 +153,8 @@ echo \$response->getBody();
           }
         }
 
-        var headers = requestModel.enabledHeadersMap;
+        var headers = requestModel.enabledHeadersMap
+            .map((key, value) => MapEntry(key, phpStringLiteral(value)));
         if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers[kHeaderContentType] =
@@ -168,11 +170,7 @@ echo \$response->getBody();
           var templateHeader = jj.Template(kTemplateHeaders);
           var headersString = '\n';
           headers.forEach((key, value) {
-            if (key == kHeaderContentType) {
-              headersString += "    '$key' => $value,\n";
-            } else {
-              headersString += "    '$key' => '$value',\n";
-            }
+            headersString += "    ${phpStringLiteral(key)} => $value,\n";
           });
           result += templateHeader.render({"headers": headersString});
         }

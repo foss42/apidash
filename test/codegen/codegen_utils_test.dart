@@ -287,4 +287,133 @@ void main() {
       expect(csharpRawStringLiteral('a\r\nb'), r'"a\r\nb"');
     });
   });
+
+  group('rubyStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(rubyStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        rubyStringLiteral("it's \"q\" a\\b\nc\r\td\x01"),
+        r'''"it's \"q\" a\\b\nc\r\td\x01"''',
+      );
+    });
+
+    test('escapes only the # that would start interpolation', () {
+      expect(
+        rubyStringLiteral(r'#{x} #@y #$z #1 #'),
+        r'"\#{x} \#@y \#$z #1 #"',
+      );
+    });
+  });
+
+  group('rubyHeredoc', () {
+    test('uses a literal heredoc without the trailing newline', () {
+      expect(
+        rubyHeredoc('{"a": "b\\c #{x}"}'),
+        "<<'HEREDOC'.chomp\n"
+        '{"a": "b\\c #{x}"}\n'
+        'HEREDOC',
+      );
+    });
+
+    test('falls back when a line would end the heredoc', () {
+      expect(rubyHeredoc('a\nHEREDOC\nb'), r'"a\nHEREDOC\nb"');
+    });
+
+    test('falls back for carriage returns', () {
+      expect(rubyHeredoc('a\r\nb'), r'"a\r\nb"');
+    });
+  });
+
+  group('phpStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(phpStringLiteral('abc'), "'abc'");
+    });
+
+    test('escapes quotes and backslashes only', () {
+      expect(
+        phpStringLiteral("it's \"q\" C:\\new \$x\nnext"),
+        r"""'it\'s "q" C:\\new $x"""
+        '\nnext\'',
+      );
+    });
+
+    test('uses a double-quoted string for carriage returns', () {
+      expect(phpStringLiteral('a\r\nb'), r'"a\r\nb"');
+    });
+  });
+
+  group('phpDoubleQuotedStringLiteral', () {
+    test(
+      'escapes quotes, backslashes, dollar signs and control characters',
+      () {
+        expect(
+          phpDoubleQuotedStringLiteral("\"q\" a\\b \$x {\$y}\nc\x01"),
+          r'"\"q\" a\\b \$x {\$y}\nc\x01"',
+        );
+      },
+    );
+  });
+
+  group('phpHeredoc', () {
+    test('keeps a heredoc for plain text when allowed', () {
+      expect(
+        phpHeredoc('{"a": 1}', 'END', allowHeredoc: true),
+        '<<<END\n{"a": 1}\nEND',
+      );
+    });
+
+    test('uses a nowdoc when a heredoc would change the text', () {
+      expect(
+        phpHeredoc(r'{"a": "\"$x\""}', 'END', allowHeredoc: true),
+        "<<<'END'\n"
+        r'{"a": "\"$x\""}'
+        "\nEND",
+      );
+      expect(phpHeredoc('{"a": 1}', 'EOF'), "<<<'EOF'\n{\"a\": 1}\nEOF");
+    });
+
+    test('falls back when a line would end the block', () {
+      expect(phpHeredoc('a\n  END;\nb', 'END'), "'a\n  END;\nb'");
+      expect(phpHeredoc('a\nENDING', 'END'), "<<<'END'\na\nENDING\nEND");
+    });
+  });
+
+  group('juliaStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(juliaStringLiteral('abc'), '"abc"');
+    });
+
+    test(
+      'escapes quotes, backslashes, dollar signs and control characters',
+      () {
+        expect(
+          juliaStringLiteral("\"q\" a\\b \$x \$(y)\nc\r\td\x01"),
+          r'"\"q\" a\\b \$x \$(y)\nc\r\td\x01"',
+        );
+      },
+    );
+  });
+
+  group('juliaTripleQuotedStringLiteral', () {
+    test('uses a triple-quoted string when possible', () {
+      expect(
+        juliaTripleQuotedStringLiteral('{\n  "a": 1\n}'),
+        '"""{\n  "a": 1\n}"""',
+      );
+    });
+
+    test('falls back when triple quotes would change the text', () {
+      expect(juliaTripleQuotedStringLiteral(r'a $x'), r'"a \$x"');
+      expect(juliaTripleQuotedStringLiteral(r'a\b'), r'"a\\b"');
+      expect(
+        juliaTripleQuotedStringLiteral('first\n  second'),
+        r'"first\n  second"',
+      );
+      expect(juliaTripleQuotedStringLiteral('\nx'), r'"\nx"');
+      expect(juliaTripleQuotedStringLiteral('ends "'), r'"ends \""');
+    });
+  });
 }

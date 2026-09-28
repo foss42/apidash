@@ -1111,4 +1111,207 @@ echo $response . "\n";
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""<?php
+
+$uri = 'https://api.apidash.dev/case/lower';
+
+$queryParams = [
+'it\'s' => ['say "hi"
+C:\\new']
+];
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
+
+$headers = [
+    'If-Match: "abc123"',
+];
+
+$request = curl_init($uri);
+
+curl_setopt_array($request, [
+    CURLOPT_RETURNTRANSFER => 1,
+    CURLOPT_CUSTOMREQUEST => 'GET',
+    CURLOPT_HTTPHEADER => $headers,
+    CURLOPT_FOLLOWLOCATION => true,
+]);
+
+$response = curl_exec($request);
+
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+curl_close($request);
+
+echo "Status Code: " . $httpCode . "\n";
+echo $response . "\n";
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r"""<?php
+
+$uri = 'https://api.apidash.dev/case/lower';
+
+$request_body = 'a \'\'\' b \\';
+
+$headers = [
+    'Content-Type: text/plain',
+];
+
+$request = curl_init($uri);
+
+curl_setopt_array($request, [
+    CURLOPT_RETURNTRANSFER => 1,
+    CURLOPT_CUSTOMREQUEST => 'POST',
+    CURLOPT_HTTPHEADER => $headers,
+    CURLOPT_POSTFIELDS => $request_body,
+    CURLOPT_FOLLOWLOCATION => true,
+]);
+
+$response = curl_exec($request);
+
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+curl_close($request);
+
+echo "Status Code: " . $httpCode . "\n";
+echo $response . "\n";
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""<?php
+
+$uri = 'https://api.apidash.dev/io/form';
+
+$request_body = [
+    'note' => 'say "hi"
+bye',
+    'file' => new CURLFILE('C:\\Users\\new\\file.txt'),
+];
+
+$request = curl_init($uri);
+
+curl_setopt_array($request, [
+    CURLOPT_RETURNTRANSFER => 1,
+    CURLOPT_CUSTOMREQUEST => 'POST',
+    CURLOPT_POSTFIELDS => $request_body,
+    CURLOPT_FOLLOWLOCATION => true,
+]);
+
+$response = curl_exec($request);
+
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+curl_close($request);
+
+echo "Status Code: " . $httpCode . "\n";
+echo $response . "\n";
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""<?php
+
+$uri = 'https://api.apidash.dev/it\'s/data';
+
+$request = curl_init($uri);
+
+curl_setopt_array($request, [
+    CURLOPT_RETURNTRANSFER => 1,
+    CURLOPT_CUSTOMREQUEST => 'GET',
+    CURLOPT_FOLLOWLOCATION => true,
+]);
+
+$response = curl_exec($request);
+
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+curl_close($request);
+
+echo "Status Code: " . $httpCode . "\n";
+echo $response . "\n";
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""<?php
+
+$uri = 'https://api.apidash.dev/case/lower';
+
+$request_body = "line 1\r\nline 2";
+
+$headers = [
+    'Content-Type: text/plain',
+];
+
+$request = curl_init($uri);
+
+curl_setopt_array($request, [
+    CURLOPT_RETURNTRANSFER => 1,
+    CURLOPT_CUSTOMREQUEST => 'POST',
+    CURLOPT_HTTPHEADER => $headers,
+    CURLOPT_POSTFIELDS => $request_body,
+    CURLOPT_FOLLOWLOCATION => true,
+]);
+
+$response = curl_exec($request);
+
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+curl_close($request);
+
+echo "Status Code: " . $httpCode . "\n";
+echo $response . "\n";
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

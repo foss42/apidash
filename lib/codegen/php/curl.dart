@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class PHPcURLCodeGen {
   final String kTemplateStart = r'''
@@ -9,7 +10,7 @@ class PHPcURLCodeGen {
 ''';
 
   final String kTemplateUri = r'''
-$uri = '{{uri}}';
+$uri = {{uri}};
 
 
 ''';
@@ -19,14 +20,14 @@ $uri = '{{uri}}';
 $request_body = [
 {%- for data in body %}
 {%- if data.type == 'text' %}
-    '{{ data.name }}' => '{{ data.value }}',
+    {{ data.name }} => {{ data.value }},
 {%- elif data.type == 'file' %}
-    '{{ data.name }}' => new CURLFILE('{{ data.value }}'),
+    {{ data.name }} => new CURLFILE({{ data.value }}),
 {%- endif %}
 {%- endfor %}
 ];
 {%- else -%}
-$request_body = '{{body}}';
+$request_body = {{body}};
 {%- endif %}
 
 
@@ -52,8 +53,8 @@ $uri .= '?' . $queryString;
   //specifying headers
   String kTemplateHeaders = r'''
 $headers = [
-{%- for name, value in headers %}
-    '{{ name }}: {{ value }}',
+{%- for header in headers %}
+    {{ header }},
 {%- endfor %}
 ];
 
@@ -112,7 +113,7 @@ echo $response . "\n";
         result += templateStart.render();
 
         var templateUri = jj.Template(kTemplateUri);
-        result += templateUri.render({'uri': stripUriParams(uri)});
+        result += templateUri.render({'uri': phpStringLiteral(stripUriParams(uri))});
 
         //renders the request body contains the HTTP method associated with the request
         if (requestModel.hasBody) {
@@ -122,7 +123,13 @@ echo $response . "\n";
           result += templateBody.render({
             'body': requestModel.hasFormData
                 ? requestModel.formDataMapList
-                : requestModel.body,
+                    .map((data) => {
+                          'name': phpStringLiteral(data['name'] ?? ''),
+                          'value': phpStringLiteral(data['value'] ?? ''),
+                          'type': data['type'] ?? '',
+                        })
+                    .toList()
+                : phpStringLiteral(requestModel.body ?? ''),
           });
         }
 
@@ -133,7 +140,8 @@ if (params.isNotEmpty) {
   List<String> paramList = [];
 
   params.forEach((key, value) {
-    paramList.add("'$key' => [${value.map((v) => "'$v'").join(", ")}]");
+    paramList.add(
+        "${phpStringLiteral(key)} => [${value.map(phpStringLiteral).join(", ")}]");
     });
 
   result += templateParams.render({
@@ -150,7 +158,12 @@ if (params.isNotEmpty) {
 
         if (headers.isNotEmpty) {
           var templateHeader = jj.Template(kTemplateHeaders);
-          result += templateHeader.render({'headers': headers});
+          result += templateHeader.render({
+            'headers': headers.entries
+                .map((header) =>
+                    phpStringLiteral('${header.key}: ${header.value}'))
+                .toList(),
+          });
         }
 
         // renders the initial request init function call

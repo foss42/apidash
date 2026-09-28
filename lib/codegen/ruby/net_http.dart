@@ -1,17 +1,18 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class RubyNetHttpCodeGen {
   String kTemplateStart = """require "uri"
 require "net/http"
 
-url = URI("{{url}}")
+url = URI({{url}})
 
 """;
 
   String kTemplateRequestParams = """
 \nparams = {
-{% for key, val in params %} "{{ key }}" => [{% for v in val %}"{{ v|string }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+{% for key, val in params %} {{ key }} => [{% for v in val %}{{ v|string }}{% if not loop.last %}, {% endif %}{% endfor %}],
 {% endfor %}}
 url.query = URI.encode_www_form(params)\n
 """;
@@ -24,19 +25,17 @@ request = Net::HTTP::{{method}}.new(url)
 
   String kTemplateHeader = """
 {% for key, value in headers %}
-request["{{key}}"] = "{{value}}"
+request[{{key}}] = {{value}}
 {% endfor %}
 """;
 
   String kTemplateBody = """
 
-request.body = <<HEREDOC
-{{body}}
-HEREDOC
+request.body = {{body}}
 
 """;
   String kMultiPartBodyTemplate = r'''
-{% if type == "file" %}"{{name}}", File.open("{{value}}"){% else %}"{{name}}", "{{value}}"{% endif %}
+{% if type == "file" %}{{name}}, File.open({{value}}){% else %}{{name}}, {{value}}{% endif %}
 ''';
   String kStringRequest = """
 
@@ -68,12 +67,14 @@ puts "Response Headers: #{response.to_hash}"
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": uri.toString().split('?').first,
+        "url": rubyStringLiteral(uri.toString().split('?').first),
       });
       if (requestModel.enabledParamsMap.isNotEmpty) {
         var templateRequestParams = jj.Template(kTemplateRequestParams);
         result += templateRequestParams.render({
-          "params": requestModel.enabledParamsMap,
+          "params": requestModel.enabledParamsMap.map((key, values) =>
+              MapEntry(rubyStringLiteral(key),
+                  values.map(rubyStringLiteral).toList())),
         });
       }
 
@@ -92,14 +93,15 @@ puts "Response Headers: #{response.to_hash}"
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
         result += templateHeader.render({
-          "headers": headers,
+          "headers": headers.map((key, value) =>
+              MapEntry(rubyStringLiteral(key), rubyStringLiteral(value))),
         });
       }
 
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
-          "body": requestModel.body,
+          "body": rubyHeredoc(requestModel.body ?? ""),
         });
       }
 
@@ -111,8 +113,8 @@ puts "Response Headers: #{response.to_hash}"
         for (var element in requestModel.formDataMapList) {
           result += "[";
           result += templateMultiPartBody.render({
-            "name": element["name"],
-            "value": element["value"],
+            "name": rubyStringLiteral(element["name"] ?? ""),
+            "value": rubyStringLiteral(element["value"] ?? ""),
             "type": element["type"]
           });
           result += "]";

@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 // Note that delete is a special case in Faraday as API Dash supports request
 // body inside delete request, but Faraday does not. Hence we need to manually
@@ -18,30 +19,28 @@ require 'faraday/multipart'
 
   final String kTemplateRequestUrl = """
 
-REQUEST_URL = URI("{{ url }}")
+REQUEST_URL = URI({{ url }})
 
 
 """;
 
   final String kTemplateBody = """
-PAYLOAD = <<HEREDOC
-{{ body }}
-HEREDOC
+PAYLOAD = {{ body }}
 
 
 """;
 
   final String kTemplateFormParamsWithFile = """
 PAYLOAD = {
-{% for param in params %}{% if param.type == "text" %}  "{{ param.name }}" => Faraday::Multipart::ParamPart.new("{{ param.value }}", "text/plain"),
-{% elif param.type == "file" %}  "{{ param.name }}" => Faraday::Multipart::FilePart.new("{{ param.value }}", "application/octet-stream"),{% endif %}{% endfor %}
+{% for param in params %}{% if param.type == "text" %}  {{ param.name }} => Faraday::Multipart::ParamPart.new({{ param.value }}, "text/plain"),
+{% elif param.type == "file" %}  {{ param.name }} => Faraday::Multipart::FilePart.new({{ param.value }}, "application/octet-stream"),{% endif %}{% endfor %}
 }
 
 
 """;
 
   final String kTemplateFormParamsWithoutFile = """
-PAYLOAD = URI.encode_www_form({\n{% for param in params %}  "{{ param.name }}" => "{{ param.value }}",\n{% endfor %}})\n\n
+PAYLOAD = URI.encode_www_form({\n{% for param in params %}  {{ param.name }} => {{ param.value }},\n{% endfor %}})\n\n
 """;
 
   final String kTemplateConnection = """
@@ -59,14 +58,14 @@ response = conn.{{ method|lower }}(REQUEST_URL{% if doesMethodAcceptBody and con
 
   final String kTemplateRequestParams = """
   req.params = {
-    {% for key, val in params %}"{{ key }}" => {% if val is list %}[{% for v in val %}"{{ v|string }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% else %}"{{ val|string }}"{% endif %},
+    {% for key, val in params %}{{ key }} => {% if val is list %}[{% for v in val %}{{ v|string }}{% if not loop.last %}, {% endif %}{% endfor %}]{% else %}{{ val|string }}{% endif %},
     {% endfor %}}
 
 """;
 
   final String kTemplateRequestHeaders = """
   req.headers = {
-{% for key, val in headers %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }
+{% for key, val in headers %}    {{ key }} => {{ val }},\n{% endfor %}  }
 
 """;
 
@@ -110,7 +109,7 @@ puts "Response Body: #{response.body}"
       }
 
       var templateRequestUrl = jj.Template(kTemplateRequestUrl);
-      result += templateRequestUrl.render({"url": url});
+      result += templateRequestUrl.render({"url": rubyStringLiteral(url)});
 
       if (requestModel.hasFormData) {
         jj.Template payload;
@@ -119,11 +118,19 @@ puts "Response Body: #{response.body}"
         } else {
           payload = jj.Template(kTemplateFormParamsWithoutFile);
         }
-        result += payload.render({"params": requestModel.formDataMapList});
+        result += payload.render({
+          "params": requestModel.formDataMapList
+              .map((param) => {
+                    "name": rubyStringLiteral(param["name"] ?? ""),
+                    "value": rubyStringLiteral(param["value"] ?? ""),
+                    "type": param["type"] ?? "",
+                  })
+              .toList(),
+        });
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
-          "body": requestModel.body,
+          "body": rubyHeredoc(requestModel.body ?? ""),
         });
       }
 
@@ -153,12 +160,19 @@ puts "Response Body: #{response.body}"
 
       if (headers.isNotEmpty) {
         var templateRequestHeaders = jj.Template(kTemplateRequestHeaders);
-        result += templateRequestHeaders.render({"headers": headers});
+        result += templateRequestHeaders.render({
+          "headers": headers.map((key, value) =>
+              MapEntry(rubyStringLiteral(key), rubyStringLiteral(value))),
+        });
       }
 
       if (requestModel.enabledParamsMap.isNotEmpty) {
         var templateRequestParams = jj.Template(kTemplateRequestParams);
-        result += templateRequestParams.render({"params": requestModel.enabledParamsMap});
+        result += templateRequestParams.render({
+          "params": requestModel.enabledParamsMap.map((key, values) =>
+              MapEntry(rubyStringLiteral(key),
+                  values.map(rubyStringLiteral).toList())),
+        });
       }
 
       if (requestModel.hasBody && requestModel.method == HTTPVerb.delete) {

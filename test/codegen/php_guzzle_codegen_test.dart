@@ -1019,4 +1019,195 @@ echo $res->getBody();
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+
+
+$queryParams = [
+'it\'s' => ['say "hi"
+C:\\new']
+];
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array)$values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryParamsStr = '?' . implode('&', $queryParts);
+$headers = [
+'If-Match' => '"abc123"'
+];
+
+$client = new Client();
+
+$request = new Request('get', 'https://api.apidash.dev/case/lower'. $queryParamsStr, $headers);
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpGuzzle,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+
+
+$headers = [
+'Content-Type' => 'application/json'
+];
+
+$body = <<<'END'
+{
+"text": "say \"true\" or null",
+"path": "a\/b",
+"flag": false
+}
+END;
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/case/lower', $headers, $body);
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpGuzzle,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\MultipartStream;
+
+$body = new MultipartStream([
+    [
+        'name'     => 'note',
+        'contents' => 'say "hi"
+bye'
+    ],
+    [
+        'name'     => 'file',
+        'contents' => fopen('C:\\Users\\new\\file.txt', 'r')
+    ]
+]);
+
+$headers = [
+'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
+];
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/form', $headers, $body);
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpGuzzle,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+
+
+$client = new Client();
+
+$request = new Request('get', 'https://api.apidash.dev/it\'s/data');
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpGuzzle,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Dollar signs in a JSON body', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+
+
+$headers = [
+'Content-Type' => 'application/json'
+];
+
+$body = <<<'END'
+{
+"cmd": "echo $HOME ${x}",
+"price": "$5"
+}
+END;
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/case/lower', $headers, $body);
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpGuzzle,
+          requestModelEscape7,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

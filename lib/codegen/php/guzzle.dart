@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class PhpGuzzleCodeGen {
   String kTemplateImport = """<?php
@@ -45,9 +46,7 @@ foreach (\$queryParams as \$key => \$values) {
 """;
 
   String kTemplateBody = """
-\$body = <<<END
-{{body}}
-END;
+\$body = {{body}};
 
 
 """;
@@ -55,7 +54,7 @@ END;
   String kTemplateRequest = r"""
 $client = new Client();
 
-$request = new Request('{{method}}', '{{url}}'{{queryParams}}{{headers}}{{body}});
+$request = new Request('{{method}}', {{url}}{{queryParams}}{{headers}}{{body}});
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -78,8 +77,8 @@ echo $res->getBody();
           "fields_list": requestModel.formDataList.map((field) {
             var row = '''
     [
-        'name'     => '${field.name}',
-        'contents' => ${field.type == FormDataType.file ? "fopen('${field.value}', 'r')" : "'${field.value}'"}
+        'name'     => ${phpStringLiteral(field.name)},
+        'contents' => ${field.type == FormDataType.file ? "fopen(${phpStringLiteral(field.value)}, 'r')" : phpStringLiteral(field.value)}
     ]''';
             return row;
           }).join(",\n"),
@@ -93,7 +92,8 @@ if (params.isNotEmpty) {
   List<String> paramList = [];
 
   params.forEach((key, value) {
-    paramList.add("'$key' => [${value.map((v) => "'$v'").join(", ")}]");
+    paramList.add(
+        "${phpStringLiteral(key)} => [${value.map(phpStringLiteral).join(", ")}]");
     });
 
   result += templateParams.render({
@@ -107,7 +107,7 @@ if (params.isNotEmpty) {
       if (headers.isNotEmpty || requestModel.hasBody) {
         var templateHeader = jj.Template(kTemplateHeader);
         headers.forEach((key, value) {
-          headerList.add("'$key' => '$value'");
+          headerList.add("${phpStringLiteral(key)} => ${phpStringLiteral(value)}");
         });
 
         if (!requestModel.hasContentTypeHeader && requestModel.hasBody) {
@@ -128,12 +128,14 @@ if (params.isNotEmpty) {
       var templateBody = jj.Template(kTemplateBody);
 
       if (requestModel.hasJsonData || requestModel.hasTextData) {
-        result += templateBody.render({"body": requestModel.body});
+        result += templateBody.render({
+          "body": phpHeredoc(requestModel.body ?? "", "END", allowHeredoc: true),
+        });
       }
 
       var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
-        "url": stripUrlParams(requestModel.url),
+        "url": phpStringLiteral(stripUrlParams(requestModel.url)),
         "method": requestModel.method.name.toLowerCase(),
         "queryParams": params.isNotEmpty ? ". \$queryParamsStr" : "",
         "headers": headerList.isNotEmpty ? ", \$headers" : "",

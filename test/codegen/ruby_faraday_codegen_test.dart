@@ -424,7 +424,7 @@ require 'faraday'
 
 REQUEST_URL = URI("https://api.apidash.dev/case/lower")
 
-PAYLOAD = <<HEREDOC
+PAYLOAD = <<'HEREDOC'.chomp
 {
 "text": "I LOVE Flutter"
 }
@@ -459,7 +459,7 @@ require 'faraday'
 
 REQUEST_URL = URI("https://api.apidash.dev/case/lower")
 
-PAYLOAD = <<HEREDOC
+PAYLOAD = <<'HEREDOC'.chomp
 {
 "text": "I LOVE Flutter",
 "flag": null,
@@ -499,7 +499,7 @@ require 'faraday'
 
 REQUEST_URL = URI("https://api.apidash.dev/case/lower")
 
-PAYLOAD = <<HEREDOC
+PAYLOAD = <<'HEREDOC'.chomp
 {
 "text": "I LOVE Flutter"
 }
@@ -742,7 +742,7 @@ require 'faraday'
 
 REQUEST_URL = URI("https://reqres.in/api/users/2")
 
-PAYLOAD = <<HEREDOC
+PAYLOAD = <<'HEREDOC'.chomp
 {
 "name": "morpheus",
 "job": "zion resident"
@@ -781,7 +781,7 @@ require 'faraday'
 
 REQUEST_URL = URI("https://reqres.in/api/users/2")
 
-PAYLOAD = <<HEREDOC
+PAYLOAD = <<'HEREDOC'.chomp
 {
 "name": "marfeus",
 "job": "accountant"
@@ -849,7 +849,7 @@ require 'faraday'
 
 REQUEST_URL = URI("https://reqres.in/api/users/2")
 
-PAYLOAD = <<HEREDOC
+PAYLOAD = <<'HEREDOC'.chomp
 {
 "name": "marfeus",
 "job": "accountant"
@@ -876,6 +876,172 @@ puts "Response Body: #{response.body}"
           CodegenLanguage.rubyFaraday,
           requestModelDelete2,
           SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""require 'uri'
+require 'faraday'
+
+REQUEST_URL = URI("https://api.apidash.dev/case/lower")
+
+conn = Faraday.new do |faraday|
+  faraday.adapter Faraday.default_adapter
+end
+
+response = conn.get(REQUEST_URL) do |req|
+  req.headers = {
+    "If-Match" => "\"abc123\"",
+  }
+  req.params = {
+    "it's" => ["say \"hi\"\nC:\\new"],
+    }
+end
+
+puts "Status Code: #{response.status}"
+puts "Response Body: #{response.body}"
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyFaraday,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""require 'uri'
+require 'faraday'
+
+REQUEST_URL = URI("https://api.apidash.dev/case/lower")
+
+PAYLOAD = <<'HEREDOC'.chomp
+{
+"text": "say \"true\" or null",
+"path": "a\/b",
+"flag": false
+}
+HEREDOC
+
+conn = Faraday.new do |faraday|
+  faraday.adapter Faraday.default_adapter
+end
+
+response = conn.post(REQUEST_URL, PAYLOAD) do |req|
+  req.headers = {
+    "Content-Type" => "application/json",
+  }
+end
+
+puts "Status Code: #{response.status}"
+puts "Response Body: #{response.body}"
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyFaraday,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""require 'uri'
+require 'faraday'
+require 'faraday/multipart'
+
+REQUEST_URL = URI("https://api.apidash.dev/io/form")
+
+PAYLOAD = {
+  "note" => Faraday::Multipart::ParamPart.new("say \"hi\"\nbye", "text/plain"),
+  "file" => Faraday::Multipart::FilePart.new("C:\\Users\\new\\file.txt", "application/octet-stream"),
+}
+
+conn = Faraday.new do |faraday|
+  faraday.adapter Faraday.default_adapter
+  faraday.request :multipart
+end
+
+response = conn.post(REQUEST_URL, PAYLOAD) do |req|
+end
+
+puts "Status Code: #{response.status}"
+puts "Response Body: #{response.body}"
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyFaraday,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""require 'uri'
+require 'faraday'
+
+REQUEST_URL = URI("https://api.apidash.dev/it's/data")
+
+conn = Faraday.new do |faraday|
+  faraday.adapter Faraday.default_adapter
+end
+
+response = conn.get(REQUEST_URL) do |req|
+end
+
+puts "Status Code: #{response.status}"
+puts "Response Body: #{response.body}"
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyFaraday,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""require 'uri'
+require 'faraday'
+
+REQUEST_URL = URI("https://api.apidash.dev/case/lower")
+
+PAYLOAD = "line 1\r\nline 2"
+
+conn = Faraday.new do |faraday|
+  faraday.adapter Faraday.default_adapter
+end
+
+response = conn.post(REQUEST_URL, PAYLOAD) do |req|
+  req.headers = {
+    "Content-Type" => "text/plain",
+  }
+end
+
+puts "Status Code: #{response.status}"
+puts "Response Body: #{response.body}"
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyFaraday,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
         ),
         expectedCode,
       );

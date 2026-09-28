@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class JuliaHttpClientCodeGen {
   final String kTemplateStart = """
@@ -9,15 +10,15 @@ using HTTP{% if hasJson %}, JSON{% endif %}
 """;
 
   final String kTemplateUrl = """
-url = "{{url}}"
+url = {{url}}
 \n
 """;
 
 String kTemplateParams = """
 params = Dict(
 {%- for name, value in params %}
-    "{{ name }}" =>[
-        {%- for v in value -%}"{{ v }}"{%- if not loop.last -%}, {%- endif -%}{%- endfor -%}
+    {{ name }} =>[
+        {%- for v in value -%}{{ v }}{%- if not loop.last -%}, {%- endif -%}{%- endfor -%}
     ],
 {%- endfor %}
 )
@@ -29,7 +30,7 @@ params = Dict(
   String kTemplateHeaders = """
 headers = Dict(
 {%- for name, value in headers %}
-    "{{ name }}" => "{{ value }}",
+    {{ name }} => {{ value }},
 {%- endfor %}
 )
 \n
@@ -39,9 +40,9 @@ headers = Dict(
 data = Dict(
 {%- for data in formdata %}
 {%- if data.type == "text" %}
-    "{{ data.name }}" => "{{ data.value }}",
+    {{ data.name }} => {{ data.value }},
 {%- else %}
-    "{{ data.name }}" => open("{{ data.value }}"),
+    {{ data.name }} => open({{ data.value }}),
 {%- endif %}
 {%- endfor %}
 )
@@ -51,7 +52,7 @@ payload = HTTP.Form(data)
 ''';
 
   String kTemplateBody = '''
-payload = """{{ body }}"""
+payload = {{ body }}
 \n
 ''';
 
@@ -93,14 +94,17 @@ println("Response Body: \n$(String(response.body))")
         });
 
         final templateUrl = jj.Template(kTemplateUrl);
-        result += templateUrl.render({"url": stripUriParams(uri)});
+        result += templateUrl.render({"url": juliaStringLiteral(stripUriParams(uri))});
 
 
           var params = requestModel.enabledParamsMap;
           if (params.isNotEmpty) {
             hasQuery = true;
             final templateParams = jj.Template(kTemplateParams);
-            result += templateParams.render({"params": params});
+            result += templateParams.render({
+              "params": params.map((name, values) => MapEntry(
+                  juliaStringLiteral(name), values.map(juliaStringLiteral).toList())),
+            });
           }
         
 
@@ -108,7 +112,8 @@ println("Response Body: \n$(String(response.body))")
           addHeaderForBody = true;
           final templateBody = jj.Template(kTemplateBody);
           var bodyStr = requestModel.body;
-          result += templateBody.render({"body": bodyStr});
+          result += templateBody
+              .render({"body": juliaTripleQuotedStringLiteral(bodyStr ?? "")});
         }
 
         if (requestModel.hasFormData) {
@@ -116,7 +121,13 @@ println("Response Body: \n$(String(response.body))")
           result += formDataBodyData.render(
             {
               "hasFile": requestModel.hasFileInFormData,
-              "formdata": requestModel.formDataMapList,
+              "formdata": requestModel.formDataMapList
+                  .map((data) => {
+                        "name": juliaStringLiteral(data["name"] ?? ""),
+                        "value": juliaStringLiteral(data["value"] ?? ""),
+                        "type": data["type"] ?? "",
+                      })
+                  .toList(),
             },
           );
         }
@@ -135,7 +146,10 @@ println("Response Body: \n$(String(response.body))")
           if (headers.isNotEmpty) {
             hasHeaders = true;
             var templateHeaders = jj.Template(kTemplateHeaders);
-            result += templateHeaders.render({"headers": headers});
+            result += templateHeaders.render({
+              "headers": headers.map((name, value) =>
+                  MapEntry(juliaStringLiteral(name), juliaStringLiteral(value))),
+            });
           }
         }
 

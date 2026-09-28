@@ -423,7 +423,7 @@ https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 request["Content-Type"] = "text/plain"
 
-request.body = <<HEREDOC
+request.body = <<'HEREDOC'.chomp
 {
 "text": "I LOVE Flutter"
 }
@@ -456,7 +456,7 @@ https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 request["Content-Type"] = "application/json"
 
-request.body = <<HEREDOC
+request.body = <<'HEREDOC'.chomp
 {
 "text": "I LOVE Flutter",
 "flag": null,
@@ -496,7 +496,7 @@ request["User-Agent"] = "Test Agent"
 
 request["Content-Type"] = "application/json"
 
-request.body = <<HEREDOC
+request.body = <<'HEREDOC'.chomp
 {
 "text": "I LOVE Flutter"
 }
@@ -714,7 +714,7 @@ request["x-api-key"] = "reqres-free-v1"
 
 request["Content-Type"] = "application/json"
 
-request.body = <<HEREDOC
+request.body = <<'HEREDOC'.chomp
 {
 "name": "morpheus",
 "job": "zion resident"
@@ -752,7 +752,7 @@ request["x-api-key"] = "reqres-free-v1"
 
 request["Content-Type"] = "application/json"
 
-request.body = <<HEREDOC
+request.body = <<'HEREDOC'.chomp
 {
 "name": "marfeus",
 "job": "accountant"
@@ -817,7 +817,7 @@ request["x-api-key"] = "reqres-free-v1"
 
 request["Content-Type"] = "application/json"
 
-request.body = <<HEREDOC
+request.body = <<'HEREDOC'.chomp
 {
 "name": "marfeus",
 "job": "accountant"
@@ -836,6 +836,162 @@ puts "Response Body: #{response.body}"
           CodegenLanguage.rubyNetHttp,
           requestModelDelete2,
           SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""require "uri"
+require "net/http"
+
+url = URI("https://api.apidash.dev/case/lower")
+
+params = {
+ "it's" => ["say \"hi\"\nC:\\new"],
+}
+url.query = URI.encode_www_form(params)
+https = Net::HTTP.new(url.host, url.port)
+https.use_ssl = true
+request = Net::HTTP::Get.new(url)
+request["If-Match"] = "\"abc123\""
+
+response = https.request(request)
+
+puts "Response Code: #{response.code}"
+
+puts "Response Body: #{response.body}"
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyNetHttp,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""require "uri"
+require "net/http"
+
+url = URI("https://api.apidash.dev/case/lower")
+https = Net::HTTP.new(url.host, url.port)
+https.use_ssl = true
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = "application/json"
+
+request.body = <<'HEREDOC'.chomp
+{
+"text": "say \"true\" or null",
+"path": "a\/b",
+"flag": false
+}
+HEREDOC
+
+response = https.request(request)
+
+puts "Response Code: #{response.code}"
+
+puts "Response Body: #{response.body}"
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyNetHttp,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""require "uri"
+require "net/http"
+
+url = URI("https://api.apidash.dev/io/form")
+https = Net::HTTP.new(url.host, url.port)
+https.use_ssl = true
+request = Net::HTTP::Post.new(url)
+form_data = [["note", "say \"hi\"\nbye"], ["file", File.open("C:\\Users\\new\\file.txt")]]
+request.set_form form_data, 'multipart/form-data'
+
+response = https.request(request)
+
+puts "Response Code: #{response.code}"
+
+puts "Response Body: #{response.body}"
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyNetHttp,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""require "uri"
+require "net/http"
+
+url = URI("https://api.apidash.dev/it's/data")
+https = Net::HTTP.new(url.host, url.port)
+https.use_ssl = true
+request = Net::HTTP::Get.new(url)
+response = https.request(request)
+
+puts "Response Code: #{response.code}"
+
+puts "Response Body: #{response.body}"
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyNetHttp,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""require "uri"
+require "net/http"
+
+url = URI("https://api.apidash.dev/case/lower")
+https = Net::HTTP.new(url.host, url.port)
+https.use_ssl = true
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = "text/plain"
+
+request.body = "line 1\r\nline 2"
+
+response = https.request(request)
+
+puts "Response Code: #{response.code}"
+
+puts "Response Body: #{response.body}"
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyNetHttp,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
         ),
         expectedCode,
       );

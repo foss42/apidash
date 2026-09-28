@@ -317,3 +317,167 @@ String csharpRawStringLiteral(String value) {
   final quotes = '"' * (longestQuoteRun < 3 ? 3 : longestQuoteRun + 1);
   return '$quotes\n$value\n$quotes';
 }
+
+bool _hasControlCharacter(String value) => value.runes.any(
+  (rune) => (rune < 0x20 && rune != 0x0a && rune != 0x09) || rune == 0x7f,
+);
+
+/// Returns [value] as a double-quoted Ruby string literal.
+///
+/// `#` is escaped when it would start `#{...}`, `#@var` or `#$var`
+/// interpolation.
+String rubyStringLiteral(String value) {
+  final result = StringBuffer('"');
+  final chars = value.runes.map(String.fromCharCode).toList();
+  for (var i = 0; i < chars.length; i++) {
+    final char = chars[i];
+    final rune = char.runes.first;
+    final next = i + 1 < chars.length ? chars[i + 1] : '';
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == '#' && (next == '{' || next == '@' || next == r'$')) {
+      result.write(r'\#');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\x${rune.toRadixString(16).padLeft(2, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a literal Ruby heredoc (`<<'HEREDOC'.chomp`), falling
+/// back to [rubyStringLiteral] when a heredoc cannot hold it exactly.
+///
+/// The quoted form turns off interpolation and escapes, and `.chomp` removes
+/// the newline that every heredoc ends with.
+String rubyHeredoc(String value) {
+  const marker = 'HEREDOC';
+  if (value.contains('\r') ||
+      _hasControlCharacter(value) ||
+      value.split('\n').contains(marker)) {
+    return rubyStringLiteral(value);
+  }
+  return "<<'$marker'.chomp\n$value\n$marker";
+}
+
+/// Returns [value] as a single-quoted PHP string literal, or as a
+/// [phpDoubleQuotedStringLiteral] when it has a carriage return or another
+/// control character, which PHP does not keep inside a single-quoted string.
+String phpStringLiteral(String value) {
+  if (value.contains('\r') || _hasControlCharacter(value)) {
+    return phpDoubleQuotedStringLiteral(value);
+  }
+  return "'${value.replaceAll(r'\', r'\\').replaceAll("'", r"\'")}'";
+}
+
+/// Returns [value] as a double-quoted PHP string literal.
+String phpDoubleQuotedStringLiteral(String value) {
+  final result = StringBuffer('"');
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == r'$') {
+      result.write(r'\$');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\x${rune.toRadixString(16).padLeft(2, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a PHP heredoc or nowdoc ending in [marker].
+///
+/// A heredoc (`<<<END`) is kept when [allowHeredoc] is true and [value] has
+/// nothing it would interpolate or unescape; otherwise a nowdoc
+/// (`<<<'END'`), which takes the text as it is. Falls back to
+/// [phpStringLiteral] when a line of [value] would end the block early, or
+/// when [value] has a carriage return or another control character.
+String phpHeredoc(String value, String marker, {bool allowHeredoc = false}) {
+  // since PHP 7.3 the closing marker may be indented and followed by any
+  // non-identifier character
+  final endsBlock = RegExp(
+    '^[ \\t]*$marker(?![A-Za-z0-9_\\x80-\\uffff])',
+    multiLine: true,
+  );
+  if (endsBlock.hasMatch(value) ||
+      value.contains('\r') ||
+      _hasControlCharacter(value)) {
+    return phpStringLiteral(value);
+  }
+  final isPlain = !value.contains(r'\') && !value.contains(r'$');
+  final opening = allowHeredoc && isPlain ? marker : "'$marker'";
+  return '<<<$opening\n$value\n$marker';
+}
+
+/// Returns [value] as a double-quoted Julia string literal.
+String juliaStringLiteral(String value) {
+  final result = StringBuffer('"');
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == r'$') {
+      result.write(r'\$');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\x${rune.toRadixString(16).padLeft(2, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a Julia triple-quoted string when that keeps it
+/// unchanged, otherwise falls back to [juliaStringLiteral].
+///
+/// Triple-quoted strings still process `\` escapes and `$` interpolation,
+/// drop a newline right after the opening quotes, and remove indentation
+/// shared by the lines after the first.
+String juliaTripleQuotedStringLiteral(String value) {
+  final laterLines = value.split('\n').skip(1).where((line) => line.isNotEmpty);
+  final hasSharedIndentation =
+      laterLines.isNotEmpty &&
+      laterLines.every((line) => line.startsWith(' ') || line.startsWith('\t'));
+  if (value.contains(r'\') ||
+      value.contains(r'$') ||
+      value.contains('"""') ||
+      value.endsWith('"') ||
+      value.startsWith('\n') ||
+      value.contains('\r') ||
+      _hasControlCharacter(value) ||
+      hasSharedIndentation) {
+    return juliaStringLiteral(value);
+  }
+  return '"""$value"""';
+}

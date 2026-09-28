@@ -1003,4 +1003,192 @@ echo $response->getBody();
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+
+$uri = "https://api.apidash.dev/case/lower";
+  $queryParams = [
+  'it\'s' => ['say "hi"
+C:\\new']
+  ];
+  $queryString = http_build_query($queryParams, '', '&', PHP_QUERY_RFC3986);
+  $queryString = preg_replace('/%5B[0-9]+%5D/', '', $queryString);
+
+  $uri .= '?'.$queryString;
+
+
+  $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+$headers = [
+    'If-Match' => '"abc123"',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
+$client = Psr18ClientDiscovery::find();
+$response = $client->sendRequest($request);
+
+echo $response->getStatusCode() . " " . $response->getReasonPhrase() . "\n";
+echo $response->getBody();
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpHttpPlug,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+use Http\Message\MultipartStream\MultipartStreamBuilder;
+$uri = "https://api.apidash.dev/io/form";
+$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$builder = new MultipartStreamBuilder();
+$builder->addResource('note', 'say "hi"
+bye');
+
+$builder->addResource('file', fopen('C:\\Users\\new\\file.txt', 'r'), ['filename' => 'C:\\Users\\new\\file.txt']);
+
+$request = $request->withBody($builder->build());
+$headers = [
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
+$client = Psr18ClientDiscovery::find();
+$response = $client->sendRequest($request);
+
+echo $response->getStatusCode() . " " . $response->getReasonPhrase() . "\n";
+echo $response->getBody();
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpHttpPlug,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+
+$uri = "https://api.apidash.dev/it's/data";
+$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
+$client = Psr18ClientDiscovery::find();
+$response = $client->sendRequest($request);
+
+echo $response->getStatusCode() . " " . $response->getReasonPhrase() . "\n";
+echo $response->getBody();
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpHttpPlug,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+
+$uri = "https://api.apidash.dev/case/lower";
+$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$body = "line 1\r\nline 2";
+
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'text/plain',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
+$client = Psr18ClientDiscovery::find();
+$response = $client->sendRequest($request);
+
+echo $response->getStatusCode() . " " . $response->getReasonPhrase() . "\n";
+echo $response->getBody();
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpHttpPlug,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Content-Type header set by the user', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+
+$uri = "https://api.apidash.dev/case/lower";
+$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$body = <<<'EOF'
+{
+"text": "I LOVE Flutter"
+}
+EOF;
+
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'application/json; charset=latin1',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
+$client = Psr18ClientDiscovery::find();
+$response = $client->sendRequest($request);
+
+echo $response->getStatusCode() . " " . $response->getReasonPhrase() . "\n";
+echo $response->getBody();
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpHttpPlug,
+          requestModelPost13,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }
