@@ -1126,4 +1126,247 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""use hyper::{Body, Client, Request};
+use hyper_tls::HttpsConnector;
+use tokio;
+use url::Url;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let mut url = Url::parse("https://api.apidash.dev/case/lower")?;
+        
+    url.query_pairs_mut().append_pair("it's", "say \"hi\"\nC:\\new");
+        let req_builder = Request::builder()
+        .method("GET").uri(url.as_str())    
+        .header("If-Match", "\"abc123\"")
+    
+        .body(Body::empty())?;
+
+    let res = client.request(req_builder).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
+
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""use hyper::{Body, Client, Request};
+use hyper_tls::HttpsConnector;
+use serde_json::json;
+use tokio;
+use url::Url;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let mut url = Url::parse("https://api.apidash.dev/case/lower")?;
+        let req_builder = Request::builder()
+        .method("POST").uri(url.as_str())
+        .body(Body::from(json!({
+"text": "say \"true\" or null",
+"path": "a/b",
+"flag": false
+}).to_string()))?;
+    let res = client.request(req_builder).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
+
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""extern crate hyper_multipart_rfc7578 as hyper_multipart;
+use hyper::{Body, Client, Request};
+use hyper_tls::HttpsConnector;
+use hyper_multipart::client::multipart;
+use tokio;
+use url::Url;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let mut url = Url::parse("https://api.apidash.dev/io/form")?;
+        let req_builder = Request::builder()
+        .method("POST")
+        .uri(url.as_str());
+    let mut form = multipart::Form::default();
+    form.add_text("note", "say \"hi\"\nbye");
+    form.add_file("file", r"C:\Users\new\file.txt").unwrap();
+
+    let req = form.set_body_convert::<Body, multipart::Body>(req_builder).unwrap();
+    let res = client.request(req).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
+
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
+
+
+    Ok(())
+}
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""use hyper::{Body, Client, Request};
+use hyper_tls::HttpsConnector;
+use tokio;
+use url::Url;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let mut url = Url::parse("https://api.apidash.dev/it's/data")?;
+        let req_builder = Request::builder()
+        .method("GET").uri(url.as_str())
+        .body(Body::empty())?;
+
+    let res = client.request(req_builder).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
+
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""use hyper::{Body, Client, Request};
+use hyper_tls::HttpsConnector;
+use tokio;
+use url::Url;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let mut url = Url::parse("https://api.apidash.dev/case/lower")?;
+        let req_builder = Request::builder()
+        .method("POST").uri(url.as_str())
+        .body(Body::from("line 1\r\nline 2"))?;
+    let res = client.request(req_builder).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
+
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote followed by # in a text body', () {
+      const expectedCode = r"""use hyper::{Body, Client, Request};
+use hyper_tls::HttpsConnector;
+use tokio;
+use url::Url;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let mut url = Url::parse("https://api.apidash.dev/case/lower")?;
+        let req_builder = Request::builder()
+        .method("POST").uri(url.as_str())
+        .body(Body::from(r###"color: "#fff" and "##""###))?;
+    let res = client.request(req_builder).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
+
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustHyper,
+          requestModelEscape10,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

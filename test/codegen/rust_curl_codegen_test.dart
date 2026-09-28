@@ -1225,4 +1225,278 @@ fn main() {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""use curl::easy::Easy;
+use curl::easy::List;
+
+fn main() {
+  let mut easy = Easy::new();
+  let mut data = Vec::new();
+   let base_url = "https://api.apidash.dev/case/lower"; 
+  
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    ("it's", vec!["say \"hi\"\nC:\\new", ]),
+  ];
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  
+ 
+  easy.get(true).unwrap();
+
+  let mut list = List::new();
+  list.append("If-Match: \"abc123\"").unwrap();
+  easy.http_headers(list).unwrap();
+  
+  {
+   easy.url(&url).unwrap();
+    let mut transfer = easy.transfer();
+    transfer.write_function(|new_data| {
+        data.extend_from_slice(new_data);
+        Ok(new_data.len())
+    }).unwrap();
+    transfer.perform().unwrap();
+  }
+
+  let response_body = String::from_utf8_lossy(&data);
+  println!("Response body: {}", response_body);
+  println!("Response code: {}", easy.response_code().unwrap());
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustCurl,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""use curl::easy::Easy;
+use serde_json::json;
+use curl::easy::List;
+
+fn main() {
+  let mut easy = Easy::new();
+  let mut data = Vec::new();
+   let base_url = "https://api.apidash.dev/case/lower"; 
+  
+  let url = base_url.to_string();
+  
+ 
+  easy.post(true).unwrap();
+
+  easy.post_fields_copy(json!({
+"text": "say \"true\" or null",
+"path": "a/b",
+"flag": false
+}).to_string().as_bytes()).unwrap();
+
+  let mut list = List::new();
+  list.append("Content-Type: application/json").unwrap();
+  easy.http_headers(list).unwrap();
+  
+  {
+   easy.url(&url).unwrap();
+    let mut transfer = easy.transfer();
+    transfer.write_function(|new_data| {
+        data.extend_from_slice(new_data);
+        Ok(new_data.len())
+    }).unwrap();
+    transfer.perform().unwrap();
+  }
+
+  let response_body = String::from_utf8_lossy(&data);
+  println!("Response body: {}", response_body);
+  println!("Response code: {}", easy.response_code().unwrap());
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustCurl,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""use curl::easy::Easy;
+
+fn main() {
+  let mut easy = Easy::new();
+  let mut data = Vec::new();
+   let base_url = "https://api.apidash.dev/io/form"; 
+  
+  let url = base_url.to_string();
+  
+ 
+  easy.post(true).unwrap();
+
+  let mut form = curl::easy::Form::new();
+  
+  form.part("note")
+    .contents(b"say \"hi\"\nbye")
+    .add().unwrap();
+  
+  form.part("file")
+    .file("C:\\Users\\new\\file.txt")
+    .add().unwrap();
+  
+  easy.httppost(form).unwrap();  {
+   easy.url(&url).unwrap();
+    let mut transfer = easy.transfer();
+    transfer.write_function(|new_data| {
+        data.extend_from_slice(new_data);
+        Ok(new_data.len())
+    }).unwrap();
+    transfer.perform().unwrap();
+  }
+
+  let response_body = String::from_utf8_lossy(&data);
+  println!("Response body: {}", response_body);
+  println!("Response code: {}", easy.response_code().unwrap());
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustCurl,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""use curl::easy::Easy;
+
+fn main() {
+  let mut easy = Easy::new();
+  let mut data = Vec::new();
+   let base_url = "https://api.apidash.dev/it's/data"; 
+  
+  let url = base_url.to_string();
+  
+ 
+  easy.get(true).unwrap();
+
+  {
+   easy.url(&url).unwrap();
+    let mut transfer = easy.transfer();
+    transfer.write_function(|new_data| {
+        data.extend_from_slice(new_data);
+        Ok(new_data.len())
+    }).unwrap();
+    transfer.perform().unwrap();
+  }
+
+  let response_body = String::from_utf8_lossy(&data);
+  println!("Response body: {}", response_body);
+  println!("Response code: {}", easy.response_code().unwrap());
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustCurl,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""use curl::easy::Easy;
+use curl::easy::List;
+
+fn main() {
+  let mut easy = Easy::new();
+  let mut data = Vec::new();
+   let base_url = "https://api.apidash.dev/case/lower"; 
+  
+  let url = base_url.to_string();
+  
+ 
+  easy.post(true).unwrap();
+
+  easy.post_fields_copy("line 1\r\nline 2".as_bytes()).unwrap();
+
+  let mut list = List::new();
+  list.append("Content-Type: text/plain").unwrap();
+  easy.http_headers(list).unwrap();
+  
+  {
+   easy.url(&url).unwrap();
+    let mut transfer = easy.transfer();
+    transfer.write_function(|new_data| {
+        data.extend_from_slice(new_data);
+        Ok(new_data.len())
+    }).unwrap();
+    transfer.perform().unwrap();
+  }
+
+  let response_body = String::from_utf8_lossy(&data);
+  println!("Response body: {}", response_body);
+  println!("Response code: {}", easy.response_code().unwrap());
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustCurl,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Non-ASCII text in form data', () {
+      const expectedCode = r"""use curl::easy::Easy;
+
+fn main() {
+  let mut easy = Easy::new();
+  let mut data = Vec::new();
+   let base_url = "https://api.apidash.dev/io/form"; 
+  
+  let url = base_url.to_string();
+  
+ 
+  easy.post(true).unwrap();
+
+  let mut form = curl::easy::Form::new();
+  
+  form.part("note")
+    .contents("café ☕".as_bytes())
+    .add().unwrap();
+  
+  easy.httppost(form).unwrap();  {
+   easy.url(&url).unwrap();
+    let mut transfer = easy.transfer();
+    transfer.write_function(|new_data| {
+        data.extend_from_slice(new_data);
+        Ok(new_data.len())
+    }).unwrap();
+    transfer.perform().unwrap();
+  }
+
+  let response_body = String::from_utf8_lossy(&data);
+  println!("Response body: {}", response_body);
+  println!("Response code: {}", easy.response_code().unwrap());
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustCurl,
+          requestModelEscape11,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

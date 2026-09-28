@@ -1080,4 +1080,196 @@ void main() async {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'it\'s': ['say "hi"\nC:\\new']
+    };
+    final headers = {'If-Match': '"abc123"'};
+    final response = await dio.Dio().get(
+      'https://api.apidash.dev/case/lower',
+      queryParameters: queryParams,
+      options: dio.Options(headers: headers),
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on dio.DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartDio,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final data = 'a \'\'\' b \\';
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/case/lower',
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on dio.DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartDio,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final data = dio.FormData();
+    final List<Map<String, String>> formDataList = [
+      {"name": "note", "value": "say \"hi\"\nbye", "type": "text"},
+      {
+        "name": "file",
+        "value": "C:\\Users\\new\\file.txt",
+        "type": "file"
+      }
+    ];
+    for (var formField in formDataList) {
+      if (formField['type'] == 'file') {
+        if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
+          ));
+        }
+      } else {
+        if (formField['value'] != null) {
+          data.fields
+              .add(MapEntry(formField['name']!, formField['value']!));
+        }
+      }
+    }
+
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/io/form',
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on dio.DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartDio,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final response = await dio.Dio().get('https://api.apidash.dev/it\'s/data');
+    print(response.statusCode);
+    print(response.data);
+  } on dio.DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartDio,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final data = 'line 1\r\nline 2';
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/case/lower',
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on dio.DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartDio,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

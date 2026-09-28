@@ -1,6 +1,7 @@
 
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class RustCurlCodeGen {
   final String kTemplateStart = """use curl::easy::Easy;
@@ -10,7 +11,7 @@ class RustCurlCodeGen {
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-   let base_url = "{{baseUrl}}";
+   let base_url = {{baseUrl}};
 """;
 
   String kTemplateUrlParams = """
@@ -18,7 +19,7 @@ fn main() {
   {% if params %}
   let params: Vec<(&str, Vec<&str>)> = vec![
     {%- for key, values in params %}
-    ("{{key}}", vec![{% for val in values %}"{{val}}", {% endfor %}]),
+    ({{key}}, vec![{% for val in values %}{{val}}, {% endfor %}]),
     {%- endfor %}
   ];
   let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
@@ -43,7 +44,7 @@ fn main() {
 """;
 
   String kTemplateRawBody = """
-  easy.post_fields_copy(r#"{{body}}"#.as_bytes()).unwrap();
+  easy.post_fields_copy({{body}}.as_bytes()).unwrap();
 
 
 """;
@@ -57,16 +58,16 @@ fn main() {
   String kTemplateFormData = """
   let mut form = curl::easy::Form::new();
   {% for field in fields %}
-  form.part("{{field.name}}")
-    {% if field.type == "file" %}.file("{{field.value}}"){% else %}.contents(b"{{field.value}}"){% endif %}
+  form.part({{field.name}})
+    {% if field.type == "file" %}.file({{field.value}}){% else %}.contents({{field.bytes}}){% endif %}
     .add().unwrap();
   {% endfor %}
   easy.httppost(form).unwrap();
 """;
 
   String kTemplateHeader = """
-  {% if headers %}let mut list = List::new();{% for header, value in headers %}
-  list.append("{{header}}: {{value}}").unwrap();{% endfor %}
+  {% if headers %}let mut list = List::new();{% for header in headers %}
+  list.append({{header}}).unwrap();{% endfor %}
   easy.http_headers(list).unwrap();
   {% endif %}
 
@@ -99,7 +100,7 @@ fn main() {
         "hasHeaders": (requestModel.enabledHeaders != null &&
                 requestModel.enabledHeaders!.isNotEmpty) ||
             (requestModel.hasJsonData || requestModel.hasTextData),
-       "baseUrl": url.split('?').first,
+       "baseUrl": rustStringLiteral(url.split('?').first),
       });
 
       var rec = getValidRequestUri(
@@ -115,7 +116,10 @@ fn main() {
 
         var templateUrlParams = jj.Template(kTemplateUrlParams);
         result += templateUrlParams.render({
-          "params": params.isNotEmpty ? params : null,
+          "params": params.isNotEmpty
+              ? params.map((key, values) => MapEntry(
+                  rustStringLiteral(key), values.map(rustStringLiteral).toList()))
+              : null,
         });
 
         // Method
@@ -125,14 +129,23 @@ fn main() {
         // Request body
         if (requestModel.hasTextData) {
           var templateBody = jj.Template(kTemplateRawBody);
-          result += templateBody.render({"body": requestModel.body});
+          result += templateBody
+              .render({"body": rustRawStringLiteral(requestModel.body ?? "")});
         } else if (requestModel.hasJsonData) {
           var templateBody = jj.Template(kTemplateJsonBody);
-          result += templateBody.render({"body": requestModel.body});
+          result += templateBody
+              .render({"body": jsonToRustJsonMacro(requestModel.body ?? "")});
         } else if (requestModel.hasFormData) {
           var templateFormData = jj.Template(kTemplateFormData);
           result += templateFormData.render({
-            "fields": requestModel.formDataMapList,
+            "fields": requestModel.formDataMapList
+                .map((field) => {
+                      "name": rustStringLiteral(field["name"] ?? ""),
+                      "value": rustStringLiteral(field["value"] ?? ""),
+                      "bytes": rustByteStringLiteral(field["value"] ?? ""),
+                      "type": field["type"] ?? "",
+                    })
+                .toList(),
           });
         }
               
@@ -146,8 +159,11 @@ fn main() {
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);
             result += templateHeader.render({
-              "headers": headers,
-              });
+              "headers": headers.entries
+                  .map((header) =>
+                      rustStringLiteral("${header.key}: ${header.value}"))
+                  .toList(),
+            });
           }
         }
         

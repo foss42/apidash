@@ -416,4 +416,159 @@ void main() {
       expect(juliaTripleQuotedStringLiteral('ends "'), r'"ends \""');
     });
   });
+
+  group('rustStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(rustStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        rustStringLiteral("it's \"q\" a\\b\nc\r\td\x01"),
+        r'''"it's \"q\" a\\b\nc\r\td\'''
+        'u{1}"',
+      );
+    });
+
+    test('leaves braces alone', () {
+      expect(rustStringLiteral('{x}'), '"{x}"');
+    });
+  });
+
+  group('rustRawStringLiteral', () {
+    test('uses r#"..."# for plain text', () {
+      expect(rustRawStringLiteral(r'a "b" \c'), r'r#"a "b" \c"#');
+    });
+
+    test('uses more #s when the value contains "#', () {
+      expect(
+        rustRawStringLiteral('color: "#fff" and "##"'),
+        'r###"color: "#fff" and "##""###',
+      );
+    });
+
+    test('respects minHashes', () {
+      expect(rustRawStringLiteral(r'C:\a', minHashes: 0), r'r"C:\a"');
+      expect(rustRawStringLiteral(r'a "b"', minHashes: 0), r'r#"a "b""#');
+    });
+
+    test('falls back for carriage returns', () {
+      expect(rustRawStringLiteral('a\r\nb'), r'"a\r\nb"');
+    });
+  });
+
+  group('rustByteStringLiteral', () {
+    test('uses a byte string for ASCII', () {
+      expect(rustByteStringLiteral('a "b"\n'), r'b"a \"b\"\n"');
+    });
+
+    test('uses as_bytes() for non-ASCII', () {
+      expect(rustByteStringLiteral('café'), '"café".as_bytes()');
+    });
+  });
+
+  group('jsonToRustJsonMacro', () {
+    test('keeps plain JSON as it is', () {
+      expect(
+        jsonToRustJsonMacro('{\n"a": "b",\n"n": 1\n}'),
+        '{\n"a": "b",\n"n": 1\n}',
+      );
+    });
+
+    test('rewrites JSON escapes that are not valid in Rust', () {
+      expect(
+        jsonToRustJsonMacro(r'{"p": "a\/b", "q": "say \"hi\""}'),
+        r'{"p": "a/b", "q": "say \"hi\""}',
+      );
+    });
+  });
+
+  group('swiftStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(swiftStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        swiftStringLiteral("\"q\" a\\b \\(x)\nc\r\td\x01"),
+        r'''"\"q\" a\\b \\(x)\nc\r\td\'''
+        'u{1}"',
+      );
+    });
+
+    test('swiftStringContent has no surrounding quotes', () {
+      expect(swiftStringContent('say "hi"'), r'say \"hi\"');
+    });
+  });
+
+  group('swiftMultilineStringLiteral', () {
+    test('keeps lines and escapes backslashes', () {
+      expect(
+        swiftMultilineStringLiteral('{\n"a": "b\\"c"\n}'),
+        '"""\n{\n"a": "b\\\\"c"\n}\n"""',
+      );
+    });
+
+    test('escapes runs of three or more quotes only', () {
+      expect(
+        swiftMultilineStringLiteral('a "" b """ c'),
+        '"""\na "" b '
+        r'\"\"\"'
+        ' c\n"""',
+      );
+    });
+
+    test('escapes carriage returns', () {
+      expect(
+        swiftMultilineStringLiteral('a\r\nb'),
+        '"""\na'
+        r'\r'
+        '\nb\n"""',
+      );
+    });
+  });
+
+  group('dartStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(dartStringLiteral('abc'), "'abc'");
+    });
+
+    test(
+      'escapes quotes, backslashes, dollar signs and control characters',
+      () {
+        expect(
+          dartStringLiteral("it's \$x \${y} a\\b\nc\r\td\x01"),
+          r"'it\'s \$x \${y} a\\b\nc\r\td\x01'",
+        );
+      },
+    );
+  });
+
+  group('dartRawMultilineStringLiteral', () {
+    test('uses a raw string when possible', () {
+      expect(
+        dartRawMultilineStringLiteral('{\n"a": "\$x \\n"\n}'),
+        "r'''{\n\"a\": \"\$x \\n\"\n}'''",
+      );
+    });
+
+    test('falls back when a raw string would change the text', () {
+      expect(dartRawMultilineStringLiteral("a ''' b"), r"'a \'\'\' b'");
+      expect(dartRawMultilineStringLiteral("ends '"), r"'ends \''");
+      expect(dartRawMultilineStringLiteral('\nx'), r"'\nx'");
+      expect(dartRawMultilineStringLiteral('  \nx'), r"'  \nx'");
+      expect(dartRawMultilineStringLiteral('a\r\nb'), r"'a\r\nb'");
+    });
+  });
+
+  group('jsonToDartLiteral', () {
+    test('escapes dollar signs', () {
+      expect(
+        jsonToDartLiteral([
+          {'value': r'$HOME ${x}'},
+        ]),
+        r'[{"value":"\$HOME \${x}"}]',
+      );
+    });
+  });
 }

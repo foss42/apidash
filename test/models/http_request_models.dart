@@ -564,3 +564,22 @@ const httpRequestModelEscape9 = HttpRequestModel(
   bodyContentType: ContentType.text,
   body: 'line 1\r\nline 2',
 );
+
+/// POST request model with a quote followed by `#` in the text body, which
+/// ends a Rust raw string unless it uses more `#`s
+const httpRequestModelEscape10 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.text,
+  body: 'color: "#fff" and "##"',
+);
+
+/// POST request model with non-ASCII text in multipart form data
+const httpRequestModelEscape11 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/io/form',
+  bodyContentType: ContentType.formdata,
+  formData: [
+    FormDataModel(name: 'note', value: 'café ☕', type: FormDataType.text),
+  ],
+);

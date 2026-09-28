@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:path/path.dart' as path;
+import '../codegen_utils.dart';
 
 class SwiftAlamofireCodeGen {
   final String kTemplateStart = """
@@ -9,9 +10,9 @@ import Alamofire
 """;
 
   final String kTemplateQueryItems = '''
-var urlComponents = URLComponents(string: "{{baseUrl}}")!
+var urlComponents = URLComponents(string: {{baseUrl}})!
 var queryItems = [URLQueryItem]()
-{% for param in queryParams %}queryItems.append(URLQueryItem(name: "{{param.name}}", value: "{{param.value}}"))
+{% for param in queryParams %}queryItems.append(URLQueryItem(name: {{param.name}}, value: {{param.value}}))
 {% endfor %}
 urlComponents.queryItems = queryItems
 let url = urlComponents.url!
@@ -19,9 +20,9 @@ let url = urlComponents.url!
 
   final String kTemplateFormData = '''
 let multipartFormData = MultipartFormData()
-{% for param in formData %}    {% if param.type == 'text' %}multipartFormData.append(Data("{{param.value}}".utf8), withName: "{{param.name}}")    {% elif param.type == 'file' %}
-let fileURL = URL(fileURLWithPath: "{{param.filepath}}")
-multipartFormData.append(fileURL, withName: "{{param.name}}", fileName: "{{param.filename}}", mimeType: "application/octet-stream")
+{% for param in formData %}    {% if param.type == 'text' %}multipartFormData.append(Data({{param.value}}.utf8), withName: {{param.name}})    {% elif param.type == 'file' %}
+let fileURL = URL(fileURLWithPath: {{param.filepath}})
+multipartFormData.append(fileURL, withName: {{param.name}}, fileName: {{param.filename}}, mimeType: "application/octet-stream")
     {% endif %}
 {% endfor %}
 ''';
@@ -83,8 +84,8 @@ dispatchMain()
       requestModel.enabledParamsMap.forEach((key, values) {
         for (var value in values) {
           queryParamsList.add({
-            'name': key,
-            'value': value,
+            'name': swiftStringLiteral(key),
+            'value': swiftStringLiteral(value),
           });
         }
       });
@@ -92,11 +93,11 @@ dispatchMain()
       if (queryParamsList.isNotEmpty) {
         var templateQueryItems = jj.Template(kTemplateQueryItems);
         result += templateQueryItems.render({
-          "baseUrl": baseUrl,
+          "baseUrl": swiftStringLiteral(baseUrl),
           "queryParams": queryParamsList,
         });
       } else {
-        result += 'let url = "$baseUrl"\n';
+        result += 'let url = ${swiftStringLiteral(baseUrl)}\n';
       }
 
       var headers = requestModel.enabledHeadersMap;
@@ -110,15 +111,15 @@ dispatchMain()
             final fileName = path.basename(filePath);
             return {
               'type': 'file',
-              'name': param['name'],
-              'filename': fileName,
-              'filepath': filePath
+              'name': swiftStringLiteral(param['name'] ?? ''),
+              'filename': swiftStringLiteral(fileName),
+              'filepath': swiftStringLiteral(filePath)
             };
           } else {
             return {
               'type': 'text',
-              'name': param['name'],
-              'value': param['value']
+              'name': swiftStringLiteral(param['name'] ?? ''),
+              'value': swiftStringLiteral(param['value'] ?? '')
             };
           }
         }).toList();
@@ -132,8 +133,7 @@ dispatchMain()
       } else if (requestModel.hasJsonData) {
         var templateJsonData = jj.Template(kTemplateJsonData);
         result += templateJsonData.render({
-          "jsonData":
-              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
+          "jsonData": swiftStringContent(requestModel.body!),
         });
 
         headers.putIfAbsent("Content-Type", () => "application/json");
@@ -144,8 +144,7 @@ dispatchMain()
       else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
         result += templateTextData.render({
-          "textData":
-              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
+          "textData": swiftStringContent(requestModel.body!),
         });
 
         headers.putIfAbsent(
@@ -158,7 +157,8 @@ dispatchMain()
       if (headers.isNotEmpty) {
         List<String> headerItems = [];
         headers.forEach((key, value) {
-          headerItems.add('"$key": "$value"');
+          headerItems
+              .add('${swiftStringLiteral(key)}: ${swiftStringLiteral(value)}');
         });
         headersString = "[${headerItems.join(', ')}]";
         hasHeaders = true;

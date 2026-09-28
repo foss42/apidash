@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class RustHyperCodeGen {
   final String kTemplateStart = """
@@ -17,12 +18,12 @@ use url::Url;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let http{% if isHttps %}s{% endif %} = Http{% if isHttps %}s{% endif %}Connector::new();
     let client = Client::builder().build::<_, hyper::Body>(http{% if isHttps %}s{% endif %});
-    let mut url = Url::parse("{{ baseUrl }}")?;
+    let mut url = Url::parse({{ baseUrl }})?;
     """;
 
   final String kTemplateParams = """
     {% for key, values in params %}{% for val in values %}
-    url.query_pairs_mut().append_pair("{{ key }}", "{{ val }}");{% endfor %}{% endfor %}
+    url.query_pairs_mut().append_pair({{ key }}, {{ val }});{% endfor %}{% endfor %}
     
 """;
 
@@ -39,18 +40,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   final String kTemplateHeaders = """
     {% for key, val in headers %}
-        .header("{{ key }}", "{{ val }}")
+        .header({{ key }}, {{ val }})
     {% endfor %}""";
 
   final String kTemplateHeadersFormData = """
     {% for key, val in headers %}
-        .header("{{ key }}", "{{ val }}"){% if loop.last %};{% endif %}
+        .header({{ key }}, {{ val }}){% if loop.last %};{% endif %}
     {% endfor %}
 """;
 
   final String kTemplateBody = """
 
-        .body(Body::from(r#"{{ body }}"#))?;\n
+        .body(Body::from({{ body }}))?;\n
 """;
 
   final String kTemplateJsonBody = """
@@ -68,9 +69,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut form = multipart::Form::default();
     {%- for field in fields_list %}
     {%- if field.type == "file" %}
-    form.add_file("{{ field.name }}", r"{{ field.value }}").unwrap();
+    form.add_file({{ field.name }}, {{ field.path }}).unwrap();
     {%- else %}
-    form.add_text("{{ field.name }}", "{{ field.value }}");
+    form.add_text({{ field.name }}, {{ field.value }});
     {%- endif %}
     {%- endfor %}
 
@@ -125,7 +126,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         
         // Generate template start with base URL
         result += jj.Template(kTemplateStart).render({
-          "baseUrl": baseUrl,
+          "baseUrl": rustStringLiteral(baseUrl),
           "isHttps": uri.scheme == "https" ? true : false,
           'hasJsonBody': requestModel.hasJsonData,
           'hasForm': requestModel.hasFormData,
@@ -134,7 +135,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Add query parameters if available
         if (params.isNotEmpty) {
           result += jj.Template(kTemplateParams).render({
-            "params": params,
+            "params": params.map((key, values) => MapEntry(
+                rustStringLiteral(key), values.map(rustStringLiteral).toList())),
           });
         }
         
@@ -151,11 +153,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Add headers if available
         if (headers.isNotEmpty) {
           if (requestModel.hasFormData) {
-            result += jj.Template(kTemplateHeadersFormData)
-                .render({"headers": headers});
+            result += jj.Template(kTemplateHeadersFormData).render({
+              "headers": headers.map((key, value) =>
+                MapEntry(rustStringLiteral(key), rustStringLiteral(value))),
+            });
           } else {
-            result +=
-                jj.Template(kTemplateHeaders).render({"headers": headers});
+            result += jj.Template(kTemplateHeaders).render({
+              "headers": headers.map((key, value) =>
+                MapEntry(rustStringLiteral(key), rustStringLiteral(value))),
+            });
           }
         }
         
@@ -163,7 +169,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         var requestBody = requestModel.body;
         if (requestModel.hasFormData) {
           result += jj.Template(kTemplateFormData).render({
-            "fields_list": requestModel.formDataMapList,
+            "fields_list": requestModel.formDataMapList
+                .map((field) => {
+                      "name": rustStringLiteral(field["name"] ?? ""),
+                      "value": rustStringLiteral(field["value"] ?? ""),
+                      "path": rustRawStringLiteral(field["value"] ?? "",
+                          minHashes: 0),
+                      "type": field["type"] ?? "",
+                    })
+                .toList(),
           });
         } else if (requestBody == "" ||
             requestBody == null ||
@@ -171,10 +185,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             requestModel.method == HTTPVerb.head) {
           result += kTemplateEmptyBody;
         } else if (requestModel.hasJsonData) {
-          result +=
-              jj.Template(kTemplateJsonBody).render({"body": requestBody});
+          result += jj.Template(kTemplateJsonBody)
+              .render({"body": jsonToRustJsonMacro(requestBody)});
         } else if (requestModel.hasTextData) {
-          result += jj.Template(kTemplateBody).render({"body": requestBody});
+          result += jj.Template(kTemplateBody)
+              .render({"body": rustRawStringLiteral(requestBody)});
         }
         
         // End request

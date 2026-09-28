@@ -320,3 +320,15 @@ const requestModelEscape9 = RequestModel(
   apiType: APIType.rest,
   httpRequestModel: httpRequestModelEscape9,
 );
+
+const requestModelEscape10 = RequestModel(
+  id: 'escape10',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape10,
+);
+
+const requestModelEscape11 = RequestModel(
+  id: 'escape11',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape11,
+);

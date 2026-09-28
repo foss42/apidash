@@ -1010,4 +1010,209 @@ fn main() -> Result<(), ureq::Error> {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
+    let url = "https://api.apidash.dev/case/lower";
+    let response = ureq::get(url)
+        .query("it's", "say \"hi\"\nC:\\new")
+        .header("If-Match", "\"abc123\"")
+        .call()?;
+
+    println!("Response Status: {}", response.status());
+    println!("Response: {}", response.into_body().read_to_string()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustUreq,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""use serde_json::json;
+fn main() -> Result<(), ureq::Error> {
+    let url = "https://api.apidash.dev/case/lower";
+
+    let payload = json!({
+"text": "say \"true\" or null",
+"path": "a/b",
+"flag": false
+});
+
+    let response = ureq::post(url)
+        .send_json(payload)?;
+
+    println!("Response Status: {}", response.status());
+    println!("Response: {}", response.into_body().read_to_string()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustUreq,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""use std::io::Read;
+fn main() -> Result<(), ureq::Error> {
+    let url = "https://api.apidash.dev/io/form";
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "note".to_string(),
+            value: "say \"hi\"\nbye".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "file".to_string(),
+            value: "C:\\Users\\new\\file.txt".to_string(),
+            field_type: "file".to_string(), 
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--b\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--b--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    let response = ureq::post(url)
+        .header("content-type", "multipart/form-data; boundary=b")
+        .send_bytes(&payload)?;
+
+    println!("Response Status: {}", response.status());
+    println!("Response: {}", response.into_body().read_to_string()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustUreq,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
+    let url = "https://api.apidash.dev/it's/data";
+    let response = ureq::get(url)
+        .call()?;
+
+    println!("Response Status: {}", response.status());
+    println!("Response: {}", response.into_body().read_to_string()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustUreq,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
+    let url = "https://api.apidash.dev/case/lower";
+    let payload = "line 1\r\nline 2";
+    let response = ureq::post(url)
+        .header("content-type", "text/plain")
+        .send(payload)?;
+
+    println!("Response Status: {}", response.status());
+    println!("Response: {}", response.into_body().read_to_string()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustUreq,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote followed by # in a text body', () {
+      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
+    let url = "https://api.apidash.dev/case/lower";
+    let payload = r###"color: "#fff" and "##""###;
+    let response = ureq::post(url)
+        .header("content-type", "text/plain")
+        .send(payload)?;
+
+    println!("Response Status: {}", response.status());
+    println!("Response: {}", response.into_body().read_to_string()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustUreq,
+          requestModelEscape10,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

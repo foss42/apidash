@@ -481,3 +481,194 @@ String juliaTripleQuotedStringLiteral(String value) {
   }
   return '"""$value"""';
 }
+
+/// Returns [value] as a Rust string literal.
+String rustStringLiteral(String value) {
+  final result = StringBuffer('"');
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\u{${rune.toRadixString(16)}}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a Rust raw string (`r#"..."#`), using enough `#`s that
+/// the value cannot end it early and at least [minHashes] of them. Falls back
+/// to [rustStringLiteral] for carriage returns and other control
+/// characters, which raw strings cannot contain.
+String rustRawStringLiteral(String value, {int minHashes = 1}) {
+  if (value.contains('\r') || _hasControlCharacter(value)) {
+    return rustStringLiteral(value);
+  }
+  var hashes = minHashes;
+  for (final match in RegExp('"(#*)').allMatches(value)) {
+    if (match[1]!.length >= hashes) {
+      hashes = match[1]!.length + 1;
+    }
+  }
+  final fence = '#' * hashes;
+  return 'r$fence"$value"$fence';
+}
+
+/// Returns [value] as a Rust byte string (`b"..."`) when it is ASCII, which
+/// byte strings require, otherwise as `"...".as_bytes()`.
+String rustByteStringLiteral(String value) {
+  if (value.runes.any((rune) => rune > 0x7f)) {
+    return '${rustStringLiteral(value)}.as_bytes()';
+  }
+  final result = StringBuffer('b"');
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\x${rune.toRadixString(16).padLeft(2, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Rewrites the string literals in a JSON body so it can be used as the
+/// argument of Rust's `serde_json::json!` macro, keeping the formatting.
+///
+/// JSON escapes such as `\/` and `é` are not valid Rust escapes, so each
+/// JSON string is decoded and written again as a [rustStringLiteral].
+String jsonToRustJsonMacro(String json) {
+  final stringPattern = RegExp(r'"(?:[^"\\]|\\.)*"', dotAll: true);
+  return json.replaceAllMapped(stringPattern, (match) {
+    try {
+      final decoded = jsonDecode(match[0]!);
+      return decoded is String ? rustStringLiteral(decoded) : match[0]!;
+    } catch (_) {
+      return match[0]!;
+    }
+  });
+}
+
+String _swiftEscape(String value, {required bool multiline}) {
+  final chars = value.runes.map(String.fromCharCode).toList();
+  // in a multi-line string only quotes in a run of three or more need
+  // escaping, since `"""` would end it
+  final inLongQuoteRun = List.filled(chars.length, false);
+  var i = 0;
+  while (i < chars.length) {
+    var end = i;
+    while (end < chars.length && chars[end] == '"') {
+      end++;
+    }
+    if (end - i >= 3) {
+      inLongQuoteRun.fillRange(i, end, true);
+    }
+    i = end == i ? i + 1 : end;
+  }
+  final result = StringBuffer();
+  for (var i = 0; i < chars.length; i++) {
+    final char = chars[i];
+    final rune = char.runes.first;
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(!multiline || inLongQuoteRun[i] ? r'\"' : '"');
+    } else if (char == '\n') {
+      result.write(multiline ? '\n' : r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(multiline ? '\t' : r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\u{${rune.toRadixString(16)}}');
+    } else {
+      result.write(char);
+    }
+  }
+  return result.toString();
+}
+
+/// Returns the text of [value] escaped for use inside a Swift string
+/// literal, without the surrounding quotes. `\(` cannot start interpolation
+/// because every backslash is escaped.
+String swiftStringContent(String value) =>
+    _swiftEscape(value, multiline: false);
+
+/// Returns [value] as a single-line Swift string literal.
+String swiftStringLiteral(String value) => '"${swiftStringContent(value)}"';
+
+/// Returns [value] as a Swift multi-line string literal, with the delimiters
+/// on their own lines. The lines of [value] are kept; backslashes, runs of
+/// three quotes and control characters are escaped.
+String swiftMultilineStringLiteral(String value) =>
+    '"""\n${_swiftEscape(value, multiline: true)}\n"""';
+
+/// Returns [value] as a single-quoted Dart string literal.
+String dartStringLiteral(String value) {
+  final result = StringBuffer("'");
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == "'") {
+      result.write(r"\'");
+    } else if (char == r'$') {
+      result.write(r'\$');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\x${rune.toRadixString(16).padLeft(2, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write("'");
+  return result.toString();
+}
+
+/// Returns [value] as a Dart raw multi-line string (`r'''...'''`) when that
+/// keeps it unchanged, otherwise falls back to [dartStringLiteral].
+///
+/// Dart drops the first line of a multi-line string when it is only
+/// whitespace, and a raw string cannot contain `'''` or end with `'`.
+String dartRawMultilineStringLiteral(String value) {
+  if (value.contains("'''") ||
+      value.endsWith("'") ||
+      RegExp(r'^[ \t]*\n').hasMatch(value) ||
+      value.contains('\r') ||
+      _hasControlCharacter(value)) {
+    return dartStringLiteral(value);
+  }
+  return "r'''$value'''";
+}
+
+/// Encodes [value] as JSON that is also a valid Dart literal, by escaping
+/// the `$` that Dart would read as string interpolation.
+String jsonToDartLiteral(Object? value) =>
+    jsonEncode(value).replaceAll(r'$', r'\$');

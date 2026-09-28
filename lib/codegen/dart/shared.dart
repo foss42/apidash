@@ -1,4 +1,19 @@
 import 'package:code_builder/code_builder.dart';
+import '../codegen_utils.dart';
+
+/// Builds a code_builder expression for [value], escaping strings with
+/// [dartStringLiteral]. code_builder's `literalString` only escapes `'` and
+/// newlines, so `$`, backslashes and `\r` in user values would break the
+/// generated code.
+Expression dartLiteral(Object? value) {
+  if (value is String) {
+    return CodeExpression(Code(dartStringLiteral(value)));
+  }
+  if (value is List) {
+    return literalList(value.map(dartLiteral));
+  }
+  return literal(value);
+}
 
 Code _toStatement(Spec spec) {
   if (spec is Expression) {

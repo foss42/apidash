@@ -1637,4 +1637,343 @@ semaphore.wait()
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import Foundation
+
+var urlComponents = URLComponents(string: "https://api.apidash.dev/case/lower")!
+var queryItems = [URLQueryItem]()
+
+
+queryItems.append(URLQueryItem(name: "it's", value: "say \"hi\"\nC:\\new"))
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "GET"
+request.addValue("\"abc123\"", forHTTPHeaderField: "If-Match")
+
+
+let semaphore = DispatchSemaphore(value: 0) 
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }   
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
+}
+
+
+task.resume()
+
+semaphore.wait()
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r'''import Foundation
+
+let postData = """
+{
+"text": "say \\"true\\" or null",
+"path": "a\\/b",
+"flag": false
+}
+""".data(using: .utf8)
+var urlComponents = URLComponents(string: "https://api.apidash.dev/case/lower")!
+var queryItems = [URLQueryItem]()
+
+
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "POST"
+request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+request.httpBody = postData
+
+
+let semaphore = DispatchSemaphore(value: 0) 
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }   
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
+}
+
+
+task.resume()
+
+semaphore.wait()
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import Foundation
+
+import MultipartFormData
+
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
+
+    
+    Subpart {
+        ContentDisposition(name: "note")
+    } body: {
+        Data("say \"hi\"\nbye".utf8)
+    }
+    
+
+    
+    try Subpart {
+        ContentDisposition(name: "file", filename: "file.txt")
+        ContentType(mimeType: MimeType(pathExtension: "txt"))
+    } body: {
+        try Data(contentsOf: URL(fileURLWithPath: "C:\\Users\\new\\file.txt"))
+    }
+    
+
+}
+var urlComponents = URLComponents(string: "https://api.apidash.dev/io/form")!
+var queryItems = [URLQueryItem]()
+
+
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "POST"
+request.addValue("multipart/form-data; boundary=\(boundary.stringValue)", forHTTPHeaderField: "Content-Type")
+
+request.httpBody = try! multipartFormData.encode()
+
+let semaphore = DispatchSemaphore(value: 0) 
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }   
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
+}
+
+
+task.resume()
+
+semaphore.wait()
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import Foundation
+
+var urlComponents = URLComponents(string: "https://api.apidash.dev/it's/data")!
+var queryItems = [URLQueryItem]()
+
+
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }   
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
+}
+
+
+task.resume()
+
+semaphore.wait()
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Triple quotes in a text body', () {
+      const expectedCode = r'''import Foundation
+
+let postData = """
+say \"\"\"hi\"\"\"
+and \"\"\"\"bye\"\"\"\"
+""".data(using: .utf8)
+var urlComponents = URLComponents(string: "https://api.apidash.dev/case/lower")!
+var queryItems = [URLQueryItem]()
+
+
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "POST"
+request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
+
+request.httpBody = postData
+
+
+let semaphore = DispatchSemaphore(value: 0) 
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }   
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
+}
+
+
+task.resume()
+
+semaphore.wait()
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelEscape8,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r'''import Foundation
+
+let postData = """
+line 1\r
+line 2
+""".data(using: .utf8)
+var urlComponents = URLComponents(string: "https://api.apidash.dev/case/lower")!
+var queryItems = [URLQueryItem]()
+
+
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "POST"
+request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
+
+request.httpBody = postData
+
+
+let semaphore = DispatchSemaphore(value: 0) 
+
+let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }   
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
+}
+
+
+task.resume()
+
+semaphore.wait()
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftUrlSession,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

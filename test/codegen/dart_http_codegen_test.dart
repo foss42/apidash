@@ -1153,4 +1153,215 @@ void main() async {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/case/lower');
+
+  var queryParams = {
+    'it\'s': ['say "hi"\nC:\\new']
+  };
+  uri = uri.replace(queryParameters: queryParams);
+
+  var headers = {'If-Match': '"abc123"'};
+
+  final response = await http.get(
+    uri,
+    headers: headers,
+  );
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartHttp,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/case/lower');
+
+  String body = 'a \'\'\' b \\';
+
+  var headers = {'content-type': 'text/plain'};
+
+  final response = await http.post(
+    uri,
+    headers: headers,
+    body: body,
+  );
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartHttp,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/form');
+
+  final formDataList = [
+    {"name": "note", "value": "say \"hi\"\nbye", "type": "text"},
+    {
+      "name": "file",
+      "value": "C:\\Users\\new\\file.txt",
+      "type": "file"
+    }
+  ];
+  final request = http.MultipartRequest(
+    "POST",
+    uri,
+  );
+  for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
+  }
+
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: :$responseBody');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: :$responseBody');
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartHttp,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/it\'s/data');
+
+  final response = await http.get(uri);
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartHttp,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/case/lower');
+
+  String body = 'line 1\r\nline 2';
+
+  var headers = {'content-type': 'text/plain'};
+
+  final response = await http.post(
+    uri,
+    headers: headers,
+    body: body,
+  );
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartHttp,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

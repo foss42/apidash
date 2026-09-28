@@ -4,6 +4,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:dart_style/dart_style.dart';
+import '../codegen_utils.dart';
 import 'shared.dart';
 
 class DartHttpCodeGen {
@@ -45,13 +46,13 @@ class DartHttpCodeGen {
     sbf.writeln(dioImport.accept(emitter));
      final parsedUrl = url.split('?').first;
     final uriExp =
-        declareVar('uri').assign(refer('Uri.parse').call([literalString(parsedUrl)]));
+        declareVar('uri').assign(refer('Uri.parse').call([dartLiteral(parsedUrl)]));
 
     Expression? dataExp;
     if (kMethodsWithBody.contains(method) &&
         (body?.isNotEmpty ?? false) &&
         contentType != ContentType.formdata) {
-      final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
+      final strContent = CodeExpression(Code(dartRawMultilineStringLiteral(body!)));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
       if (!hasContentTypeHeader) {
         headers.putIfAbsent(
@@ -67,7 +68,8 @@ class DartHttpCodeGen {
 
     if (queryParams.isNotEmpty) {
       queryParamExp = declareVar('queryParams').assign(
-        literalMap(queryParams.map((key, value) => MapEntry(key, value))),
+        literalMap(queryParams
+            .map((key, value) => MapEntry(dartLiteral(key), dartLiteral(value)))),
       );
 
       uriReassignExps = [
@@ -95,7 +97,8 @@ class DartHttpCodeGen {
     Expression? headerExp;
     if (headers.isNotEmpty) {
       headerExp = declareVar('headers').assign(
-        literalMap(headers.map((key, value) => MapEntry(key, value))),
+        literalMap(headers
+            .map((key, value) => MapEntry(dartLiteral(key), dartLiteral(value)))),
       );
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
@@ -117,7 +120,7 @@ class DartHttpCodeGen {
       [refer(jsonEncode(method.name.toUpperCase())), refer('uri')],
     ));
     final multiPartFiles = declareFinal('formDataList').assign(refer(
-      jsonEncode(formData),
+      jsonToDartLiteral(formData),
     ));
 
     final addHeaders = refer('request.headers.addAll').call([refer('headers')]);

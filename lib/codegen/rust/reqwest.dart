@@ -2,19 +2,20 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class RustReqwestCodeGen {
   final String kTemplateStart =
       """fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "{{url}}";\n
+    let url = {{url}};\n
 """;
 
   String kTemplateParamsDef = """
     let query_params = [
     {%- for key, values in params %}
         {%- for val in values %}
-        ("{{key}}", "{{val}}"),
+        ({{key}}, {{val}}),
         {%- endfor %}
     {%- endfor %}
     ];
@@ -24,7 +25,7 @@ class RustReqwestCodeGen {
 
   String kTemplateBody = """
 
-    let payload = r#"{{body}}"#;
+    let payload = {{body}};
 """;
 
   String kTemplateJson = """
@@ -33,7 +34,7 @@ class RustReqwestCodeGen {
 """;
 
   String kTemplateHeaders =
-       """\n        {% for key, val in headers -%}.header("{{key}}", "{{val}}"){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
+       """\n        {% for key, val in headers -%}.header({{key}}, {{val}}){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
 
   String kTemplateRequest = """
 
@@ -52,7 +53,7 @@ class RustReqwestCodeGen {
     {%- for formitem in fields_list %}  
         FormDataItem {
         {%- for key, val in formitem %}
-            {% if key == "type" %}field_type: "{{ val }}".to_string(),{% else %}{{ key }}: "{{ val }}".to_string(),{% endif %}
+            {% if key == "type" %}field_type: {{ val }}.to_string(),{% else %}{{ key }}: {{ val }}.to_string(),{% endif %}
         {%- endfor %} 
         },
     {%- endfor %}
@@ -102,7 +103,7 @@ class RustReqwestCodeGen {
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
-          "url": url.split('?').first
+          "url": rustStringLiteral(url.split('?').first)
         });
 
         var method = requestModel.method;
@@ -113,11 +114,13 @@ class RustReqwestCodeGen {
             if (requestModel.bodyContentType == ContentType.json) {
               hasJsonBody = true;
               var templateBody = jj.Template(kTemplateJson);
-              result += templateBody.render({"body": requestBody});
+              result += templateBody
+                  .render({"body": jsonToRustJsonMacro(requestBody)});
             } else if (!requestModel.hasFormData) {
               hasBody = true;
               var templateBody = jj.Template(kTemplateBody);
-              result += templateBody.render({"body": requestBody});
+              result += templateBody
+                  .render({"body": rustRawStringLiteral(requestBody)});
             }
           }
         }
@@ -126,14 +129,23 @@ class RustReqwestCodeGen {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
-            "fields_list": requestModel.formDataMapList,
+            "fields_list": requestModel.formDataMapList
+                .map((item) => {
+                      "name": rustStringLiteral(item["name"] ?? ""),
+                      "value": rustStringLiteral(item["value"] ?? ""),
+                      "type": rustStringLiteral(item["type"] ?? ""),
+                    })
+                .toList(),
           },
           );
         }
         var params = requestModel.enabledParamsMap;
         if (params.isNotEmpty) {
           var templateParamsDef = jj.Template(kTemplateParamsDef);
-          result += templateParamsDef.render({"params": params});
+          result += templateParamsDef.render({
+            "params": params.map((key, values) => MapEntry(
+                rustStringLiteral(key), values.map(rustStringLiteral).toList())),
+          });
         }
 
         var templateRequest = jj.Template(kTemplateRequest);
@@ -154,7 +166,10 @@ class RustReqwestCodeGen {
           }
           if (headers.isNotEmpty) {
             var templateHeaders = jj.Template(kTemplateHeaders);
-            result += templateHeaders.render({"headers": headers});
+            result += templateHeaders.render({
+              "headers": headers.map((key, value) =>
+                MapEntry(rustStringLiteral(key), rustStringLiteral(value))),
+            });
           }
         }
 

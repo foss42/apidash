@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:dart_style/dart_style.dart';
+import '../codegen_utils.dart';
 import 'shared.dart';
 
 class DartDioCodeGen {
@@ -42,17 +42,19 @@ class DartDioCodeGen {
     Expression? queryParamExp;
     if (queryParams.isNotEmpty) {
       queryParamExp = declareFinal('queryParams').assign(
-        literalMap(queryParams.map((key, value) => MapEntry(key, value))),
+        literalMap(queryParams
+            .map((key, value) => MapEntry(dartLiteral(key), dartLiteral(value)))),
       );
     }
     Expression? headerExp;
     if (headers.isNotEmpty) {
       headerExp = declareFinal('headers').assign(
-        literalMap(headers.map((key, value) => MapEntry(key, value))),
+        literalMap(headers
+            .map((key, value) => MapEntry(dartLiteral(key), dartLiteral(value)))),
       );
     }
     final multiPartList = Code('''
-      final List<Map<String,String>> formDataList = ${json.encode(formData)};
+      final List<Map<String,String>> formDataList = ${jsonToDartLiteral(formData)};
       for (var formField in formDataList) {
         if (formField['type'] == 'file') {
            if (formField['value'] != null) {
@@ -72,7 +74,8 @@ class DartDioCodeGen {
     Expression? dataExp;
     if ((kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false) ||
         contentType == ContentType.formdata)) {
-      final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
+      final strContent =
+          CodeExpression(Code(dartRawMultilineStringLiteral(body ?? '')));
       switch (contentType) {
         // dio doesn't need pass `content-type` header when body is json or plain text
         case ContentType.json:
@@ -90,7 +93,7 @@ class DartDioCodeGen {
     final parsedUrl = url.split('?').first;
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
       refer('dio.Dio()'),
-      [literalString(parsedUrl)], 
+      [dartLiteral(parsedUrl)], 
       {
        if (queryParamExp != null) 'queryParameters': refer('queryParams'), 
         if (headerExp != null)

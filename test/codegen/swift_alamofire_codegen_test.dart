@@ -1019,4 +1019,214 @@ dispatchMain()''';
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import Foundation
+import Alamofire
+var urlComponents = URLComponents(string: "https://api.apidash.dev/case/lower")!
+var queryItems = [URLQueryItem]()
+queryItems.append(URLQueryItem(name: "it's", value: "say \"hi\"\nC:\\new"))
+
+urlComponents.queryItems = queryItems
+let url = urlComponents.url!
+AF.request(url, method: .get, headers: ["If-Match": "\"abc123\""])
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftAlamofire,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r'''import Foundation
+import Alamofire
+let url = "https://api.apidash.dev/case/lower"
+let jsonString = """
+{\n\"text\": \"say \\\"true\\\" or null\",\n\"path\": \"a\\/b\",\n\"flag\": false\n}
+"""
+let jsonData = jsonString.data(using: .utf8)
+
+AF.upload(jsonData!, to: url, method: .post, headers: ["Content-Type": "application/json"])
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftAlamofire,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import Foundation
+import Alamofire
+let url = "https://api.apidash.dev/io/form"
+let multipartFormData = MultipartFormData()
+    multipartFormData.append(Data("say \"hi\"\nbye".utf8), withName: "note")    
+    
+let fileURL = URL(fileURLWithPath: "C:\\Users\\new\\file.txt")
+multipartFormData.append(fileURL, withName: "file", fileName: "file.txt", mimeType: "application/octet-stream")
+    
+
+AF.upload(multipartFormData: multipartFormData, to: url, method: .post)
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftAlamofire,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import Foundation
+import Alamofire
+let url = "https://api.apidash.dev/it's/data"
+
+AF.request(url, method: .get)
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftAlamofire,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Triple quotes in a text body', () {
+      const expectedCode = r'''import Foundation
+import Alamofire
+let url = "https://api.apidash.dev/case/lower"
+let textString = """
+say \"\"\"hi\"\"\"\nand \"\"\"\"bye\"\"\"\"
+"""
+let textData = textString.data(using: .utf8)
+
+AF.upload(textData!, to: url, method: .post, headers: ["Content-Type": "text/plain"])
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftAlamofire,
+          requestModelEscape8,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r'''import Foundation
+import Alamofire
+let url = "https://api.apidash.dev/case/lower"
+let textString = """
+line 1\r\nline 2
+"""
+let textData = textString.data(using: .utf8)
+
+AF.upload(textData!, to: url, method: .post, headers: ["Content-Type": "text/plain"])
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.swiftAlamofire,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

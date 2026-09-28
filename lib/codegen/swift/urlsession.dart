@@ -1,8 +1,12 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:path/path.dart' as path;
+import '../codegen_utils.dart';
 
 class SwiftURLSessionCodeGen {
+  static const kFormDataContentType =
+      "multipart/form-data; boundary=\\(boundary.stringValue)";
+
   final String kTemplateStart = """
 import Foundation
 
@@ -19,16 +23,16 @@ let multipartFormData = try! MultipartFormData(boundary: boundary) {
 {% for param in formData %}
     {% if param.type == 'text' %}
     Subpart {
-        ContentDisposition(name: "{{param.name}}")
+        ContentDisposition(name: {{param.name}})
     } body: {
-        Data("{{param.value}}".utf8)
+        Data({{param.value}}.utf8)
     }
     {% elif param.type == 'file' %}
     try Subpart {
-        ContentDisposition(name: "{{param.name}}", filename: "{{param.filename}}")
-        ContentType(mimeType: MimeType(pathExtension: "{{param.extension}}"))
+        ContentDisposition(name: {{param.name}}, filename: {{param.filename}})
+        ContentType(mimeType: MimeType(pathExtension: {{param.extension}}))
     } body: {
-        try Data(contentsOf: URL(fileURLWithPath: "{{param.filepath}}"))
+        try Data(contentsOf: URL(fileURLWithPath: {{param.filepath}}))
     }
     {% endif %}
 {% endfor %}
@@ -37,25 +41,21 @@ let multipartFormData = try! MultipartFormData(boundary: boundary) {
 ''';
 
   final String kTemplateJsonData = '''
-let postData = """
-{{jsonData}}
-""".data(using: .utf8)
+let postData = {{jsonData}}.data(using: .utf8)
 
 ''';
 
   final String kTemplateTextData = '''
-let postData = """
-{{textData}}
-""".data(using: .utf8)
+let postData = {{textData}}.data(using: .utf8)
 
 ''';
 
 final String kTemplateRequest = """
-var urlComponents = URLComponents(string: "{{url}}")!
+var urlComponents = URLComponents(string: {{url}})!
 var queryItems = [URLQueryItem]()
 
 {% for param in params %}
-queryItems.append(URLQueryItem(name: "{{param.key}}", value: "{{param.value}}")){% if not loop.last %}{% else %}{% endif %}{% endfor %}
+queryItems.append(URLQueryItem(name: {{param.key}}, value: {{param.value}})){% if not loop.last %}{% else %}{% endif %}{% endfor %}
 
 urlComponents.queryItems = queryItems
 let requestUrl = urlComponents.url!
@@ -65,7 +65,7 @@ request.httpMethod = "{{method}}"
 
   final String kTemplateHeaders = """
 {% for header, value in headers %}
-request.addValue("{{value}}", forHTTPHeaderField: "{{header}}")
+request.addValue({{value}}, forHTTPHeaderField: {{header}})
 {% endfor %}
 
 """;
@@ -120,7 +120,10 @@ semaphore.wait()
     var values = entry.value;
     
     return values.map((value) {
-      return {'key': entry.key, 'value': value};
+      return {
+        'key': swiftStringLiteral(entry.key),
+        'value': swiftStringLiteral(value)
+      };
     });
   }).toList();
 
@@ -138,16 +141,16 @@ semaphore.wait()
                 path.extension(fileName).toLowerCase().replaceFirst('.', '');
             return {
               'type': 'file',
-              'name': param['name'],
-              'filename': fileName,
-              'extension': fileExtension,
-              'filepath': filePath
+              'name': swiftStringLiteral(param['name'] ?? ''),
+              'filename': swiftStringLiteral(fileName),
+              'extension': swiftStringLiteral(fileExtension),
+              'filepath': swiftStringLiteral(filePath)
             };
           } else {
             return {
               'type': 'text',
-              'name': param['name'],
-              'value': param['value']
+              'name': swiftStringLiteral(param['name'] ?? ''),
+              'value': swiftStringLiteral(param['value'] ?? '')
             };
           }
         }).toList();
@@ -161,20 +164,20 @@ semaphore.wait()
       else if (requestModel.hasJsonData) {
         var templateJsonData = jj.Template(kTemplateJsonData);
         result += templateJsonData.render({
-          "jsonData": requestModel.body!
+          "jsonData": swiftMultilineStringLiteral(requestModel.body!)
                     });
       } 
       // Handle text data
       else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
         result += templateTextData.render({
-          "textData": requestModel.body!
+          "textData": swiftMultilineStringLiteral(requestModel.body!)
         });
       }
 
       var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
-        "url": uri.toString().split('?').first,
+        "url": swiftStringLiteral(uri.toString().split('?').first),
         "method": requestModel.method.name.toUpperCase(),
         "params": params, 
       });
@@ -182,14 +185,22 @@ semaphore.wait()
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasFormData) {
         headers.putIfAbsent("Content-Type",
-            () => "multipart/form-data; boundary=\\(boundary.stringValue)");
+            () => kFormDataContentType);
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         headers.putIfAbsent(
             kHeaderContentType, () => requestModel.bodyContentType.header);
       }
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeaders);
-        result += templateHeader.render({"headers": headers});
+        // the generated form Content-Type interpolates the boundary, so it
+        // is written as it is; every other value is a plain string
+        result += templateHeader.render({
+          "headers": headers.map((header, value) => MapEntry(
+              swiftStringLiteral(header),
+              value == kFormDataContentType
+                  ? '"$value"'
+                  : swiftStringLiteral(value))),
+        });
       }
 
       if (requestModel.hasFormData) {

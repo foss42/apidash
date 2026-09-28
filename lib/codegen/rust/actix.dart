@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 import '../../utils/utils.dart';
 
 class RustActixCodeGen {
@@ -11,7 +12,7 @@ use std::io::Read;
 {% endif -%}  
 #[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "{{url}}";
+    let url = {{url}};
     let client = awc::Client::default();
     let mut request = client.{{method}}(url);
 """;
@@ -21,7 +22,7 @@ String kTemplateParams = """
     let query_params = [
     {%- for key, values in params %}
         {%- for val in values %}
-        ("{{key}}", "{{val}}"),
+        ({{key}}, {{val}}),
         {%- endfor %}
     {%- endfor %}
     ];
@@ -30,7 +31,7 @@ String kTemplateParams = """
 
   String kTemplateBody = """
 
-    let payload = r#"{{body}}"#;
+    let payload = {{body}};
 
 """;
 
@@ -41,7 +42,7 @@ String kTemplateParams = """
 """;
 String kTemplateHeaders =
     """
-\n    {% for key, val in headers -%}request = request.insert_header(("{{key}}", "{{val}}"));{{ '\n    ' }}{%- endfor -%}""";
+\n    {% for key, val in headers -%}request = request.insert_header(({{key}}, {{val}}));{{ '\n    ' }}{%- endfor -%}""";
 
   String kTemplateFormHeaderContentType = '''
 multipart/form-data; boundary={{boundary}}''';
@@ -58,7 +59,7 @@ multipart/form-data; boundary={{boundary}}''';
     {%- for formitem in fields_list %}
         FormDataItem {
         {%- for key, val in formitem %}
-            {% if key == "type" %}field_type: "{{ val }}".to_string(),{% else %}{{ key }}: "{{ val }}".to_string(),{% endif %}
+            {% if key == "type" %}field_type: {{ val }}.to_string(),{% else %}{{ key }}: {{ val }}.to_string(),{% endif %}
         {%- endfor %}
         },
     {%- endfor %}
@@ -134,7 +135,7 @@ multipart/form-data; boundary={{boundary}}''';
         var baseUrl = stripUriParams(uri);
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
-          "url": baseUrl,
+          "url": rustStringLiteral(baseUrl),
           'isFormDataRequest': requestModel.hasFormData,
           "method": requestModel.method.name.toLowerCase()
         });
@@ -147,11 +148,13 @@ multipart/form-data; boundary={{boundary}}''';
             if (requestModel.bodyContentType == ContentType.json) {
               hasJsonBody = true;
               var templateBody = jj.Template(kTemplateJson);
-              result += templateBody.render({"body": requestBody});
+              result += templateBody
+                  .render({"body": jsonToRustJsonMacro(requestBody)});
             } else if (!requestModel.hasFormData) {
               hasBody = true;
               var templateBody = jj.Template(kTemplateBody);
-              result += templateBody.render({"body": requestBody});
+              result += templateBody
+                  .render({"body": rustRawStringLiteral(requestBody)});
             }
           }
         }
@@ -160,7 +163,13 @@ multipart/form-data; boundary={{boundary}}''';
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
-              "fields_list": requestModel.formDataMapList,
+              "fields_list": requestModel.formDataMapList
+                .map((item) => {
+                      "name": rustStringLiteral(item["name"] ?? ""),
+                      "value": rustStringLiteral(item["value"] ?? ""),
+                      "type": rustStringLiteral(item["type"] ?? ""),
+                    })
+                .toList(),
               "boundary": boundary ?? uuid,
             },
           );
@@ -172,7 +181,8 @@ multipart/form-data; boundary={{boundary}}''';
           var templateParams = jj.Template(kTemplateParams);
           result += templateParams.render({
             "method": method.name.toLowerCase(),
-            "params": params,
+            "params": params.map((key, values) => MapEntry(
+                rustStringLiteral(key), values.map(rustStringLiteral).toList())),
           });
         } 
           
@@ -192,7 +202,10 @@ multipart/form-data; boundary={{boundary}}''';
 
           if (headers.isNotEmpty) {
             var templateHeaders = jj.Template(kTemplateHeaders);
-            result += templateHeaders.render({"headers": headers});
+            result += templateHeaders.render({
+              "headers": headers.map((key, value) =>
+                MapEntry(rustStringLiteral(key), rustStringLiteral(value))),
+            });
           }
         }
 

@@ -991,4 +991,207 @@ void main() {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/case/lower";
+    let query_params = [
+        ("it's", "say \"hi\"\nC:\\new"),
+    ];
+    let response = client
+        .get(url)
+        .query(&query_params)
+        .header("If-Match", "\"abc123\"")
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustReqwest,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/case/lower";
+
+    let payload = serde_json::json!({
+"text": "say \"true\" or null",
+"path": "a/b",
+"flag": false
+});
+    let response = client
+        .post(url)
+        .json(&payload)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustReqwest,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/form";
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "note".to_string(),
+            value: "say \"hi\"\nbye".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "file".to_string(),
+            value: "C:\\Users\\new\\file.txt".to_string(),
+            field_type: "file".to_string(), 
+        },
+    ]; 
+  
+    let mut form = reqwest::blocking::multipart::Form::new();
+    
+    for item in form_data_items {
+        if item.field_type == "text" {
+            form = form.text(item.name, item.value);
+        } else if item.field_type == "file" {
+            form = form.file(item.name, &item.value)?; 
+        }
+    }
+    let response = client
+        .post(url)
+        .multipart(form)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustReqwest,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/it's/data";
+
+    let response = client
+        .get(url)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustReqwest,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/case/lower";
+
+    let payload = "line 1\r\nline 2";
+    let response = client
+        .post(url)
+        .header("content-type", "text/plain")
+        .body(payload)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustReqwest,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote followed by # in a text body', () {
+      const expectedCode = r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/case/lower";
+
+    let payload = r###"color: "#fff" and "##""###;
+    let response = client
+        .post(url)
+        .header("content-type", "text/plain")
+        .body(payload)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustReqwest,
+          requestModelEscape10,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

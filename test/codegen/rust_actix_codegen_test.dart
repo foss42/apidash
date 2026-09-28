@@ -1204,4 +1204,252 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/case/lower";
+    let client = awc::Client::default();
+    let mut request = client.get(url);    
+    let query_params = [
+        ("it's", "say \"hi\"\nC:\\new"),
+    ];
+    request = request.query(&query_params).unwrap();
+    request = request.insert_header(("If-Match", "\"abc123\""));
+    
+    let mut response = request.send()
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustActix,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/case/lower";
+    let client = awc::Client::default();
+    let mut request = client.post(url);
+    let payload = serde_json::json!({
+"text": "say \"true\" or null",
+"path": "a/b",
+"flag": false
+});
+
+    let mut response = request.send_json(&payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustActix,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""use std::io::Read;
+#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/form";
+    let client = awc::Client::default();
+    let mut request = client.post(url);
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![
+        FormDataItem {
+            name: "note".to_string(),
+            value: "say \"hi\"\nbye".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "file".to_string(),
+            value: "C:\\Users\\new\\file.txt".to_string(),
+            field_type: "file".to_string(),
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--b\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--b--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    request = request.insert_header(("content-type", "multipart/form-data; boundary=b"));
+    
+    let mut response = request.send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustActix,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/it's/data";
+    let client = awc::Client::default();
+    let mut request = client.get(url);
+    let mut response = request.send()
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustActix,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/case/lower";
+    let client = awc::Client::default();
+    let mut request = client.post(url);
+    let payload = "line 1\r\nline 2";
+
+    request = request.insert_header(("content-type", "text/plain"));
+    
+    let mut response = request.send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustActix,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote followed by # in a text body', () {
+      const expectedCode = r"""#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/case/lower";
+    let client = awc::Client::default();
+    let mut request = client.post(url);
+    let payload = r###"color: "#fff" and "##""###;
+
+    request = request.insert_header(("content-type", "text/plain"));
+    
+    let mut response = request.send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustActix,
+          requestModelEscape10,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }
