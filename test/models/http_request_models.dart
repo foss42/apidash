@@ -527,3 +527,24 @@ const httpRequestModelEscape5 = HttpRequestModel(
   method: HTTPVerb.get,
   url: "https://api.apidash.dev/it's/data",
 );
+
+/// POST request model with a text body that has trailing spaces and shared
+/// indentation, which Java text blocks would strip
+const httpRequestModelEscape6 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.text,
+  body: '  name:  \n  value',
+);
+
+/// POST request model with `$` in the JSON body, which starts a string
+/// template in Kotlin
+const httpRequestModelEscape7 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.json,
+  body: r'''{
+"cmd": "echo $HOME ${x}",
+"price": "$5"
+}''',
+);

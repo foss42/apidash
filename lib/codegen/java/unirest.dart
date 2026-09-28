@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class JavaUnirestGen {
   final String kStringUnirestImports = '''
@@ -17,12 +18,11 @@ public class Main {
 ''';
 
   final String kTemplateUrl = '''
-        final String requestURL = "{{url}}";\n
+        final String requestURL = {{url}};\n
 ''';
 
   final String kTemplateRequestBodyContent = '''
-        final String requestBody = """
-{{body}}""";
+        final String requestBody = {{body}};
 
 ''';
 
@@ -31,23 +31,23 @@ public class Main {
 ''';
 
   final String kTemplateRequestHeader = '''
-                .header("{{name}}", "{{value}}")\n
+                .header({{name}}, {{value}})\n
 ''';
 
     final String kTemplateUrlQueryParam = '''
               {% for name, value in queryParams %}{% for v in value -%}
-                  .queryString("{{name}}", "{{v}}")
+                  .queryString({{name}}, {{v}})
               {% endfor %}{% endfor %}
 ''';
 
 
 
   final String kTemplateRequestTextFormData = '''
-                .field("{{name}}", "{{value}}")\n
+                .field({{name}}, {{value}})\n
 ''';
 
   final String kTemplateRequestFileFormData = '''
-                .field("{{name}}", new File("{{value}}"))\n
+                .field({{name}}, new File({{value}}))\n
 ''';
 
   final String kStringRequestBodySetup = '''
@@ -94,7 +94,7 @@ public class Main {
 
       // generating the URL to which the request has to be submitted
       var templateUrl = jj.Template(kTemplateUrl);
-      result += templateUrl.render({"url": url});
+      result += templateUrl.render({"url": javaStringLiteral(url)});
 
       // if request type is not form data, the request method can include
       // a body, and the body of the request is not null, in that case
@@ -102,7 +102,7 @@ public class Main {
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
         result += templateBodyContent.render({
-          "body": requestModel.body,
+          "body": javaTextBlock(requestModel.body ?? ""),
         });
         hasBody = true;
       }
@@ -121,7 +121,10 @@ public class Main {
       var templateRequestHeader = jj.Template(kTemplateRequestHeader);
       // setting up rest of the request headers
       headers.forEach((name, value) {
-        result += templateRequestHeader.render({"name": name, "value": value});
+        result += templateRequestHeader.render({
+          "name": javaStringLiteral(name),
+          "value": javaStringLiteral(value),
+        });
       });
 
       // ~~~~~~~~~~~~~~~~~~ request header ends ~~~~~~~~~~~~~~~~~~
@@ -131,7 +134,10 @@ public class Main {
      
      var params = requestModel.enabledParamsMap;
     var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
-    result += templateUrlQueryParam.render({"queryParams": params});
+    result += templateUrlQueryParam.render({
+      "queryParams": params.map((name, values) => MapEntry(
+          javaStringLiteral(name), values.map(javaStringLiteral).toList())),
+    });
           
 
       // ~~~~~~~~~~~~~~~~~~ query parameters end ~~~~~~~~~~~~~~~~~~
@@ -145,11 +151,15 @@ public class Main {
             jj.Template(kTemplateRequestFileFormData);
         for (var field in requestModel.formDataList) {
           if (field.type == FormDataType.text) {
-            result += templateRequestTextFormData
-                .render({"name": field.name, "value": field.value});
+            result += templateRequestTextFormData.render({
+              "name": javaStringLiteral(field.name),
+              "value": javaStringLiteral(field.value),
+            });
           } else if (field.type == FormDataType.file) {
-            result += templateRequestFileFormData
-                .render({"name": field.name, "value": field.value});
+            result += templateRequestFileFormData.render({
+              "name": javaStringLiteral(field.name),
+              "value": javaStringLiteral(field.value),
+            });
           }
         }
       }

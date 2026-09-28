@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class JavaAsyncHttpClientGen {
   final String kStringStart = '''
@@ -32,7 +33,7 @@ public class Main {
 ''';
 
   final String kTemplateUrl = '''
-            String url = "{{url}}";\n
+            String url = {{url}};\n
 ''';
 
   final String kTemplateRequestCreation = '''
@@ -41,18 +42,18 @@ public class Main {
 
   final String kTemplateUrlQueryParam = ''' 
           {% for name, value in queryParams %} {% for v in value %}
-            requestBuilder.addQueryParam("{{ name }}", "{{ v }}"); {% endfor %}{% endfor %}\n
+            requestBuilder.addQueryParam({{ name }}, {{ v }}); {% endfor %}{% endfor %}\n
 ''';
   final String kTemplateRequestHeader = '''
             requestBuilder{% for name, value in headers %}
-                .addHeader("{{ name }}", "{{ value }}"){% endfor %};\n
+                .addHeader({{ name }}, {{ value }}){% endfor %};\n
 ''';
 
   final String kTemplateMultipartTextFormData = '''
 
             Map<String, String> params = new HashMap<>() {
                 { {% for key, value in textFields %}
-                    put("{{ key }}", "{{ value }}");{% endfor %}
+                    put({{ key }}, {{ value }});{% endfor %}
                 }
             };
 
@@ -68,7 +69,7 @@ public class Main {
   final String kTemplateMultipartFileHandling = '''
             Map<String, String> files = new HashMap<>() {
                 { {% for key, value in fileFields %}
-                    put("{{ key }}", "{{ value }}");{% endfor %}
+                    put({{ key }}, {{ value }});{% endfor %}
                 }
             };
 
@@ -87,8 +88,7 @@ public class Main {
 ''';
 
   String kTemplateRequestBodyContent = '''
-            String bodyContent = """
-{{body}}""";\n
+            String bodyContent = {{body}};\n
 ''';
   String kStringRequestBodySetup = '''
             requestBuilder.setBody(bodyContent);
@@ -142,14 +142,15 @@ public class Main {
 
       // generating the URL to which the request has to be submitted
       var templateUrl = jj.Template(kTemplateUrl);
-      result += templateUrl.render({"url": url});
+      result += templateUrl.render({"url": javaStringLiteral(url)});
 
       // if request type is not form data, the request method can include
       // a body, and the body of the request is not null, in that case
       // we need to parse the body as it is, and write it to the body
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
-        result += templateBodyContent.render({"body": requestModel.body});
+        result += templateBodyContent
+            .render({"body": javaTextBlock(requestModel.body ?? "")});
         hasBody = true;
       }
 
@@ -160,7 +161,10 @@ public class Main {
       var params = requestModel.enabledParamsMap;
       if (params.isNotEmpty) {
         var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
-        result += templateUrlQueryParam.render({"queryParams": params});
+        result += templateUrlQueryParam.render({
+          "queryParams": params.map((name, values) => MapEntry(
+              javaStringLiteral(name), values.map(javaStringLiteral).toList())),
+        });
       }
 
       var headers = requestModel.enabledHeadersMap;
@@ -171,7 +175,10 @@ public class Main {
       // setting up rest of the request headers
       if (headers.isNotEmpty) {
         var templateRequestHeader = jj.Template(kTemplateRequestHeader);
-        result += templateRequestHeader.render({"headers": headers});
+        result += templateRequestHeader.render({
+          "headers": headers.map((name, value) =>
+              MapEntry(javaStringLiteral(name), javaStringLiteral(value))),
+        });
       }
 
       // handling form data
@@ -182,10 +189,12 @@ public class Main {
         Map<String, String> fileFieldMap = {};
         for (var field in formDataList) {
           if (field.type == FormDataType.text) {
-            textFieldMap[field.name] = field.value;
+            textFieldMap[javaStringLiteral(field.name)] =
+                javaStringLiteral(field.value);
           }
           if (field.type == FormDataType.file) {
-            fileFieldMap[field.name] = field.value;
+            fileFieldMap[javaStringLiteral(field.name)] =
+                javaStringLiteral(field.value);
           }
         }
 

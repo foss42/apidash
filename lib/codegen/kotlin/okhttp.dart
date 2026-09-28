@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class KotlinOkHttpCodeGen {
   final String kTemplateStart = """import okhttp3.OkHttpClient
@@ -32,16 +33,16 @@ import okhttp3.MediaType.Companion.toMediaType""";
 
   final String kTemplateUrl = '''
 
-    val url = "{{url}}"
+    val url = {{url}}
 
 ''';
 
  final String kTemplateUrlQuery = """
 
-    val url = "{{url}}".toHttpUrl().newBuilder()
+    val url = {{url}}.toHttpUrl().newBuilder()
 {%- for name, values in params %}
         {%- for value in values %}
-            .addQueryParameter("{{ name }}", "{{ value }}")
+            .addQueryParameter({{ name }}, {{ value }})
         {%- endfor %}
 {%- endfor %}
             .build()
@@ -53,7 +54,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
 
     val mediaType = "{{contentType}}".toMediaType()
 
-    val body = """{{body}}""".toRequestBody(mediaType)
+    val body = {{body}}.toRequestBody(mediaType)
 
 ''';
 
@@ -77,8 +78,8 @@ import okhttp3.MediaType.Companion.toMediaType""";
 // Converting list of form data objects to kolin multi part data
   String kFormDataBody = '''
     val body = MultipartBody.Builder().setType(MultipartBody.FORM){% for item in formDataList %}{% if item.type == 'file' %}
-          .addFormDataPart("{{item.name}}",File("{{item.value}}").name,File("{{item.value}}").asRequestBody("application/octet-stream".toMediaType()))
-          {% else %}.addFormDataPart("{{item.name}}","{{item.value}}")
+          .addFormDataPart({{item.name}},File({{item.value}}).name,File({{item.value}}).asRequestBody("application/octet-stream".toMediaType()))
+          {% else %}.addFormDataPart({{item.name}},{{item.value}})
           {% endif %}{% endfor %}.build()
 ''';
 
@@ -99,14 +100,18 @@ import okhttp3.MediaType.Companion.toMediaType""";
       Uri? uri = rec.$1;
 
       if (uri != null) {
-        String url = stripUriParams(uri);
+        String url = kotlinStringLiteral(stripUriParams(uri));
 
           var params = requestModel.enabledParamsMap;
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams
-                .render({"url": url, "params": params});
+            result += templateParams.render({
+              "url": url,
+              "params": params.map((name, values) => MapEntry(
+                  kotlinStringLiteral(name),
+                  values.map(kotlinStringLiteral).toList())),
+            });
           }
         if (!hasQuery) {
           var templateUrl = jj.Template(kTemplateUrl);
@@ -124,18 +129,24 @@ import okhttp3.MediaType.Companion.toMediaType""";
             if (item.type == FormDataType.file) {
               if (item.value[0] == "/") {
                 modifiedFormDataList.add({
-                  "name": item.name,
-                  "value": item.value.substring(1),
+                  "name": kotlinStringLiteral(item.name),
+                  "value": kotlinStringLiteral(item.value.substring(1)),
                   "type": "file"
                 });
               } else {
-                modifiedFormDataList.add(
-                    {"name": item.name, "value": item.value, "type": "file"});
+                modifiedFormDataList.add({
+                  "name": kotlinStringLiteral(item.name),
+                  "value": kotlinStringLiteral(item.value),
+                  "type": "file"
+                });
               }
               hasFile = true;
             } else {
-              modifiedFormDataList.add(
-                  {"name": item.name, "value": item.value, "type": "text"});
+              modifiedFormDataList.add({
+                "name": kotlinStringLiteral(item.name),
+                "value": kotlinStringLiteral(item.value),
+                "type": "text"
+              });
             }
           }
 
@@ -148,8 +159,10 @@ import okhttp3.MediaType.Companion.toMediaType""";
             hasBody = true;
             String contentType = requestModel.bodyContentType.header;
             var templateBody = jj.Template(kTemplateRequestBody);
-            result += templateBody
-                .render({"contentType": contentType, "body": requestBody});
+            result += templateBody.render({
+              "contentType": contentType,
+              "body": kotlinRawStringLiteral(requestBody),
+            });
           }
         }
 
@@ -195,7 +208,8 @@ import okhttp3.MediaType.Companion.toMediaType""";
   String getHeaders(Map<String, String> headers) {
     String result = "";
     for (final k in headers.keys) {
-      result = """$result        .addHeader("$k", "${headers[k]}")\n""";
+      result =
+          """$result        .addHeader(${kotlinStringLiteral(k)}, ${kotlinStringLiteral(headers[k]!)})\n""";
     }
     return result;
   }

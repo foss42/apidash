@@ -961,4 +961,191 @@ fun main() {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.HttpUrl.Companion.toHttpUrl
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/case/lower".toHttpUrl().newBuilder()
+            .addQueryParameter("it's", "say \"hi\"\nC:\\new")
+            .build()
+
+    val request = Request.Builder()
+        .url(url)
+        .addHeader("If-Match", "\"abc123\"")
+        .get()
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.kotlinOkHttp,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/case/lower"
+
+    val mediaType = "application/json".toMediaType()
+
+    val body = """{
+"text": "say \"true\" or null",
+"path": "a\/b",
+"flag": false
+}""".toRequestBody(mediaType)
+
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.kotlinOkHttp,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.MultipartBody
+import java.io.File
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/form"
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("note","say \"hi\"\nbye")
+          
+          .addFormDataPart("file",File("C:\\Users\\new\\file.txt").name,File("C:\\Users\\new\\file.txt").asRequestBody("application/octet-stream".toMediaType()))
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.kotlinOkHttp,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/it's/data"
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.kotlinOkHttp,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Dollar signs in a JSON body', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/case/lower"
+
+    val mediaType = "application/json".toMediaType()
+
+    val body = """{
+"cmd": "echo ${'$'}HOME ${'$'}{x}",
+"price": "$5"
+}""".toRequestBody(mediaType)
+
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.kotlinOkHttp,
+          requestModelEscape7,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

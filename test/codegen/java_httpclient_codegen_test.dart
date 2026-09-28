@@ -504,7 +504,7 @@ public class Main {
       HttpClient client = HttpClient.newHttpClient();
       URI uri = URI.create("https://api.apidash.dev/case/lower");
       HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
-      {
+{
 "text": "I LOVE Flutter"
 }""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
@@ -1215,6 +1215,268 @@ public class Main {
           CodegenLanguage.javaHttpClient,
           requestModelDelete2,
           SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      URI uri = URI.create("https://api.apidash.dev/case/lower?it%27s=say+%22hi%22%0AC%3A%5Cnew");
+
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).GET();
+      requestBuilder = requestBuilder.headers(
+        "If-Match", "\"abc123\""
+      );
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
+    }
+  }
+  
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r'''import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      URI uri = URI.create("https://api.apidash.dev/case/lower");
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
+a ''' "'''" r''' b \\""");
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
+      requestBuilder = requestBuilder.headers(
+        "Content-Type", "text/plain"
+      );
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
+    }
+  }
+  
+}''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r'''import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      URI uri = URI.create("https://api.apidash.dev/case/lower");
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
+{
+"text": "say \\"true\\" or null",
+"path": "a\\/b",
+"flag": false
+}""");
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
+      requestBuilder = requestBuilder.headers(
+        "Content-Type", "application/json"
+      );
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
+    }
+  }
+  
+}''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      URI uri = URI.create("https://api.apidash.dev/io/form");
+      String boundary = "b";
+      Map<Object, Object> data = new HashMap<>();
+      
+      data.put("note", "say \"hi\"\nbye");
+      data.put("file", Paths.get("C:\\Users\\new\\file.txt"));
+      HttpRequest.BodyPublisher bodyPublisher = buildMultipartFormData(data, boundary);
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
+      requestBuilder = requestBuilder.headers(
+        "Content-Type", "multipart/form-data; boundary=b"
+      );
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
+    }
+  }
+  
+  private static HttpRequest.BodyPublisher buildMultipartFormData(Map<Object, Object> data, String boundary) throws IOException {
+    var byteArrays = new ArrayList<byte[]>();
+    var CRLF = "\r\n".getBytes(StandardCharsets.UTF_8);
+
+    for (Map.Entry<Object, Object> entry : data.entrySet()) {
+        byteArrays.add(("--" + boundary + "\r\n").getBytes(StandardCharsets.UTF_8));
+        if (entry.getValue() instanceof Path) {
+            var file = (Path) entry.getValue();
+            var fileName = file.getFileName().toString();
+            byteArrays.add(("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"; filename=\"" + fileName + "\"\r\n").getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(("Content-Type: " + Files.probeContentType(file) + "\r\n\r\n").getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(Files.readAllBytes(file));
+            byteArrays.add(CRLF);
+        } else {
+            byteArrays.add(("Content-Disposition: form-data; name=\"" + entry.getKey() + "\"\r\n\r\n").getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(entry.getValue().toString().getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(CRLF);
+        }
+    }
+    byteArrays.add(("--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
+
+    return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
+  }
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      URI uri = URI.create("https://api.apidash.dev/it's/data");
+
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).GET();
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
+    }
+  }
+  
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with trailing spaces and shared indentation', () {
+      const expectedCode = r"""import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      URI uri = URI.create("https://api.apidash.dev/case/lower");
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("  name:  \n  value");
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
+      requestBuilder = requestBuilder.headers(
+        "Content-Type", "text/plain"
+      );
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
+    }
+  }
+  
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelEscape6,
+          SupportedUriSchemes.https,
+          boundary: "b",
         ),
         expectedCode,
       );

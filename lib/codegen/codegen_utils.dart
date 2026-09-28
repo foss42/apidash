@@ -104,3 +104,104 @@ String jsStringLiteral(String value, {String quote = "'"}) {
   result.write(quote);
   return result.toString();
 }
+
+/// Returns [value] as a double-quoted Java string literal.
+String javaStringLiteral(String value) {
+  final result = StringBuffer('"');
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      // octal, because javac turns unicode escapes into raw characters
+      // before parsing, so a `\u000a` would end the literal
+      result.write('\\${rune.toRadixString(8).padLeft(3, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a Java text block when that keeps it unchanged,
+/// otherwise falls back to an escaped [javaStringLiteral].
+///
+/// Text blocks strip trailing spaces on each line and the indentation shared
+/// by all lines, and end at the first `"""`, so those cases are not safe.
+String javaTextBlock(String value) {
+  final lines = value.split('\n');
+  final hasUnsafeCharacter = value.runes.any(
+    (rune) => (rune < 0x20 && rune != 0x0a && rune != 0x09) || rune == 0x7f,
+  );
+  final hasTrailingWhitespace = lines.any(
+    (line) => line.endsWith(' ') || line.endsWith('\t'),
+  );
+  final hasSharedIndentation =
+      lines.any((line) => line.isNotEmpty) &&
+      lines
+          .where((line) => line.isNotEmpty)
+          .every((line) => line.startsWith(' ') || line.startsWith('\t'));
+  if (value.contains('"""') ||
+      value.endsWith('"') ||
+      hasUnsafeCharacter ||
+      hasTrailingWhitespace ||
+      hasSharedIndentation) {
+    return javaStringLiteral(value);
+  }
+  return '"""\n${value.replaceAll(r'\', r'\\')}"""';
+}
+
+/// Returns [value] as a double-quoted Kotlin string literal.
+String kotlinStringLiteral(String value) {
+  final result = StringBuffer('"');
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == r'$') {
+      result.write(r'\$');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\u${rune.toRadixString(16).padLeft(4, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a Kotlin raw string when that keeps it unchanged,
+/// otherwise falls back to an escaped [kotlinStringLiteral].
+///
+/// Raw strings have no escapes, so a `$` that would start a string template
+/// is written as `${'$'}`.
+String kotlinRawStringLiteral(String value) {
+  final hasUnsafeCharacter = value.runes.any(
+    (rune) => (rune < 0x20 && rune != 0x0a && rune != 0x09) || rune == 0x7f,
+  );
+  if (value.contains('"""') || value.endsWith('"') || hasUnsafeCharacter) {
+    return kotlinStringLiteral(value);
+  }
+  final escaped = value.replaceAllMapped(
+    RegExp(r'\$(?=[\p{L}_{`])', unicode: true),
+    (_) => r"${'$'}",
+  );
+  return '"""$escaped"""';
+}

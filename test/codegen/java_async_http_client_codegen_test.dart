@@ -1277,4 +1277,291 @@ public class Main {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import org.asynchttpclient.*;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
+            String url = "https://api.apidash.dev/case/lower";
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
+           
+            requestBuilder.addQueryParam("it's", "say \"hi\"\nC:\\new"); 
+            requestBuilder
+                .addHeader("If-Match", "\"abc123\"");
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
+        } catch (InterruptedException | ExecutionException | IOException ignored) {
+
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaAsyncHttpClient,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r'''import org.asynchttpclient.*;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
+            String url = "https://api.apidash.dev/case/lower";
+            String bodyContent = """
+a ''' "'''" r''' b \\""";
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
+            requestBuilder
+                .addHeader("Content-Type", "text/plain");
+            requestBuilder.setBody(bodyContent);
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
+        } catch (InterruptedException | ExecutionException | IOException ignored) {
+
+        }
+    }
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaAsyncHttpClient,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r'''import org.asynchttpclient.*;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
+            String url = "https://api.apidash.dev/case/lower";
+            String bodyContent = """
+{
+"text": "say \\"true\\" or null",
+"path": "a\\/b",
+"flag": false
+}""";
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
+            requestBuilder
+                .addHeader("Content-Type", "application/json");
+            requestBuilder.setBody(bodyContent);
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
+        } catch (InterruptedException | ExecutionException | IOException ignored) {
+
+        }
+    }
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaAsyncHttpClient,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import org.asynchttpclient.*;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+import java.util.Map;
+import java.util.HashMap;
+import org.asynchttpclient.request.body.multipart.StringPart;
+import org.asynchttpclient.request.body.multipart.FilePart;
+
+public class Main {
+    public static void main(String[] args) {
+        try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
+            String url = "https://api.apidash.dev/io/form";
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
+
+            Map<String, String> params = new HashMap<>() {
+                { 
+                    put("note", "say \"hi\"\nbye");
+                }
+            };
+
+            for (String paramName : params.keySet()) {
+                requestBuilder.addBodyPart(new StringPart(
+                    paramName, params.get(paramName)
+                ));
+            }
+
+            Map<String, String> files = new HashMap<>() {
+                { 
+                    put("file", "C:\\Users\\new\\file.txt");
+                }
+            };
+
+            for (String paramName : files.keySet()) {
+                File file = new File(files.get(paramName));
+                requestBuilder.addBodyPart(new FilePart(
+                        paramName,
+                        file,
+                        "application/octet-stream",
+                        StandardCharsets.UTF_8,
+                        file.getName()
+                ));
+            }
+
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
+        } catch (InterruptedException | ExecutionException | IOException ignored) {
+
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaAsyncHttpClient,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import org.asynchttpclient.*;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
+            String url = "https://api.apidash.dev/it's/data";
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("GET", url);
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
+        } catch (InterruptedException | ExecutionException | IOException ignored) {
+
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaAsyncHttpClient,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with trailing spaces and shared indentation', () {
+      const expectedCode = r"""import org.asynchttpclient.*;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
+            String url = "https://api.apidash.dev/case/lower";
+            String bodyContent = "  name:  \n  value";
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
+            requestBuilder
+                .addHeader("Content-Type", "text/plain");
+            requestBuilder.setBody(bodyContent);
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
+        } catch (InterruptedException | ExecutionException | IOException ignored) {
+
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaAsyncHttpClient,
+          requestModelEscape6,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

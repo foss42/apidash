@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 import '../../utils/har_utils.dart';
+import '../codegen_utils.dart';
 
 class JavaHttpClientCodeGen {
   final String kTemplateStart = """import java.net.URI;
@@ -24,7 +25,7 @@ public class Main {
 """;
 
   String kTemplateUrl = """
-      URI uri = URI.create("{{url}}");
+      URI uri = URI.create({{url}});
 
 """;
 
@@ -48,26 +49,24 @@ multipart/form-data; boundary={{boundary}}''';
 """;
 
   String kTemplateRawBody = """
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(\"\"\"
-      {{body}}\"\"\");
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString({{body}});
 """;
 
   String kTemplateJsonBody = """
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(\"\"\"
-{{body}}\"\"\");
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString({{body}});
 """;
 
   String kTemplateFormData = """
       String boundary = "{{boundary}}";
       Map<Object, Object> data = new HashMap<>();
       {% for field in fields %}
-      {% if field.type == "file" %}data.put("{{field.name}}", Paths.get("{{field.value}}"));{% else %}data.put("{{field.name}}", "{{field.value}}");{% endif %}{% endfor %}
+      {% if field.type == "file" %}data.put({{field.name}}, Paths.get({{field.value}}));{% else %}data.put({{field.name}}, {{field.value}});{% endif %}{% endfor %}
       HttpRequest.BodyPublisher bodyPublisher = buildMultipartFormData(data, boundary);
 """;
 
   String kTemplateHeader = """
       requestBuilder = requestBuilder.headers({% for header, value in headers %}
-        "{{header}}", "{{value}}"{% if not loop.last %},{% endif %}{% endfor %}
+        {{header}}, {{value}}{% if not loop.last %},{% endif %}{% endfor %}
       );
 
 """;
@@ -132,19 +131,27 @@ multipart/form-data; boundary={{boundary}}''';
 
       if (uri != null) {
         var templateUrl = jj.Template(kTemplateUrl);
-        result += templateUrl.render({"url": harJson["url"]});
+        result += templateUrl.render({"url": javaStringLiteral(harJson["url"])});
 
         String? bodyPublisher = "";
         if (requestModel.hasTextData) {
           var templateBody = jj.Template(kTemplateRawBody);
-          bodyPublisher = templateBody.render({"body": requestBody});
+          bodyPublisher =
+              templateBody.render({"body": javaTextBlock(requestBody ?? "")});
         } else if (requestModel.hasJsonData) {
           var templateBody = jj.Template(kTemplateJsonBody);
-          bodyPublisher = templateBody.render({"body": requestBody});
+          bodyPublisher =
+              templateBody.render({"body": javaTextBlock(requestBody ?? "")});
         } else if (requestModel.hasFormData) {
           var templateFormData = jj.Template(kTemplateFormData);
           bodyPublisher = templateFormData.render({
-            "fields": requestModel.formDataMapList,
+            "fields": requestModel.formDataMapList
+                .map((field) => {
+                      "name": javaStringLiteral(field["name"] ?? ""),
+                      "value": javaStringLiteral(field["value"] ?? ""),
+                      "type": field["type"] ?? "",
+                    })
+                .toList(),
             "boundary": boundary,
           });
         }
@@ -175,7 +182,8 @@ multipart/form-data; boundary={{boundary}}''';
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);
             result += templateHeader.render({
-              "headers": headers,
+              "headers": headers.map((name, value) =>
+                  MapEntry(javaStringLiteral(name), javaStringLiteral(value))),
             });
           }
         }

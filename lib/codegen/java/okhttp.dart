@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class JavaOkHttpCodeGen {
   final String kTemplateStart = """
@@ -32,14 +33,14 @@ import okhttp3.MultipartBody;""";
 
   final String kTemplateUrl = '''
 
-        String url = "{{url}}";
+        String url = {{url}};
 
 ''';
 
 final String kTemplateUrlQuery = '''
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("{{url}}").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse({{url}}).newBuilder();
         {% for name, value in queryParams %}{% for v in value %} 
-        urlBuilder.addQueryParameter("{{ name }}", "{{ v }}");{% endfor %}{% endfor %}  
+        urlBuilder.addQueryParameter({{ name }}, {{ v }});{% endfor %}{% endfor %}  
         HttpUrl url = urlBuilder.build();      
         ''';
 
@@ -79,9 +80,9 @@ final String kTemplateUrlQuery = '''
         RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
             {%- for item in formDataList -%}
               {% if item.type == 'file' %}
-            .addFormDataPart("{{ item.name }}",null,RequestBody.create(MediaType.parse("application/octet-stream"),new File("{{ item.value }}")))
+            .addFormDataPart({{ item.name }},null,RequestBody.create(MediaType.parse("application/octet-stream"),new File({{ item.value }})))
               {%- else %}
-            .addFormDataPart("{{ item.name }}","{{ item.value }}")
+            .addFormDataPart({{ item.name }},{{ item.value }})
               {%- endif %}
             {%- endfor %}
             .build();
@@ -104,7 +105,7 @@ final String kTemplateUrlQuery = '''
       Uri? uri = rec.$1;
 
       if (uri != null) {
-        String url = stripUriParams(uri);
+        String url = javaStringLiteral(stripUriParams(uri));
 
         if (uri.hasQuery) {
           var params = requestModel.enabledParamsMap;
@@ -112,7 +113,7 @@ final String kTemplateUrlQuery = '''
             hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
             result += templateParams
-                .render({"url": url, "queryParams": params});
+                .render({"url": url, "queryParams": escapeParams(params)});
           }
         }
         if (!hasQuery) {
@@ -127,7 +128,7 @@ final String kTemplateUrlQuery = '''
           var formDataTemplate = jj.Template(kFormDataBody);
 
           result += formDataTemplate.render({
-            "formDataList": requestModel.formDataMapList,
+            "formDataList": escapeFormData(requestModel.formDataMapList),
           });
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
@@ -173,10 +174,27 @@ final String kTemplateUrlQuery = '''
   }
 
 
+  Map<String, List<String>> escapeParams(Map<String, List<String>> params) {
+    return params.map((name, values) => MapEntry(
+        javaStringLiteral(name), values.map(javaStringLiteral).toList()));
+  }
+
+  List<Map<String, String>> escapeFormData(
+      List<Map<String, String>> formDataList) {
+    return formDataList
+        .map((item) => {
+              "name": javaStringLiteral(item["name"] ?? ""),
+              "value": javaStringLiteral(item["value"] ?? ""),
+              "type": item["type"] ?? "",
+            })
+        .toList();
+  }
+
   String getHeaders(Map<String, String> headers) {
     String result = "";
     for (final k in headers.keys) {
-      result = """$result            .addHeader("$k", "${headers[k]}")\n""";
+      result =
+          """$result            .addHeader(${javaStringLiteral(k)}, ${javaStringLiteral(headers[k]!)})\n""";
     }
     return result;
   }

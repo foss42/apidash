@@ -730,4 +730,171 @@ public class Main {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import kong.unirest.*;
+
+public class Main {
+    public static void main(String[] args) {
+        final String requestURL = "https://api.apidash.dev/case/lower";
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+                .header("If-Match", "\"abc123\"")
+              .queryString("it's", "say \"hi\"\nC:\\new")
+                      .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaUnirest,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r'''import kong.unirest.*;
+
+public class Main {
+    public static void main(String[] args) {
+        final String requestURL = "https://api.apidash.dev/case/lower";
+        final String requestBody = """
+a ''' "'''" r''' b \\""";
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                .header("Content-Type", "text/plain")
+                              .body(requestBody)
+        .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaUnirest,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r'''import kong.unirest.*;
+
+public class Main {
+    public static void main(String[] args) {
+        final String requestURL = "https://api.apidash.dev/case/lower";
+        final String requestBody = """
+{
+"text": "say \\"true\\" or null",
+"path": "a\\/b",
+"flag": false
+}""";
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                .header("Content-Type", "application/json")
+                              .body(requestBody)
+        .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaUnirest,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import kong.unirest.*;
+
+import java.io.File;
+
+public class Main {
+    public static void main(String[] args) {
+        final String requestURL = "https://api.apidash.dev/io/form";
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                              .field("note", "say \"hi\"\nbye")
+                .field("file", new File("C:\\Users\\new\\file.txt"))
+        .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaUnirest,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import kong.unirest.*;
+
+public class Main {
+    public static void main(String[] args) {
+        final String requestURL = "https://api.apidash.dev/it's/data";
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+                      .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaUnirest,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with trailing spaces and shared indentation', () {
+      const expectedCode = r"""import kong.unirest.*;
+
+public class Main {
+    public static void main(String[] args) {
+        final String requestURL = "https://api.apidash.dev/case/lower";
+        final String requestBody = "  name:  \n  value";
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                .header("Content-Type", "text/plain")
+                              .body(requestBody)
+        .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaUnirest,
+          requestModelEscape6,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

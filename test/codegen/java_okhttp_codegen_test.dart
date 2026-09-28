@@ -1195,4 +1195,136 @@ public class Main {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.HttpUrl;
+
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/case/lower").newBuilder();
+         
+        urlBuilder.addQueryParameter("it's", "say \"hi\"\nC:\\new");  
+        HttpUrl url = urlBuilder.build();      
+        
+        Request request = new Request.Builder()
+            .url(url)
+            .addHeader("If-Match", "\"abc123\"")
+            .get()
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            System.out.println(response.code());
+            if (response.body() != null) {
+                System.out.println(response.body().string());
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.RequestBody;
+import okhttp3.MultipartBody;
+
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+
+        String url = "https://api.apidash.dev/io/form";
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("note","say \"hi\"\nbye")
+            .addFormDataPart("file",null,RequestBody.create(MediaType.parse("application/octet-stream"),new File("C:\\Users\\new\\file.txt")))
+            .build();
+
+        Request request = new Request.Builder()
+            .url(url)
+            .post(body)
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            System.out.println(response.code());
+            if (response.body() != null) {
+                System.out.println(response.body().string());
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+
+        String url = "https://api.apidash.dev/it's/data";
+
+        Request request = new Request.Builder()
+            .url(url)
+            .get()
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            System.out.println(response.code());
+            if (response.body() != null) {
+                System.out.println(response.body().string());
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

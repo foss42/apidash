@@ -104,4 +104,95 @@ void main() {
       expect(jsStringLiteral('héllo 👋'), "'héllo 👋'");
     });
   });
+
+  group('javaStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(javaStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        javaStringLiteral("it's \"q\" a\\b\nc\r\td\x01"),
+        r'''"it's \"q\" a\\b\nc\r\td\001"''',
+      );
+    });
+
+    test('backslash before u cannot start a unicode escape', () {
+      // javac reads unicode escapes before parsing, so the backslash must be
+      // doubled to keep the text as it is
+      expect(
+        javaStringLiteral(
+          r'x\'
+          'u0041',
+        ),
+        r'"x\\'
+        'u0041"',
+      );
+    });
+  });
+
+  group('javaTextBlock', () {
+    test('uses a text block when possible', () {
+      expect(javaTextBlock('line 1\nline 2'), '"""\nline 1\nline 2"""');
+    });
+
+    test('doubles backslashes inside the text block', () {
+      expect(
+        javaTextBlock(r'say \"hi\" now'),
+        '"""\n'
+        r'say \\"hi\\" now"""',
+      );
+    });
+
+    test(
+      'falls back to a string literal when a text block would change it',
+      () {
+        expect(javaTextBlock('a """ b'), r'"a \"\"\" b"');
+        expect(javaTextBlock('ends with "'), r'"ends with \""');
+        expect(javaTextBlock('trailing  \nspaces'), r'"trailing  \nspaces"');
+        expect(javaTextBlock('  shared\n  indent'), r'"  shared\n  indent"');
+        expect(javaTextBlock('a\r\nb'), r'"a\r\nb"');
+      },
+    );
+  });
+
+  group('kotlinStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(kotlinStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes, dollar signs and newlines', () {
+      expect(
+        kotlinStringLiteral('a\$b \${c} "d" \\e\nf\r\tg'),
+        r'"a\$b \${c} \"d\" \\e\nf\r\tg"',
+      );
+    });
+
+    test('escapes control characters', () {
+      expect(
+        kotlinStringLiteral('a\x01'),
+        r'"a\'
+        'u0001"',
+      );
+    });
+  });
+
+  group('kotlinRawStringLiteral', () {
+    test('uses a raw string when possible', () {
+      expect(kotlinRawStringLiteral('a\n"b"\nc'), '"""a\n"b"\nc"""');
+    });
+
+    test('escapes only dollar signs that would start a template', () {
+      expect(
+        kotlinRawStringLiteral(r'$HOME ${x} $5 $'),
+        r'''"""${'$'}HOME ${'$'}{x} $5 $"""''',
+      );
+    });
+
+    test('falls back to a string literal when needed', () {
+      expect(kotlinRawStringLiteral('a """ b'), r'"a \"\"\" b"');
+      expect(kotlinRawStringLiteral('ends with "'), r'"ends with \""');
+      expect(kotlinRawStringLiteral('a\r\nb'), r'"a\r\nb"');
+    });
+  });
 }
