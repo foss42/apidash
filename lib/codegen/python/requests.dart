@@ -8,7 +8,7 @@ class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
 {% if hasFormData %}from requests_toolbelt.multipart.encoder import MultipartEncoder
 {% endif %}
-url = '{{url}}'
+url = {{url}}
 
 """;
 
@@ -18,7 +18,7 @@ params = { {{params}} }
 
   String kTemplateBody = """
 
-payload = r'''{{body}}'''
+payload = {{body}}
 
 """;
 
@@ -49,10 +49,10 @@ payload = MultipartEncoder({
 
 ''';
 
-  String kTemplateFormDataRowText = r"""  "{{name}}": "{{value}}",""";
+  String kTemplateFormDataRowText = r"""  {{name}}: {{value}},""";
 
   String kTemplateFormDataRowFile =
-      r"""  "{{name}}": ("{{filename}}", open("{{path}}", "rb")),""";
+      r"""  {{name}}: ({{filename}}, open({{path}}, "rb")),""";
 
   String kStringRequestParams = """, params=params""";
 
@@ -94,7 +94,7 @@ print('Response Body:', response.text)
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
-          "url": stripUriParams(uri),
+          "url": pyStringLiteral(stripUriParams(uri)),
           'hasFormData': requestModel.hasFormData
         });
 
@@ -105,7 +105,8 @@ print('Response Body:', response.text)
       List<String> paramList = [];
 
       params.forEach((key, value) {
-        paramList.add("'$key': [${value.map((v) => "'$v'").join(", ")}]");
+        paramList.add(
+            "${pyStringLiteral(key)}: [${value.map(pyStringLiteral).join(", ")}]");
             });
 
       result += templateParams.render({
@@ -119,15 +120,16 @@ print('Response Body:', response.text)
           for (var item in requestModel.formDataList) {
             if (item.type == FormDataType.text) {
               formdataPayload.add(jj.Template(kTemplateFormDataRowText).render({
-                "name": item.name,
-                "value": item.value,
+                "name": pyStringLiteral(item.name, quote: '"'),
+                "value": pyStringLiteral(item.value, quote: '"'),
               }));
             }
             if (item.type == FormDataType.file) {
               formdataPayload.add(jj.Template(kTemplateFormDataRowFile).render({
-                "name": item.name,
-                "filename": getFilenameFromPath(item.value),
-                "path": item.value,
+                "name": pyStringLiteral(item.name, quote: '"'),
+                "filename": pyStringLiteral(getFilenameFromPath(item.value),
+                    quote: '"'),
+                "path": pyStringLiteral(item.value, quote: '"'),
               }));
             }
           }
@@ -146,7 +148,8 @@ print('Response Body:', response.text)
         } else if (requestModel.hasTextData) {
           hasBody = true;
           var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({"body": requestModel.body});
+          result += templateBody.render(
+              {"body": pyMultilineStringLiteral(requestModel.body ?? "")});
         }
 
         var headersList = requestModel.enabledHeaders;

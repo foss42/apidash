@@ -265,3 +265,28 @@ const requestModelOptions1 = RequestModel(
   apiType: APIType.rest,
   httpRequestModel: httpRequestModelOptions1,
 );
+
+/// Request models with values that need escaping in generated code
+const requestModelEscape1 = RequestModel(
+  id: 'escape1',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape1,
+);
+
+const requestModelEscape2 = RequestModel(
+  id: 'escape2',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape2,
+);
+
+const requestModelEscape3 = RequestModel(
+  id: 'escape3',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape3,
+);
+
+const requestModelEscape4 = RequestModel(
+  id: 'escape4',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape4,
+);

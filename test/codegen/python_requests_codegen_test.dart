@@ -708,4 +708,118 @@ print('Response Body:', response.text)
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.apidash.dev/case/lower'
+params = { 'it\'s': ['say "hi"\nC:\\new'] }
+headers = {
+  "If-Match": "\"abc123\""
+}
+
+response = requests.get(url, params=params, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body that cannot be a raw string', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.apidash.dev/case/lower'
+
+payload = 'a \'\'\' b \\'
+
+headers = {
+  "content-type": "text/plain"
+}
+
+response = requests.post(url, data=payload, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('JSON literals inside string values are kept', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.apidash.dev/case/lower'
+
+payload = {
+"text": "say \"true\" or null",
+"path": "a/b",
+"flag": False
+}
+
+response = requests.post(url, json=payload)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+
+url = 'https://api.apidash.dev/io/form'
+
+payload = MultipartEncoder({
+  "note": "say \"hi\"\nbye",
+  "file": ("file.txt", open("C:\\Users\\new\\file.txt", "rb")),
+}, 
+    boundary="b"
+)
+
+headers = {
+  "content-type": payload.content_type
+}
+
+response = requests.post(url, data=payload, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

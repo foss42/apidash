@@ -917,4 +917,66 @@ print(data.decode("utf-8"))
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+params = { 'it\'s': ['say "hi"\nC:\\new'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
+
+headers = {
+  "If-Match": "\"abc123\""
+}
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("GET", "/case/lower" + queryParamsStr,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body that cannot be a raw string', () {
+      const expectedCode = r"""import http.client
+
+body = 'a \'\'\' b \\'
+
+headers = {
+  "content-type": "text/plain"
+}
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

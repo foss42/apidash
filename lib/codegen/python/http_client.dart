@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class PythonHttpClientCodeGen {
   final String kTemplateStart = """import http.client
@@ -19,7 +20,7 @@ queryParamsStr = '?' + urlencode(params,doseq=True)
 
   String kTemplateBody = """
 
-body = r'''{{body}}'''
+body = {{body}}
 
 """;
 
@@ -108,7 +109,8 @@ body = b'\r\n'.join(dataList)
       List<String> paramList = [];
 
       params.forEach((key, value) {
-        paramList.add("'$key': [${value.map((v) => "'$v'").join(", ")}]");
+        paramList.add(
+            "${pyStringLiteral(key)}: [${value.map(pyStringLiteral).join(", ")}]");
             });
 
       result += templateParams.render({
@@ -123,7 +125,8 @@ body = b'\r\n'.join(dataList)
           hasBody = true;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             var templateBody = jj.Template(kTemplateBody);
-            result += templateBody.render({"body": requestModel.body});
+            result += templateBody.render(
+                {"body": pyMultilineStringLiteral(requestModel.body ?? "")});
           }
         }
 
