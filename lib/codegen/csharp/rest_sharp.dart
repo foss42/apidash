@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class CSharpRestSharp {
   String kStringImports = """
@@ -19,33 +20,33 @@ class Program
 """;
 
   String kInitClientTemplate = """
-      const String _baseUrl = "{{baseUrl}}";
+      const String _baseUrl = {{baseUrl}};
       var client = new RestClient(_baseUrl);
 
 
 """;
 
   String kMethodTypeTemplate = """
-      var request = new RestRequest("{{path}}", Method.{{method}});
+      var request = new RestRequest({{path}}, Method.{{method}});
 
 
 """;
 
   String kTemplateParams = """
-      request.AddQueryParameter("{{param}}", "{{value}}");
+      request.AddQueryParameter({{param}}, {{value}});
 
 """;
 
   String kTemplateHeaders = """
-      request.AddHeader("{{header}}", "{{value}}");
+      request.AddHeader({{header}}, {{value}});
 
 """;
 
   String kTemplateFormData = """
       {% if type == "text" -%}
-      request.AddParameter("{{name}}", "{{value}}", ParameterType.GetOrPost);
+      request.AddParameter({{name}}, {{value}}, ParameterType.GetOrPost);
 {% else -%}
-       request.AddFile("{{name}}", "{{value}}", options: options);
+       request.AddFile({{name}}, {{value}}, options: options);
 {% endif -%}
 """;
 
@@ -103,12 +104,12 @@ class Program
 
         jj.Template templateInitClient = jj.Template(kInitClientTemplate);
         String initClient = templateInitClient
-            .render({"baseUrl": "${uri.scheme}://${uri.authority}"});
+            .render({"baseUrl": csharpStringLiteral("${uri.scheme}://${uri.authority}")});
         result += initClient;
 
         jj.Template templateMethodType = jj.Template(kMethodTypeTemplate);
         String methodType = templateMethodType.render({
-          "path": uri.path,
+          "path": csharpStringLiteral(uri.path),
           "method": requestModel.method.name.capitalize(),
         });
         result += methodType;
@@ -119,7 +120,10 @@ class Program
           
           requestModel.enabledParamsMap.forEach((key, values) {
             for (var value in values) {
-              paramsResult += templateParams.render({"param": key, "value": value});
+              paramsResult += templateParams.render({
+                "param": csharpStringLiteral(key),
+                "value": csharpStringLiteral(value),
+              });
             }
                     });
 
@@ -139,8 +143,10 @@ class Program
             jj.Template templateHeaders = jj.Template(kTemplateHeaders);
             String headersResult = "";
             for (var item in headers.entries) {
-              headersResult += templateHeaders
-                  .render({"header": item.key, "value": item.value});
+              headersResult += templateHeaders.render({
+                "header": csharpStringLiteral(item.key),
+                "value": csharpStringLiteral(item.value),
+              });
             }
             result += "$headersResult\n";
           }
@@ -151,8 +157,8 @@ class Program
           String formDataResult = "";
           for (var data in requestModel.formDataMapList) {
             formDataResult += templateFormData.render({
-              "name": data["name"],
-              "value": data["value"],
+              "name": csharpStringLiteral(data["name"] ?? ""),
+              "value": csharpStringLiteral(data["value"] ?? ""),
               "type": data["type"]
             });
           }

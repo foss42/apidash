@@ -548,3 +548,19 @@ const httpRequestModelEscape7 = HttpRequestModel(
 "price": "$5"
 }''',
 );
+
+/// POST request model with `"""` in a multi-line text body
+const httpRequestModelEscape8 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.text,
+  body: 'say """hi"""\nand """"bye""""',
+);
+
+/// POST request model with Windows line endings in the text body
+const httpRequestModelEscape9 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.text,
+  body: 'line 1\r\nline 2',
+);

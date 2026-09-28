@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class CCurlCodeGen {
   final String kTemplateStart = """#include <stdio.h>
@@ -34,12 +35,12 @@ int main() {
   if(curl) {
 """;
 
-  String kTemplateUrl = """\n    curl_easy_setopt(curl, CURLOPT_URL, "{{url}}");
+  String kTemplateUrl = """\n    curl_easy_setopt(curl, CURLOPT_URL, {{url}});
 """;
 
   String kTemplateBody = """
     {% if body %}
-    const char *data = "{{body}}";
+    const char *data = {{body}};
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     {% endif %}
 
@@ -52,12 +53,12 @@ int main() {
     mime = curl_mime_init(curl);
     {% for field in fields %}{% if field.type == "file" %}
     part = curl_mime_addpart(mime);
-    curl_mime_name(part, "{{field.name}}");
-    curl_mime_filedata(part, "{{field.value}}");
+    curl_mime_name(part, {{field.name}});
+    curl_mime_filedata(part, {{field.value}});
     {% else %}  
     part = curl_mime_addpart(mime);    
-    curl_mime_name(part, "{{field.name}}");    
-    curl_mime_data(part, "{{field.value}}", CURL_ZERO_TERMINATED);
+    curl_mime_name(part, {{field.name}});    
+    curl_mime_data(part, {{field.value}}, CURL_ZERO_TERMINATED);
     {% endif %}
     {% endfor %}
 """;
@@ -65,7 +66,7 @@ int main() {
   String kTemplateHeader = """
   
     struct curl_slist *headers = NULL;
-  {% if headers %}{% for header, value in headers %}  headers = curl_slist_append(headers,"{{header}}: {{value}}");\n  {% endfor %}
+  {% if headers %}{% for header in headers %}  headers = curl_slist_append(headers,{{header}});\n  {% endfor %}
   {% endif %}  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 """;
   String kTemplateQueryParam = """""";
@@ -121,7 +122,7 @@ int main() {
       });
 
       var templateUrl = jj.Template(kTemplateUrl);
-      result += templateUrl.render({"url": uri});
+      result += templateUrl.render({"url": cStringLiteral(uri.toString())});
 
       var headersList = requestModel.enabledHeaders;
       if (headersList != null ||
@@ -139,7 +140,9 @@ int main() {
         if (headers.isNotEmpty) {
           var templateHeader = jj.Template(kTemplateHeader);
           result += templateHeader.render({
-            "headers": headers,
+            "headers": headers.entries
+                .map((header) => cStringLiteral("${header.key}: ${header.value}"))
+                .toList(),
           });
         }
       }
@@ -148,9 +151,8 @@ int main() {
         hasBody = true;
         var templateRawBody = jj.Template(kTemplateBody);
         String body = "";
-        if (requestModel.body != null) {
-          body =
-              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n');
+        if (requestModel.body?.isNotEmpty ?? false) {
+          body = cStringLiteral(requestModel.body!);
         }
         result += templateRawBody.render({"body": body});
       } else if (requestModel.hasFormData) {
@@ -158,7 +160,13 @@ int main() {
         var templateFormData = jj.Template(kTemplateFormData);
         result += templateFormData.render({
           "hasFileInFormData": requestModel.hasFileInFormData,
-          "fields": requestModel.formDataMapList,
+          "fields": requestModel.formDataMapList
+              .map((field) => {
+                    "name": cStringLiteral(field["name"] ?? ""),
+                    "value": cStringLiteral(field["value"] ?? ""),
+                    "type": field["type"] ?? "",
+                  })
+              .toList(),
         });
       }
       if (requestModel.hasTextData) {}

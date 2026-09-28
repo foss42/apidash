@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class CSharpHttpClientCodeGen {
   final String kTemplateNamespaces = r'''
@@ -15,13 +16,13 @@ using System.IO;
 
 
 final String kTemplateQueryParams = '''
-string baseUri = "{{ baseUri }}";
+string baseUri = {{ baseUri }};
 
 var query = new Dictionary<string, List<string>>();
 {%- for key, values in queryParams %}
-    query["{{ key }}"] = new List<string>();
+    query[{{ key }}] = new List<string>();
     {%- for value in values %}
-      query["{{ key }}"].Add("{{ value }}");
+      query[{{ key }}].Add({{ value }});
     {%- endfor %}
 {%- endfor %}
 
@@ -39,7 +40,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
 
   final String kTemplateHeaders = r'''
     {% for name, value in headers -%}
-    request.Headers.Add("{{ name }}", "{{ value}}");
+    request.Headers.Add({{ name }}, {{ value}});
     {% endfor %}
 ''';
 
@@ -47,7 +48,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
     var payload = new Dictionary<string, string>
     {
     {%- for data in formdata %}
-        { "{{ data.name }}", "{{ data.value }}" },
+        { {{ data.name }}, {{ data.value }} },
     {%- endfor %}
     };
     var content = new FormUrlEncodedContent(payload);
@@ -58,12 +59,12 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
     {
 {%- for data in formdata %}
 {%- if data.type == "text" %}
-        { new StringContent("{{ data.value }}"), "{{ data.name }}" },
+        { new StringContent({{ data.value }}), {{ data.name }} },
 {%- else %}
         {
-            new StreamContent(File.OpenRead("{{ data.value }}")), 
-            "{{ data.name }}", 
-            "{{ data.value }}"
+            new StreamContent(File.OpenRead({{ data.value }})), 
+            {{ data.name }}, 
+            {{ data.value }}
         },
 {%- endif %}
 {%- endfor %}
@@ -71,9 +72,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
 ''';
 
   final String kTemplateRawBody = '''
-    var payload = """
-{{ body }}
-""";
+    var payload = {{ body }};
     var content = new StringContent(payload, null, "{{ mediaType }}");
 ''';
 
@@ -106,11 +105,12 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
 
       if (queryParams.isNotEmpty) {
         result.writeln(jj.Template(kTemplateQueryParams).render({
-          "baseUri": baseUri,
-          "queryParams": queryParams,
+          "baseUri": csharpStringLiteral(baseUri),
+          "queryParams": queryParams.map((key, values) => MapEntry(
+              csharpStringLiteral(key), values.map(csharpStringLiteral).toList())),
         }));
       } else {
-        result.writeln('string uri = "$baseUri";\n');
+        result.writeln('string uri = ${csharpStringLiteral(baseUri)};\n');
       }
 
       // Initialize HttpClient and create HttpRequestMessage
@@ -122,7 +122,10 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       var headers = requestModel.enabledHeadersMap;
       if (headers.isNotEmpty) {
         result.writeln(
-          jj.Template(kTemplateHeaders).render({"headers": headers}));
+          jj.Template(kTemplateHeaders).render({
+            "headers": headers.map((name, value) =>
+                MapEntry(csharpStringLiteral(name), csharpStringLiteral(value))),
+          }));
       }
 
       // Set request body if exists
@@ -135,7 +138,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
           requestBody.isNotEmpty) {
             // if the request body is not formdata then render raw text body
           result.writeln(jj.Template(kTemplateRawBody).render({
-            "body": requestBody,
+            "body": csharpRawStringLiteral(requestBody),
             "mediaType": requestModel.bodyContentType.header,
           }));
         } else if (requestModel.hasFormData) {
@@ -145,7 +148,13 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
 
           final String renderingTemplate = kTemplateMultipartFormDataContent;
           result.writeln(jj.Template(renderingTemplate).render({
-            "formdata": requestModel.formDataMapList,
+            "formdata": requestModel.formDataMapList
+                .map((data) => {
+                      "name": csharpStringLiteral(data["name"] ?? ""),
+                      "value": csharpStringLiteral(data["value"] ?? ""),
+                      "type": data["type"] ?? "",
+                    })
+                .toList(),
           }));
         }
 

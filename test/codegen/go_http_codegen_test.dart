@@ -1248,4 +1248,184 @@ func main() {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""package main
+
+import (
+  "fmt"
+  "io"
+  "net/http"
+  "net/url"
+)
+
+func main() {
+  client := &http.Client{}
+  url, _ := url.Parse("https://api.apidash.dev/case/lower")
+query := url.Query()
+
+query.Add("it's", "say \"hi\"\nC:\\new")
+
+url.RawQuery = query.Encode()
+  req, _ := http.NewRequest("GET", url.String(), nil)
+
+  req.Header.Set("If-Match", "\"abc123\"")
+
+  response, err := client.Do(req)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""package main
+
+import (
+  "fmt"
+  "io"
+  "net/http"
+  "net/url"
+  "bytes"
+  "mime/multipart"
+  "os"
+)
+
+func main() {
+  client := &http.Client{}
+  url, _ := url.Parse("https://api.apidash.dev/io/form")
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload)
+  var (
+    file *os.File
+    part io.Writer
+  )
+  
+  writer.WriteField("note", "say \"hi\"\nbye")
+  file, _ = os.Open("C:\\Users\\new\\file.txt")
+  defer file.Close()
+  part, _ = writer.CreateFormFile("file", "C:\\Users\\new\\file.txt")
+  io.Copy(part, file)
+  
+  writer.Close()
+
+  req, _ := http.NewRequest("POST", url.String(), payload)
+  req.Header.Set("Content-Type", writer.FormDataContentType())
+
+  response, err := client.Do(req)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""package main
+
+import (
+  "fmt"
+  "io"
+  "net/http"
+  "net/url"
+)
+
+func main() {
+  client := &http.Client{}
+  url, _ := url.Parse("https://api.apidash.dev/it's/data")
+  req, _ := http.NewRequest("GET", url.String(), nil)
+
+  response, err := client.Do(req)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""package main
+
+import (
+  "fmt"
+  "io"
+  "net/http"
+  "net/url"
+  "bytes"
+)
+
+func main() {
+  client := &http.Client{}
+  url, _ := url.Parse("https://api.apidash.dev/case/lower")
+  payload := bytes.NewBuffer([]byte("line 1\r\nline 2"))
+  req, _ := http.NewRequest("POST", url.String(), payload)
+
+  req.Header.Set("Content-Type", "text/plain")
+
+  response, err := client.Do(req)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.goHttp,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

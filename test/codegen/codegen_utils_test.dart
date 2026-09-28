@@ -195,4 +195,96 @@ void main() {
       expect(kotlinRawStringLiteral('a\r\nb'), r'"a\r\nb"');
     });
   });
+
+  group('goStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(goStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        goStringLiteral("it's \"q\" a\\b\nc\r\td"),
+        r'''"it's \"q\" a\\b\nc\r\td"''',
+      );
+    });
+
+    test('leaves backticks alone', () {
+      expect(goStringLiteral('`x`'), '"`x`"');
+    });
+  });
+
+  group('goRawStringLiteral', () {
+    test('uses a raw string when possible', () {
+      expect(goRawStringLiteral('a\n"b" \\c'), '`a\n"b" \\c`');
+    });
+
+    test('falls back for backticks and carriage returns', () {
+      expect(goRawStringLiteral('a `b`'), '"a `b`"');
+      expect(goRawStringLiteral('a\r\nb'), r'"a\r\nb"');
+    });
+  });
+
+  group('cStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(cStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        cStringLiteral("it's \"q\" a\\b\nc\r\td\x01"),
+        r'''"it's \"q\" a\\b\nc\r\td\001"''',
+      );
+    });
+
+    test('uses octal so following hex digits are not swallowed', () {
+      expect(cStringLiteral('\x01abc'), r'"\001abc"');
+    });
+
+    test('breaks up trigraphs', () {
+      expect(cStringLiteral('what??!'), r'"what?\?!"');
+    });
+  });
+
+  group('csharpStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(csharpStringLiteral('abc'), '"abc"');
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        csharpStringLiteral("it's \"q\" a\\b\nc\r\td\x01"),
+        r'''"it's \"q\" a\\b\nc\r\td\'''
+        'u0001"',
+      );
+    });
+
+    test('escapes the characters C# treats as line breaks', () {
+      final value = 'a${String.fromCharCode(0x2028)}b';
+      expect(
+        csharpStringLiteral(value),
+        r'"a\'
+        'u2028b"',
+      );
+    });
+  });
+
+  group('csharpRawStringLiteral', () {
+    test('uses a raw string when possible', () {
+      expect(
+        csharpRawStringLiteral('{\n"a": "b\\c"\n}'),
+        '"""\n{\n"a": "b\\c"\n}\n"""',
+      );
+    });
+
+    test('uses a longer delimiter when the value has quote runs', () {
+      expect(
+        csharpRawStringLiteral('say """"hi""""'),
+        '"""""\nsay """"hi""""\n"""""',
+      );
+    });
+
+    test('falls back for carriage returns', () {
+      expect(csharpRawStringLiteral('a\r\nb'), r'"a\r\nb"');
+    });
+  });
 }

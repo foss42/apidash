@@ -1075,4 +1075,123 @@ class Program
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""using System;
+using RestSharp;
+using System.Threading.Tasks;
+
+class Program
+{
+  static async Task Main(){
+    try{
+      const String _baseUrl = "https://api.apidash.dev";
+      var client = new RestClient(_baseUrl);
+
+      var request = new RestRequest("/case/lower", Method.Get);
+
+      request.AddQueryParameter("it's", "say \"hi\"\nC:\\new");
+
+      request.AddHeader("If-Match", "\"abc123\"");
+
+      var response = await client.ExecuteAsync(request);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
+      Console.WriteLine("Response Content: " + response.Content);
+    }
+    catch(Exception ex){
+      Console.WriteLine("Error: " + ex);
+    }
+  }
+}
+""";
+      expect(
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""using System;
+using RestSharp;
+using System.Threading.Tasks;
+
+class Program
+{
+  static async Task Main(){
+    try{
+      const String _baseUrl = "https://api.apidash.dev";
+      var client = new RestClient(_baseUrl);
+
+      var request = new RestRequest("/io/form", Method.Post);
+
+      request.AlwaysMultipartFormData = true;
+      var options = new FileParameterOptions
+      {
+          DisableFilenameEncoding = true
+      };
+      request.AddParameter("note", "say \"hi\"\nbye", ParameterType.GetOrPost);
+      request.AddFile("file", "C:\\Users\\new\\file.txt", options: options);
+
+      var response = await client.ExecuteAsync(request);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
+      Console.WriteLine("Response Content: " + response.Content);
+    }
+    catch(Exception ex){
+      Console.WriteLine("Error: " + ex);
+    }
+  }
+}
+""";
+      expect(
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""using System;
+using RestSharp;
+using System.Threading.Tasks;
+
+class Program
+{
+  static async Task Main(){
+    try{
+      const String _baseUrl = "https://api.apidash.dev";
+      var client = new RestClient(_baseUrl);
+
+      var request = new RestRequest("/it's/data", Method.Get);
+
+      var response = await client.ExecuteAsync(request);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
+      Console.WriteLine("Response Content: " + response.Content);
+    }
+    catch(Exception ex){
+      Console.WriteLine("Error: " + ex);
+    }
+  }
+}
+""";
+      expect(
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

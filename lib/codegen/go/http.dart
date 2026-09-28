@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
+import '../codegen_utils.dart';
 
 class GoHttpCodeGen {
   final String kTemplateStart = """package main
@@ -22,7 +21,7 @@ func main() {
 """;
 
   String kTemplateUrl = """
-  url, _ := url.Parse("{{url}}")
+  url, _ := url.Parse({{url}})
 
 """;
 
@@ -39,11 +38,11 @@ func main() {
     part io.Writer
   ){% endif %}
   {% for field in fields %}
-  {% if field.type == "file" %}file, _ = os.Open("{{field.value}}")
+  {% if field.type == "file" %}file, _ = os.Open({{field.value}})
   defer file.Close()
-  part, _ = writer.CreateFormFile("{{field.name}}", "{{field.value}}")
+  part, _ = writer.CreateFormFile({{field.name}}, {{field.value}})
   io.Copy(part, file)
-  {% else %}writer.WriteField("{{field.name}}", "{{field.value}}"){% endif %}{% endfor %}
+  {% else %}writer.WriteField({{field.name}}, {{field.value}}){% endif %}{% endfor %}
   writer.Close()
 
 
@@ -51,7 +50,7 @@ func main() {
 
   String kTemplateHeader = """
 {% if headers %}{% for header, value in headers %}
-  req.Header.Set("{{header}}", "{{value}}"){% endfor %}
+  req.Header.Set({{header}}, {{value}}){% endfor %}
 {% endif %}
 """;
 
@@ -62,7 +61,7 @@ func main() {
   String kTemplateQueryParam = """
 query := url.Query()
 {% for param in params %}
-query.Add("{{param.key}}", "{{param.value}}"){% endfor %}
+query.Add({{param.key}}, {{param.value}}){% endfor %}
 
 url.RawQuery = query.Encode()
 
@@ -105,7 +104,8 @@ url.RawQuery = query.Encode()
       });
 
       var templateUrl = jj.Template(kTemplateUrl);
-      result += templateUrl.render({"url": url.split('?').first});
+      result +=
+          templateUrl.render({"url": goStringLiteral(url.split('?').first)});
 
       var rec = getValidRequestUri(
         url,
@@ -120,21 +120,28 @@ url.RawQuery = query.Encode()
           var templateRawBody = jj.Template(kTemplateBody);
           final body = requestModel.body!;
           result += templateRawBody.render({
-            "body": body.contains('`') ? jsonEncode(body) : '`$body`',
+            "body": goRawStringLiteral(body),
           });
         } else if (requestModel.hasFormData) {
           hasBody = true;
           var templateFormData = jj.Template(kTemplateFormData);
           result += templateFormData.render({
             "hasFileInFormData": requestModel.hasFileInFormData,
-            "fields": requestModel.formDataMapList,
+            "fields": requestModel.formDataMapList
+                .map((field) => {
+                      "name": goStringLiteral(field["name"] ?? ""),
+                      "value": goStringLiteral(field["value"] ?? ""),
+                      "type": field["type"] ?? "",
+                    })
+                .toList(),
           });
         }
       if (requestModel.enabledParamsMap.isNotEmpty) {
       var queryParams = [];
       requestModel.enabledParamsMap.forEach((key, value) {
         for (var v in value) {
-          queryParams.add({'key': key, 'value': v});
+          queryParams
+              .add({'key': goStringLiteral(key), 'value': goStringLiteral(v)});
         }
             });
 
@@ -158,7 +165,8 @@ url.RawQuery = query.Encode()
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);
             result += templateHeader.render({
-              "headers": headers,
+              "headers": headers.map((name, value) =>
+                  MapEntry(goStringLiteral(name), goStringLiteral(value))),
             });
           }
         }

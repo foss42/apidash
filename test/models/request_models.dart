@@ -308,3 +308,15 @@ const requestModelEscape7 = RequestModel(
   apiType: APIType.rest,
   httpRequestModel: httpRequestModelEscape7,
 );
+
+const requestModelEscape8 = RequestModel(
+  id: 'escape8',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape8,
+);
+
+const requestModelEscape9 = RequestModel(
+  id: 'escape9',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape9,
+);

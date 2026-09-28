@@ -1713,4 +1713,268 @@ int main() {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <curl/curl.h>
+struct ResponseData {
+    char *data;
+    size_t size;
+};
+
+size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+    struct ResponseData *response_data = (struct ResponseData *)userdata;
+    size_t real_size = size * nmemb;
+
+    response_data->data = realloc(response_data->data, response_data->size + real_size + 1);
+    if (response_data->data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+
+    memcpy(&(response_data->data[response_data->size]), ptr, real_size);
+    response_data->size += real_size;
+    response_data->data[response_data->size] = 0;
+
+    return real_size;
+}
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/case/lower?it%27s=say+%22hi%22%0AC%3A%5Cnew");  
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"If-Match: \"abc123\"");
+  
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    struct ResponseData response_data = {0};
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+    res = curl_easy_perform(curl);
+    long response_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    printf("Response code: %ld\n", response_code);
+    printf("Response body: %s\n", response_data.data);
+    free(response_data.data);
+    curl_slist_free_all(headers);
+  }
+  curl_easy_cleanup(curl);
+  return 0;
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cCurlCodeGen,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r"""#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <curl/curl.h>
+struct ResponseData {
+    char *data;
+    size_t size;
+};
+
+size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+    struct ResponseData *response_data = (struct ResponseData *)userdata;
+    size_t real_size = size * nmemb;
+
+    response_data->data = realloc(response_data->data, response_data->size + real_size + 1);
+    if (response_data->data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+
+    memcpy(&(response_data->data[response_data->size]), ptr, real_size);
+    response_data->size += real_size;
+    response_data->data[response_data->size] = 0;
+
+    return real_size;
+}
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/case/lower");  
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"Content-Type: text/plain");
+  
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);    
+    const char *data = "a ''' b \\";
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+    
+
+    struct ResponseData response_data = {0};
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+    res = curl_easy_perform(curl);
+    long response_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    printf("Response code: %ld\n", response_code);
+    printf("Response body: %s\n", response_data.data);
+    free(response_data.data);
+    curl_slist_free_all(headers);
+  }
+  curl_easy_cleanup(curl);
+  return 0;
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cCurlCodeGen,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <curl/curl.h>
+struct ResponseData {
+    char *data;
+    size_t size;
+};
+
+size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+    struct ResponseData *response_data = (struct ResponseData *)userdata;
+    size_t real_size = size * nmemb;
+
+    response_data->data = realloc(response_data->data, response_data->size + real_size + 1);
+    if (response_data->data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+
+    memcpy(&(response_data->data[response_data->size]), ptr, real_size);
+    response_data->size += real_size;
+    response_data->data[response_data->size] = 0;
+
+    return real_size;
+}
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/case/lower");  
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"Content-Type: application/json");
+  
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);    
+    const char *data = "{\n\"text\": \"say \\\"true\\\" or null\",\n\"path\": \"a\\/b\",\n\"flag\": false\n}";
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+    
+
+    struct ResponseData response_data = {0};
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+    res = curl_easy_perform(curl);
+    long response_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    printf("Response code: %ld\n", response_code);
+    printf("Response body: %s\n", response_data.data);
+    free(response_data.data);
+    curl_slist_free_all(headers);
+  }
+  curl_easy_cleanup(curl);
+  return 0;
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cCurlCodeGen,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <curl/curl.h>
+struct ResponseData {
+    char *data;
+    size_t size;
+};
+
+size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+    struct ResponseData *response_data = (struct ResponseData *)userdata;
+    size_t real_size = size * nmemb;
+
+    response_data->data = realloc(response_data->data, response_data->size + real_size + 1);
+    if (response_data->data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+
+    memcpy(&(response_data->data[response_data->size]), ptr, real_size);
+    response_data->size += real_size;
+    response_data->data[response_data->size] = 0;
+
+    return real_size;
+}
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/form");    
+    curl_mime *mime;
+    curl_mimepart *part;
+    mime = curl_mime_init(curl);
+      
+    part = curl_mime_addpart(mime);    
+    curl_mime_name(part, "note");    
+    curl_mime_data(part, "say \"hi\"\nbye", CURL_ZERO_TERMINATED);
+    
+    
+    part = curl_mime_addpart(mime);
+    curl_mime_name(part, "file");
+    curl_mime_filedata(part, "C:\\Users\\new\\file.txt");
+    
+    curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);
+    struct ResponseData response_data = {0};
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+    res = curl_easy_perform(curl);
+    long response_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    printf("Response code: %ld\n", response_code);
+    printf("Response body: %s\n", response_data.data);
+    free(response_data.data);
+    curl_mime_free(mime);
+  }
+  curl_easy_cleanup(curl);
+  return 0;
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cCurlCodeGen,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

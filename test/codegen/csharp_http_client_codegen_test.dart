@@ -971,4 +971,177 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+
+string baseUri = "https://api.apidash.dev/case/lower";
+
+var query = new Dictionary<string, List<string>>();
+    query["it's"] = new List<string>();
+      query["it's"].Add("say \"hi\"\nC:\\new");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
+using (var client = new HttpClient())
+using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
+{
+    request.Headers.Add("If-Match", "\"abc123\"");
+    
+    HttpResponseMessage response = await client.SendAsync(request);
+
+    Console.WriteLine((int)response.StatusCode);
+    Console.WriteLine(await response.Content.ReadAsStringAsync());
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cSharpHttpClient,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+
+string uri = "https://api.apidash.dev/io/form";
+
+using (var client = new HttpClient())
+using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
+{
+    var content = new MultipartFormDataContent
+    {
+        { new StringContent("say \"hi\"\nbye"), "note" },
+        {
+            new StreamContent(File.OpenRead("C:\\Users\\new\\file.txt")), 
+            "file", 
+            "C:\\Users\\new\\file.txt"
+        },
+    };
+    request.Content = content;
+
+    HttpResponseMessage response = await client.SendAsync(request);
+
+    Console.WriteLine((int)response.StatusCode);
+    Console.WriteLine(await response.Content.ReadAsStringAsync());
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cSharpHttpClient,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+
+string uri = "https://api.apidash.dev/it's/data";
+
+using (var client = new HttpClient())
+using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
+{
+    HttpResponseMessage response = await client.SendAsync(request);
+
+    Console.WriteLine((int)response.StatusCode);
+    Console.WriteLine(await response.Content.ReadAsStringAsync());
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cSharpHttpClient,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Triple quotes in a text body', () {
+      const expectedCode = r'''using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+
+string uri = "https://api.apidash.dev/case/lower";
+
+using (var client = new HttpClient())
+using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
+{
+    var payload = """""
+say """hi"""
+and """"bye""""
+""""";
+    var content = new StringContent(payload, null, "text/plain");
+    request.Content = content;
+
+    HttpResponseMessage response = await client.SendAsync(request);
+
+    Console.WriteLine((int)response.StatusCode);
+    Console.WriteLine(await response.Content.ReadAsStringAsync());
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cSharpHttpClient,
+          requestModelEscape8,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+
+string uri = "https://api.apidash.dev/case/lower";
+
+using (var client = new HttpClient())
+using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
+{
+    var payload = "line 1\r\nline 2";
+    var content = new StringContent(payload, null, "text/plain");
+    request.Content = content;
+
+    HttpResponseMessage response = await client.SendAsync(request);
+
+    Console.WriteLine((int)response.StatusCode);
+    Console.WriteLine(await response.Content.ReadAsStringAsync());
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cSharpHttpClient,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

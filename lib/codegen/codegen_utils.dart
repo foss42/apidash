@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Converts a JSON string into a Python dict literal, keeping the original
 /// formatting. Only the `null`, `true` and `false` literals outside of strings
 /// are replaced, so string values are never changed.
@@ -204,4 +206,114 @@ String kotlinRawStringLiteral(String value) {
     (_) => r"${'$'}",
   );
   return '"""$escaped"""';
+}
+
+/// Returns [value] as a Go interpreted string literal.
+///
+/// Every escape that JSON produces is also a Go escape with the same
+/// meaning, so a JSON string is a valid Go string.
+String goStringLiteral(String value) => jsonEncode(value);
+
+/// Returns [value] as a Go raw string when that keeps it unchanged,
+/// otherwise falls back to [goStringLiteral].
+///
+/// Raw strings cannot contain a backtick, and Go drops carriage returns
+/// from them.
+String goRawStringLiteral(String value) {
+  if (value.contains('`') || value.contains('\r')) {
+    return goStringLiteral(value);
+  }
+  return '`$value`';
+}
+
+/// Returns [value] as a double-quoted C string literal.
+String cStringLiteral(String value) {
+  final result = StringBuffer('"');
+  var previous = '';
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (char == '?' && previous == '?') {
+      // `??` followed by some characters is a trigraph in older C standards
+      result.write(r'\?');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      // octal, because a `\x` escape would also swallow any hex digits
+      // that follow it
+      result.write('\\${rune.toRadixString(8).padLeft(3, '0')}');
+    } else {
+      result.write(char);
+    }
+    previous = char;
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a regular (non-verbatim) C# string literal.
+String csharpStringLiteral(String value) {
+  final result = StringBuffer('"');
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == '"') {
+      result.write(r'\"');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 ||
+        rune == 0x7f ||
+        rune == 0x85 ||
+        rune == 0x2028 ||
+        rune == 0x2029) {
+      // C# also treats U+0085, U+2028 and U+2029 as line breaks, which
+      // cannot appear inside a regular string literal
+      result.write('\\u${rune.toRadixString(16).padLeft(4, '0')}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write('"');
+  return result.toString();
+}
+
+/// Returns [value] as a multi-line C# raw string literal, with the opening
+/// and closing quotes on their own lines.
+///
+/// The delimiter is one quote longer than the longest run of quotes in
+/// [value], so the value can contain `"""`. Falls back to
+/// [csharpStringLiteral] when a raw string cannot hold it exactly.
+String csharpRawStringLiteral(String value) {
+  final hasUnsafeCharacter = value.runes.any(
+    (rune) =>
+        (rune < 0x20 && rune != 0x0a && rune != 0x09) ||
+        rune == 0x7f ||
+        rune == 0x85 ||
+        rune == 0x2028 ||
+        rune == 0x2029,
+  );
+  if (hasUnsafeCharacter) {
+    return csharpStringLiteral(value);
+  }
+  final longestQuoteRun = RegExp(r'"+')
+      .allMatches(value)
+      .fold(
+        0,
+        (longest, match) =>
+            match[0]!.length > longest ? match[0]!.length : longest,
+      );
+  final quotes = '"' * (longestQuoteRun < 3 ? 3 : longestQuoteRun + 1);
+  return '$quotes\n$value\n$quotes';
 }
