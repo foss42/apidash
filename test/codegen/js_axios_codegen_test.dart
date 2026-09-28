@@ -892,4 +892,101 @@ axios(config)
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""const config = {
+  url: 'https://api.apidash.dev/case/lower',
+  method: 'get',
+  params: {
+    "it's": [
+      "say \"hi\"\nC:\\new"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  },
+  headers: {
+    "If-Match": "\"abc123\""
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.jsAxios,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""// refer https://github.com/foss42/apidash/issues/293#issuecomment-1997568083 for details regarding integration
+
+const config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: {
+    "note": "say \"hi\"\nbye",
+    "file": fileInput1.files[0]
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.jsAxios,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""const config = {
+  url: 'https://api.apidash.dev/it\'s/data',
+  method: 'get'
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.jsAxios,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

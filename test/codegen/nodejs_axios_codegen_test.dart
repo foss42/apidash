@@ -936,4 +936,106 @@ axios(config)
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import axios from 'axios';
+import qs from 'qs';
+const config = {
+  url: 'https://api.apidash.dev/case/lower',
+  method: 'get',
+  params: {
+    "it's": [
+      "say \"hi\"\nC:\\new"
+    ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  },
+  headers: {
+    "If-Match": "\"abc123\""
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import axios from 'axios';
+import qs from 'qs';
+import fs from 'fs'
+const config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: {
+    "note": "say \"hi\"\nbye",
+    "file": fs.createReadStream("C:\\Users\\new\\file.txt")
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import axios from 'axios';
+import qs from 'qs';
+const config = {
+  url: 'https://api.apidash.dev/it\'s/data',
+  method: 'get'
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.nodejsAxios,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

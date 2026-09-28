@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 import '../../utils/utils.dart';
+import '../codegen_utils.dart';
 
 class FetchCodeGen {
   FetchCodeGen({this.isNodeJs = false});
@@ -15,10 +16,10 @@ import { {% if hasFileInFormData %}fileFromSync, {% endif %}FormData } from 'nod
 
 """;
 
-  String kTemplateStart = """const url = new URL('{{url}}'); 
+  String kTemplateStart = """const url = new URL({{url}}); 
 {% for key, value in params -%}
 {% for item in value -%}
-url.searchParams.append('{{key}}', '{{item}}');
+url.searchParams.append({{key}}, {{item}});
 {% endfor -%}
 {% endfor -%}
 const options = {
@@ -34,7 +35,7 @@ const options = {
 """;
 
   String kMultiPartBodyTemplate = r'''
-payload.append("{{name}}", {{value}})
+payload.append({{name}}, {{value}})
 
 ''';
   String kStringRequest = """
@@ -73,11 +74,11 @@ fetch(url, options)
         var formFileCounter = 1;
         for (var element in requestModel.formDataMapList) {
           result += templateMultiPartBody.render({
-            "name": element["name"],
+            "name": jsStringLiteral(element["name"] ?? "", quote: '"'),
             "value": element["type"] == "text"
-                ? "\"${element["value"]}\""
+                ? jsStringLiteral(element["value"] ?? "", quote: '"')
                 : isNodeJs
-                    ? "fileFromSync(\"${element["value"]}\")"
+                    ? "fileFromSync(${jsStringLiteral(element["value"] ?? "", quote: '"')})"
                     : "fileInput$formFileCounter.files[0]"
           });
           if (element["type"] != "text") formFileCounter++;
@@ -91,9 +92,10 @@ fetch(url, options)
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": stripUrlParams(requestModel.url),
+        "url": jsStringLiteral(stripUrlParams(requestModel.url)),
         "method": harJson["method"],
-        "params": params,
+        "params": params.map((key, values) => MapEntry(
+            jsStringLiteral(key), values.map(jsStringLiteral).toList())),
       });
 
       var headers = harJson["headers"];

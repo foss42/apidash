@@ -76,3 +76,31 @@ String pyMultilineStringLiteral(String value) {
       !value.contains('\r');
   return canUseRawString ? "r'''$value'''" : pyStringLiteral(value);
 }
+
+/// Returns [value] as a JavaScript string literal delimited by [quote].
+String jsStringLiteral(String value, {String quote = "'"}) {
+  final result = StringBuffer(quote);
+  for (final rune in value.runes) {
+    final char = String.fromCharCode(rune);
+    if (char == r'\') {
+      result.write(r'\\');
+    } else if (char == quote) {
+      result.write('\\$quote');
+    } else if (char == '\n') {
+      result.write(r'\n');
+    } else if (char == '\r') {
+      result.write(r'\r');
+    } else if (char == '\t') {
+      result.write(r'\t');
+    } else if (rune < 0x20 || rune == 0x7f) {
+      result.write('\\x${rune.toRadixString(16).padLeft(2, '0')}');
+    } else if (rune == 0x2028 || rune == 0x2029) {
+      // line terminators that end a string literal in pre-ES2019 engines
+      result.write('\\u${rune.toRadixString(16)}');
+    } else {
+      result.write(char);
+    }
+  }
+  result.write(quote);
+  return result.toString();
+}

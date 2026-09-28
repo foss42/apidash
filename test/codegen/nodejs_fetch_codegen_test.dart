@@ -939,4 +939,106 @@ fetch(url, options)
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+
+const url = new URL('https://api.apidash.dev/case/lower'); 
+url.searchParams.append('it\'s', 'say "hi"\nC:\\new');
+const options = {
+  method: 'GET',
+  headers: {
+    "If-Match": "\"abc123\""
+  }
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.nodejsFetch,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+import { fileFromSync, FormData } from 'node-fetch'
+
+const payload = new FormData();
+payload.append("note", "say \"hi\"\nbye")
+payload.append("file", fileFromSync("C:\\Users\\new\\file.txt"))
+
+const url = new URL('https://api.apidash.dev/io/form'); 
+const options = {
+  method: 'POST',
+  body: payload
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.nodejsFetch,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""import fetch from 'node-fetch'
+
+const url = new URL('https://api.apidash.dev/it\'s/data'); 
+const options = {
+  method: 'GET'
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.nodejsFetch,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

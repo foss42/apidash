@@ -521,3 +521,9 @@ const httpRequestModelEscape4 = HttpRequestModel(
         name: 'file', value: r'C:\Users\new\file.txt', type: FormDataType.file),
   ],
 );
+
+/// GET request model with a quote in the URL path
+const httpRequestModelEscape5 = HttpRequestModel(
+  method: HTTPVerb.get,
+  url: "https://api.apidash.dev/it's/data",
+);

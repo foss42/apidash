@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 import '../../utils/utils.dart';
+import '../codegen_utils.dart';
 
 class AxiosCodeGen {
   AxiosCodeGen({this.isNodeJs = false});
@@ -15,7 +16,7 @@ import fs from 'fs'
 """;
 
   String kTemplateStart = """const config = {
-  url: '{{url}}',
+  url: {{url}},
   method: '{{method}}'
 """;
 
@@ -68,7 +69,7 @@ axios(config)
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": stripUrlParams(requestModel.url),
+        "url": jsStringLiteral(stripUrlParams(requestModel.url)),
         "method": harJson["method"].toLowerCase(),
       });
 

@@ -72,4 +72,36 @@ void main() {
       expect(pyMultilineStringLiteral('a\r\nb'), r"'a\r\nb'");
     });
   });
+
+  group('jsStringLiteral', () {
+    test('plain value is unchanged', () {
+      expect(jsStringLiteral('abc'), "'abc'");
+    });
+
+    test('escapes quotes, backslashes and control characters', () {
+      expect(
+        jsStringLiteral("it's a\\b\nc\r\td\x01"),
+        r"'it\'s a\\b\nc\r\td\x01'",
+      );
+    });
+
+    test('escapes only the chosen quote', () {
+      expect(
+        jsStringLiteral('say "hi" it\'s', quote: '"'),
+        r'''"say \"hi\" it's"''',
+      );
+    });
+
+    test('leaves template literal syntax alone', () {
+      expect(jsStringLiteral(r'`${x}` $y'), r"'`${x}` $y'");
+    });
+
+    test('escapes line and paragraph separators', () {
+      expect(jsStringLiteral('a\u2028b\u2029c'), "'a\\u2028b\\u2029c'");
+    });
+
+    test('keeps non-ASCII characters', () {
+      expect(jsStringLiteral('héllo 👋'), "'héllo 👋'");
+    });
+  });
 }
