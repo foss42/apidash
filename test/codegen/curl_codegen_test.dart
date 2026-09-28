@@ -425,4 +425,149 @@ void main() {
       );
     });
   });
+
+  group('Escaping', () {
+    test('Quotes and newlines in params and headers', () {
+      const expectedCode = r"""curl --url 'https://api.apidash.dev/case/lower?it%27s=say+%22hi%22%0AC%3A%5Cnew' \
+  --header 'If-Match: "abc123"'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/case/lower' \
+  --header 'Content-Type: text/plain' \
+  --data 'a '\'''\'''\'' b \'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Escaped quotes inside a JSON body', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/case/lower' \
+  --header 'Content-Type: application/json' \
+  --data '{
+"text": "say \"true\" or null",
+"path": "a\/b",
+"flag": false
+}'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and backslashes in form data', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/form' \
+  --form 'note=say "hi"
+bye' \
+  --form 'file=@C:\Users\new\file.txt'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape4,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quote in the URL', () {
+      const expectedCode = r"""curl --url 'https://api.apidash.dev/it'\''s/data'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape5,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Windows line endings in a text body', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/case/lower' \
+  --header 'Content-Type: text/plain' \
+  --data $'line 1\r\nline 2'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape9,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Form values that curl would read as options or files', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/form' \
+  --form-string 'note=a; b' \
+  --form-string 'user=@dash' \
+  --form 'file=@"C:/Users/new/a,b.txt"'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape12,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body starting with @', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/case/lower' \
+  --header 'Content-Type: text/plain' \
+  --data-raw '@dash'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape13,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Header with an empty value', () {
+      const expectedCode = r"""curl --url 'https://api.apidash.dev/case/lower' \
+  --header 'X-Empty;'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelEscape14,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+  });
 }

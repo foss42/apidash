@@ -672,3 +672,31 @@ String dartRawMultilineStringLiteral(String value) {
 /// the `$` that Dart would read as string interpolation.
 String jsonToDartLiteral(Object? value) =>
     jsonEncode(value).replaceAll(r'$', r'\$');
+
+/// Returns [value] as a POSIX shell single-quoted word. A `'` cannot appear
+/// inside single quotes, so it closes the quote, adds an escaped `\'` and
+/// opens a new one.
+///
+/// A carriage return or other control character inside plain quotes is easy
+/// to lose (Git Bash drops the `\r` of a CRLF, and copy-paste may too), so
+/// such values use ANSI-C quoting (`$'...'`) instead, which bash, zsh and ksh
+/// support.
+String shellSingleQuoted(String value) {
+  if (!_hasControlCharacter(value)) {
+    return "'${value.replaceAll("'", r"'\''")}'";
+  }
+  final result = StringBuffer(r"$'");
+  for (final rune in value.runes) {
+    result.write(switch (rune) {
+      0x5c => r'\\',
+      0x27 => r"\'",
+      0x0a => r'\n',
+      0x0d => r'\r',
+      0x09 => r'\t',
+      < 0x20 || 0x7f => '\\x${rune.toRadixString(16).padLeft(2, '0')}',
+      _ => String.fromCharCode(rune),
+    });
+  }
+  result.write("'");
+  return result.toString();
+}

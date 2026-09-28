@@ -583,3 +583,33 @@ const httpRequestModelEscape11 = HttpRequestModel(
     FormDataModel(name: 'note', value: 'café ☕', type: FormDataType.text),
   ],
 );
+
+/// POST request model with form values that curl's `--form` would misread:
+/// `;` starts options, `@` reads a file, and `,` separates file names
+const httpRequestModelEscape12 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/io/form',
+  bodyContentType: ContentType.formdata,
+  formData: [
+    FormDataModel(name: 'note', value: 'a; b', type: FormDataType.text),
+    FormDataModel(name: 'user', value: '@dash', type: FormDataType.text),
+    FormDataModel(
+        name: 'file', value: 'C:/Users/new/a,b.txt', type: FormDataType.file),
+  ],
+);
+
+/// POST request model with a text body starting with `@`, which curl's
+/// `--data` reads as a file name
+const httpRequestModelEscape13 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.text,
+  body: '@dash',
+);
+
+/// GET request model with a header that has an empty value
+const httpRequestModelEscape14 = HttpRequestModel(
+  method: HTTPVerb.get,
+  url: 'https://api.apidash.dev/case/lower',
+  headers: [NameValueModel(name: 'X-Empty', value: '')],
+);

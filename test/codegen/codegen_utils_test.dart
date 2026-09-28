@@ -571,4 +571,26 @@ void main() {
       );
     });
   });
+
+  group('shellSingleQuoted', () {
+    test('keeps plain values unchanged', () {
+      expect(shellSingleQuoted(r'say "hi" $HOME \n'), r"""'say "hi" $HOME \n'""");
+    });
+
+    test('keeps newlines inside the quotes', () {
+      expect(shellSingleQuoted('a\nb'), "'a\nb'");
+    });
+
+    test('escapes single quotes', () {
+      expect(shellSingleQuoted("it's"), r"""'it'\''s'""");
+    });
+
+    test('uses ANSI-C quoting for carriage returns', () {
+      expect(shellSingleQuoted("it's\r\n\\"), r"""$'it\'s\r\n\\'""");
+    });
+
+    test('uses ANSI-C quoting for other control characters', () {
+      expect(shellSingleQuoted('a\x01b'), r"""$'a\x01b'""");
+    });
+  });
 }

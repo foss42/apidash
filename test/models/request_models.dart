@@ -332,3 +332,21 @@ const requestModelEscape11 = RequestModel(
   apiType: APIType.rest,
   httpRequestModel: httpRequestModelEscape11,
 );
+
+const requestModelEscape12 = RequestModel(
+  id: 'escape12',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape12,
+);
+
+const requestModelEscape13 = RequestModel(
+  id: 'escape13',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape13,
+);
+
+const requestModelEscape14 = RequestModel(
+  id: 'escape14',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelEscape14,
+);
