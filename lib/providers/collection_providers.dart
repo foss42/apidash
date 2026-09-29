@@ -1547,10 +1547,20 @@ class CollectionStateNotifier
       if (!streamingMode &&
           apiType == APIType.ai &&
           response.statusCode == 200) {
-        final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
-          kJsonDecoder.convert(httpResponseModel?.body ?? "Error parsing body"),
-        );
-        httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+        try {
+          final fb = executionRequestModel.aiRequestModel?.getFormattedOutput(
+            kJsonDecoder.convert(
+              httpResponseModel?.body ?? "Error parsing body",
+            ),
+          );
+          httpResponseModel = httpResponseModel?.copyWith(formattedBody: fb);
+        } catch (e) {
+          terminal.logSystem(
+            category: 'provider',
+            message: 'Error parsing AI response: $e',
+            level: TerminalLevel.warn,
+          );
+        }
       }
 
       newRequestModel = newRequestModel.copyWith(
