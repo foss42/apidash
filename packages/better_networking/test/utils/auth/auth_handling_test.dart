@@ -161,6 +161,28 @@ void main() {
     );
 
     test(
+      'given handleAuth when headers have no enabled list then it should keep existing headers enabled',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+          headers: [NameValueModel(name: 'Accept', value: 'application/json')],
+        );
+
+        const apiKeyAuth = AuthApiKeyModel(key: 'api-key-123');
+        const authModel = AuthModel(
+          type: APIAuthType.apiKey,
+          apikey: apiKeyAuth,
+        );
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.isHeaderEnabledList, equals([true, true]));
+        expect(result.enabledHeaders?.length, equals(2));
+      },
+    );
+
+    test(
       'given handleAuth when JWT authentication fields are provided then it should add an authorization header',
       () async {
         const httpRequestModel = HttpRequestModel(
