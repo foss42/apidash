@@ -277,3 +277,46 @@ EnvironmentVariableSuggestion getVariableStatus(
       variable: EnvironmentVariableModel(
           key: key, type: EnvironmentVariableType.variable, value: "unknown"));
 }
+
+/// Merge the environment map returned by a pre/post JS script with the
+/// original environment values.
+///
+/// Disabled variables are never injected into the JS runtime, so their
+/// absence from [updatedEnvironment] is not a deletion. Enabled variables
+/// missing from the map were unset by the script and are dropped.
+List<EnvironmentVariableModel> mergeScriptEnvironmentValues({
+  required List<EnvironmentVariableModel> originalValues,
+  required Map<String, dynamic> updatedEnvironment,
+}) {
+  final newValues = <EnvironmentVariableModel>[];
+  final mutableUpdatedEnv = Map<String, dynamic>.from(updatedEnvironment);
+
+  for (final originalVariable in originalValues) {
+    if (mutableUpdatedEnv.containsKey(originalVariable.key)) {
+      final dynamic newValue = mutableUpdatedEnv[originalVariable.key];
+      newValues.add(
+        originalVariable.copyWith(
+          value: newValue == null ? '' : newValue.toString(),
+          enabled: true,
+        ),
+      );
+      mutableUpdatedEnv.remove(originalVariable.key);
+    } else if (!originalVariable.enabled) {
+      newValues.add(originalVariable);
+    }
+  }
+
+  for (final entry in mutableUpdatedEnv.entries) {
+    final dynamic newValue = entry.value;
+    newValues.add(
+      EnvironmentVariableModel(
+        key: entry.key,
+        value: newValue == null ? '' : newValue.toString(),
+        enabled: true,
+        type: EnvironmentVariableType.variable,
+      ),
+    );
+  }
+
+  return newValues;
+}
