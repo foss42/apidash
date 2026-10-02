@@ -1,7 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
-import 'secure_storage.dart';
+import 'storage_service/storage_service.dart';
 
 const String kSharedPrefSettingsKey = 'apidash-settings';
 const String kSharedPrefOnboardingKey = 'apidash-onboarding-status';
