@@ -77,7 +77,7 @@ List<NameValueModel>? getEnabledRows(
   List<NameValueModel>? rows,
   List<bool>? isRowEnabledList,
 ) {
-  if (rows == null || isRowEnabledList == null) {
+  if (rows == null || isRowEnabledList == null || rows.length != isRowEnabledList.length) {
     return rows;
   }
   List<NameValueModel> finalRows = rows
