@@ -82,5 +82,7 @@ String getAbbr(APIType apiType, {HTTPVerb? method}) {
     APIType.graphql => apiType.abbr,
     APIType.ai => apiType.abbr,
     APIType.websocket => apiType.abbr,
+    APIType.mqtt => apiType.abbr,
+    APIType.grpc => apiType.abbr,
   };
 }
