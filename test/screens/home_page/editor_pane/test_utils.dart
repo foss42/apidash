@@ -1,26 +1,12 @@
-import 'package:apidash/models/models.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/models/models.dart';
 import 'package:apidash/dashbot/constants.dart';
 
-class MockCollectionStateNotifier
-    extends StateNotifier<Map<String, RequestModel>?>
-    implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
-    : super(state);
-
-  @override
-  RequestModel? getRequestModel(String id) {
-    return state?[id];
-  }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => null;
-}
+export '../../../providers/helpers.dart'
+    show MockActiveCollectionNotifier, mockActiveCollectionOverrides;
 
 class DummyChatViewmodel extends ChatViewmodel {
   DummyChatViewmodel(super.ref);

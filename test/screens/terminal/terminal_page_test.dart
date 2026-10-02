@@ -20,7 +20,7 @@ void main() {
   }
 
   setUp(() async {
-    await testSetUpTempDirForHive();
+    await testSetUpWorkspaceStorage();
   });
 
   testWidgets('shows empty state initially', (tester) async {
@@ -122,13 +122,12 @@ void main() {
     tester,
   ) async {
     const reqId = 'req-empty-name';
-    final container = ProviderContainer();
+    final container = createContainer();
+    await ensureCollectionReady(container, tester);
 
-    // Seed collection with a RequestModel having empty name
-    final collectionNotifier = container.read(
-      collectionStateNotifierProvider.notifier,
-    );
-    collectionNotifier.state = {reqId: RequestModel(id: reqId, name: '')};
+    container.read(collectionStateNotifierProvider.notifier).state = {
+      reqId: RequestModel(id: reqId, name: ''),
+    };
 
     final term = container.read(terminalStateProvider.notifier);
 

@@ -25,7 +25,11 @@ final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
 final kColorHttpMethodOptions = Colors.deepPurple.shade800;
 
-final kColorGQL = Colors.pink.shade600;
+final kColorGraphQL = Colors.pink.shade600;
+final kColorAI = Colors.amber;
+final kColorWS = Colors.teal;
+final kColorMQTT = Colors.purple;
+final kColorgRPC = Colors.blueGrey;
 
 // Realtime (WebSocket) event-stream status colors.
 final kColorWsConnected = Colors.teal.shade400;

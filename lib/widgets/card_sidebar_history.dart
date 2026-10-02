@@ -37,15 +37,13 @@ class SidebarHistoryCard extends StatelessWidget {
       triggerMode: TooltipTriggerMode.manual,
       waitDuration: const Duration(seconds: 1),
       child: Card(
-        shape: const RoundedRectangleBorder(
-          borderRadius: kBorderRadius8,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: kBorderRadius8),
         elevation: isSelected ? 1 : 0,
         surfaceTintColor: isSelected ? surfaceTint : null,
         color: isSelected
             ? Theme.of(context).colorScheme.brightness == Brightness.dark
-                ? colorVariant
-                : color
+                  ? colorVariant
+                  : color
             : color,
         margin: EdgeInsets.zero,
         child: InkWell(
@@ -64,8 +62,12 @@ class SidebarHistoryCard extends StatelessWidget {
               child: Row(
                 children: [
                   SidebarRequestCardTextBox(
-                    apiType: apiType,
-                    method: method,
+                    abbr: getAbbr(apiType, method: method),
+                    color: getAPIColor(
+                      apiType,
+                      method: method,
+                      brightness: Theme.of(context).brightness,
+                    ),
                   ),
                   kHSpacer4,
                   Expanded(
@@ -87,18 +89,17 @@ class SidebarHistoryCard extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                            requestGroupSize > 9
-                                ? "9+"
-                                : requestGroupSize.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                )),
+                          requestGroupSize > 9
+                              ? "9+"
+                              : requestGroupSize.toString(),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
+                              ),
+                        ),
                       ),
                     ),
                   ),

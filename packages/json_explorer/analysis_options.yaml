@@ -1,1 +1,4 @@
+analyzer:
+  exclude:
+    - build/**
 include: package:rows_lint/analysis_options.yaml

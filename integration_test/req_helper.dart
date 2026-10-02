@@ -1,3 +1,4 @@
+import 'package:apidash/screens/home_page/collection_pane/request_item.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:spot/spot.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
-import 'package:apidash/screens/home_page/collection_pane.dart';
+import 'package:apidash/screens/home_page/collection_pane/collection_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card/url_card.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_params.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_headers.dart';

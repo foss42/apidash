@@ -35,10 +35,12 @@ void main() {
       "defaultWsScheme": "ws",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
+      "saveMediaResponsesAsFiles": false,
       "promptBeforeClosing": true,
       "activeEnvironmentId": null,
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
+      "savedWorkspaces": [],
       "isSSLDisabled": true,
       "isDashBotEnabled": true,
       "defaultAIModel": {"model": "llama"},
@@ -119,10 +121,12 @@ void main() {
   "defaultWsScheme": "ws",
   "defaultCodeGenLang": "curl",
   "saveResponses": true,
+  "saveMediaResponsesAsFiles": false,
   "promptBeforeClosing": true,
   "activeEnvironmentId": null,
   "historyRetentionPeriod": "oneWeek",
   "workspaceFolderPath": null,
+  "savedWorkspaces": [],
   "isSSLDisabled": true,
   "isDashBotEnabled": true,
   "defaultAIModel": {
@@ -135,5 +139,16 @@ void main() {
 
   test('Testing hashcode', () {
     expect(sm.hashCode, greaterThan(0));
+  });
+
+  test('saveMediaResponsesAsFiles defaults to false and round-trips', () {
+    expect(const SettingsModel().saveMediaResponsesAsFiles, isFalse);
+    final updated = sm.copyWith(saveMediaResponsesAsFiles: true);
+    expect(updated.saveMediaResponsesAsFiles, isTrue);
+    expect(updated.toJson()["saveMediaResponsesAsFiles"], isTrue);
+    expect(
+      SettingsModel.fromJson(updated.toJson()).saveMediaResponsesAsFiles,
+      isTrue,
+    );
   });
 }

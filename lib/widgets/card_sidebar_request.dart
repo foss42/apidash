@@ -1,4 +1,3 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -10,8 +9,8 @@ class SidebarRequestCard extends StatelessWidget {
   const SidebarRequestCard({
     super.key,
     required this.id,
-    required this.apiType,
-    this.method,
+    required this.abbr,
+    this.abbrColor,
     this.name,
     this.url,
     this.selectedId,
@@ -27,10 +26,10 @@ class SidebarRequestCard extends StatelessWidget {
   });
 
   final String id;
-  final APIType apiType;
+  final String abbr;
+  final Color? abbrColor;
   final String? name;
   final String? url;
-  final HTTPVerb? method;
   final String? selectedId;
   final String? editRequestId;
   final void Function()? onTap;
@@ -57,15 +56,13 @@ class SidebarRequestCard extends StatelessWidget {
       triggerMode: TooltipTriggerMode.manual,
       waitDuration: const Duration(seconds: 1),
       child: Card(
-        shape: const RoundedRectangleBorder(
-          borderRadius: kBorderRadius8,
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: kBorderRadius8),
         elevation: isSelected ? 1 : 0,
         surfaceTintColor: isSelected ? surfaceTint : null,
         color: isSelected
             ? Theme.of(context).colorScheme.brightness == Brightness.dark
-                ? colorVariant
-                : color
+                  ? colorVariant
+                  : color
             : color,
         margin: EdgeInsets.zero,
         child: InkWell(
@@ -76,7 +73,12 @@ class SidebarRequestCard extends StatelessWidget {
           // onDoubleTap: inEditMode ? null : onDoubleTap,
           onSecondaryTapUp: (details) {
             onSecondaryTap?.call();
-            showItemCardMenu(context, details, onMenuSelected);
+            showItemCardMenu(
+              context,
+              details,
+              ItemMenuOption.values,
+              onMenuSelected,
+            );
           },
           child: Padding(
             padding: EdgeInsets.only(
@@ -89,10 +91,7 @@ class SidebarRequestCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  SidebarRequestCardTextBox(
-                    apiType: apiType,
-                    method: method,
-                  ),
+                  SidebarRequestCardTextBox(abbr: abbr, color: abbrColor),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode
@@ -127,9 +126,7 @@ class SidebarRequestCard extends StatelessWidget {
                     visible: isSelected && !inEditMode,
                     child: SizedBox(
                       width: 28,
-                      child: ItemCardMenu(
-                        onSelected: onMenuSelected,
-                      ),
+                      child: ItemCardMenu(onSelected: onMenuSelected),
                     ),
                   ),
                 ],

@@ -1,21 +1,17 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/models/grpc_request_model.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:apidash/services/connection_manager.dart';
-import 'package:apidash/utils/grpc_utils.dart';
-import 'package:apidash/services/grpc_reflection_service.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/services/services.dart';
 import 'request_metadata_grpc.dart';
 import 'request_parameters_grpc.dart';
 import 'request_auth_grpc.dart';
 
 class EditGrpcRequestPane extends ConsumerStatefulWidget {
-  const EditGrpcRequestPane({
-    super.key,
-    this.showViewCodeButton = true,
-  });
+  const EditGrpcRequestPane({super.key, this.showViewCodeButton = true});
 
   final bool showViewCodeButton;
 
@@ -50,9 +46,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
     if (requestId == null) return kSizedBoxEmpty;
     final isClientOrBidi =
         grpcModel.streamingType == GrpcStreamingType.client ||
-            grpcModel.streamingType == GrpcStreamingType.bidi;
-    final hasOpenGrpcStream =
-        ConnectionManager.instance.hasGrpcRequestStream(requestId);
+        grpcModel.streamingType == GrpcStreamingType.bidi;
+    final hasOpenGrpcStream = ConnectionManager.instance.hasGrpcRequestStream(
+      requestId,
+    );
 
     return DefaultTabController(
       length: 5,
@@ -60,8 +57,9 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
         children: [
           TabBar(
             labelColor: Theme.of(context).colorScheme.primary,
-            unselectedLabelColor:
-                Theme.of(context).colorScheme.onSurfaceVariant,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant,
             tabs: const [
               Tab(text: "Invocation"),
               Tab(text: "Body"),
@@ -85,14 +83,17 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Select Service",
-                                    style: kTextStyleButtonSmall),
+                                const Text(
+                                  "Select Service",
+                                  style: kTextStyleButtonSmall,
+                                ),
                                 kVSpacer5,
                                 ADDropdownButton<String>(
                                   isExpanded: true,
                                   value: grpcModel.service,
-                                  values: grpcModel.availableServices
-                                      .map((s) => (s, s)),
+                                  values: grpcModel.availableServices.map(
+                                    (s) => (s, s),
+                                  ),
                                   onChanged: (val) async {
                                     if (val != null) {
                                       // Fetch this service's methods from the
@@ -103,38 +104,44 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                           requestModel != null) {
                                         await ConnectionManager.instance
                                             .connectGrpc(
-                                                requestModel.id, grpcModel);
+                                              requestModel.id,
+                                              grpcModel,
+                                            );
                                         final result =
-                                            await GrpcReflectionService
-                                                .getMethodsForService(
-                                                    requestModel.id,
-                                                    grpcModel,
-                                                    val,
-                                                    metadata:
-                                                        await buildGrpcMetadata(
-                                                            grpcModel));
+                                            await GrpcReflectionService.getMethodsForService(
+                                              requestModel.id,
+                                              grpcModel,
+                                              val,
+                                              metadata: await buildGrpcMetadata(
+                                                grpcModel,
+                                              ),
+                                            );
                                         methods = result[val] ?? [];
                                       } else if (grpcModel.protoFile != null) {
                                         final result =
                                             await GrpcUtils.parseProtoFile(
-                                                grpcModel.protoFile!);
+                                              grpcModel.protoFile!,
+                                            );
                                         final methodMappings =
                                             result['methods']
                                                 as Map<String, dynamic>?;
-                                        methods = (methodMappings?[val]
+                                        methods =
+                                            (methodMappings?[val]
                                                 as List<String>?) ??
                                             [];
                                       }
                                       ref
-                                          .read(collectionStateNotifierProvider
-                                              .notifier)
+                                          .read(
+                                            collectionStateNotifierProvider
+                                                .notifier,
+                                          )
                                           .update(
-                                            grpcRequestModel:
-                                                grpcModel.copyWith(
-                                              service: val,
-                                              availableMethods: methods,
-                                              method: null,
-                                            ),
+                                            grpcRequestModel: grpcModel
+                                                .copyWith(
+                                                  service: val,
+                                                  availableMethods: methods,
+                                                  method: null,
+                                                ),
                                           );
                                     }
                                   },
@@ -147,14 +154,17 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Select Method",
-                                    style: kTextStyleButtonSmall),
+                                const Text(
+                                  "Select Method",
+                                  style: kTextStyleButtonSmall,
+                                ),
                                 kVSpacer5,
                                 ADDropdownButton<String>(
                                   isExpanded: true,
                                   value: grpcModel.method,
-                                  values: grpcModel.availableMethods
-                                      .map((m) => (m, m)),
+                                  values: grpcModel.availableMethods.map(
+                                    (m) => (m, m),
+                                  ),
                                   onChanged: (val) async {
                                     if (val != null) {
                                       // Resolve this method's request params from
@@ -166,52 +176,60 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                       if (grpcModel.useReflection &&
                                           requestModel != null &&
                                           grpcModel.service != null) {
-                                        params = await GrpcReflectionService
-                                            .getParamsForMethod(
-                                                requestModel.id,
+                                        params =
+                                            await GrpcReflectionService.getParamsForMethod(
+                                              requestModel.id,
+                                              grpcModel,
+                                              grpcModel.service!,
+                                              val,
+                                              metadata: await buildGrpcMetadata(
                                                 grpcModel,
-                                                grpcModel.service!,
-                                                val,
-                                                metadata:
-                                                    await buildGrpcMetadata(
-                                                        grpcModel));
+                                              ),
+                                            );
                                       } else if (grpcModel.protoFile != null) {
                                         final result =
                                             await GrpcUtils.parseProtoFile(
-                                                grpcModel.protoFile!);
-                                        final methodMappings = result['methods']
-                                            as Map<String, dynamic>?;
+                                              grpcModel.protoFile!,
+                                            );
+                                        final methodMappings =
+                                            result['methods']
+                                                as Map<String, dynamic>?;
                                         final messageFields =
                                             result['messageFields']
                                                 as Map<String, dynamic>?;
 
                                         if (methodMappings != null &&
                                             messageFields != null) {
-                                          final requestType = (methodMappings[
-                                                      "${grpcModel.service}/$val"]
-                                                  as List<String>?)
-                                              ?.first;
+                                          final requestType =
+                                              (methodMappings["${grpcModel.service}/$val"]
+                                                      as List<String>?)
+                                                  ?.first;
                                           if (requestType != null) {
-                                            params = (messageFields[requestType]
+                                            params =
+                                                (messageFields[requestType]
                                                     as List<
-                                                        GrpcParameterModel>?) ??
+                                                      GrpcParameterModel
+                                                    >?) ??
                                                 [];
                                           }
                                         }
                                       }
 
                                       ref
-                                          .read(collectionStateNotifierProvider
-                                              .notifier)
+                                          .read(
+                                            collectionStateNotifierProvider
+                                                .notifier,
+                                          )
                                           .update(
-                                            grpcRequestModel:
-                                                grpcModel.copyWith(
-                                              method: val,
-                                              parameters: params,
-                                              requestBody:
-                                                  GrpcUtils.paramsToJson(
-                                                      params),
-                                            ),
+                                            grpcRequestModel: grpcModel
+                                                .copyWith(
+                                                  method: val,
+                                                  parameters: params,
+                                                  requestBody:
+                                                      GrpcUtils.paramsToJson(
+                                                        params,
+                                                      ),
+                                                ),
                                           );
                                     }
                                   },
@@ -237,11 +255,13 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             onChanged: (val) {
                               if (val != null) {
                                 ref
-                                    .read(collectionStateNotifierProvider
-                                        .notifier)
+                                    .read(
+                                      collectionStateNotifierProvider.notifier,
+                                    )
                                     .update(
                                       grpcRequestModel: grpcModel.copyWith(
-                                          streamingType: val),
+                                        streamingType: val,
+                                      ),
                                     );
                               }
                             },
@@ -249,15 +269,20 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                         ],
                       ),
                       kVSpacer20,
-                      const Text("Request Parameters (Form)",
-                          style: kTextStyleButtonSmall),
+                      const Text(
+                        "Request Parameters (Form)",
+                        style: kTextStyleButtonSmall,
+                      ),
                       kVSpacer10,
                       Expanded(
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: Theme.of(context).colorScheme.outlineVariant),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const EditGrpcRequestParameters(),
@@ -272,8 +297,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Request Body (JSON)",
-                          style: kTextStyleButtonSmall),
+                      const Text(
+                        "Request Body (JSON)",
+                        style: kTextStyleButtonSmall,
+                      ),
                       kVSpacer10,
                       Expanded(
                         flex: 1,
@@ -294,8 +321,9 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             ref
                                 .read(collectionStateNotifierProvider.notifier)
                                 .update(
-                                  grpcRequestModel:
-                                      grpcModel.copyWith(requestBody: val),
+                                  grpcRequestModel: grpcModel.copyWith(
+                                    requestBody: val,
+                                  ),
                                 );
                           },
                         ),
@@ -311,8 +339,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                               onPressed: hasOpenGrpcStream
                                   ? () {
                                       ref
-                                          .read(collectionStateNotifierProvider
-                                              .notifier)
+                                          .read(
+                                            collectionStateNotifierProvider
+                                                .notifier,
+                                          )
                                           .sendGrpcMessage(requestId);
                                     }
                                   : null,
@@ -325,8 +355,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                               onPressed: hasOpenGrpcStream
                                   ? () {
                                       ref
-                                          .read(collectionStateNotifierProvider
-                                              .notifier)
+                                          .read(
+                                            collectionStateNotifierProvider
+                                                .notifier,
+                                          )
                                           .finishGrpcSending(requestId);
                                       setState(() {});
                                     }
@@ -371,13 +403,17 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                               onChanged: (val) {
                                 final port = int.tryParse(val.trim()) ?? 50051;
                                 String url = grpcModel.url;
-                                String host = url.contains(':') ? url.split(':')[0] : url;
+                                String host = url.contains(':')
+                                    ? url.split(':')[0]
+                                    : url;
                                 ref
-                                    .read(collectionStateNotifierProvider
-                                        .notifier)
+                                    .read(
+                                      collectionStateNotifierProvider.notifier,
+                                    )
                                     .update(
-                                      grpcRequestModel:
-                                          grpcModel.copyWith(url: '$host:$port'),
+                                      grpcRequestModel: grpcModel.copyWith(
+                                        url: '$host:$port',
+                                      ),
                                     );
                               },
                             ),
@@ -392,23 +428,28 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                           ref
                               .read(collectionStateNotifierProvider.notifier)
                               .update(
-                                grpcRequestModel: grpcModel.copyWith(useTLS: val),
+                                grpcRequestModel: grpcModel.copyWith(
+                                  useTLS: val,
+                                ),
                               );
                         },
                       ),
                       SwitchListTile(
                         title: const Text("Allow Invalid Certificates"),
                         subtitle: const Text(
-                            "Accept self-signed / untrusted TLS certificates"),
+                          "Accept self-signed / untrusted TLS certificates",
+                        ),
                         value: grpcModel.allowInvalidCertificates,
                         onChanged: grpcModel.useTLS
                             ? (val) {
                                 ref
-                                    .read(collectionStateNotifierProvider
-                                        .notifier)
+                                    .read(
+                                      collectionStateNotifierProvider.notifier,
+                                    )
                                     .update(
                                       grpcRequestModel: grpcModel.copyWith(
-                                          allowInvalidCertificates: val),
+                                        allowInvalidCertificates: val,
+                                      ),
                                     );
                               }
                             : null,
@@ -420,8 +461,10 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Proto File",
-                                    style: kTextStyleButtonSmall),
+                                const Text(
+                                  "Proto File",
+                                  style: kTextStyleButtonSmall,
+                                ),
                                 Text(
                                   grpcModel.protoFile ??
                                       "No Proto file selected",
@@ -438,14 +481,17 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                 extensions: <String>['proto'],
                               );
                               final XFile? file = await openFile(
-                                  acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+                                acceptedTypeGroups: <XTypeGroup>[typeGroup],
+                              );
                               if (file != null) {
                                 ref
-                                    .read(collectionStateNotifierProvider
-                                        .notifier)
+                                    .read(
+                                      collectionStateNotifierProvider.notifier,
+                                    )
                                     .update(
                                       grpcRequestModel: grpcModel.copyWith(
-                                          protoFile: file.path),
+                                        protoFile: file.path,
+                                      ),
                                     );
                               }
                             },
@@ -472,11 +518,13 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                           }
 
                           final result = await GrpcUtils.parseProtoFile(
-                              grpcModel.protoFile!);
+                            grpcModel.protoFile!,
+                          );
                           final services =
                               (result['services'] as List<String>?) ?? [];
                           final methods =
-                              (result['methods'] as Map<String, dynamic>?) ?? {};
+                              (result['methods'] as Map<String, dynamic>?) ??
+                              {};
 
                           ref
                               .read(collectionStateNotifierProvider.notifier)
@@ -488,8 +536,8 @@ class _EditGrpcRequestPaneState extends ConsumerState<EditGrpcRequestPane> {
                                       : null,
                                   availableMethods: services.isNotEmpty
                                       ? (methods[services.first]
-                                              as List<String>?) ??
-                                          []
+                                                as List<String>?) ??
+                                            []
                                       : [],
                                   method: null,
                                   parameters: const <GrpcParameterModel>[],

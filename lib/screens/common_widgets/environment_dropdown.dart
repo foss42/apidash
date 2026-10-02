@@ -23,7 +23,6 @@ class EnvironmentDropdown extends ConsumerWidget {
           ref
               .read(settingsProvider.notifier)
               .update(activeEnvironmentId: value.id);
-          ref.read(hasUnsavedChangesProvider.notifier).state = true;
         }
       },
     );

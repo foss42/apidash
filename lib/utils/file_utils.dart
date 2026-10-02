@@ -1,15 +1,92 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:mime_dart/mime_dart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+import '../consts.dart';
 
 const uuid = Uuid();
 
 String getNewUuid() {
   return uuid.v1();
+}
+
+final _storageIdSuffixPattern = RegExp(r'_[0-9a-f]{8}$');
+
+String _slugifyStorageName(String name) {
+  final trimmed = name.trim().toLowerCase();
+  if (trimmed.isEmpty) {
+    return 'untitled';
+  }
+  final slug = trimmed
+      .replaceAll(RegExp(r'[/\\:*?"<>|]'), '')
+      .replaceAll(RegExp(r'\s+'), '-')
+      .replaceAll(RegExp(r'-+'), '-')
+      .replaceAll(RegExp(r'^-|-$'), '');
+  return slug.isEmpty ? 'untitled' : slug;
+}
+
+String makeStorageId(String name, {String? suffix}) {
+  final stableSuffix =
+      suffix ?? getNewUuid().replaceAll('-', '').substring(0, 8);
+  return '${_slugifyStorageName(name)}_$stableSuffix';
+}
+
+String _sanitizeForFileName(String name) {
+  final cleaned = name
+      .trim()
+      .replaceAll(RegExp(r'[/\\:*?"<>|]'), '-')
+      .replaceAll(RegExp(r'-+'), '-')
+      .replaceAll(RegExp(r'\s+'), ' ')
+      .replaceAll(RegExp(r'^-+|-+$'), '')
+      .trim();
+  return cleaned.isEmpty ? 'request' : cleaned;
+}
+
+String makeHistoryId({required DateTime timeStamp, required String name}) {
+  final label = _sanitizeForFileName(name);
+  final stamp = DateFormat('yyyy-MM-dd hh.mm.ss a').format(timeStamp);
+  return '$label $stamp';
+}
+
+String makeCollectionId(String name) {
+  final cleaned = name.trim();
+  return cleaned.isEmpty ? 'untitled' : cleaned;
+}
+
+final _illegalFileNameChars = RegExp(r'[/\\:*?"<>|]');
+
+bool collectionNameHasIllegalChars(String name) =>
+    _illegalFileNameChars.hasMatch(name);
+
+String? storageIdSuffix(String id) {
+  if (!_storageIdSuffixPattern.hasMatch(id)) {
+    return null;
+  }
+  return id.substring(id.length - 8);
+}
+
+String renameStorageId(String oldId, String newName) {
+  final suffix = storageIdSuffix(oldId);
+  if (suffix == null) {
+    return oldId;
+  }
+  return makeStorageId(newName, suffix: suffix);
+}
+
+String renameEnvironmentStorageId(String currentId, String name) {
+  final renamed = renameStorageId(currentId, name);
+  if (renamed != currentId) {
+    return renamed;
+  }
+  if (storageIdSuffix(currentId) != null) {
+    return currentId;
+  }
+  final trimmed = name.trim();
+  return trimmed.isEmpty ? currentId : makeStorageId(trimmed);
 }
 
 String? getFileExtension(String? mimeType) {
@@ -35,7 +112,9 @@ Future<String?> getFileDownloadpath(String? name, String? ext) async {
 }
 
 Future<String?> getApplicationSupportDirectoryFilePath(
-    String name, String? ext) async {
+  String name,
+  String? ext,
+) async {
   final Directory tempDir = await getApplicationSupportDirectory();
   name = name;
   ext = (ext != null) ? ".$ext" : "";
@@ -98,4 +177,18 @@ Future<bool> deleteFileFromPath(String filePath) async {
   } catch (e) {
     return false;
   }
+}
+
+Future<String?> resolveWorkspaceRoot({
+  required bool useDesktopPath,
+  String? desktopPath,
+}) async {
+  if (useDesktopPath) {
+    if (desktopPath == null || desktopPath.isEmpty) {
+      return null;
+    }
+    return desktopPath;
+  }
+  final documents = await getApplicationDocumentsDirectory();
+  return p.join(documents.path, kDefaultMobileWorkspaceSubpath);
 }
