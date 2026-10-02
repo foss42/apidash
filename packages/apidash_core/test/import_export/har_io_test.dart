@@ -41,6 +41,13 @@ void main() {
       );
     });
 
+    test('decodes plus signs as spaces in form data', () {
+      expect(
+        harParser.parseFormData('full+name=John+Doe'),
+        {'full name': 'John Doe'},
+      );
+    });
+
     test('handles an empty value', () {
       expect(harParser.parseFormData('key='), {'key': ''});
     });

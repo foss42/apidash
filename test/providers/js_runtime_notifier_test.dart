@@ -506,6 +506,33 @@ void main() {
       },
     );
 
+    test(
+      'should preserve disabled environment variables after pre-request script',
+      () async {
+        List<EnvironmentVariableModel>? capturedValues;
+
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          capturedValues = values;
+        }
+
+        await handlePreRequestScript(
+          baseRequestModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        );
+
+        expect(capturedValues, isNotNull);
+        final disabledVar = capturedValues!.firstWhere(
+          (v) => v.key == 'disabledVar',
+        );
+        expect(disabledVar.value, equals('disabled-value'));
+        expect(disabledVar.enabled, isFalse);
+      },
+    );
+
     test('should handle environment variable removal correctly', () async {
       List<EnvironmentVariableModel>? capturedValues;
 
@@ -527,6 +554,8 @@ void main() {
 
       // Assert - apiKey should not be in the result if properly removed
       expect(capturedValues, isNotNull);
+      expect(capturedValues!.any((v) => v.key == 'apiKey'), isFalse);
+      expect(capturedValues!.any((v) => v.key == 'disabledVar'), isTrue);
     });
 
     test('should convert non-string values to strings', () async {
@@ -646,6 +675,12 @@ void main() {
             value: 'old-jwt-token',
             enabled: true,
             type: EnvironmentVariableType.secret,
+          ),
+          EnvironmentVariableModel(
+            key: 'disabledSecret',
+            value: 'should-not-be-deleted',
+            enabled: false,
+            type: EnvironmentVariableType.variable,
           ),
         ],
       );
@@ -825,6 +860,33 @@ void main() {
       expect(baseUrlVar.value, equals('https://api.apidash.dev'));
       expect(baseUrlVar.enabled, isTrue);
     });
+
+    test(
+      'should preserve disabled environment variables after post-response script',
+      () async {
+        List<EnvironmentVariableModel>? capturedValues;
+
+        void mockUpdateEnv(
+          EnvironmentModel envModel,
+          List<EnvironmentVariableModel> values,
+        ) {
+          capturedValues = values;
+        }
+
+        await handlePostResponseScript(
+          baseRequestModel,
+          testEnvironmentModel,
+          mockUpdateEnv,
+        );
+
+        expect(capturedValues, isNotNull);
+        final disabledVar = capturedValues!.firstWhere(
+          (v) => v.key == 'disabledSecret',
+        );
+        expect(disabledVar.value, equals('should-not-be-deleted'));
+        expect(disabledVar.enabled, isFalse);
+      },
+    );
 
     test(
       'should handle environment variable updates with different data types',

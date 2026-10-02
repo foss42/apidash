@@ -13,7 +13,7 @@ void main() {
       );
       final result = generator.getCode(req);
       expect(result, isNotNull);
-      expect(result, contains('Unirest\n                .get(requestURL)'));
+      expect(result, contains('Unirest.get(requestURL)'));
       expect(
         result,
         contains('final String requestURL = "https://api.test.com";'),

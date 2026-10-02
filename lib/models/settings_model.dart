@@ -12,6 +12,7 @@ class SettingsModel {
     this.size,
     this.offset,
     this.defaultUriScheme = kDefaultUriScheme,
+    this.defaultWsScheme = kDefaultWsScheme,
     this.defaultCodeGenLang = CodegenLanguage.curl,
     this.saveResponses = true,
     this.promptBeforeClosing = true,
@@ -31,6 +32,7 @@ class SettingsModel {
   final Size? size;
   final Offset? offset;
   final SupportedUriSchemes defaultUriScheme;
+  final SupportedWsSchemes defaultWsScheme;
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
   final bool promptBeforeClosing;
@@ -50,6 +52,7 @@ class SettingsModel {
     Size? size,
     Offset? offset,
     SupportedUriSchemes? defaultUriScheme,
+    SupportedWsSchemes? defaultWsScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
@@ -70,6 +73,7 @@ class SettingsModel {
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
+      defaultWsScheme: defaultWsScheme ?? this.defaultWsScheme,
       defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
@@ -95,6 +99,7 @@ class SettingsModel {
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       defaultUriScheme: defaultUriScheme,
+      defaultWsScheme: defaultWsScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       offset: offset,
       saveResponses: saveResponses,
@@ -134,6 +139,15 @@ class SettingsModel {
         defaultUriScheme = SupportedUriSchemes.values.byName(
           defaultUriSchemeStr,
         );
+      } catch (e) {
+        // pass
+      }
+    }
+    final defaultWsSchemeStr = data["defaultWsScheme"] as String?;
+    SupportedWsSchemes? defaultWsScheme;
+    if (defaultWsSchemeStr != null) {
+      try {
+        defaultWsScheme = SupportedWsSchemes.values.byName(defaultWsSchemeStr);
       } catch (e) {
         // pass
       }
@@ -194,6 +208,7 @@ class SettingsModel {
       size: size,
       offset: offset,
       defaultUriScheme: defaultUriScheme,
+      defaultWsScheme: defaultWsScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
@@ -219,6 +234,7 @@ class SettingsModel {
       "dx": offset?.dx,
       "dy": offset?.dy,
       "defaultUriScheme": defaultUriScheme.name,
+      "defaultWsScheme": defaultWsScheme.name,
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
@@ -249,6 +265,7 @@ class SettingsModel {
         other.size == size &&
         other.offset == offset &&
         other.defaultUriScheme == defaultUriScheme &&
+        other.defaultWsScheme == defaultWsScheme &&
         other.defaultCodeGenLang == defaultCodeGenLang &&
         other.saveResponses == saveResponses &&
         other.promptBeforeClosing == promptBeforeClosing &&
@@ -272,6 +289,7 @@ class SettingsModel {
       size,
       offset,
       defaultUriScheme,
+      defaultWsScheme,
       defaultCodeGenLang,
       saveResponses,
       promptBeforeClosing,

@@ -61,8 +61,8 @@ class Program
 """;
 
   String kTemplateJsonData = """
-      var jsonBody = new {{jsonData}};
-      request.AddJsonBody(jsonBody);
+      var jsonBody = {{jsonData}};
+      request.AddStringBody(jsonBody, ContentType.Json);
 
 
 """;
@@ -113,18 +113,19 @@ class Program
         });
         result += methodType;
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            jj.Template templateParams = jj.Template(kTemplateParams);
-            String paramsResult = "";
-            for (var item in params.entries) {
-              paramsResult += templateParams
-                  .render({"param": item.key, "value": item.value});
+     if (requestModel.enabledParamsMap.isNotEmpty) {
+          jj.Template templateParams = jj.Template(kTemplateParams);
+          String paramsResult = "";
+          
+          requestModel.enabledParamsMap.forEach((key, values) {
+            for (var value in values) {
+              paramsResult += templateParams.render({"param": key, "value": value});
             }
-            result += "$paramsResult\n";
-          }
+                    });
+
+          result += "$paramsResult\n";
         }
+
 
         var headersList = requestModel.enabledHeaders;
         if (headersList != null ||
@@ -164,15 +165,8 @@ class Program
 
         if (requestModel.hasJsonData) {
           var templateJsonData = jj.Template(kTemplateJsonData);
-          Map<String, dynamic> bodyData = json.decode(requestModel.body!);
-          List<String> jsonArr = [];
-
-          bodyData.forEach((key, value) {
-            jsonArr += ["$key = \"$value\""];
-          });
-          String jsonDataResult = "{\n${jsonArr.join(",\n")}\n}";
-
-          result += templateJsonData.render({"jsonData": jsonDataResult});
+          result += templateJsonData
+              .render({"jsonData": jsonEncode(requestModel.body)});
         }
 
         if (requestModel.hasTextData) {

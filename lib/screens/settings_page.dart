@@ -88,6 +88,21 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text(kLabelDefaultWsScheme),
+                subtitle: Text(
+                  '$kDefaultUri/ws → ${settings.defaultWsScheme.name}://$kDefaultUri/ws',
+                ),
+                trailing: DefaultWsSchemePopupMenu(
+                  value: settings.defaultWsScheme,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultWsScheme: value);
+                  },
+                ),
+              ),
               !kIsWeb
                   ? ADListTile(
                       type: ListTileType.switchOnOff,

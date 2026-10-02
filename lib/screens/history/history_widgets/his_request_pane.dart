@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import '../../common_widgets/common_widgets.dart';
 import 'ai_history_page.dart';
 import 'ws_history_page.dart';
@@ -25,51 +26,43 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
     );
 
-    final headersMap =
+    final headers =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai) return <String, String>{};
-            if (apiType == APIType.websocket) {
-              final headers = value?.wsRequestModel?.headers ?? [];
-              final map = <String, String>{};
-              for (final header in headers) {
-                if (header.name.isNotEmpty) {
-                  map[header.name] = header.value;
-                }
-              }
-              return map;
-            }
-            return value?.httpRequestModel?.headersMap;
+            return switch (apiType) {
+              APIType.ai => <NameValueModel>[],
+              APIType.grpc => <NameValueModel>[],
+              APIType.websocket => value?.wsRequestModel?.headers,
+              _ => value?.httpRequestModel?.headers,
+            };
           }),
         ) ??
-        {};
-    final headerLength = headersMap.length;
+        [];
+    final headerLength = headers.length;
 
-    final paramsMap =
+    final params =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai) return <String, String>{};
-            if (apiType == APIType.websocket) {
-              final params = value?.wsRequestModel?.params ?? [];
-              final map = <String, String>{};
-              for (final param in params) {
-                if (param.name.isNotEmpty) {
-                  map[param.name] = param.value;
-                }
-              }
-              return map;
-            }
-            return value?.httpRequestModel?.paramsMap;
+            return switch (apiType) {
+              APIType.ai => <NameValueModel>[],
+              APIType.grpc => <NameValueModel>[],
+              APIType.websocket => value?.wsRequestModel?.params,
+              _ => value?.httpRequestModel?.params,
+            };
           }),
         ) ??
-        {};
-    final paramLength = paramsMap.length;
+        <NameValueModel>[];
+    final paramLength = params.length;
 
     final hasBody =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket)
+            if (apiType == APIType.ai ||
+                apiType == APIType.websocket ||
+                apiType == APIType.mqtt ||
+                apiType == APIType.grpc) {
               return false;
+            }
             return value?.httpRequestModel?.hasBody;
           }),
         ) ??
@@ -78,8 +71,12 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery =
         ref.watch(
           selectedHistoryRequestModelProvider.select((value) {
-            if (apiType == APIType.ai || apiType == APIType.websocket)
+            if (apiType == APIType.ai ||
+                apiType == APIType.websocket ||
+                apiType == APIType.mqtt ||
+                apiType == APIType.grpc) {
               return false;
+            }
             return value?.httpRequestModel?.hasQuery;
           }),
         ) ??
@@ -108,9 +105,63 @@ class HistoryRequestPane extends ConsumerWidget {
       selectedHistoryRequestModelProvider.select((value) => value?.authModel),
     );
 
+    // MQTT read-only view data. Mirrors the WebSocket case (which shows
+    // read-only RequestDataTables), but MQTT has no params/headers — instead we
+    // surface the broker/connection + settings summary, the subscribed topics,
+    // and the v5 user properties, all as read-only key/value tables.
+    final mqttModel = ref.watch(
+      selectedHistoryRequestModelProvider.select(
+        (value) => value?.mqttRequestModel,
+      ),
+    );
+
+    List<NameValueModel> mqttConnection = <NameValueModel>[];
+    List<NameValueModel> mqttTopics = <NameValueModel>[];
+    List<NameValueModel> mqttProperties = <NameValueModel>[];
+    if (mqttModel != null) {
+      mqttConnection = mqttModel.getConnectionData();
+      for (final topic in mqttModel.subscribedTopics) {
+        if (topic.name.isNotEmpty) {
+          mqttTopics.add(NameValueModel(name: topic.name, value: topic.value));
+        }
+      }
+      for (final property in mqttModel.userProperties) {
+        if (property.name.isNotEmpty) {
+          mqttProperties.add(
+            NameValueModel(name: property.name, value: property.value),
+          );
+        }
+      }
+    }
+
+    final grpcRequestModel = ref.watch(
+      selectedHistoryRequestModelProvider.select(
+        (value) => value?.grpcRequestModel,
+      ),
+    );
+
+    final grpcInfo = <NameValueModel>[
+      if ((grpcRequestModel?.url ?? '').isNotEmpty)
+        NameValueModel(name: 'Target', value: grpcRequestModel!.url),
+      if ((grpcRequestModel?.service ?? '').isNotEmpty)
+        NameValueModel(name: 'Service', value: grpcRequestModel!.service!),
+      if ((grpcRequestModel?.method ?? '').isNotEmpty)
+        NameValueModel(name: 'Method', value: grpcRequestModel!.method!),
+    ];
+
+    final grpcMetadata = grpcRequestModel?.metadata ?? <NameValueModel>[];
+    final grpcParameters = grpcRequestModel?.nvParameters ?? <NameValueModel>[];
+
+    final codeButtonTooltip = apiType == null
+        ? null
+        : apiType.hasNativeCodegen
+        ? kTooltipViewCode
+        : apiType.codegenViaDashbotMessage;
+
     return switch (apiType) {
       APIType.rest => RequestPane(
         key: const Key("history-request-pane-rest"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -133,15 +184,16 @@ class HistoryRequestPane extends ConsumerWidget {
           kLabelScripts,
         ],
         children: [
-          RequestDataTable(rows: paramsMap, keyName: kNameURLParam),
+          RequestDataTable(rows: params, keyName: kNameURLParam),
           AuthPage(authModel: authModel, readOnly: true),
-          RequestDataTable(rows: headersMap, keyName: kNameHeader),
+          RequestDataTable(rows: headers, keyName: kNameHeader),
           const HisRequestBody(),
           const HistoryScriptsTab(),
         ],
       ),
       APIType.graphql => RequestPane(
         key: const Key("history-request-pane-graphql"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -162,7 +214,7 @@ class HistoryRequestPane extends ConsumerWidget {
           kLabelScripts,
         ],
         children: [
-          RequestDataTable(rows: headersMap, keyName: kNameHeader),
+          RequestDataTable(rows: headers, keyName: kNameHeader),
           AuthPage(authModel: authModel, readOnly: true),
           const HisRequestBody(),
           const HistoryScriptsTab(),
@@ -170,6 +222,7 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.ai => RequestPane(
         key: const Key("history-request-pane-ai"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
@@ -191,21 +244,66 @@ class HistoryRequestPane extends ConsumerWidget {
       ),
       APIType.websocket => RequestPane(
         key: const Key("history-request-pane-websocket"),
+        codeButtonTooltip: codeButtonTooltip,
         selectedId: selectedId,
         codePaneVisible: codePaneVisible,
         onPressedCodeButton: () {
           ref.read(historyCodePaneVisibleStateProvider.notifier).state =
               !codePaneVisible;
         },
-        // WebSocket requests have no code generation, so the "View Code"
-        // button is always hidden (mirrors request_pane_ws.dart:44).
-        showViewCodeButton: false,
+        // No WebSocket codegen yet: the button stays visible so the tooltip
+        // and the code pane can say so, like AI and GraphQL above.
+        showViewCodeButton: !isCompact,
         showIndicators: [paramLength > 0, headerLength > 0, true],
         tabLabels: const [kLabelURLParams, kLabelHeaders, kLabelSettings],
         children: [
-          RequestDataTable(rows: paramsMap, keyName: kNameURLParam),
-          RequestDataTable(rows: headersMap, keyName: kNameHeader),
+          RequestDataTable(rows: params, keyName: kNameURLParam),
+          RequestDataTable(rows: headers, keyName: kNameHeader),
           const HisWebSocketConfigSection(),
+        ],
+      ),
+      APIType.mqtt => RequestPane(
+        key: const Key("history-request-pane-mqtt"),
+        codeButtonTooltip: codeButtonTooltip,
+        selectedId: selectedId,
+        codePaneVisible: codePaneVisible,
+        onPressedCodeButton: () {
+          ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+              !codePaneVisible;
+        },
+        showViewCodeButton: !isCompact,
+        showIndicators: [
+          mqttConnection.isNotEmpty,
+          mqttTopics.isNotEmpty,
+          mqttProperties.isNotEmpty,
+        ],
+        tabLabels: const ["Connection", "Topics", "Properties"],
+        children: [
+          RequestDataTable(rows: mqttConnection, keyName: "Setting"),
+          RequestDataTable(rows: mqttTopics, keyName: "Topic"),
+          RequestDataTable(rows: mqttProperties, keyName: "Property"),
+        ],
+      ),
+      APIType.grpc => RequestPane(
+        key: const Key("history-request-pane-grpc"),
+        codeButtonTooltip: codeButtonTooltip,
+        selectedId: selectedId,
+        codePaneVisible: codePaneVisible,
+        onPressedCodeButton: () {
+          ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+              !codePaneVisible;
+        },
+        showViewCodeButton: !isCompact,
+        showIndicators: [
+          grpcInfo.isNotEmpty,
+          grpcMetadata.isNotEmpty,
+          grpcParameters.isNotEmpty,
+        ],
+        tabLabels: const ['Info', 'Metadata', 'Message'],
+        children: [
+          RequestDataTable(rows: grpcInfo, keyName: 'Field'),
+          RequestDataTable(rows: grpcMetadata, keyName: 'Metadata'),
+          RequestDataTable(rows: grpcParameters, keyName: 'Parameter'),
         ],
       ),
       _ => kSizedBoxEmpty,

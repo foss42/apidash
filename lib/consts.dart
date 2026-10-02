@@ -499,6 +499,8 @@ const kLabelClose = "Close";
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
+const kTooltipViewCode =
+    "Show this request as code (cURL, Python, JavaScript and more)";
 const kLabelURLParams = "Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
@@ -568,6 +570,7 @@ const kLabelSwitchThemeMode = "Switch Theme Mode";
 const kLabelDashBotSetting = "DashBot";
 const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visiblity";
 const kLabelDefaultUriScheme = "Default URI Scheme";
+const kLabelDefaultWsScheme = "Default WebSocket Scheme";
 const kLabelDisableSSL = "Disable SSL verification";
 const kLabelDefaultCodeGen = "Default Code Generator";
 const kLabelDefaultLLM = "Default Large Language Model (LLM)";
@@ -705,6 +708,7 @@ const kMsgCodegenGraphQLNotAvailable =
     "Code generation for GraphQL is currently not available.";
 const kMsgCodegenWebSocketNotAvailable =
     "Code generation for WebSocket requests is currently not available.";
+const kLabelGenerateCodeDashbot = "Generate code with DashBot";
 const kMsgCodegenError =
     "An error was encountered while generating code. $kRaiseIssue";
 

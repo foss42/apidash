@@ -13,6 +13,7 @@ class AutoFixService {
     required this.ensureBaseUrl,
     required this.readCurrentRequest,
     this.updateWsUrl,
+    this.updateMqttField,
   });
 
   final RequestApplyService requestApply;
@@ -26,7 +27,19 @@ class AutoFixService {
   /// wsRequestModel inside the callback (never a captured/stale one).
   final void Function({required String id, required String url})? updateWsUrl;
 
+  /// Applies a single whitelisted field change to an MQTT request
+  /// (`brokerUrl`, `useTLS`, or `clientId`). Must read the LATEST
+  /// mqttRequestModel inside the callback (never a captured/stale one).
+  final void Function({
+    required String id,
+    required String field,
+    required String value,
+  })?
+  updateMqttField;
+
   bool get _isWsRequest => readCurrentRequest()?.apiType == APIType.websocket;
+
+  bool get _isMqttRequest => readCurrentRequest()?.apiType == APIType.mqtt;
 
   Future<String?> apply(ChatAction action) async {
     final requestId = readCurrentRequestId();
@@ -96,6 +109,21 @@ class AutoFixService {
 
   Future<void> _applyFieldUpdate(ChatAction action, String? requestId) async {
     if (requestId == null) return;
+    if (_isMqttRequest) {
+      // Only the debug whitelist fields are honored for MQTT.
+      final field = action.field;
+      if (field == 'brokerUrl' ||
+          field == 'useTLS' ||
+          field == 'clientId' ||
+          field == 'sessionExpiryInterval') {
+        updateMqttField?.call(
+          id: requestId,
+          field: field,
+          value: action.value.toString(),
+        );
+      }
+      return;
+    }
     switch (action.field) {
       case 'url':
         updateSelected(id: requestId, url: action.value as String);
@@ -201,6 +229,15 @@ class AutoFixService {
     if (requestId == null) return;
     if (_isWsRequest) {
       updateWsUrl?.call(id: requestId, url: action.value as String);
+      return;
+    }
+    if (_isMqttRequest) {
+      // MQTT's "url" is the broker address on mqttRequestModel.
+      updateMqttField?.call(
+        id: requestId,
+        field: 'brokerUrl',
+        value: action.value as String,
+      );
       return;
     }
     updateSelected(id: requestId, url: action.value as String);

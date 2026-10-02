@@ -59,7 +59,8 @@ response = conn.{{ method|lower }}(REQUEST_URL{% if doesMethodAcceptBody and con
 
   final String kTemplateRequestParams = """
   req.params = {
-{% for key, val in params %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }
+    {% for key, val in params %}"{{ key }}" => {% if val is list %}[{% for v in val %}"{{ v|string }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% else %}"{{ val|string }}"{% endif %},
+    {% endfor %}}
 
 """;
 
@@ -155,12 +156,9 @@ puts "Response Body: #{response.body}"
         result += templateRequestHeaders.render({"headers": headers});
       }
 
-      if (uri.hasQuery) {
-        var params = uri.queryParameters;
-        if (params.isNotEmpty) {
-          var templateRequestParams = jj.Template(kTemplateRequestParams);
-          result += templateRequestParams.render({"params": params});
-        }
+      if (requestModel.enabledParamsMap.isNotEmpty) {
+        var templateRequestParams = jj.Template(kTemplateRequestParams);
+        result += templateRequestParams.render({"params": requestModel.enabledParamsMap});
       }
 
       if (requestModel.hasBody && requestModel.method == HTTPVerb.delete) {

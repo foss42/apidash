@@ -120,7 +120,7 @@ void main() async {
     });
   });
 
-  group('ActiveCollectionNotifier Auth Tests', () {
+  group('CollectionStateNotifier Auth Tests', () {
     late ProviderContainer container;
     late CollectionStateNotifier notifier;
 
@@ -130,6 +130,44 @@ void main() async {
       notifier = container.read(collectionStateNotifierProvider.notifier);
     });
 
+  test(
+    'sendRequest keeps the raw response when an AI response is not JSON',
+    () async {
+      HttpOverrides.global = null;
+      final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      addTearDown(() => server.close(force: true));
+      server.listen((req) {
+        req.response
+          ..headers.set('content-type', 'text/html')
+          ..write('<html>Proxy error</html>')
+          ..close();
+      });
+
+      final container = createContainer();
+      final notifier = container.read(collectionStateNotifierProvider.notifier);
+      notifier.add();
+      final id = container.read(selectedIdStateProvider)!;
+      notifier.update(id: id, apiType: APIType.ai);
+      notifier.update(
+        id: id,
+        aiRequestModel: AIRequestModel(
+          modelApiProvider: ModelAPIProvider.ollama,
+          url: 'http://127.0.0.1:${server.port}/v1/chat/completions',
+          model: 'llama3',
+        ),
+      );
+
+      await notifier.sendRequest();
+      // let onDone run before the container is disposed
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final requestModel = notifier.getRequestModel(id)!;
+      expect(requestModel.isWorking, false);
+      expect(requestModel.responseStatus, 200);
+      expect(requestModel.httpResponseModel?.body, '<html>Proxy error</html>');
+    },
+  );    
+    
     test('should update request with basic authentication', () {
       final id = notifier.state!.entries.first.key;
       const basicAuth = AuthBasicAuthModel(

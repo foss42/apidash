@@ -429,6 +429,45 @@ void main() async {
       container.dispose();
     });
   });
+
+  group('default ws/wss scheme (#1747)', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+    late String id;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+      id = notifier.state!.entries.first.key;
+      notifier.update(id: id, apiType: APIType.websocket);
+    });
+
+    test('connects to a scheme-less URL using the default WebSocket scheme '
+        '(wss) and logs the resolved URL', () async {
+      // Strip the scheme so the app has to supply one itself.
+      final bareUrl = wsUrl.replaceFirst(RegExp(r'^wss?://'), '');
+      notifier.update(
+        id: id,
+        wsRequestModel: WebSocketRequestModel(url: bareUrl),
+      );
+
+      await driveSendRequestForWs(container, notifier, id);
+
+      final ws = notifier.getRequestModel(id)!.wsRequestModel!;
+      final connected = ws.messageHistory.where(
+        (m) => m.messageType == WebSocketMessageType.connected,
+      );
+      expect(connected, isNotEmpty, reason: 'should connect without a scheme');
+      expect(connected.first.payload, contains('://$bareUrl'));
+      // The raw url typed by the user is left untouched.
+      expect(ws.url, bareUrl);
+    });
+
+    tearDown(() {
+      ConnectionManager.instance.disconnect(id);
+      container.dispose();
+    });
+  });
 }
 
 /// Helper that drives [sendRequest] for the currently-selected websocket

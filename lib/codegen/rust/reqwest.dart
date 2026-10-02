@@ -7,26 +7,33 @@ class RustReqwestCodeGen {
   final String kTemplateStart =
       """fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "{{url}}";
-
+    let url = "{{url}}";\n
 """;
 
-  String kTemplateParams = """\n        .query(&{{params}})""";
+  String kTemplateParamsDef = """
+    let query_params = [
+    {%- for key, values in params %}
+        {%- for val in values %}
+        ("{{key}}", "{{val}}"),
+        {%- endfor %}
+    {%- endfor %}
+    ];
+""";
+
+  String kTemplateParamsChain = """\n        .query(&query_params)""";
 
   String kTemplateBody = """
 
     let payload = r#"{{body}}"#;
-
 """;
 
   String kTemplateJson = """
 
     let payload = serde_json::json!({{body}});
-
 """;
 
   String kTemplateHeaders =
-      """\n        {% for key, val in headers -%}.header("{{key}}", "{{val}}"){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
+       """\n        {% for key, val in headers -%}.header("{{key}}", "{{val}}"){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
 
   String kTemplateRequest = """
 
@@ -79,7 +86,7 @@ class RustReqwestCodeGen {
 
   String? getCode(
     HttpRequestModel requestModel,
-  ) {
+    ) {
     try {
       String result = "";
       bool hasBody = false;
@@ -90,14 +97,12 @@ class RustReqwestCodeGen {
       var rec = getValidRequestUri(
         url,
         requestModel.enabledParams,
-      );
+        );
       Uri? uri = rec.$1;
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
-          "url": stripUriParams(uri),
-          'isFormDataRequest': requestModel.hasFormData,
-          'isJson': requestModel.bodyContentType == ContentType.json
+          "url": url.split('?').first
         });
 
         var method = requestModel.method;
@@ -121,28 +126,26 @@ class RustReqwestCodeGen {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
-              "fields_list": requestModel.formDataMapList,
-            },
+            "fields_list": requestModel.formDataMapList,
+          },
           );
         }
+        var params = requestModel.enabledParamsMap;
+        if (params.isNotEmpty) {
+          var templateParamsDef = jj.Template(kTemplateParamsDef);
+          result += templateParamsDef.render({"params": params});
+        }
+
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
           "method": method.name.toLowerCase(),
         });
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var tupleStrings = params.entries
-                .map((entry) => '("${entry.key}", "${entry.value}")')
-                .toList();
-            var paramsString = "[${tupleStrings.join(', ')}]";
-            var templateParams = jj.Template(kTemplateParams);
-            result += templateParams.render({"params": paramsString});
-          }
+        if (params.isNotEmpty) {
+                  result += kTemplateParamsChain;
         }
 
-        var headersList = requestModel.enabledHeaders;
+         var headersList = requestModel.enabledHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (hasBody) {
