@@ -10,11 +10,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// Seeds [collectionStateNotifierProvider] without loading from disk.
 class MockActiveCollectionNotifier extends CollectionStateNotifier {
-  MockActiveCollectionNotifier(
-    Ref ref, [
-    Map<String, RequestModel>? initial,
-  ])  : _initial = Map<String, RequestModel>.from(initial ?? const {}),
-        super(ref, workspaceStorage) {
+  MockActiveCollectionNotifier(Ref ref, [Map<String, RequestModel>? initial])
+    : _initial = Map<String, RequestModel>.from(initial ?? const {}),
+      super(ref, workspaceStorage) {
     state = Map<String, RequestModel>.from(_initial);
   }
 
@@ -44,6 +42,7 @@ List<Override> mockActiveCollectionOverrides([
     ),
   ];
 }
+
 /// A testing utility which creates a [ProviderContainer] and automatically
 /// disposes it at the end of the test.
 ProviderContainer createContainer({
@@ -62,30 +61,67 @@ ProviderContainer createContainer({
   return container;
 }
 
+/*
+Future<void> testSetUpForHive() async {
+  // override path_provider methodCall to point
+  // path to temporary location for all unit tests
+  const MethodChannel channel = MethodChannel(
+    'plugins.flutter.io/path_provider',
+  );
+
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        return './test-hive-storage/';
+      });
+
+  await initHiveBoxes(false, null);
+  // await deleteHiveBoxes();
+  // await openHiveBoxes();
+}
+
+Future<void> testSetUpTempDirForHive() async {
+  const MethodChannel channel = MethodChannel(
+    'plugins.flutter.io/path_provider',
+  );
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getApplicationDocumentsDirectory') {
+          // Create a mock app doc directory for testing
+          Directory tempDir = await Directory.systemTemp.createTemp(
+            'mock_app_doc_dir',
+          );
+          return tempDir.path; // Return the path to the mock directory
+        }
+        return null;
+      });
+  await initHiveBoxes(false, null);
+}
+*/
+
 Future<void> _mockSecureStorage() async {
   const channel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
   final store = <String, String>{};
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-    switch (methodCall.method) {
-      case 'read':
-        return store[methodCall.arguments['key'] as String];
-      case 'write':
-        store[methodCall.arguments['key'] as String] =
-            methodCall.arguments['value'] as String;
-        return null;
-      case 'delete':
-        store.remove(methodCall.arguments['key'] as String);
-        return null;
-      case 'deleteAll':
-        store.clear();
-        return null;
-      case 'readAll':
-        return Map<String, String>.from(store);
-      default:
-        return null;
-    }
-  });
+        switch (methodCall.method) {
+          case 'read':
+            return store[methodCall.arguments['key'] as String];
+          case 'write':
+            store[methodCall.arguments['key'] as String] =
+                methodCall.arguments['value'] as String;
+            return null;
+          case 'delete':
+            store.remove(methodCall.arguments['key'] as String);
+            return null;
+          case 'deleteAll':
+            store.clear();
+            return null;
+          case 'readAll':
+            return Map<String, String>.from(store);
+          default:
+            return null;
+        }
+      });
 }
 
 /// Initializes an isolated filesystem workspace for unit/widget tests.
@@ -94,8 +130,9 @@ Future<void> _mockSecureStorage() async {
 /// returning a desktop workspace root.
 Future<void> testSetUpWorkspaceStorage() async {
   await _mockSecureStorage();
-  final tempDir =
-      await Directory.systemTemp.createTemp('apidash_test_workspace_');
+  final tempDir = await Directory.systemTemp.createTemp(
+    'apidash_test_workspace_',
+  );
   addTearDown(() async {
     if (await tempDir.exists()) {
       await tempDir.delete(recursive: true);
@@ -126,7 +163,9 @@ Future<void> ensureCollectionReady(
     if (state != null) {
       if (state.isEmpty) {
         final ids = container.read(requestSequenceProvider);
-        final notifier = container.read(collectionStateNotifierProvider.notifier);
+        final notifier = container.read(
+          collectionStateNotifierProvider.notifier,
+        );
         for (final id in ids) {
           notifier.loadRequest(id);
         }
