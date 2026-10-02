@@ -53,6 +53,13 @@ class AnthropicModel extends ModelProvider {
 
   @override
   String? streamOutputFormatter(Map x) {
-    return x['text'];
+    // Anthropic SSE data payloads carry their own event type. Only
+    // content_block_delta events hold generated text, nested under
+    // delta.text; all other events (message_start, ping, etc.) yield null
+    // and are skipped downstream. See #1592.
+    if (x['type'] == 'content_block_delta') {
+      return x['delta']?['text'];
+    }
+    return null;
   }
 }

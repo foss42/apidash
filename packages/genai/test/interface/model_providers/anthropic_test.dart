@@ -39,10 +39,36 @@ void main() {
       expect(body['messages'][0]['content'], 'Generate');
     });
 
-    test('streamOutputFormatter', () {
+    test('streamOutputFormatter extracts text from content_block_delta', () {
       expect(
-        AnthropicModel.instance.streamOutputFormatter({'text': 'hello'}),
+        AnthropicModel.instance.streamOutputFormatter({
+          'type': 'content_block_delta',
+          'index': 0,
+          'delta': {'type': 'text_delta', 'text': 'hello'},
+        }),
         'hello',
+      );
+    });
+
+    test('streamOutputFormatter ignores non-text events', () {
+      for (final event in const [
+        {'type': 'message_start'},
+        {'type': 'ping'},
+        {'type': 'content_block_start'},
+        {'type': 'content_block_stop'},
+        {'type': 'message_stop'},
+      ]) {
+        expect(AnthropicModel.instance.streamOutputFormatter(event), isNull);
+      }
+    });
+
+    test('streamOutputFormatter handles content_block_delta without text', () {
+      expect(
+        AnthropicModel.instance.streamOutputFormatter({
+          'type': 'content_block_delta',
+          'delta': {'type': 'input_json_delta', 'partial_json': '{}'},
+        }),
+        isNull,
       );
     });
 
