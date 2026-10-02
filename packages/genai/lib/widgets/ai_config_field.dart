@@ -22,8 +22,11 @@ class AIConfigField extends StatelessWidget {
         if (readonly) return;
         if (numeric) {
           if (x.isEmpty) x = '0';
-          if (num.tryParse(x) == null) return;
-          configuration.value.value = num.parse(x);
+          final parsed = num.tryParse(x);
+          // Reject non-finite values (e.g. "1e309" -> Infinity, "NaN"):
+          // they later crash JSON encoding of the request body. See #1264.
+          if (parsed == null || !parsed.isFinite) return;
+          configuration.value.value = parsed;
         } else {
           configuration.value.value = x;
         }

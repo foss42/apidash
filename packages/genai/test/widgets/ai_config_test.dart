@@ -132,6 +132,18 @@ void main() {
       await tester.enterText(find.byType(TextFormField), 'abc');
       await tester.pumpAndSettle();
       expect(updated, isFalse);
+
+      // Non-finite values must be rejected (would crash JSON encoding). See #1264.
+      await tester.enterText(find.byType(TextFormField), '7');
+      await tester.pumpAndSettle();
+      expect(config.value.value, 7);
+      for (final bad in ['1e309', '-1e309', 'Infinity', 'NaN']) {
+        updated = false;
+        await tester.enterText(find.byType(TextFormField), bad);
+        await tester.pumpAndSettle();
+        expect(updated, isFalse, reason: 'should reject "$bad"');
+        expect(config.value.value, 7, reason: 'value unchanged after "$bad"');
+      }
     });
 
     testWidgets('readonly ignores change', (tester) async {
