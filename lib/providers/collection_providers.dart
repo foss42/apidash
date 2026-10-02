@@ -1,61 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:apidash/models/grpc_request_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/services/connection_manager.dart';
-import 'package:apidash/services/grpc_reflection_service.dart';
-import 'package:apidash/utils/grpc_utils.dart';
 import 'package:apidash/terminal/terminal.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
-
-/// Builds the metadata map for a gRPC call by merging the user's Metadata-table
-/// entries with headers derived from the request's [AuthModel].
-///
-/// Precedence: user metadata entries are applied first, then auth-derived
-/// headers are merged on top — so an auth entry OVERRIDES a manual metadata
-/// entry sharing the same (case-insensitive) key. This makes the first-class
-/// Auth tab the source of truth and stops a stale hand-typed `authorization`
-/// row from silently defeating it. Entries with different keys always coexist.
-///
-/// Keys are lower-cased (HTTP/2 / gRPC header semantics) so a collision resolves
-/// deterministically here, before the grpc package's own metadata sanitizer
-/// (which also lower-cases) runs.
-///
-/// Token formatting is delegated to [handleAuth] — the exact helper the HTTP
-/// path uses — so bearer/basic/api-key/jwt/etc. are formatted identically. Only
-/// header-targeted auth maps to gRPC; query-param auth (api-key/jwt set to
-/// `query`) has no gRPC equivalent and is ignored.
-Future<Map<String, String>> buildGrpcMetadata(
-  GrpcRequestModel grpcModel,
-) async {
-  final merged = <String, String>{};
-
-  grpcModel.metadataMap.forEach((name, value) {
-    final key = name.trim().toLowerCase();
-    if (key.isNotEmpty) merged[key] = value;
-  });
-
-  final authModel = grpcModel.authModel;
-  if (authModel != null && authModel.type != APIAuthType.none) {
-    final authed = await handleAuth(
-      HttpRequestModel(url: grpcModel.url, headers: const []),
-      authModel,
-    );
-    for (final header in (authed.headers ?? const <NameValueModel>[])) {
-      final key = header.name.trim().toLowerCase();
-      if (key.isNotEmpty) merged[key] = header.value;
-    }
-  }
-
-  return merged;
-}
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -98,6 +52,30 @@ class CollectionStateNotifier
     });
   }
 
+  final Ref ref;
+  final WorkspaceStorage workspaceStorage;
+  final baseHttpResponseModel = const HttpResponseModel();
+  final Map<String, Timer> _appHeartbeatTimers = {};
+
+  @override
+  void dispose() {
+    for (final timer in _appHeartbeatTimers.values) {
+      timer.cancel();
+    }
+    _appHeartbeatTimers.clear();
+    super.dispose();
+  }
+
+  bool hasId(String id) => state?.keys.contains(id) ?? false;
+
+  RequestModel? getRequestModel(String id) {
+    return state?[id];
+  }
+
+  void updateStateRequestModel(String id, RequestModel requestModel) {
+    state = {...state ?? {}, id: requestModel};
+  }
+
   List<String> _catalogRequestIds(String collectionId) {
     return ref.read(collectionCatalogProvider)?[collectionId]?.requestIds ??
         const [];
@@ -118,7 +96,7 @@ class CollectionStateNotifier
     final useMemory = collectionId == _activeCollectionId;
     return [
       for (final id in ids)
-        useMemory && state?[id] != null
+        useMemory && getRequestModel(id) != null
             ? RequestMetaModel.fromRequestModel(state![id]!)
             : byId[id]!,
     ];
@@ -162,16 +140,16 @@ class CollectionStateNotifier
     if (apiKey == null || apiKey.isEmpty) {
       return;
     }
-    final current = state?[id];
+    final current = getRequestModel(id);
     if (current?.aiRequestModel == null) {
       return;
     }
-    state = {
-      ...state!,
-      id: current!.copyWith(
+    updateStateRequestModel(
+      id,
+      current!.copyWith(
         aiRequestModel: current.aiRequestModel?.copyWith(apiKey: apiKey),
       ),
-    };
+    );
   }
 
   Future<Map<String, dynamic>> _prepareRequestJsonForDisk(
@@ -198,7 +176,7 @@ class CollectionStateNotifier
   }
 
   void loadRequest(String id) {
-    if (state?[id] != null) {
+    if (getRequestModel(id) != null) {
       return;
     }
     final active = _activeCollectionId;
@@ -209,7 +187,7 @@ class CollectionStateNotifier
     if (model == null) {
       return;
     }
-    state = {...state ?? {}, id: model};
+    updateStateRequestModel(id, model);
     if (model.aiRequestModel != null) {
       unawaited(_hydrateAiApiKey(active, id));
     }
@@ -309,35 +287,14 @@ class CollectionStateNotifier
     activateCollection(collectionId);
   }
 
-  final Ref ref;
-  final WorkspaceStorage workspaceStorage;
-  final baseHttpResponseModel = const HttpResponseModel();
-  final Map<String, Timer> _appHeartbeatTimers = {};
-
-  @override
-  void dispose() {
-    for (final timer in _appHeartbeatTimers.values) {
-      timer.cancel();
-    }
-    _appHeartbeatTimers.clear();
-    super.dispose();
-  }
-
-  bool hasId(String id) => state?.keys.contains(id) ?? false;
-
-  RequestModel? getRequestModel(String id) {
-    return state?[id];
-  }
-
   void add() {
     final id = makeStorageId('');
     final newRequestModel = RequestModel(
       id: id,
       httpRequestModel: const HttpRequestModel(),
     );
-    var map = {...state!};
-    map[id] = newRequestModel;
-    state = map;
+    updateStateRequestModel(id, newRequestModel);
+
     ref
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
@@ -352,9 +309,7 @@ class CollectionStateNotifier
       name: name ?? "",
       httpRequestModel: httpRequestModel,
     );
-    var map = {...state!};
-    map[id] = newRequestModel;
-    state = map;
+    updateStateRequestModel(id, newRequestModel);
     ref
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
@@ -410,7 +365,7 @@ class CollectionStateNotifier
 
   void clearResponse({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
-    if (rId == null || state?[rId] == null) return;
+    if (rId == null || getRequestModel(rId) == null) return;
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       responseStatus: null,
@@ -419,14 +374,12 @@ class CollectionStateNotifier
       isWorking: false,
       sendingTime: null,
     );
-    var map = {...state!};
-    map[rId] = newModel;
-    state = map;
+    updateStateRequestModel(rId, newModel);
   }
 
   void clearGrpcHistory({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
-    if (rId == null || state?[rId] == null) return;
+    if (rId == null || getRequestModel(rId) == null) return;
     var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       httpResponseModel: null,
@@ -434,9 +387,7 @@ class CollectionStateNotifier
         messageHistory: [],
       ),
     );
-    var map = {...state!};
-    map[rId] = newModel;
-    state = map;
+    updateStateRequestModel(rId, newModel);
   }
 
   void duplicate({String? id}) {
@@ -461,9 +412,7 @@ class CollectionStateNotifier
     );
 
     itemIds.insert(idx + 1, newId);
-    var map = {...state!};
-    map[newId] = newModel;
-    state = map;
+    updateStateRequestModel(newId, newModel);
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
@@ -494,9 +443,7 @@ class CollectionStateNotifier
     );
 
     itemIds.insert(0, newId);
-    var map = {...state!};
-    map[newId] = newModel;
-    state = map;
+    updateStateRequestModel(newId, newModel);
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
@@ -675,9 +622,7 @@ class CollectionStateNotifier
     if (newId != rId) {
       _rekeyRequest(rId, newId, newModel.copyWith(id: newId));
     } else {
-      var map = {...state!};
-      map[rId] = newModel;
-      state = map;
+      updateStateRequestModel(rId, newModel);
     }
     _syncActiveCollectionSummaries();
 
@@ -760,7 +705,7 @@ class CollectionStateNotifier
   }
 
   void subscribeMqttTopic(String requestId, String topic, int qos) {
-    final currentRequest = state?[requestId];
+    final currentRequest = getRequestModel(requestId);
     if (currentRequest != null && currentRequest.apiType == APIType.mqtt) {
       final mqttModel = currentRequest.mqttRequestModel;
       if (mqttModel == null) return;
@@ -769,7 +714,7 @@ class CollectionStateNotifier
   }
 
   void unsubscribeMqttTopic(String requestId, String topic) {
-    final currentRequest = state?[requestId];
+    final currentRequest = getRequestModel(requestId);
     if (currentRequest != null && currentRequest.apiType == APIType.mqtt) {
       final mqttModel = currentRequest.mqttRequestModel;
       if (mqttModel == null) return;
@@ -798,7 +743,7 @@ class CollectionStateNotifier
     String message, {
     bool isAutomatic = false,
   }) {
-    final currentRequest = state?[requestId];
+    final currentRequest = getRequestModel(requestId);
     if (currentRequest == null || currentRequest.apiType != APIType.websocket) {
       return;
     }
@@ -851,7 +796,7 @@ class CollectionStateNotifier
 
   /// Send a text message over an active MQTT connection.
   void sendMqttMessage(String requestId, String message, String topic) {
-    final currentRequest = state?[requestId];
+    final currentRequest = getRequestModel(requestId);
     if (currentRequest == null || currentRequest.apiType != APIType.mqtt) {
       return;
     }
@@ -896,7 +841,7 @@ class CollectionStateNotifier
   /// appends a "sent" [WebSocketMessage] to the gRPC message history — mirrors
   /// [sendWebSocketMessage]. No-op if there is no open request stream.
   void sendGrpcMessage(String requestId) {
-    final currentRequest = state?[requestId];
+    final currentRequest = getRequestModel(requestId);
     if (currentRequest == null || currentRequest.apiType != APIType.grpc) {
       return;
     }
@@ -983,16 +928,16 @@ class CollectionStateNotifier
       }
     }
 
-    state = {
-      ...state!,
-      requestId: requestModel.copyWith(
+    updateStateRequestModel(
+      requestId,
+      requestModel.copyWith(
         isWorking: true,
         sendingTime: DateTime.now(),
         wsRequestModel: wsModel.copyWith(
           messageHistory: wsModel.messageHistory,
         ),
       ),
-    };
+    );
 
     Map<String, String>? headers = {};
     if (wsModel.headers != null && wsModel.isHeaderEnabledList != null) {
@@ -1028,7 +973,7 @@ class CollectionStateNotifier
       // handshake; the `state` reads/writes below would throw otherwise.
       if (!mounted) return;
 
-      final latestRequest = state?[requestId];
+      final latestRequest = getRequestModel(requestId);
       final currentWs = latestRequest?.wsRequestModel ?? wsModel;
 
       final connectedMessage = WebSocketMessage(
@@ -1038,9 +983,9 @@ class CollectionStateNotifier
         messageType: WebSocketMessageType.connected,
       );
 
-      state = {
-        ...state!,
-        requestId: (latestRequest ?? requestModel).copyWith(
+      updateStateRequestModel(
+        requestId,
+        (latestRequest ?? requestModel).copyWith(
           isWorking: false,
           isStreaming: true,
           httpResponseModel: null,
@@ -1048,7 +993,7 @@ class CollectionStateNotifier
             messageHistory: [...currentWs.messageHistory, connectedMessage],
           ),
         ),
-      };
+      );
 
       _startMessageHeartbeat(requestId, currentWs);
 
@@ -1057,7 +1002,7 @@ class CollectionStateNotifier
           // Guard: stream events can arrive after the notifier is disposed
           // (free-floating subscription); touching `state` then throws.
           if (!mounted) return;
-          final currentRequest = state?[requestId];
+          final currentRequest = getRequestModel(requestId);
           if (currentRequest != null) {
             final currentWs = currentRequest.wsRequestModel;
             if (currentWs != null) {
@@ -1081,7 +1026,7 @@ class CollectionStateNotifier
           // tab is torn down); touching `state` then throws "used after dispose".
           if (!mounted) return;
           _stopMessageHeartbeat(requestId);
-          final currentRequest = state?[requestId];
+          final currentRequest = getRequestModel(requestId);
           final ws = currentRequest?.wsRequestModel;
           if (ws != null) {
             final errMsg = WebSocketMessage(
@@ -1108,7 +1053,7 @@ class CollectionStateNotifier
           // Guard: onDone fires asynchronously after the channel closes and may
           // run after the notifier is disposed; touching `state` then throws.
           if (!mounted) return;
-          final currentRequest = state?[requestId];
+          final currentRequest = getRequestModel(requestId);
           if (currentRequest == null) return;
           final ws = currentRequest.wsRequestModel;
           if (ws == null) return;
@@ -1126,7 +1071,7 @@ class CollectionStateNotifier
             final updatedWs = ws.copyWith(
               messageHistory: [...ws.messageHistory, reconnMsg],
             );
-            final latestReq = state?[requestId];
+            final latestReq = getRequestModel(requestId);
             if (latestReq != null) {
               _connectWebSocket(
                 requestId,
@@ -1163,7 +1108,7 @@ class CollectionStateNotifier
       // disposed; touching `state` below would throw "used after dispose".
       if (!mounted) return;
       _stopMessageHeartbeat(requestId);
-      final currentRequest = state?[requestId];
+      final currentRequest = getRequestModel(requestId);
       final ws = currentRequest?.wsRequestModel ?? wsModel;
       final errMsg = WebSocketMessage(
         payload: "Connection error: $e",
@@ -1177,16 +1122,16 @@ class CollectionStateNotifier
         outgoing: false,
         messageType: WebSocketMessageType.disconnected,
       );
-      state = {
-        ...state!,
-        requestId: (currentRequest ?? requestModel).copyWith(
+      updateStateRequestModel(
+        requestId,
+        (currentRequest ?? requestModel).copyWith(
           isWorking: false,
           isStreaming: false,
           wsRequestModel: ws.copyWith(
             messageHistory: [...ws.messageHistory, errMsg, discMsg],
           ),
         ),
-      };
+      );
       if (historyId != null) {
         _updateWebSocketHistoryRecord(
           historyId,
@@ -1319,16 +1264,16 @@ class CollectionStateNotifier
             clientId: 'apidash_${DateTime.now().millisecondsSinceEpoch}',
           );
         }
-        state = {
-          ...state!,
-          requestId: requestModel.copyWith(
+        updateStateRequestModel(
+          requestId,
+          requestModel.copyWith(
             isWorking: true,
             isStreaming: false,
             sendingTime: DateTime.now(),
             message: null,
             mqttRequestModel: mqttModel,
           ),
-        };
+        );
 
         // Save history for MQTT connection attempt first (mirrors WebSocket).
         String newHistoryId = getNewUuid();
@@ -1539,7 +1484,12 @@ class CollectionStateNotifier
         // return before any invoke path. Only a selected method drives an
         // actual call (and its history record) below.
         if (grpcModel.method == null) {
-          await reflectGrpcServices(requestId);
+          await reflectGrpcServices(
+            requestId,
+            mounted: mounted,
+            getRequestModelFromState: getRequestModel,
+            update: update,
+          );
           return;
         }
 
@@ -1566,12 +1516,16 @@ class CollectionStateNotifier
         ref
             .read(historyMetaStateNotifier.notifier)
             .addHistoryRequest(historyModel);
-
-        await _connectGrpc(
+        await connectGrpc(
           requestId,
           requestModel,
           grpcModel,
           historyId: newHistoryId,
+          mounted: mounted,
+          getRequestModelFromState: getRequestModel,
+          updateStateRequestModel: updateStateRequestModel,
+          update: update,
+          updateGrpcHistoryRecord: _updateGrpcHistoryRecord,
         );
       } else {
         update(id: requestId, message: "Invalid gRPC model");
@@ -1640,13 +1594,10 @@ class CollectionStateNotifier
       isStreaming: true,
     );
 
-    state = {
-      ...state!,
-      requestId: requestModel.copyWith(
-        isWorking: true,
-        sendingTime: DateTime.now(),
-      ),
-    };
+    updateStateRequestModel(
+      requestId,
+      requestModel.copyWith(isWorking: true, sendingTime: DateTime.now()),
+    );
     bool streamingMode = true;
 
     final stream = await streamHttpRequest(
@@ -1687,7 +1638,7 @@ class CollectionStateNotifier
             httpResponseModel: httpResponseModel,
             isStreaming: true,
           );
-          state = {...state!, requestId: newRequestModel};
+          updateStateRequestModel(requestId, newRequestModel);
           if (response != null && response.body.isNotEmpty) {
             terminal.addNetworkChunk(
               logId,
@@ -1716,10 +1667,10 @@ class CollectionStateNotifier
       },
       onDone: () {
         sub?.cancel();
-        state = {
-          ...state!,
-          requestId: newRequestModel.copyWith(isStreaming: false),
-        };
+        updateStateRequestModel(
+          requestId,
+          newRequestModel.copyWith(isStreaming: false),
+        );
       },
       onError: (e) {
         if (!completer.isCompleted) {
@@ -1832,13 +1783,13 @@ class CollectionStateNotifier
       }
     }
 
-    state = {...state!, requestId: newRequestModel};
+    updateStateRequestModel(requestId, newRequestModel);
   }
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
     if (id == null) return;
-    final requestModel = state?[id];
+    final requestModel = getRequestModel(id);
     if (requestModel?.apiType == APIType.websocket) {
       final ws = requestModel?.wsRequestModel;
       if (ws != null) {
@@ -1926,7 +1877,7 @@ class CollectionStateNotifier
         .read(collectionCatalogProvider.notifier)
         .syncRequests(targetId, summaries);
     for (final requestId in ids) {
-      final inMemory = state?[requestId];
+      final inMemory = getRequestModel(requestId);
       Map<String, dynamic>? json;
       if (inMemory != null) {
         json = saveResponse
@@ -1972,7 +1923,8 @@ class CollectionStateNotifier
     }
     final models = <RequestModel>[];
     for (final id in ref.read(requestSequenceProvider)) {
-      final model = state?[id] ?? _requestModelFromDisk(collectionId, id);
+      final model =
+          getRequestModel(id) ?? _requestModelFromDisk(collectionId, id);
       if (model != null) {
         models.add(model);
       }
@@ -1987,467 +1939,5 @@ class CollectionStateNotifier
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
     return substituteHttpRequestModel(httpRequestModel, envMap, activeEnvId);
-  }
-
-  /// Reflection-only service/method discovery for the URL-bar "Reflect" button
-  /// (shown whenever no method is selected). Connects, lists services via
-  /// server reflection, loads the first service's methods, and stamps
-  /// `useReflection: true` as the active discovery source. It never invokes an
-  /// RPC. On an empty result the real reflection failure ([lastError]) is
-  /// surfaced through the same messageHistory error channel the streaming
-  /// onError path uses, instead of a silent empty dropdown.
-  Future<void> reflectGrpcServices(String requestId) async {
-    final requestModel = state?[requestId];
-    final grpcModel = requestModel?.grpcRequestModel;
-    if (requestModel == null || grpcModel == null) return;
-
-    await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
-    // Guard: the notifier may have been disposed while awaiting the handshake.
-    if (!mounted) return;
-
-    // Reflection may require auth on secured servers, so thread the same
-    // metadata the actual RPC uses.
-    final metadata = await buildGrpcMetadata(grpcModel);
-    if (!mounted) return;
-
-    final services = await GrpcReflectionService.listServices(
-      requestId,
-      grpcModel,
-      metadata: metadata,
-    );
-    if (!mounted) return;
-
-    if (services.isNotEmpty) {
-      final methodsResult = await GrpcReflectionService.getMethodsForService(
-        requestId,
-        grpcModel,
-        services.first,
-        metadata: metadata,
-      );
-      if (!mounted) return;
-      final methods = methodsResult[services.first] ?? <String>[];
-
-      final latest = state?[requestId];
-      final latestGrpc = latest?.grpcRequestModel;
-      if (latest != null && latestGrpc != null) {
-        update(
-          id: requestId,
-          grpcRequestModel: latestGrpc.copyWith(
-            availableServices: services,
-            service: services.first,
-            availableMethods: methods,
-            method: null,
-            parameters: const <GrpcParameterModel>[],
-            useReflection: true,
-          ),
-        );
-      }
-    } else {
-      // Empty result with no feedback is the exact bug: surface WHY (wrong
-      // reflection version, TLS mismatch, refused, reflection disabled).
-      final err = GrpcReflectionService.lastError;
-      final errorMsg = WebSocketMessage(
-        payload: err != null
-            ? "Reflection failed: $err"
-            : "No services found. Enable reflection on the server or select a .proto file.",
-        timestamp: DateTime.now(),
-        outgoing: false,
-        messageType: WebSocketMessageType.error,
-      );
-      final latest = state?[requestId];
-      final latestGrpc = latest?.grpcRequestModel;
-      if (latest != null && latestGrpc != null) {
-        update(
-          id: requestId,
-          grpcRequestModel: latestGrpc.copyWith(
-            messageHistory: [...latestGrpc.messageHistory, errorMsg],
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _connectGrpc(
-    String requestId,
-    RequestModel requestModel,
-    GrpcRequestModel grpcModel, {
-    String? historyId,
-  }) async {
-    try {
-      // Mark in-flight AND stamp sendingTime so the response pane's sending
-      // animation shows a live elapsed timer (mirrors WS/HTTP). Without
-      // sendingTime the timer is stuck at 0ms.
-      final connectingReq = state?[requestId];
-      if (connectingReq != null) {
-        state = {
-          ...state!,
-          requestId: connectingReq.copyWith(
-            isWorking: true,
-            sendingTime: DateTime.now(),
-          ),
-        };
-      }
-      await ConnectionManager.instance.connectGrpc(requestId, grpcModel);
-
-      // Guard: the notifier may have been disposed while awaiting the gRPC
-      // channel handshake; the `state` reads/writes below would throw otherwise.
-      if (!mounted) return;
-
-      String host = grpcModel.url.trim();
-      int port = 50051;
-      if (host.contains(':')) {
-        final parts = host.split(':');
-        host = parts[0].trim();
-        final p = int.tryParse(parts[1].trim());
-        if (p != null) port = p;
-      }
-
-      final msg = WebSocketMessage(
-        payload: "Connected to gRPC host: $host:$port",
-        timestamp: DateTime.now(),
-        outgoing: false,
-        messageType: WebSocketMessageType.connected,
-      );
-
-      final currentRequest = state?[requestId];
-      if (currentRequest != null && currentRequest.grpcRequestModel != null) {
-        final currentGrpcModel = currentRequest.grpcRequestModel!;
-        final isActualRequest =
-            grpcModel.service != null && grpcModel.method != null;
-        state = {
-          ...state!,
-          requestId: currentRequest.copyWith(
-            isWorking: isActualRequest,
-            isStreaming: isActualRequest,
-            responseStatus: isActualRequest ? 0 : currentRequest.responseStatus,
-            message: isActualRequest ? "" : currentRequest.message,
-            httpResponseModel: isActualRequest
-                ? null
-                : currentRequest.httpResponseModel,
-            grpcRequestModel: currentGrpcModel.copyWith(
-              messageHistory: isActualRequest
-                  ? [msg]
-                  : currentGrpcModel.messageHistory,
-            ),
-          ),
-        };
-
-        debugPrint("gRPC: Host established. Checking for method invocation...");
-
-        // Build call metadata once (auth headers + custom metadata). Reflection
-        // needs it too: a server that requires auth rejects unauthenticated
-        // ServerReflectionInfo calls, so it is threaded through the reflection
-        // helpers as well as the actual RPC below.
-        final grpcMetadata = await buildGrpcMetadata(grpcModel);
-        // Guard: disposed while building auth metadata; state writes below throw.
-        if (!mounted) return;
-
-        if (grpcModel.useReflection ||
-            (grpcModel.service == null && grpcModel.method == null)) {
-          debugPrint("gRPC: Fetching services via reflection...");
-          final services = await GrpcReflectionService.listServices(
-            requestId,
-            grpcModel,
-            metadata: grpcMetadata,
-          );
-          // Guard: disposed while awaiting reflection; state access below throws.
-          if (!mounted) return;
-          if (services.isNotEmpty) {
-            final latestRequest = state?[requestId];
-            if (latestRequest != null &&
-                latestRequest.grpcRequestModel != null) {
-              state = {
-                ...state!,
-                requestId: latestRequest.copyWith(
-                  grpcRequestModel: latestRequest.grpcRequestModel!.copyWith(
-                    useReflection: true,
-                    availableServices: services,
-                  ),
-                ),
-              };
-            }
-          } else if (GrpcReflectionService.lastError != null) {
-            // Reflection produced no services. Surface WHY (wrong reflection
-            // version, TLS mismatch, connection refused, reflection disabled)
-            // through the same message-history error channel the streaming
-            // onError path uses, instead of a silent empty dropdown.
-            final reflectionErrorMsg = WebSocketMessage(
-              payload: "Reflection failed: ${GrpcReflectionService.lastError}",
-              timestamp: DateTime.now(),
-              outgoing: false,
-              messageType: WebSocketMessageType.error,
-            );
-            final currentReq = state?[requestId];
-            if (currentReq != null && currentReq.grpcRequestModel != null) {
-              update(
-                id: requestId,
-                grpcRequestModel: currentReq.grpcRequestModel!.copyWith(
-                  messageHistory: [
-                    ...currentReq.grpcRequestModel!.messageHistory,
-                    reflectionErrorMsg,
-                  ],
-                ),
-              );
-            }
-          }
-        }
-
-        if (grpcModel.service != null && grpcModel.method != null) {
-          debugPrint(
-            "gRPC: Invoking method ${grpcModel.service}/${grpcModel.method}",
-          );
-
-          GrpcMethodSchema? methodSchema;
-          if (grpcModel.useReflection) {
-            methodSchema = await GrpcReflectionService.getMethodSchema(
-              requestId,
-              grpcModel,
-              grpcModel.service!,
-              grpcModel.method!,
-              metadata: grpcMetadata,
-            );
-          }
-          // Guard: disposed while awaiting the method schema.
-          if (!mounted) return;
-
-          final startTime = DateTime.now();
-          final requestData = grpcModel.parameters.isNotEmpty
-              ? GrpcUtils.paramsToBytes(grpcModel.parameters)
-              : utf8.encode(grpcModel.requestBody);
-
-          final call = ConnectionManager.instance.callGrpcMethod(
-            requestId,
-            grpcModel.service!,
-            grpcModel.method!,
-            requestData,
-            metadata: grpcMetadata,
-            streamingType: grpcModel.streamingType,
-          );
-
-          // For client/bidi streaming the request stream stays open; record
-          // the first message that was just sent so the user has feedback.
-          final keepsRequestStreamOpen =
-              grpcModel.streamingType == GrpcStreamingType.client ||
-              grpcModel.streamingType == GrpcStreamingType.bidi;
-          if (keepsRequestStreamOpen) {
-            final sentPreview = grpcModel.parameters.isNotEmpty
-                ? GrpcUtils.paramsToJson(grpcModel.parameters)
-                : grpcModel.requestBody;
-            final sentMsg = WebSocketMessage(
-              payload: "Sent:\n$sentPreview",
-              timestamp: DateTime.now(),
-              outgoing: true,
-              messageType: WebSocketMessageType.sent,
-            );
-            final reqNow = state?[requestId];
-            final grpcNow = reqNow?.grpcRequestModel;
-            if (reqNow != null && grpcNow != null) {
-              state = {
-                ...state!,
-                requestId: reqNow.copyWith(
-                  grpcRequestModel: grpcNow.copyWith(
-                    messageHistory: [...grpcNow.messageHistory, sentMsg],
-                  ),
-                ),
-              };
-            }
-          }
-
-          Map<String, String> initialMetadata = {};
-          Map<String, String> trailingMetadata = {};
-
-          call.headers
-              .then((headers) {
-                initialMetadata = headers;
-              })
-              .catchError((_) {});
-
-          call.trailers
-              .then((trailers) {
-                trailingMetadata = trailers;
-              })
-              .catchError((_) {});
-
-          call.response.listen(
-            (data) {
-              // Guard: stream events can arrive after the notifier is disposed
-              // (free-floating subscription); touching `state` then throws.
-              if (!mounted) return;
-              final duration = DateTime.now().difference(startTime);
-              final payload = GrpcUtils.decodeBinaryResponse(
-                data,
-                schema: methodSchema,
-              );
-              final responseMsg = WebSocketMessage(
-                payload: "Response (${duration.inMilliseconds}ms):\n$payload",
-                timestamp: DateTime.now(),
-                outgoing: false,
-                messageType: WebSocketMessageType.received,
-              );
-
-              final currentReq = state?[requestId];
-              if (currentReq != null) {
-                final grpcReqModel = currentReq.grpcRequestModel;
-                if (grpcReqModel != null) {
-                  final receivedCount = grpcReqModel.messageHistory
-                      .where(
-                        (m) => m.messageType == WebSocketMessageType.received,
-                      )
-                      .length;
-
-                  update(
-                    id: requestId,
-                    isWorking: false,
-                    isStreaming: false,
-                    responseStatus: receivedCount == 0
-                        ? 200
-                        : currentReq.responseStatus,
-                    httpResponseModel: receivedCount == 0
-                        ? HttpResponseModel(
-                            body: payload,
-                            bodyBytes: utf8.encode(payload),
-                            time: duration,
-                            headers: initialMetadata.map(
-                              (k, v) => MapEntry("[Initial] $k", v),
-                            ),
-                            // The metadata we sent → shown as "Request Headers".
-                            requestHeaders: grpcMetadata,
-                          )
-                        : currentReq.httpResponseModel,
-                    grpcRequestModel: grpcReqModel.copyWith(
-                      messageHistory: [
-                        ...grpcReqModel.messageHistory,
-                        responseMsg,
-                      ],
-                    ),
-                  );
-                }
-              }
-            },
-            onDone: () {
-              // Guard: onDone fires asynchronously after the call completes and
-              // may run after the notifier is disposed; touching `state` throws.
-              if (!mounted) return;
-              // The call has ended: close any still-open client/bidi request
-              // stream so `hasGrpcRequestStream` is false and the Body-tab Send
-              // button no longer pushes into a dead call (no-op for unary/server).
-              ConnectionManager.instance.finishGrpcSending(requestId);
-              final currentReq = state?[requestId];
-              if (currentReq != null) {
-                final responseModel = currentReq.httpResponseModel;
-                final finalHeaders = {
-                  ...initialMetadata.map((k, v) => MapEntry("[Initial] $k", v)),
-                  ...trailingMetadata.map(
-                    (k, v) => MapEntry("[Trailing] $k", v),
-                  ),
-                };
-
-                update(
-                  id: requestId,
-                  isWorking: false,
-                  isStreaming: false,
-                  httpResponseModel: responseModel?.copyWith(
-                    headers: finalHeaders,
-                  ),
-                );
-              }
-              if (historyId != null) {
-                _updateGrpcHistoryRecord(
-                  historyId,
-                  state?[requestId]?.grpcRequestModel ?? grpcModel,
-                );
-              }
-            },
-            onError: (e) {
-              // Guard: onError can fire after dispose (call failing while the tab
-              // is torn down); touching `state` then throws "used after dispose".
-              if (!mounted) return;
-              // The call has ended in error: close any open client/bidi request
-              // stream so the Body-tab Send button no longer targets a dead call.
-              ConnectionManager.instance.finishGrpcSending(requestId);
-              final errorMsg = WebSocketMessage(
-                payload: "RPC Error: ${e.toString()}",
-                timestamp: DateTime.now(),
-                outgoing: false,
-                messageType: WebSocketMessageType.error,
-              );
-
-              final currentReq = state?[requestId];
-              if (currentReq != null && currentReq.grpcRequestModel != null) {
-                final currentGrpc = currentReq.grpcRequestModel!;
-                update(
-                  id: requestId,
-                  isWorking: false,
-                  isStreaming: false,
-                  responseStatus: 400,
-                  message: "",
-                  httpResponseModel: HttpResponseModel(
-                    body: e.toString(),
-                    bodyBytes: utf8.encode(e.toString()),
-                    time: Duration.zero,
-                    requestHeaders: grpcMetadata,
-                  ),
-                  grpcRequestModel: currentGrpc.copyWith(
-                    messageHistory: [...currentGrpc.messageHistory, errorMsg],
-                  ),
-                );
-              }
-              if (historyId != null) {
-                _updateGrpcHistoryRecord(
-                  historyId,
-                  state?[requestId]?.grpcRequestModel ?? grpcModel,
-                );
-              }
-            },
-          );
-        } else {
-          final latestRequest = state?[requestId];
-          if (latestRequest != null) {
-            state = {
-              ...state!,
-              requestId: latestRequest.copyWith(
-                isWorking: false,
-                isStreaming: false,
-              ),
-            };
-          }
-          ConnectionManager.instance.disconnectGrpc(requestId);
-        }
-      }
-    } catch (e) {
-      final errorMsg = WebSocketMessage(
-        payload: "Connection Error: ${e.toString()}",
-        timestamp: DateTime.now(),
-        outgoing: false,
-        messageType: WebSocketMessageType.error,
-      );
-
-      final currentRequest = state?[requestId];
-      if (currentRequest != null && currentRequest.grpcRequestModel != null) {
-        final currentGrpcModel = currentRequest.grpcRequestModel!;
-        state = {
-          ...state!,
-          requestId: currentRequest.copyWith(
-            isWorking: false,
-            responseStatus: 400,
-            message: "",
-            httpResponseModel: HttpResponseModel(
-              body: e.toString(),
-              bodyBytes: utf8.encode(e.toString()),
-              time: Duration.zero,
-            ),
-            grpcRequestModel: currentGrpcModel.copyWith(
-              messageHistory: [...currentGrpcModel.messageHistory, errorMsg],
-            ),
-          ),
-        };
-      }
-      if (historyId != null) {
-        _updateGrpcHistoryRecord(
-          historyId,
-          state?[requestId]?.grpcRequestModel ?? grpcModel,
-        );
-      }
-    }
   }
 }
