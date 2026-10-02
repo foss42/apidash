@@ -73,11 +73,8 @@ final kIconRemoveLight = Icon(
 const kCodePreviewLinesLimit = 500;
 
 const kAutoSaveDebounceDuration = Duration(seconds: 1);
-
 const kDefaultMobileWorkspaceSubpath = 'apidash/workspace';
-
 const kMaxSavedWorkspaces = 10;
-
 const kDefaultCollectionName = 'Collection 1';
 const kWorkspaceCollectionsDir = 'collections';
 const kWorkspaceCollectionsIndexFile = 'collection_index.json';
@@ -87,15 +84,11 @@ const kWorkspaceResponseBodyFilePrefix = 'response_body';
 const kWorkspaceResponseBodyFileKey = 'bodyFile';
 const kWorkspaceRequestIndexFile = 'request_index.json';
 const kWorkspaceCollectionsIndexKey = 'collections';
-const kWorkspaceCollectionIdKey = 'id';
-const kWorkspaceCollectionNameKey = 'name';
 const kWorkspaceEnvironmentsDir = 'environments';
 const kWorkspaceEnvironmentIndexFile = 'environment_index.json';
 const kWorkspaceHistoryDir = 'history';
 const kWorkspaceHistoryIndexFile = 'history_index.json';
 const kJsonFileExtension = '.json';
-
-const kWorkspaceRequestsKey = 'requests';
 const kWorkspaceEnvironmentIdsKey = 'environmentIds';
 const kWorkspaceHistoryMetasKey = 'historyMeta';
 const kWorkspaceActiveEnvironmentIdKey = 'activeEnvironmentId';
@@ -472,8 +465,7 @@ const kLabelCreateCollection = "Create collection";
 const kMsgNoCollections = "No collections yet";
 const kLabelCollectionName = "Collection name";
 const kMsgCollectionNameInUse = "This collection name already exists";
-const kMsgCollectionNameInvalidChars =
-    r'Name cannot contain / \ : * ? " < > |';
+const kMsgCollectionNameInvalidChars = r'Name cannot contain / \ : * ? " < > |';
 const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
