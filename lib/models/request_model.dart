@@ -14,10 +14,7 @@ abstract class RequestModel with _$RequestModel {
   // breaks codegen (_RequestModel stops implementing getUrl) — do not delete.
   const RequestModel._();
 
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true)
   const factory RequestModel({
     required String id,
     @Default(APIType.rest) APIType apiType,
@@ -25,18 +22,18 @@ abstract class RequestModel with _$RequestModel {
     @Default("") String description,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,
     HttpRequestModel? httpRequestModel,
-    int? responseStatus,
-    String? message,
     HttpResponseModel? httpResponseModel,
+    AIRequestModel? aiRequestModel,
+    WebSocketRequestModel? wsRequestModel,
+    MQTTRequestModel? mqttRequestModel,
+    GrpcRequestModel? grpcRequestModel,
     @JsonKey(includeToJson: false) @Default(false) bool isWorking,
     @JsonKey(includeToJson: false) DateTime? sendingTime,
     @JsonKey(includeToJson: false) @Default(false) bool isStreaming,
     String? preRequestScript,
     String? postRequestScript,
-    AIRequestModel? aiRequestModel,
-    WebSocketRequestModel? wsRequestModel,
-    MQTTRequestModel? mqttRequestModel,
-    GrpcRequestModel? grpcRequestModel,
+    int? responseStatus,
+    String? message,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>
