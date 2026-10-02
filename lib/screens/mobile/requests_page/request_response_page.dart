@@ -6,7 +6,7 @@ import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../home_page/collection_pane.dart';
+import '../../home_page/collection_pane/collection_pane.dart';
 import '../../home_page/editor_pane/editor_default.dart';
 import '../../common_widgets/common_widgets.dart';
 import 'request_response_page_bottombar.dart';

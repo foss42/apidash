@@ -132,8 +132,11 @@ void main() {
     });
 
     test('Test getAPIColor for GraphQL', () {
-      expect(getAPIColor(APIType.graphql), kColorGQL);
-      expect(getAPIColor(APIType.graphql, brightness: dark), kColorGQL.toDark);
+      expect(getAPIColor(APIType.graphql), kColorGraphQL);
+      expect(
+        getAPIColor(APIType.graphql, brightness: dark),
+        kColorGraphQL.toDark,
+      );
     });
 
     test('Test getAPIColor for AI', () {

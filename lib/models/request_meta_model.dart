@@ -15,9 +15,7 @@ abstract class RequestMetaModel with _$RequestMetaModel {
     required String id,
     @Default('') String name,
     @Default(APIType.rest) APIType apiType,
-
-    /// Abbreviation for the request.
-    @Default('') String abbr,
+    @Default(null) HTTPVerb? method,
     @Default('') String url,
   }) = _RequestMetaModel;
 
@@ -29,8 +27,10 @@ abstract class RequestMetaModel with _$RequestMetaModel {
       id: model.id,
       name: model.name,
       apiType: model.apiType,
-      abbr: getAbbr(model.apiType, method: model.httpRequestModel?.method),
+      method: model.httpRequestModel?.method,
       url: model.getUrl() ?? '',
     );
   }
+
+  String get abbr => getAbbr(apiType, method: method);
 }

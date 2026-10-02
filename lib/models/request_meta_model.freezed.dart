@@ -15,8 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RequestMetaModel {
 
- String get id; String get name; APIType get apiType;/// Abbreviation for the request.
- String get abbr; String get url;
+ String get id; String get name; APIType get apiType; HTTPVerb? get method; String get url;
 /// Create a copy of RequestMetaModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +28,16 @@ $RequestMetaModelCopyWith<RequestMetaModel> get copyWith => _$RequestMetaModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestMetaModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.abbr, abbr) || other.abbr == abbr)&&(identical(other.url, url) || other.url == url));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestMetaModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.method, method) || other.method == method)&&(identical(other.url, url) || other.url == url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,apiType,abbr,url);
+int get hashCode => Object.hash(runtimeType,id,name,apiType,method,url);
 
 @override
 String toString() {
-  return 'RequestMetaModel(id: $id, name: $name, apiType: $apiType, abbr: $abbr, url: $url)';
+  return 'RequestMetaModel(id: $id, name: $name, apiType: $apiType, method: $method, url: $url)';
 }
 
 
@@ -49,7 +48,7 @@ abstract mixin class $RequestMetaModelCopyWith<$Res>  {
   factory $RequestMetaModelCopyWith(RequestMetaModel value, $Res Function(RequestMetaModel) _then) = _$RequestMetaModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, APIType apiType, String abbr, String url
+ String id, String name, APIType apiType, HTTPVerb? method, String url
 });
 
 
@@ -66,13 +65,13 @@ class _$RequestMetaModelCopyWithImpl<$Res>
 
 /// Create a copy of RequestMetaModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? apiType = null,Object? abbr = null,Object? url = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? apiType = null,Object? method = freezed,Object? url = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,apiType: null == apiType ? _self.apiType : apiType // ignore: cast_nullable_to_non_nullable
-as APIType,abbr: null == abbr ? _self.abbr : abbr // ignore: cast_nullable_to_non_nullable
-as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as APIType,method: freezed == method ? _self.method : method // ignore: cast_nullable_to_non_nullable
+as HTTPVerb?,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -158,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  APIType apiType,  String abbr,  String url)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  APIType apiType,  HTTPVerb? method,  String url)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RequestMetaModel() when $default != null:
-return $default(_that.id,_that.name,_that.apiType,_that.abbr,_that.url);case _:
+return $default(_that.id,_that.name,_that.apiType,_that.method,_that.url);case _:
   return orElse();
 
 }
@@ -179,10 +178,10 @@ return $default(_that.id,_that.name,_that.apiType,_that.abbr,_that.url);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  APIType apiType,  String abbr,  String url)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  APIType apiType,  HTTPVerb? method,  String url)  $default,) {final _that = this;
 switch (_that) {
 case _RequestMetaModel():
-return $default(_that.id,_that.name,_that.apiType,_that.abbr,_that.url);case _:
+return $default(_that.id,_that.name,_that.apiType,_that.method,_that.url);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +198,10 @@ return $default(_that.id,_that.name,_that.apiType,_that.abbr,_that.url);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  APIType apiType,  String abbr,  String url)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  APIType apiType,  HTTPVerb? method,  String url)?  $default,) {final _that = this;
 switch (_that) {
 case _RequestMetaModel() when $default != null:
-return $default(_that.id,_that.name,_that.apiType,_that.abbr,_that.url);case _:
+return $default(_that.id,_that.name,_that.apiType,_that.method,_that.url);case _:
   return null;
 
 }
@@ -214,14 +213,13 @@ return $default(_that.id,_that.name,_that.apiType,_that.abbr,_that.url);case _:
 @JsonSerializable()
 
 class _RequestMetaModel extends RequestMetaModel {
-  const _RequestMetaModel({required this.id, this.name = '', this.apiType = APIType.rest, this.abbr = '', this.url = ''}): super._();
+  const _RequestMetaModel({required this.id, this.name = '', this.apiType = APIType.rest, this.method = null, this.url = ''}): super._();
   factory _RequestMetaModel.fromJson(Map<String, dynamic> json) => _$RequestMetaModelFromJson(json);
 
 @override final  String id;
 @override@JsonKey() final  String name;
 @override@JsonKey() final  APIType apiType;
-/// Abbreviation for the request.
-@override@JsonKey() final  String abbr;
+@override@JsonKey() final  HTTPVerb? method;
 @override@JsonKey() final  String url;
 
 /// Create a copy of RequestMetaModel
@@ -237,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestMetaModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.abbr, abbr) || other.abbr == abbr)&&(identical(other.url, url) || other.url == url));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestMetaModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.method, method) || other.method == method)&&(identical(other.url, url) || other.url == url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,apiType,abbr,url);
+int get hashCode => Object.hash(runtimeType,id,name,apiType,method,url);
 
 @override
 String toString() {
-  return 'RequestMetaModel(id: $id, name: $name, apiType: $apiType, abbr: $abbr, url: $url)';
+  return 'RequestMetaModel(id: $id, name: $name, apiType: $apiType, method: $method, url: $url)';
 }
 
 
@@ -257,7 +255,7 @@ abstract mixin class _$RequestMetaModelCopyWith<$Res> implements $RequestMetaMod
   factory _$RequestMetaModelCopyWith(_RequestMetaModel value, $Res Function(_RequestMetaModel) _then) = __$RequestMetaModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, APIType apiType, String abbr, String url
+ String id, String name, APIType apiType, HTTPVerb? method, String url
 });
 
 
@@ -274,13 +272,13 @@ class __$RequestMetaModelCopyWithImpl<$Res>
 
 /// Create a copy of RequestMetaModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? apiType = null,Object? abbr = null,Object? url = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? apiType = null,Object? method = freezed,Object? url = null,}) {
   return _then(_RequestMetaModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,apiType: null == apiType ? _self.apiType : apiType // ignore: cast_nullable_to_non_nullable
-as APIType,abbr: null == abbr ? _self.abbr : abbr // ignore: cast_nullable_to_non_nullable
-as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as APIType,method: freezed == method ? _self.method : method // ignore: cast_nullable_to_non_nullable
+as HTTPVerb?,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

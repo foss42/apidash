@@ -31,11 +31,11 @@ Color getResponseStatusCodeColor(
 Color getAPIColor(APIType apiType, {HTTPVerb? method, Brightness? brightness}) {
   Color col = switch (apiType) {
     APIType.rest => getHTTPMethodColor(method),
-    APIType.graphql => kColorGQL,
-    APIType.ai => Colors.amber,
-    APIType.websocket => Colors.teal,
-    APIType.mqtt => Colors.purple,
-    APIType.grpc => Colors.blueGrey,
+    APIType.graphql => kColorGraphQL,
+    APIType.ai => kColorAI,
+    APIType.websocket => kColorWS,
+    APIType.mqtt => kColorMQTT,
+    APIType.grpc => kColorgRPC,
   };
   if (brightness == Brightness.dark) {
     col = col.toDark;

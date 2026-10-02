@@ -437,7 +437,6 @@ class CollectionStateNotifier
     var map = {...state!};
     map[rId] = newModel;
     state = map;
-    unsave();
   }
 
   void duplicate({String? id}) {
@@ -1319,7 +1318,6 @@ class CollectionStateNotifier
           mqttModel = mqttModel.copyWith(
             clientId: 'apidash_${DateTime.now().millisecondsSinceEpoch}',
           );
-          unsave();
         }
         state = {
           ...state!,

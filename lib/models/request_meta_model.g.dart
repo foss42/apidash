@@ -13,7 +13,7 @@ _RequestMetaModel _$RequestMetaModelFromJson(Map<String, dynamic> json) =>
       apiType:
           $enumDecodeNullable(_$APITypeEnumMap, json['apiType']) ??
           APIType.rest,
-      abbr: json['abbr'] as String? ?? '',
+      method: $enumDecodeNullable(_$HTTPVerbEnumMap, json['method']) ?? null,
       url: json['url'] as String? ?? '',
     );
 
@@ -22,7 +22,7 @@ Map<String, dynamic> _$RequestMetaModelToJson(_RequestMetaModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'apiType': _$APITypeEnumMap[instance.apiType]!,
-      'abbr': instance.abbr,
+      'method': _$HTTPVerbEnumMap[instance.method],
       'url': instance.url,
     };
 
@@ -33,4 +33,14 @@ const _$APITypeEnumMap = {
   APIType.websocket: 'websocket',
   APIType.mqtt: 'mqtt',
   APIType.grpc: 'grpc',
+};
+
+const _$HTTPVerbEnumMap = {
+  HTTPVerb.get: 'get',
+  HTTPVerb.head: 'head',
+  HTTPVerb.post: 'post',
+  HTTPVerb.put: 'put',
+  HTTPVerb.patch: 'patch',
+  HTTPVerb.delete: 'delete',
+  HTTPVerb.options: 'options',
 };
