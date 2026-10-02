@@ -17,12 +17,7 @@ class SidebarRequestCardTextBox extends StatelessWidget {
     return SizedBox(
       width: 24,
       child: Text(
-        switch (apiType) {
-          APIType.rest => method!.abbr,
-          APIType.graphql => apiType.abbr,
-          APIType.ai => apiType.abbr,
-          APIType.websocket => apiType.abbr,
-        },
+        getAbbr(apiType, method: method),
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 8,
@@ -46,15 +41,18 @@ class StatusCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final Color color =
-        getResponseStatusCodeColor(statusCode, brightness: brightness);
+    final Color color = getResponseStatusCodeColor(
+      statusCode,
+      brightness: brightness,
+    );
     return Text(
       statusCode.toString(),
-      style: style?.copyWith(color: color) ??
+      style:
+          style?.copyWith(color: color) ??
           Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontFamily: kCodeStyle.fontFamily,
-                color: color,
-              ),
+            fontFamily: kCodeStyle.fontFamily,
+            color: color,
+          ),
     );
   }
 }

@@ -1,5 +1,5 @@
-export 'auto_save.dart';
 export 'ai_providers.dart';
+export 'auto_save_providers.dart';
 export 'collection_catalog_providers.dart';
 export 'collection_providers.dart';
 export 'environment_providers.dart';

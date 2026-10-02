@@ -52,28 +52,27 @@ class CollectionStateNotifier
   }
 
   List<String> _catalogRequestIds(String collectionId) {
-    return ref
-            .read(collectionCatalogProvider)?[collectionId]
-            ?.requestIds ??
+    return ref.read(collectionCatalogProvider)?[collectionId]?.requestIds ??
         const [];
   }
 
-  List<RequestSummary> summariesForSequence(
+  List<RequestMetaModel> summariesForSequence(
     String collectionId,
     List<String> ids,
   ) {
     final byId = {
-      for (final summary
-          in ref.read(collectionCatalogProvider)?[collectionId]
-                  ?.requests ??
-              const <RequestSummary>[])
-        summary.id: summary,
+      for (final requestMeta
+          in ref
+                  .read(collectionCatalogProvider)?[collectionId]
+                  ?.requestMetaList ??
+              const <RequestMetaModel>[])
+        requestMeta.id: requestMeta,
     };
     final useMemory = collectionId == _activeCollectionId;
     return [
       for (final id in ids)
         useMemory && state?[id] != null
-            ? RequestSummary.fromRequestModel(state![id]!)
+            ? RequestMetaModel.fromRequestModel(state![id]!)
             : byId[id]!,
     ];
   }
@@ -83,12 +82,11 @@ class CollectionStateNotifier
     if (active == null) {
       return;
     }
-    ref.read(collectionCatalogProvider.notifier).syncRequests(
+    ref
+        .read(collectionCatalogProvider.notifier)
+        .syncRequests(
           active,
-          summariesForSequence(
-            active,
-            ref.read(requestSequenceProvider),
-          ),
+          summariesForSequence(active, ref.read(requestSequenceProvider)),
         );
   }
 
@@ -218,10 +216,9 @@ class CollectionStateNotifier
     };
     ref.read(requestSequenceProvider.notifier).state = [newId];
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    ref.read(collectionCatalogProvider.notifier).syncRequests(
-          collectionId,
-          [RequestSummary.fromRequestModel(state![newId]!)],
-        );
+    ref.read(collectionCatalogProvider.notifier).syncRequests(collectionId, [
+      RequestMetaModel.fromRequestModel(state![newId]!),
+    ]);
   }
 
   void activateCollection(String? collectionId) {
@@ -250,7 +247,8 @@ class CollectionStateNotifier
     }
     final collections = ref.read(collectionCatalogProvider.notifier);
     final from = _activeCollectionId;
-    final fromStillExists = from != null &&
+    final fromStillExists =
+        from != null &&
         (ref.read(collectionCatalogProvider)?.containsKey(from) ?? false);
     if (state != null && from != collectionId && fromStillExists) {
       collections.loadCollection(from);
@@ -550,16 +548,20 @@ class CollectionStateNotifier
                 //   1. the explicit top-level arg (caller-supplied merge),
                 //   2. the just-passed wsRequestModel's own field,
                 //   3. the existing model's field.
-                headers: headers ??
+                headers:
+                    headers ??
                     wsRequestModel?.headers ??
                     currentModel.wsRequestModel?.headers,
-                isHeaderEnabledList: isHeaderEnabledList ??
+                isHeaderEnabledList:
+                    isHeaderEnabledList ??
                     wsRequestModel?.isHeaderEnabledList ??
                     currentModel.wsRequestModel?.isHeaderEnabledList,
-                params: params ??
+                params:
+                    params ??
                     wsRequestModel?.params ??
                     currentModel.wsRequestModel?.params,
-                isParamEnabledList: isParamEnabledList ??
+                isParamEnabledList:
+                    isParamEnabledList ??
                     wsRequestModel?.isParamEnabledList ??
                     currentModel.wsRequestModel?.isParamEnabledList,
               )
@@ -592,8 +594,10 @@ class CollectionStateNotifier
         // Protocol-level ping interval (mutable on a live connection).
         if (oldWs?.enableHeartbeat != newWs.enableHeartbeat ||
             oldWs?.heartbeatInterval != newWs.heartbeatInterval) {
-          ConnectionManager.instance
-              .updatePingInterval(rId, _wsPingInterval(newWs));
+          ConnectionManager.instance.updatePingInterval(
+            rId,
+            _wsPingInterval(newWs),
+          );
         }
         // App-level repeating-message heartbeat (restart timer on any change,
         // without reconnecting). Fires independently of the ping change above.
@@ -610,9 +614,7 @@ class CollectionStateNotifier
   /// Heartbeat ping interval for [ws], or `null` when heartbeats are disabled.
   /// Falls back to 30s when the interval is non-positive (mirrors connect()).
   Duration? _wsPingInterval(WebSocketRequestModel ws) => ws.enableHeartbeat
-      ? Duration(
-          seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30,
-        )
+      ? Duration(seconds: ws.heartbeatInterval > 0 ? ws.heartbeatInterval : 30)
       : null;
 
   /// Builds the combined env-var map (global env overlaid by active env),
@@ -651,7 +653,7 @@ class CollectionStateNotifier
           final combined = _buildCombinedEnvVarMap();
           final substituted =
               substituteVariables(ws.messageHeartbeatPayload, combined) ??
-                  ws.messageHeartbeatPayload;
+              ws.messageHeartbeatPayload;
           sendWebSocketMessage(requestId, substituted);
         },
       );
@@ -697,9 +699,9 @@ class CollectionStateNotifier
   Future<void> _connectWebSocket(
     String requestId,
     RequestModel requestModel,
-    WebSocketRequestModel wsModel,
-    {String? historyId}
-  ) async {
+    WebSocketRequestModel wsModel, {
+    String? historyId,
+  }) async {
     final Map<String, String> combinedEnvVarMap = _buildCombinedEnvVarMap();
 
     final substitutedUrl =
@@ -845,9 +847,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, errMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, errMsg]),
+              );
             }
           }
         },
@@ -875,7 +878,12 @@ class CollectionStateNotifier
             );
             final latestReq = state?[requestId];
             if (latestReq != null) {
-              _connectWebSocket(requestId, latestReq, updatedWs, historyId: historyId);
+              _connectWebSocket(
+                requestId,
+                latestReq,
+                updatedWs,
+                historyId: historyId,
+              );
             }
           } else {
             final discMsg = WebSocketMessage(
@@ -892,9 +900,10 @@ class CollectionStateNotifier
               ),
             );
             if (historyId != null) {
-              _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-                messageHistory: [...ws.messageHistory, discMsg],
-              ));
+              _updateWebSocketHistoryRecord(
+                historyId,
+                ws.copyWith(messageHistory: [...ws.messageHistory, discMsg]),
+              );
             }
           }
         },
@@ -929,14 +938,18 @@ class CollectionStateNotifier
         ),
       };
       if (historyId != null) {
-        _updateWebSocketHistoryRecord(historyId, ws.copyWith(
-          messageHistory: [...ws.messageHistory, errMsg, discMsg],
-        ));
+        _updateWebSocketHistoryRecord(
+          historyId,
+          ws.copyWith(messageHistory: [...ws.messageHistory, errMsg, discMsg]),
+        );
       }
     }
   }
 
-  void _updateWebSocketHistoryRecord(String historyId, WebSocketRequestModel wsRequestModel) {
+  void _updateWebSocketHistoryRecord(
+    String historyId,
+    WebSocketRequestModel wsRequestModel,
+  ) {
     final historyMap = ref.read(historyMetaStateNotifier);
     if (historyMap != null && historyMap.containsKey(historyId)) {
       final historyMeta = historyMap[historyId]!;
@@ -945,7 +958,9 @@ class CollectionStateNotifier
         metaData: historyMeta,
         wsRequestModel: wsRequestModel,
       );
-      ref.read(historyMetaStateNotifier.notifier).editHistoryRequest(historyModel);
+      ref
+          .read(historyMetaStateNotifier.notifier)
+          .editHistoryRequest(historyModel);
     }
   }
 
@@ -991,7 +1006,12 @@ class CollectionStateNotifier
             .read(historyMetaStateNotifier.notifier)
             .addHistoryRequest(historyModel);
 
-        await _connectWebSocket(requestId, requestModel, wsModel, historyId: newHistoryId);
+        await _connectWebSocket(
+          requestId,
+          requestModel,
+          wsModel,
+          historyId: newHistoryId,
+        );
       } else {
         update(id: requestId, message: "Invalid WebSocket model");
       }
@@ -1285,7 +1305,9 @@ class CollectionStateNotifier
       workspaceStorage.rootPath,
     );
     await workspaceStorage.clear();
-    await ref.read(environmentsStateNotifierProvider.notifier).loadEnvironments();
+    await ref
+        .read(environmentsStateNotifierProvider.notifier)
+        .loadEnvironments();
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
@@ -1352,8 +1374,7 @@ class CollectionStateNotifier
     }
     final models = <RequestModel>[];
     for (final id in ref.read(requestSequenceProvider)) {
-      final model =
-          state?[id] ?? _requestModelFromDisk(collectionId, id);
+      final model = state?[id] ?? _requestModelFromDisk(collectionId, id);
       if (model != null) {
         models.add(model);
       }

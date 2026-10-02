@@ -23,7 +23,10 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) => []);
 
 final expandedCollectionIdsProvider = StateProvider<Set<String>>((ref) => {});
 
-final StateNotifierProvider<CollectionCatalogNotifier, Map<String, CollectionModel>?>
+final StateNotifierProvider<
+  CollectionCatalogNotifier,
+  Map<String, CollectionModel>?
+>
 collectionCatalogProvider = StateNotifierProvider(
   (ref) => CollectionCatalogNotifier(ref, workspaceStorage),
 );
@@ -54,8 +57,7 @@ class CollectionCatalogNotifier
 
   Future<void> _persistIndex() async {
     await workspaceStorage.setCollectionsIndex([
-      for (final id in collectionSequence)
-        (id: id, name: state![id]!.name),
+      for (final id in collectionSequence) (id: id, name: state![id]!.name),
     ]);
   }
 
@@ -68,7 +70,7 @@ class CollectionCatalogNotifier
     final model = json != null
         ? CollectionModel.fromJson(Map<String, Object?>.from(json))
         : CollectionModel(id: collectionId, name: catalogName);
-    final requests = model.requests
+    final requestMetaList = model.requestMetaList
         .where((r) => workspaceStorage.requestExistsOnDisk(collectionId, r.id))
         .toList();
     _loadedCollectionIds.add(collectionId);
@@ -76,19 +78,24 @@ class CollectionCatalogNotifier
       ...state!,
       collectionId: model.copyWith(
         name: catalogName,
-        requests: requests,
+        requestMetaList: requestMetaList,
       ),
     };
   }
 
-  void syncRequests(String collectionId, List<RequestSummary> requests) {
+  void syncRequests(
+    String collectionId,
+    List<RequestMetaModel> requestMetaList,
+  ) {
     if (state == null || !state!.containsKey(collectionId)) {
       return;
     }
     _loadedCollectionIds.add(collectionId);
     state = {
       ...state!,
-      collectionId: state![collectionId]!.copyWith(requests: requests),
+      collectionId: state![collectionId]!.copyWith(
+        requestMetaList: requestMetaList,
+      ),
     };
   }
 
@@ -119,12 +126,10 @@ class CollectionCatalogNotifier
     state = {...state!, id: model};
     await workspaceStorage.setCollection(id, model.toJson());
     await _persistIndex();
-    ref.read(expandedCollectionIdsProvider.notifier).update(
-          (ids) => {...ids, id},
-        );
-    await ref
-        .read(collectionStateNotifierProvider.notifier)
-        .ensureActive(id);
+    ref
+        .read(expandedCollectionIdsProvider.notifier)
+        .update((ids) => {...ids, id});
+    await ref.read(collectionStateNotifierProvider.notifier).ensureActive(id);
   }
 
   Future<bool> renameCollection(String id, String name) async {
@@ -150,7 +155,7 @@ class CollectionCatalogNotifier
     final model = CollectionModel(
       id: newId,
       name: trimmed,
-      requests: state![id]!.requests,
+      requestMetaList: state![id]!.requestMetaList,
     );
     final seqIdx = collectionSequence.indexOf(id);
     collectionSequence = [...collectionSequence];
@@ -184,13 +189,16 @@ class CollectionCatalogNotifier
     collectionSequence = [...collectionSequence]..remove(id);
     _loadedCollectionIds.remove(id);
     state = {...state!}..remove(id);
-    ref.read(expandedCollectionIdsProvider.notifier).update((s) => {...s}..remove(id));
+    ref
+        .read(expandedCollectionIdsProvider.notifier)
+        .update((s) => {...s}..remove(id));
     await workspaceStorage.deleteCollection(id);
     await _persistIndex();
 
     if (wasActive) {
-      final nextId =
-          collectionSequence.isNotEmpty ? collectionSequence.first : null;
+      final nextId = collectionSequence.isNotEmpty
+          ? collectionSequence.first
+          : null;
       await ref
           .read(collectionStateNotifierProvider.notifier)
           .ensureActive(nextId);
@@ -201,23 +209,25 @@ class CollectionCatalogNotifier
     await _persistIndex();
     final activeId = ref.read(selectedCollectionIdStateProvider);
     final activeSequence = ref.read(requestSequenceProvider);
-    final collectionNotifier =
-        ref.read(collectionStateNotifierProvider.notifier);
+    final collectionNotifier = ref.read(
+      collectionStateNotifierProvider.notifier,
+    );
     for (final entry in state!.entries) {
       if (!_loadedCollectionIds.contains(entry.key)) {
         continue;
       }
 
-      final requests = entry.key == activeId
+      final requestMetaList = entry.key == activeId
           ? collectionNotifier.summariesForSequence(entry.key, activeSequence)
-          : entry.value.requests
-              .where((r) =>
-                  workspaceStorage.requestExistsOnDisk(entry.key, r.id))
-              .toList();
+          : entry.value.requestMetaList
+                .where(
+                  (r) => workspaceStorage.requestExistsOnDisk(entry.key, r.id),
+                )
+                .toList();
       if (entry.key == activeId) {
-        syncRequests(entry.key, requests);
+        syncRequests(entry.key, requestMetaList);
       }
-      final model = entry.value.copyWith(requests: requests);
+      final model = entry.value.copyWith(requestMetaList: requestMetaList);
       await workspaceStorage.setCollection(entry.key, model.toJson());
       if (entry.key != activeId) {
         state = {...state!, entry.key: model};

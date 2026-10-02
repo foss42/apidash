@@ -101,9 +101,8 @@ class _CollectionRequestListState extends ConsumerState<CollectionRequestList> {
 
     if (collectionSequence.isEmpty) {
       return _EmptyCollections(
-        onCreate: () => ref
-            .read(collectionCatalogProvider.notifier)
-            .addCollection(),
+        onCreate: () =>
+            ref.read(collectionCatalogProvider.notifier).addCollection(),
       );
     }
 
@@ -158,8 +157,8 @@ class _EmptyCollections extends StatelessWidget {
               kMsgNoCollections,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
             kVSpacer16,
             FilledButton.icon(
@@ -189,9 +188,9 @@ class _CollectionSection extends ConsumerWidget {
   final bool isActive;
   final String filterQuery;
 
-  List<RequestSummary> _requestSummaries(WidgetRef ref) {
+  List<RequestMetaModel> _requestSummaries(WidgetRef ref) {
     if (!isActive) {
-      return collection.requests;
+      return collection.requestMetaList;
     }
     ref.watch(collectionStateNotifierProvider);
     final sequence = ref.watch(requestSequenceProvider);
@@ -203,9 +202,7 @@ class _CollectionSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (isExpanded) {
-      ref.read(collectionCatalogProvider.notifier).loadCollection(
-            collectionId,
-          );
+      ref.read(collectionCatalogProvider.notifier).loadCollection(collectionId);
     }
     final summaries = _requestSummaries(ref);
     final visibleSummaries = filterQuery.isEmpty
@@ -355,7 +352,9 @@ class _CollectionSectionHeader extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Material(
-      color: isActive ? colorScheme.surfaceContainerHighest : Colors.transparent,
+      color: isActive
+          ? colorScheme.surfaceContainerHighest
+          : Colors.transparent,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
@@ -365,9 +364,9 @@ class _CollectionSectionHeader extends ConsumerWidget {
                 .read(collectionStateNotifierProvider.notifier)
                 .ensureActive(collectionId);
           }
-          ref.read(expandedCollectionIdsProvider.notifier).update(
-                (ids) => {...ids, collectionId},
-              );
+          ref
+              .read(expandedCollectionIdsProvider.notifier)
+              .update((ids) => {...ids, collectionId});
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
@@ -378,26 +377,25 @@ class _CollectionSectionHeader extends ConsumerWidget {
                 constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
                 iconSize: 18,
                 onPressed: () {
-                  final expanding =
-                      !ref.read(expandedCollectionIdsProvider).contains(
-                            collectionId,
-                          );
+                  final expanding = !ref
+                      .read(expandedCollectionIdsProvider)
+                      .contains(collectionId);
                   if (expanding) {
                     ref
                         .read(collectionCatalogProvider.notifier)
                         .loadCollection(collectionId);
                   }
-                  ref.read(expandedCollectionIdsProvider.notifier).update(
-                        (ids) {
-                          final next = {...ids};
-                          if (next.contains(collectionId)) {
-                            next.remove(collectionId);
-                          } else {
-                            next.add(collectionId);
-                          }
-                          return next;
-                        },
-                      );
+                  ref.read(expandedCollectionIdsProvider.notifier).update((
+                    ids,
+                  ) {
+                    final next = {...ids};
+                    if (next.contains(collectionId)) {
+                      next.remove(collectionId);
+                    } else {
+                      next.add(collectionId);
+                    }
+                    return next;
+                  });
                 },
                 icon: Icon(
                   isExpanded
@@ -429,9 +427,9 @@ class _CollectionSectionHeader extends ConsumerWidget {
                       .read(collectionStateNotifierProvider.notifier)
                       .ensureActive(collectionId);
                   ref.read(collectionStateNotifierProvider.notifier).add();
-                  ref.read(expandedCollectionIdsProvider.notifier).update(
-                        (ids) => {...ids, collectionId},
-                      );
+                  ref
+                      .read(expandedCollectionIdsProvider.notifier)
+                      .update((ids) => {...ids, collectionId});
                 },
                 icon: const Icon(Icons.add),
               ),
@@ -495,7 +493,7 @@ class RequestItem extends ConsumerWidget {
     required this.collectionId,
   });
 
-  final RequestSummary summary;
+  final RequestMetaModel summary;
   final String collectionId;
 
   @override
