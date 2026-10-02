@@ -241,7 +241,7 @@ class JsonFieldState extends State<JsonField> {
             keyHighlightStyle: keyHighlightStyle,
             nullHighlightStyle: nullHighlightStyle,
             numberHighlightStyle: numberHighlightStyle,
-            specialCharHighlightStyle: stringHighlightStyle,
+            specialCharHighlightStyle: specialCharHighlightStyle,
             stringHighlightStyle: stringHighlightStyle,
             commonTextStyle: commonTextStyle,
             isFormating: widget.isFormatting,
