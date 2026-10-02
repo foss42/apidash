@@ -1,8 +1,7 @@
-import 'package:apidash/models/models.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
 import '../services/services.dart';
 import 'collection_providers.dart';
 
