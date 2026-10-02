@@ -17,7 +17,7 @@ class WorkspacePopupMenu extends StatelessWidget {
   });
 
   final String currentLabel;
-  final List<SavedWorkspaceEntry> workspaces;
+  final List<NamePathModel> workspaces;
   final void Function(String path) onPathSelected;
   final VoidCallback onOpenWorkspace;
   final double? width;
@@ -26,8 +26,7 @@ class WorkspacePopupMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final menuWidth = width ?? (context.isCompactWindow ? 100.0 : 130.0);
     final items = <(String, String)>[
-      for (final w in workspaces)
-        (w.path, w.name.clip(30)),
+      for (final w in workspaces) (w.path, w.name.clip(30)),
       (kWorkspaceMenuOpenSentinel, kLabelOpenWorkspaceMenu),
     ];
 
