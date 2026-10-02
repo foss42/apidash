@@ -13,11 +13,20 @@ use std::io::Read;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "{{url}}";
     let client = awc::Client::default();
-
+    let mut request = client.{{method}}(url);
 """;
 
-  String kTemplateParams =
-      """\n        .query(&{{ params }})\n        .unwrap()""";
+String kTemplateParams = """
+    
+    let query_params = [
+    {%- for key, values in params %}
+        {%- for val in values %}
+        ("{{key}}", "{{val}}"),
+        {%- endfor %}
+    {%- endfor %}
+    ];
+    request = request.query(&query_params).unwrap();
+""";
 
   String kTemplateBody = """
 
@@ -30,17 +39,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let payload = serde_json::json!({{body}});
 
 """;
-
-  String kTemplateHeaders =
-      """\n        {% for key, val in headers -%}.insert_header(("{{key}}", "{{val}}")){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
+String kTemplateHeaders =
+    """
+\n    {% for key, val in headers -%}request = request.insert_header(("{{key}}", "{{val}}"));{{ '\n    ' }}{%- endfor -%}""";
 
   String kTemplateFormHeaderContentType = '''
 multipart/form-data; boundary={{boundary}}''';
-
-  String kTemplateRequest = """
-
-    let mut response = client\n        .{{method}}(url)
-""";
 
   final String kStringFormDataBody = r"""
 
@@ -92,11 +96,11 @@ multipart/form-data; boundary={{boundary}}''';
     let payload = build_data_list(form_data_items);
 """;
 
-  String kStringRequestBody = """\n        .send_body(payload)""";
+  String kStringRequestBody = """\n    let mut response = request.send_body(payload)""";
 
-  String kStringRequestJson = """\n        .send_json(&payload)""";
+  String kStringRequestJson = """\n    let mut response = request.send_json(&payload)""";
 
-  String kStringRequestNormal = """\n        .send()""";
+  String kStringRequestNormal = """\n    let mut response = request.send()""";
 
   final String kStringRequestEnd = """\n        .await\n        .unwrap();
 
@@ -127,9 +131,10 @@ multipart/form-data; boundary={{boundary}}''';
       );
       Uri? uri = rec.$1;
       if (uri != null) {
+        var baseUrl = stripUriParams(uri);
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
-          "url": stripUriParams(uri),
+          "url": baseUrl,
           'isFormDataRequest': requestModel.hasFormData,
           "method": requestModel.method.name.toLowerCase()
         });
@@ -160,23 +165,17 @@ multipart/form-data; boundary={{boundary}}''';
             },
           );
         }
-        var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "method": method.name.toLowerCase(),
-        });
-
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var tupleStrings = params.entries
-                .map((entry) => '("${entry.key}", "${entry.value}")')
-                .toList();
-            var paramsString = "[${tupleStrings.join(', ')}]";
-            var templateParms = jj.Template(kTemplateParams);
-            result += templateParms.render({"params": paramsString});
-          }
-        }
-
+        
+        var params = requestModel.enabledParamsMap;
+        
+        if (params.isNotEmpty) {
+          var templateParams = jj.Template(kTemplateParams);
+          result += templateParams.render({
+            "method": method.name.toLowerCase(),
+            "params": params,
+          });
+        } 
+          
         var headersList = requestModel.enabledHeaders;
         if (headersList != null || hasBody || requestModel.hasFormData) {
           var headers = requestModel.enabledHeadersMap;

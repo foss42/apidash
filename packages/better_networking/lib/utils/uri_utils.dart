@@ -22,6 +22,24 @@ String stripUrlParams(String url) {
   return idx > 0 ? url.substring(0, idx) : url;
 }
 
+/// Prefixes a WebSocket [url] with [defaultWsScheme] (`ws://` or `wss://`)
+/// when the user omitted the scheme, mirroring what [getValidRequestUri]
+/// does for HTTP. localhost / bare IPs always get `ws://`.
+/// URLs that already carry a scheme are returned untouched.
+String getWebSocketUrl(
+  String url, {
+  SupportedWsSchemes defaultWsScheme = kDefaultWsScheme,
+}) {
+  url = url.trim();
+  if (url.isEmpty || url.contains("://")) {
+    return url;
+  }
+  if (kLocalhostRegex.hasMatch(url) || kIPHostRegex.hasMatch(url)) {
+    return "ws://$url";
+  }
+  return "${defaultWsScheme.name}://$url";
+}
+
 (Uri?, String?) getValidRequestUri(
   String? url,
   List<NameValueModel>? requestParams, {
@@ -55,12 +73,14 @@ String stripUrlParams(String url) {
     uri = uri.removeFragment();
   }
 
-  Map<String, String>? queryParams = rowsToMap(requestParams);
-  if (queryParams != null && queryParams.isNotEmpty) {
-    if (uri.hasQuery) {
-      Map<String, String> urlQueryParams = uri.queryParameters;
-      queryParams = mergeMaps(urlQueryParams, queryParams);
-    }
+  Map<String, List<String>> queryParams = uri.queryParametersAll;
+
+  Map<String, List<String>>? requestQueryParams = rowsToRequestMap(requestParams);
+ if (requestQueryParams != null) {
+  queryParams = mergeMaps(queryParams, requestQueryParams, value: (v1, v2) => v1 + v2);
+}
+  
+  if (queryParams.isNotEmpty) {
     uri = uri.replace(queryParameters: queryParams);
   }
   return (uri, null);

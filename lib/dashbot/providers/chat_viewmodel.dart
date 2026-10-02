@@ -27,7 +27,15 @@ class ChatViewmodel extends StateNotifier<ChatState> {
   final Ref _ref;
 
   ChatRemoteRepository get _repo => _ref.read(chatRepositoryProvider);
-  RequestModel? get _currentRequest => _ref.read(selectedRequestModelProvider);
+  RequestModel? get _currentRequest {
+    // On the History page (nav rail index 2) DashBot acts on the selected
+    // history entry instead of the editor selection.
+    final history = _ref.read(selectedHistoryRequestModelProvider);
+    if (_ref.read(navRailIndexStateProvider) == 2 && history != null) {
+      return getRequestModelFromHistoryModel(history);
+    }
+    return _ref.read(selectedRequestModelProvider);
+  }
   HttpRequestModel? get _currentSubstitutedHttpRequestModel =>
       _ref.read(selectedSubstitutedHttpRequestModelProvider);
   AIRequestModel? get _selectedAIModel {
@@ -140,6 +148,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       );
     } else if (type == ChatMessageType.generateWsCode) {
       final detectedLang = promptBuilder.detectWsLanguage(text);
+      systemPrompt = promptBuilder.buildSystemPrompt(
+        substitutedReq,
+        type,
+        overrideLanguage: detectedLang,
+        history: currentMessages,
+      );
+    } else if (type == ChatMessageType.generateMqttCode) {
+      final detectedLang = promptBuilder.detectMqttLanguage(text);
       systemPrompt = promptBuilder.buildSystemPrompt(
         substitutedReq,
         type,

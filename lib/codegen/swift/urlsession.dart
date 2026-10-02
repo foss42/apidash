@@ -50,10 +50,17 @@ let postData = """
 
 ''';
 
-  final String kTemplateRequest = """
-var request = URLRequest(url: URL(string: "{{url}}")!)
-request.httpMethod = "{{method}}"
+final String kTemplateRequest = """
+var urlComponents = URLComponents(string: "{{url}}")!
+var queryItems = [URLQueryItem]()
 
+{% for param in params %}
+queryItems.append(URLQueryItem(name: "{{param.key}}", value: "{{param.value}}")){% if not loop.last %}{% else %}{% endif %}{% endfor %}
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "{{method}}"
 """;
 
   final String kTemplateHeaders = """
@@ -73,10 +80,11 @@ request.httpBody = postData
 """;
 
   final String kTemplateEnd = """
+
 let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-    defer { semaphore.signal() }  
+    defer { semaphore.signal() }   
 
     if let error = error {
         print("Error: \\(error.localizedDescription)")
@@ -91,6 +99,7 @@ let task = URLSession.shared.dataTask(with: request) { data, response, error in
     }
 }
 
+
 task.resume()
 
 semaphore.wait()
@@ -101,8 +110,22 @@ semaphore.wait()
     try {
       String result = kTemplateStart;
 
-      var rec = getValidRequestUri(requestModel.url, requestModel.enabledParams);
+
+      var rec = 
+      getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
+
+    var params = requestModel.enabledParamsMap.entries.expand((entry) {
+
+    var values = entry.value;
+    
+    return values.map((value) {
+      return {'key': entry.key, 'value': value};
+    });
+  }).toList();
+
+
+
 
       if (requestModel.hasFormData) {
         result += kTemplateFormDataImport;
@@ -151,18 +174,19 @@ semaphore.wait()
 
       var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
-        "url": uri.toString(),
-        "method": requestModel.method.name.toUpperCase()
+        "url": uri.toString().split('?').first,
+        "method": requestModel.method.name.toUpperCase(),
+        "params": params, 
       });
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasFormData) {
-        headers['Content-Type'] = 
-            "multipart/form-data; boundary=\\(boundary.stringValue)";
-      } else if(requestModel.hasJsonData||requestModel.hasTextData){
-        headers['Content-Type'] = 'application/json';
-    }
-
+        headers.putIfAbsent("Content-Type",
+            () => "multipart/form-data; boundary=\\(boundary.stringValue)");
+      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
+        headers.putIfAbsent(
+            kHeaderContentType, () => requestModel.bodyContentType.header);
+      }
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeaders);
         result += templateHeader.render({"headers": headers});

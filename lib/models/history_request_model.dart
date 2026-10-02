@@ -17,6 +17,8 @@ abstract class HistoryRequestModel with _$HistoryRequestModel {
     HttpRequestModel? httpRequestModel,
     AIRequestModel? aiRequestModel,
     WebSocketRequestModel? wsRequestModel,
+    MQTTRequestModel? mqttRequestModel,
+    GrpcRequestModel? grpcRequestModel,
     HttpResponseModel? httpResponseModel,
     String? preRequestScript,
     String? postRequestScript,

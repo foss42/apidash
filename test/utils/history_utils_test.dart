@@ -8,6 +8,49 @@ import '../models/history_models.dart';
 
 void main() {
   group('Testing getRequestModelFromHistoryModel function', () {
+    test('carries grpcRequestModel for a gRPC history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModelGrpc,
+      );
+
+      expect(requestModel.id, 'historyIdGrpc');
+      expect(requestModel.apiType, APIType.grpc);
+      // The actual fix: grpcRequestModel is carried through.
+      expect(requestModel.grpcRequestModel, isNotNull);
+      expect(requestModel.grpcRequestModel, historyGrpcRequestModel);
+      expect(requestModel.grpcRequestModel!.url, 'localhost:50051');
+      expect(requestModel.grpcRequestModel!.service, 'GreeterService');
+      expect(requestModel.grpcRequestModel!.method, 'SayHello');
+      expect(requestModel.grpcRequestModel!.messageHistory.length, 2);
+      // Sibling protocol models stay null on a gRPC restore.
+      expect(requestModel.wsRequestModel, isNull);
+      expect(requestModel.httpRequestModel, isNull);
+      expect(requestModel.aiRequestModel, isNull);
+    });
+
+    test('carries wsRequestModel for a WebSocket history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModelWs,
+      );
+
+      expect(requestModel.apiType, APIType.websocket);
+      // wsRequestModel passthrough (added alongside the gRPC fix).
+      expect(requestModel.wsRequestModel, isNotNull);
+      expect(requestModel.wsRequestModel, historyWsRequestModel);
+      expect(requestModel.grpcRequestModel, isNull);
+    });
+
+    test('carries httpRequestModel for a REST history entry', () {
+      final requestModel = getRequestModelFromHistoryModel(
+        historyRequestModel1,
+      );
+
+      expect(requestModel.apiType, APIType.rest);
+      expect(requestModel.httpRequestModel, isNotNull);
+      expect(requestModel.grpcRequestModel, isNull);
+      expect(requestModel.wsRequestModel, isNull);
+    });
+
     test('returns correct RequestModel', () {
       final model = HistoryRequestModel(
         historyId: 'h1',
@@ -20,6 +63,25 @@ void main() {
       expect(result.apiType, APIType.rest);
       expect(result.responseStatus, 200);
       expect(result.message, kResponseCodeReasons[200]);
+    });
+
+    test('carries wsRequestModel through the conversion', () {
+      final result = getRequestModelFromHistoryModel(historyRequestModelWs);
+      expect(result.id, 'historyIdWs');
+      expect(result.apiType, APIType.websocket);
+      expect(result.wsRequestModel, historyWsRequestModel);
+      expect(result.mqttRequestModel, isNull);
+    });
+
+    test('carries mqttRequestModel through the conversion', () {
+      final result = getRequestModelFromHistoryModel(historyRequestModelMqtt);
+      expect(result.id, 'historyIdMqtt');
+      expect(result.apiType, APIType.mqtt);
+      expect(result.mqttRequestModel, historyMqttRequestModel);
+      // populated collections carried across intact
+      expect(result.mqttRequestModel!.messageHistory.length, 2);
+      expect(result.mqttRequestModel!.subscribedTopics.length, 2);
+      expect(result.wsRequestModel, isNull);
     });
   });
 

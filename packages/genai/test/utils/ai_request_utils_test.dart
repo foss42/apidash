@@ -129,6 +129,25 @@ void main() {
       expect(results, isEmpty);
     });
 
+    test(
+      'streamGenAIRequest emits an error and completes when the connection fails',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          url: 'invalid://url',
+          apiKey: 'fake_key',
+        );
+        final stream = await streamGenAIRequest(model);
+        final errors = <Object>[];
+        final results = await stream
+            .handleError((e) => errors.add(e))
+            .toList()
+            .timeout(const Duration(seconds: 5));
+        expect(errors, isNotEmpty);
+        expect(results, isEmpty);
+      },
+    );
+
     test('callGenerativeModel calls onAnswer correctly', () async {
       var model = AIRequestModel(
         modelApiProvider: ModelAPIProvider.gemini,

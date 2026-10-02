@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 
@@ -25,7 +27,7 @@ func main() {
 """;
 
   String kTemplateBody = """
-  {% if body %}payload := bytes.NewBuffer([]byte(`{{body}}`)){% endif %}
+  {% if body %}payload := bytes.NewBuffer([]byte({{body}})){% endif %}
 
 """;
 
@@ -58,13 +60,14 @@ func main() {
 """;
 
   String kTemplateQueryParam = """
-  query := url.Query()
-  {% for key, value in params %}
-  query.Set("{{key}}", "{{value}}"){% endfor %}
+query := url.Query()
+{% for param in params %}
+query.Add("{{param.key}}", "{{param.value}}"){% endfor %}
 
-  url.RawQuery = query.Encode()
+url.RawQuery = query.Encode()
 
 """;
+
 
   String kTemplateRequest = """
   req, _ := http.NewRequest("{{method}}", url.String(), {% if hasBody %}payload{% else %}nil{% endif %})
@@ -102,7 +105,7 @@ func main() {
       });
 
       var templateUrl = jj.Template(kTemplateUrl);
-      result += templateUrl.render({"url": url});
+      result += templateUrl.render({"url": url.split('?').first});
 
       var rec = getValidRequestUri(
         url,
@@ -115,7 +118,10 @@ func main() {
         if (requestModel.hasTextData || requestModel.hasJsonData) {
           hasBody = true;
           var templateRawBody = jj.Template(kTemplateBody);
-          result += templateRawBody.render({"body": requestModel.body});
+          final body = requestModel.body!;
+          result += templateRawBody.render({
+            "body": body.contains('`') ? jsonEncode(body) : '`$body`',
+          });
         } else if (requestModel.hasFormData) {
           hasBody = true;
           var templateFormData = jj.Template(kTemplateFormData);
@@ -124,15 +130,17 @@ func main() {
             "fields": requestModel.formDataMapList,
           });
         }
-
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var templateQueryParam = jj.Template(kTemplateQueryParam);
-            result += templateQueryParam.render({"params": params});
-          }
+      if (requestModel.enabledParamsMap.isNotEmpty) {
+      var queryParams = [];
+      requestModel.enabledParamsMap.forEach((key, value) {
+        for (var v in value) {
+          queryParams.add({'key': key, 'value': v});
         }
+            });
 
+      var templateQueryParam = jj.Template(kTemplateQueryParam);
+      result += templateQueryParam.render({"params": queryParams});
+    }
         var method = requestModel.method.name.toUpperCase();
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({

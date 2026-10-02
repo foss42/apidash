@@ -294,34 +294,10 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       httpRequestModel: scriptResult.updatedRequest,
     );
     if (originalEnvironmentModel != null) {
-      final updatedEnvironmentMap = scriptResult.updatedEnvironment;
-      final List<EnvironmentVariableModel> newValues = [];
-      final Map<String, dynamic> mutableUpdatedEnv = Map.from(
-        updatedEnvironmentMap,
+      final newValues = mergeScriptEnvironmentValues(
+        originalValues: originalEnvironmentModel.values,
+        updatedEnvironment: scriptResult.updatedEnvironment,
       );
-      for (final originalVariable in originalEnvironmentModel.values) {
-        if (mutableUpdatedEnv.containsKey(originalVariable.key)) {
-          final dynamic newValue = mutableUpdatedEnv[originalVariable.key];
-          newValues.add(
-            originalVariable.copyWith(
-              value: newValue == null ? '' : newValue.toString(),
-              enabled: true,
-            ),
-          );
-          mutableUpdatedEnv.remove(originalVariable.key);
-        }
-      }
-      for (final entry in mutableUpdatedEnv.entries) {
-        final dynamic newValue = entry.value;
-        newValues.add(
-          EnvironmentVariableModel(
-            key: entry.key,
-            value: newValue == null ? '' : newValue.toString(),
-            enabled: true,
-            type: EnvironmentVariableType.variable,
-          ),
-        );
-      }
       updateEnv?.call(originalEnvironmentModel, newValues);
     } else {
       if (scriptResult.updatedEnvironment.isNotEmpty) {
@@ -356,34 +332,10 @@ class JsRuntimeNotifier extends StateNotifier<JsRuntimeState> {
       httpResponseModel: scriptResult.updatedResponse,
     );
     if (originalEnvironmentModel != null) {
-      final updatedEnvironmentMap = scriptResult.updatedEnvironment;
-      final List<EnvironmentVariableModel> newValues = [];
-      final Map<String, dynamic> mutableUpdatedEnv = Map.from(
-        updatedEnvironmentMap,
+      final newValues = mergeScriptEnvironmentValues(
+        originalValues: originalEnvironmentModel.values,
+        updatedEnvironment: scriptResult.updatedEnvironment,
       );
-      for (final originalVariable in originalEnvironmentModel.values) {
-        if (mutableUpdatedEnv.containsKey(originalVariable.key)) {
-          final dynamic newValue = mutableUpdatedEnv[originalVariable.key];
-          newValues.add(
-            originalVariable.copyWith(
-              value: newValue == null ? '' : newValue.toString(),
-              enabled: true,
-            ),
-          );
-          mutableUpdatedEnv.remove(originalVariable.key);
-        }
-      }
-      for (final entry in mutableUpdatedEnv.entries) {
-        final dynamic newValue = entry.value;
-        newValues.add(
-          EnvironmentVariableModel(
-            key: entry.key,
-            value: newValue == null ? '' : newValue.toString(),
-            enabled: true,
-            type: EnvironmentVariableType.variable,
-          ),
-        );
-      }
       updateEnv?.call(originalEnvironmentModel, newValues);
     } else {
       if (scriptResult.updatedEnvironment.isNotEmpty) {

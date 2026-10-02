@@ -92,9 +92,10 @@ class Program
       const String _baseUrl = "https://api.apidash.dev";
       var client = new RestClient(_baseUrl);
 
-      var request = new RestRequest("/country/data", Method.Get);
+      var request = new RestRequest("/country/filtercodes", Method.Get);
 
-      request.AddQueryParameter("code", "IND");
+      request.AddQueryParameter("country", "United States");
+      request.AddQueryParameter("country", "India");
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -576,7 +577,7 @@ class Program
       );
     });
     test("Post 2", () {
-      const expectedCode = """
+      const expectedCode = r"""
 using System;
 using RestSharp;
 using System.Threading.Tasks;
@@ -592,15 +593,8 @@ class Program
 
       request.AddHeader("Content-Type", "application/json");
 
-      var jsonBody = new {
-text = "I LOVE Flutter",
-flag = "null",
-male = "true",
-female = "false",
-no = "1.2",
-arr = "[null, true, false, null]"
-};
-      request.AddJsonBody(jsonBody);
+      var jsonBody = "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}";
+      request.AddStringBody(jsonBody, ContentType.Json);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -622,7 +616,7 @@ arr = "[null, true, false, null]"
       );
     });
     test("Post 3", () {
-      const expectedCode = """
+      const expectedCode = r"""
 using System;
 using RestSharp;
 using System.Threading.Tasks;
@@ -639,10 +633,8 @@ class Program
       request.AddHeader("User-Agent", "Test Agent");
       request.AddHeader("Content-Type", "application/json");
 
-      var jsonBody = new {
-text = "I LOVE Flutter"
-};
-      request.AddJsonBody(jsonBody);
+      var jsonBody = "{\n\"text\": \"I LOVE Flutter\"\n}";
+      request.AddStringBody(jsonBody, ContentType.Json);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -921,7 +913,7 @@ class Program
 
   group("Put Request Test", () {
     test("Put 1", () {
-      const expectedCode = """
+      const expectedCode = r"""
 using System;
 using RestSharp;
 using System.Threading.Tasks;
@@ -935,13 +927,11 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Put);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
       request.AddHeader("Content-Type", "application/json");
 
-      var jsonBody = new {
-name = "morpheus",
-job = "zion resident"
-};
-      request.AddJsonBody(jsonBody);
+      var jsonBody = "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}";
+      request.AddStringBody(jsonBody, ContentType.Json);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -966,7 +956,7 @@ job = "zion resident"
 
   group("Patch Request Test", () {
     test("Patch 1", () {
-      const expectedCode = """
+      const expectedCode = r"""
 using System;
 using RestSharp;
 using System.Threading.Tasks;
@@ -980,13 +970,11 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Patch);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
       request.AddHeader("Content-Type", "application/json");
 
-      var jsonBody = new {
-name = "marfeus",
-job = "accountant"
-};
-      request.AddJsonBody(jsonBody);
+      var jsonBody = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+      request.AddStringBody(jsonBody, ContentType.Json);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -1025,6 +1013,8 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Delete);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
+
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
@@ -1045,7 +1035,7 @@ class Program
       );
     });
     test("Delete 2", () {
-      const expectedCode = """
+      const expectedCode = r"""
 using System;
 using RestSharp;
 using System.Threading.Tasks;
@@ -1059,13 +1049,11 @@ class Program
 
       var request = new RestRequest("/api/users/2", Method.Delete);
 
+      request.AddHeader("x-api-key", "reqres-free-v1");
       request.AddHeader("Content-Type", "application/json");
 
-      var jsonBody = new {
-name = "marfeus",
-job = "accountant"
-};
-      request.AddJsonBody(jsonBody);
+      var jsonBody = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+      request.AddStringBody(jsonBody, ContentType.Json);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);

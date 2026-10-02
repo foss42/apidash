@@ -763,4 +763,91 @@ void main() {
       expect(result.authModel?.oauth2?.accessToken, "atok");
     });
   });
+
+  group("Testing mergeScriptEnvironmentValues", () {
+    const enabledBaseUrl = EnvironmentVariableModel(
+      key: "baseUrl",
+      value: "https://api.example.com",
+      enabled: true,
+      type: EnvironmentVariableType.variable,
+    );
+    const disabledSecret = EnvironmentVariableModel(
+      key: "secretKey",
+      value: "my-secret",
+      enabled: false,
+      type: EnvironmentVariableType.variable,
+    );
+    const enabledApiKey = EnvironmentVariableModel(
+      key: "apiKey",
+      value: "secret-api-key-123",
+      enabled: true,
+      type: EnvironmentVariableType.secret,
+    );
+
+    test("preserves disabled variables that were never injected into JS", () {
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [enabledBaseUrl, disabledSecret],
+        updatedEnvironment: {"baseUrl": "https://api.example.com"},
+      );
+
+      expect(result, contains(disabledSecret));
+      expect(result.firstWhere((v) => v.key == "baseUrl").enabled, isTrue);
+    });
+
+    test("keeps disabled secrets and their type", () {
+      const disabledSecretTyped = EnvironmentVariableModel(
+        key: "token",
+        value: "hidden",
+        enabled: false,
+        type: EnvironmentVariableType.secret,
+      );
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [enabledBaseUrl, disabledSecretTyped],
+        updatedEnvironment: {"baseUrl": "https://api.example.com"},
+      );
+
+      final preserved = result.firstWhere((v) => v.key == "token");
+      expect(preserved.enabled, isFalse);
+      expect(preserved.type, EnvironmentVariableType.secret);
+      expect(preserved.value, "hidden");
+    });
+
+    test("drops enabled variables that the script unset", () {
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [enabledBaseUrl, enabledApiKey, disabledSecret],
+        updatedEnvironment: {"baseUrl": "https://api.example.com"},
+      );
+
+      expect(result.any((v) => v.key == "apiKey"), isFalse);
+      expect(result, contains(disabledSecret));
+    });
+
+    test("updates enabled values and appends script-created keys", () {
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [enabledBaseUrl, disabledSecret],
+        updatedEnvironment: {
+          "baseUrl": "https://api.example.com/v2",
+          "requestId": "req_1",
+        },
+      );
+
+      expect(
+        result.firstWhere((v) => v.key == "baseUrl").value,
+        "https://api.example.com/v2",
+      );
+      expect(result.firstWhere((v) => v.key == "requestId").value, "req_1");
+      expect(result.firstWhere((v) => v.key == "requestId").enabled, isTrue);
+      expect(result, contains(disabledSecret));
+    });
+
+    test("stringifies non-string script values", () {
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [enabledBaseUrl],
+        updatedEnvironment: {"baseUrl": 42, "retryCount": 0},
+      );
+
+      expect(result.firstWhere((v) => v.key == "baseUrl").value, "42");
+      expect(result.firstWhere((v) => v.key == "retryCount").value, "0");
+    });
+  });
 }

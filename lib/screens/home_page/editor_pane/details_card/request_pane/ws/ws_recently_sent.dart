@@ -1,14 +1,18 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 
 /// "Recently Sent" strip below the message composer. Extracted into its own
 /// widget so the `messageHistory` watch (which changes on every incoming WS
 /// frame) lives here instead of in the composer — keeping the composer from
 /// rebuilding (and reseeding `TextFieldEditor`) while the user is typing.
-class WsRecentlySent extends ConsumerWidget {
+class WsRecentlySent extends HookConsumerWidget {
   final List<Map<String, String>> templates;
   final void Function(String payload) onReuse;
   final void Function(String name, String payload) onSaveTemplate;
@@ -29,13 +33,20 @@ class WsRecentlySent extends ConsumerWidget {
             .select((value) => value?.wsRequestModel?.messageHistory)) ??
         const <WebSocketMessage>[];
 
-    final sentHistory = messageHistory
-        .where((m) => m.outgoing && m.messageType == WebSocketMessageType.sent && m.payload != "Heartbeat ping")
+    // Newest-first, deduped by payload (map keeps insertion order, so a
+    // repeat keeps its latest slot) and counted so the card can show "×N".
+    final sentCounts = <String, int>{};
+    for (final payload in messageHistory
+        .where((m) => m.outgoing && m.messageType == WebSocketMessageType.sent && !m.isAutomatic)
         .map((m) => m.payload)
         .toList()
-        .reversed
-        .take(10)
-        .toList();
+        .reversed) {
+      sentCounts.update(payload, (n) => n + 1, ifAbsent: () => 1);
+    }
+    final sentHistory = sentCounts.keys.take(10).toList();
+    // Horizontal strip on desktop: visible draggable bar, mouse drag, and a
+    // plain wheel (no Shift) scrolls sideways.
+    final scrollController = useScrollController();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -53,7 +64,23 @@ class WsRecentlySent extends ConsumerWidget {
         else
           SizedBox(
             height: 100,
-            child: ListView.separated(
+            child: Listener(
+              onPointerSignal: (e) {
+                if (e is PointerScrollEvent && e.scrollDelta.dy != 0 && scrollController.hasClients) {
+                  scrollController.jumpTo((scrollController.offset + e.scrollDelta.dy)
+                      .clamp(0.0, scrollController.position.maxScrollExtent));
+                }
+              },
+              child: Scrollbar(
+                controller: scrollController,
+                thumbVisibility: true,
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch, PointerDeviceKind.trackpad},
+                  ),
+                  child: ListView.separated(
+              controller: scrollController,
+              padding: const EdgeInsets.only(bottom: 8),
               scrollDirection: Axis.horizontal,
               itemCount: sentHistory.length,
               separatorBuilder: (_, __) => kHSpacer10,
@@ -67,11 +94,7 @@ class WsRecentlySent extends ConsumerWidget {
 
                 final title = matchingTemplate?["name"];
 
-                return Tooltip(
-                  message: payload,
-                  waitDuration: const Duration(milliseconds: 600),
-                  textStyle: kCodeStyle.copyWith(fontSize: 11),
-                  child: Material(
+                return Material(
                     type: MaterialType.transparency,
                     clipBehavior: Clip.antiAlias,
                     borderRadius: BorderRadius.circular(8),
@@ -134,6 +157,25 @@ class WsRecentlySent extends ConsumerWidget {
                                       ),
                                     ),
                               ),
+                              if (sentCounts[payload]! > 1)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 6, top: 2),
+                                  child: Text(
+                                    "×${sentCounts[payload]}",
+                                    style: kTextStyleButtonSmall.copyWith(
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                              // Long payloads are truncated by the card, so a
+                              // "View" button opens the full text in a dialog.
+                              ADIconButton(
+                                icon: Icons.open_in_full,
+                                iconSize: 14,
+                                tooltip: "View full message",
+                                visualDensity: VisualDensity.compact,
+                                onPressed: () => _showFullMessage(context, payload),
+                              ),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -148,12 +190,36 @@ class WsRecentlySent extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  ),
                 );
               },
             ),
+                ),
+              ),
+            ),
           ),
       ],
+    );
+  }
+
+  void _showFullMessage(BuildContext context, String payload) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Sent message"),
+        content: SizedBox(
+          width: 600,
+          child: SingleChildScrollView(
+            child: SelectableText(payload, style: kCodeStyle.copyWith(fontSize: 12)),
+          ),
+        ),
+        actions: [
+          CopyButton(toCopy: payload),
+          ADTextButton(
+            label: kLabelClose,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
     );
   }
 }
