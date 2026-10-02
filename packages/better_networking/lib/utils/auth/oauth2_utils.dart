@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 
 import '../../models/auth/auth_oauth2_model.dart';
 import '../../services/http_client_manager.dart';
 import '../../services/oauth_callback_server.dart';
 import '../platform_utils.dart';
+
+typedef OAuth2CallbackHandler = Future<String> Function(
+  String url, {
+  required String callbackUrlScheme,
+});
 
 /// Advanced OAuth2 authorization code grant handler that returns both the client and server
 /// for cases where you need manual control over the callback server lifecycle.
@@ -22,6 +26,7 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
   required File? credentialsFile,
   String? state,
   String? scope,
+  OAuth2CallbackHandler? customCallbackHandler,
 }) async {
   // Check for existing credentials first
   if (credentialsFile != null && await credentialsFile.exists()) {
@@ -107,14 +112,15 @@ Future<(oauth2.Client, OAuthCallbackServer?)> oAuth2AuthorizationCodeGrant({
         }
       }
     } else {
-      // For mobile: Use the standard flutter_web_auth_2 approach
-      callbackUri = await FlutterWebAuth2.authenticate(
-        url: authorizationUrl.toString(),
+      // For mobile / custom: Use the provided callback handler
+      if (customCallbackHandler == null) {
+        throw Exception(
+          'A customCallbackHandler must be provided for OAuth2 on this platform.',
+        );
+      }
+      callbackUri = await customCallbackHandler(
+        authorizationUrl.toString(),
         callbackUrlScheme: actualRedirectUrl.scheme,
-        options: const FlutterWebAuth2Options(
-          useWebview: true,
-          windowName: 'OAuth Authorization - API Dash',
-        ),
       );
     }
 

@@ -1,0 +1,29 @@
+name: apidash_cli
+description: "Pure-Dart command line interface for API Dash. Reuses API Dash's own better_networking engine and shares the desktop workspace."
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=3.11.0 <4.0.0"
+
+resolution: workspace
+
+dependencies:
+  # The send engine + models (HttpRequestModel, APIType, sendHttpRequest).
+  # We depend on better_networking directly, not apidash_core: apidash_core's
+  # barrel pulls genai, which exports Flutter widgets and so cannot be compiled
+  # by a pure-Dart `dart run`/`dart compile`.
+  better_networking: any
+  # genai for the `ai` command. Import ONLY its Flutter-free subpaths
+  # (models/, interface/, utils/) — never the genai.dart barrel, which
+  # re-exports widgets/ and would drag Flutter into this pure-Dart compile.
+  # genai itself declares no Flutter dependency, so narrow imports stay clean.
+  genai: any
+  args: ^2.5.0
+  mason_logger: ^0.3.1
+  hive_ce: ^2.1.2
+  path: ^1.9.0
+
+dev_dependencies:
+  test: ^1.29.0
+  lints: ^6.0.0
