@@ -83,16 +83,44 @@ class EditRequestBody extends ConsumerWidget {
           APIType.graphql => Expanded(
             child: Padding(
               padding: kPt5o10,
-              child: TextFieldEditor(
-                key: Key("$selectedId-query"),
-                fieldKey: "$selectedId-query-editor",
-                initialValue: requestModel?.httpRequestModel?.query,
-                onChanged: (String value) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .update(query: value);
-                },
-                hintText: kHintQuery,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-query"),
+                      fieldKey: "$selectedId-query-editor",
+                      initialValue: requestModel?.httpRequestModel?.query,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(query: value);
+                      },
+                      hintText: kHintQuery,
+                    ),
+                  ),
+                  kVSpacer8,
+                  Text(
+                    kLabelGQLVariables,
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: JsonTextFieldEditor(
+                      key: Key("$selectedId-gql-variables"),
+                      fieldKey: "$selectedId-gql-variables-editor-$darkMode",
+                      isDark: darkMode,
+                      initialValue: requestModel?.httpRequestModel?.variables,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(variables: value);
+                      },
+                      hintText: kHintGraphQLVariables,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

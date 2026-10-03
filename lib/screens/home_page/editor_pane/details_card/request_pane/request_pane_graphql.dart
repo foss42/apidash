@@ -29,6 +29,9 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasQuery = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasQuery)) ??
         false;
+    final hasVariables = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.hasVariables)) ??
+        false;
 
     final scriptsLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.preRequestScript?.length)) ??
@@ -56,7 +59,7 @@ class EditGraphQLRequestPane extends ConsumerWidget {
       showIndicators: [
         headerLength > 0,
         hasAuth,
-        hasQuery,
+        hasQuery || hasVariables,
         scriptsLength > 0,
       ],
       tabLabels: const [
