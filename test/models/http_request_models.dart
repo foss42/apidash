@@ -387,6 +387,7 @@ const httpRequestModelGet4Json = <String, dynamic>{
   "bodyContentType": "json",
   "body": null,
   "query": null,
+  "variables": null,
   "formData": null,
 };
 
@@ -418,6 +419,7 @@ const httpRequestModelPost10Json = <String, dynamic>{
 "text": "I LOVE Flutter"
 }''',
   "query": null,
+  "variables": null,
   'formData': [
     {'name': 'token', 'value': 'xyz', 'type': 'text'},
     {'name': 'imfile', 'value': '/Documents/up/1.png', 'type': 'file'},
