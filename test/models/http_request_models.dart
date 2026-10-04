@@ -480,3 +480,32 @@ const httpRequestModelOptions1 = HttpRequestModel(
   method: HTTPVerb.options,
   url: 'https://reqbin.com/echo/options',
 );
+
+/// GET request model with quotes, a backslash and a newline in a param
+const httpRequestModelEscape1 = HttpRequestModel(
+  method: HTTPVerb.get,
+  url: 'https://api.apidash.dev/case/lower',
+  params: [NameValueModel(name: "it's", value: 'say "hi"\nC:\\new')],
+  headers: [NameValueModel(name: 'If-Match', value: '"abc123"')],
+);
+
+/// POST request model with a text body that cannot be a raw string
+const httpRequestModelEscape2 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.text,
+  body: "a ''' b \\",
+);
+
+/// POST request model with quotes and a Windows file path in form data
+const httpRequestModelEscape3 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/io/form',
+  bodyContentType: ContentType.formdata,
+  formData: [
+    FormDataModel(
+        name: 'note', value: 'say "hi"\nbye', type: FormDataType.text),
+    FormDataModel(
+        name: 'file', value: r'C:\Users\new\file.txt', type: FormDataType.file),
+  ],
+);

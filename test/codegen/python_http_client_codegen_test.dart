@@ -32,7 +32,7 @@ print(data.decode("utf-8"))
     test('GET 2', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-params = { 'code': ['US'] }
+params = { "code": ["US"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
@@ -56,7 +56,7 @@ print(data.decode("utf-8"))
     test('GET 3', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-params = { 'country': ['United States', 'India'] }
+params = { "country": ["United States", "India"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
@@ -80,11 +80,11 @@ print(data.decode("utf-8"))
     test('GET 4', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-params = { 'num': ['8700000'],
-'digits': ['3'],
-'system': ['SS'],
-'add_space': ['true'],
-'trailing_zeros': ['true'] }
+params = { "num": ["8700000"],
+"digits": ["3"],
+"system": ["SS"],
+"add_space": ["true"],
+"trailing_zeros": ["true"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
@@ -134,7 +134,7 @@ print(data.decode("utf-8"))
     test('GET 6', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-params = { 'raw': ['true'] }
+params = { "raw": ["true"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
@@ -184,7 +184,7 @@ print(data.decode("utf-8"))
     test('GET 8', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-params = { 'raw': ['true'] }
+params = { "raw": ["true"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
@@ -213,8 +213,8 @@ print(data.decode("utf-8"))
     test('GET 9', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-params = { 'num': ['8700000'],
-'add_space': ['true'] }
+params = { "num": ["8700000"],
+"add_space": ["true"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
@@ -264,8 +264,8 @@ print(data.decode("utf-8"))
     test('GET 11', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-params = { 'num': ['8700000'],
-'digits': ['3'] }
+params = { "num": ["8700000"],
+"digits": ["3"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
@@ -361,9 +361,7 @@ print(data.decode("utf-8"))
     test('POST 1', () {
       const expectedCode = r"""import http.client
 
-body = r'''{
-"text": "I LOVE Flutter"
-}'''
+body = "{\n\"text\": \"I LOVE Flutter\"\n}"
 
 headers = {
   "content-type": "text/plain"
@@ -675,8 +673,8 @@ print(data.decode("utf-8"))
 import mimetypes
 from codecs import encode
 from urllib.parse import urlencode
-params = { 'size': ['2'],
-'len': ['3'] }
+params = { "size": ["2"],
+"len": ["3"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
@@ -732,8 +730,8 @@ print(data.decode("utf-8"))
 import mimetypes
 from codecs import encode
 from urllib.parse import urlencode
-params = { 'size': ['2'],
-'len': ['3'] }
+params = { "size": ["2"],
+"len": ["3"] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
@@ -912,6 +910,121 @@ print(data.decode("utf-8"))
           CodegenLanguage.pythonHttpClient,
           requestModelDelete2,
           SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
+
+  group('Escaping', () {
+    test('Quotes, a backslash and a newline in params and headers', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+params = { "it's": ["say \"hi\"\nC:\\new"] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
+
+headers = {
+  "If-Match": "\"abc123\""
+}
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("GET", "/case/lower" + queryParamsStr,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r"""import http.client
+
+body = "a ''' b \\"
+
+headers = {
+  "content-type": "text/plain"
+}
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and a Windows file path in form data', () {
+      const expectedCode = r"""import http.client
+import mimetypes
+from codecs import encode
+
+headers = {
+  "content-type": "multipart/form-data; boundary=b"
+}
+
+def build_data_list(fields):
+    dataList = []
+    for field in fields:
+        name = field.get('name', '')
+        value = field.get('value', '')
+        type_ = field.get('type', 'text')
+        dataList.append(encode('--b'))
+        if type_ == 'text':
+            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"'))
+            dataList.append(encode('Content-Type: text/plain'))
+            dataList.append(encode(''))
+            dataList.append(encode(value))
+        elif type_ == 'file':
+            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"; filename="{value}"'))
+            dataList.append(encode(f'Content-Type: {mimetypes.guess_type(value)[0] or "application/octet-stream"}'))
+            dataList.append(encode(''))
+            dataList.append(open(value, 'rb').read())
+    dataList.append(encode(f'--b--'))
+    dataList.append(encode(''))
+    return dataList
+
+dataList = build_data_list([{"name":"note","value":"say \"hi\"\nbye","type":"text"},{"name":"file","value":"C:\\Users\\new\\file.txt","type":"file"}])
+body = b'\r\n'.join(dataList)
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/io/form",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
         ),
         expectedCode,
       );

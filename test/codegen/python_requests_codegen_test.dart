@@ -11,7 +11,7 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev'
+url = "https://api.apidash.dev"
 
 response = requests.get(url)
 
@@ -31,8 +31,8 @@ print('Response Body:', response.text)
     test('GET 2', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/country/data'
-params = { 'code': ['US'] }
+url = "https://api.apidash.dev/country/data"
+params = { "code": ["US"] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -51,8 +51,8 @@ print('Response Body:', response.text)
     test('GET 3', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/country/filtercodes'
-params = { 'country': ['United States', 'India'] }
+url = "https://api.apidash.dev/country/filtercodes"
+params = { "country": ["United States", "India"] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -71,12 +71,12 @@ print('Response Body:', response.text)
     test('GET 4', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/humanize/social'
-params = { 'num': ['8700000'],
-'digits': ['3'],
-'system': ['SS'],
-'add_space': ['true'],
-'trailing_zeros': ['true'] }
+url = "https://api.apidash.dev/humanize/social"
+params = { "num": ["8700000"],
+"digits": ["3"],
+"system": ["SS"],
+"add_space": ["true"],
+"trailing_zeros": ["true"] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -95,7 +95,7 @@ print('Response Body:', response.text)
     test('GET 5', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.github.com/repos/foss42/apidash'
+url = "https://api.github.com/repos/foss42/apidash"
 
 headers = {
   "User-Agent": "Test Agent"
@@ -119,8 +119,8 @@ print('Response Body:', response.text)
     test('GET 6', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.github.com/repos/foss42/apidash'
-params = { 'raw': ['true'] }
+url = "https://api.github.com/repos/foss42/apidash"
+params = { "raw": ["true"] }
 headers = {
   "User-Agent": "Test Agent"
 }
@@ -143,7 +143,7 @@ print('Response Body:', response.text)
     test('GET 7', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev'
+url = "https://api.apidash.dev"
 
 response = requests.get(url)
 
@@ -163,8 +163,8 @@ print('Response Body:', response.text)
     test('GET 8', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.github.com/repos/foss42/apidash'
-params = { 'raw': ['true'] }
+url = "https://api.github.com/repos/foss42/apidash"
+params = { "raw": ["true"] }
 headers = {
   "User-Agent": "Test Agent"
 }
@@ -187,9 +187,9 @@ print('Response Body:', response.text)
     test('GET 9', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/humanize/social'
-params = { 'num': ['8700000'],
-'add_space': ['true'] }
+url = "https://api.apidash.dev/humanize/social"
+params = { "num": ["8700000"],
+"add_space": ["true"] }
 response = requests.get(url, params=params)
 
 print('Status Code:', response.status_code)
@@ -208,7 +208,7 @@ print('Response Body:', response.text)
     test('GET 10', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/humanize/social'
+url = "https://api.apidash.dev/humanize/social"
 
 headers = {
   "User-Agent": "Test Agent"
@@ -232,9 +232,9 @@ print('Response Body:', response.text)
     test('GET 11', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/humanize/social'
-params = { 'num': ['8700000'],
-'digits': ['3'] }
+url = "https://api.apidash.dev/humanize/social"
+params = { "num": ["8700000"],
+"digits": ["3"] }
 headers = {
   "User-Agent": "Test Agent"
 }
@@ -257,7 +257,7 @@ print('Response Body:', response.text)
     test('GET 12', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/humanize/social'
+url = "https://api.apidash.dev/humanize/social"
 
 response = requests.get(url)
 
@@ -279,7 +279,7 @@ print('Response Body:', response.text)
     test('HEAD 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev'
+url = "https://api.apidash.dev"
 
 response = requests.head(url)
 
@@ -299,7 +299,7 @@ print('Response Body:', response.text)
     test('HEAD 2', () {
       const expectedCode = r"""import requests
 
-url = 'http://api.apidash.dev'
+url = "http://api.apidash.dev"
 
 response = requests.head(url)
 
@@ -321,11 +321,9 @@ print('Response Body:', response.text)
     test('POST 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/case/lower'
+url = "https://api.apidash.dev/case/lower"
 
-payload = r'''{
-"text": "I LOVE Flutter"
-}'''
+payload = "{\n\"text\": \"I LOVE Flutter\"\n}"
 
 headers = {
   "content-type": "text/plain"
@@ -349,7 +347,7 @@ print('Response Body:', response.text)
     test('POST 2', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/case/lower'
+url = "https://api.apidash.dev/case/lower"
 
 payload = {
 "text": "I LOVE Flutter",
@@ -378,7 +376,7 @@ print('Response Body:', response.text)
     test('POST 3', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.apidash.dev/case/lower'
+url = "https://api.apidash.dev/case/lower"
 
 payload = {
 "text": "I LOVE Flutter"
@@ -407,7 +405,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-url = 'https://api.apidash.dev/io/form'
+url = "https://api.apidash.dev/io/form"
 
 payload = MultipartEncoder({
   "text": "API",
@@ -438,7 +436,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-url = 'https://api.apidash.dev/io/form'
+url = "https://api.apidash.dev/io/form"
 
 payload = MultipartEncoder({
   "text": "API",
@@ -470,7 +468,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-url = 'https://api.apidash.dev/io/img'
+url = "https://api.apidash.dev/io/img"
 
 payload = MultipartEncoder({
   "token": "xyz",
@@ -500,7 +498,7 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-url = 'https://api.apidash.dev/io/img'
+url = "https://api.apidash.dev/io/img"
 
 payload = MultipartEncoder({
   "token": "xyz",
@@ -530,9 +528,9 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-url = 'https://api.apidash.dev/io/form'
-params = { 'size': ['2'],
-'len': ['3'] }
+url = "https://api.apidash.dev/io/form"
+params = { "size": ["2"],
+"len": ["3"] }
 payload = MultipartEncoder({
   "text": "API",
   "sep": "|",
@@ -562,9 +560,9 @@ print('Response Body:', response.text)
       const expectedCode = r"""import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-url = 'https://api.apidash.dev/io/img'
-params = { 'size': ['2'],
-'len': ['3'] }
+url = "https://api.apidash.dev/io/img"
+params = { "size": ["2"],
+"len": ["3"] }
 payload = MultipartEncoder({
   "token": "xyz",
   "imfile": ("1.png", open("/Documents/up/1.png", "rb")),
@@ -596,7 +594,7 @@ print('Response Body:', response.text)
     test('PUT 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://reqres.in/api/users/2'
+url = "https://reqres.in/api/users/2"
 
 payload = {
 "name": "morpheus",
@@ -627,7 +625,7 @@ print('Response Body:', response.text)
     test('PATCH 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://reqres.in/api/users/2'
+url = "https://reqres.in/api/users/2"
 
 payload = {
 "name": "marfeus",
@@ -658,7 +656,7 @@ print('Response Body:', response.text)
     test('DELETE 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://reqres.in/api/users/2'
+url = "https://reqres.in/api/users/2"
 
 headers = {
   "x-api-key": "reqres-free-v1"
@@ -682,7 +680,7 @@ print('Response Body:', response.text)
     test('DELETE 2', () {
       const expectedCode = r"""import requests
 
-url = 'https://reqres.in/api/users/2'
+url = "https://reqres.in/api/users/2"
 
 payload = {
 "name": "marfeus",
@@ -703,6 +701,93 @@ print('Response Body:', response.text)
           CodegenLanguage.pythonRequests,
           requestModelDelete2,
           SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+  });
+
+  group('Escaping', () {
+    test('Quotes, a backslash and a newline in params and headers', () {
+      const expectedCode = r"""import requests
+
+url = "https://api.apidash.dev/case/lower"
+params = { "it's": ["say \"hi\"\nC:\\new"] }
+headers = {
+  "If-Match": "\"abc123\""
+}
+
+response = requests.get(url, params=params, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelEscape1,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Text body with triple quotes and a trailing backslash', () {
+      const expectedCode = r"""import requests
+
+url = "https://api.apidash.dev/case/lower"
+
+payload = "a ''' b \\"
+
+headers = {
+  "content-type": "text/plain"
+}
+
+response = requests.post(url, data=payload, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelEscape2,
+          SupportedUriSchemes.https,
+          boundary: "b",
+        ),
+        expectedCode,
+      );
+    });
+
+    test('Quotes and a Windows file path in form data', () {
+      const expectedCode = r"""import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+
+url = "https://api.apidash.dev/io/form"
+
+payload = MultipartEncoder({
+  "note": "say \"hi\"\nbye",
+  "file": ("file.txt", open("C:\\Users\\new\\file.txt", "rb")),
+}, 
+    boundary="b"
+)
+
+headers = {
+  "content-type": payload.content_type
+}
+
+response = requests.post(url, data=payload, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelEscape3,
+          SupportedUriSchemes.https,
+          boundary: "b",
         ),
         expectedCode,
       );
