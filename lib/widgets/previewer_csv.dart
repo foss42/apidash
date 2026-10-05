@@ -15,6 +15,11 @@ class CsvPreviewer extends StatelessWidget {
   Widget build(BuildContext context) {
     try {
       final List<List<dynamic>> csvData = csv.decode(body);
+      if (csvData.isEmpty) {
+        return const Center(
+          child: Text('No CSV data available'),
+        );
+      }
       return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SingleChildScrollView(
