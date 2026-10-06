@@ -45,10 +45,18 @@ abstract class GrpcRequestModel with _$GrpcRequestModel {
     @Default([]) List<GrpcParameterModel> parameters,
   }) = _GrpcRequestModel;
 
+  /// Outgoing gRPC metadata, excluding rows the user has unchecked.
+  ///
+  /// Enablement is resolved via [getEnabledRows], the same helper the HTTP path
+  /// uses for headers/params. It intentionally treats a null or
+  /// mismatched-length flag list as "all enabled", so requests persisted before
+  /// [isMetadataEnabled] existed keep sending their metadata.
   Map<String, String> get metadataMap {
     if (metadata == null) return {};
+    final enabledMetadata =
+        getEnabledRows(metadata, isMetadataEnabled) ?? const <NameValueModel>[];
     return {
-      for (var m in (metadata!))
+      for (var m in enabledMetadata)
         if (m.name.isNotEmpty) m.name: m.value,
     };
   }

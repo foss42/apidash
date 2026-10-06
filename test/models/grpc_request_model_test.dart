@@ -73,6 +73,98 @@ void main() {
       expect(map, isEmpty);
     });
 
+    test('metadataMap excludes rows the user unchecked', () {
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-keep', value: 'yes'),
+          NameValueModel(name: 'x-probe', value: 'disabled'),
+          NameValueModel(name: 'x-also-keep', value: 'yes'),
+        ],
+        isMetadataEnabled: [true, false, true],
+      );
+
+      final map = model.metadataMap;
+      expect(map, {'x-keep': 'yes', 'x-also-keep': 'yes'});
+      expect(map.containsKey('x-probe'), isFalse);
+    });
+
+    test('metadataMap is empty when every row is unchecked', () {
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-a', value: '1'),
+          NameValueModel(name: 'x-b', value: '2'),
+        ],
+        isMetadataEnabled: [false, false],
+      );
+
+      expect(model.metadataMap, isEmpty);
+    });
+
+    test('metadataMap keeps all rows when flag list is empty (legacy request)',
+        () {
+      // Requests saved before the checkbox feature carry the `[]` default.
+      // Those rows must stay enabled rather than silently stop being sent.
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-a', value: '1'),
+          NameValueModel(name: 'x-b', value: '2'),
+        ],
+        isMetadataEnabled: [],
+      );
+
+      expect(model.metadataMap, {'x-a': '1', 'x-b': '2'});
+    });
+
+    test('metadataMap keeps all rows when flag list is null', () {
+      const model = GrpcRequestModel(
+        metadata: [NameValueModel(name: 'x-a', value: '1')],
+        isMetadataEnabled: null,
+      );
+
+      expect(model.metadataMap, {'x-a': '1'});
+    });
+
+    test('metadataMap keeps all rows when flag list length mismatches', () {
+      // Defensive: a short/stale flag list must not drop or misalign rows.
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-a', value: '1'),
+          NameValueModel(name: 'x-b', value: '2'),
+          NameValueModel(name: 'x-c', value: '3'),
+        ],
+        isMetadataEnabled: [true, false],
+      );
+
+      expect(model.metadataMap, {'x-a': '1', 'x-b': '2', 'x-c': '3'});
+    });
+
+    test('metadataMap still drops empty-name rows when flags are present', () {
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: '', value: 'no name'),
+          NameValueModel(name: 'x-b', value: '2'),
+        ],
+        isMetadataEnabled: [true, true],
+      );
+
+      expect(model.metadataMap, {'x-b': '2'});
+    });
+
+    test('metadataMap maps enabled flags positionally, not by value', () {
+      // Duplicate names must not confuse index alignment. Keeping the *first*
+      // row is what distinguishes correct filtering from no filtering at all,
+      // since an unfiltered map would let the second row overwrite the first.
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-dup', value: 'first'),
+          NameValueModel(name: 'x-dup', value: 'second'),
+        ],
+        isMetadataEnabled: [true, false],
+      );
+
+      expect(model.metadataMap, {'x-dup': 'first'});
+    });
+
     test('FromJson / ToJson serialization', () {
       final model = GrpcRequestModel(
         url: 'grpc.postman-echo.com',

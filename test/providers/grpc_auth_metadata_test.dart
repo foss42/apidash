@@ -104,5 +104,69 @@ void main() {
 
       expect(meta, {'x-a': '1'});
     });
+
+    test('unchecked metadata row is not sent', () async {
+      const model = GrpcRequestModel(
+        url: 'localhost:50051',
+        metadata: [
+          NameValueModel(name: 'X-Keep', value: 'yes'),
+          NameValueModel(name: 'X-Probe', value: 'disabled'),
+        ],
+        isMetadataEnabled: [true, false],
+      );
+
+      final meta = await buildGrpcMetadata(model);
+
+      expect(meta, {'x-keep': 'yes'});
+      expect(meta.containsKey('x-probe'), isFalse);
+    });
+
+    test('auth still applies when all manual rows are unchecked', () async {
+      const model = GrpcRequestModel(
+        url: 'localhost:50051',
+        metadata: [NameValueModel(name: 'x-tenant', value: 't1')],
+        isMetadataEnabled: [false],
+        authModel: AuthModel(
+          type: APIAuthType.bearer,
+          bearer: AuthBearerModel(token: 'tok'),
+        ),
+      );
+
+      final meta = await buildGrpcMetadata(model);
+
+      expect(meta.containsKey('x-tenant'), isFalse);
+      expect(meta['authorization'], 'Bearer tok');
+    });
+
+    test('auth overrides an unchecked manual row with the same key', () async {
+      // Disabling the manual row must not suppress the auth-provided value.
+      const model = GrpcRequestModel(
+        url: 'localhost:50051',
+        metadata: [NameValueModel(name: 'authorization', value: 'stale')],
+        isMetadataEnabled: [false],
+        authModel: AuthModel(
+          type: APIAuthType.bearer,
+          bearer: AuthBearerModel(token: 'fresh'),
+        ),
+      );
+
+      final meta = await buildGrpcMetadata(model);
+
+      expect(meta['authorization'], 'Bearer fresh');
+    });
+
+    test('legacy request with empty flag list still sends its metadata',
+        () async {
+      // `isMetadataEnabled` defaults to `[]`; such rows must stay enabled.
+      const model = GrpcRequestModel(
+        url: 'localhost:50051',
+        metadata: [NameValueModel(name: 'X-Trace', value: 'abc')],
+        isMetadataEnabled: [],
+      );
+
+      final meta = await buildGrpcMetadata(model);
+
+      expect(meta, {'x-trace': 'abc'});
+    });
   });
 }
