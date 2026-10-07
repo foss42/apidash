@@ -958,6 +958,12 @@ class CollectionStateNotifier
             );
             final latestReq = state?[requestId];
             if (latestReq != null) {
+              final reconnectUrl = (latestReq.wsRequestModel?.url ?? '').trim();
+              if (reconnectUrl.isEmpty) {
+                _wsReconnectAttempts.remove(requestId);
+                _wsReconnectTimers.remove(requestId);
+                return;
+              }
               final timer = Timer(delay, () {
                 if (!mounted) return;
                 _connectWebSocket(
