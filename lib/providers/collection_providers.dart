@@ -111,13 +111,20 @@ class CollectionStateNotifier
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
   final Map<String, Timer> _appHeartbeatTimers = {};
+  final Map<String, int> _wsReconnectAttempts = {};
+  final Map<String, Timer> _wsReconnectTimers = {};
 
   @override
   void dispose() {
     for (final timer in _appHeartbeatTimers.values) {
       timer.cancel();
     }
+    for (final timer in _wsReconnectTimers.values) {
+      timer.cancel();
+    }
     _appHeartbeatTimers.clear();
+    _wsReconnectAttempts.clear();
+    _wsReconnectTimers.clear();
     super.dispose();
   }
 
@@ -182,6 +189,9 @@ class CollectionStateNotifier
     // has no matching connection, so deleting a gRPC tab tears down its channel
     // and request controller (mirrors the WS disconnect) instead of leaking it.
     _stopMessageHeartbeat(rId);
+    _wsReconnectTimers[rId]?.cancel();
+    _wsReconnectTimers.remove(rId);
+    _wsReconnectAttempts.remove(rId);
     ConnectionManager.instance.disconnect(rId);
     ConnectionManager.instance.disconnectGrpc(rId);
     cancelHttpRequest(rId);
@@ -822,6 +832,10 @@ class CollectionStateNotifier
       // handshake; the `state` reads/writes below would throw otherwise.
       if (!mounted) return;
 
+      _wsReconnectAttempts[requestId] = 0;
+      _wsReconnectTimers[requestId]?.cancel();
+      _wsReconnectTimers.remove(requestId);
+
       final latestRequest = state?[requestId];
       final currentWs = latestRequest?.wsRequestModel ?? wsModel;
 
@@ -911,8 +925,30 @@ class CollectionStateNotifier
           _stopMessageHeartbeat(requestId);
 
           if (ws.autoReconnect && currentRequest.isStreaming) {
+            final attempt = (_wsReconnectAttempts[requestId] ?? 0) + 1;
+            _wsReconnectAttempts[requestId] = attempt;
+
+            if (attempt > 5) {
+              final maxMsg = WebSocketMessage(
+                payload: "Connection closed. Max reconnect attempts reached.",
+                timestamp: DateTime.now(),
+                outgoing: false,
+                messageType: WebSocketMessageType.disconnected,
+              );
+              update(
+                id: requestId,
+                isStreaming: false,
+                wsRequestModel: ws.copyWith(
+                  messageHistory: [...ws.messageHistory, maxMsg],
+                ),
+              );
+              _wsReconnectAttempts.remove(requestId);
+              return;
+            }
+
+            final delay = Duration(milliseconds: 250 * (1 << (attempt - 1)));
             final reconnMsg = WebSocketMessage(
-              payload: "Connection closed. Reconnecting...",
+              payload: "Connection closed. Reconnecting in ${delay.inSeconds}s...",
               timestamp: DateTime.now(),
               outgoing: false,
               messageType: WebSocketMessageType.disconnected,
@@ -922,12 +958,17 @@ class CollectionStateNotifier
             );
             final latestReq = state?[requestId];
             if (latestReq != null) {
-              _connectWebSocket(
-                requestId,
-                latestReq,
-                updatedWs,
-                historyId: historyId,
-              );
+              final timer = Timer(delay, () {
+                if (!mounted) return;
+                _connectWebSocket(
+                  requestId,
+                  latestReq,
+                  updatedWs,
+                  historyId: historyId,
+                );
+              });
+              _wsReconnectTimers[requestId]?.cancel();
+              _wsReconnectTimers[requestId] = timer;
             }
           } else {
             final discMsg = WebSocketMessage(
