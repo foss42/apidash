@@ -2,11 +2,13 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 
 @immutable
 class SettingsModel {
   const SettingsModel({
     this.isDark = false,
+    this.appThemeType = AppThemeType.cafe,
     this.alwaysShowCollectionPaneScrollbar = true,
     this.size,
     this.offset,
@@ -25,6 +27,7 @@ class SettingsModel {
   });
 
   final bool isDark;
+  final AppThemeType appThemeType;
   final bool alwaysShowCollectionPaneScrollbar;
   final Size? size;
   final Offset? offset;
@@ -43,6 +46,7 @@ class SettingsModel {
 
   SettingsModel copyWith({
     bool? isDark,
+    AppThemeType? appThemeType,
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
@@ -61,6 +65,7 @@ class SettingsModel {
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
+      appThemeType: appThemeType ?? this.appThemeType,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
@@ -86,6 +91,7 @@ class SettingsModel {
   }) {
     return SettingsModel(
       isDark: isDark,
+      appThemeType: appThemeType,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       defaultUriScheme: defaultUriScheme,
@@ -106,6 +112,10 @@ class SettingsModel {
 
   factory SettingsModel.fromJson(Map<dynamic, dynamic> data) {
     final isDark = data["isDark"] as bool?;
+    final appThemeType = AppThemeType.values.firstWhere(
+      (theme) => theme.name == data["appThemeType"],
+      orElse: () => AppThemeType.cafe,
+    );
     final alwaysShowCollectionPaneScrollbar =
         data["alwaysShowCollectionPaneScrollbar"] as bool?;
     final width = data["width"] as double?;
@@ -176,6 +186,7 @@ class SettingsModel {
 
     return sm.copyWith(
       isDark: isDark,
+      appThemeType: appThemeType,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       offset: offset,
@@ -198,6 +209,7 @@ class SettingsModel {
   Map<String, dynamic> toJson() {
     return {
       "isDark": isDark,
+      "appThemeType": appThemeType.name,
       "alwaysShowCollectionPaneScrollbar": alwaysShowCollectionPaneScrollbar,
       "width": size?.width,
       "height": size?.height,
@@ -228,6 +240,7 @@ class SettingsModel {
     return other is SettingsModel &&
         other.runtimeType == runtimeType &&
         other.isDark == isDark &&
+        other.appThemeType == appThemeType &&
         other.alwaysShowCollectionPaneScrollbar ==
             alwaysShowCollectionPaneScrollbar &&
         other.size == size &&

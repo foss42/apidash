@@ -10,6 +10,114 @@ import '../widgets/widgets.dart';
 import '../consts.dart';
 import 'common_widgets/common_widgets.dart';
 
+void _showThemePickerDialog(BuildContext context, WidgetRef ref) {
+  final currentTheme = ref.read(settingsProvider).appThemeType;
+
+  showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: kLabelChooseTheme,
+    transitionDuration: const Duration(milliseconds: 280),
+    pageBuilder: (context, animation, _) {
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutBack,
+      );
+
+      return Center(
+        child: ScaleTransition(
+          scale: curved,
+          child: FadeTransition(
+            opacity: animation,
+            child: Dialog(
+              insetPadding: const EdgeInsets.all(20),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      kLabelChooseTheme,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 16),
+                    ...AppThemeType.values.map((themeType) {
+                      final isSelected = themeType == currentTheme;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Material(
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : Theme.of(context).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(12),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .update(appThemeType: themeType);
+                              Navigator.of(context).pop();
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 220),
+                              curve: Curves.easeInOut,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.outlineVariant,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      themeType.label,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    Icon(
+                                      Icons.check_rounded,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
@@ -48,6 +156,18 @@ class SettingsPage extends ConsumerWidget {
                 onChanged: (bool? value) {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text(kLabelTheme),
+                subtitle: Text(
+                  '$kLabelCurrentSelectionPrefix${settings.appThemeType.label}',
+                ),
+                trailing: FilledButton.tonalIcon(
+                  onPressed: () => _showThemePickerDialog(context, ref),
+                  icon: const Icon(Icons.palette_rounded),
+                  label: const Text(kLabelChooseTheme),
+                ),
               ),
               ADListTile(
                 type: ListTileType.switchOnOff,

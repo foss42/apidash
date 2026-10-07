@@ -523,6 +523,8 @@ const kLabelSettings = "Settings";
 
 // Settings Page
 const kLabelSwitchThemeMode = "Switch Theme Mode";
+const kLabelTheme = "Theme";
+const kLabelChooseTheme = "Choose Theme";
 const kLabelDashBotSetting = "DashBot";
 const kLabelCollectionPaneScrollbar = "Collection Pane Scrollbar Visiblity";
 const kLabelDefaultUriScheme = "Default URI Scheme";

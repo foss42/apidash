@@ -111,6 +111,8 @@ class DashApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
+    final selectedTheme =
+        ref.watch(settingsProvider.select((value) => value.appThemeType));
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
@@ -118,8 +120,8 @@ class DashApp extends ConsumerWidget {
     return Portal(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: kLightMaterialAppTheme,
-        darkTheme: kDarkMaterialAppTheme,
+        theme: AppThemeBuilder.light(selectedTheme),
+        darkTheme: AppThemeBuilder.dark(selectedTheme),
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         home: showWorkspaceSelector
             ? WorkspaceSelector(

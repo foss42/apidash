@@ -9,7 +9,7 @@ const kColorRed = Colors.red;
 final kColorLightDanger = Colors.red.withValues(alpha: 0.9);
 const kColorDarkDanger = Color(0xffcf6679);
 
-const kColorSchemeSeed = Colors.blue;
+const kColorSchemeSeed = Color(0xFF6F4E37);
 
 final kColorStatusCodeDefault = Colors.grey.shade700;
 final kColorStatusCode200 = Colors.green.shade800;
