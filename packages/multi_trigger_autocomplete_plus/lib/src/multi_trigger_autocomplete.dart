@@ -466,10 +466,10 @@ class _AutocompleteInvokedTriggerWithQuery {
 // The default Material-style Autocomplete text field.
 class _MultiTriggerAutocompleteField extends StatelessWidget {
   const _MultiTriggerAutocompleteField({
-    Key? key,
+    super.key,
     required this.focusNode,
     required this.textEditingController,
-  }) : super(key: key);
+  });
 
   final FocusNode focusNode;
 

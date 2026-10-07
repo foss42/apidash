@@ -34,7 +34,7 @@ void main() {
             body: WsRecentlySent(
               templates: const [],
               onReuse: (_) {},
-              onSaveTemplate: (_, __) {},
+              onSaveTemplate: (_, _) {},
             ),
           ),
         ),
@@ -86,7 +86,7 @@ void main() {
             body: WsRecentlySent(
               templates: const [],
               onReuse: (p) => reused = p,
-              onSaveTemplate: (_, __) {},
+              onSaveTemplate: (_, _) {},
             ),
           ),
         ),
@@ -144,7 +144,7 @@ void main() {
             body: WsRecentlySent(
               templates: const [],
               onReuse: (_) {},
-              onSaveTemplate: (_, __) {},
+              onSaveTemplate: (_, _) {},
             ),
           ),
         ),

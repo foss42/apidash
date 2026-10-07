@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genai/interface/model_providers/anthropic.dart';
 import 'package:genai/interface/interface.dart';
 import 'package:genai/models/models.dart';
 

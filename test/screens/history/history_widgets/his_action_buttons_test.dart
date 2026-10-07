@@ -11,8 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 class MockCollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?>
     implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
-    : super(state);
+  MockCollectionStateNotifier([super.state]);
 
   @override
   void duplicateFromHistory(HistoryRequestModel historyModel) {}

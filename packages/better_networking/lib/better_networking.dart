@@ -1,4 +1,4 @@
-library better_networking;
+library;
 
 export 'consts.dart';
 export 'extensions/extensions.dart';

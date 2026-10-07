@@ -5,7 +5,6 @@ import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/request_pane_ai.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/dashbot/dashbot.dart';
 import 'package:flutter/material.dart';

@@ -10,8 +10,7 @@ import 'package:apidash/dashbot/constants.dart';
 class MockCollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?>
     implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
-    : super(state);
+  MockCollectionStateNotifier([super.state]);
 
   @override
   RequestModel? getRequestModel(String id) {
@@ -42,8 +41,7 @@ class DummyChatViewmodel extends ChatViewmodel {
 class MockEnvironmentsStateNotifier
     extends StateNotifier<Map<String, EnvironmentModel>?>
     implements EnvironmentsStateNotifier {
-  MockEnvironmentsStateNotifier(Map<String, EnvironmentModel>? state)
-    : super(state);
+  MockEnvironmentsStateNotifier(super.state);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

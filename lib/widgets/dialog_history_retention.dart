@@ -2,7 +2,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
-showHistoryRetentionDialog(
+void showHistoryRetentionDialog(
   BuildContext context,
   HistoryRetentionPeriod historyRetentionPeriod,
   Function(HistoryRetentionPeriod) onRetentionPeriodChange,

@@ -10,8 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 class MockHistoryMetaStateNotifier
     extends StateNotifier<Map<String, HistoryMetaModel>?>
     implements HistoryMetaStateNotifier {
-  MockHistoryMetaStateNotifier([Map<String, HistoryMetaModel>? state])
-    : super(state);
+  MockHistoryMetaStateNotifier([super.state]);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -20,8 +19,7 @@ class MockHistoryMetaStateNotifier
 class MockCollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?>
     implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
-    : super(state);
+  MockCollectionStateNotifier([super.state]);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

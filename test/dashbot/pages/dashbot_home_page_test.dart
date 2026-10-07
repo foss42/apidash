@@ -50,7 +50,7 @@ void main() {
   testWidgets('DashbotHomePage renders greeting and quick actions', (
     tester,
   ) async {
-    await _pumpHomePage(tester, onRoute: (_, __) {});
+    await _pumpHomePage(tester, onRoute: (_, _) {});
 
     expect(find.textContaining('Hello there'), findsOneWidget);
     expect(find.textContaining('How can I help you today'), findsOneWidget);
@@ -262,7 +262,7 @@ void main() {
   testWidgets(
     'Generate Tool hides and shows dashbot window even without response',
     (tester) async {
-      final notifier = await _pumpHomePage(tester, onRoute: (_, __) {});
+      final notifier = await _pumpHomePage(tester, onRoute: (_, _) {});
 
       await tester.tap(find.text('🛠️ Generate Tool'));
       await tester.pumpAndSettle();
@@ -288,7 +288,7 @@ void main() {
     final notifier = await _pumpHomePage(
       tester,
       selectedModel: requestModel,
-      onRoute: (_, __) {},
+      onRoute: (_, _) {},
     );
 
     await tester.tap(find.text('📱 Generate UI'));
@@ -319,7 +319,7 @@ void main() {
     final notifier = await _pumpHomePage(
       tester,
       selectedModel: requestModel,
-      onRoute: (_, __) {},
+      onRoute: (_, _) {},
     );
 
     await tester.tap(find.text('📱 Generate UI'));

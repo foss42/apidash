@@ -1,7 +1,6 @@
 import 'package:apidash/dashbot/dashbot_dashboard.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/routes/routes.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

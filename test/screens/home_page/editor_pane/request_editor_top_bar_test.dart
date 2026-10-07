@@ -2,7 +2,6 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/screens/home_page/editor_pane/request_editor_top_bar.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

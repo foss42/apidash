@@ -145,7 +145,7 @@ class _WsMessageEditorState extends ConsumerState<WsMessageEditor> {
                               hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
                               isDense: true,
                               filled: true,
-                              fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                              fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                               prefixIcon: const Icon(Icons.search, size: 18, color: Colors.grey),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -248,7 +248,7 @@ class _WsMessageEditorState extends ConsumerState<WsMessageEditor> {
                         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: SingleChildScrollView(

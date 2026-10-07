@@ -22,12 +22,12 @@ void main() {
           ..headers.set('Cache-Control', 'no-cache')
           ..headers.set('Connection', 'keep-alive');
 
-        request.response.write(': ' + ' ' * 10000 + '\n');
+        request.response.write(': ${' ' * 10000}\n');
         request.response.write('data: msg1\n\n');
         await request.response.flush();
         await Future.delayed(const Duration(milliseconds: 500));
 
-        request.response.write(': ' + ' ' * 10000 + '\n');
+        request.response.write(': ${' ' * 10000}\n');
         request.response.write('data: msg2\n\n');
         await request.response.flush();
 

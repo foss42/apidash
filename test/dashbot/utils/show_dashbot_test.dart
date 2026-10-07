@@ -21,7 +21,7 @@ void main() {
         overrides: [
           // Empty current request (StateProvider override supplies initial value).
           selectedRequestModelProvider.overrideWith((ref) => null),
-          if (overrides != null) ...overrides,
+          ...?overrides,
         ],
         child: MaterialApp(
           home: Scaffold(

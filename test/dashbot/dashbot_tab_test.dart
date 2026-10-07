@@ -1,5 +1,4 @@
 import 'package:apidash/dashbot/dashbot_tab.dart';
-import 'package:apidash/dashbot/models/dashbot_window_model.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/routes/routes.dart';
 import 'package:apidash/providers/providers.dart';

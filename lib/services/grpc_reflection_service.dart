@@ -160,7 +160,7 @@ class FieldDescriptorProto_Type extends ProtobufEnum {
   static final Map<int, FieldDescriptorProto_Type> _byValue = ProtobufEnum.initByValue(values);
   static FieldDescriptorProto_Type? valueOf(int value) => _byValue[value];
 
-  const FieldDescriptorProto_Type._(int v, String n) : super(v, n);
+  const FieldDescriptorProto_Type._(super.v, super.n);
 }
 
 class FieldDescriptorProto_Label extends ProtobufEnum {
@@ -175,7 +175,7 @@ class FieldDescriptorProto_Label extends ProtobufEnum {
   static final Map<int, FieldDescriptorProto_Label> _byValue = ProtobufEnum.initByValue(values);
   static FieldDescriptorProto_Label? valueOf(int value) => _byValue[value];
 
-  const FieldDescriptorProto_Label._(int v, String n) : super(v, n);
+  const FieldDescriptorProto_Label._(super.v, super.n);
 }
 
 class ServerReflectionRequest extends GeneratedMessage {

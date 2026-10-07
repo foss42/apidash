@@ -13,8 +13,7 @@ import 'package:apidash/providers/providers.dart';
 class MockCollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?>
     implements CollectionStateNotifier {
-  MockCollectionStateNotifier([Map<String, RequestModel>? state])
-    : super(state);
+  MockCollectionStateNotifier([super.state]);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

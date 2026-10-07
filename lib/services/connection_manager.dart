@@ -18,7 +18,6 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 // package is imported behind the `mqtt5` prefix to keep the two apart.
 import 'package:mqtt5_client/mqtt5_client.dart' as mqtt5;
 import 'package:mqtt5_client/mqtt5_server_client.dart' as mqtt5;
-import 'dart:async';
 
 /// TODO: it should also be usable for other Protocols
 /// A singleton service that holds active WebSocket connections.

@@ -1,10 +1,8 @@
 import 'package:apidash/widgets/dialog_import.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/drag_and_drop_area.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:file_selector/file_selector.dart';
 
 void main() {
   testWidgets('Testing showImportDialog', (tester) async {

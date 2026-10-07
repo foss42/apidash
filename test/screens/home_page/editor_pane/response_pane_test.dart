@@ -1,6 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';

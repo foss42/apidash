@@ -7,7 +7,6 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
-import 'package:apidash/models/grpc_request_model.dart';
 
 class EditGrpcRequestMetadata extends ConsumerStatefulWidget {
   const EditGrpcRequestMetadata({super.key});

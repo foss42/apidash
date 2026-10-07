@@ -983,8 +983,9 @@ ${formatWsMessageLog(mqtt.messageHistory, includeTopic: true)}
         t.contains('mqtt.js')) {
       return 'JavaScript (mqtt.js)';
     }
-    if (t.contains('dart') || t.contains('flutter'))
+    if (t.contains('dart') || t.contains('flutter')) {
       return 'Dart (mqtt_client)';
+    }
     return null;
   }
 

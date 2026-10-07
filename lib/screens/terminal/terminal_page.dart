@@ -105,7 +105,7 @@ class _TerminalPageState extends ConsumerState<TerminalPage> {
                   )
                 : ListView.separated(
                     itemCount: filtered.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    separatorBuilder: (_, _) => const Divider(height: 1),
                     itemBuilder: (ctx, i) {
                       final e = filtered[filtered.length - 1 - i];
                       final searchQuery = _searchCtrl.text.trim();

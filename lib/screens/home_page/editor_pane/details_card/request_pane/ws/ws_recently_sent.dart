@@ -83,7 +83,7 @@ class WsRecentlySent extends HookConsumerWidget {
               padding: const EdgeInsets.only(bottom: 8),
               scrollDirection: Axis.horizontal,
               itemCount: sentHistory.length,
-              separatorBuilder: (_, __) => kHSpacer10,
+              separatorBuilder: (_, _) => kHSpacer10,
               itemBuilder: (context, index) {
                 final payload = sentHistory[index];
 
@@ -109,7 +109,7 @@ class WsRecentlySent extends HookConsumerWidget {
                       decoration: BoxDecoration(
                         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
                         borderRadius: BorderRadius.circular(8),
-                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
