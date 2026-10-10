@@ -19,7 +19,7 @@ queryParamsStr = '?' + urlencode(params,doseq=True)
 
   String kTemplateBody = """
 
-body = r'''{{body}}'''
+body = {{body}}
 
 """;
 
@@ -33,11 +33,11 @@ multipart/form-data; boundary={{boundary}}''';
 
   String kTemplateConnection = """
 
-conn = http.client.HTTP{{isHttps}}Connection("{{authority}}")""";
+conn = http.client.HTTP{{isHttps}}Connection({{authority}})""";
 
   String kTemplateRequest = """
 
-conn.request("{{method}}", "{{path}}"{{queryParamsStr}}""";
+conn.request("{{method}}", {{path}}{{queryParamsStr}}""";
 
   String kStringRequestBody = """,
               body= body""";
@@ -108,7 +108,8 @@ body = b'\r\n'.join(dataList)
       List<String> paramList = [];
 
       params.forEach((key, value) {
-        paramList.add("'$key': [${value.map((v) => "'$v'").join(", ")}]");
+        paramList.add(
+            "${jsonEncode(key)}: [${value.map(jsonEncode).join(", ")}]");
             });
 
       result += templateParams.render({
@@ -123,7 +124,12 @@ body = b'\r\n'.join(dataList)
           hasBody = true;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             var templateBody = jj.Template(kTemplateBody);
-            result += templateBody.render({"body": requestModel.body});
+            result += templateBody.render({
+              // valid JSON is safe in a raw string and stays readable
+              "body": requestModel.hasJsonData
+                  ? "r'''${requestModel.body}'''"
+                  : jsonEncode(requestModel.body),
+            });
           }
         }
 
@@ -163,13 +169,13 @@ body = b'\r\n'.join(dataList)
         var templateConnection = jj.Template(kTemplateConnection);
         result += templateConnection.render({
           "isHttps": uri.scheme == "https" ? "S" : "",
-          "authority": uri.authority
+          "authority": jsonEncode(uri.authority)
         });
 
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
           "method": requestModel.method.name.toUpperCase(),
-          "path": uri.path,
+          "path": jsonEncode(uri.path),
           "queryParamsStr": hasQuery ? " + queryParamsStr" : "",
         });
 
