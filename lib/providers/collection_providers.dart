@@ -814,6 +814,7 @@ class CollectionStateNotifier
         finalUrl,
         headers: headers,
         pingInterval: _wsPingInterval(wsModel),
+        autoPongEnabled: wsModel.autoPongEnabled,
       );
 
       await channel.ready;

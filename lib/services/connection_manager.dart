@@ -7,6 +7,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:grpc/grpc.dart';
 import 'package:apidash/models/grpc_request_model.dart';
+import 'raw_web_socket_channel.dart';
 
 import 'package:apidash/models/mqtt_request_model.dart' show MQTTVersion;
 import 'package:apidash_core/apidash_core.dart' show NameValueModel;
@@ -73,6 +74,7 @@ class ConnectionManager {
     String url, {
     Map<String, String>? headers,
     Duration? pingInterval,
+    bool autoPongEnabled = true,
   }) async {
     // Tear down any pre-existing connection for the same tab.
     disconnect(requestId);
@@ -82,11 +84,21 @@ class ConnectionManager {
     // IOWebSocketChannel.connect) so we keep a reference to the underlying
     // socket. WebSocket.pingInterval is mutable at runtime, which lets us
     // change the heartbeat on a live connection (see [updatePingInterval]).
-    final webSocket = await WebSocket.connect(url, headers: headers);
-    webSocket.pingInterval = pingInterval;
-    final channel = IOWebSocketChannel(webSocket);
+    WebSocketChannel channel;
+    if (autoPongEnabled) {
+      final webSocket = await WebSocket.connect(url, headers: headers);
+      webSocket.pingInterval = pingInterval;
+      channel = IOWebSocketChannel(webSocket);
+      _sockets[requestId] = webSocket;
+    } else {
+      channel = await RawWebSocketChannel.connect(
+        url,
+        headers: headers,
+        autoPongEnabled: autoPongEnabled,
+        pingInterval: pingInterval,
+      );
+    }
     _channels[requestId] = channel;
-    _sockets[requestId] = webSocket;
     return channel;
   }
 
@@ -111,6 +123,12 @@ class ConnectionManager {
     if (webSocket != null) {
       webSocket.pingInterval = pingInterval;
       debugPrint('WS: updated pingInterval for $requestId -> $pingInterval');
+    } else {
+      final channel = _channels[requestId];
+      if (channel is RawWebSocketChannel) {
+        channel.pingInterval = pingInterval;
+        debugPrint('WS: updated pingInterval for $requestId -> $pingInterval');
+      }
     }
   }
 

@@ -300,7 +300,8 @@ mixin _$WebSocketRequestModel {
  List<bool>? get isHeaderEnabledList;/// URL parameters
  List<NameValueModel>? get params;/// URL parameters enabled list
  List<bool>? get isParamEnabledList;/// Whether to automatically re-establish the connection on close.
- bool get autoReconnect;/// Whether to send periodic keep-alive pings.
+ bool get autoReconnect;/// Whether to automatically reply to server PING with PONG.
+ bool get autoPongEnabled;/// Whether to send periodic keep-alive pings.
  bool get enableHeartbeat;/// Ping interval for heartbeat in seconds
  int get heartbeatInterval;/// Whether to periodically send a user-defined message (app-level heartbeat).
  bool get enableMessageHeartbeat;/// Interval in seconds between repeated heartbeat messages.
@@ -318,16 +319,16 @@ $WebSocketRequestModelCopyWith<WebSocketRequestModel> get copyWith => _$WebSocke
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketRequestModel&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other.messageHistory, messageHistory)&&const DeepCollectionEquality().equals(other.headers, headers)&&const DeepCollectionEquality().equals(other.isHeaderEnabledList, isHeaderEnabledList)&&const DeepCollectionEquality().equals(other.params, params)&&const DeepCollectionEquality().equals(other.isParamEnabledList, isParamEnabledList)&&(identical(other.autoReconnect, autoReconnect) || other.autoReconnect == autoReconnect)&&(identical(other.enableHeartbeat, enableHeartbeat) || other.enableHeartbeat == enableHeartbeat)&&(identical(other.heartbeatInterval, heartbeatInterval) || other.heartbeatInterval == heartbeatInterval)&&(identical(other.enableMessageHeartbeat, enableMessageHeartbeat) || other.enableMessageHeartbeat == enableMessageHeartbeat)&&(identical(other.messageHeartbeatInterval, messageHeartbeatInterval) || other.messageHeartbeatInterval == messageHeartbeatInterval)&&(identical(other.messageHeartbeatPayload, messageHeartbeatPayload) || other.messageHeartbeatPayload == messageHeartbeatPayload));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebSocketRequestModel&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other.messageHistory, messageHistory)&&const DeepCollectionEquality().equals(other.headers, headers)&&const DeepCollectionEquality().equals(other.isHeaderEnabledList, isHeaderEnabledList)&&const DeepCollectionEquality().equals(other.params, params)&&const DeepCollectionEquality().equals(other.isParamEnabledList, isParamEnabledList)&&(identical(other.autoReconnect, autoReconnect) || other.autoReconnect == autoReconnect)&&(identical(other.autoPongEnabled, autoPongEnabled) || other.autoPongEnabled == autoPongEnabled)&&(identical(other.enableHeartbeat, enableHeartbeat) || other.enableHeartbeat == enableHeartbeat)&&(identical(other.heartbeatInterval, heartbeatInterval) || other.heartbeatInterval == heartbeatInterval)&&(identical(other.enableMessageHeartbeat, enableMessageHeartbeat) || other.enableMessageHeartbeat == enableMessageHeartbeat)&&(identical(other.messageHeartbeatInterval, messageHeartbeatInterval) || other.messageHeartbeatInterval == messageHeartbeatInterval)&&(identical(other.messageHeartbeatPayload, messageHeartbeatPayload) || other.messageHeartbeatPayload == messageHeartbeatPayload));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,url,const DeepCollectionEquality().hash(messageHistory),const DeepCollectionEquality().hash(headers),const DeepCollectionEquality().hash(isHeaderEnabledList),const DeepCollectionEquality().hash(params),const DeepCollectionEquality().hash(isParamEnabledList),autoReconnect,enableHeartbeat,heartbeatInterval,enableMessageHeartbeat,messageHeartbeatInterval,messageHeartbeatPayload);
+int get hashCode => Object.hash(runtimeType,url,const DeepCollectionEquality().hash(messageHistory),const DeepCollectionEquality().hash(headers),const DeepCollectionEquality().hash(isHeaderEnabledList),const DeepCollectionEquality().hash(params),const DeepCollectionEquality().hash(isParamEnabledList),autoReconnect,autoPongEnabled,enableHeartbeat,heartbeatInterval,enableMessageHeartbeat,messageHeartbeatInterval,messageHeartbeatPayload);
 
 @override
 String toString() {
-  return 'WebSocketRequestModel(url: $url, messageHistory: $messageHistory, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, autoReconnect: $autoReconnect, enableHeartbeat: $enableHeartbeat, heartbeatInterval: $heartbeatInterval, enableMessageHeartbeat: $enableMessageHeartbeat, messageHeartbeatInterval: $messageHeartbeatInterval, messageHeartbeatPayload: $messageHeartbeatPayload)';
+  return 'WebSocketRequestModel(url: $url, messageHistory: $messageHistory, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, autoReconnect: $autoReconnect, autoPongEnabled: $autoPongEnabled, enableHeartbeat: $enableHeartbeat, heartbeatInterval: $heartbeatInterval, enableMessageHeartbeat: $enableMessageHeartbeat, messageHeartbeatInterval: $messageHeartbeatInterval, messageHeartbeatPayload: $messageHeartbeatPayload)';
 }
 
 
@@ -338,7 +339,7 @@ abstract mixin class $WebSocketRequestModelCopyWith<$Res>  {
   factory $WebSocketRequestModelCopyWith(WebSocketRequestModel value, $Res Function(WebSocketRequestModel) _then) = _$WebSocketRequestModelCopyWithImpl;
 @useResult
 $Res call({
- String url, List<WebSocketMessage> messageHistory, List<NameValueModel>? headers, List<bool>? isHeaderEnabledList, List<NameValueModel>? params, List<bool>? isParamEnabledList, bool autoReconnect, bool enableHeartbeat, int heartbeatInterval, bool enableMessageHeartbeat, int messageHeartbeatInterval, String messageHeartbeatPayload
+ String url, List<WebSocketMessage> messageHistory, List<NameValueModel>? headers, List<bool>? isHeaderEnabledList, List<NameValueModel>? params, List<bool>? isParamEnabledList, bool autoReconnect, bool autoPongEnabled, bool enableHeartbeat, int heartbeatInterval, bool enableMessageHeartbeat, int messageHeartbeatInterval, String messageHeartbeatPayload
 });
 
 
@@ -355,7 +356,7 @@ class _$WebSocketRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of WebSocketRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? url = null,Object? messageHistory = null,Object? headers = freezed,Object? isHeaderEnabledList = freezed,Object? params = freezed,Object? isParamEnabledList = freezed,Object? autoReconnect = null,Object? enableHeartbeat = null,Object? heartbeatInterval = null,Object? enableMessageHeartbeat = null,Object? messageHeartbeatInterval = null,Object? messageHeartbeatPayload = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? url = null,Object? messageHistory = null,Object? headers = freezed,Object? isHeaderEnabledList = freezed,Object? params = freezed,Object? isParamEnabledList = freezed,Object? autoReconnect = null,Object? autoPongEnabled = null,Object? enableHeartbeat = null,Object? heartbeatInterval = null,Object? enableMessageHeartbeat = null,Object? messageHeartbeatInterval = null,Object? messageHeartbeatPayload = null,}) {
   return _then(_self.copyWith(
 url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,messageHistory: null == messageHistory ? _self.messageHistory : messageHistory // ignore: cast_nullable_to_non_nullable
@@ -364,6 +365,7 @@ as List<NameValueModel>?,isHeaderEnabledList: freezed == isHeaderEnabledList ? _
 as List<bool>?,params: freezed == params ? _self.params : params // ignore: cast_nullable_to_non_nullable
 as List<NameValueModel>?,isParamEnabledList: freezed == isParamEnabledList ? _self.isParamEnabledList : isParamEnabledList // ignore: cast_nullable_to_non_nullable
 as List<bool>?,autoReconnect: null == autoReconnect ? _self.autoReconnect : autoReconnect // ignore: cast_nullable_to_non_nullable
+as bool,autoPongEnabled: null == autoPongEnabled ? _self.autoPongEnabled : autoPongEnabled // ignore: cast_nullable_to_non_nullable
 as bool,enableHeartbeat: null == enableHeartbeat ? _self.enableHeartbeat : enableHeartbeat // ignore: cast_nullable_to_non_nullable
 as bool,heartbeatInterval: null == heartbeatInterval ? _self.heartbeatInterval : heartbeatInterval // ignore: cast_nullable_to_non_nullable
 as int,enableMessageHeartbeat: null == enableMessageHeartbeat ? _self.enableMessageHeartbeat : enableMessageHeartbeat // ignore: cast_nullable_to_non_nullable
@@ -454,10 +456,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String url,  List<WebSocketMessage> messageHistory,  List<NameValueModel>? headers,  List<bool>? isHeaderEnabledList,  List<NameValueModel>? params,  List<bool>? isParamEnabledList,  bool autoReconnect,  bool enableHeartbeat,  int heartbeatInterval,  bool enableMessageHeartbeat,  int messageHeartbeatInterval,  String messageHeartbeatPayload)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String url,  List<WebSocketMessage> messageHistory,  List<NameValueModel>? headers,  List<bool>? isHeaderEnabledList,  List<NameValueModel>? params,  List<bool>? isParamEnabledList,  bool autoReconnect,  bool autoPongEnabled,  bool enableHeartbeat,  int heartbeatInterval,  bool enableMessageHeartbeat,  int messageHeartbeatInterval,  String messageHeartbeatPayload)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WebSocketRequestModel() when $default != null:
-return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabledList,_that.params,_that.isParamEnabledList,_that.autoReconnect,_that.enableHeartbeat,_that.heartbeatInterval,_that.enableMessageHeartbeat,_that.messageHeartbeatInterval,_that.messageHeartbeatPayload);case _:
+return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabledList,_that.params,_that.isParamEnabledList,_that.autoReconnect,_that.autoPongEnabled,_that.enableHeartbeat,_that.heartbeatInterval,_that.enableMessageHeartbeat,_that.messageHeartbeatInterval,_that.messageHeartbeatPayload);case _:
   return orElse();
 
 }
@@ -475,10 +477,10 @@ return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabl
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String url,  List<WebSocketMessage> messageHistory,  List<NameValueModel>? headers,  List<bool>? isHeaderEnabledList,  List<NameValueModel>? params,  List<bool>? isParamEnabledList,  bool autoReconnect,  bool enableHeartbeat,  int heartbeatInterval,  bool enableMessageHeartbeat,  int messageHeartbeatInterval,  String messageHeartbeatPayload)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String url,  List<WebSocketMessage> messageHistory,  List<NameValueModel>? headers,  List<bool>? isHeaderEnabledList,  List<NameValueModel>? params,  List<bool>? isParamEnabledList,  bool autoReconnect,  bool autoPongEnabled,  bool enableHeartbeat,  int heartbeatInterval,  bool enableMessageHeartbeat,  int messageHeartbeatInterval,  String messageHeartbeatPayload)  $default,) {final _that = this;
 switch (_that) {
 case _WebSocketRequestModel():
-return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabledList,_that.params,_that.isParamEnabledList,_that.autoReconnect,_that.enableHeartbeat,_that.heartbeatInterval,_that.enableMessageHeartbeat,_that.messageHeartbeatInterval,_that.messageHeartbeatPayload);case _:
+return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabledList,_that.params,_that.isParamEnabledList,_that.autoReconnect,_that.autoPongEnabled,_that.enableHeartbeat,_that.heartbeatInterval,_that.enableMessageHeartbeat,_that.messageHeartbeatInterval,_that.messageHeartbeatPayload);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -495,10 +497,10 @@ return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabl
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String url,  List<WebSocketMessage> messageHistory,  List<NameValueModel>? headers,  List<bool>? isHeaderEnabledList,  List<NameValueModel>? params,  List<bool>? isParamEnabledList,  bool autoReconnect,  bool enableHeartbeat,  int heartbeatInterval,  bool enableMessageHeartbeat,  int messageHeartbeatInterval,  String messageHeartbeatPayload)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String url,  List<WebSocketMessage> messageHistory,  List<NameValueModel>? headers,  List<bool>? isHeaderEnabledList,  List<NameValueModel>? params,  List<bool>? isParamEnabledList,  bool autoReconnect,  bool autoPongEnabled,  bool enableHeartbeat,  int heartbeatInterval,  bool enableMessageHeartbeat,  int messageHeartbeatInterval,  String messageHeartbeatPayload)?  $default,) {final _that = this;
 switch (_that) {
 case _WebSocketRequestModel() when $default != null:
-return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabledList,_that.params,_that.isParamEnabledList,_that.autoReconnect,_that.enableHeartbeat,_that.heartbeatInterval,_that.enableMessageHeartbeat,_that.messageHeartbeatInterval,_that.messageHeartbeatPayload);case _:
+return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabledList,_that.params,_that.isParamEnabledList,_that.autoReconnect,_that.autoPongEnabled,_that.enableHeartbeat,_that.heartbeatInterval,_that.enableMessageHeartbeat,_that.messageHeartbeatInterval,_that.messageHeartbeatPayload);case _:
   return null;
 
 }
@@ -510,7 +512,7 @@ return $default(_that.url,_that.messageHistory,_that.headers,_that.isHeaderEnabl
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _WebSocketRequestModel implements WebSocketRequestModel {
-  const _WebSocketRequestModel({this.url = "", final  List<WebSocketMessage> messageHistory = const [], final  List<NameValueModel>? headers, final  List<bool>? isHeaderEnabledList, final  List<NameValueModel>? params, final  List<bool>? isParamEnabledList, this.autoReconnect = false, this.enableHeartbeat = false, this.heartbeatInterval = 30, this.enableMessageHeartbeat = false, this.messageHeartbeatInterval = 30, this.messageHeartbeatPayload = "ping"}): _messageHistory = messageHistory,_headers = headers,_isHeaderEnabledList = isHeaderEnabledList,_params = params,_isParamEnabledList = isParamEnabledList;
+  const _WebSocketRequestModel({this.url = "", final  List<WebSocketMessage> messageHistory = const [], final  List<NameValueModel>? headers, final  List<bool>? isHeaderEnabledList, final  List<NameValueModel>? params, final  List<bool>? isParamEnabledList, this.autoReconnect = false, this.autoPongEnabled = true, this.enableHeartbeat = false, this.heartbeatInterval = 30, this.enableMessageHeartbeat = false, this.messageHeartbeatInterval = 30, this.messageHeartbeatPayload = "ping"}): _messageHistory = messageHistory,_headers = headers,_isHeaderEnabledList = isHeaderEnabledList,_params = params,_isParamEnabledList = isParamEnabledList;
   factory _WebSocketRequestModel.fromJson(Map<String, dynamic> json) => _$WebSocketRequestModelFromJson(json);
 
 /// The WebSocket endpoint URL (e.g. `wss://echo.websocket.org`).
@@ -570,6 +572,8 @@ class _WebSocketRequestModel implements WebSocketRequestModel {
 
 /// Whether to automatically re-establish the connection on close.
 @override@JsonKey() final  bool autoReconnect;
+/// Whether to automatically reply to server PING with PONG.
+@override@JsonKey() final  bool autoPongEnabled;
 /// Whether to send periodic keep-alive pings.
 @override@JsonKey() final  bool enableHeartbeat;
 /// Ping interval for heartbeat in seconds
@@ -594,16 +598,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WebSocketRequestModel&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other._messageHistory, _messageHistory)&&const DeepCollectionEquality().equals(other._headers, _headers)&&const DeepCollectionEquality().equals(other._isHeaderEnabledList, _isHeaderEnabledList)&&const DeepCollectionEquality().equals(other._params, _params)&&const DeepCollectionEquality().equals(other._isParamEnabledList, _isParamEnabledList)&&(identical(other.autoReconnect, autoReconnect) || other.autoReconnect == autoReconnect)&&(identical(other.enableHeartbeat, enableHeartbeat) || other.enableHeartbeat == enableHeartbeat)&&(identical(other.heartbeatInterval, heartbeatInterval) || other.heartbeatInterval == heartbeatInterval)&&(identical(other.enableMessageHeartbeat, enableMessageHeartbeat) || other.enableMessageHeartbeat == enableMessageHeartbeat)&&(identical(other.messageHeartbeatInterval, messageHeartbeatInterval) || other.messageHeartbeatInterval == messageHeartbeatInterval)&&(identical(other.messageHeartbeatPayload, messageHeartbeatPayload) || other.messageHeartbeatPayload == messageHeartbeatPayload));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WebSocketRequestModel&&(identical(other.url, url) || other.url == url)&&const DeepCollectionEquality().equals(other._messageHistory, _messageHistory)&&const DeepCollectionEquality().equals(other._headers, _headers)&&const DeepCollectionEquality().equals(other._isHeaderEnabledList, _isHeaderEnabledList)&&const DeepCollectionEquality().equals(other._params, _params)&&const DeepCollectionEquality().equals(other._isParamEnabledList, _isParamEnabledList)&&(identical(other.autoReconnect, autoReconnect) || other.autoReconnect == autoReconnect)&&(identical(other.autoPongEnabled, autoPongEnabled) || other.autoPongEnabled == autoPongEnabled)&&(identical(other.enableHeartbeat, enableHeartbeat) || other.enableHeartbeat == enableHeartbeat)&&(identical(other.heartbeatInterval, heartbeatInterval) || other.heartbeatInterval == heartbeatInterval)&&(identical(other.enableMessageHeartbeat, enableMessageHeartbeat) || other.enableMessageHeartbeat == enableMessageHeartbeat)&&(identical(other.messageHeartbeatInterval, messageHeartbeatInterval) || other.messageHeartbeatInterval == messageHeartbeatInterval)&&(identical(other.messageHeartbeatPayload, messageHeartbeatPayload) || other.messageHeartbeatPayload == messageHeartbeatPayload));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,url,const DeepCollectionEquality().hash(_messageHistory),const DeepCollectionEquality().hash(_headers),const DeepCollectionEquality().hash(_isHeaderEnabledList),const DeepCollectionEquality().hash(_params),const DeepCollectionEquality().hash(_isParamEnabledList),autoReconnect,enableHeartbeat,heartbeatInterval,enableMessageHeartbeat,messageHeartbeatInterval,messageHeartbeatPayload);
+int get hashCode => Object.hash(runtimeType,url,const DeepCollectionEquality().hash(_messageHistory),const DeepCollectionEquality().hash(_headers),const DeepCollectionEquality().hash(_isHeaderEnabledList),const DeepCollectionEquality().hash(_params),const DeepCollectionEquality().hash(_isParamEnabledList),autoReconnect,autoPongEnabled,enableHeartbeat,heartbeatInterval,enableMessageHeartbeat,messageHeartbeatInterval,messageHeartbeatPayload);
 
 @override
 String toString() {
-  return 'WebSocketRequestModel(url: $url, messageHistory: $messageHistory, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, autoReconnect: $autoReconnect, enableHeartbeat: $enableHeartbeat, heartbeatInterval: $heartbeatInterval, enableMessageHeartbeat: $enableMessageHeartbeat, messageHeartbeatInterval: $messageHeartbeatInterval, messageHeartbeatPayload: $messageHeartbeatPayload)';
+  return 'WebSocketRequestModel(url: $url, messageHistory: $messageHistory, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, autoReconnect: $autoReconnect, autoPongEnabled: $autoPongEnabled, enableHeartbeat: $enableHeartbeat, heartbeatInterval: $heartbeatInterval, enableMessageHeartbeat: $enableMessageHeartbeat, messageHeartbeatInterval: $messageHeartbeatInterval, messageHeartbeatPayload: $messageHeartbeatPayload)';
 }
 
 
@@ -614,7 +618,7 @@ abstract mixin class _$WebSocketRequestModelCopyWith<$Res> implements $WebSocket
   factory _$WebSocketRequestModelCopyWith(_WebSocketRequestModel value, $Res Function(_WebSocketRequestModel) _then) = __$WebSocketRequestModelCopyWithImpl;
 @override @useResult
 $Res call({
- String url, List<WebSocketMessage> messageHistory, List<NameValueModel>? headers, List<bool>? isHeaderEnabledList, List<NameValueModel>? params, List<bool>? isParamEnabledList, bool autoReconnect, bool enableHeartbeat, int heartbeatInterval, bool enableMessageHeartbeat, int messageHeartbeatInterval, String messageHeartbeatPayload
+ String url, List<WebSocketMessage> messageHistory, List<NameValueModel>? headers, List<bool>? isHeaderEnabledList, List<NameValueModel>? params, List<bool>? isParamEnabledList, bool autoReconnect, bool autoPongEnabled, bool enableHeartbeat, int heartbeatInterval, bool enableMessageHeartbeat, int messageHeartbeatInterval, String messageHeartbeatPayload
 });
 
 
@@ -631,7 +635,7 @@ class __$WebSocketRequestModelCopyWithImpl<$Res>
 
 /// Create a copy of WebSocketRequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? url = null,Object? messageHistory = null,Object? headers = freezed,Object? isHeaderEnabledList = freezed,Object? params = freezed,Object? isParamEnabledList = freezed,Object? autoReconnect = null,Object? enableHeartbeat = null,Object? heartbeatInterval = null,Object? enableMessageHeartbeat = null,Object? messageHeartbeatInterval = null,Object? messageHeartbeatPayload = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? url = null,Object? messageHistory = null,Object? headers = freezed,Object? isHeaderEnabledList = freezed,Object? params = freezed,Object? isParamEnabledList = freezed,Object? autoReconnect = null,Object? autoPongEnabled = null,Object? enableHeartbeat = null,Object? heartbeatInterval = null,Object? enableMessageHeartbeat = null,Object? messageHeartbeatInterval = null,Object? messageHeartbeatPayload = null,}) {
   return _then(_WebSocketRequestModel(
 url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,messageHistory: null == messageHistory ? _self._messageHistory : messageHistory // ignore: cast_nullable_to_non_nullable
@@ -640,6 +644,7 @@ as List<NameValueModel>?,isHeaderEnabledList: freezed == isHeaderEnabledList ? _
 as List<bool>?,params: freezed == params ? _self._params : params // ignore: cast_nullable_to_non_nullable
 as List<NameValueModel>?,isParamEnabledList: freezed == isParamEnabledList ? _self._isParamEnabledList : isParamEnabledList // ignore: cast_nullable_to_non_nullable
 as List<bool>?,autoReconnect: null == autoReconnect ? _self.autoReconnect : autoReconnect // ignore: cast_nullable_to_non_nullable
+as bool,autoPongEnabled: null == autoPongEnabled ? _self.autoPongEnabled : autoPongEnabled // ignore: cast_nullable_to_non_nullable
 as bool,enableHeartbeat: null == enableHeartbeat ? _self.enableHeartbeat : enableHeartbeat // ignore: cast_nullable_to_non_nullable
 as bool,heartbeatInterval: null == heartbeatInterval ? _self.heartbeatInterval : heartbeatInterval // ignore: cast_nullable_to_non_nullable
 as int,enableMessageHeartbeat: null == enableMessageHeartbeat ? _self.enableMessageHeartbeat : enableMessageHeartbeat // ignore: cast_nullable_to_non_nullable
