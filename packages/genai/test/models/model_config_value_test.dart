@@ -56,6 +56,44 @@ void main() {
       final slider = ConfigSliderValue(value: (0.0, 0.5, 1.0));
       expect(slider.getPayloadValue(), 0.5);
     });
+
+    test('deserialize throws format exception for short list', () {
+      expect(
+        () => ConfigSliderValue.deserialize(jsonEncode([0.0, 0.5])),
+        throwsA(
+          isA<FormatException>()
+              .having(
+                (e) => e.message,
+                'message contains requirement',
+                contains('requires exactly 3 numeric values'),
+              )
+              .having(
+                (e) => e.message,
+                'message contains actual length',
+                contains('got 2'),
+              ),
+        ),
+      );
+    });
+
+    test('deserialize throws format exception for oversized list', () {
+      expect(
+        () => ConfigSliderValue.deserialize(jsonEncode([0.0, 0.5, 1.0, 1.5])),
+        throwsA(
+          isA<FormatException>()
+              .having(
+                (e) => e.message,
+                'message contains requirement',
+                contains('requires exactly 3 numeric values'),
+              )
+              .having(
+                (e) => e.message,
+                'message contains actual length',
+                contains('got 4'),
+              ),
+        ),
+      );
+    });
   });
 
   group('ConfigTextValue', () {
