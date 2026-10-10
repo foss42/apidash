@@ -22,10 +22,12 @@ Future<HttpRequestModel> handleAuth(
   );
   List<NameValueModel> updatedParams = List.from(httpRequestModel.params ?? []);
   List<bool> updatedHeaderEnabledList = List.from(
-    httpRequestModel.isHeaderEnabledList ?? [],
+    httpRequestModel.isHeaderEnabledList ??
+        List.filled(updatedHeaders.length, true),
   );
   List<bool> updatedParamEnabledList = List.from(
-    httpRequestModel.isParamEnabledList ?? [],
+    httpRequestModel.isParamEnabledList ??
+        List.filled(updatedParams.length, true),
   );
 
   switch (authData.type) {
