@@ -83,5 +83,24 @@ void main() {
       expect(model.formDataMapList.length, 2);
       expect(model.hasFileInFormData, true);
     });
+
+    test('hasQuery / hasVariables and JSON roundtrip', () {
+      const model = HttpRequestModel(
+        query: '{ user { id } }',
+        variables: '{"id": 1}',
+      );
+
+      expect(model.hasQuery, true);
+      expect(model.hasVariables, true);
+
+      final fromJson = HttpRequestModel.fromJson(model.toJson());
+      expect(fromJson.query, '{ user { id } }');
+      expect(fromJson.variables, '{"id": 1}');
+    });
+
+    test('hasVariables is false for blank JSON', () {
+      const model = HttpRequestModel(variables: '  ');
+      expect(model.hasVariables, false);
+    });
   });
 }
