@@ -689,7 +689,7 @@ class JsonExplorerStore extends ChangeNotifier {
   /// Finds all occurrences of [searchTerm] in [victim] and retrieves all their
   /// indexes.
   Iterable<int> _getSearchTermMatchesIndexes(String victim) {
-    final pattern = RegExp(searchTerm, caseSensitive: false);
+    final pattern = RegExp(RegExp.escape(searchTerm), caseSensitive: false);
 
     final matches = pattern.allMatches(victim).map((match) => match.start);
 
