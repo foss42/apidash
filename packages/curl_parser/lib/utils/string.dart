@@ -17,8 +17,16 @@ List<String> splitAsCommandLineArgs(String command) {
 }
 
 /// Removes surrounding quotes from a url/string token.
+
 String? clean(String? url) {
-  return url?.replaceAll('"', '').replaceAll("'", '');
+  if (url == null || url.length < 2) return url;
+
+  if ((url.startsWith('"') && url.endsWith('"')) ||
+      (url.startsWith("'") && url.endsWith("'"))) {
+    return url.substring(1, url.length - 1);
+  }
+
+  return url;
 }
 
 /// Provides `firstOrNull` for lists.

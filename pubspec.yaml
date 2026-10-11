@@ -50,6 +50,7 @@ dependencies:
   hive_ce_flutter: ^2.3.4
   hooks_riverpod: ^3.2.1
   intl: ^0.20.2
+  image: ^4.11.1
   jinja: ^0.6.5
   json_annotation: ^4.11.0
   json_explorer: any
@@ -93,6 +94,8 @@ dependencies:
   protobuf: ^4.1.0
 
 dependency_overrides:
+  image: ^4.11.1
+  archive: ^4.4.0
   pdf_widget_wrapper: ^1.0.4
   web: ^1.1.1
   freezed_annotation: ^3.1.0

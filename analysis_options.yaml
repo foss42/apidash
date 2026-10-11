@@ -7,6 +7,8 @@ analyzer:
     - "**/*.freezed.dart"
     - "**/*.g.dart"
     - "doc/*"
+    - build/**
+    - macos/**
 
 linter:
   rules:

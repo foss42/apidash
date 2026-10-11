@@ -105,4 +105,50 @@ void main() {
       'A: 1',
     ]);
   }, timeout: defaultTimeout);
+
+  group('clean', () {
+    test('removes enclosing double quotes but preserves apostrophes', () {
+      expect(
+        clean('"https://api.example.com/search?author=O\'Reilly"'),
+        "https://api.example.com/search?author=O'Reilly",
+      );
+    });
+
+    test('removes enclosing single quotes but preserves double quotes', () {
+      expect(
+        clean("'https://api.example.com/items?filter=\"active\"'"),
+        'https://api.example.com/items?filter="active"',
+      );
+    });
+
+    test('preserves quotes in unquoted strings', () {
+      expect(
+        clean('https://api.example.com/search?author=O\'Reilly'),
+        "https://api.example.com/search?author=O'Reilly",
+      );
+      expect(
+        clean('https://api.example.com/items?filter="active"'),
+        'https://api.example.com/items?filter="active"',
+      );
+    });
+
+    test('preserves unmatched boundary quotes', () {
+      expect(clean('"example'), '"example');
+      expect(clean("example'"), "example'");
+      expect(clean('"example\''), '"example\'');
+    });
+
+    test('handles null, empty strings, and single characters', () {
+      expect(clean(null), isNull);
+      expect(clean(''), '');
+      expect(clean('"'), '"');
+      expect(clean("'"), "'");
+      expect(clean('a'), 'a');
+    });
+
+    test('removes matching quotes around an empty string', () {
+      expect(clean('""'), '');
+      expect(clean("''"), '');
+    });
+  });
 }
