@@ -566,4 +566,16 @@ void main() {
       ),
     );
   });
+
+  test('parses URL with internal apostrophe or quotes in query parameters', () {
+    const cmd = r"""curl "https://api.example.com/books?author=O'Reilly" """;
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse("https://api.example.com/books?author=O'Reilly"),
+      ),
+    );
+  });
 }
