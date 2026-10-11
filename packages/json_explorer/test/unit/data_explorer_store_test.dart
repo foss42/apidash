@@ -73,6 +73,18 @@ const testJson = '''
 }
 ''';
 
+const metacharJson = '''
+{
+  "obj": {
+    "bracket[": "value[",
+    "paren(": "value(",
+    "star*": "value*",
+    "dotted.key": "v1.2.3",
+    "plain": "no metachar"
+  }
+}
+''';
+
 void main() {
   group('JsonExplorerStore', () {
     test('build nodes', () {
@@ -632,6 +644,90 @@ void main() {
           store.focusedSearchResult.matchLocation,
           SearchMatchLocation.key,
         );
+      });
+
+      test('search for "[" is treated literally', () {
+        final store = JsonExplorerStore();
+        store.buildNodes(json.decode(metacharJson));
+
+        expect(() => store.search('['), returnsNormally);
+        expect(store.searchResults, hasLength(2));
+
+        expect(store.searchResults[0].node.key, 'bracket[');
+        expect(store.searchResults[0].matchLocation, SearchMatchLocation.key);
+        expect(store.searchResults[0].matchIndex, 7);
+
+        expect(store.searchResults[1].node.key, 'bracket[');
+        expect(store.searchResults[1].matchLocation, SearchMatchLocation.value);
+        expect(store.searchResults[1].matchIndex, 5);
+      });
+
+      test('search for "(" is treated literally', () {
+        final store = JsonExplorerStore();
+        store.buildNodes(json.decode(metacharJson));
+
+        expect(() => store.search('('), returnsNormally);
+        expect(store.searchResults, hasLength(2));
+
+        expect(store.searchResults[0].node.key, 'paren(');
+        expect(store.searchResults[0].matchLocation, SearchMatchLocation.key);
+        expect(store.searchResults[0].matchIndex, 5);
+
+        expect(store.searchResults[1].node.key, 'paren(');
+        expect(store.searchResults[1].matchLocation, SearchMatchLocation.value);
+        expect(store.searchResults[1].matchIndex, 5);
+      });
+
+      test('search for "*" is treated literally', () {
+        final store = JsonExplorerStore();
+        store.buildNodes(json.decode(metacharJson));
+
+        expect(() => store.search('*'), returnsNormally);
+        expect(store.searchResults, hasLength(2));
+
+        expect(store.searchResults[0].node.key, 'star*');
+        expect(store.searchResults[0].matchLocation, SearchMatchLocation.key);
+        expect(store.searchResults[0].matchIndex, 4);
+
+        expect(store.searchResults[1].node.key, 'star*');
+        expect(store.searchResults[1].matchLocation, SearchMatchLocation.value);
+        expect(store.searchResults[1].matchIndex, 5);
+      });
+
+      test('search for "." matches only literal dots', () {
+        final store = JsonExplorerStore();
+        store.buildNodes(json.decode(metacharJson));
+
+        store.search('.');
+        expect(store.searchResults, hasLength(3));
+
+        expect(store.searchResults[0].node.key, 'dotted.key');
+        expect(store.searchResults[0].matchLocation, SearchMatchLocation.key);
+        expect(store.searchResults[0].matchIndex, 6);
+
+        expect(store.searchResults[1].node.key, 'dotted.key');
+        expect(store.searchResults[1].matchLocation, SearchMatchLocation.value);
+        expect(store.searchResults[1].matchIndex, 2);
+
+        expect(store.searchResults[2].node.key, 'dotted.key');
+        expect(store.searchResults[2].matchLocation, SearchMatchLocation.value);
+        expect(store.searchResults[2].matchIndex, 4);
+
+        // Only the node containing literal dots is matched.
+        expect(
+          store.searchResults.map((result) => result.node.key).toSet(),
+          {'dotted.key'},
+        );
+      });
+
+      test('ordinary case-insensitive search still works', () {
+        for (final term in ['firstField', 'FIRSTFIELD', 'FirstField']) {
+          final store = JsonExplorerStore();
+          store.buildNodes(json.decode(testJson));
+
+          store.search(term);
+          expect(store.searchResults, hasLength(20), reason: 'term: $term');
+        }
       });
 
       group('expand parent nodes', () {
