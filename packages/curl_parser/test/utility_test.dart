@@ -105,4 +105,32 @@ void main() {
       'A: 1',
     ]);
   }, timeout: defaultTimeout);
+
+  group('clean', () {
+    test('removes surrounding double quotes', () {
+      expect(clean('"https://api.apidash.dev"'), 'https://api.apidash.dev');
+    });
+
+    test('removes surrounding single quotes', () {
+      expect(clean("'https://api.apidash.dev'"), 'https://api.apidash.dev');
+    });
+
+    test('preserves internal quotes in query parameters', () {
+      expect(clean('"https://api.example.com/books?author=O\'Reilly"'),
+          "https://api.example.com/books?author=O'Reilly");
+      expect(clean("'https://api.example.com/items?filter=\"active\"'"),
+          'https://api.example.com/items?filter="active"');
+    });
+
+    test('handles unquoted URLs and edge cases', () {
+      expect(clean('https://api.apidash.dev'), 'https://api.apidash.dev');
+      expect(clean("https://api.example.com/books?author=O'Reilly"),
+          "https://api.example.com/books?author=O'Reilly");
+      expect(clean(null), isNull);
+      expect(clean(''), '');
+      expect(clean('"'), '"');
+      expect(clean("'"), "'");
+      expect(clean('"a'), '"a');
+    });
+  });
 }
