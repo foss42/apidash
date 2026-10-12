@@ -44,7 +44,8 @@ String? substituteVariables(
   if (envVarMap.keys.isEmpty) {
     return input;
   }
-  final regex = RegExp("{{(${envVarMap.keys.join('|')})}}");
+  final escapedKeys = envVarMap.keys.map((key) => RegExp.escape(key)).join('|');
+  final regex = RegExp("{{($escapedKeys)}}");
 
   String result = input.replaceAllMapped(regex, (match) {
     final key = match.group(1)?.trim() ?? '';
