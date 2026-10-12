@@ -1,9 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json_field_editor/json_field_editor.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/json_utils.dart';
 
 class JsonTextFieldEditor extends StatefulWidget {
   const JsonTextFieldEditor({
@@ -30,6 +33,11 @@ class JsonTextFieldEditor extends StatefulWidget {
 class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
   final JsonTextFieldController controller = JsonTextFieldController();
   late final FocusNode editorFocusNode;
+  
+  String? validationError;
+  int? errorOffset;
+  int? errorLength;
+  Timer? _debounce;
 
   void insertTab() {
     String sp = "  ";
@@ -45,7 +53,65 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
         extentOffset: controller.selection.extentOffset + sp.length,
       ),
     );
-    widget.onChanged?.call(text);
+    _onChanged(text);
+  }
+
+  void _validateJson(String text) {
+     if (text.isEmpty) {
+      if (validationError != null) {
+        setState(() {
+          validationError = null;
+          errorOffset = null;
+        });
+      }
+      return;
+    }
+    try {
+      json.decode(text);
+      // Syntax valid. Check logical errors (Duplicates).
+      var (dupeError, offset, length) = JsonUtils.findDuplicateKeys(text);
+      if (dupeError != null) {
+        setState(() {
+          validationError = "Error: $dupeError";
+          errorOffset = offset;
+          errorLength = length;
+        });
+        return;
+      }
+
+      // No errors
+      if (validationError != null) {
+        setState(() {
+          validationError = null;
+          errorOffset = null;
+          errorLength = null;
+        });
+      }
+    } on FormatException catch (e) {
+      int offset = e.offset ?? -1;
+      var (line, col) = JsonUtils.getLineCol(text, offset);
+      setState(() {
+        validationError = "Error at Line $line, Col $col: ${e.message}";
+        errorOffset = offset;
+        // Check if we can determine length. E.g. unexpected character?
+        // Default to 1 for basic highlighting (cursor or single char).
+        errorLength = 1;
+      });
+    } catch (e) {
+       setState(() {
+        validationError = "Invalid JSON: $e";
+        errorOffset = null;
+        errorLength = null;
+      });
+    }
+  }
+
+  void _onChanged(String value) {
+    widget.onChanged?.call(value);
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _validateJson(value);
+    });
   }
 
   @override
@@ -54,17 +120,12 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
-    // Below code fixes issue #782 but JSON formatting
-    // should be manual via beautify button
-    // Future.delayed(Duration(milliseconds: 50), () {
-    //   controller.formatJson(sortJson: false);
-    //   setState(() {});
-    // });
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
   }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     editorFocusNode.dispose();
     super.dispose();
   }
@@ -76,6 +137,8 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
       controller.text = widget.initialValue ?? "";
       controller.selection =
           TextSelection.collapsed(offset: controller.text.length);
+       // Re-validate on update
+      _validateJson(controller.text);
     }
     if ((oldWidget.fieldKey != widget.fieldKey) ||
         (oldWidget.isDark != widget.isDark)) {
@@ -132,14 +195,6 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
                   : kLightCodeTheme['attr']?.color,
               fontWeight: FontWeight.bold,
             ),
-            // errorContainerDecoration: BoxDecoration(
-            //   color: Theme.of(context).colorScheme.error.withOpacity(
-            //         kForegroundOpacity,
-            //       ),
-            //   borderRadius: kBorderRadius8,
-            // ),
-            // TODO: Show error message in Global Status bar
-            // showErrorMessage: true,
             isFormatting: true,
             controller: controller,
             focusNode: editorFocusNode,
@@ -151,7 +206,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
               fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
             ),
             textAlignVertical: TextAlignVertical.top,
-            onChanged: widget.onChanged,
+            onChanged: _onChanged,
             onTapOutside: (PointerDownEvent event) {
               editorFocusNode.unfocus();
             },
@@ -178,6 +233,70 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
             ),
           ),
         ),
+        if (validationError != null)
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Tooltip(
+              message: validationError!,
+              padding: const EdgeInsets.all(8),
+              margin: const EdgeInsets.all(8),
+              textStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+                fontSize: 12,
+              ),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.errorContainer,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: InkWell(
+                onTap: () {
+                   // Highlight error
+                   if (errorOffset != null && errorOffset! >= 0 && errorOffset! <= controller.text.length) {
+                     editorFocusNode.requestFocus();
+                     // Default length 1 if not provided (e.g. syntax error at end)
+                     int length = errorLength ?? 1;
+                     if (errorOffset! + length > controller.text.length) {
+                       length = controller.text.length - errorOffset!;
+                     }
+                     controller.selection = TextSelection(
+                       baseOffset: errorOffset!,
+                       extentOffset: errorOffset! + length,
+                     );
+                   }
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.errorContainer,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "Invalid JSON (Hover for details, Tap to locate)",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onErrorContainer,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         Align(
           alignment: Alignment.topRight,
           child: ADIconButton(
@@ -185,7 +304,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
             tooltip: "Format JSON",
             onPressed: () {
               controller.formatJson(sortJson: false);
-              widget.onChanged?.call(controller.text);
+              _onChanged(controller.text);
             },
           ),
         ),
