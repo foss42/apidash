@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -16,10 +17,10 @@ void main() {
             children: [
               SidebarRequestCard(
                 id: '23',
-                apiType: APIType.rest,
+                abbr: APIType.fromMethod(HTTPVerb.get.name).abbr,
+                abbrColor: kColorHttpMethodGet,
                 selectedId: '2',
                 url: 'https://api.apidash.dev',
-                method: HTTPVerb.get,
                 onTap: () {
                   changedValue = 'Single Tapped';
                 },
@@ -62,11 +63,11 @@ void main() {
             children: [
               SidebarRequestCard(
                 id: '2',
-                apiType: APIType.rest,
+                abbr: APIType.fromMethod(HTTPVerb.get.name).abbr,
+                abbrColor: kColorHttpMethodGet,
                 selectedId: '2',
                 editRequestId: '2',
                 url: 'https://api.apidash.dev',
-                method: HTTPVerb.get,
                 onTapOutsideNameEditor: () {
                   changedValue = 'Tapped Outside';
                 },

@@ -6,14 +6,15 @@ import 'package:apidash/widgets/texts.dart';
 
 void main() {
   testWidgets('Testing when method is GET', (tester) async {
-    var methodGet = HTTPVerb.get;
-    var apiType = APIType.rest;
     await tester.pumpWidget(
       MaterialApp(
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.light),
         home: Scaffold(
-          body: SidebarRequestCardTextBox(apiType: apiType, method: methodGet),
+          body: SidebarRequestCardTextBox(
+            abbr: APIType.fromMethod(HTTPVerb.get.name).abbr,
+            color: kColorHttpMethodGet,
+          ),
         ),
       ),
     );
@@ -28,14 +29,15 @@ void main() {
   });
 
   testWidgets('Testing when method is DELETE', (tester) async {
-    var methodDel = HTTPVerb.delete;
-    var apiType = APIType.rest;
     await tester.pumpWidget(
       MaterialApp(
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.dark),
         home: Scaffold(
-          body: SidebarRequestCardTextBox(apiType: apiType, method: methodDel),
+          body: SidebarRequestCardTextBox(
+            abbr: APIType.fromMethod(HTTPVerb.delete.name).abbr,
+            color: kColorHttpMethodDelete,
+          ),
         ),
       ),
     );
@@ -52,9 +54,12 @@ void main() {
 
   testWidgets('Testing when APIType is graphql', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
-          body: SidebarRequestCardTextBox(apiType: APIType.graphql),
+          body: SidebarRequestCardTextBox(
+            abbr: APIType.graphql.abbr,
+            color: kColorGraphQL,
+          ),
         ),
       ),
     );
@@ -64,8 +69,13 @@ void main() {
 
   testWidgets('Testing when APIType is ai', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: SidebarRequestCardTextBox(apiType: APIType.ai)),
+      MaterialApp(
+        home: Scaffold(
+          body: SidebarRequestCardTextBox(
+            abbr: APIType.ai.abbr,
+            color: kColorAI,
+          ),
+        ),
       ),
     );
 

@@ -2,8 +2,8 @@
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/envvar/environment_page.dart';
+import 'package:apidash/screens/home_page/collection_pane/request_item.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
-import 'package:apidash/screens/home_page/editor_pane/editor_default.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card/url_card.dart';
 import 'package:apidash/screens/home_page/home_page.dart';
@@ -22,11 +22,52 @@ import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
 import 'helpers.dart';
 
+Future<ProviderContainer> pumpCollectionPane(
+  WidgetTester tester, {
+  Widget? home,
+}) async {
+  await tester.pumpWidget(
+    ProviderScope(
+      child: MaterialApp(home: home ?? const Scaffold(body: CollectionPane())),
+    ),
+  );
+  await tester.pump();
+  final container = ProviderScope.containerOf(
+    tester.element(find.byType(CollectionPane)),
+  );
+  await ensureCollectionReady(container, tester);
+  final collectionId = container.read(selectedCollectionIdStateProvider)!;
+  container.read(expandedCollectionIdsProvider.notifier).state = {collectionId};
+  await tester.pump();
+  return container;
+}
+
+Future<ProviderContainer> pumpRequestEditorPane(
+  WidgetTester tester, {
+  bool largeScreen = false,
+}) async {
+  if (largeScreen) {
+    await tester.setScreenSize(largeWidthDevice);
+  }
+  final container = createContainer();
+  await ensureCollectionReady(container, tester);
+  await tester.pumpWidget(
+    UncontrolledProviderScope(
+      container: container,
+      child: const Portal(
+        child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
+      ),
+    ),
+  );
+  await tester.pump();
+  return container;
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    await testSetUpTempDirForHive();
+    await testSetUpWorkspaceStorage();
     // FIXME: Font file moved to design system so this must be fixed if spot screenshot is used
     // final flamante = rootBundle.load('google_fonts/OpenSans-Medium.ttf');
     // final fontLoader = FontLoader('OpenSans')..addFont(flamante);
@@ -277,30 +318,16 @@ void main() {
     testWidgets(
       'selectedIdEditStateProvider should not be null after Duplicate button has been tapped',
       (tester) async {
-        await tester.pumpWidget(
-          ProviderScope(
-            child: MaterialApp(
-              theme: ThemeData(fontFamily: 'OpenSans'),
-              home: const Scaffold(body: CollectionPane()),
-            ),
-          ),
-        );
+        final container = await pumpCollectionPane(tester);
 
-        final collectionPane = tester.element(find.byType(CollectionPane));
-        final container = ProviderScope.containerOf(collectionPane);
         var orig = container.read(selectedIdStateProvider);
         expect(orig, isNotNull);
 
-        // Tap on the three dots to open the request card menu
-        await tester.tap(find.byType(RequestList));
-        await tester.pump();
         await tester.tap(find.byType(RequestItem));
         await tester.pump();
-        //await tester.tap(find.byIcon(Icons.more_vert).at(1));
         await tester.tap(find.byType(RequestItem), buttons: kSecondaryButton);
         await tester.pumpAndSettle();
 
-        // Tap on the "Duplicate" option in the menu
         var byType = find.text('Duplicate', findRichText: true);
         expect(byType, findsOneWidget);
 
@@ -319,36 +346,27 @@ void main() {
     testWidgets(
       'It should be set back to null when user taps outside name editor',
       (tester) async {
-        await tester.pumpWidget(
-          const ProviderScope(
-            child: MaterialApp(home: Scaffold(body: CollectionPane())),
-          ),
-        );
+        final container = await pumpCollectionPane(tester);
 
-        // Grab the CollectionPane widget and its ProviderContainer
-        final collectionPane = tester.element(find.byType(CollectionPane));
-        final container = ProviderScope.containerOf(collectionPane);
-
-        // Tap on the three dots to open the request card menu
-        await tester.tap(find.byType(RequestList));
-        await tester.pump();
         await tester.tap(find.byType(RequestItem));
         await tester.pump();
-        await tester.tap(find.byIcon(Icons.more_vert).at(1));
+        await tester.tap(
+          find.descendant(
+            of: find.byType(RequestItem),
+            matching: find.byIcon(Icons.more_vert),
+          ),
+        );
         await tester.pumpAndSettle();
 
-        // Tap on the "Rename" option in the menu
         await tester.tap(find.text('Rename'));
         await tester.pumpAndSettle();
 
-        // Verify that the selectedIdEditStateProvider is not null
         expect(container.read(selectedIdEditStateProvider), isNotNull);
         expect(
           (container.read(selectedIdEditStateProvider)).runtimeType,
           String,
         );
 
-        // Tap on the screen to simulate tapping outside the name editor
         await tester.tap(find.byType(CollectionPane));
         await tester.pumpAndSettle();
 
@@ -401,26 +419,8 @@ void main() {
     testWidgets("When state is false ResponsePane should be visible", (
       tester,
     ) async {
-      await tester.setScreenSize(largeWidthDevice);
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(home: Material(child: RequestEditorPane())),
-          ),
-        ),
-      );
+      await pumpRequestEditorPane(tester, largeScreen: true);
 
-      expect(find.byType(RequestEditorDefault), findsOneWidget);
-
-      // Tap on the "Plus New" button
-      Finder plusNewButton = find.descendant(
-        of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
-      );
-      await tester.tap(plusNewButton);
-      await tester.pump();
-
-      // Verify that NotSentWidget is visible
       expect(find.byType(NotSentWidget), findsOneWidget);
 
       // Add some data in URLTextField
@@ -446,26 +446,8 @@ void main() {
     testWidgets("When state is true CodePane should be visible", (
       tester,
     ) async {
-      await tester.setScreenSize(largeWidthDevice);
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
-          ),
-        ),
-      );
+      await pumpRequestEditorPane(tester, largeScreen: true);
 
-      expect(find.byType(RequestEditorDefault), findsOneWidget);
-
-      // Tap on the "Plus New" button
-      Finder plusNewButton = find.descendant(
-        of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
-      );
-      await tester.tap(plusNewButton);
-      await tester.pump();
-
-      // Verify that NotSentWidget is visible
       expect(find.byType(NotSentWidget), findsOneWidget);
 
       // Add some data in URLTextField
@@ -494,26 +476,8 @@ void main() {
     });
 
     testWidgets("Hide/View Code button toggles the state", (tester) async {
-      await tester.setScreenSize(largeWidthDevice);
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
-          ),
-        ),
-      );
+      await pumpRequestEditorPane(tester, largeScreen: true);
 
-      expect(find.byType(RequestEditorDefault), findsOneWidget);
-
-      // Tap on the "Plus New" button
-      Finder plusNewButton = find.descendant(
-        of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
-      );
-      await tester.tap(plusNewButton);
-      await tester.pump();
-
-      // Verify that NotSentWidget is visible
       expect(find.byType(NotSentWidget), findsOneWidget);
 
       // Add some data in URLTextField
@@ -551,26 +515,8 @@ void main() {
     });
 
     testWidgets("That state persists across widget rebuilds", (tester) async {
-      await tester.setScreenSize(largeWidthDevice);
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
-            child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
-          ),
-        ),
-      );
+      final container = await pumpRequestEditorPane(tester, largeScreen: true);
 
-      expect(find.byType(RequestEditorDefault), findsOneWidget);
-
-      // Tap on the "Plus New" button
-      Finder plusNewButton = find.descendant(
-        of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
-      );
-      await tester.tap(plusNewButton);
-      await tester.pump();
-
-      // Verify that NotSentWidget is visible
       expect(find.byType(NotSentWidget), findsOneWidget);
 
       // Add some data in URLTextField
@@ -587,8 +533,6 @@ void main() {
       await tester.tap(sendButton);
       await tester.pump();
 
-      final editorPane = tester.element(find.byType(RequestEditorPane));
-      final container = ProviderScope.containerOf(editorPane);
       final bool currentValue = container.read(codePaneVisibleStateProvider);
 
       // Click on View Code button
@@ -599,18 +543,18 @@ void main() {
       expect(container.read(codePaneVisibleStateProvider), !currentValue);
       bool matcher = !currentValue;
 
-      // Rebuild the widget tree
+      // Rebuild the widget tree with the same provider container
       await tester.pumpWidget(
-        const ProviderScope(
-          child: Portal(
+        UncontrolledProviderScope(
+          container: container,
+          child: const Portal(
             child: MaterialApp(home: Scaffold(body: RequestEditorPane())),
           ),
         ),
       );
 
       // Verify that the value of codePaneVisibleStateProvider is still true
-      final containerAfterRebuild = ProviderScope.containerOf(editorPane);
-      bool actual = containerAfterRebuild.read(codePaneVisibleStateProvider);
+      bool actual = container.read(codePaneVisibleStateProvider);
       expect(actual, matcher);
     });
 

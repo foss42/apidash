@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'name_path_model.dart';
 
 @immutable
 class SettingsModel {
@@ -22,6 +23,8 @@ class SettingsModel {
     this.isDashBotEnabled = true,
     this.defaultAIModel,
     this.maxConnectionMessages = 1000,
+    this.saveMediaResponsesAsFiles = false,
+    this.savedWorkspaces = const <NamePathModel>[],
   });
 
   final bool isDark;
@@ -40,6 +43,8 @@ class SettingsModel {
   final bool isDashBotEnabled;
   final Map<String, Object?>? defaultAIModel;
   final int maxConnectionMessages;
+  final bool saveMediaResponsesAsFiles;
+  final List<NamePathModel> savedWorkspaces;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -58,10 +63,13 @@ class SettingsModel {
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
     int? maxConnectionMessages,
+    bool? saveMediaResponsesAsFiles,
+    List<NamePathModel>? savedWorkspaces,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
-      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
+      alwaysShowCollectionPaneScrollbar:
+          alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
@@ -77,13 +85,15 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
-      maxConnectionMessages: maxConnectionMessages ?? this.maxConnectionMessages,
+      maxConnectionMessages:
+          maxConnectionMessages ?? this.maxConnectionMessages,
+      saveMediaResponsesAsFiles:
+          saveMediaResponsesAsFiles ?? this.saveMediaResponsesAsFiles,
+      savedWorkspaces: savedWorkspaces ?? this.savedWorkspaces,
     );
   }
 
-  SettingsModel copyWithPath({
-    String? workspaceFolderPath,
-  }) {
+  SettingsModel copyWithPath({String? workspaceFolderPath}) {
     return SettingsModel(
       isDark: isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
@@ -101,6 +111,8 @@ class SettingsModel {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
       maxConnectionMessages: maxConnectionMessages,
+      saveMediaResponsesAsFiles: saveMediaResponsesAsFiles,
+      savedWorkspaces: savedWorkspaces,
     );
   }
 
@@ -124,8 +136,9 @@ class SettingsModel {
     SupportedUriSchemes? defaultUriScheme;
     if (defaultUriSchemeStr != null) {
       try {
-        defaultUriScheme =
-            SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+        defaultUriScheme = SupportedUriSchemes.values.byName(
+          defaultUriSchemeStr,
+        );
       } catch (e) {
         // pass
       }
@@ -143,8 +156,9 @@ class SettingsModel {
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
       try {
-        defaultCodeGenLang =
-            CodegenLanguage.values.byName(defaultCodeGenLangStr);
+        defaultCodeGenLang = CodegenLanguage.values.byName(
+          defaultCodeGenLangStr,
+        );
       } catch (e) {
         // pass
       }
@@ -156,8 +170,9 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod;
     if (historyRetentionPeriodStr != null) {
       try {
-        historyRetentionPeriod =
-            HistoryRetentionPeriod.values.byName(historyRetentionPeriodStr);
+        historyRetentionPeriod = HistoryRetentionPeriod.values.byName(
+          historyRetentionPeriodStr,
+        );
       } catch (e) {
         // pass
       }
@@ -172,6 +187,19 @@ class SettingsModel {
     final maxConnectionMessages =
         data["maxConnectionMessages"] as int? ??
         data["maxWebSocketEvents"] as int?;
+    final saveMediaResponsesAsFiles =
+        data["saveMediaResponsesAsFiles"] as bool?;
+    final savedWorkspaces = <NamePathModel>[];
+    final rawWorkspaces = data['savedWorkspaces'];
+    if (rawWorkspaces is List) {
+      for (final item in rawWorkspaces) {
+        if (item is Map) {
+          savedWorkspaces.add(
+            NamePathModel.fromJson(Map<String, Object?>.from(item)),
+          );
+        }
+      }
+    }
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -192,6 +220,8 @@ class SettingsModel {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
       maxConnectionMessages: maxConnectionMessages ?? 1000,
+      saveMediaResponsesAsFiles: saveMediaResponsesAsFiles,
+      savedWorkspaces: savedWorkspaces,
     );
   }
 
@@ -215,6 +245,8 @@ class SettingsModel {
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
       "maxConnectionMessages": maxConnectionMessages,
+      "saveMediaResponsesAsFiles": saveMediaResponsesAsFiles,
+      "savedWorkspaces": savedWorkspaces.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -243,7 +275,9 @@ class SettingsModel {
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
         mapEquals(other.defaultAIModel, defaultAIModel) &&
-        other.maxConnectionMessages == maxConnectionMessages;
+        other.maxConnectionMessages == maxConnectionMessages &&
+        other.saveMediaResponsesAsFiles == saveMediaResponsesAsFiles &&
+        listEquals(other.savedWorkspaces, savedWorkspaces);
   }
 
   @override
@@ -266,6 +300,8 @@ class SettingsModel {
       isDashBotEnabled,
       defaultAIModel,
       maxConnectionMessages,
+      saveMediaResponsesAsFiles,
+      Object.hashAll(savedWorkspaces),
     );
   }
 }

@@ -116,7 +116,8 @@ class GrpcUtils {
         services.add(name);
         final serviceMethods = <String>[];
         final methodRegex = RegExp(
-            r'rpc\s+(\w+)\s*\(([^)]*)\)\s+returns\s*\(([^)]*)\)');
+          r'rpc\s+(\w+)\s*\(([^)]*)\)\s+returns\s*\(([^)]*)\)',
+        );
         for (final mMatch in methodRegex.allMatches(inner)) {
           final methodName = mMatch.group(1)!;
           var requestType = mMatch.group(2)!.trim();
@@ -136,13 +137,15 @@ class GrpcUtils {
           final type = fMatch.group(1)!;
           final fname = fMatch.group(2)!;
           final tag = int.tryParse(fMatch.group(3)!) ?? 0;
-          fields.add(GrpcParameterModel(
-            name: fname,
-            tag: tag,
-            type: type,
-            enabled: true,
-            value: "",
-          ));
+          fields.add(
+            GrpcParameterModel(
+              name: fname,
+              tag: tag,
+              type: type,
+              enabled: true,
+              value: "",
+            ),
+          );
         }
         messageFields[name] = fields;
         if (fullName != name) messageFields[fullName] = fields;
@@ -166,12 +169,18 @@ class GrpcUtils {
     }
   }
 
-  static String decodeBinaryResponse(List<int> data, {GrpcMethodSchema? schema}) {
+  static String decodeBinaryResponse(
+    List<int> data, {
+    GrpcMethodSchema? schema,
+  }) {
     try {
       if (data.isEmpty) return "";
 
       final mapped = _decodeWithSchema(
-          data, schema?.outputDescriptor, schema?.allDescriptors ?? {});
+        data,
+        schema?.outputDescriptor,
+        schema?.allDescriptors ?? {},
+      );
       return _prettyJson(mapped);
     } catch (e) {
       return data.toString();
@@ -179,7 +188,10 @@ class GrpcUtils {
   }
 
   static Map<String, dynamic> _decodeWithSchema(
-      List<int> data, dynamic descriptor, Map<String, dynamic> allDescriptors) {
+    List<int> data,
+    dynamic descriptor,
+    Map<String, dynamic> allDescriptors,
+  ) {
     final result = <String, dynamic>{};
     int offset = 0;
 
@@ -210,17 +222,25 @@ class GrpcUtils {
           final val = _readVarint(data, offset);
           if (val == null) return result;
           offset = val.nextOffset;
-          _assign(result, fieldName, _decodeVarintValue(val.value, typeName),
-              repeated);
+          _assign(
+            result,
+            fieldName,
+            _decodeVarintValue(val.value, typeName),
+            repeated,
+          );
           break;
         case 1: // 64-bit fixed (fixed64 / sfixed64 / double)
           if (offset + 8 > data.length) return result;
-          final bd = Uint8List.fromList(data.sublist(offset, offset + 8))
-              .buffer
-              .asByteData();
+          final bd = Uint8List.fromList(
+            data.sublist(offset, offset + 8),
+          ).buffer.asByteData();
           offset += 8;
-          _assign(result, fieldName, _decodeFixed64Value(bd, typeName),
-              repeated);
+          _assign(
+            result,
+            fieldName,
+            _decodeFixed64Value(bd, typeName),
+            repeated,
+          );
           break;
         case 2: // Length-delimited (string/bytes/message/packed repeated)
           final len = _readVarint(data, offset);
@@ -234,8 +254,12 @@ class GrpcUtils {
             var tn = fieldDesc.typeName as String;
             if (tn.startsWith('.')) tn = tn.substring(1);
             final nestedDesc = allDescriptors[tn];
-            _assign(result, fieldName,
-                _decodeWithSchema(bytes, nestedDesc, allDescriptors), repeated);
+            _assign(
+              result,
+              fieldName,
+              _decodeWithSchema(bytes, nestedDesc, allDescriptors),
+              repeated,
+            );
           } else if (_packedKind(typeName) != null) {
             _assignList(result, fieldName, _decodePacked(bytes, typeName));
           } else if (_isBytesType(typeName)) {
@@ -253,8 +277,12 @@ class GrpcUtils {
             } catch (_) {
               if (descriptor == null && _isLikelyProtobuf(bytes)) {
                 try {
-                  _assign(result, fieldName,
-                      _decodeWithSchema(bytes, null, allDescriptors), repeated);
+                  _assign(
+                    result,
+                    fieldName,
+                    _decodeWithSchema(bytes, null, allDescriptors),
+                    repeated,
+                  );
                 } catch (_) {
                   _assign(result, fieldName, bytes.toString(), repeated);
                 }
@@ -266,12 +294,16 @@ class GrpcUtils {
           break;
         case 5: // 32-bit fixed (fixed32 / sfixed32 / float)
           if (offset + 4 > data.length) return result;
-          final bd32 = Uint8List.fromList(data.sublist(offset, offset + 4))
-              .buffer
-              .asByteData();
+          final bd32 = Uint8List.fromList(
+            data.sublist(offset, offset + 4),
+          ).buffer.asByteData();
           offset += 4;
-          _assign(result, fieldName, _decodeFixed32Value(bd32, typeName),
-              repeated);
+          _assign(
+            result,
+            fieldName,
+            _decodeFixed32Value(bd32, typeName),
+            repeated,
+          );
           break;
         default:
           return result;
@@ -367,15 +399,17 @@ class GrpcUtils {
       }
     } else if (kind == 'fixed64') {
       while (o + 8 <= bytes.length) {
-        final bd =
-            Uint8List.fromList(bytes.sublist(o, o + 8)).buffer.asByteData();
+        final bd = Uint8List.fromList(
+          bytes.sublist(o, o + 8),
+        ).buffer.asByteData();
         out.add(_decodeFixed64Value(bd, typeName));
         o += 8;
       }
     } else if (kind == 'fixed32') {
       while (o + 4 <= bytes.length) {
-        final bd =
-            Uint8List.fromList(bytes.sublist(o, o + 4)).buffer.asByteData();
+        final bd = Uint8List.fromList(
+          bytes.sublist(o, o + 4),
+        ).buffer.asByteData();
         out.add(_decodeFixed32Value(bd, typeName));
         o += 4;
       }
@@ -385,7 +419,11 @@ class GrpcUtils {
 
   // Accumulate a scalar/message value, turning repeated occurrences into a list.
   static void _assign(
-      Map<String, dynamic> result, String name, dynamic value, bool forceList) {
+    Map<String, dynamic> result,
+    String name,
+    dynamic value,
+    bool forceList,
+  ) {
     if (result.containsKey(name)) {
       final existing = result[name];
       if (existing is List) {
@@ -400,7 +438,10 @@ class GrpcUtils {
 
   // Accumulate a packed list of values into the field.
   static void _assignList(
-      Map<String, dynamic> result, String name, List<dynamic> vals) {
+    Map<String, dynamic> result,
+    String name,
+    List<dynamic> vals,
+  ) {
     final existing = result[name];
     if (existing is List) {
       existing.addAll(vals);
@@ -445,9 +486,17 @@ class GrpcUtils {
     for (var p in params) {
       if (p.enabled && p.name.isNotEmpty) {
         dynamic val = p.value;
-        if (p.type == 'int32' || p.type == 'uint32' || p.type == 'sint32' || p.type == 'fixed32' || p.type == 'sfixed32') {
+        if (p.type == 'int32' ||
+            p.type == 'uint32' ||
+            p.type == 'sint32' ||
+            p.type == 'fixed32' ||
+            p.type == 'sfixed32') {
           val = int.tryParse(p.value) ?? 0;
-        } else if (p.type == 'int64' || p.type == 'uint64' || p.type == 'sint64' || p.type == 'fixed64' || p.type == 'sfixed64') {
+        } else if (p.type == 'int64' ||
+            p.type == 'uint64' ||
+            p.type == 'sint64' ||
+            p.type == 'fixed64' ||
+            p.type == 'sfixed64') {
           val = int.tryParse(p.value) ?? 0;
         } else if (p.type == 'double' || p.type == 'float') {
           val = double.tryParse(p.value) ?? 0.0;

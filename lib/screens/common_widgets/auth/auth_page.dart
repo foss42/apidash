@@ -1,7 +1,10 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
 import 'api_key_auth_fields.dart';
+import 'auth_warning_tip.dart';
 import 'basic_auth_fields.dart';
 import 'bearer_auth_fields.dart';
 import 'digest_auth_fields.dart';
@@ -10,7 +13,7 @@ import 'consts.dart';
 import 'oauth1_fields.dart';
 import 'oauth2_field.dart';
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends ConsumerWidget {
   final AuthModel? authModel;
   final bool readOnly;
   final Function(APIAuthType? newType)? onChangedAuthType;
@@ -25,7 +28,7 @@ class AuthPage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -34,13 +37,9 @@ class AuthPage extends StatelessWidget {
           children: [
             Text(
               kLabelSelectAuthType,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(
-              height: 8,
-            ),
+            SizedBox(height: 8),
             ADPopupMenu<APIAuthType>(
               value: authModel?.type.displayType,
               values: APIAuthType.values
@@ -50,49 +49,61 @@ class AuthPage extends StatelessWidget {
               isOutlined: true,
               onChanged: readOnly ? null : onChangedAuthType,
             ),
-            const SizedBox(height: 48),
+            const SizedBox(height: 24),
             switch (authModel?.type) {
               APIAuthType.basic => BasicAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.bearer => BearerAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.apiKey => ApiKeyAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.jwt => JwtAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.digest => DigestAuthFields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
-                APIAuthType.oauth1 => OAuth1Fields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
+              APIAuthType.oauth1 => OAuth1Fields(
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
               APIAuthType.oauth2 => OAuth2Fields(
-                  readOnly: readOnly,
-                  authData: authModel,
-                  updateAuth: updateAuthData,
-                ),
-              APIAuthType.none =>
-                Text(readOnly ? kMsgNoAuth : kMsgNoAuthSelected),
-              _ => Text(readOnly
-                  ? "${authModel?.type.name} $kMsgAuthNotSupported"
-                  : kMsgNotImplemented),
-            }
+                readOnly: readOnly,
+                authData: authModel,
+                updateAuth: updateAuthData,
+              ),
+              APIAuthType.none => Text(
+                readOnly ? kMsgNoAuth : kMsgNoAuthSelected,
+              ),
+              _ => Text(
+                readOnly
+                    ? "${authModel?.type.name} $kMsgAuthNotSupported"
+                    : kMsgNotImplemented,
+              ),
+            },
+            if (authModel?.type != null &&
+                authModel?.type != APIAuthType.none) ...[
+              const SizedBox(height: 24),
+              AuthWarningTip(
+                onTap: () {
+                  ref.read(navRailIndexStateProvider.notifier).state = 1;
+                },
+              ),
+            ],
           ],
         ),
       ),

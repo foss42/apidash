@@ -1,39 +1,23 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 
 class SidebarRequestCardTextBox extends StatelessWidget {
-  const SidebarRequestCardTextBox({
-    super.key,
-    required this.apiType,
-    this.method,
-  });
-  final APIType apiType;
-  final HTTPVerb? method;
+  const SidebarRequestCardTextBox({super.key, required this.abbr, this.color});
+  final String abbr;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 24,
       child: Text(
-        switch (apiType) {
-          APIType.rest => method!.abbr,
-          APIType.graphql => apiType.abbr,
-          APIType.ai => apiType.abbr,
-          APIType.websocket => apiType.abbr,
-          APIType.mqtt => apiType.abbr,
-          APIType.grpc => apiType.abbr,
-        },
+        abbr,
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 8,
           fontWeight: FontWeight.bold,
-          color: getAPIColor(
-            apiType,
-            method: method,
-            brightness: Theme.of(context).brightness,
-          ),
+          color: color,
         ),
       ),
     );
@@ -48,15 +32,18 @@ class StatusCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
-    final Color color =
-        getResponseStatusCodeColor(statusCode, brightness: brightness);
+    final Color color = getResponseStatusCodeColor(
+      statusCode,
+      brightness: brightness,
+    );
     return Text(
       statusCode.toString(),
-      style: style?.copyWith(color: color) ??
+      style:
+          style?.copyWith(color: color) ??
           Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontFamily: kCodeStyle.fontFamily,
-                color: color,
-              ),
+            fontFamily: kCodeStyle.fontFamily,
+            color: color,
+          ),
     );
   }
 }

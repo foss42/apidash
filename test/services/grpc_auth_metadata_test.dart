@@ -1,22 +1,25 @@
 import 'dart:convert';
 
+import 'package:apidash/services/services.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/grpc_request_model.dart';
-import 'package:apidash/providers/collection_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('buildGrpcMetadata (authModel -> gRPC metadata)', () {
-    test('no authModel -> only user metadata table, keys lower-cased', () async {
-      const model = GrpcRequestModel(
-        url: 'localhost:50051',
-        metadata: [NameValueModel(name: 'X-Trace', value: 'abc')],
-      );
+    test(
+      'no authModel -> only user metadata table, keys lower-cased',
+      () async {
+        const model = GrpcRequestModel(
+          url: 'localhost:50051',
+          metadata: [NameValueModel(name: 'X-Trace', value: 'abc')],
+        );
 
-      final meta = await buildGrpcMetadata(model);
+        final meta = await buildGrpcMetadata(model);
 
-      expect(meta, {'x-trace': 'abc'});
-    });
+        expect(meta, {'x-trace': 'abc'});
+      },
+    );
 
     test('bearer auth -> authorization: Bearer <token>', () async {
       const model = GrpcRequestModel(

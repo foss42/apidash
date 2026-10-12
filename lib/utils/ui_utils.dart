@@ -3,8 +3,10 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import '../consts.dart';
 
-Color getResponseStatusCodeColor(int? statusCode,
-    {Brightness brightness = Brightness.light}) {
+Color getResponseStatusCodeColor(
+  int? statusCode, {
+  Brightness brightness = Brightness.light,
+}) {
   Color col = kColorStatusCodeDefault;
   if (statusCode != null) {
     if (statusCode >= 200) {
@@ -26,20 +28,14 @@ Color getResponseStatusCodeColor(int? statusCode,
   return col;
 }
 
-Color getAPIColor(
-  APIType apiType, {
-  HTTPVerb? method,
-  Brightness? brightness,
-}) {
+Color getAPIColor(APIType apiType, {HTTPVerb? method, Brightness? brightness}) {
   Color col = switch (apiType) {
-    APIType.rest => getHTTPMethodColor(
-        method,
-      ),
-    APIType.graphql => kColorGQL,
-    APIType.ai => Colors.amber,
-    APIType.websocket => Colors.teal,
-    APIType.mqtt => Colors.purple,
-    APIType.grpc => Colors.blueGrey,
+    APIType.rest => getHTTPMethodColor(method),
+    APIType.graphql => kColorGraphQL,
+    APIType.ai => kColorAI,
+    APIType.websocket => kColorWS,
+    APIType.mqtt => kColorMQTT,
+    APIType.grpc => kColorgRPC,
   };
   if (brightness == Brightness.dark) {
     col = col.toDark;
@@ -76,5 +72,17 @@ GlobalKey<ScaffoldState> getScaffoldKey(int railIdx) {
     1 => kEnvScaffoldKey,
     2 => kHisScaffoldKey,
     _ => kHomeScaffoldKey,
+  };
+}
+
+/// Returns the abbreviation for the given API type.
+String getAbbr(APIType apiType, {HTTPVerb? method}) {
+  return switch (apiType) {
+    APIType.rest => method?.abbr ?? "",
+    APIType.graphql => apiType.abbr,
+    APIType.ai => apiType.abbr,
+    APIType.websocket => apiType.abbr,
+    APIType.mqtt => apiType.abbr,
+    APIType.grpc => apiType.abbr,
   };
 }

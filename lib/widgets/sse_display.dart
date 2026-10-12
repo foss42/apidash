@@ -6,11 +6,7 @@ import 'package:flutter/material.dart';
 class SSEDisplay extends StatelessWidget {
   final AIRequestModel? aiRequestModel;
   final List<String>? sseOutput;
-  const SSEDisplay({
-    super.key,
-    this.sseOutput,
-    this.aiRequestModel,
-  });
+  const SSEDisplay({super.key, this.sseOutput, this.aiRequestModel});
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +46,14 @@ class SSEDisplay extends StatelessWidget {
           debugPrint("SSEDisplay -> Error in JSONDEC $e");
         }
       }
-      return SingleChildScrollView(
-        child: Text(out),
-      );
+      return SingleChildScrollView(child: Text(out));
     }
 
     return ListView(
       padding: kP1,
-      children:
-          sseOutput!.reversed.where((e) => e.trim() != '').map<Widget>((chunk) {
+      children: sseOutput!.reversed.where((e) => e.trim() != '').map<Widget>((
+        chunk,
+      ) {
         Map<String, dynamic>? parsedJson;
         try {
           parsedJson = jsonDecode(chunk);
@@ -66,9 +61,7 @@ class SSEDisplay extends StatelessWidget {
 
         return Card(
           color: theme.colorScheme.surfaceContainerLowest,
-          shape: RoundedRectangleBorder(
-            borderRadius: kBorderRadius6,
-          ),
+          shape: RoundedRectangleBorder(borderRadius: kBorderRadius6),
           child: Padding(
             padding: kP8,
             child: parsedJson != null
@@ -84,7 +77,9 @@ class SSEDisplay extends StatelessWidget {
                               '${entry.key}: ',
                               style: kCodeStyle.copyWith(
                                 fontSize: fontSizeMedium,
-                                color: isDark ? kColorGQL.toDark : kColorGQL,
+                                color: isDark
+                                    ? kColorGraphQL.toDark
+                                    : kColorGraphQL,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -102,9 +97,7 @@ class SSEDisplay extends StatelessWidget {
                   )
                 : Text(
                     chunk.toString().trim(),
-                    style: kCodeStyle.copyWith(
-                      fontSize: fontSizeMedium,
-                    ),
+                    style: kCodeStyle.copyWith(fontSize: fontSizeMedium),
                   ),
           ),
         );

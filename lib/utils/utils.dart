@@ -2,6 +2,7 @@ export 'codegen_utils.dart';
 export 'convert_utils.dart';
 export 'envvar_utils.dart';
 export 'file_utils.dart';
+export 'grpc_utils.dart';
 export 'har_utils.dart';
 export 'header_utils.dart';
 export 'history_utils.dart';

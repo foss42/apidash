@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RequestModel {
 
- String get id; APIType get apiType; String get name; String get description;@JsonKey(includeToJson: false) dynamic get requestTabIndex; HttpRequestModel? get httpRequestModel; int? get responseStatus; String? get message; HttpResponseModel? get httpResponseModel;@JsonKey(includeToJson: false) bool get isWorking;@JsonKey(includeToJson: false) DateTime? get sendingTime;@JsonKey(includeToJson: false) bool get isStreaming; String? get preRequestScript; String? get postRequestScript; AIRequestModel? get aiRequestModel; WebSocketRequestModel? get wsRequestModel; MQTTRequestModel? get mqttRequestModel; GrpcRequestModel? get grpcRequestModel;
+ String get id; APIType get apiType; String get name; String get description;@JsonKey(includeToJson: false) dynamic get requestTabIndex; HttpRequestModel? get httpRequestModel; HttpResponseModel? get httpResponseModel; AIRequestModel? get aiRequestModel; WebSocketRequestModel? get wsRequestModel; MQTTRequestModel? get mqttRequestModel; GrpcRequestModel? get grpcRequestModel;@JsonKey(includeToJson: false) bool get isWorking;@JsonKey(includeToJson: false) DateTime? get sendingTime;@JsonKey(includeToJson: false) bool get isStreaming; String? get preRequestScript; String? get postRequestScript; int? get responseStatus; String? get message;
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $RequestModelCopyWith<RequestModel> get copyWith => _$RequestModelCopyWithImpl<R
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel)&&(identical(other.wsRequestModel, wsRequestModel) || other.wsRequestModel == wsRequestModel)&&(identical(other.mqttRequestModel, mqttRequestModel) || other.mqttRequestModel == mqttRequestModel)&&(identical(other.grpcRequestModel, grpcRequestModel) || other.grpcRequestModel == grpcRequestModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel)&&(identical(other.wsRequestModel, wsRequestModel) || other.wsRequestModel == wsRequestModel)&&(identical(other.mqttRequestModel, mqttRequestModel) || other.mqttRequestModel == mqttRequestModel)&&(identical(other.grpcRequestModel, grpcRequestModel) || other.grpcRequestModel == grpcRequestModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,responseStatus,message,httpResponseModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,aiRequestModel,wsRequestModel,mqttRequestModel,grpcRequestModel);
+int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,httpResponseModel,aiRequestModel,wsRequestModel,mqttRequestModel,grpcRequestModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,responseStatus,message);
 
 @override
 String toString() {
-  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel, wsRequestModel: $wsRequestModel, mqttRequestModel: $mqttRequestModel, grpcRequestModel: $grpcRequestModel)';
+  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, aiRequestModel: $aiRequestModel, wsRequestModel: $wsRequestModel, mqttRequestModel: $mqttRequestModel, grpcRequestModel: $grpcRequestModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, responseStatus: $responseStatus, message: $message)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $RequestModelCopyWith<$Res>  {
   factory $RequestModelCopyWith(RequestModel value, $Res Function(RequestModel) _then) = _$RequestModelCopyWithImpl;
 @useResult
 $Res call({
- String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, int? responseStatus, String? message, HttpResponseModel? httpResponseModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, AIRequestModel? aiRequestModel, WebSocketRequestModel? wsRequestModel, MQTTRequestModel? mqttRequestModel, GrpcRequestModel? grpcRequestModel
+ String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, HttpResponseModel? httpResponseModel, AIRequestModel? aiRequestModel, WebSocketRequestModel? wsRequestModel, MQTTRequestModel? mqttRequestModel, GrpcRequestModel? grpcRequestModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, int? responseStatus, String? message
 });
 
 
@@ -65,7 +65,7 @@ class _$RequestModelCopyWithImpl<$Res>
 
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? responseStatus = freezed,Object? message = freezed,Object? httpResponseModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? aiRequestModel = freezed,Object? wsRequestModel = freezed,Object? mqttRequestModel = freezed,Object? grpcRequestModel = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? httpResponseModel = freezed,Object? aiRequestModel = freezed,Object? wsRequestModel = freezed,Object? mqttRequestModel = freezed,Object? grpcRequestModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? responseStatus = freezed,Object? message = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,apiType: null == apiType ? _self.apiType : apiType // ignore: cast_nullable_to_non_nullable
@@ -73,19 +73,19 @@ as APIType,name: null == name ? _self.name : name // ignore: cast_nullable_to_no
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,requestTabIndex: freezed == requestTabIndex ? _self.requestTabIndex : requestTabIndex // ignore: cast_nullable_to_non_nullable
 as dynamic,httpRequestModel: freezed == httpRequestModel ? _self.httpRequestModel : httpRequestModel // ignore: cast_nullable_to_non_nullable
-as HttpRequestModel?,responseStatus: freezed == responseStatus ? _self.responseStatus : responseStatus // ignore: cast_nullable_to_non_nullable
-as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String?,httpResponseModel: freezed == httpResponseModel ? _self.httpResponseModel : httpResponseModel // ignore: cast_nullable_to_non_nullable
-as HttpResponseModel?,isWorking: null == isWorking ? _self.isWorking : isWorking // ignore: cast_nullable_to_non_nullable
+as HttpRequestModel?,httpResponseModel: freezed == httpResponseModel ? _self.httpResponseModel : httpResponseModel // ignore: cast_nullable_to_non_nullable
+as HttpResponseModel?,aiRequestModel: freezed == aiRequestModel ? _self.aiRequestModel : aiRequestModel // ignore: cast_nullable_to_non_nullable
+as AIRequestModel?,wsRequestModel: freezed == wsRequestModel ? _self.wsRequestModel : wsRequestModel // ignore: cast_nullable_to_non_nullable
+as WebSocketRequestModel?,mqttRequestModel: freezed == mqttRequestModel ? _self.mqttRequestModel : mqttRequestModel // ignore: cast_nullable_to_non_nullable
+as MQTTRequestModel?,grpcRequestModel: freezed == grpcRequestModel ? _self.grpcRequestModel : grpcRequestModel // ignore: cast_nullable_to_non_nullable
+as GrpcRequestModel?,isWorking: null == isWorking ? _self.isWorking : isWorking // ignore: cast_nullable_to_non_nullable
 as bool,sendingTime: freezed == sendingTime ? _self.sendingTime : sendingTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming // ignore: cast_nullable_to_non_nullable
 as bool,preRequestScript: freezed == preRequestScript ? _self.preRequestScript : preRequestScript // ignore: cast_nullable_to_non_nullable
 as String?,postRequestScript: freezed == postRequestScript ? _self.postRequestScript : postRequestScript // ignore: cast_nullable_to_non_nullable
-as String?,aiRequestModel: freezed == aiRequestModel ? _self.aiRequestModel : aiRequestModel // ignore: cast_nullable_to_non_nullable
-as AIRequestModel?,wsRequestModel: freezed == wsRequestModel ? _self.wsRequestModel : wsRequestModel // ignore: cast_nullable_to_non_nullable
-as WebSocketRequestModel?,mqttRequestModel: freezed == mqttRequestModel ? _self.mqttRequestModel : mqttRequestModel // ignore: cast_nullable_to_non_nullable
-as MQTTRequestModel?,grpcRequestModel: freezed == grpcRequestModel ? _self.grpcRequestModel : grpcRequestModel // ignore: cast_nullable_to_non_nullable
-as GrpcRequestModel?,
+as String?,responseStatus: freezed == responseStatus ? _self.responseStatus : responseStatus // ignore: cast_nullable_to_non_nullable
+as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of RequestModel
@@ -242,10 +242,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel,  MQTTRequestModel? mqttRequestModel,  GrpcRequestModel? grpcRequestModel)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  HttpResponseModel? httpResponseModel,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel,  MQTTRequestModel? mqttRequestModel,  GrpcRequestModel? grpcRequestModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  int? responseStatus,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RequestModel() when $default != null:
-return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel,_that.wsRequestModel,_that.mqttRequestModel,_that.grpcRequestModel);case _:
+return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.httpResponseModel,_that.aiRequestModel,_that.wsRequestModel,_that.mqttRequestModel,_that.grpcRequestModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.responseStatus,_that.message);case _:
   return orElse();
 
 }
@@ -263,10 +263,10 @@ return $default(_that.id,_that.apiType,_that.name,_that.description,_that.reques
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel,  MQTTRequestModel? mqttRequestModel,  GrpcRequestModel? grpcRequestModel)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  HttpResponseModel? httpResponseModel,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel,  MQTTRequestModel? mqttRequestModel,  GrpcRequestModel? grpcRequestModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  int? responseStatus,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _RequestModel():
-return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel,_that.wsRequestModel,_that.mqttRequestModel,_that.grpcRequestModel);case _:
+return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.httpResponseModel,_that.aiRequestModel,_that.wsRequestModel,_that.mqttRequestModel,_that.grpcRequestModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.responseStatus,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -283,10 +283,10 @@ return $default(_that.id,_that.apiType,_that.name,_that.description,_that.reques
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  int? responseStatus,  String? message,  HttpResponseModel? httpResponseModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel,  MQTTRequestModel? mqttRequestModel,  GrpcRequestModel? grpcRequestModel)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  APIType apiType,  String name,  String description, @JsonKey(includeToJson: false)  dynamic requestTabIndex,  HttpRequestModel? httpRequestModel,  HttpResponseModel? httpResponseModel,  AIRequestModel? aiRequestModel,  WebSocketRequestModel? wsRequestModel,  MQTTRequestModel? mqttRequestModel,  GrpcRequestModel? grpcRequestModel, @JsonKey(includeToJson: false)  bool isWorking, @JsonKey(includeToJson: false)  DateTime? sendingTime, @JsonKey(includeToJson: false)  bool isStreaming,  String? preRequestScript,  String? postRequestScript,  int? responseStatus,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _RequestModel() when $default != null:
-return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.responseStatus,_that.message,_that.httpResponseModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.aiRequestModel,_that.wsRequestModel,_that.mqttRequestModel,_that.grpcRequestModel);case _:
+return $default(_that.id,_that.apiType,_that.name,_that.description,_that.requestTabIndex,_that.httpRequestModel,_that.httpResponseModel,_that.aiRequestModel,_that.wsRequestModel,_that.mqttRequestModel,_that.grpcRequestModel,_that.isWorking,_that.sendingTime,_that.isStreaming,_that.preRequestScript,_that.postRequestScript,_that.responseStatus,_that.message);case _:
   return null;
 
 }
@@ -298,7 +298,7 @@ return $default(_that.id,_that.apiType,_that.name,_that.description,_that.reques
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _RequestModel extends RequestModel {
-  const _RequestModel({required this.id, this.apiType = APIType.rest, this.name = "", this.description = "", @JsonKey(includeToJson: false) this.requestTabIndex = 0, this.httpRequestModel, this.responseStatus, this.message, this.httpResponseModel, @JsonKey(includeToJson: false) this.isWorking = false, @JsonKey(includeToJson: false) this.sendingTime, @JsonKey(includeToJson: false) this.isStreaming = false, this.preRequestScript, this.postRequestScript, this.aiRequestModel, this.wsRequestModel, this.mqttRequestModel, this.grpcRequestModel}): super._();
+  const _RequestModel({required this.id, this.apiType = APIType.rest, this.name = "", this.description = "", @JsonKey(includeToJson: false) this.requestTabIndex = 0, this.httpRequestModel, this.httpResponseModel, this.aiRequestModel, this.wsRequestModel, this.mqttRequestModel, this.grpcRequestModel, @JsonKey(includeToJson: false) this.isWorking = false, @JsonKey(includeToJson: false) this.sendingTime, @JsonKey(includeToJson: false) this.isStreaming = false, this.preRequestScript, this.postRequestScript, this.responseStatus, this.message}): super._();
   factory _RequestModel.fromJson(Map<String, dynamic> json) => _$RequestModelFromJson(json);
 
 @override final  String id;
@@ -307,18 +307,18 @@ class _RequestModel extends RequestModel {
 @override@JsonKey() final  String description;
 @override@JsonKey(includeToJson: false) final  dynamic requestTabIndex;
 @override final  HttpRequestModel? httpRequestModel;
-@override final  int? responseStatus;
-@override final  String? message;
 @override final  HttpResponseModel? httpResponseModel;
+@override final  AIRequestModel? aiRequestModel;
+@override final  WebSocketRequestModel? wsRequestModel;
+@override final  MQTTRequestModel? mqttRequestModel;
+@override final  GrpcRequestModel? grpcRequestModel;
 @override@JsonKey(includeToJson: false) final  bool isWorking;
 @override@JsonKey(includeToJson: false) final  DateTime? sendingTime;
 @override@JsonKey(includeToJson: false) final  bool isStreaming;
 @override final  String? preRequestScript;
 @override final  String? postRequestScript;
-@override final  AIRequestModel? aiRequestModel;
-@override final  WebSocketRequestModel? wsRequestModel;
-@override final  MQTTRequestModel? mqttRequestModel;
-@override final  GrpcRequestModel? grpcRequestModel;
+@override final  int? responseStatus;
+@override final  String? message;
 
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
@@ -333,16 +333,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel)&&(identical(other.wsRequestModel, wsRequestModel) || other.wsRequestModel == wsRequestModel)&&(identical(other.mqttRequestModel, mqttRequestModel) || other.mqttRequestModel == mqttRequestModel)&&(identical(other.grpcRequestModel, grpcRequestModel) || other.grpcRequestModel == grpcRequestModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestModel&&(identical(other.id, id) || other.id == id)&&(identical(other.apiType, apiType) || other.apiType == apiType)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&const DeepCollectionEquality().equals(other.requestTabIndex, requestTabIndex)&&(identical(other.httpRequestModel, httpRequestModel) || other.httpRequestModel == httpRequestModel)&&(identical(other.httpResponseModel, httpResponseModel) || other.httpResponseModel == httpResponseModel)&&(identical(other.aiRequestModel, aiRequestModel) || other.aiRequestModel == aiRequestModel)&&(identical(other.wsRequestModel, wsRequestModel) || other.wsRequestModel == wsRequestModel)&&(identical(other.mqttRequestModel, mqttRequestModel) || other.mqttRequestModel == mqttRequestModel)&&(identical(other.grpcRequestModel, grpcRequestModel) || other.grpcRequestModel == grpcRequestModel)&&(identical(other.isWorking, isWorking) || other.isWorking == isWorking)&&(identical(other.sendingTime, sendingTime) || other.sendingTime == sendingTime)&&(identical(other.isStreaming, isStreaming) || other.isStreaming == isStreaming)&&(identical(other.preRequestScript, preRequestScript) || other.preRequestScript == preRequestScript)&&(identical(other.postRequestScript, postRequestScript) || other.postRequestScript == postRequestScript)&&(identical(other.responseStatus, responseStatus) || other.responseStatus == responseStatus)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,responseStatus,message,httpResponseModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,aiRequestModel,wsRequestModel,mqttRequestModel,grpcRequestModel);
+int get hashCode => Object.hash(runtimeType,id,apiType,name,description,const DeepCollectionEquality().hash(requestTabIndex),httpRequestModel,httpResponseModel,aiRequestModel,wsRequestModel,mqttRequestModel,grpcRequestModel,isWorking,sendingTime,isStreaming,preRequestScript,postRequestScript,responseStatus,message);
 
 @override
 String toString() {
-  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel, wsRequestModel: $wsRequestModel, mqttRequestModel: $mqttRequestModel, grpcRequestModel: $grpcRequestModel)';
+  return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, aiRequestModel: $aiRequestModel, wsRequestModel: $wsRequestModel, mqttRequestModel: $mqttRequestModel, grpcRequestModel: $grpcRequestModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, responseStatus: $responseStatus, message: $message)';
 }
 
 
@@ -353,7 +353,7 @@ abstract mixin class _$RequestModelCopyWith<$Res> implements $RequestModelCopyWi
   factory _$RequestModelCopyWith(_RequestModel value, $Res Function(_RequestModel) _then) = __$RequestModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, int? responseStatus, String? message, HttpResponseModel? httpResponseModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, AIRequestModel? aiRequestModel, WebSocketRequestModel? wsRequestModel, MQTTRequestModel? mqttRequestModel, GrpcRequestModel? grpcRequestModel
+ String id, APIType apiType, String name, String description,@JsonKey(includeToJson: false) dynamic requestTabIndex, HttpRequestModel? httpRequestModel, HttpResponseModel? httpResponseModel, AIRequestModel? aiRequestModel, WebSocketRequestModel? wsRequestModel, MQTTRequestModel? mqttRequestModel, GrpcRequestModel? grpcRequestModel,@JsonKey(includeToJson: false) bool isWorking,@JsonKey(includeToJson: false) DateTime? sendingTime,@JsonKey(includeToJson: false) bool isStreaming, String? preRequestScript, String? postRequestScript, int? responseStatus, String? message
 });
 
 
@@ -370,7 +370,7 @@ class __$RequestModelCopyWithImpl<$Res>
 
 /// Create a copy of RequestModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? responseStatus = freezed,Object? message = freezed,Object? httpResponseModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? aiRequestModel = freezed,Object? wsRequestModel = freezed,Object? mqttRequestModel = freezed,Object? grpcRequestModel = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? apiType = null,Object? name = null,Object? description = null,Object? requestTabIndex = freezed,Object? httpRequestModel = freezed,Object? httpResponseModel = freezed,Object? aiRequestModel = freezed,Object? wsRequestModel = freezed,Object? mqttRequestModel = freezed,Object? grpcRequestModel = freezed,Object? isWorking = null,Object? sendingTime = freezed,Object? isStreaming = null,Object? preRequestScript = freezed,Object? postRequestScript = freezed,Object? responseStatus = freezed,Object? message = freezed,}) {
   return _then(_RequestModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,apiType: null == apiType ? _self.apiType : apiType // ignore: cast_nullable_to_non_nullable
@@ -378,19 +378,19 @@ as APIType,name: null == name ? _self.name : name // ignore: cast_nullable_to_no
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,requestTabIndex: freezed == requestTabIndex ? _self.requestTabIndex : requestTabIndex // ignore: cast_nullable_to_non_nullable
 as dynamic,httpRequestModel: freezed == httpRequestModel ? _self.httpRequestModel : httpRequestModel // ignore: cast_nullable_to_non_nullable
-as HttpRequestModel?,responseStatus: freezed == responseStatus ? _self.responseStatus : responseStatus // ignore: cast_nullable_to_non_nullable
-as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String?,httpResponseModel: freezed == httpResponseModel ? _self.httpResponseModel : httpResponseModel // ignore: cast_nullable_to_non_nullable
-as HttpResponseModel?,isWorking: null == isWorking ? _self.isWorking : isWorking // ignore: cast_nullable_to_non_nullable
+as HttpRequestModel?,httpResponseModel: freezed == httpResponseModel ? _self.httpResponseModel : httpResponseModel // ignore: cast_nullable_to_non_nullable
+as HttpResponseModel?,aiRequestModel: freezed == aiRequestModel ? _self.aiRequestModel : aiRequestModel // ignore: cast_nullable_to_non_nullable
+as AIRequestModel?,wsRequestModel: freezed == wsRequestModel ? _self.wsRequestModel : wsRequestModel // ignore: cast_nullable_to_non_nullable
+as WebSocketRequestModel?,mqttRequestModel: freezed == mqttRequestModel ? _self.mqttRequestModel : mqttRequestModel // ignore: cast_nullable_to_non_nullable
+as MQTTRequestModel?,grpcRequestModel: freezed == grpcRequestModel ? _self.grpcRequestModel : grpcRequestModel // ignore: cast_nullable_to_non_nullable
+as GrpcRequestModel?,isWorking: null == isWorking ? _self.isWorking : isWorking // ignore: cast_nullable_to_non_nullable
 as bool,sendingTime: freezed == sendingTime ? _self.sendingTime : sendingTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,isStreaming: null == isStreaming ? _self.isStreaming : isStreaming // ignore: cast_nullable_to_non_nullable
 as bool,preRequestScript: freezed == preRequestScript ? _self.preRequestScript : preRequestScript // ignore: cast_nullable_to_non_nullable
 as String?,postRequestScript: freezed == postRequestScript ? _self.postRequestScript : postRequestScript // ignore: cast_nullable_to_non_nullable
-as String?,aiRequestModel: freezed == aiRequestModel ? _self.aiRequestModel : aiRequestModel // ignore: cast_nullable_to_non_nullable
-as AIRequestModel?,wsRequestModel: freezed == wsRequestModel ? _self.wsRequestModel : wsRequestModel // ignore: cast_nullable_to_non_nullable
-as WebSocketRequestModel?,mqttRequestModel: freezed == mqttRequestModel ? _self.mqttRequestModel : mqttRequestModel // ignore: cast_nullable_to_non_nullable
-as MQTTRequestModel?,grpcRequestModel: freezed == grpcRequestModel ? _self.grpcRequestModel : grpcRequestModel // ignore: cast_nullable_to_non_nullable
-as GrpcRequestModel?,
+as String?,responseStatus: freezed == responseStatus ? _self.responseStatus : responseStatus // ignore: cast_nullable_to_non_nullable
+as int?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

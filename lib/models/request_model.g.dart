@@ -18,20 +18,11 @@ _RequestModel _$RequestModelFromJson(Map json) => _RequestModel(
       : HttpRequestModel.fromJson(
           Map<String, Object?>.from(json['httpRequestModel'] as Map),
         ),
-  responseStatus: (json['responseStatus'] as num?)?.toInt(),
-  message: json['message'] as String?,
   httpResponseModel: json['httpResponseModel'] == null
       ? null
       : HttpResponseModel.fromJson(
           Map<String, Object?>.from(json['httpResponseModel'] as Map),
         ),
-  isWorking: json['isWorking'] as bool? ?? false,
-  sendingTime: json['sendingTime'] == null
-      ? null
-      : DateTime.parse(json['sendingTime'] as String),
-  isStreaming: json['isStreaming'] as bool? ?? false,
-  preRequestScript: json['preRequestScript'] as String?,
-  postRequestScript: json['postRequestScript'] as String?,
   aiRequestModel: json['aiRequestModel'] == null
       ? null
       : AIRequestModel.fromJson(
@@ -52,6 +43,15 @@ _RequestModel _$RequestModelFromJson(Map json) => _RequestModel(
       : GrpcRequestModel.fromJson(
           Map<String, dynamic>.from(json['grpcRequestModel'] as Map),
         ),
+  isWorking: json['isWorking'] as bool? ?? false,
+  sendingTime: json['sendingTime'] == null
+      ? null
+      : DateTime.parse(json['sendingTime'] as String),
+  isStreaming: json['isStreaming'] as bool? ?? false,
+  preRequestScript: json['preRequestScript'] as String?,
+  postRequestScript: json['postRequestScript'] as String?,
+  responseStatus: (json['responseStatus'] as num?)?.toInt(),
+  message: json['message'] as String?,
 );
 
 Map<String, dynamic> _$RequestModelToJson(_RequestModel instance) =>
@@ -61,15 +61,15 @@ Map<String, dynamic> _$RequestModelToJson(_RequestModel instance) =>
       'name': instance.name,
       'description': instance.description,
       'httpRequestModel': instance.httpRequestModel?.toJson(),
-      'responseStatus': instance.responseStatus,
-      'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
-      'preRequestScript': instance.preRequestScript,
-      'postRequestScript': instance.postRequestScript,
       'aiRequestModel': instance.aiRequestModel?.toJson(),
       'wsRequestModel': instance.wsRequestModel?.toJson(),
       'mqttRequestModel': instance.mqttRequestModel?.toJson(),
       'grpcRequestModel': instance.grpcRequestModel?.toJson(),
+      'preRequestScript': instance.preRequestScript,
+      'postRequestScript': instance.postRequestScript,
+      'responseStatus': instance.responseStatus,
+      'message': instance.message,
     };
 
 const _$APITypeEnumMap = {

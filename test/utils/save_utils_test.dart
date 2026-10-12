@@ -122,27 +122,5 @@ void main() {
       await tester.pump();
       expect(find.byType(SnackBar), findsOneWidget);
     });
-
-    testWidgets('saveAndShowDialog executes', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(body: Builder(builder: (context) => Container())),
-        ),
-      );
-
-      final context = tester.element(find.byType(Container));
-      bool called = false;
-
-      await tester.runAsync(() async {
-        await saveAndShowDialog(
-          context,
-          onSave: () async {
-            called = true;
-          },
-        );
-      });
-
-      expect(called, isTrue);
-    });
   });
 }

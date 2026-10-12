@@ -7,6 +7,13 @@ analyzer:
     - "**/*.freezed.dart"
     - "**/*.g.dart"
     - "doc/*"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:
