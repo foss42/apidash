@@ -3,6 +3,8 @@ import 'package:apidash/consts.dart';
 import 'package:fvp/fvp.dart' as fvp;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,7 +25,7 @@ String getVideoTempFileSuffix(String? extension) {
   return extension.startsWith('.') ? extension : '.$extension';
 }
 
-class VideoPreviewer extends StatefulWidget {
+class VideoPreviewer extends ConsumerStatefulWidget {
   const VideoPreviewer({
     super.key,
     required this.videoBytes,
@@ -34,10 +36,10 @@ class VideoPreviewer extends StatefulWidget {
   final String? videoFileExtension;
 
   @override
-  State<VideoPreviewer> createState() => _VideoPreviewerState();
+  ConsumerState<VideoPreviewer> createState() => _VideoPreviewerState();
 }
 
-class _VideoPreviewerState extends State<VideoPreviewer> {
+class _VideoPreviewerState extends ConsumerState<VideoPreviewer> {
   VideoPlayerController? _videoController;
   late Future<void> _initializeVideoPlayerFuture;
   File? _tempVideoFile;
@@ -123,6 +125,13 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(navRailIndexStateProvider, (previous, next) {
+      if (previous != next && _videoController?.value.isPlaying == true) {
+        _videoController?.pause();
+        setState(() {});
+      }
+    });
+
     final iconColor = Theme.of(context).iconTheme.color;
     final progressBarColors = VideoProgressColors(
       playedColor: iconColor!,
