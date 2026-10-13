@@ -140,7 +140,14 @@ dispatchMain()
         hasBody = true;
         hasJsonData = true;
       }
-      // Handle text data 
+      // Handle file data
+      else if (requestModel.hasFileData) {
+        hasBody = true;
+        headers.putIfAbsent(
+            kHeaderContentType, () => requestModel.bodyContentType.header);
+        result += "let fileURL = URL(fileURLWithPath: \"${requestModel.bodyFile}\")\n";
+      }
+      // Handle text data
       else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
         result += templateTextData.render({

@@ -132,7 +132,7 @@ int main() {
         // if (requestModel.hasFormData) {
         //   headers.putIfAbsent("Content-Type", () => "multipart/form-data");
         // }
-        if (requestModel.hasTextData || requestModel.hasJsonData) {
+        if (requestModel.hasTextData || requestModel.hasJsonData || requestModel.hasFileData) {
           headers.putIfAbsent(
               kHeaderContentType, () => requestModel.bodyContentType.header);
         }
@@ -153,6 +153,10 @@ int main() {
               requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n');
         }
         result += templateRawBody.render({"body": body});
+      } else if (requestModel.hasFileData) {
+        hasBody = true;
+        result += '    const char *data = "@${requestModel.bodyFile!}";\n';
+        result += '    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);\n\n';
       } else if (requestModel.hasFormData) {
         hasBody = true;
         var templateFormData = jj.Template(kTemplateFormData);

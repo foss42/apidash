@@ -898,5 +898,34 @@ fetch(url, options)
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""const url = new URL('https://api.apidash.dev/io/img'); 
+const options = {
+  method: 'POST'
+};
+
+fetch(url, options)
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:${err}`);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.jsFetch,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 }

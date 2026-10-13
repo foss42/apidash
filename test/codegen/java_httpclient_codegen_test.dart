@@ -1219,5 +1219,40 @@ public class Main {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      URI uri = URI.create("https://api.apidash.dev/io/img");
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("/Documents/up/1.png");
+
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
+    }
+  }
+  
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaHttpClient,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 }

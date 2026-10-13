@@ -943,6 +943,40 @@ echo $response . "\n";
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""<?php
+
+$uri = 'https://api.apidash.dev/io/img';
+
+    $request_body = curl_file_create('/Documents/up/1.png', 'application/octet-stream');
+$request = curl_init($uri);
+
+curl_setopt_array($request, [
+    CURLOPT_RETURNTRANSFER => 1,
+    CURLOPT_CUSTOMREQUEST => 'POST',
+    CURLOPT_POSTFIELDS => $request_body,
+    CURLOPT_FOLLOWLOCATION => true,
+]);
+
+$response = curl_exec($request);
+
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+curl_close($request);
+
+echo "Status Code: " . $httpCode . "\n";
+echo $response . "\n";
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpCurl,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
   group('PUT Request', () {
     test('PUT 1', () {

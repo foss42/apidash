@@ -1447,6 +1447,67 @@ int main() {
         expectedCode,
       );
     });
+    test('POST 10', () {
+      const expectedCode = r"""#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <curl/curl.h>
+struct ResponseData {
+    char *data;
+    size_t size;
+};
+
+size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+    struct ResponseData *response_data = (struct ResponseData *)userdata;
+    size_t real_size = size * nmemb;
+
+    response_data->data = realloc(response_data->data, response_data->size + real_size + 1);
+    if (response_data->data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 0;
+    }
+
+    memcpy(&(response_data->data[response_data->size]), ptr, real_size);
+    response_data->size += real_size;
+    response_data->data[response_data->size] = 0;
+
+    return real_size;
+}
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/img");  
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers,"Content-Type: application/octet-stream");
+  
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);    const char *data = "@/Documents/up/1.png";
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+
+
+    struct ResponseData response_data = {0};
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_data);
+    res = curl_easy_perform(curl);
+    long response_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    printf("Response code: %ld\n", response_code);
+    printf("Response body: %s\n", response_data.data);
+    free(response_data.data);
+  }
+  curl_easy_cleanup(curl);
+  return 0;
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cCurlCodeGen,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {
