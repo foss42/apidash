@@ -156,16 +156,15 @@ semaphore.wait()
         result += templateFormData.render({
           "formData": formDataList,
         });
-      } 
-      // Handle JSON data
-      else if (requestModel.hasJsonData) {
+      } else if (requestModel.hasJsonData) {
         var templateJsonData = jj.Template(kTemplateJsonData);
         result += templateJsonData.render({
           "jsonData": requestModel.body!
-                    });
-      } 
-      // Handle text data
-      else if (requestModel.hasTextData) {
+        });
+      } else if (requestModel.hasFileData) {
+        result += "let fileURL = URL(fileURLWithPath: \"${requestModel.bodyFile}\")\n";
+        result += "let data = try! Data(contentsOf: fileURL)\n";
+      } else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
         result += templateTextData.render({
           "textData": requestModel.body!
@@ -183,7 +182,7 @@ semaphore.wait()
       if (requestModel.hasFormData) {
         headers.putIfAbsent("Content-Type",
             () => "multipart/form-data; boundary=\\(boundary.stringValue)");
-      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
+      } else if (requestModel.hasJsonData || requestModel.hasTextData || requestModel.hasFileData) {
         headers.putIfAbsent(
             kHeaderContentType, () => requestModel.bodyContentType.header);
       }
@@ -196,6 +195,8 @@ semaphore.wait()
         result += kTemplateFormDataBody;
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         result += kTemplateJsonTextBody;
+      } else if (requestModel.hasFileData) {
+        result += "request.httpBody = data\n";
       }
 
       result += kTemplateEnd;

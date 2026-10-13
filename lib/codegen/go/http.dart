@@ -11,9 +11,10 @@ import (
   "io"
   "net/http"
   "net/url"{% if hasBody %}
-  "bytes"{% if hasFormData %}
-  "mime/multipart"{% if hasFileInFormData %}
-  "os"{% endif %}{% endif %}{% endif %}
+  "bytes"{% endif %}{% if hasFormData %}
+  "mime/multipart"{% endif %}{% if hasFileInFormData %}
+  "os"{% endif %}{% if hasFileData %}
+  "os"{% endif %}
 )
 
 func main() {
@@ -28,6 +29,13 @@ func main() {
 
   String kTemplateBody = """
   {% if body %}payload := bytes.NewBuffer([]byte({{body}})){% endif %}
+
+""";
+
+  String kTemplateFileBody = """
+  file, _ := os.Open("{{body}}")
+  defer file.Close()
+  payload := file
 
 """;
 
@@ -99,9 +107,10 @@ url.RawQuery = query.Encode()
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "hasBody": requestModel.hasBody,
+        "hasBody": requestModel.hasBody || requestModel.hasFileData,
         "hasFormData": requestModel.hasFormData,
         "hasFileInFormData": requestModel.hasFileInFormData,
+        "hasFileData": requestModel.hasFileData,
       });
 
       var templateUrl = jj.Template(kTemplateUrl);
@@ -122,6 +131,10 @@ url.RawQuery = query.Encode()
           result += templateRawBody.render({
             "body": body.contains('`') ? jsonEncode(body) : '`$body`',
           });
+        } else if (requestModel.hasFileData) {
+          hasBody = true;
+          var templateFileBody = jj.Template(kTemplateFileBody);
+          result += templateFileBody.render({"body": requestModel.bodyFile});
         } else if (requestModel.hasFormData) {
           hasBody = true;
           var templateFormData = jj.Template(kTemplateFormData);

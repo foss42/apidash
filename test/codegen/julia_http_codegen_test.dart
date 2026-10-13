@@ -727,5 +727,32 @@ println("Response Body: \n$(String(response.body))")
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r'''using HTTP
+
+url = "https://api.apidash.dev/io/img"
+
+payload = """read("/Documents/up/1.png")"""
+
+headers = Dict(
+    "content-type" => "application/octet-stream",
+)
+
+response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
+
+println("Status Code: $(response.status)")
+println("Response Body: \n$(String(response.body))")
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.juliaHttp,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 }

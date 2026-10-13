@@ -1224,5 +1224,44 @@ fn main() {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""use curl::easy::Easy;
+
+fn main() {
+  let mut easy = Easy::new();
+  let mut data = Vec::new();
+   let base_url = "https://api.apidash.dev/io/img"; 
+  
+  let url = base_url.to_string();
+  
+ 
+  easy.post(true).unwrap();
+
+easy.add_post_field("", "@/Documents/up/1.png")
+  {
+   easy.url(&url).unwrap();
+    let mut transfer = easy.transfer();
+    transfer.write_function(|new_data| {
+        data.extend_from_slice(new_data);
+        Ok(new_data.len())
+    }).unwrap();
+    transfer.perform().unwrap();
+  }
+
+  let response_body = String::from_utf8_lossy(&data);
+  println!("Response body: {}", response_body);
+  println!("Response code: {}", easy.response_code().unwrap());
+}""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustCurl,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 }

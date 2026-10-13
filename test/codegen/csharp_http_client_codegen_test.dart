@@ -821,6 +821,37 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
         expectedCode,
       );
     });
+    test('POST 10', () {
+      const expectedCode = r'''using System;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+
+string uri = "https://api.apidash.dev/io/img";
+
+using (var client = new HttpClient())
+using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
+{
+    var content = new StreamContent(File.OpenRead("/Documents/up/1.png"));
+    content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+    request.Content = content;
+
+    HttpResponseMessage response = await client.SendAsync(request);
+
+    Console.WriteLine((int)response.StatusCode);
+    Console.WriteLine(await response.Content.ReadAsStringAsync());
+}
+''';
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.cSharpHttpClient,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('Put Request', () {

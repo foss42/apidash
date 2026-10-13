@@ -987,6 +987,41 @@ void main() async {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+import 'dart:io' as io;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/img');
+
+  io.File body = io.File('/Documents/up/1.png').openRead();
+
+  final response = await http.post(
+    uri,
+    body: body,
+  );
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.dartHttp,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

@@ -16,6 +16,7 @@ class DartDioCodeGen {
         queryParams: requestModel.enabledParamsMap,
         headers: requestModel.enabledHeadersMap,
         body: requestModel.body,
+        fileBody: requestModel.bodyFile,
         contentType: requestModel.bodyContentType,
         formData: requestModel.formDataMapList,
       );
@@ -33,6 +34,7 @@ class DartDioCodeGen {
     required String? body,
     required ContentType contentType,
     required List<Map<String, dynamic>> formData,
+    required String? fileBody,
   }) {
     final sbf = StringBuffer();
     final emitter = DartEmitter();
@@ -70,26 +72,30 @@ class DartDioCodeGen {
       }
     ''');
     Expression? dataExp;
-    if ((kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false) ||
-        contentType == ContentType.formdata)) {
-      final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
-      switch (contentType) {
-        // dio doesn't need pass `content-type` header when body is json or plain text
-        case ContentType.json:
-          final convertImport = Directive.import('dart:convert', as: 'convert');
-          sbf.writeln(convertImport.accept(emitter));
-          dataExp = declareFinal('data')
-              .assign(refer('convert.json.decode').call([strContent]));
-        case ContentType.text:
-          dataExp = declareFinal('data').assign(strContent);
-        // when add new type of [ContentType], need update [dataExp].
-        case ContentType.formdata:
-          dataExp = declareFinal('data').assign(refer('dio.FormData()'));
-        case ContentType.file:
-          final ioImport = Directive.import('dart:io', as: 'io');
-          sbf.writeln(ioImport.accept(emitter));
-          dataExp = declareFinal('data').assign(refer('io.File').call([strContent]).property('openRead').call([]));
+    if (kMethodsWithBody.contains(method) && contentType != ContentType.formdata) {
+      if (contentType == ContentType.file && fileBody != null && fileBody.isNotEmpty) {
+        final ioImport = Directive.import('dart:io', as: 'io');
+        sbf.writeln(ioImport.accept(emitter));
+        dataExp = declareFinal('data')
+            .assign(refer('io.File').call([literalString(fileBody)]).property('openRead').call([]));
+      } else if (body?.isNotEmpty ?? false) {
+        final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
+        switch (contentType) {
+          // dio doesn't need pass `content-type` header when body is json or plain text
+          case ContentType.json:
+            final convertImport = Directive.import('dart:convert', as: 'convert');
+            sbf.writeln(convertImport.accept(emitter));
+            dataExp = declareFinal('data')
+                .assign(refer('convert.json.decode').call([strContent]));
+          case ContentType.text:
+            dataExp = declareFinal('data').assign(strContent);
+          default:
+            break;
+        }
       }
+    }
+    if (contentType == ContentType.formdata) {
+      dataExp = declareFinal('data').assign(refer('dio.FormData()'));
     }
     final parsedUrl = url.split('?').first;
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(

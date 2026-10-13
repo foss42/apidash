@@ -74,6 +74,12 @@ class Program
 
 """;
 
+  String kTemplateFileData = """
+      request.AddFile("file", "{{bodyFile}}");
+
+
+""";
+
   String kStringEnd = """
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -173,6 +179,10 @@ class Program
           jj.Template templateTextData = jj.Template(kTemplateTextData);
           result += templateTextData
               .render({"textData": jsonEncode(requestModel.body)});
+        }
+
+        if (requestModel.hasFileData) {
+          result += '      request.AddFile("file", "${requestModel.bodyFile!}", options: options);\n';
         }
 
         result += kStringEnd;
