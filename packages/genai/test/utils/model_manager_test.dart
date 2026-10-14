@@ -21,7 +21,7 @@ void main() {
           ..headers.contentType = ContentType.json
           ..write(jsonEncode(kModelsData))
           ..close();
-      } else if (request.uri.path == '/ollama_success/api/ps') {
+      } else if (request.uri.path == '/ollama_success/api/tags') {
         request.response
           ..statusCode = HttpStatus.ok
           ..headers.contentType = ContentType.json
@@ -33,11 +33,24 @@ void main() {
             }),
           )
           ..close();
-      } else if (request.uri.path == '/ollama_empty/api/ps') {
+      } else if (request.uri.path == '/ollama_empty/api/tags') {
         request.response
           ..statusCode = HttpStatus.ok
           ..headers.contentType = ContentType.json
           ..write(jsonEncode({}))
+          ..close();
+      } else if (request.uri.path == '/v1/models') {
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              "data": [
+                {"id": "gpt-test"},
+                {"id": "gpt-other"},
+              ],
+            }),
+          )
           ..close();
       } else if (request.uri.path == '/error') {
         request.response
@@ -57,6 +70,12 @@ void main() {
   });
 
   group('ModelManager', () {
+    test('knownModelsFor skips empty ids', () {
+      final models = ModelManager.knownModelsFor(ModelAPIProvider.openai);
+      expect(models, isNotEmpty);
+      expect(models.every((m) => m.id != null && m.id!.isNotEmpty), isTrue);
+    });
+
     test('fetchModelsFromRemote success', () async {
       final res = await ModelManager.fetchModelsFromRemote(
         remoteURL: '$serverUrl/remote_success',
@@ -131,6 +150,33 @@ void main() {
         ollamaUrl: 'http://invalid.local',
       );
       expect(res, isNull);
+    });
+
+    test('fetchProviderModels openai live list', () async {
+      final res = await ModelManager.fetchProviderModels(
+        provider: ModelAPIProvider.openai,
+        apiKey: 'sk-test',
+        url: '$serverUrl/v1/chat/completions',
+      );
+      expect(res, isNotNull);
+      expect(res!.map((e) => e.id), containsAll(['gpt-test', 'gpt-other']));
+    });
+
+    test('fetchProviderModels openai without key returns null', () async {
+      final res = await ModelManager.fetchProviderModels(
+        provider: ModelAPIProvider.openai,
+        apiKey: '',
+      );
+      expect(res, isNull);
+    });
+
+    test('ollamaHostFromEndpoint strips chat path', () {
+      expect(
+        ModelManager.ollamaHostFromEndpoint(
+          'http://localhost:11434/v1/chat/completions',
+        ),
+        'http://localhost:11434',
+      );
     });
   });
 }

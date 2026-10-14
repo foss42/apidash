@@ -42,6 +42,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
     int? maxConnectionMessages,
+    Map<String, Map<String, Object?>>? aiProviders,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -60,6 +61,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
       maxConnectionMessages: maxConnectionMessages,
+      aiProviders: aiProviders,
     );
     await setSettingsToSharedPrefs(state);
   }
