@@ -58,17 +58,14 @@ class HarParserIO {
     if (request.postData?.mimeType == "application/x-www-form-urlencoded") {
       bodyContentType = ContentType.formdata;
       var formDataStr = request.postData?.text;
-      Map<String, String> parsedData = parseFormData(formDataStr);
-      parsedData.forEach((key, value) {
-        formDataType = FormDataType.text;
-        var name = key;
-        var val = value;
+      List<(String, String)> parsedData = parseFormData(formDataStr);
+      for (var (key, value) in parsedData) {
         formData.add(FormDataModel(
-          name: name,
-          value: val,
-          type: formDataType,
+          name: key,
+          value: value,
+          type: FormDataType.text,
         ));
-      });
+      }
     }
 
     if (request.postData?.mimeType == "multipart/form-data") {
@@ -103,16 +100,22 @@ class HarParserIO {
         formData: formData);
   }
 
-  Map<String, String> parseFormData(String? data) {
-    // Return an empty map if the input is null or empty
+  /// Parses a URL-encoded form body into a list of key-value pairs.
+  ///
+  /// Returns a [List] of `(String, String)` records rather than a [Map] so
+  /// that fields with duplicate names (e.g. `tag=red&tag=blue&tag=green`) are
+  /// all preserved instead of the later values silently overwriting earlier
+  /// ones.
+  List<(String, String)> parseFormData(String? data) {
+    // Return an empty list if the input is null or empty
     if (data == null || data.isEmpty) {
-      return {};
+      return [];
     }
     // Split the input string into individual key-value pairs
     var pairs = data.split('&');
 
-    // Create a Map to store key-value pairs
-    Map<String, String> result = {};
+    // Use a list to preserve duplicate keys
+    List<(String, String)> result = [];
 
     // Loop through the pairs and split them into keys and values
     for (var pair in pairs) {
@@ -127,7 +130,7 @@ class HarParserIO {
           pair.substring(separatorIndex + 1).replaceAll('+', ' '),
         );
 
-        result[key] = value;
+        result.add((key, value));
       }
     }
 
