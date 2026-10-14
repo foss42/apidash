@@ -39,10 +39,41 @@ void main() {
       expect(body['messages'][0]['content'], 'Generate');
     });
 
-    test('streamOutputFormatter', () {
+    test('streamOutputFormatter extracts text from content_block_delta', () {
       expect(
-        AnthropicModel.instance.streamOutputFormatter({'text': 'hello'}),
+        AnthropicModel.instance.streamOutputFormatter({
+          'type': 'content_block_delta',
+          'index': 0,
+          'delta': {'type': 'text_delta', 'text': 'hello'},
+        }),
         'hello',
+      );
+    });
+
+    test('streamOutputFormatter returns null for every non-text event', () {
+      for (final payload in const [
+        {'type': 'message_start'},
+        {'type': 'content_block_start', 'index': 0},
+        {'type': 'ping'},
+        {'type': 'content_block_stop', 'index': 0},
+        {
+          'type': 'message_delta',
+          'delta': {'stop_reason': 'end_turn'},
+        },
+        {'type': 'message_stop'},
+      ]) {
+        expect(AnthropicModel.instance.streamOutputFormatter(payload), isNull);
+      }
+    });
+
+    test('streamOutputFormatter returns null for deltas without text', () {
+      expect(
+        AnthropicModel.instance.streamOutputFormatter({
+          'type': 'content_block_delta',
+          'index': 0,
+          'delta': {'type': 'input_json_delta', 'partial_json': '{}'},
+        }),
+        isNull,
       );
     });
 

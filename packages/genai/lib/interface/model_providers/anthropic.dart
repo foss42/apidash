@@ -53,6 +53,11 @@ class AnthropicModel extends ModelProvider {
 
   @override
   String? streamOutputFormatter(Map x) {
-    return x['text'];
+    // Generated text arrives only on content_block_delta events, nested
+    // under delta.text; every other event type is skipped by the caller.
+    if (x['type'] == 'content_block_delta') {
+      return x['delta']?['text'];
+    }
+    return null;
   }
 }

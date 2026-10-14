@@ -45,6 +45,27 @@ void main() {
           ..headers.contentType = ContentType('text', 'event-stream')
           ..write('data: invalid_json\n\n')
           ..close();
+      } else if (path.contains('anthropic-sse')) {
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType('text', 'event-stream')
+          ..write(
+            'event: message_start\n'
+            'data: {"type":"message_start","message":{"id":"msg_1","role":"assistant","content":[]}}\n\n'
+            'event: content_block_start\n'
+            'data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}\n\n'
+            'event: ping\n'
+            'data: {"type":"ping"}\n\n'
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hello"}}\n\n'
+            'event: content_block_delta\n'
+            'data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" world"}}\n\n'
+            'event: content_block_stop\n'
+            'data: {"type":"content_block_stop","index":0}\n\n'
+            'event: message_stop\n'
+            'data: {"type":"message_stop"}\n\n',
+          )
+          ..close();
       } else if (path.contains('stream')) {
         request.response
           ..statusCode = HttpStatus.ok
@@ -111,6 +132,23 @@ void main() {
       final results = await stream.toList();
       expect(results, ['mock ', 'stream']);
     });
+
+    test(
+      'streamGenAIRequest extracts Anthropic content_block_delta text',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.anthropic,
+          model: 'claude-3',
+          url: '$serverUrl/anthropic-sse',
+          apiKey: 'test-key',
+          stream: true,
+        );
+        final stream = await streamGenAIRequest(model);
+        final results = await stream.toList();
+        expect(results.whereType<String>().toList(), ['Hello', ' world']);
+        expect(results.where((r) => r == null), hasLength(5));
+      },
+    );
 
     test('streamGenAIRequest fallback to plain string on json error', () async {
       var model = AIRequestModel(
