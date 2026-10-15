@@ -297,7 +297,7 @@ List<EnvironmentVariableModel> mergeScriptEnvironmentValues({
       newValues.add(
         originalVariable.copyWith(
           value: newValue == null ? '' : newValue.toString(),
-          enabled: true,
+          enabled: originalVariable.enabled,
         ),
       );
       mutableUpdatedEnv.remove(originalVariable.key);
