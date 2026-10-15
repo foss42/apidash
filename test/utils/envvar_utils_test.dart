@@ -849,5 +849,16 @@ void main() {
       expect(result.firstWhere((v) => v.key == "baseUrl").value, "42");
       expect(result.firstWhere((v) => v.key == "retryCount").value, "0");
     });
+
+    test("disabled variable remains disabled when script sets its key", () {
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [disabledSecret],
+        updatedEnvironment: {"secretKey": "script-injected-value"},
+      );
+
+      final merged = result.firstWhere((v) => v.key == "secretKey");
+      expect(merged.enabled, isFalse);
+      expect(merged.value, "script-injected-value");
+    });
   });
 }
