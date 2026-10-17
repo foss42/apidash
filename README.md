@@ -132,6 +132,11 @@ API Dash can be downloaded from the links below:
 - Click and open the collection/folder popup menu to export it as HAR. This can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc.
 - Export your entire data into a HAR (HTTP Archive) file. To access this option goto `Settings > Export Data`.
 
+**📝 Markdown API Documentation & Session Export**
+
+- Export API request and response sessions into clean GitHub Flavored Markdown (`.md`) documentation and reproducible cURL scripts.
+- Pure client-side generation without any external servers or third-party dependencies.
+
 **⚙️ Settings & Other Options**
 
 - Customize various options using a dedicated Settings screen.
