@@ -13,6 +13,7 @@ export 'card_sidebar_environment.dart';
 export 'card_sidebar_history.dart';
 export 'card_sidebar_request.dart';
 export 'dialog_about.dart';
+export 'dialog_export_doc.dart';
 export 'dialog_history_retention.dart';
 export 'dialog_import.dart';
 export 'dialog_ok_cancel.dart';
