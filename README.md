@@ -137,6 +137,8 @@ API Dash can be downloaded from the links below:
 - Export API request and response sessions into clean GitHub Flavored Markdown (`.md`) documentation and reproducible cURL scripts.
 - Integrated action trigger in the Response Pane Header for one-click access.
 - Interactive `ExportDocumentDialog` modal with segmented tabs for Markdown (`.md`) and cURL Session previewing.
+- Responsive layout adaptations: opens a 700x500 modal on desktop and transitions automatically to a full-width bottom sheet (`ExportDocumentSheet`) on mobile devices.
+- Dynamic breakpoint awareness utilizing `context.isMediumWindow` and `context.isSmallWindow` with scrollable views and wrapped action controls.
 - Reactive Riverpod state management via `selectedDocExportProvider` with cached markdown generation from the active `RequestModel`.
 - Direct wiring in `ResponsePane` to launch the export dialog pre-populated with environment-substituted request and response models.
 - Syntax-highlighted code preview with one-tap clipboard copying via `FlutterClipboard` and visual SnackBar confirmation.

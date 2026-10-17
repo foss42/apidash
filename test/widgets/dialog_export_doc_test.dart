@@ -197,7 +197,7 @@ void main() {
     expect(find.text('Saved to api_doc.md'), findsOneWidget);
   });
 
-  testWidgets('showExportDocDialog displays and Close button dismisses dialog',
+  testWidgets('showExportDocDialog displays and Close button dismisses dialog on desktop',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -212,6 +212,7 @@ void main() {
                     request: testRequest,
                     response: testResponse,
                     requestName: 'Test Request',
+                    isBottomSheet: false,
                   );
                 },
                 child: const Text('Open Dialog'),
@@ -241,4 +242,72 @@ void main() {
     // Dialog dismissed
     expect(find.byType(AlertDialog), findsNothing);
   });
+
+  testWidgets('showExportDocDialog displays bottom sheet on mobile',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: Builder(
+            builder: (context) {
+              return ElevatedButton(
+                onPressed: () {
+                  showExportDocDialog(
+                    context,
+                    request: testRequest,
+                    response: testResponse,
+                    requestName: 'Test Request',
+                    isBottomSheet: true,
+                  );
+                },
+                child: const Text('Open Sheet'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ExportDocumentDialog), findsNothing);
+
+    await tester.tap(find.text('Open Sheet'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ExportDocumentDialog), findsOneWidget);
+    expect(find.text('Export API Documentation'), findsOneWidget);
+    expect(find.text('Markdown (.md)'), findsOneWidget);
+    expect(find.text('cURL Session'), findsOneWidget);
+
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ExportDocumentDialog), findsNothing);
+  });
+
+  testWidgets('ExportDocumentSheet renders directly in bottom sheet mode',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ExportDocumentSheet(
+            request: testRequest,
+            response: testResponse,
+            requestName: 'Sheet Test',
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ExportDocumentSheet), findsOneWidget);
+    expect(find.text('Export API Documentation'), findsOneWidget);
+    expect(find.text('Copy to Clipboard'), findsOneWidget);
+    expect(find.text('Save to File'), findsOneWidget);
+  });
 }
+
