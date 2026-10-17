@@ -223,4 +223,20 @@ void main() {
       expect(getHeaderDescription('my-tracking-id'), '-');
     });
   });
+
+  group('escapeBashSingleQuotes tests', () {
+    test('Handles null and empty string', () {
+      expect(escapeBashSingleQuotes(null), '');
+      expect(escapeBashSingleQuotes(''), '');
+    });
+
+    test('Leaves plain text without single quotes untouched', () {
+      expect(escapeBashSingleQuotes('hello world'), 'hello world');
+    });
+
+    test('Escapes single quotes with bash closing/escaped sequence', () {
+      expect(escapeBashSingleQuotes("don't"), r"don'\''t");
+      expect(escapeBashSingleQuotes("it's a 'test'"), r"it'\''s a '\''test'\''");
+    });
+  });
 }

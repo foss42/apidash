@@ -232,3 +232,10 @@ String getHeaderDescription(String? headerName) {
   if (headerName == null || headerName.trim().isEmpty) return '-';
   return kCommonHeaderDescriptions[headerName.trim().toLowerCase()] ?? '-';
 }
+
+/// Escapes text for safe inclusion inside bash single-quoted arguments.
+/// Replaces `'` with `'\''`.
+String escapeBashSingleQuotes(String? text) {
+  if (text == null || text.isEmpty) return '';
+  return text.replaceAll("'", r"'\''");
+}
