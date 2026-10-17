@@ -109,6 +109,9 @@ class MarkdownDocGenerator implements DocGenerator {
 
     // 3. Response Section (omitted if response is null)
     if (response != null) {
+      if (!buffer.toString().endsWith('\n\n')) {
+        buffer.writeln();
+      }
       buffer.writeln('## Response');
       final statusCode = response.statusCode;
       final statusDesc = getHttpStatusText(statusCode);
