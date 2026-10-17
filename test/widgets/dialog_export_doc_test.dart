@@ -309,5 +309,96 @@ void main() {
     expect(find.text('Copy to Clipboard'), findsOneWidget);
     expect(find.text('Save to File'), findsOneWidget);
   });
+
+  testWidgets(
+      'ExportDocumentDialog copies cURL session and handles copy errors gracefully',
+      (tester) async {
+    String? copiedText;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ExportDocumentDialog(
+            request: testRequest,
+            response: testResponse,
+            requestName: 'Get Users',
+            onCopy: (content) async {
+              copiedText = content;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    // Switch to cURL tab
+    await tester.tap(find.text('cURL Session'));
+    await tester.pumpAndSettle();
+
+    // Copy cURL
+    await tester.tap(find.text('Copy to Clipboard'));
+    await tester.pumpAndSettle();
+
+    expect(copiedText, isNotNull);
+    expect(copiedText, contains('curl -X GET'));
+    expect(copiedText, contains('# Response: 200 OK'));
+    expect(find.text(kMsgCopiedToClipboard), findsOneWidget);
+
+    // Test error handling on copy
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ExportDocumentDialog(
+            request: testRequest,
+            response: testResponse,
+            requestName: 'Get Users',
+            onCopy: (content) async {
+              throw Exception('Clipboard error');
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Copy to Clipboard'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Failed to copy: Exception: Clipboard error'), findsOneWidget);
+  });
+
+  testWidgets('ExportDocumentDialog renders 700x500 modal on desktop',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ExportDocumentDialog(
+            request: testRequest,
+            response: testResponse,
+            requestName: 'Get Users',
+            isBottomSheet: false,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final sizedBoxFinder = find.byWidgetPredicate(
+      (widget) => widget is SizedBox && widget.width == 700.0 && widget.height == 500.0,
+    );
+    expect(sizedBoxFinder, findsOneWidget);
+  });
 }
+
 
