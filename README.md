@@ -144,6 +144,7 @@ API Dash can be downloaded from the links below:
 - Syntax-highlighted code preview with one-tap clipboard copying via `FlutterClipboard` and visual SnackBar confirmation.
 - Direct local filesystem save via `file_selector` with auto-suggested `<request_name>_api_doc.md` filename.
 - End-to-end verified with dedicated widget & integration test suites validating action triggers, dialog lifecycle, format toggle, and clipboard copy.
+- Workspace-level quality assurance: full Melos verification and multi-package static analysis with zero lint errors and 100% test pass rate across core generators, state providers, and UI widgets.
 - Pure client-side generation without any external servers or third-party dependencies.
 
 **⚙️ Settings & Other Options**

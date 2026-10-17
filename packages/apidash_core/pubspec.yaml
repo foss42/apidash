@@ -13,6 +13,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  better_networking: any
   curl_parser: any
   freezed_annotation: ^3.0.0
   genai: any

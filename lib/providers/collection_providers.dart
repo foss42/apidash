@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:apidash/models/grpc_request_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/services/connection_manager.dart';
 import 'package:apidash/services/grpc_reflection_service.dart';
 import 'package:apidash/utils/grpc_utils.dart';
 import 'package:apidash/terminal/terminal.dart';

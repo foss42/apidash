@@ -2,7 +2,6 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/dialog_export_doc.dart';
 import 'package:apidash/widgets/response_pane_header.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../test_consts.dart';
