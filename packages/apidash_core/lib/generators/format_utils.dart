@@ -189,3 +189,46 @@ String getHttpStatusText(int? statusCode) {
       return 'Status $statusCode';
   }
 }
+
+/// Standard descriptions for common HTTP headers.
+const Map<String, String> kCommonHeaderDescriptions = {
+  'accept': 'Acceptable response media types',
+  'accept-charset': 'Character sets that are acceptable',
+  'accept-encoding': 'Acceptable content encoding (compression)',
+  'accept-language': 'Preferred natural languages',
+  'authorization': 'Authentication credentials',
+  'cache-control': 'Directives for caching mechanisms',
+  'connection': 'Connection control options',
+  'content-length': 'Length of the request body in bytes',
+  'content-type': 'Media type of the request body',
+  'cookie': 'HTTP cookies previously sent by the server',
+  'date': 'Date and time the message was sent',
+  'expect': 'Expectations that need to be met by the server',
+  'forwarded': 'Information from reverse proxy servers',
+  'from': 'Email address of the human user sending request',
+  'host': 'Domain name of the server and port',
+  'if-match': 'Perform action only if entity matches ETag',
+  'if-modified-since': 'Perform action only if modified since date',
+  'if-none-match': 'Perform action only if entity does not match ETag',
+  'if-range': 'Send parts of document if unchanged',
+  'if-unmodified-since': 'Perform action only if unmodified since date',
+  'origin': 'Origin of cross-site or preflight request',
+  'pragma': 'Implementation-specific directives',
+  'proxy-authorization': 'Credentials to authenticate with proxy',
+  'range': 'Request only part of an entity',
+  'referer': 'Address of the previous web page',
+  'upgrade': 'Ask server to upgrade to another protocol',
+  'user-agent': 'Client application user agent string',
+  'via': 'Informs client of proxies through which request was sent',
+  'warning': 'General warning about message status',
+  'x-api-key': 'API authentication key',
+  'x-requested-with': 'Identifies Ajax requests',
+  'x-forwarded-for': 'Originating IP address of a client',
+  'x-forwarded-proto': 'Originating protocol (HTTP/HTTPS)',
+};
+
+/// Resolves a description for a given header name.
+String getHeaderDescription(String? headerName) {
+  if (headerName == null || headerName.trim().isEmpty) return '-';
+  return kCommonHeaderDescriptions[headerName.trim().toLowerCase()] ?? '-';
+}

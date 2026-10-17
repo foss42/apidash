@@ -199,4 +199,28 @@ void main() {
       expect(getHttpStatusText(999), 'Status 999');
     });
   });
+
+  group('getHeaderDescription tests', () {
+    test('Handles null and empty strings', () {
+      expect(getHeaderDescription(null), '-');
+      expect(getHeaderDescription(''), '-');
+      expect(getHeaderDescription('   '), '-');
+    });
+
+    test('Resolves common header descriptions case-insensitively', () {
+      expect(getHeaderDescription('Authorization'),
+          'Authentication credentials');
+      expect(getHeaderDescription('content-type'),
+          'Media type of the request body');
+      expect(getHeaderDescription('ACCEPT'),
+          'Acceptable response media types');
+      expect(getHeaderDescription('User-Agent'),
+          'Client application user agent string');
+    });
+
+    test('Falls back to - for custom or unknown headers', () {
+      expect(getHeaderDescription('X-Custom-Header'), '-');
+      expect(getHeaderDescription('my-tracking-id'), '-');
+    });
+  });
 }
