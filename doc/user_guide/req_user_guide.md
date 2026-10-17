@@ -82,6 +82,18 @@ The response pane displays:
 
 API Dash supports previewing 50+ MIME types including JSON, XML, HTML, images, PDFs, audio, and video.
 
+## Exporting API Documentation & Reproduction Sessions
+
+Once an API response has been received, you can export the full request-response transaction directly from the response header:
+
+1. Click the **"Export API Documentation"** icon button (`Icons.description_outlined`) in the Response Pane Header.
+2. Select between:
+   - **Markdown (.md)**: Generates technical API documentation with method, endpoint, headers table, query parameters, body, status code, latency, and response payload.
+   - **cURL Session**: Generates an executable multi-line bash `curl` command with flags (`-X`, `-H`, `--data`) and a commented response summary (`# Response: 200 OK (45 ms)`).
+3. Click **"Copy to Clipboard"** for quick sharing or **"Save to File"** to save to local disk (`<request_name>_api_doc.md`).
+
+For detailed examples and output templates, see the [Markdown Documentation Export Guide](./export_markdown_doc_guide.md).
+
 ## Request Name Tooltip
 
 ![Image](./images/req/req_tooltip.png)

@@ -22,10 +22,7 @@ class CurlSessionGenerator implements DocGenerator {
     }
 
     // 2. Resolve target URL including active/enabled query parameters
-    final (uri, _) = getValidRequestUri(
-      request.url,
-      request.enabledParams,
-    );
+    final (uri, _) = getValidRequestUri(request.url, request.enabledParams);
     String targetUrl;
     if (uri != null) {
       targetUrl = uri.toString();
@@ -78,7 +75,8 @@ class CurlSessionGenerator implements DocGenerator {
     }
 
     // Join parts with multi-line bash continuation
-    final commandStr = parts.first +
+    final commandStr =
+        parts.first +
         (parts.length > 1 ? ' \\\n  ${parts.skip(1).join(' \\\n  ')}' : '');
     buffer.writeln(commandStr);
 
@@ -88,8 +86,7 @@ class CurlSessionGenerator implements DocGenerator {
       final statusCode = response.statusCode;
       final statusDesc = getHttpStatusText(statusCode);
       final timeStr = formatDuration(response.time);
-      final statusPart =
-          statusCode != null ? '$statusCode $statusDesc' : '-';
+      final statusPart = statusCode != null ? '$statusCode $statusDesc' : '-';
       buffer.writeln('# Response: $statusPart ($timeStr)');
     }
 

@@ -16,7 +16,12 @@ void main() {
         request: request,
         requestName: 'Fetch All Users',
       );
-      expect(md, startsWith('# Fetch All Users\n`GET` `https://api.example.com/users`\n'));
+      expect(
+        md,
+        startsWith(
+          '# Fetch All Users\n`GET` `https://api.example.com/users`\n',
+        ),
+      );
     });
 
     test('Falls back to METHOD + URL if requestName is null', () {
@@ -25,14 +30,16 @@ void main() {
         url: 'https://api.example.com/items',
       );
       final md = generator.generate(request: request);
-      expect(md, startsWith('# POST https://api.example.com/items\n`POST` `https://api.example.com/items`\n'));
+      expect(
+        md,
+        startsWith(
+          '# POST https://api.example.com/items\n`POST` `https://api.example.com/items`\n',
+        ),
+      );
     });
 
     test('Falls back to API Request if URL is empty', () {
-      const request = HttpRequestModel(
-        method: HTTPVerb.get,
-        url: '',
-      );
+      const request = HttpRequestModel(method: HTTPVerb.get, url: '');
       final md = generator.generate(request: request);
       expect(md, startsWith('# API Request\n`GET`\n'));
     });
@@ -78,8 +85,18 @@ void main() {
       final md = generator.generate(request: request);
       expect(md.contains('### Headers'), isTrue);
       expect(md.contains('| Header | Value | Description |'), isTrue);
-      expect(md.contains('| Authorization | Bearer token123 | Authentication credentials |'), isTrue);
-      expect(md.contains('| Content-Type | application/json | Media type of the request body |'), isTrue);
+      expect(
+        md.contains(
+          '| Authorization | Bearer token123 | Authentication credentials |',
+        ),
+        isTrue,
+      );
+      expect(
+        md.contains(
+          '| Content-Type | application/json | Media type of the request body |',
+        ),
+        isTrue,
+      );
       expect(md.contains('| X-Custom-ID | custom-999 | - |'), isTrue);
     });
 
@@ -87,9 +104,7 @@ void main() {
       const request = HttpRequestModel(
         method: HTTPVerb.get,
         url: 'https://api.example.com',
-        headers: [
-          NameValueModel(name: 'X-Pipe|Header', value: 'val1|val2'),
-        ],
+        headers: [NameValueModel(name: 'X-Pipe|Header', value: 'val1|val2')],
       );
       final md = generator.generate(request: request);
       expect(md.contains(r'| X-Pipe\|Header | val1\|val2 | - |'), isTrue);
@@ -130,9 +145,7 @@ void main() {
       const request = HttpRequestModel(
         method: HTTPVerb.get,
         url: 'https://api.example.com',
-        params: [
-          NameValueModel(name: '', value: 'ignored'),
-        ],
+        params: [NameValueModel(name: '', value: 'ignored')],
       );
       final md = generator.generate(request: request);
       expect(md.contains('### Query Parameters'), isFalse);
@@ -172,7 +185,11 @@ void main() {
         url: 'https://api.example.com/upload',
         bodyContentType: ContentType.formdata,
         formData: [
-          FormDataModel(name: 'avatar', value: 'image.png', type: FormDataType.file),
+          FormDataModel(
+            name: 'avatar',
+            value: 'image.png',
+            type: FormDataType.file,
+          ),
           FormDataModel(name: 'userId', value: '123', type: FormDataType.text),
         ],
       );
@@ -195,10 +212,7 @@ void main() {
       final response = HttpResponseModel(
         statusCode: 200,
         time: const Duration(milliseconds: 45),
-        headers: {
-          'content-type': 'application/json',
-          'server': 'nginx',
-        },
+        headers: {'content-type': 'application/json', 'server': 'nginx'},
         body: responseBody,
         bodyBytes: responseBytes,
       );
@@ -268,9 +282,7 @@ void main() {
           NameValueModel(name: 'Authorization', value: 'Bearer secret'),
           NameValueModel(name: 'Content-Type', value: 'application/json'),
         ],
-        params: [
-          NameValueModel(name: 'notify', value: 'true'),
-        ],
+        params: [NameValueModel(name: 'notify', value: 'true')],
         bodyContentType: ContentType.json,
         body: '{"username":"johndoe"}',
       );
@@ -279,9 +291,7 @@ void main() {
       final response = HttpResponseModel(
         statusCode: 201,
         time: const Duration(milliseconds: 45),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: responseBody,
         bodyBytes: Uint8List.fromList(utf8.encode(responseBody)),
       );

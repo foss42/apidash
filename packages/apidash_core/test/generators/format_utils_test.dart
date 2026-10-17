@@ -22,7 +22,10 @@ void main() {
         method: HTTPVerb.get,
         url: 'https://api.example.com/test',
       );
-      final output = generator.generate(request: req, requestName: 'Sample Request');
+      final output = generator.generate(
+        request: req,
+        requestName: 'Sample Request',
+      );
       expect(output, 'Generated: Sample Request');
 
       final fallbackOutput = generator.generate(request: req);
@@ -148,7 +151,10 @@ void main() {
 
     test('Falls back gracefully for malformed JSON', () {
       const malformedJson = '{"name": "John", missing: }';
-      final formatted = formatDocBody(malformedJson, contentType: 'application/json');
+      final formatted = formatDocBody(
+        malformedJson,
+        contentType: 'application/json',
+      );
       expect(formatted, malformedJson);
     });
 
@@ -162,7 +168,10 @@ void main() {
 
     test('Falls back gracefully for malformed XML', () {
       const malformedXml = '<root><unclosed>';
-      final formatted = formatDocBody(malformedXml, contentType: 'application/xml');
+      final formatted = formatDocBody(
+        malformedXml,
+        contentType: 'application/xml',
+      );
       expect(formatted, malformedXml);
     });
 
@@ -208,14 +217,19 @@ void main() {
     });
 
     test('Resolves common header descriptions case-insensitively', () {
-      expect(getHeaderDescription('Authorization'),
-          'Authentication credentials');
-      expect(getHeaderDescription('content-type'),
-          'Media type of the request body');
-      expect(getHeaderDescription('ACCEPT'),
-          'Acceptable response media types');
-      expect(getHeaderDescription('User-Agent'),
-          'Client application user agent string');
+      expect(
+        getHeaderDescription('Authorization'),
+        'Authentication credentials',
+      );
+      expect(
+        getHeaderDescription('content-type'),
+        'Media type of the request body',
+      );
+      expect(getHeaderDescription('ACCEPT'), 'Acceptable response media types');
+      expect(
+        getHeaderDescription('User-Agent'),
+        'Client application user agent string',
+      );
     });
 
     test('Falls back to - for custom or unknown headers', () {
@@ -236,7 +250,10 @@ void main() {
 
     test('Escapes single quotes with bash closing/escaped sequence', () {
       expect(escapeBashSingleQuotes("don't"), r"don'\''t");
-      expect(escapeBashSingleQuotes("it's a 'test'"), r"it'\''s a '\''test'\''");
+      expect(
+        escapeBashSingleQuotes("it's a 'test'"),
+        r"it'\''s a '\''test'\''",
+      );
     });
   });
 }

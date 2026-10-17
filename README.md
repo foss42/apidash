@@ -145,6 +145,8 @@ API Dash can be downloaded from the links below:
 - Direct local filesystem save via `file_selector` with auto-suggested `<request_name>_api_doc.md` filename.
 - End-to-end verified with dedicated widget & integration test suites validating action triggers, dialog lifecycle, format toggle, and clipboard copy.
 - Workspace-level quality assurance: full Melos verification and multi-package static analysis with zero lint errors and 100% test pass rate across core generators, state providers, and UI widgets.
+- Comprehensive user documentation with examples and templates in [Markdown Documentation Export Guide](doc/user_guide/export_markdown_doc_guide.md).
+- Complete CI/CD & repository guidelines compliance: validated against static analyzers, Dart code formatting, Semgrep security scans, and ready-to-submit proposal issue and pull request documentation.
 - Pure client-side generation without any external servers or third-party dependencies.
 
 **⚙️ Settings & Other Options**

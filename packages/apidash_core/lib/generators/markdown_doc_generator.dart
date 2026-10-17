@@ -99,8 +99,10 @@ class MarkdownDocGenerator implements DocGenerator {
           lang = 'json';
         }
       }
-      final formattedBody =
-          formatDocBody(request.body, contentType: contentTypeLabel);
+      final formattedBody = formatDocBody(
+        request.body,
+        contentType: contentTypeLabel,
+      );
       buffer.writeln('### Request Body ($contentTypeLabel)');
       buffer.writeln('```$lang');
       buffer.writeln(formattedBody);
@@ -115,10 +117,12 @@ class MarkdownDocGenerator implements DocGenerator {
       buffer.writeln('## Response');
       final statusCode = response.statusCode;
       final statusDesc = getHttpStatusText(statusCode);
-      final statusStr =
-          statusCode != null ? '`$statusCode $statusDesc`' : '`-`';
+      final statusStr = statusCode != null
+          ? '`$statusCode $statusDesc`'
+          : '`-`';
       final durationStr = '`${formatDuration(response.time)}`';
-      final byteCount = response.bodyBytes?.length ??
+      final byteCount =
+          response.bodyBytes?.length ??
           (response.body != null ? utf8.encode(response.body!).length : 0);
       final sizeStr = '`${formatByteSize(byteCount)}`';
 
@@ -154,7 +158,8 @@ class MarkdownDocGenerator implements DocGenerator {
             lang = 'json';
           }
         }
-        final formattedRespBody = response.formattedBody ??
+        final formattedRespBody =
+            response.formattedBody ??
             formatDocBody(response.body, contentType: response.contentType);
         buffer.writeln('### Response Body');
         buffer.writeln('```$lang');

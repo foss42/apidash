@@ -161,8 +161,8 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
       : _curlContent;
 
   String get _defaultFileName {
-    final prefix = (widget.requestName != null &&
-            widget.requestName!.trim().isNotEmpty)
+    final prefix =
+        (widget.requestName != null && widget.requestName!.trim().isNotEmpty)
         ? '${widget.requestName!.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '_')}_'
         : '';
     return _selectedFormat == ExportDocFormat.markdown
@@ -204,10 +204,7 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
         suggestedName: fileName,
         content: bytes,
         acceptedTypeGroups: [
-          XTypeGroup(
-            label: _selectedFormat.label,
-            extensions: [ext],
-          ),
+          XTypeGroup(label: _selectedFormat.label, extensions: [ext]),
         ],
       );
 
@@ -302,8 +299,7 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
     final mediaQuery = MediaQuery.of(context);
 
     if (widget.isBottomSheet) {
-      final sheetHeight =
-          (mediaQuery.size.height * 0.85).clamp(380.0, 720.0);
+      final sheetHeight = (mediaQuery.size.height * 0.85).clamp(380.0, 720.0);
 
       return Container(
         width: double.infinity,
@@ -333,9 +329,7 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
               ],
             ),
             kVSpacer10,
-            Expanded(
-              child: _buildPreviewContent(theme, codeTheme),
-            ),
+            Expanded(child: _buildPreviewContent(theme, codeTheme)),
             kVSpacer10,
             Wrap(
               alignment: WrapAlignment.end,

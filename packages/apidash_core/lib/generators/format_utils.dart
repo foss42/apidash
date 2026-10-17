@@ -118,8 +118,7 @@ String formatDocBody(String? body, {String? contentType}) {
     }
   }
 
-  if (mimeLang == 'xml' ||
-      (trimmed.startsWith('<') && trimmed.endsWith('>'))) {
+  if (mimeLang == 'xml' || (trimmed.startsWith('<') && trimmed.endsWith('>'))) {
     try {
       final document = XmlDocument.parse(trimmed);
       return document.toXmlString(pretty: true, indent: '  ');

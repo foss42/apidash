@@ -13,9 +13,7 @@ void main() async {
   group('Testing selectedDocExportProvider', () {
     test('returns null when selectedRequestModelProvider has no selection', () {
       final container = createContainer(
-        overrides: [
-          selectedRequestModelProvider.overrideWith((ref) => null),
-        ],
+        overrides: [selectedRequestModelProvider.overrideWith((ref) => null)],
       );
 
       final doc = container.read(selectedDocExportProvider);
@@ -31,7 +29,9 @@ void main() async {
 
       final container = createContainer(
         overrides: [
-          selectedRequestModelProvider.overrideWith((ref) => nonHttpRequestModel),
+          selectedRequestModelProvider.overrideWith(
+            (ref) => nonHttpRequestModel,
+          ),
         ],
       );
 
@@ -39,38 +39,43 @@ void main() async {
       expect(doc, isNull);
     });
 
-    test('returns formatted markdown for active RequestModel with response', () {
-      final testRequestModel = RequestModel(
-        id: 'req_1',
-        name: 'Get Users List',
-        httpRequestModel: const HttpRequestModel(
-          method: HTTPVerb.get,
-          url: 'https://api.apidash.dev/users',
-          headers: [
-            NameValueModel(name: 'Accept', value: 'application/json'),
+    test(
+      'returns formatted markdown for active RequestModel with response',
+      () {
+        final testRequestModel = RequestModel(
+          id: 'req_1',
+          name: 'Get Users List',
+          httpRequestModel: const HttpRequestModel(
+            method: HTTPVerb.get,
+            url: 'https://api.apidash.dev/users',
+            headers: [
+              NameValueModel(name: 'Accept', value: 'application/json'),
+            ],
+          ),
+          httpResponseModel: const HttpResponseModel(
+            statusCode: 200,
+            time: Duration(milliseconds: 85),
+            body: '{"users": ["Alice", "Bob"]}',
+          ),
+        );
+
+        final container = createContainer(
+          overrides: [
+            selectedRequestModelProvider.overrideWith(
+              (ref) => testRequestModel,
+            ),
           ],
-        ),
-        httpResponseModel: const HttpResponseModel(
-          statusCode: 200,
-          time: Duration(milliseconds: 85),
-          body: '{"users": ["Alice", "Bob"]}',
-        ),
-      );
+        );
 
-      final container = createContainer(
-        overrides: [
-          selectedRequestModelProvider.overrideWith((ref) => testRequestModel),
-        ],
-      );
-
-      final doc = container.read(selectedDocExportProvider);
-      expect(doc, isNotNull);
-      expect(doc, contains('# Get Users List'));
-      expect(doc, contains('`GET` `https://api.apidash.dev/users`'));
-      expect(doc, contains('Accept'));
-      expect(doc, contains('200 OK'));
-      expect(doc, contains('85 ms'));
-    });
+        final doc = container.read(selectedDocExportProvider);
+        expect(doc, isNotNull);
+        expect(doc, contains('# Get Users List'));
+        expect(doc, contains('`GET` `https://api.apidash.dev/users`'));
+        expect(doc, contains('Accept'));
+        expect(doc, contains('200 OK'));
+        expect(doc, contains('85 ms'));
+      },
+    );
 
     test('reactively updates when response is received', () {
       final initialModel = RequestModel(
@@ -103,7 +108,8 @@ void main() async {
         ),
       );
 
-      container.read(selectedRequestModelProvider.notifier).state = completedModel;
+      container.read(selectedRequestModelProvider.notifier).state =
+          completedModel;
 
       final updatedDoc = container.read(selectedDocExportProvider);
       expect(updatedDoc, isNotNull);

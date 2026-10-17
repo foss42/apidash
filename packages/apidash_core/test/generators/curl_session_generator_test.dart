@@ -41,7 +41,9 @@ void main() {
       );
       expect(
         result,
-        startsWith("# Check Service Health\ncurl -X GET 'https://api.example.com/health'\n"),
+        startsWith(
+          "# Check Service Health\ncurl -X GET 'https://api.example.com/health'\n",
+        ),
       );
     });
   });
@@ -59,7 +61,8 @@ void main() {
         body: '{"name":"Alice"}',
       );
       final result = generator.generate(request: request);
-      final expected = "curl -X POST 'https://api.example.com/users' \\\n"
+      final expected =
+          "curl -X POST 'https://api.example.com/users' \\\n"
           "  -H 'Authorization: Bearer token123' \\\n"
           "  -H 'Content-Type: application/json' \\\n"
           "  --data '{\"name\":\"Alice\"}'\n";
@@ -80,27 +83,41 @@ void main() {
       expect(result.contains(r"It'\''s great"), isTrue);
     });
 
-    test('Generates -F flags for multipart/form-data and skips Content-Type header', () {
-      const request = HttpRequestModel(
-        method: HTTPVerb.post,
-        url: 'https://api.example.com/upload',
-        headers: [
-          NameValueModel(name: 'Authorization', value: 'Bearer token123'),
-          NameValueModel(name: 'Content-Type', value: 'multipart/form-data'),
-        ],
-        bodyContentType: ContentType.formdata,
-        formData: [
-          FormDataModel(name: 'description', value: 'User Avatar', type: FormDataType.text),
-          FormDataModel(name: 'photo', value: '/tmp/avatar.png', type: FormDataType.file),
-        ],
-      );
-      final result = generator.generate(request: request);
-      expect(result.contains("-H 'Authorization: Bearer token123'"), isTrue);
-      // Content-Type should be omitted so curl sets correct boundary automatically
-      expect(result.contains("-H 'Content-Type: multipart/form-data'"), isFalse);
-      expect(result.contains("-F 'description=User Avatar'"), isTrue);
-      expect(result.contains("-F 'photo=@/tmp/avatar.png'"), isTrue);
-    });
+    test(
+      'Generates -F flags for multipart/form-data and skips Content-Type header',
+      () {
+        const request = HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.example.com/upload',
+          headers: [
+            NameValueModel(name: 'Authorization', value: 'Bearer token123'),
+            NameValueModel(name: 'Content-Type', value: 'multipart/form-data'),
+          ],
+          bodyContentType: ContentType.formdata,
+          formData: [
+            FormDataModel(
+              name: 'description',
+              value: 'User Avatar',
+              type: FormDataType.text,
+            ),
+            FormDataModel(
+              name: 'photo',
+              value: '/tmp/avatar.png',
+              type: FormDataType.file,
+            ),
+          ],
+        );
+        final result = generator.generate(request: request);
+        expect(result.contains("-H 'Authorization: Bearer token123'"), isTrue);
+        // Content-Type should be omitted so curl sets correct boundary automatically
+        expect(
+          result.contains("-H 'Content-Type: multipart/form-data'"),
+          isFalse,
+        );
+        expect(result.contains("-F 'description=User Avatar'"), isTrue);
+        expect(result.contains("-F 'photo=@/tmp/avatar.png'"), isTrue);
+      },
+    );
   });
 
   group('CurlSessionGenerator - Appended Response Summary Comment', () {
@@ -147,38 +164,37 @@ void main() {
   });
 
   group('CurlSessionGenerator - Full Specification Conformance', () {
-    test('Matches exact specification structure with multi-line flags and response comment', () {
-      const request = HttpRequestModel(
-        method: HTTPVerb.post,
-        url: 'https://api.example.com/v1/users',
-        headers: [
-          NameValueModel(name: 'Authorization', value: 'Bearer secret'),
-          NameValueModel(name: 'Content-Type', value: 'application/json'),
-        ],
-        params: [
-          NameValueModel(name: 'notify', value: 'true'),
-        ],
-        bodyContentType: ContentType.json,
-        body: '{"username":"johndoe"}',
-      );
+    test(
+      'Matches exact specification structure with multi-line flags and response comment',
+      () {
+        const request = HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.example.com/v1/users',
+          headers: [
+            NameValueModel(name: 'Authorization', value: 'Bearer secret'),
+            NameValueModel(name: 'Content-Type', value: 'application/json'),
+          ],
+          params: [NameValueModel(name: 'notify', value: 'true')],
+          bodyContentType: ContentType.json,
+          body: '{"username":"johndoe"}',
+        );
 
-      const response = HttpResponseModel(
-        statusCode: 200,
-        time: Duration(milliseconds: 45),
-      );
+        const response = HttpResponseModel(
+          statusCode: 200,
+          time: Duration(milliseconds: 45),
+        );
 
-      final result = generator.generate(
-        request: request,
-        response: response,
-      );
+        final result = generator.generate(request: request, response: response);
 
-      final expected = "curl -X POST 'https://api.example.com/v1/users?notify=true' \\\n"
-          "  -H 'Authorization: Bearer secret' \\\n"
-          "  -H 'Content-Type: application/json' \\\n"
-          "  --data '{\"username\":\"johndoe\"}'\n\n"
-          "# Response: 200 OK (45 ms)\n";
+        final expected =
+            "curl -X POST 'https://api.example.com/v1/users?notify=true' \\\n"
+            "  -H 'Authorization: Bearer secret' \\\n"
+            "  -H 'Content-Type: application/json' \\\n"
+            "  --data '{\"username\":\"johndoe\"}'\n\n"
+            "# Response: 200 OK (45 ms)\n";
 
-      expect(result, expected);
-    });
+        expect(result, expected);
+      },
+    );
   });
 }

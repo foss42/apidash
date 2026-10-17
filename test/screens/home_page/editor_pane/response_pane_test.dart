@@ -213,8 +213,10 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    final exportButtonFinder =
-        find.widgetWithIcon(IconButton, Icons.description_outlined);
+    final exportButtonFinder = find.widgetWithIcon(
+      IconButton,
+      Icons.description_outlined,
+    );
     expect(exportButtonFinder, findsOneWidget);
 
     await tester.tap(exportButtonFinder);
@@ -229,4 +231,3 @@ void main() {
     expect(find.byType(ExportDocumentDialog), findsNothing);
   });
 }
-
