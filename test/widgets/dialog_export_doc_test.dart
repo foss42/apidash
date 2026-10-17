@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/dialog_export_doc.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -62,7 +63,8 @@ void main() {
     );
   });
 
-  testWidgets('ExportDocumentDialog switches preview between Markdown and cURL Session',
+  testWidgets(
+      'ExportDocumentDialog switches preview between Markdown and cURL Session',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -130,10 +132,11 @@ void main() {
 
     expect(copiedText, isNotNull);
     expect(copiedText, contains('# Get Users'));
-    expect(find.text('Copied to clipboard'), findsOneWidget);
+    expect(find.text(kMsgCopiedToClipboard), findsOneWidget);
   });
 
-  testWidgets('ExportDocumentDialog invokes onSaveToFile and shows SnackBar',
+  testWidgets(
+      'ExportDocumentDialog invokes onSaveToFile with suggested filename <request_name>_api_doc.md',
       (tester) async {
     String? savedContent;
     String? savedFileName;
@@ -161,9 +164,37 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(savedContent, isNotNull);
-    expect(savedFileName, startsWith('get_users_'));
-    expect(savedFileName, endsWith('.md'));
-    expect(find.text('Saved to $savedFileName'), findsOneWidget);
+    expect(savedFileName, equals('get_users_api_doc.md'));
+    expect(find.text('Saved to get_users_api_doc.md'), findsOneWidget);
+  });
+
+  testWidgets('ExportDocumentDialog falls back to api_doc.md when requestName is null',
+      (tester) async {
+    String? savedFileName;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ExportDocumentDialog(
+            request: testRequest,
+            response: testResponse,
+            requestName: null,
+            onSaveToFile: (content, filename) async {
+              savedFileName = filename;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Save to File'));
+    await tester.pumpAndSettle();
+
+    expect(savedFileName, equals('api_doc.md'));
+    expect(find.text('Saved to api_doc.md'), findsOneWidget);
   });
 
   testWidgets('showExportDocDialog displays and Close button dismisses dialog',

@@ -1,10 +1,19 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:mime_dart/mime_dart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+
+class FlutterClipboard {
+  const FlutterClipboard._();
+
+  static Future<void> copy(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+  }
+}
 
 const uuid = Uuid();
 
@@ -50,6 +59,22 @@ Future<String?> getApplicationSupportDirectoryFilePath(
 Future<void> saveFile(String path, Uint8List content) async {
   final file = File(path);
   await file.writeAsBytes(content);
+}
+
+Future<String?> promptSaveFile({
+  required String suggestedName,
+  required Uint8List content,
+  List<XTypeGroup> acceptedTypeGroups = const <XTypeGroup>[],
+}) async {
+  final FileSaveLocation? saveLocation = await getSaveLocation(
+    suggestedName: suggestedName,
+    acceptedTypeGroups: acceptedTypeGroups,
+  );
+  if (saveLocation != null) {
+    await saveFile(saveLocation.path, content);
+    return saveLocation.path;
+  }
+  return null;
 }
 
 String getShortPath(String path) {

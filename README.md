@@ -137,7 +137,8 @@ API Dash can be downloaded from the links below:
 - Export API request and response sessions into clean GitHub Flavored Markdown (`.md`) documentation and reproducible cURL scripts.
 - Integrated action trigger in the Response Pane Header for one-click access.
 - Interactive `ExportDocumentDialog` modal with segmented tabs for Markdown (`.md`) and cURL Session previewing.
-- Syntax-highlighted code preview with one-tap clipboard copying and native local file export.
+- Syntax-highlighted code preview with one-tap clipboard copying via `FlutterClipboard` and visual SnackBar confirmation.
+- Direct local filesystem save via `file_selector` with auto-suggested `<request_name>_api_doc.md` filename.
 - Pure client-side generation without any external servers or third-party dependencies.
 
 **⚙️ Settings & Other Options**

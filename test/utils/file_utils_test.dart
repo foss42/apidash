@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:apidash/consts.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
@@ -27,6 +28,8 @@ class FakePathProviderPlatform extends Fake
 class FakeFileSelectorPlatform extends Fake
     with MockPlatformInterfaceMixin
     implements FileSelectorPlatform {
+  String? savePathToReturn;
+
   @override
   Future<XFile?> openFile({
     List<XTypeGroup>? acceptedTypeGroups,
@@ -34,6 +37,17 @@ class FakeFileSelectorPlatform extends Fake
     String? confirmButtonText,
   }) async {
     return XFile('/mock/picked/file.txt');
+  }
+
+  @override
+  Future<FileSaveLocation?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    SaveDialogOptions options = const SaveDialogOptions(),
+  }) async {
+    if (savePathToReturn != null) {
+      return FileSaveLocation(savePathToReturn!);
+    }
+    return null;
   }
 }
 
@@ -170,6 +184,54 @@ void main() {
       final directory = Directory.systemTemp;
       final testFilePath = '${directory.path}/missing_file_xyz.txt';
       expect(await deleteFileFromPath(testFilePath), isFalse);
+    });
+
+    test('Test FlutterClipboard.copy sets clipboard content', () async {
+      String? copiedText;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform,
+              (MethodCall methodCall) async {
+        if (methodCall.method == 'Clipboard.setData') {
+          copiedText = methodCall.arguments['text'];
+        }
+        return null;
+      });
+
+      await FlutterClipboard.copy('test clipboard content');
+      expect(copiedText, 'test clipboard content');
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+    });
+
+    test('Test promptSaveFile saves file when location selected', () async {
+      final directory = Directory.systemTemp;
+      final testSavePath = '${directory.path}/prompt_saved_file.txt';
+      final fakePlatform = FileSelectorPlatform.instance as FakeFileSelectorPlatform;
+      fakePlatform.savePathToReturn = testSavePath;
+
+      final savedPath = await promptSaveFile(
+        suggestedName: 'prompt_saved_file.txt',
+        content: Uint8List.fromList([10, 20, 30]),
+      );
+
+      expect(savedPath, testSavePath);
+      expect(await File(testSavePath).exists(), isTrue);
+      expect(await File(testSavePath).readAsBytes(), Uint8List.fromList([10, 20, 30]));
+
+      await deleteFileFromPath(testSavePath);
+    });
+
+    test('Test promptSaveFile returns null when dialog canceled', () async {
+      final fakePlatform = FileSelectorPlatform.instance as FakeFileSelectorPlatform;
+      fakePlatform.savePathToReturn = null;
+
+      final savedPath = await promptSaveFile(
+        suggestedName: 'canceled_file.txt',
+        content: Uint8List.fromList([1, 2]),
+      );
+
+      expect(savedPath, isNull);
     });
   });
 }

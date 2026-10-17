@@ -84,14 +84,13 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
       : _curlContent;
 
   String get _defaultFileName {
-    final dateStr = DateTime.now().toIso8601String().split('T').first;
     final prefix = (widget.requestName != null &&
             widget.requestName!.trim().isNotEmpty)
-        ? widget.requestName!.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '_')
-        : 'api_doc';
+        ? '${widget.requestName!.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '_')}_'
+        : '';
     return _selectedFormat == ExportDocFormat.markdown
-        ? '${prefix}_$dateStr.md'
-        : 'curl_session_$dateStr.sh';
+        ? '${prefix}api_doc.md'
+        : '${prefix}curl_session.sh';
   }
 
   Future<void> _handleCopy() async {
@@ -100,10 +99,10 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
       if (widget.onCopy != null) {
         await widget.onCopy!(_currentContent);
       } else {
-        await Clipboard.setData(ClipboardData(text: _currentContent));
+        await FlutterClipboard.copy(_currentContent);
       }
       sm.hideCurrentSnackBar();
-      sm.showSnackBar(getSnackBar("Copied to clipboard"));
+      sm.showSnackBar(getSnackBar(kMsgCopiedToClipboard));
     } catch (e) {
       sm.hideCurrentSnackBar();
       sm.showSnackBar(getSnackBar("Failed to copy: $e"));
@@ -123,8 +122,10 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
         return;
       }
 
-      final FileSaveLocation? saveLocation = await getSaveLocation(
+      final bytes = Uint8List.fromList(utf8.encode(_currentContent));
+      final path = await promptSaveFile(
         suggestedName: fileName,
+        content: bytes,
         acceptedTypeGroups: [
           XTypeGroup(
             label: _selectedFormat.label,
@@ -133,16 +134,10 @@ class _ExportDocumentDialogState extends State<ExportDocumentDialog> {
         ],
       );
 
-      if (saveLocation != null) {
-        final bytes = Uint8List.fromList(utf8.encode(_currentContent));
-        final xFile = XFile.fromData(
-          bytes,
-          name: fileName,
-          mimeType: ext == 'md' ? 'text/markdown' : 'application/x-sh',
-        );
-        await xFile.saveTo(saveLocation.path);
+      if (path != null) {
+        final sp = getShortPath(path);
         sm.hideCurrentSnackBar();
-        sm.showSnackBar(getSnackBar("Document saved to ${saveLocation.path}"));
+        sm.showSnackBar(getSnackBar("Saved to $sp", small: false));
       }
     } catch (e) {
       sm.hideCurrentSnackBar();
