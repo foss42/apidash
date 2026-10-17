@@ -135,6 +135,7 @@ API Dash can be downloaded from the links below:
 **📝 Markdown API Documentation & Session Export**
 
 - Export API request and response sessions into clean GitHub Flavored Markdown (`.md`) documentation and reproducible cURL scripts.
+- Integrated action trigger in the Response Pane Header for one-click access.
 - Pure client-side generation without any external servers or third-party dependencies.
 
 **⚙️ Settings & Other Options**

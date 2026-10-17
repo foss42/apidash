@@ -82,6 +82,82 @@ void main() {
     );
   });
 
+  testWidgets('ResponsePaneHeader - Export button enabled when responseStatus > 0', (tester) async {
+    bool exportTapped = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ResponsePaneHeader(
+            responseStatus: 200,
+            message: 'OK',
+            time: const Duration(milliseconds: 45),
+            onExportDoc: () {
+              exportTapped = true;
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byTooltip('Export API Documentation'), findsOneWidget);
+    final exportBtnFinder = find.widgetWithIcon(IconButton, Icons.description_outlined);
+    expect(exportBtnFinder, findsOneWidget);
+
+    final iconButton = tester.widget<IconButton>(exportBtnFinder);
+    expect(iconButton.onPressed, isNotNull);
+
+    await tester.tap(exportBtnFinder);
+    await tester.pump();
+    expect(exportTapped, isTrue);
+  });
+
+  testWidgets('ResponsePaneHeader - Export button disabled when responseStatus is null or non-positive', (tester) async {
+    bool exportTapped = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: ResponsePaneHeader(
+            responseStatus: null,
+            message: null,
+            onExportDoc: () {
+              exportTapped = true;
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byTooltip('Export API Documentation'), findsOneWidget);
+    final exportBtnFinder = find.widgetWithIcon(IconButton, Icons.description_outlined);
+    expect(exportBtnFinder, findsOneWidget);
+
+    final iconButton = tester.widget<IconButton>(exportBtnFinder);
+    expect(iconButton.onPressed, isNull);
+
+    await tester.tap(exportBtnFinder);
+    await tester.pump();
+    expect(exportTapped, isFalse);
+  });
+
+  testWidgets('ResponsePaneHeader - Export button omitted when onExportDoc is null', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: ResponsePaneHeader(
+            responseStatus: 200,
+            message: 'OK',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byTooltip('Export API Documentation'), findsNothing);
+    expect(find.byIcon(Icons.description_outlined), findsNothing);
+  });
+
   testWidgets('Testing Response Tab View', (tester) async {
     await tester.pumpWidget(
       MaterialApp(

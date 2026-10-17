@@ -491,6 +491,7 @@ const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
 const kLabelResponseBody = "Response Body";
 const kTooltipClearResponse = "Clear Response";
+const kTooltipExportDoc = "Export API Documentation";
 const kHeaderRow = ["Header Name", "Header Value"];
 const kLabelRequestHeaders = "Request Headers";
 const kLabelResponseHeaders = "Response Headers";

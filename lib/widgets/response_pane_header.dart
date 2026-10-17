@@ -11,16 +11,21 @@ class ResponsePaneHeader extends StatelessWidget {
     this.message,
     this.time,
     this.onClearResponse,
+    this.onExportDoc,
   });
 
   final int? responseStatus;
   final String? message;
   final Duration? time;
   final VoidCallback? onClearResponse;
+  final VoidCallback? onExportDoc;
 
   @override
   Widget build(BuildContext context) {
     final bool showClearButton = onClearResponse != null;
+    final bool hasResponseData = responseStatus != null && responseStatus! > 0;
+    final bool isExportEnabled = onExportDoc != null && hasResponseData;
+
     return Padding(
       padding: kPv8,
       child: SizedBox(
@@ -52,6 +57,14 @@ class ResponsePaneHeader extends StatelessWidget {
                   ),
             ),
             kHSpacer10,
+            if (onExportDoc != null) ...[
+              ADIconButton(
+                icon: Icons.description_outlined,
+                tooltip: kTooltipExportDoc,
+                onPressed: isExportEnabled ? onExportDoc : null,
+              ),
+              kHSpacer10,
+            ],
             showClearButton
                 ? ClearResponseButton(
                     onPressed: onClearResponse,
