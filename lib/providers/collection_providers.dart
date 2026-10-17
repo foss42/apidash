@@ -83,6 +83,22 @@ final selectedSubstitutedHttpRequestModelProvider =
       }
     });
 
+final selectedDocExportProvider = StateProvider<String?>((ref) {
+  final selectedRequestModel = ref.watch(selectedRequestModelProvider);
+  if (selectedRequestModel == null ||
+      selectedRequestModel.httpRequestModel == null) {
+    return null;
+  }
+  final substitutedRequest =
+      ref.watch(selectedSubstitutedHttpRequestModelProvider) ??
+          selectedRequestModel.httpRequestModel!;
+  return const MarkdownDocGenerator().generate(
+    request: substitutedRequest,
+    response: selectedRequestModel.httpResponseModel,
+    requestName: selectedRequestModel.name,
+  );
+});
+
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
   return ids ?? [];

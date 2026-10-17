@@ -157,4 +157,77 @@ void main() {
     expect(find.byType(ResponsePaneHeader), findsOneWidget);
     expect(find.byType(ResponseTabs), findsOneWidget);
   });
+
+  testWidgets('Testing ResponsePane triggers ExportDocumentDialog', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          selectedIdStateProvider.overrideWith((ref) => 'test_id'),
+          collectionStateNotifierProvider.overrideWith(
+            (ref) => MockCollectionStateNotifier({
+              'test_id': RequestModel(
+                id: 'test_id',
+                name: 'Test Request',
+                responseStatus: 200,
+                httpRequestModel: const HttpRequestModel(
+                  method: HTTPVerb.get,
+                  url: 'https://api.apidash.dev/test',
+                ),
+                httpResponseModel: HttpResponseModel(
+                  statusCode: 200,
+                  body: 'Test body',
+                  bodyBytes: Uint8List.fromList([
+                    84,
+                    101,
+                    115,
+                    116,
+                    32,
+                    98,
+                    111,
+                    100,
+                    121,
+                  ]),
+                  headers: const {'test': 'header'},
+                  requestHeaders: const {'req': 'header'},
+                  time: const Duration(milliseconds: 100),
+                ),
+              ),
+            }),
+          ),
+          environmentsStateNotifierProvider.overrideWith(
+            (ref) => MockEnvironmentsStateNotifier({
+              'global': const EnvironmentModel(
+                id: 'global',
+                name: 'Global',
+                values: [],
+              ),
+            }),
+          ),
+          environmentSequenceProvider.overrideWith((ref) => ['global']),
+          activeEnvironmentIdStateProvider.overrideWith((ref) => 'global'),
+        ],
+        child: const MaterialApp(home: Scaffold(body: ResponsePane())),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final exportButtonFinder =
+        find.widgetWithIcon(IconButton, Icons.description_outlined);
+    expect(exportButtonFinder, findsOneWidget);
+
+    await tester.tap(exportButtonFinder);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ExportDocumentDialog), findsOneWidget);
+    expect(find.text('Export API Documentation'), findsOneWidget);
+
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ExportDocumentDialog), findsNothing);
+  });
 }
+

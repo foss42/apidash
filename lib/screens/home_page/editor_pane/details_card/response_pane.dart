@@ -157,6 +157,27 @@ class ResponseDetails extends ConsumerWidget {
           onClearResponse: () {
             ref.read(collectionStateNotifierProvider.notifier).clearResponse();
           },
+          onExportDoc: () {
+            final selectedRequestModel = ref.read(selectedRequestModelProvider);
+            if (selectedRequestModel == null) return;
+            HttpRequestModel? requestToExport;
+            try {
+              requestToExport =
+                  ref.read(selectedSubstitutedHttpRequestModelProvider);
+            } catch (_) {
+              requestToExport = selectedRequestModel.httpRequestModel;
+            }
+            requestToExport ??= selectedRequestModel.httpRequestModel;
+
+            if (requestToExport != null) {
+              showExportDocDialog(
+                context,
+                request: requestToExport,
+                response: selectedRequestModel.httpResponseModel,
+                requestName: selectedRequestModel.name,
+              );
+            }
+          },
         ),
         const Expanded(
           child: ResponseTabs(),
