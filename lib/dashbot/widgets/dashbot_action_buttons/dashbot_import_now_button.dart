@@ -53,6 +53,7 @@ class DashbotImportNowButton extends ConsumerWidget with DashbotActionMixin {
               path: s.path,
               method: s.method,
               op: s.op,
+              pathParameters: spec.paths?[s.path]?.parameters ?? const [],
             );
             log("SorceName: $sourceName");
             payload['sourceName'] =

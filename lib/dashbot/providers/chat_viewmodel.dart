@@ -36,6 +36,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     }
     return _ref.read(selectedRequestModelProvider);
   }
+
   HttpRequestModel? get _currentSubstitutedHttpRequestModel =>
       _ref.read(selectedSubstitutedHttpRequestModelProvider);
   AIRequestModel? get _selectedAIModel {
@@ -394,6 +395,19 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final headers = headersMap.entries
         .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
         .toList();
+    final paramsListRaw = (payload['params'] as List?)?.cast<dynamic>();
+    final params = paramsListRaw == null
+        ? <NameValueModel>[]
+        : paramsListRaw
+              .whereType<Map>()
+              .map(
+                (e) => NameValueModel(
+                  name: (e['name'] as String?) ?? '',
+                  value: (e['value'] as String?) ?? '',
+                ),
+              )
+              .toList();
+    final isParamEnabledList = List<bool>.filled(params.length, true);
 
     final body = payload['body'] as String?;
     final formFlag = payload['form'] == true;
@@ -450,14 +464,14 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       baseUrl,
       sourceTitle,
     );
-    debugPrint('[OpenAPI] withEnvUrl="$withEnvUrl');
     if (action.field == 'apply_to_new') {
-      debugPrint('[OpenAPI] withEnvUrl="$withEnvUrl');
       final model = HttpRequestModel(
         method: method,
         url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        params: params,
+        isParamEnabledList: isParamEnabledList,
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
@@ -466,6 +480,29 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       collection.addRequestModel(model, name: displayName);
       _appendSystem(
         'Created a new request from the OpenAPI operation.',
+        ChatMessageType.importOpenApi,
+      );
+    } else if (action.field == 'apply_to_selected') {
+      final current = _currentRequest;
+      if (current == null) return;
+      final requestId = current.id;
+      if (current.apiType != APIType.rest) {
+        collection.update(id: requestId, apiType: APIType.rest);
+      }
+      collection.update(
+        id: requestId,
+        method: method,
+        url: withEnvUrl,
+        headers: headers,
+        isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        params: params,
+        isParamEnabledList: isParamEnabledList,
+        body: body,
+        bodyContentType: bodyContentType,
+        formData: formData.isEmpty ? null : formData,
+      );
+      _appendSystem(
+        'Applied OpenAPI operation to the selected request.',
         ChatMessageType.importOpenApi,
       );
     }

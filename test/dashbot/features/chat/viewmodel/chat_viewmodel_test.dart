@@ -738,6 +738,102 @@ info:
 
       // Test passes if no exception is thrown (coverage achieved)
     });
+
+    test(
+      'OpenAPI parameters are applied to new and selected requests',
+      () async {
+        final viewmodel = container.read(chatViewmodelProvider.notifier);
+        final payload = {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/pets',
+          'baseUrl': 'https://api.apidash.dev',
+          'headers': {'X-Trace-Id': ''},
+          'params': [
+            {'name': 'status', 'value': ''},
+            {'name': 'limit', 'value': '10'},
+          ],
+          'body': null,
+          'form': false,
+          'formData': <Map<String, String>>[],
+        };
+
+        await viewmodel.applyAutoFix(
+          ChatAction.fromJson({
+            'action': 'apply_openapi',
+            'actionType': 'apply_openapi',
+            'target': 'httpRequestModel',
+            'targetType': 'httpRequestModel',
+            'field': 'apply_to_new',
+            'value': payload,
+          }),
+        );
+
+        final collection = container.read(collectionStateNotifierProvider);
+        final selectedId = container.read(selectedIdStateProvider);
+        final newRequest = collection![selectedId!]!.httpRequestModel!;
+        expect(newRequest.params, const [
+          NameValueModel(name: 'status', value: ''),
+          NameValueModel(name: 'limit', value: '10'),
+        ]);
+        expect(newRequest.isParamEnabledList, [true, true]);
+
+        container.read(selectedRequestModelProvider.notifier).state =
+            container.read(collectionStateNotifierProvider)![selectedId];
+
+        await viewmodel.applyAutoFix(
+          ChatAction.fromJson({
+            'action': 'apply_openapi',
+            'actionType': 'apply_openapi',
+            'target': 'httpRequestModel',
+            'targetType': 'httpRequestModel',
+            'field': 'apply_to_selected',
+            'value': payload,
+          }),
+        );
+
+        final updatedRequest = container
+            .read(collectionStateNotifierProvider)![selectedId]!
+            .httpRequestModel!;
+        expect(updatedRequest.params, const [
+          NameValueModel(name: 'status', value: ''),
+          NameValueModel(name: 'limit', value: '10'),
+        ]);
+        expect(updatedRequest.isParamEnabledList, [true, true]);
+
+        // Convert the selected request to a non-REST request (e.g. websocket)
+        container.read(collectionStateNotifierProvider.notifier).update(
+              id: selectedId,
+              apiType: APIType.websocket,
+            );
+        container.read(selectedRequestModelProvider.notifier).state =
+            container.read(collectionStateNotifierProvider)![selectedId];
+        expect(
+          container.read(collectionStateNotifierProvider)![selectedId]!.apiType,
+          APIType.websocket,
+        );
+
+        // Applying to a selected non-REST request should convert it to REST
+        await viewmodel.applyAutoFix(
+          ChatAction.fromJson({
+            'action': 'apply_openapi',
+            'actionType': 'apply_openapi',
+            'target': 'httpRequestModel',
+            'targetType': 'httpRequestModel',
+            'field': 'apply_to_selected',
+            'value': payload,
+          }),
+        );
+
+        final convertedModel =
+            container.read(collectionStateNotifierProvider)![selectedId]!;
+        expect(convertedModel.apiType, APIType.rest);
+        expect(convertedModel.httpRequestModel!.params, const [
+          NameValueModel(name: 'status', value: ''),
+          NameValueModel(name: 'limit', value: '10'),
+        ]);
+        expect(convertedModel.httpRequestModel!.isParamEnabledList, [true, true]);
+      },
+    );
   });
 
   group('ChatViewmodel Attachment Tests', () {

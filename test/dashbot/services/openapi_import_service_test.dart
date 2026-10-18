@@ -261,6 +261,207 @@ void main() {
       },
     );
 
+    test('payloadForOperation extracts query parameter values', () {
+      const querySpecJson = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Query API", "version": "1.0.0"},
+  "paths": {
+    "/pets": {
+      "get": {
+        "parameters": [
+          {"name": "status", "in": "query", "schema": {"type": "string", "enum": ["available", "pending"]}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "default": 10}},
+          {"name": "sort", "in": "query", "schema": {"type": "string", "enum": ["name"]}},
+          {"name": "search", "in": "query", "example": "explicit", "schema": {"type": "string", "example": "schema", "default": "default"}},
+          {"name": "q", "in": "query", "schema": {"type": "string", "example": "schema-example", "default": "schema-default"}},
+          {"name": "X-Trace-Id", "in": "header", "schema": {"type": "string"}}
+        ],
+        "responses": {"200": {"description": "ok"}}
+      }
+    }
+  }
+}
+''';
+      final spec = OpenApiImportService.tryParseSpec(querySpecJson)!;
+      final payload = OpenApiImportService.payloadForOperation(
+        baseUrl: 'https://api.apidash.dev',
+        path: '/pets',
+        method: 'get',
+        op: spec.paths!['/pets']!.get!,
+      );
+
+      expect(payload['url'], 'https://api.apidash.dev/pets');
+      expect(payload['headers'], {'X-Trace-Id': ''});
+      expect(payload['params'], [
+        {'name': 'status', 'value': ''},
+        {'name': 'limit', 'value': '10'},
+        {'name': 'sort', 'value': 'name'},
+        {'name': 'search', 'value': 'explicit'},
+        {'name': 'q', 'value': 'schema-example'},
+      ]);
+      expect(
+        (payload['params'] as List).any(
+          (param) => param['name'] == 'q' && param['value'] == 'schema-example',
+        ),
+        true,
+      );
+    });
+
+    test('payloadForOperation inherits path-level query parameters', () {
+      const specJson = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Path Parameters API", "version": "1.0.0"},
+  "paths": {
+    "/pets": {
+      "parameters": [
+        {"name": "tenant", "in": "query", "schema": {"type": "string", "default": "north"}}
+      ],
+      "get": {"responses": {"200": {"description": "ok"}}}
+    }
+  }
+}
+''';
+      final spec = OpenApiImportService.tryParseSpec(specJson)!;
+      final pathItem = spec.paths!['/pets']!;
+      final payload = OpenApiImportService.payloadForOperation(
+        baseUrl: 'https://api.apidash.dev',
+        path: '/pets',
+        method: 'get',
+        op: pathItem.get!,
+        pathParameters: pathItem.parameters ?? const [],
+      );
+
+      expect(payload['params'], [
+        {'name': 'tenant', 'value': 'north'},
+      ]);
+    });
+
+    test('operation-level query parameter overrides path-level parameter', () {
+      const specJson = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Parameter Override API", "version": "1.0.0"},
+  "paths": {
+    "/pets": {
+      "parameters": [
+        {"name": "tenant", "in": "query", "schema": {"type": "string", "default": "north"}},
+        {"name": "region", "in": "query", "schema": {"type": "string", "default": "west"}}
+      ],
+      "get": {
+        "parameters": [
+          {"name": "tenant", "in": "query", "example": "south", "schema": {"type": "string", "default": "east"}}
+        ],
+        "responses": {"200": {"description": "ok"}}
+      }
+    }
+  }
+}
+''';
+      final spec = OpenApiImportService.tryParseSpec(specJson)!;
+      final pathItem = spec.paths!['/pets']!;
+      final payload = OpenApiImportService.payloadForOperation(
+        baseUrl: 'https://api.apidash.dev',
+        path: '/pets',
+        method: 'get',
+        op: pathItem.get!,
+        pathParameters: pathItem.parameters ?? const [],
+      );
+
+      // The inherited `region` stays in place, while `tenant` keeps its path
+      // item position and takes its value from the operation-level override.
+      expect(payload['params'], [
+        {'name': 'tenant', 'value': 'south'},
+        {'name': 'region', 'value': 'west'},
+      ]);
+    });
+
+    test(
+      'payloadForOperation serializes composite query defaults and examples',
+      () {
+        const specJson = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Composite Parameters API", "version": "1.0.0"},
+  "paths": {
+    "/search": {
+      "get": {
+        "parameters": [
+          {"name": "tag", "in": "query", "style": "form", "explode": true, "schema": {"type": "array", "items": {"type": "string"}, "default": ["red", "blue"]}},
+          {"name": "id", "in": "query", "style": "form", "explode": false, "schema": {"type": "array", "items": {"type": "integer"}, "example": [2, 4]}},
+          {"name": "filter", "in": "query", "style": "form", "explode": true, "schema": {"type": "object", "default": {"role": "admin", "active": true}}},
+          {"name": "extra", "in": "query", "style": "deepObject", "explode": true, "schema": {"type": "object", "default": {"color": "green", "size": "large"}}}
+        ],
+        "responses": {"200": {"description": "ok"}}
+      }
+    }
+  }
+}
+''';
+        final spec = OpenApiImportService.tryParseSpec(specJson)!;
+        final payload = OpenApiImportService.payloadForOperation(
+          baseUrl: 'https://api.apidash.dev',
+          path: '/search',
+          method: 'get',
+          op: spec.paths!['/search']!.get!,
+        );
+
+        expect(payload['params'], [
+          {'name': 'tag', 'value': 'red'},
+          {'name': 'tag', 'value': 'blue'},
+          {'name': 'id', 'value': '2,4'},
+          {'name': 'role', 'value': 'admin'},
+          {'name': 'active', 'value': 'true'},
+          {'name': 'extra[color]', 'value': 'green'},
+          {'name': 'extra[size]', 'value': 'large'},
+        ]);
+      },
+    );
+
+    test(
+      'payloadForOperation serializes spaceDelimited and pipeDelimited array styles',
+      () {
+        const specJson = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Delimited Parameters API", "version": "1.0.0"},
+  "paths": {
+    "/items": {
+      "get": {
+        "parameters": [
+          {"name": "s_unexploded", "in": "query", "style": "spaceDelimited", "explode": false, "schema": {"type": "array", "items": {"type": "string"}, "default": ["a", "b"]}},
+          {"name": "s_exploded", "in": "query", "style": "spaceDelimited", "explode": true, "schema": {"type": "array", "items": {"type": "string"}, "default": ["a", "b"]}},
+          {"name": "p_unexploded", "in": "query", "style": "pipeDelimited", "explode": false, "schema": {"type": "array", "items": {"type": "string"}, "default": ["x", "y"]}},
+          {"name": "p_exploded", "in": "query", "style": "pipeDelimited", "explode": true, "schema": {"type": "array", "items": {"type": "string"}, "default": ["x", "y"]}},
+          {"name": "obj_unexploded", "in": "query", "style": "form", "explode": false, "schema": {"type": "object", "default": {"k1": "v1", "k2": "v2"}}}
+        ],
+        "responses": {"200": {"description": "ok"}}
+      }
+    }
+  }
+}
+''';
+        final spec = OpenApiImportService.tryParseSpec(specJson)!;
+        final payload = OpenApiImportService.payloadForOperation(
+          baseUrl: 'https://api.apidash.dev',
+          path: '/items',
+          method: 'get',
+          op: spec.paths!['/items']!.get!,
+        );
+
+        expect(payload['params'], [
+          {'name': 's_unexploded', 'value': 'a b'},
+          {'name': 's_exploded', 'value': 'a'},
+          {'name': 's_exploded', 'value': 'b'},
+          {'name': 'p_unexploded', 'value': 'x|y'},
+          {'name': 'p_exploded', 'value': 'x'},
+          {'name': 'p_exploded', 'value': 'y'},
+          {'name': 'obj_unexploded', 'value': 'k1,v1,k2,v2'},
+        ]);
+      },
+    );
+
     test('payloadForOperation covers form request body variants', () {
       final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
       final postOp = spec.paths!['/search']!.post!; // multipart form

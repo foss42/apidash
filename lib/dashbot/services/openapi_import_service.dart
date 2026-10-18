@@ -41,8 +41,10 @@ class OpenApiImportService {
   /// Extract structured metadata from an OpenAPI spec for analytics/insights.
   /// Returns a JSON-serializable map capturing key details like title, version,
   /// servers, total endpoints, methods, tags and a concise list of routes.
-  static Map<String, dynamic> extractSpecMeta(OpenApi spec,
-      {int maxRoutes = 40}) {
+  static Map<String, dynamic> extractSpecMeta(
+    OpenApi spec, {
+    int maxRoutes = 40,
+  }) {
     final servers = (spec.servers ?? const [])
         .map((s) => s.url)
         .where((u) => (u ?? '').trim().isNotEmpty)
@@ -90,10 +92,7 @@ class OpenApiImportService {
         }
       });
       if (presentMethods.isNotEmpty) {
-        routes.add({
-          'path': path,
-          'methods': presentMethods,
-        });
+        routes.add({'path': path, 'methods': presentMethods});
       }
     });
 
@@ -112,8 +111,9 @@ class OpenApiImportService {
         .toList();
 
     // Trim routes list to keep payload light
-    final trimmedRoutes =
-        routes.length > maxRoutes ? routes.take(maxRoutes).toList() : routes;
+    final trimmedRoutes = routes.length > maxRoutes
+        ? routes.take(maxRoutes).toList()
+        : routes;
 
     return {
       'title': title,
@@ -179,6 +179,133 @@ class OpenApiImportService {
     return security.any((item) => item is List && item.isEmpty);
   }
 
+  static dynamic _initialQueryParameterValue(dynamic parameter) {
+    final parameterExample = parameter.example;
+    if (parameterExample != null) {
+      final schemaType = (parameter.schema as dynamic)?.type?.toString();
+      if (schemaType == 'SchemaType.array' ||
+          schemaType == 'SchemaType.object' ||
+          schemaType == 'SchemaType.map') {
+        if (parameterExample is String) {
+          try {
+            return jsonDecode(parameterExample);
+          } catch (_) {
+            // Keep non-JSON examples as their literal parameter value.
+          }
+        }
+      }
+      return parameterExample;
+    }
+
+    final schema = parameter.schema as dynamic;
+    if (schema == null) return null;
+    return switch (schema.type.toString()) {
+      'SchemaType.string' ||
+      'SchemaType.integer' ||
+      'SchemaType.number' ||
+      'SchemaType.boolean' => schema.example ?? schema.defaultValue,
+      'SchemaType.enumeration' =>
+        schema.example ??
+            schema.defaultValue ??
+            ((schema.values as List?)?.length == 1
+                ? (schema.values as List).first
+                : null),
+      'SchemaType.array' => schema.example ?? schema.defaultValue,
+      'SchemaType.object' => () {
+        try {
+          return (schema as dynamic).example ?? schema.defaultValue;
+        } catch (_) {
+          return schema.defaultValue;
+        }
+      }(),
+      'SchemaType.map' => schema.example ?? schema.defaultValue,
+      _ => null,
+    };
+  }
+
+  static List<Map<String, String>> _queryParameterRows(
+    String name,
+    dynamic value, {
+    required String? style,
+    required bool? explode,
+  }) {
+    if (value is List) {
+      if (value.isEmpty) {
+        return [
+          {'name': name, 'value': ''},
+        ];
+      }
+      final effectiveStyle = style ?? 'form';
+      final effectiveExplode = explode ?? (effectiveStyle == 'form');
+      if (effectiveExplode) {
+        return value
+            .map((item) => {'name': name, 'value': _queryValueString(item)})
+            .toList();
+      }
+      final delimiter = switch (effectiveStyle) {
+        'spaceDelimited' => ' ',
+        'pipeDelimited' => '|',
+        _ => ',',
+      };
+      return [
+        {'name': name, 'value': value.map(_queryValueString).join(delimiter)},
+      ];
+    }
+
+    if (value is Map) {
+      if (value.isEmpty) {
+        return [
+          {'name': name, 'value': ''},
+        ];
+      }
+      final effectiveStyle = style ?? 'form';
+      final effectiveExplode = explode ?? (effectiveStyle == 'form');
+      if (effectiveStyle == 'deepObject') {
+        return value.entries
+            .map(
+              (entry) => {
+                'name': '$name[${entry.key}]',
+                'value': _queryValueString(entry.value),
+              },
+            )
+            .toList();
+      }
+      if (effectiveStyle == 'form' && effectiveExplode) {
+        return value.entries
+            .map(
+              (entry) => {
+                'name': entry.key.toString(),
+                'value': _queryValueString(entry.value),
+              },
+            )
+            .toList();
+      }
+      return [
+        {
+          'name': name,
+          'value': value.entries
+              .expand(
+                (entry) => [
+                  entry.key.toString(),
+                  _queryValueString(entry.value),
+                ],
+              )
+              .join(','),
+        },
+      ];
+    }
+
+    return [
+      {'name': name, 'value': _queryValueString(value)},
+    ];
+  }
+
+  static String _queryValueString(dynamic value) {
+    if (value == null) return '';
+    if (value is Map || value is List) return jsonEncode(value);
+    return value.toString();
+  }
+
   /// Build a single request payload from a path + method operation.
   /// The payload mirrors CurlImportService payload shape for reuse.
   static Map<String, dynamic> _payloadForOperation({
@@ -186,6 +313,7 @@ class OpenApiImportService {
     required String path,
     required String method,
     required Operation op,
+    List<dynamic> pathParameters = const [],
   }) {
     // Resolve URL (server may include variables; keep as-is if any)
     final url = baseUrl.endsWith('/')
@@ -194,10 +322,44 @@ class OpenApiImportService {
 
     // Headers from parameters in header "in": "header"
     final headers = <String, String>{};
-    for (final p in op.parameters ?? const []) {
+    final params = <Map<String, String>>[];
+    final allParameters = <dynamic>[];
+    final parameterIndexes = <(String, String), int>{};
+    for (final p in [...pathParameters, ...?op.parameters]) {
+      final parameterJson = p.toJson();
+      final name = parameterJson['name'];
+      final location = parameterJson['in'];
+      if (name is String && location is String) {
+        final key = (name, location);
+        final existingIndex = parameterIndexes[key];
+        if (existingIndex == null) {
+          parameterIndexes[key] = allParameters.length;
+          allParameters.add(p);
+        } else {
+          // Operation-level entries occur later and override the path item.
+          allParameters[existingIndex] = p;
+        }
+      } else {
+        allParameters.add(p);
+      }
+    }
+
+    for (final p in allParameters) {
       // Use direct type checking since the parameter objects are union types
       if (p is ParameterHeader && p.name != null) {
         headers[p.name!] = '';
+      } else {
+        final parameterJson = p.toJson();
+        if (parameterJson['in'] == 'query' && parameterJson['name'] is String) {
+          params.addAll(
+            _queryParameterRows(
+              parameterJson['name'] as String,
+              _initialQueryParameterValue(p),
+              style: parameterJson['style'] as String?,
+              explode: parameterJson['explode'] as bool?,
+            ),
+          );
+        }
       }
     }
 
@@ -251,6 +413,7 @@ class OpenApiImportService {
       'url': url,
       'baseUrl': baseUrl,
       'headers': headers,
+      'params': params,
       'body': body,
       'form': isForm,
       'formData': formData,
@@ -263,16 +426,19 @@ class OpenApiImportService {
     required String path,
     required String method,
     required Operation op,
-  }) =>
-      _payloadForOperation(
-        baseUrl: baseUrl,
-        path: path,
-        method: method,
-        op: op,
-      );
+    List<dynamic> pathParameters = const [],
+  }) => _payloadForOperation(
+    baseUrl: baseUrl,
+    path: path,
+    method: method,
+    op: op,
+    pathParameters: pathParameters,
+  );
 
-  static Map<String, dynamic> buildOperationPicker(OpenApi spec,
-      {String? insights}) {
+  static Map<String, dynamic> buildOperationPicker(
+    OpenApi spec, {
+    String? insights,
+  }) {
     final servers = spec.servers ?? const [];
     int endpointsCount = 0;
     final methods = <String>{};
@@ -298,7 +464,7 @@ class OpenApiImportService {
       return {
         'explanation':
             'No operations found in the OpenAPI spec. Please check the file.',
-        'actions': []
+        'actions': [],
       };
     }
 
@@ -311,9 +477,9 @@ class OpenApiImportService {
       ..writeln('- Endpoints discovered: $endpointsCount')
       ..writeln('- Methods: ${methods.join(', ')}');
 
-    final explanation =
-        StringBuffer('OpenAPI parsed. Click Import Now to choose operations.')
-            .toString();
+    final explanation = StringBuffer(
+      'OpenAPI parsed. Click Import Now to choose operations.',
+    ).toString();
     return {
       'explanation': insights == null || insights.isEmpty
           ? '$explanation\n\n${summary.toString()}'
@@ -324,16 +490,13 @@ class OpenApiImportService {
           'target': 'httpRequestModel',
           'field': '',
           'path': null,
-          'value': {
-            'spec': spec,
-            'sourceName': title,
-          }
-        }
+          'value': {'spec': spec, 'sourceName': title},
+        },
       ],
       'meta': {
         'openapi_summary': summary.toString(),
         'openapi_meta': extractSpecMeta(spec),
-      }
+      },
     };
   }
 }
