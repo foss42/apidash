@@ -28,6 +28,7 @@ class HistoryResponsePane extends ConsumerWidget {
           // Fresh event-stream State per history entry (mirrors ResponseTabView).
           key: ValueKey(selectedId),
           historyMessages: wsModel?.messageHistory ?? [],
+          enableJsonWatch: true,
         );
       }
 
@@ -63,7 +64,7 @@ class HistoryResponsePane extends ConsumerWidget {
           Expanded(
             child: ResponseTabView(
               selectedId: selectedId,
-              headersTitle: requestModel?.apiType == APIType.grpc ? "Metadata" : kLabelHeaders,
+              headersTitle: requestModel.apiType == APIType.grpc ? "Metadata" : kLabelHeaders,
               children: [
                 ResponseBody(
                   selectedRequestModel: requestModel,

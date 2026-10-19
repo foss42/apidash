@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/ws_request_model.dart';
 import 'package:apidash/widgets/button_copy.dart';
+import 'package:apidash/utils/json_watch_utils.dart';
+import 'realtime_json_watch_view.dart';
 /// A real-time, log-style view of WebSocket messages.
 ///
 /// Each entry shows direction (sent / received), a timestamp, a label, and
@@ -13,10 +15,16 @@ import 'package:apidash/widgets/button_copy.dart';
 /// expands it (works with mouse and touch), and once expanded the text is
 /// selectable so part of it can be copied. "Show less" collapses it again.
 class RealtimeEventStreamView extends ConsumerStatefulWidget {
-  const RealtimeEventStreamView({super.key, this.historyMessages, this.onViewMetadata});
+  const RealtimeEventStreamView({
+    super.key,
+    this.historyMessages,
+    this.onViewMetadata,
+    this.enableJsonWatch = false,
+  });
 
   final List<WebSocketMessage>? historyMessages;
   final VoidCallback? onViewMetadata;
+  final bool enableJsonWatch;
 
   @override
   ConsumerState<RealtimeEventStreamView> createState() => _RealtimeEventStreamViewState();
@@ -26,6 +34,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
   final TextEditingController _filterController = TextEditingController();
   TextEditingController? _autocompleteController;
   String _filterQuery = "";
+  JsonWatchExpression? _watch;
   final List<String> _selectedTopics = [];
 
   /// Set by [Autocomplete.onSelected] so the field's submit handler can tell
@@ -33,6 +42,12 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
   /// (via RawAutocomplete's onFieldSubmitted, which selects the highlighted
   /// entry iff the options view is showing and is a no-op otherwise).
   bool _submitHandledBySelection = false;
+
+  @override
+  void didUpdateWidget(covariant RealtimeEventStreamView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!widget.enableJsonWatch) _watch = null;
+  }
 
   @override
   void dispose() {
@@ -105,7 +120,7 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (history.isNotEmpty)
+        if (history.isNotEmpty || widget.enableJsonWatch)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Column(
@@ -247,6 +262,22 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                         },
                       ),
                     ),
+                    if (widget.enableJsonWatch) ...[
+                      kHSpacer5,
+                      IconButton(
+                        key: const ValueKey('websocket-watch-button'),
+                        icon: Icon(
+                          _watch == null
+                              ? Icons.visibility_outlined
+                              : Icons.visibility,
+                          size: 18,
+                        ),
+                        tooltip: _watch == null
+                            ? 'Watch a JSON value'
+                            : 'Edit JSON watch',
+                        onPressed: () => _configureWatch(context),
+                      ),
+                    ],
                     if (widget.historyMessages == null) ...[
                       kHSpacer5,
             if (grpcModel != null && widget.onViewMetadata != null)
@@ -288,6 +319,28 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
               ],
             ),
           ),
+        if (_watch != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Watching ${_watch!.source}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ),
+                IconButton(
+                  key: const ValueKey('websocket-stop-watch-button'),
+                  tooltip: 'Stop watching',
+                  icon: const Icon(Icons.close, size: 18),
+                  onPressed: () => setState(() => _watch = null),
+                ),
+              ],
+            ),
+          ),
         const Divider(height: 1),
         // Log content
         Expanded(
@@ -298,10 +351,27 @@ class _RealtimeEventStreamViewState extends ConsumerState<RealtimeEventStreamVie
                     style: TextStyle(color: Colors.grey),
                   ),
                 )
-              : _buildLogView(context, displayHistory),
+              : _watch != null
+                  ? RealtimeJsonWatchView(
+                      history: filteredHistory,
+                      expression: _watch!,
+                      maxEvents: maxEvents,
+                    )
+                  : _buildLogView(context, displayHistory),
         ),
       ],
     );
+  }
+
+  Future<void> _configureWatch(BuildContext context) async {
+    final expression = await showJsonWatchDialog(
+      context,
+      currentExpression: _watch?.source ?? '',
+    );
+    if (expression == null || !mounted || !widget.enableJsonWatch) return;
+    setState(() {
+      _watch = expression.isEmpty ? null : JsonWatchExpression.parse(expression);
+    });
   }
 
   Widget _buildLogView(

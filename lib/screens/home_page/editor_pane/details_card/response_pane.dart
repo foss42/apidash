@@ -132,6 +132,9 @@ class _WsResponsePanelState extends ConsumerState<_WsResponsePanel> {
     return RealtimeEventStreamView(
       key: ValueKey(selectedId),
       onViewMetadata: () => setState(() => _showMetadata = true),
+      enableJsonWatch: ref.watch(
+        selectedRequestModelProvider.select((value) => value?.apiType),
+      ) == APIType.websocket,
     );
   }
 }
