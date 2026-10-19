@@ -50,57 +50,53 @@ class HarParserIO {
     String? body;
     List<FormDataModel>? formData = [];
 
-    if (request.postData?.mimeType == "application/json") {
-      bodyContentType = ContentType.json;
-      body = request.postData?.text;
-    }
-    FormDataType formDataType = FormDataType.text;
-    if (request.postData?.mimeType == "application/x-www-form-urlencoded") {
-      bodyContentType = ContentType.formdata;
-      var formDataStr = request.postData?.text;
-      Map<String, String> parsedData = parseFormData(formDataStr);
-      parsedData.forEach((key, value) {
-        formDataType = FormDataType.text;
-        var name = key;
-        var val = value;
-        formData.add(FormDataModel(
-          name: name,
-          value: val,
-          type: formDataType,
-        ));
-      });
-    }
+    final postData = request.postData;
+    final bodyMediaType = getMediaTypeFromContentType(postData?.mimeType);
 
-    if (request.postData?.mimeType == "multipart/form-data") {
-      bodyContentType = ContentType.formdata;
-      String? name, val;
-      for (var fd in request.postData?.params ?? <har.Param>[]) {
-        name = fd.name;
-        if (fd.contentType == "text/plain") {
-          formDataType = FormDataType.text;
-          val = fd.value;
-        } else {
-          formDataType = FormDataType.file;
-          val = fd.fileName;
+    if (bodyMediaType != null) {
+      if (bodyMediaType.subtype.contains('json')) {
+        bodyContentType = ContentType.json;
+        body = postData?.text;
+      } else if (bodyMediaType.mimeType ==
+          'application/x-www-form-urlencoded') {
+        bodyContentType = ContentType.formdata;
+        parseFormData(postData?.text).forEach((key, value) {
+          formData.add(
+            FormDataModel(name: key, value: value, type: FormDataType.text),
+          );
+        });
+      } else if (bodyMediaType.type == 'multipart' &&
+          bodyMediaType.subtype == 'form-data') {
+        bodyContentType = ContentType.formdata;
+        for (var fd in postData?.params ?? <har.Param>[]) {
+          final isText =
+              getMediaTypeFromContentType(fd.contentType)?.mimeType ==
+              'text/plain';
+          formData.add(
+            FormDataModel(
+              name: fd.name ?? "",
+              value: (isText ? fd.value : fd.fileName) ?? "",
+              type: isText ? FormDataType.text : FormDataType.file,
+            ),
+          );
         }
-        formData.add(FormDataModel(
-          name: name ?? "",
-          value: val ?? "",
-          type: formDataType,
-        ));
+      } else {
+        bodyContentType = ContentType.text;
+        body = postData?.text;
       }
     }
 
     return HttpRequestModel(
-        method: method,
-        url: url,
-        headers: headers,
-        params: params,
-        isHeaderEnabledList: isHeaderEnabledList,
-        isParamEnabledList: isParamEnabledList,
-        body: body,
-        bodyContentType: bodyContentType,
-        formData: formData);
+      method: method,
+      url: url,
+      headers: headers,
+      params: params,
+      isHeaderEnabledList: isHeaderEnabledList,
+      isParamEnabledList: isParamEnabledList,
+      body: body,
+      bodyContentType: bodyContentType,
+      formData: formData,
+    );
   }
 
   Map<String, String> parseFormData(String? data) {
