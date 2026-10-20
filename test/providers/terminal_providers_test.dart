@@ -166,6 +166,21 @@ void main() {
       expect(idxMap[entries.first.id], 0);
     });
 
+    test('entries are capped at maxEntries, dropping the oldest', () {
+      for (var i = 0; i < TerminalController.maxEntries + 5; i++) {
+        controller.logSystem(category: 'c$i', message: 'm$i');
+      }
+      final state = container.read(terminalStateProvider);
+      expect(state.entries.length, TerminalController.maxEntries);
+      expect(state.index.length, TerminalController.maxEntries);
+      // newest first; the 5 oldest were dropped
+      expect(
+        state.entries.first.system?.category,
+        'c${TerminalController.maxEntries + 4}',
+      );
+      expect(state.entries.last.system?.category, 'c5');
+    });
+
     test('serializeAll with provided entries includes ISO timestamps', () {
       final e1 = TerminalEntry(
         id: 'x1',
