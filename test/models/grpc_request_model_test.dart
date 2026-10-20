@@ -67,6 +67,43 @@ void main() {
       expect(map['Authorization'], 'Bearer token');
     });
 
+    test('metadataMap excludes unchecked rows', () {
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-on', value: '1'),
+          NameValueModel(name: 'x-off', value: '2'),
+        ],
+        isMetadataEnabled: [true, false],
+      );
+      expect(model.metadataMap, {'x-on': '1'});
+    });
+
+    test('metadataMap is empty when all rows are unchecked', () {
+      const model = GrpcRequestModel(
+        metadata: [NameValueModel(name: 'x-off', value: '2')],
+        isMetadataEnabled: [false],
+      );
+      expect(model.metadataMap, isEmpty);
+    });
+
+    test('metadataMap treats legacy/mismatched enabled list as enabled', () {
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'a', value: '1'),
+          NameValueModel(name: 'b', value: '2'),
+        ],
+        isMetadataEnabled: [false],
+      );
+      expect(model.metadataMap, {'a': '1', 'b': '2'});
+      expect(
+        const GrpcRequestModel(
+          metadata: [NameValueModel(name: 'a', value: '1')],
+          isMetadataEnabled: null,
+        ).metadataMap,
+        {'a': '1'},
+      );
+    });
+
     test('metadataMap handles null metadata', () {
       const model = GrpcRequestModel(metadata: null);
       final map = model.metadataMap;
