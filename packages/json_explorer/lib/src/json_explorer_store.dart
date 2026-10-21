@@ -688,8 +688,11 @@ class JsonExplorerStore extends ChangeNotifier {
 
   /// Finds all occurrences of [searchTerm] in [victim] and retrieves all their
   /// indexes.
+  ///
+  /// The search term is matched as literal text, so regex metacharacters
+  /// (e.g. `[`, `(`, `*`) are not interpreted as patterns.
   Iterable<int> _getSearchTermMatchesIndexes(String victim) {
-    final pattern = RegExp(searchTerm, caseSensitive: false);
+    final pattern = RegExp(RegExp.escape(searchTerm), caseSensitive: false);
 
     final matches = pattern.allMatches(victim).map((match) => match.start);
 
