@@ -566,4 +566,19 @@ void main() {
       ),
     );
   });
+
+  test('parse cURL keeps quotes inside the URL', () {
+    expect(
+      Curl.parse(
+        r"""curl "https://api.apidash.dev/books?author=O'Reilly" """,
+      ).uri.queryParameters['author'],
+      "O'Reilly",
+    );
+    expect(
+      Curl.parse(
+        r"""curl 'https://api.apidash.dev/filter?field="active"'""",
+      ).uri.queryParameters['field'],
+      '"active"',
+    );
+  });
 }
