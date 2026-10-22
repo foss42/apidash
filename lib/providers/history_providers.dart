@@ -8,7 +8,7 @@ final selectedHistoryIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestGroupIdStateProvider = StateProvider<String?>((ref) {
   final selectedHistoryId = ref.watch(selectedHistoryIdStateProvider);
-  final historyMetaState = ref.read(historyMetaStateNotifier);
+  final historyMetaState = ref.watch(historyMetaStateNotifier);
   if (selectedHistoryId == null) {
     return null;
   }
