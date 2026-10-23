@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:better_networking/better_networking.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:test/test.dart';
 
 void main() {
@@ -459,6 +461,115 @@ void main() {
             ),
           ),
         );
+      },
+    );
+
+    test(
+      'given handleAuth when OAuth2 authorizationCode grant is provided without redirectUrl then it should throw Exception',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const oauth2Auth = AuthOAuth2Model(
+          grantType: OAuth2GrantType.authorizationCode,
+          authorizationUrl: 'https://example.com/auth',
+          accessTokenUrl: 'https://example.com/token',
+          clientId: 'client-id',
+          clientSecret: 'client-secret',
+          redirectUrl: null,
+        );
+        const authModel = AuthModel(
+          type: APIAuthType.oauth2,
+          oauth2: oauth2Auth,
+        );
+
+        expect(
+          () async => await handleAuth(httpRequestModel, authModel),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('No Redirect URL found!'),
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'given handleAuth when OAuth2 clientCredentials grant is provided with null redirectUrl and valid credentials file then it should add authorization header',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        final tempDir = await Directory.systemTemp.createTemp('oauth2_cc_test');
+        final credFile = File('${tempDir.path}/credentials.json');
+        final credentials = oauth2.Credentials(
+          'test-client-token',
+          expiration: DateTime.now().add(const Duration(hours: 1)),
+        );
+        await credFile.writeAsString(credentials.toJson());
+
+        final oauth2Auth = AuthOAuth2Model(
+          grantType: OAuth2GrantType.clientCredentials,
+          authorizationUrl: 'https://example.com/auth',
+          accessTokenUrl: 'https://example.com/token',
+          clientId: 'client-id',
+          clientSecret: 'client-secret',
+          credentialsFilePath: credFile.path,
+          redirectUrl: null,
+        );
+        final authModel = AuthModel(
+          type: APIAuthType.oauth2,
+          oauth2: oauth2Auth,
+        );
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isNotEmpty);
+        expect(
+          result.headers?.any(
+            (h) =>
+                h.name.toLowerCase() == 'authorization' &&
+                h.value == 'Bearer test-client-token',
+          ),
+          isTrue,
+        );
+
+        await tempDir.delete(recursive: true);
+      },
+    );
+
+    test(
+      'given handleAuth when OAuth2 clientCredentials grant is provided with null redirectUrl then it should not throw No Redirect URL found exception',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const oauth2Auth = AuthOAuth2Model(
+          grantType: OAuth2GrantType.clientCredentials,
+          authorizationUrl: 'https://example.com/auth',
+          accessTokenUrl: 'https://example.com/token',
+          clientId: 'client-id',
+          clientSecret: 'client-secret',
+          redirectUrl: null,
+        );
+        const authModel = AuthModel(
+          type: APIAuthType.oauth2,
+          oauth2: oauth2Auth,
+        );
+
+        try {
+          await handleAuth(httpRequestModel, authModel);
+        } catch (e) {
+          expect(e.toString(), isNot(contains('No Redirect URL found!')));
+        }
       },
     );
 
