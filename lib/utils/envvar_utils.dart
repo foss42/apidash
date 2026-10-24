@@ -107,8 +107,8 @@ AuthModel? substituteAuthModel(
         final basic = authModel.basic!;
         return authModel.copyWith(
           basic: basic.copyWith(
-            username: substituteVariables(basic.username, envVarMap)!,
-            password: substituteVariables(basic.password, envVarMap)!,
+            username: substituteVariables(basic.username, envVarMap) ?? basic.username,
+            password: substituteVariables(basic.password, envVarMap) ?? basic.password,
           ),
         );
       }
@@ -118,7 +118,7 @@ AuthModel? substituteAuthModel(
         final bearer = authModel.bearer!;
         return authModel.copyWith(
           bearer: bearer.copyWith(
-            token: substituteVariables(bearer.token, envVarMap)!,
+            token: substituteVariables(bearer.token, envVarMap) ?? bearer.token,
           ),
         );
       }
@@ -128,8 +128,8 @@ AuthModel? substituteAuthModel(
         final apiKey = authModel.apikey!;
         return authModel.copyWith(
           apikey: apiKey.copyWith(
-            key: substituteVariables(apiKey.key, envVarMap)!,
-            name: substituteVariables(apiKey.name, envVarMap)!,
+            key: substituteVariables(apiKey.key, envVarMap) ?? apiKey.key,
+            name: substituteVariables(apiKey.name, envVarMap) ?? apiKey.name,
           ),
         );
       }
@@ -139,10 +139,10 @@ AuthModel? substituteAuthModel(
         final jwt = authModel.jwt!;
         return authModel.copyWith(
           jwt: jwt.copyWith(
-            secret: substituteVariables(jwt.secret, envVarMap)!,
+            secret: substituteVariables(jwt.secret, envVarMap) ?? jwt.secret,
             privateKey:
                 substituteVariables(jwt.privateKey, envVarMap) ?? jwt.privateKey,
-            payload: substituteVariables(jwt.payload, envVarMap)!,
+            payload: substituteVariables(jwt.payload, envVarMap) ?? jwt.payload,
           ),
         );
       }
@@ -152,12 +152,12 @@ AuthModel? substituteAuthModel(
         final digest = authModel.digest!;
         return authModel.copyWith(
           digest: digest.copyWith(
-            username: substituteVariables(digest.username, envVarMap)!,
-            password: substituteVariables(digest.password, envVarMap)!,
-            realm: substituteVariables(digest.realm, envVarMap)!,
-            nonce: substituteVariables(digest.nonce, envVarMap)!,
-            qop: substituteVariables(digest.qop, envVarMap)!,
-            opaque: substituteVariables(digest.opaque, envVarMap)!,
+            username: substituteVariables(digest.username, envVarMap) ?? digest.username,
+            password: substituteVariables(digest.password, envVarMap) ?? digest.password,
+            realm: substituteVariables(digest.realm, envVarMap) ?? digest.realm,
+            nonce: substituteVariables(digest.nonce, envVarMap) ?? digest.nonce,
+            qop: substituteVariables(digest.qop, envVarMap) ?? digest.qop,
+            opaque: substituteVariables(digest.opaque, envVarMap) ?? digest.opaque,
           ),
         );
       }
@@ -167,18 +167,18 @@ AuthModel? substituteAuthModel(
         final oauth1 = authModel.oauth1!;
         return authModel.copyWith(
           oauth1: oauth1.copyWith(
-            consumerKey: substituteVariables(oauth1.consumerKey, envVarMap)!,
-            consumerSecret: substituteVariables(oauth1.consumerSecret, envVarMap)!,
-            credentialsFilePath: substituteVariables(oauth1.credentialsFilePath, envVarMap)!,
-            accessToken: substituteVariables(oauth1.accessToken, envVarMap)!,
-            tokenSecret: substituteVariables(oauth1.tokenSecret, envVarMap)!,
-            parameterLocation: substituteVariables(oauth1.parameterLocation, envVarMap)!,
-            version: substituteVariables(oauth1.version, envVarMap)!,
-            realm: substituteVariables(oauth1.realm, envVarMap)!,
-            callbackUrl: substituteVariables(oauth1.callbackUrl, envVarMap)!,
-            verifier: substituteVariables(oauth1.verifier, envVarMap)!,
-            nonce: substituteVariables(oauth1.nonce, envVarMap)!,
-            timestamp: substituteVariables(oauth1.timestamp, envVarMap)!,
+            consumerKey: substituteVariables(oauth1.consumerKey, envVarMap) ?? oauth1.consumerKey,
+            consumerSecret: substituteVariables(oauth1.consumerSecret, envVarMap) ?? oauth1.consumerSecret,
+            credentialsFilePath: substituteVariables(oauth1.credentialsFilePath, envVarMap),
+            accessToken: substituteVariables(oauth1.accessToken, envVarMap),
+            tokenSecret: substituteVariables(oauth1.tokenSecret, envVarMap),
+            parameterLocation: substituteVariables(oauth1.parameterLocation, envVarMap) ?? oauth1.parameterLocation,
+            version: substituteVariables(oauth1.version, envVarMap) ?? oauth1.version,
+            realm: substituteVariables(oauth1.realm, envVarMap),
+            callbackUrl: substituteVariables(oauth1.callbackUrl, envVarMap),
+            verifier: substituteVariables(oauth1.verifier, envVarMap),
+            nonce: substituteVariables(oauth1.nonce, envVarMap),
+            timestamp: substituteVariables(oauth1.timestamp, envVarMap),
           ),
         );
       }
@@ -188,22 +188,22 @@ AuthModel? substituteAuthModel(
         final oauth2 = authModel.oauth2!;
         return authModel.copyWith(
           oauth2: oauth2.copyWith(
-            authorizationUrl: substituteVariables(oauth2.authorizationUrl, envVarMap)!,
-            accessTokenUrl: substituteVariables(oauth2.accessTokenUrl, envVarMap)!,
-            clientId: substituteVariables(oauth2.clientId, envVarMap)!,
-            clientSecret: substituteVariables(oauth2.clientSecret, envVarMap)!,
-            credentialsFilePath: substituteVariables(oauth2.credentialsFilePath, envVarMap)!,
-            redirectUrl: substituteVariables(oauth2.redirectUrl, envVarMap)!,
-            scope: substituteVariables(oauth2.scope, envVarMap)!,
-            state: substituteVariables(oauth2.state, envVarMap)!,
-            codeChallengeMethod: substituteVariables(oauth2.codeChallengeMethod, envVarMap)!,
-            codeVerifier: substituteVariables(oauth2.codeVerifier, envVarMap)!,
-            codeChallenge: substituteVariables(oauth2.codeChallenge, envVarMap)!,
-            username: substituteVariables(oauth2.username, envVarMap)!,
-            password: substituteVariables(oauth2.password, envVarMap)!,
-            refreshToken: substituteVariables(oauth2.refreshToken, envVarMap)!,
-            identityToken: substituteVariables(oauth2.identityToken, envVarMap)!,
-            accessToken: substituteVariables(oauth2.accessToken, envVarMap)!,
+            authorizationUrl: substituteVariables(oauth2.authorizationUrl, envVarMap) ?? oauth2.authorizationUrl,
+            accessTokenUrl: substituteVariables(oauth2.accessTokenUrl, envVarMap) ?? oauth2.accessTokenUrl,
+            clientId: substituteVariables(oauth2.clientId, envVarMap) ?? oauth2.clientId,
+            clientSecret: substituteVariables(oauth2.clientSecret, envVarMap) ?? oauth2.clientSecret,
+            credentialsFilePath: substituteVariables(oauth2.credentialsFilePath, envVarMap),
+            redirectUrl: substituteVariables(oauth2.redirectUrl, envVarMap),
+            scope: substituteVariables(oauth2.scope, envVarMap),
+            state: substituteVariables(oauth2.state, envVarMap),
+            codeChallengeMethod: substituteVariables(oauth2.codeChallengeMethod, envVarMap) ?? oauth2.codeChallengeMethod,
+            codeVerifier: substituteVariables(oauth2.codeVerifier, envVarMap),
+            codeChallenge: substituteVariables(oauth2.codeChallenge, envVarMap),
+            username: substituteVariables(oauth2.username, envVarMap),
+            password: substituteVariables(oauth2.password, envVarMap),
+            refreshToken: substituteVariables(oauth2.refreshToken, envVarMap),
+            identityToken: substituteVariables(oauth2.identityToken, envVarMap),
+            accessToken: substituteVariables(oauth2.accessToken, envVarMap),
           ),
         );
       }
