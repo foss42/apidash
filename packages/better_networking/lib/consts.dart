@@ -172,7 +172,8 @@ List<String> kStreamingResponseTypes = [
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
-  formdata("$kTypeMultipart/$kSubTypeFormData");
+  formdata("$kTypeMultipart/$kSubTypeFormData"),
+  file("$kTypeApplication/$kSubTypeOctetStream");
 
   const ContentType(this.header);
   final String header;

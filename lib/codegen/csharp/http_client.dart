@@ -77,6 +77,11 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
     var content = new StringContent(payload, null, "{{ mediaType }}");
 ''';
 
+  final String kTemplateFileBody = '''
+    var content = new StreamContent(File.OpenRead("{{ body }}"));
+    content.Headers.ContentType = new MediaTypeHeaderValue("{{ mediaType }}");
+''';
+
   final String kStringContentSetup = '''
     request.Content = content;
 ''';
@@ -94,7 +99,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       StringBuffer result = StringBuffer();
 
       // Include necessary C# namespace
-      String formdataImport = requestModel.hasFormData 
+      String formdataImport = requestModel.hasFormData || requestModel.hasFileData
       ? "multipart" //(requestModel.hasFileInFormData ? "multipart" : "urlencoded")
       : "nodata";
       result.writeln(jj.Template(kTemplateNamespaces)
@@ -130,7 +135,12 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
        requestModel.hasBody) {
         var requestBody = requestModel.body;
 
-        if (!requestModel.hasFormData &&
+        if (requestModel.hasFileData) {
+          result.writeln(jj.Template(kTemplateFileBody).render({
+            "body": requestModel.bodyFile,
+            "mediaType": requestModel.bodyContentType.header,
+          }));
+        } else if (!requestModel.hasFormData &&
          requestBody != null &&
           requestBody.isNotEmpty) {
             // if the request body is not formdata then render raw text body

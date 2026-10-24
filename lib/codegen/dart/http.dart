@@ -19,6 +19,7 @@ class DartHttpCodeGen {
         contentType: requestModel.bodyContentType,
         hasContentTypeHeader: requestModel.hasContentTypeHeader,
         body: requestModel.body,
+        fileBody: requestModel.bodyFile,
         formData: requestModel.formDataMapList,
       );
       return next;
@@ -34,6 +35,7 @@ class DartHttpCodeGen {
     required Map<String, String> headers,
     required ContentType contentType,
     required String? body,
+    required String? fileBody,
     required bool hasContentTypeHeader,
     required List<Map<String, dynamic>> formData,
   }) {
@@ -48,14 +50,18 @@ class DartHttpCodeGen {
         declareVar('uri').assign(refer('Uri.parse').call([literalString(parsedUrl)]));
 
     Expression? dataExp;
-    if (kMethodsWithBody.contains(method) &&
-        (body?.isNotEmpty ?? false) &&
-        contentType != ContentType.formdata) {
-      final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
-      dataExp = declareVar('body', type: refer('String')).assign(strContent);
-      if (!hasContentTypeHeader) {
-        headers.putIfAbsent(
-            HttpHeaders.contentTypeHeader, () => contentType.header);
+    if (kMethodsWithBody.contains(method) && contentType != ContentType.formdata) {
+      if (contentType == ContentType.file && fileBody != null && fileBody.isNotEmpty) {
+        final ioImport = Directive.import('dart:io', as: 'io');
+        sbf.writeln(ioImport.accept(emitter));
+        dataExp = declareVar('body', type: refer('io.File')).assign(refer('io.File').call([literalString(fileBody)]).property('openRead').call([]));
+      } else if ((body?.isNotEmpty ?? false)) {
+        final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
+        dataExp = declareVar('body', type: refer('String')).assign(strContent);
+        if (!hasContentTypeHeader) {
+          headers.putIfAbsent(
+              HttpHeaders.contentTypeHeader, () => contentType.header);
+        }
       }
     }
 

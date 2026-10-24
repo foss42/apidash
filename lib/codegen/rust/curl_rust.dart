@@ -123,7 +123,9 @@ fn main() {
         result += methodTemplate.render({"method": requestModel.method.name.toLowerCase()});
 
         // Request body
-        if (requestModel.hasTextData) {
+        if (requestModel.hasFileData) {
+          result += "easy.add_post_field(\"\", \"@${requestModel.bodyFile}\")\n";
+        } else if (requestModel.hasTextData) {
           var templateBody = jj.Template(kTemplateRawBody);
           result += templateBody.render({"body": requestModel.body});
         } else if (requestModel.hasJsonData) {

@@ -142,6 +142,10 @@ import okhttp3.MediaType.Companion.toMediaType""";
           result += formDataTemplate.render({
             "formDataList": modifiedFormDataList,
           });
+        } else if (requestModel.hasFileData) {
+          hasBody = true;
+          result += "        val mediaType = MediaType.parse(\"application/octet-stream\")\n";
+          result += "        val body = RequestBody.create(mediaType, File(\"${requestModel.bodyFile}\"))\n";
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {

@@ -129,6 +129,13 @@ final String kTemplateUrlQuery = '''
           result += formDataTemplate.render({
             "formDataList": requestModel.formDataMapList,
           });
+        } else if (requestModel.hasFileData) {
+          hasBody = true;
+          var templateBody = jj.Template(kTemplateRequestBody);
+          result += templateBody.render({
+            "contentType": requestModel.bodyContentType.header,
+            "body": "new File(\"${requestModel.bodyFile}\")",
+          });
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {

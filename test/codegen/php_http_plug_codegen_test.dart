@@ -842,6 +842,35 @@ echo $response->getBody();
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+
+$uri = "https://api.apidash.dev/io/img";
+$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$stream = fopen('/Documents/up/1.png', 'r');
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStreamFromResource($stream));
+$client = Psr18ClientDiscovery::find();
+$response = $client->sendRequest($request);
+
+echo $response->getStatusCode() . " " . $response->getReasonPhrase() . "\n";
+echo $response->getBody();
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpHttpPlug,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

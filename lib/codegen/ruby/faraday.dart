@@ -125,6 +125,11 @@ puts "Response Body: #{response.body}"
         result += templateBody.render({
           "body": requestModel.body,
         });
+      } else if (requestModel.hasFileData) {
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({
+          "body": "File.binread(\"${requestModel.bodyFile}\")",
+        });
       }
 
       // creating faraday connection for request
@@ -146,7 +151,7 @@ puts "Response Body: #{response.body}"
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
-        if (requestModel.hasJsonData || requestModel.hasTextData) {
+        if (requestModel.hasJsonData || requestModel.hasTextData || requestModel.hasFileData) {
           headers[kHeaderContentType] = requestModel.bodyContentType.header;
         }
       }

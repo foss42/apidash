@@ -85,7 +85,7 @@ puts "Response Headers: #{response.to_hash}"
 
       var headers = requestModel.enabledHeadersMap;
       if (!requestModel.hasContentTypeHeader &&
-          (requestModel.hasJsonData || requestModel.hasTextData)) {
+          (requestModel.hasJsonData || requestModel.hasTextData || requestModel.hasFileData)) {
         headers[kHeaderContentType] = requestModel.bodyContentType.header;
       }
 
@@ -101,6 +101,8 @@ puts "Response Headers: #{response.to_hash}"
         result += templateBody.render({
           "body": requestModel.body,
         });
+      } else if (requestModel.hasFileData) {
+        result += "request.body = File.binread(\"${requestModel.bodyFile}\")\n";
       }
 
       if (requestModel.hasFormData) {
