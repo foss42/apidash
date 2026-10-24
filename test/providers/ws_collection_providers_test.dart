@@ -425,6 +425,40 @@ void main() async {
       expect(ConnectionManager.instance.hasConnection(id), false);
     });
 
+    test(
+      'remove() on a grpc request tears down the active connection',
+      () async {
+        final id = notifier.state!.entries.first.key;
+        notifier.update(id: id, apiType: APIType.grpc);
+        notifier.update(
+          id: id,
+          grpcRequestModel: const GrpcRequestModel(url: 'localhost'),
+        );
+
+        await ConnectionManager.instance.connectGrpc(
+          id,
+          const GrpcRequestModel(url: 'localhost'),
+        );
+        expect(ConnectionManager.instance.hasConnection(id), true);
+
+        notifier.remove(id: id);
+
+        expect(ConnectionManager.instance.hasConnection(id), false);
+        expect(notifier.hasId(id), false);
+      },
+    );
+
+    test('remove() is safe when removing an mqtt request', () {
+      final id = notifier.state!.entries.first.key;
+      notifier.update(id: id, apiType: APIType.mqtt);
+      expect(ConnectionManager.instance.hasConnection(id), false);
+
+      // Should not throw and calls disconnectMqtt cleanly.
+      notifier.remove(id: id);
+      expect(notifier.hasId(id), false);
+      expect(ConnectionManager.instance.hasConnection(id), false);
+    });
+
     tearDown(() {
       container.dispose();
     });
