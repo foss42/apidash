@@ -105,4 +105,33 @@ void main() {
       'A: 1',
     ]);
   }, timeout: defaultTimeout);
+
+  group('clean', () {
+    test('removes matching surrounding quotes', () {
+      expect(clean('"https://api.example.com"'), 'https://api.example.com');
+      expect(clean("'https://api.example.com'"), 'https://api.example.com');
+    });
+
+    test('keeps quotes inside the value', () {
+      expect(
+        clean('"https://api.example.com/books?author=O\'Reilly"'),
+        "https://api.example.com/books?author=O'Reilly",
+      );
+      expect(
+        clean("'https://api.example.com/filter?field=\"active\"'"),
+        'https://api.example.com/filter?field="active"',
+      );
+      expect(
+        clean("https://api.example.com/books?author=O'Reilly"),
+        "https://api.example.com/books?author=O'Reilly",
+      );
+    });
+
+    test('leaves unmatched or short values unchanged', () {
+      expect(clean(null), isNull);
+      expect(clean(''), '');
+      expect(clean('"'), '"');
+      expect(clean('"https://api.example.com\''), '"https://api.example.com\'');
+    });
+  });
 }
