@@ -183,16 +183,15 @@ Future<HttpRequestModel> handleAuth(
         throw Exception("Failed to get OAuth2 Data");
       }
 
-      if (oauth2.redirectUrl == null) {
-        throw Exception("No Redirect URL found!");
-      }
-
       final credentialsFile = oauth2.credentialsFilePath != null
           ? File(oauth2.credentialsFilePath!)
           : null;
 
       switch (oauth2.grantType) {
         case OAuth2GrantType.authorizationCode:
+          if (oauth2.redirectUrl == null) {
+            throw Exception("No Redirect URL found!");
+          }
           // Use localhost callback server for desktop platforms, fallback to custom scheme for mobile
           final res = await oAuth2AuthorizationCodeGrant(
             identifier: oauth2.clientId,
