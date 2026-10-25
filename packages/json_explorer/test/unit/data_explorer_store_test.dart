@@ -668,9 +668,11 @@ void main() {
           store.searchResults.first.matchLocation,
           SearchMatchLocation.value,
         );
+        expect(store.searchResults.first.matchIndex, 23);
 
         store.search('.com/');
         expect(store.searchResults, hasLength(1));
+        expect(store.searchResults.first.matchIndex, 15);
       });
 
       group('expand parent nodes', () {
