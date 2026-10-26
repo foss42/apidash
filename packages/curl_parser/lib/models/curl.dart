@@ -124,8 +124,9 @@ abstract class Curl with _$Curl {
         if (recognizedAbbrs.contains(token)) {
           filteredTokens.add(token);
         } else {
-          // Drop unknown short option
-          continue;
+          // Expand attached values (-XDELETE) and combined flags (-sL),
+          // dropping anything from the first unknown short option onwards
+          filteredTokens.addAll(_expandShortOptions(token, parser));
         }
       } else {
         // Positional arg (likely URL)
@@ -333,6 +334,25 @@ abstract class Curl with _$Curl {
   }
 
   /// Builds the [ArgParser] for cURL command-line options.
+  /// Splits a short option group such as `-XDELETE` or `-sL` into
+  /// separate tokens (`-X DELETE`, `-s -L`).
+  ///
+  /// Stops at the first unrecognized option, since it is unknown whether
+  /// the remaining characters are flags or that option's value.
+  static List<String> _expandShortOptions(String token, ArgParser parser) {
+    final expanded = <String>[];
+    for (var i = 1; i < token.length; i++) {
+      final option = parser.findByAbbreviation(token[i]);
+      if (option == null) break;
+      expanded.add('-${token[i]}');
+      if (!option.isFlag) {
+        if (i + 1 < token.length) expanded.add(token.substring(i + 1));
+        break;
+      }
+    }
+    return expanded;
+  }
+
   static ArgParser _buildArgParser() {
     final parser = ArgParser(allowTrailingOptions: true);
 
@@ -363,6 +383,7 @@ abstract class Curl with _$Curl {
 
     // Common non-request flags (parsed and ignored)
     parser.addFlag('silent', abbr: 's');
+    parser.addFlag('show-error', abbr: 'S');
     parser.addFlag('compressed');
     parser.addOption('output', abbr: 'o');
     parser.addFlag('include', abbr: 'i');
