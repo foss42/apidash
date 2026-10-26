@@ -450,6 +450,49 @@ void main() {
     );
   });
 
+  test('parses short options with attached values', () {
+    const cmd = r"""curl -XPUT -HAccept:application/json \
+  -uuser:pass -d'{"a":1}' 'https://api.apidash.dev/echo'""";
+    expect(
+      Curl.parse(cmd),
+      Curl(
+        method: 'PUT',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        headers: {'Accept': 'application/json'},
+        user: 'user:pass',
+        data: '{"a":1}',
+      ),
+    );
+  });
+
+  test('parses -XDELETE as DELETE method', () {
+    expect(
+      Curl.parse('curl -XDELETE https://api.apidash.dev'),
+      Curl(method: 'DELETE', uri: apiUri),
+    );
+  });
+
+  test('parses combined short flags', () {
+    expect(
+      Curl.parse('curl -sSLk https://api.apidash.dev'),
+      Curl(method: 'GET', uri: apiUri, location: true, insecure: true),
+    );
+  });
+
+  test('combined short flags ending with an option take its value', () {
+    expect(
+      Curl.parse('curl -sLX POST https://api.apidash.dev'),
+      Curl(method: 'POST', uri: apiUri, location: true),
+    );
+  });
+
+  test('stops expanding short options at an unknown option', () {
+    expect(
+      Curl.parse('curl -Lw%{http_code} https://api.apidash.dev'),
+      Curl(method: 'GET', uri: apiUri, location: true),
+    );
+  });
+
   test('HEAD 1', () async {
     expect(
       Curl.parse(r"""curl -I 'https://api.apidash.dev'"""),
