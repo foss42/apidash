@@ -103,10 +103,6 @@ abstract class Curl with _$Curl {
 
     // Filter out unrecognized flags before parsing to avoid ArgParser errors
     final recognizedOptions = parser.options.keys.toSet();
-    final recognizedAbbrs = parser.options.values
-        .where((opt) => opt.abbr != null)
-        .map((opt) => '-${opt.abbr}')
-        .toSet();
 
     final filteredTokens = <String>[];
     for (var i = 0; i < tokens.length; i++) {
@@ -121,12 +117,8 @@ abstract class Curl with _$Curl {
           continue;
         }
       } else if (token.startsWith('-') && token != '-') {
-        if (recognizedAbbrs.contains(token)) {
-          filteredTokens.add(token);
-        } else {
-          // Drop unknown short option
-          continue;
-        }
+        // Split combined flags and attached values; unknown ones are dropped
+        filteredTokens.addAll(_expandShortOptions(token, parser));
       } else {
         // Positional arg (likely URL)
         filteredTokens.add(token);
@@ -332,6 +324,28 @@ abstract class Curl with _$Curl {
     return buffer.toString().trim();
   }
 
+  /// Expands a short-option [token] the way cURL reads it.
+  ///
+  /// Flags can be combined (`-sSL` → `-s -S -L`) and an option can carry its
+  /// value attached (`-XPOST` → `-X POST`), also after flags (`-sXPOST`).
+  /// Expansion stops at the first letter [parser] does not know, because an
+  /// unknown option may take the rest of the token as its value.
+  static List<String> _expandShortOptions(String token, ArgParser parser) {
+    final expanded = <String>[];
+    for (var i = 1; i < token.length; i++) {
+      final abbr = token[i];
+      final option = parser.findByAbbreviation(abbr);
+      if (option == null) break;
+      expanded.add('-$abbr');
+      if (!option.isFlag) {
+        final value = token.substring(i + 1);
+        if (value.isNotEmpty) expanded.add(value);
+        break;
+      }
+    }
+    return expanded;
+  }
+
   /// Builds the [ArgParser] for cURL command-line options.
   static ArgParser _buildArgParser() {
     final parser = ArgParser(allowTrailingOptions: true);
@@ -363,6 +377,8 @@ abstract class Curl with _$Curl {
 
     // Common non-request flags (parsed and ignored)
     parser.addFlag('silent', abbr: 's');
+    parser.addFlag('show-error', abbr: 'S');
+    parser.addFlag('fail', abbr: 'f');
     parser.addFlag('compressed');
     parser.addOption('output', abbr: 'o');
     parser.addFlag('include', abbr: 'i');

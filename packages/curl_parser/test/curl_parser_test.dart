@@ -450,6 +450,70 @@ void main() {
     );
   });
 
+  test('parses method attached to -X', () {
+    expect(
+      Curl.parse(r"""curl -XDELETE 'https://api.apidash.dev/items/1'"""),
+      Curl(
+        method: 'DELETE',
+        uri: Uri.parse('https://api.apidash.dev/items/1'),
+      ),
+    );
+  });
+
+  test('attached -X method is not replaced by POST default for data', () {
+    expect(
+      Curl.parse(
+        r"""curl -XPUT 'https://api.apidash.dev/items/1' -d '{"a":1}'""",
+      ),
+      Curl(
+        method: 'PUT',
+        uri: Uri.parse('https://api.apidash.dev/items/1'),
+        data: '{"a":1}',
+      ),
+    );
+  });
+
+  test('parses values attached to -H, -d and -u', () {
+    expect(
+      Curl.parse(
+        r"""curl -H'Accept: application/json' -d'a=1' -uuser:pass 'https://api.apidash.dev/echo'""",
+      ),
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        headers: {'Accept': 'application/json'},
+        data: 'a=1',
+        user: 'user:pass',
+      ),
+    );
+  });
+
+  test('parses combined short flags', () {
+    expect(
+      Curl.parse(r"""curl -sSLk 'https://api.apidash.dev'"""),
+      Curl(method: 'GET', uri: apiUri, location: true, insecure: true),
+    );
+  });
+
+  test('parses combined flags followed by an attached option value', () {
+    expect(
+      Curl.parse(r"""curl -sLXPOST 'https://api.apidash.dev/echo'"""),
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/echo'),
+        location: true,
+      ),
+    );
+  });
+
+  test('stops expanding combined short options at an unknown letter', () {
+    // `-Z` is unknown and may take a value, so `Hfoo` must not become a header
+    expect(
+      Curl.parse(r"""curl -sZHfoo 'https://api.apidash.dev'"""),
+      Curl(method: 'GET', uri: apiUri),
+    );
+  });
+
   test('HEAD 1', () async {
     expect(
       Curl.parse(r"""curl -I 'https://api.apidash.dev'"""),
