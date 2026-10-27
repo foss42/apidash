@@ -185,7 +185,7 @@ void main() {
           [kvRow1, kvRow2, kvRow3, kvRow4],
           [false, false, false, false],
         ),
-        [],
+        null,
       );
     });
     test('Testing for list with some disabled', () {

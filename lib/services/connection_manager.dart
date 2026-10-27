@@ -34,7 +34,7 @@ class ConnectionManager {
 
   /// Maps request ID → active WebSocket channel.
   final Map<String, WebSocketChannel> _channels = {};
-  
+
   /// Maps request ID → active MQTT v3.1.1 client (`mqtt_client` package).
   final Map<String, MqttServerClient> _mqttClients = {};
 
@@ -59,7 +59,8 @@ class ConnectionManager {
   bool hasConnection(String requestId) =>
       _channels.containsKey(requestId) ||
       _mqttClients.containsKey(requestId) ||
-      _mqtt5Clients.containsKey(requestId);
+      _mqtt5Clients.containsKey(requestId) ||
+      _grpcChannels.containsKey(requestId);
 
   /// Returns the active channel for [requestId], or `null` if none exists.
   WebSocketChannel? getChannel(String requestId) => _channels[requestId];
@@ -143,7 +144,7 @@ class ConnectionManager {
   }
 
   // --- MQTT LOGIC ---
-  
+
   /// The plaintext MQTT port. Also the model's default ([MQTTRequestModel.port]).
   /// Used to detect "user left the port at its plaintext default" so we can
   /// transparently switch to the TLS port when [useTLS] is enabled.
@@ -197,10 +198,12 @@ class ConnectionManager {
   }) async {
     disconnectMqtt(requestId);
 
-    // Strip any lingering port from the URL if the user typed it manually 
+    // Strip any lingering port from the URL if the user typed it manually
     // and the UI didn't aggressively strip it to preserve cursor position.
     try {
-      final uriStr = brokerUrl.contains('://') ? brokerUrl : 'mqtt://$brokerUrl';
+      final uriStr = brokerUrl.contains('://')
+          ? brokerUrl
+          : 'mqtt://$brokerUrl';
       final uri = Uri.parse(uriStr);
       if (uri.hasPort && uri.port > 0) {
         brokerUrl = brokerUrl.replaceFirst(':${uri.port}', '');
@@ -275,7 +278,11 @@ class ConnectionManager {
   /// Resolves the server string handed to the underlying client. TCP wants a
   /// bare hostname; WebSocket wants a full ws:// / wss:// URL. Shared by both
   /// the v3 and v5 paths.
-  String _resolveServerString(String brokerUrl, bool useTLS, bool useWebSocket) {
+  String _resolveServerString(
+    String brokerUrl,
+    bool useTLS,
+    bool useWebSocket,
+  ) {
     if (useWebSocket) {
       return _buildWebSocketUrl(brokerUrl, useTLS);
     }
@@ -326,7 +333,11 @@ class ConnectionManager {
     final server = _resolveServerString(brokerUrl, useTLS, useWebSocket);
     final finalClientId = _resolveClientId(clientId);
 
-    final client = MqttServerClient.withPort(server, finalClientId, effectivePort);
+    final client = MqttServerClient.withPort(
+      server,
+      finalClientId,
+      effectivePort,
+    );
     client.logging(on: false);
     client.keepAlivePeriod = keepAlivePeriod;
 
@@ -337,7 +348,9 @@ class ConnectionManager {
     // session — including QoS 1/2 messages queued while this client id was
     // offline. Username/password are applied by client.connect(); keepAlive
     // is copied from client.keepAlivePeriod by the package.
-    final connMessage = MqttConnectMessage().withClientIdentifier(finalClientId);
+    final connMessage = MqttConnectMessage().withClientIdentifier(
+      finalClientId,
+    );
     if (cleanSession) {
       connMessage.startClean();
     }
@@ -369,7 +382,9 @@ class ConnectionManager {
     // Optionally accept self-signed / untrusted certs (e.g. test.mosquitto.org).
     if (useTLS && allowInvalidCertificates) {
       client.onBadCertificate = (Object? cert) {
-        debugPrint('MQTT(v3): accepting bad certificate (allowInvalidCertificates).');
+        debugPrint(
+          'MQTT(v3): accepting bad certificate (allowInvalidCertificates).',
+        );
         return true;
       };
     }
@@ -406,15 +421,18 @@ class ConnectionManager {
 
       client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
         final recMess = c![0].payload as MqttPublishMessage;
-        final payload =
-            MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+        final payload = MqttPublishPayload.bytesToStringAsString(
+          recMess.payload.message,
+        );
         final topic = c[0].topic;
         onMessage?.call(topic, payload);
       });
     } else {
       client.disconnect();
       _mqttClients.remove(requestId);
-      throw Exception('MQTT Connection failed: ${client.connectionStatus!.state}');
+      throw Exception(
+        'MQTT Connection failed: ${client.connectionStatus!.state}',
+      );
     }
 
     return client;
@@ -447,8 +465,11 @@ class ConnectionManager {
     final server = _resolveServerString(brokerUrl, useTLS, useWebSocket);
     final finalClientId = _resolveClientId(clientId);
 
-    final client =
-        mqtt5.MqttServerClient.withPort(server, finalClientId, effectivePort);
+    final client = mqtt5.MqttServerClient.withPort(
+      server,
+      finalClientId,
+      effectivePort,
+    );
     client.logging(on: false);
     client.keepAlivePeriod = keepAlivePeriod;
 
@@ -464,7 +485,9 @@ class ConnectionManager {
     }
     if (useTLS && allowInvalidCertificates) {
       client.onBadCertificate = (dynamic cert) {
-        debugPrint('MQTT(v5): accepting bad certificate (allowInvalidCertificates).');
+        debugPrint(
+          'MQTT(v5): accepting bad certificate (allowInvalidCertificates).',
+        );
         return true;
       };
     }
@@ -494,7 +517,9 @@ class ConnectionManager {
     };
     client.onSubscribeFail = (mqtt5.MqttSubscription sub) {
       final topic = sub.topic.rawTopic ?? sub.topic.toString();
-      onInfo?.call('SUBACK FAILED "$topic": ${sub.reasonCode?.name ?? 'unknown'}');
+      onInfo?.call(
+        'SUBACK FAILED "$topic": ${sub.reasonCode?.name ?? 'unknown'}',
+      );
     };
 
     // v5 session handling: sessionExpiryInterval == 0 → clean start (session
@@ -504,15 +529,16 @@ class ConnectionManager {
     // interval tells the broker how long to retain the session after
     // disconnect. Calling startClean() with an expiry interval (the old code)
     // discarded on every reconnect exactly the state the broker had kept.
-    final connMessage = mqtt5.MqttConnectMessage()
-        .withClientIdentifier(finalClientId);
+    final connMessage = mqtt5.MqttConnectMessage().withClientIdentifier(
+      finalClientId,
+    );
 
     if (sessionExpiryInterval > 0) {
       connMessage.startSession(sessionExpiryInterval: sessionExpiryInterval);
     } else {
       connMessage.startClean();
     }
-    
+
     // Also ensure keep alive is explicitly set on the connect message
     connMessage.keepAliveFor(keepAlivePeriod);
 
@@ -522,12 +548,13 @@ class ConnectionManager {
           : mqtt5.MqttQos.atMostOnce;
       final builder = mqtt5.MqttPayloadBuilder();
       builder.addString(willMessage);
-      
-      connMessage.will()
+
+      connMessage
+          .will()
           .withWillTopic(willTopic)
           .withWillPayload(builder.payload!)
           .withWillQos(mqos);
-          
+
       if (willRetain) {
         connMessage.withWillRetain();
       }
@@ -564,10 +591,13 @@ class ConnectionManager {
       onInfo?.call('CONNACK [MQTT 5.0]: ${rc?.name ?? 'success'}');
       _mqtt5Clients[requestId] = client;
 
-      client.updates.listen((List<mqtt5.MqttReceivedMessage<mqtt5.MqttMessage>> c) {
+      client.updates.listen((
+        List<mqtt5.MqttReceivedMessage<mqtt5.MqttMessage>> c,
+      ) {
         final recMess = c[0].payload as mqtt5.MqttPublishMessage;
-        final payload =
-            mqtt5.MqttUtilities.bytesToStringAsString(recMess.payload.message!);
+        final payload = mqtt5.MqttUtilities.bytesToStringAsString(
+          recMess.payload.message!,
+        );
         final topic = c[0].topic ?? recMess.variableHeader?.topicName ?? '';
         onMessage?.call(topic, payload);
       });
@@ -756,10 +786,13 @@ class ConnectionManager {
     _grpcChannels.clear();
   }
 
-  // gRPC 
+  // gRPC
   ClientChannel getGrpcChannel(String requestId) => _grpcChannels[requestId]!;
 
-  Future<ClientChannel> connectGrpc(String requestId, GrpcRequestModel model) async {
+  Future<ClientChannel> connectGrpc(
+    String requestId,
+    GrpcRequestModel model,
+  ) async {
     String host = model.url.trim();
     int port = 50051;
 
@@ -777,8 +810,10 @@ class ConnectionManager {
       options: ChannelOptions(
         credentials: model.useTLS
             ? (model.allowInvalidCertificates
-                ? ChannelCredentials.secure(onBadCertificate: (cert, host) => true)
-                : const ChannelCredentials.secure())
+                  ? ChannelCredentials.secure(
+                      onBadCertificate: (cert, host) => true,
+                    )
+                  : const ChannelCredentials.secure())
             : const ChannelCredentials.insecure(),
       ),
     );
@@ -836,7 +871,8 @@ class ConnectionManager {
 
     // unary + server-streaming send exactly one message then half-close.
     // client + bidi keep the request stream open for [pushGrpcMessage].
-    final singleShot = streamingType == GrpcStreamingType.unary ||
+    final singleShot =
+        streamingType == GrpcStreamingType.unary ||
         streamingType == GrpcStreamingType.server;
     if (singleShot) {
       controller.close();
