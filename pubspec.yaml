@@ -91,6 +91,7 @@ dependencies:
   mqtt5_client: ^4.10.0
   grpc: ^4.1.2
   protobuf: ^4.1.0
+  crypto: ^3.0.7
 
 dependency_overrides:
   pdf_widget_wrapper: ^1.0.4

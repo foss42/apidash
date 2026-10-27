@@ -66,6 +66,7 @@ _WebSocketRequestModel _$WebSocketRequestModelFromJson(
       ?.map((e) => e as bool)
       .toList(),
   autoReconnect: json['autoReconnect'] as bool? ?? false,
+  autoPongEnabled: json['autoPongEnabled'] as bool? ?? true,
   enableHeartbeat: json['enableHeartbeat'] as bool? ?? false,
   heartbeatInterval: (json['heartbeatInterval'] as num?)?.toInt() ?? 30,
   enableMessageHeartbeat: json['enableMessageHeartbeat'] as bool? ?? false,
@@ -84,6 +85,7 @@ Map<String, dynamic> _$WebSocketRequestModelToJson(
   'params': instance.params?.map((e) => e.toJson()).toList(),
   'isParamEnabledList': instance.isParamEnabledList,
   'autoReconnect': instance.autoReconnect,
+  'autoPongEnabled': instance.autoPongEnabled,
   'enableHeartbeat': instance.enableHeartbeat,
   'heartbeatInterval': instance.heartbeatInterval,
   'enableMessageHeartbeat': instance.enableMessageHeartbeat,
