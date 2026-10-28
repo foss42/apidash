@@ -73,7 +73,7 @@ class AutocompleteTrigger {
 
     // If the selection is invalid, then it's not a trigger.
     if (!selection.isValid) return null;
-    final cursorPosition = selection.baseOffset;
+    final cursorPosition = selection.baseOffset.clamp(0, text.length).toInt();
 
     // Find the first [trigger] location before the input cursor.
     final firstTriggerIndexBeforeCursor =
