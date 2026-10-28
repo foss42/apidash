@@ -36,7 +36,8 @@ HttpRequestModel convertCurlToHttpRequestModel(Curl curl) {
   }
 
   final headers = mapToRows(headersMap) ?? <NameValueModel>[];
-  final params = mapToRows(curl.uri.queryParameters) ?? <NameValueModel>[];
+  final params =
+      requestMapToRows(curl.uri.queryParametersAll) ?? <NameValueModel>[];
   final body = curl.data ?? '';
   // Clear file paths in form data to avoid permission issues
   // when accessing files from different systems

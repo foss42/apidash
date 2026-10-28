@@ -253,6 +253,27 @@ void main() {
       );
     });
 
+    test(
+      'Request with duplicate query parameter keys should preserve all values',
+      () {
+        final curl = Curl(
+          method: 'GET',
+          uri: Uri.parse(
+            'https://api.example.com/items?filter=red&filter=blue&tag=sale',
+          ),
+        );
+
+        final result = convertCurlToHttpRequestModel(curl);
+
+        expect(result.url, 'https://api.example.com/items');
+        expect(result.params, [
+          const NameValueModel(name: 'filter', value: 'red'),
+          const NameValueModel(name: 'filter', value: 'blue'),
+          const NameValueModel(name: 'tag', value: 'sale'),
+        ]);
+      },
+    );
+
     test('POST request with body should include data', () {
       final curl = Curl(
         method: 'POST',
