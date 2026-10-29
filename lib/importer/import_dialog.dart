@@ -1,6 +1,7 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'importer.dart';
@@ -23,43 +24,53 @@ void importToCollectionPane(
     },
     onFileDropped: (file) {
       final importFormatType = ref.read(importFormatStateProvider);
+      final navigator = Navigator.of(context);
       sm.hideCurrentSnackBar();
       file.readAsString().then(
         (content) {
           kImporter
               .getHttpRequestModelList(importFormatType, content)
               .then((importedRequestModels) {
-            if (importedRequestModels != null) {
-              if (importedRequestModels.isEmpty) {
-                sm.showSnackBar(
-                    getSnackBar("No requests imported", small: false));
-              } else {
-                for (var model in importedRequestModels.reversed) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .addRequestModel(
-                        model.$2,
-                        name: model.$1,
-                      );
-                }
-                sm.showSnackBar(getSnackBar(
-                    "Successfully imported ${importedRequestModels.length} requests",
-                    small: false));
-              }
-              // Solves - Do not use BuildContexts across async gaps
-              if (!context.mounted) return;
-              Navigator.of(context).pop();
+            final String message;
+            if (importedRequestModels == null) {
+              message = "Unable to parse ${file.name}";
+            } else if (importedRequestModels.isEmpty) {
+              message = "No requests imported";
             } else {
-              var err = "Unable to parse ${file.name}";
-              sm.showSnackBar(getSnackBar(err, small: false));
+              for (var model in importedRequestModels.reversed) {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .addRequestModel(
+                      model.$2,
+                      name: model.$1,
+                    );
+              }
+              message =
+                  "Successfully imported ${importedRequestModels.length} requests";
             }
+            _showImportResult(navigator, sm, message);
           });
         },
         onError: (e) {
-          var err = "Unable to import ${file.name}";
-          sm.showSnackBar(getSnackBar(err, small: false));
+          _showImportResult(navigator, sm, "Unable to import ${file.name}");
         },
       );
     },
   );
+}
+
+/// Shows the import result once the dialog and, on mobile, the drawer are out
+/// of the way: the scaffold's snackbar renders below both, so a message shown
+/// while they are open stays hidden until they are closed.
+void _showImportResult(
+  NavigatorState navigator,
+  ScaffoldMessengerState sm,
+  String message,
+) {
+  // maybePop rather than pop: if the dialog was dismissed while the file was
+  // being read and parsed, there is nothing to close and the route below it
+  // must stay.
+  navigator.maybePop();
+  kHomeScaffoldKey.currentState?.closeDrawer();
+  sm.showSnackBar(getSnackBar(message, small: false));
 }
