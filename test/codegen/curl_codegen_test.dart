@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
@@ -161,6 +162,51 @@ void main() {
         codeGen.getCode(
           CodegenLanguage.curl,
           requestModelGet12,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('GET with single quote in URL', () {
+      const requestModelGetSingleQuote = RequestModel(
+        id: 'get_single_quote_url',
+        apiType: APIType.rest,
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.get,
+          url: "https://api.apidash.dev/users/o'connor",
+        ),
+      );
+      const expectedCode =
+          r"""curl --url 'https://api.apidash.dev/users/o'\''connor'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelGetSingleQuote,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('GET with single quote in header', () {
+      const requestModelGetHeaderQuote = RequestModel(
+        id: 'get_single_quote_header',
+        apiType: APIType.rest,
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev',
+          headers: [
+            NameValueModel(name: 'User-Agent', value: "Test's Agent"),
+          ],
+        ),
+      );
+      const expectedCode = r"""curl --url 'https://api.apidash.dev' \
+  --header 'User-Agent: Test'\''s Agent'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelGetHeaderQuote,
           SupportedUriSchemes.https,
         ),
         expectedCode,
@@ -342,6 +388,71 @@ void main() {
         codeGen.getCode(
           CodegenLanguage.curl,
           requestModelPost9,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('POST with single quote in body', () {
+      const requestModelPostSingleQuote = RequestModel(
+        id: 'post_single_quote',
+        apiType: APIType.rest,
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.apidash.dev/case/lower',
+          bodyContentType: ContentType.json,
+          body: r"""{
+"message": "It's a test"
+}""",
+        ),
+      );
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/case/lower' \
+  --header 'Content-Type: application/json' \
+  --data '{
+"message": "It'\''s a test"
+}'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelPostSingleQuote,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+
+    test('POST with single quote in form data', () {
+      const requestModelPostFormDataSingleQuote = RequestModel(
+        id: 'post_form_single_quote',
+        apiType: APIType.rest,
+        httpRequestModel: HttpRequestModel(
+          method: HTTPVerb.post,
+          url: 'https://api.apidash.dev/io/form',
+          bodyContentType: ContentType.formdata,
+          formData: [
+            FormDataModel(
+              name: "user's_name",
+              value: "O'Connor",
+              type: FormDataType.text,
+            ),
+            FormDataModel(
+              name: "user's_file",
+              value: "/path/to/user's_file.pdf",
+              type: FormDataType.file,
+            ),
+          ],
+        ),
+      );
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/form' \
+  --form 'user'\''s_name=O'\''Connor' \
+  --form 'user'\''s_file=@/path/to/user'\''s_file.pdf'""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.curl,
+          requestModelPostFormDataSingleQuote,
           SupportedUriSchemes.https,
         ),
         expectedCode,
