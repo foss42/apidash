@@ -230,6 +230,27 @@ void main() {
       );
     });
 
+    test("Testing substituteHttpRequestModel with GraphQL variables", () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/graphql",
+        query: r"query ($num: Int!) { item(num: $num) { id } }",
+        variables: '{"num": {{num}}, "missing": "{{missing}}"}',
+      );
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+      };
+      const expected = HttpRequestModel(
+        url: "api.apidash.dev/graphql",
+        query: r"query ($num: Int!) { item(num: $num) { id } }",
+        variables: '{"num": 8940000, "missing": "{{missing}}"}',
+      );
+      expect(
+        substituteHttpRequestModel(httpRequestModel, envMap, "activeEnvId"),
+        expected,
+      );
+    });
+
     test("Testing substituteHttpRequestModel with unavailable variables", () {
       const httpRequestModel = HttpRequestModel(
         url: "{{url1}}/humanize/social",
