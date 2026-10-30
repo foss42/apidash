@@ -57,18 +57,13 @@ class HarParserIO {
     FormDataType formDataType = FormDataType.text;
     if (request.postData?.mimeType == "application/x-www-form-urlencoded") {
       bodyContentType = ContentType.formdata;
-      var formDataStr = request.postData?.text;
-      Map<String, String> parsedData = parseFormData(formDataStr);
-      parsedData.forEach((key, value) {
-        formDataType = FormDataType.text;
-        var name = key;
-        var val = value;
+      for (final (name, value) in parseFormData(request.postData?.text)) {
         formData.add(FormDataModel(
           name: name,
-          value: val,
-          type: formDataType,
+          value: value,
+          type: FormDataType.text,
         ));
-      });
+      }
     }
 
     if (request.postData?.mimeType == "multipart/form-data") {
@@ -103,32 +98,28 @@ class HarParserIO {
         formData: formData);
   }
 
-  Map<String, String> parseFormData(String? data) {
-    // Return an empty map if the input is null or empty
+  /// A URL-encoded form body split into its fields, in the order they appear.
+  ///
+  /// A repeated name keeps one entry per occurrence, so `tag=red&tag=blue`
+  /// imports as two fields instead of the last value overwriting the first.
+  List<(String, String)> parseFormData(String? data) {
     if (data == null || data.isEmpty) {
-      return {};
+      return [];
     }
-    // Split the input string into individual key-value pairs
-    var pairs = data.split('&');
 
-    // Create a Map to store key-value pairs
-    Map<String, String> result = {};
-
-    // Loop through the pairs and split them into keys and values
-    for (var pair in pairs) {
-      var separatorIndex = pair.indexOf('=');
-
-      // Ensure the pair contains both key and value
-      if (separatorIndex != -1) {
-        var key = Uri.decodeComponent(
-          pair.substring(0, separatorIndex).replaceAll('+', ' '),
-        );
-        var value = Uri.decodeComponent(
-          pair.substring(separatorIndex + 1).replaceAll('+', ' '),
-        );
-
-        result[key] = value;
+    final result = <(String, String)>[];
+    for (final pair in data.split('&')) {
+      final separatorIndex = pair.indexOf('=');
+      if (separatorIndex == -1) {
+        continue;
       }
+      final key = Uri.decodeComponent(
+        pair.substring(0, separatorIndex).replaceAll('+', ' '),
+      );
+      final value = Uri.decodeComponent(
+        pair.substring(separatorIndex + 1).replaceAll('+', ' '),
+      );
+      result.add((key, value));
     }
 
     return result;
