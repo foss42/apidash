@@ -1,7 +1,5 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/screens/common_widgets/ai/ai_model_selector_button.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -158,7 +156,6 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsProvider);
     return Opacity(
       opacity: 0.8,
       child: SizedBox(
@@ -178,25 +175,7 @@ class DefaultLLModelSelectorWidget extends ConsumerWidget {
               ),
             ),
             SizedBox(width: 5),
-            AIModelSelectorButton(
-              aiRequestModel: AIRequestModel.fromJson(
-                settings.defaultAIModel ?? {},
-              ),
-              onModelUpdated: (d) {
-                ref
-                    .read(settingsProvider.notifier)
-                    .update(
-                      defaultAIModel: d
-                          .copyWith(
-                            modelConfigs: [],
-                            stream: null,
-                            systemPrompt: '',
-                            userPrompt: '',
-                          )
-                          .toJson(),
-                    );
-              },
-            ),
+            const DefaultAIModelSelector(),
             kVSpacer5,
           ],
         ),

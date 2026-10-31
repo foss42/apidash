@@ -22,6 +22,7 @@ class SettingsModel {
     this.isDashBotEnabled = true,
     this.defaultAIModel,
     this.maxConnectionMessages = 1000,
+    this.aiProviders,
   });
 
   final bool isDark;
@@ -41,6 +42,11 @@ class SettingsModel {
   final Map<String, Object?>? defaultAIModel;
   final int maxConnectionMessages;
 
+  /// Per-provider credentials keyed by [ModelAPIProvider.name].
+  /// Each value: `{ "apiKey": "...", "url": "..." }`.
+  /// Scalable for future custom providers without schema churn.
+  final Map<String, Map<String, Object?>>? aiProviders;
+
   SettingsModel copyWith({
     bool? isDark,
     bool? alwaysShowCollectionPaneScrollbar,
@@ -58,10 +64,12 @@ class SettingsModel {
     bool? isDashBotEnabled,
     Map<String, Object?>? defaultAIModel,
     int? maxConnectionMessages,
+    Map<String, Map<String, Object?>>? aiProviders,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
-      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
+      alwaysShowCollectionPaneScrollbar:
+          alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
@@ -77,13 +85,13 @@ class SettingsModel {
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
       defaultAIModel: defaultAIModel ?? this.defaultAIModel,
-      maxConnectionMessages: maxConnectionMessages ?? this.maxConnectionMessages,
+      maxConnectionMessages:
+          maxConnectionMessages ?? this.maxConnectionMessages,
+      aiProviders: aiProviders ?? this.aiProviders,
     );
   }
 
-  SettingsModel copyWithPath({
-    String? workspaceFolderPath,
-  }) {
+  SettingsModel copyWithPath({String? workspaceFolderPath}) {
     return SettingsModel(
       isDark: isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
@@ -101,6 +109,7 @@ class SettingsModel {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
       maxConnectionMessages: maxConnectionMessages,
+      aiProviders: aiProviders,
     );
   }
 
@@ -124,8 +133,9 @@ class SettingsModel {
     SupportedUriSchemes? defaultUriScheme;
     if (defaultUriSchemeStr != null) {
       try {
-        defaultUriScheme =
-            SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+        defaultUriScheme = SupportedUriSchemes.values.byName(
+          defaultUriSchemeStr,
+        );
       } catch (e) {
         // pass
       }
@@ -143,8 +153,9 @@ class SettingsModel {
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
       try {
-        defaultCodeGenLang =
-            CodegenLanguage.values.byName(defaultCodeGenLangStr);
+        defaultCodeGenLang = CodegenLanguage.values.byName(
+          defaultCodeGenLangStr,
+        );
       } catch (e) {
         // pass
       }
@@ -156,8 +167,9 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod;
     if (historyRetentionPeriodStr != null) {
       try {
-        historyRetentionPeriod =
-            HistoryRetentionPeriod.values.byName(historyRetentionPeriodStr);
+        historyRetentionPeriod = HistoryRetentionPeriod.values.byName(
+          historyRetentionPeriodStr,
+        );
       } catch (e) {
         // pass
       }
@@ -172,6 +184,18 @@ class SettingsModel {
     final maxConnectionMessages =
         data["maxConnectionMessages"] as int? ??
         data["maxWebSocketEvents"] as int?;
+
+    Map<String, Map<String, Object?>>? aiProviders;
+    final rawProviders = data["aiProviders"];
+    if (rawProviders is Map) {
+      aiProviders = rawProviders.map(
+        (key, value) => MapEntry(
+          key.toString(),
+          value is Map ? Map<String, Object?>.from(value) : <String, Object?>{},
+        ),
+      );
+    }
+
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -192,6 +216,7 @@ class SettingsModel {
       isDashBotEnabled: isDashBotEnabled,
       defaultAIModel: defaultAIModel,
       maxConnectionMessages: maxConnectionMessages ?? 1000,
+      aiProviders: aiProviders,
     );
   }
 
@@ -215,6 +240,7 @@ class SettingsModel {
       "isDashBotEnabled": isDashBotEnabled,
       "defaultAIModel": defaultAIModel,
       "maxConnectionMessages": maxConnectionMessages,
+      "aiProviders": aiProviders,
     };
   }
 
@@ -243,7 +269,8 @@ class SettingsModel {
         other.isSSLDisabled == isSSLDisabled &&
         other.isDashBotEnabled == isDashBotEnabled &&
         mapEquals(other.defaultAIModel, defaultAIModel) &&
-        other.maxConnectionMessages == maxConnectionMessages;
+        other.maxConnectionMessages == maxConnectionMessages &&
+        _aiProvidersEquals(other.aiProviders, aiProviders);
   }
 
   @override
@@ -266,6 +293,20 @@ class SettingsModel {
       isDashBotEnabled,
       defaultAIModel,
       maxConnectionMessages,
+      aiProviders,
     );
   }
+}
+
+bool _aiProvidersEquals(
+  Map<String, Map<String, Object?>>? a,
+  Map<String, Map<String, Object?>>? b,
+) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null) return a == b;
+  if (a.length != b.length) return false;
+  for (final entry in a.entries) {
+    if (!mapEquals(entry.value, b[entry.key])) return false;
+  }
+  return true;
 }
