@@ -308,14 +308,24 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     final contentType =
         getMediaTypeFromHeaders(streamedResponse.headers)?.mimeType ?? '';
     final chunkList = <List<int>>[];
+    int lastUpdate = 0;
 
     subscription = streamedResponse.stream.listen(
       (bytes) async {
         if (controller.isClosed) return;
         final isStreaming = kStreamingResponseTypes.contains(contentType);
         if (isStreaming) {
-          final response = _createResponseFromBytes(bytes);
-          controller.add((true, response, stopwatch.elapsed, null));
+          chunkList.add(bytes);
+          if (chunkList.length > 30) {
+            chunkList.removeAt(0);
+          }
+          final currentMs = stopwatch.elapsedMilliseconds;
+          if (currentMs - lastUpdate > 100) {
+            lastUpdate = currentMs;
+            final allBytes = chunkList.expand((x) => x).toList();
+            final response = _createResponseFromBytes(allBytes);
+            controller.add((true, response, stopwatch.elapsed, null));
+          }
         } else {
           chunkList.add(bytes);
         }

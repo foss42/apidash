@@ -1478,7 +1478,6 @@ class CollectionStateNotifier
           httpResponseModel = httpResponseModel?.copyWith(
             time: duration,
             sseOutput: [
-              ...(httpResponseModel?.sseOutput ?? []),
               if (response != null) response.body,
             ],
           );
