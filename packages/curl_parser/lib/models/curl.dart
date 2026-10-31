@@ -206,7 +206,7 @@ abstract class Curl with _$Curl {
     if (url == null) {
       throw const FormatException('URL is null');
     }
-    final uri = Uri.parse(url);
+    var uri = Uri.parse(url);
 
     // Method
     String method = result['head']
@@ -224,7 +224,13 @@ abstract class Curl with _$Curl {
     addDataList(result['data-raw']);
     addDataList(result['data-binary']);
     addDataList(result['data']);
-    final String? data = dataPieces.isNotEmpty ? dataPieces.join('&') : null;
+    String? data = dataPieces.isNotEmpty ? dataPieces.join('&') : null;
+
+    // -G sends the data as a query string instead of a body
+    if (result['get'] && data != null) {
+      uri = uri.replace(query: uri.hasQuery ? '${uri.query}&$data' : data);
+      data = null;
+    }
 
     final String? cookie = result['cookie'];
     final String? user = result['user'];
@@ -357,6 +363,7 @@ abstract class Curl with _$Curl {
 
     // Request flags
     parser.addFlag('head', abbr: 'I');
+    parser.addFlag('get', abbr: 'G');
     parser.addMultiOption('form', abbr: 'F');
     parser.addFlag('insecure', abbr: 'k');
     parser.addFlag('location', abbr: 'L');
