@@ -339,6 +339,29 @@ void main() {
     expect(curl.method, 'HEAD');
   });
 
+  test('-G sends data as query parameters of a GET', () {
+    const cmd = r"""curl -G 'https://api.apidash.dev/echo' \
+  -d 'a=1' \
+  -d 'b=2'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/echo?a=1&b=2'),
+      ),
+    );
+  });
+
+  test('--get appends data to an existing query', () {
+    const cmd = r"""curl --get 'https://api.apidash.dev/echo?x=0' \
+  --data 'a=1'""";
+    final curl = Curl.parse(cmd);
+    expect(curl.method, 'GET');
+    expect(curl.uri, Uri.parse('https://api.apidash.dev/echo?x=0&a=1'));
+    expect(curl.data, isNull);
+  });
+
   test('user agent via -A populates userAgent field', () {
     const cmd = r"""curl -A 'MyApp/1.0' \
   'https://api.apidash.dev/ua'""";
