@@ -193,11 +193,15 @@ class OpenApiImportService {
         : '$baseUrl$path';
 
     // Headers from parameters in header "in": "header"
+    // Query params from parameters in query "in": "query"
     final headers = <String, String>{};
+    final params = <String, String>{};
     for (final p in op.parameters ?? const []) {
       // Use direct type checking since the parameter objects are union types
       if (p is ParameterHeader && p.name != null) {
         headers[p.name!] = '';
+      } else if (p is ParameterQuery && p.name != null) {
+        params[p.name!] = p.example ?? '';
       }
     }
 
@@ -251,6 +255,7 @@ class OpenApiImportService {
       'url': url,
       'baseUrl': baseUrl,
       'headers': headers,
+      'params': params,
       'body': body,
       'form': isForm,
       'formData': formData,

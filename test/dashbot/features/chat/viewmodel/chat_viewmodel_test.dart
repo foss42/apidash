@@ -403,6 +403,38 @@ info:
       // Should complete the action without error
     });
 
+    test('_applyOpenApi carries query params into the new request', () async {
+      final viewmodel = container.read(chatViewmodelProvider.notifier);
+
+      final openApiAction = ChatAction.fromJson({
+        'action': 'apply_openapi',
+        'target': 'httpRequestModel',
+        'field': 'apply_to_new',
+        'value': {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/pets/{petId}',
+          'baseUrl': 'https://api.apidash.dev',
+          'sourceName': 'Pet Store API',
+          'headers': {'X-Trace-Id': ''},
+          'params': {'status': 'available', 'limit': ''},
+          'body': '',
+        },
+      });
+
+      await viewmodel.applyAutoFix(openApiAction);
+
+      final newId = container.read(selectedIdStateProvider)!;
+      final model =
+          container.read(collectionStateNotifierProvider)![newId]!
+              .httpRequestModel!;
+      expect(model.params, const [
+        NameValueModel(name: 'status', value: 'available'),
+        NameValueModel(name: 'limit', value: ''),
+      ]);
+      expect(model.isParamEnabledList, [true, true]);
+      expect(model.headers!.first.name, 'X-Trace-Id');
+    });
+
     test('should test _getSubstitutedHttpRequestModel method', () async {
       // Create a container with a mock request to test substitution
       final mockRequest = RequestModel(

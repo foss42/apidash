@@ -395,6 +395,12 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
         .toList();
 
+    final paramsMap =
+        (payload['params'] as Map?)?.cast<String, dynamic>() ?? {};
+    final params = paramsMap.entries
+        .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
+        .toList();
+
     final body = payload['body'] as String?;
     final formFlag = payload['form'] == true;
     final formDataListRaw = (payload['formData'] as List?)?.cast<dynamic>();
@@ -458,6 +464,8 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        params: params,
+        isParamEnabledList: List<bool>.filled(params.length, true),
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
