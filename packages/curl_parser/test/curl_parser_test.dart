@@ -339,6 +339,49 @@ void main() {
     expect(curl.method, 'HEAD');
   });
 
+  test('-G sends data as query parameters of a GET', () {
+    const cmd = r"""curl -G 'https://api.apidash.dev/echo' \
+  -d 'a=1' \
+  -d 'b=2'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/echo?a=1&b=2'),
+      ),
+    );
+  });
+
+  test('--get appends data to an existing query', () {
+    const cmd = r"""curl --get 'https://api.apidash.dev/echo?x=0' \
+  --data 'a=1'""";
+    final curl = Curl.parse(cmd);
+    expect(curl.method, 'GET');
+    expect(curl.uri, Uri.parse('https://api.apidash.dev/echo?x=0&a=1'));
+    expect(curl.data, isNull);
+  });
+
+  test('-G keeps an explicit -X method', () {
+    const cmd = r"""curl -G -X POST 'https://api.apidash.dev/echo' \
+  -d 'a=1'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(method: 'POST', uri: Uri.parse('https://api.apidash.dev/echo?a=1')),
+    );
+  });
+
+  test('-G with -I sends data as query parameters of a HEAD', () {
+    const cmd = r"""curl -G -I 'https://api.apidash.dev/echo' \
+  -d 'a=1'""";
+    final curl = Curl.parse(cmd);
+    expect(
+      curl,
+      Curl(method: 'HEAD', uri: Uri.parse('https://api.apidash.dev/echo?a=1')),
+    );
+  });
+
   test('user agent via -A populates userAgent field', () {
     const cmd = r"""curl -A 'MyApp/1.0' \
   'https://api.apidash.dev/ua'""";
