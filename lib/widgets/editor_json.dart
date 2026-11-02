@@ -73,9 +73,38 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
   void didUpdateWidget(JsonTextFieldEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialValue != widget.initialValue) {
-      controller.text = widget.initialValue ?? "";
-      controller.selection =
-          TextSelection.collapsed(offset: controller.text.length);
+      final newText = widget.initialValue ?? "";
+      final oldSelection = controller.selection;
+
+      // Avoid unnecessary controller.text assignment; it can reset selection
+      // during typing. Only update controller text if the incoming value
+      // differs from what we currently have.
+      if (controller.text != newText) {
+        controller.text = newText;
+      }
+
+      // Preserve selection as much as possible by clamping offsets into the
+      // new text range (prevents out-of-bounds crashes).
+      final int newLen = controller.text.length;
+      int clampOffset(int offset) {
+        if (offset < 0) return 0;
+        if (offset > newLen) return newLen;
+        return offset;
+      }
+
+      final baseOffset = clampOffset(oldSelection.baseOffset);
+      final extentOffset = clampOffset(oldSelection.extentOffset);
+
+      if (oldSelection.isCollapsed) {
+        controller.selection = TextSelection.collapsed(offset: baseOffset);
+      } else {
+        controller.selection = TextSelection(
+          baseOffset: baseOffset,
+          extentOffset: extentOffset,
+          affinity: oldSelection.affinity,
+          isDirectional: oldSelection.isDirectional,
+        );
+      }
     }
     if ((oldWidget.fieldKey != widget.fieldKey) ||
         (oldWidget.isDark != widget.isDark)) {
