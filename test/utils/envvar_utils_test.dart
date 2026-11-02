@@ -182,6 +182,41 @@ void main() {
       String expected = "{{url1}}/humanize/social?num=8940000";
       expect(substituteVariables(input, combinedEnvVarsMap), expected);
     });
+
+    test("Testing substituteVariables with special characters in variable keys", () {
+      Map<String, String> envMap = {
+        "api.key": "value_with_dot",
+        "user+id": "value_with_plus",
+        "var*name": "value_with_asterisk",
+        "test[0]": "value_with_brackets",
+      };
+      String input = "API: {{api.key}}, User: {{user+id}}, Var: {{var*name}}, Test: {{test[0]}}";
+      String expected = "API: value_with_dot, User: value_with_plus, Var: value_with_asterisk, Test: value_with_brackets";
+      expect(substituteVariables(input, envMap), expected);
+    });
+
+    test("Testing substituteVariables with regex metacharacters in keys", () {
+      Map<String, String> envMap = {
+        "api\$key": "dollar_value",
+        "var^name": "caret_value",
+        "test|pipe": "pipe_value",
+        "back\\slash": "backslash_value",
+      };
+      String input = "Dollar: {{api\$key}}, Caret: {{var^name}}, Pipe: {{test|pipe}}, Backslash: {{back\\slash}}";
+      String expected = "Dollar: dollar_value, Caret: caret_value, Pipe: pipe_value, Backslash: backslash_value";
+      expect(substituteVariables(input, envMap), expected);
+    });
+
+    test("Testing substituteVariables with mixed special and normal characters", () {
+      Map<String, String> envMap = {
+        "normal_var": "normal",
+        "api.key": "dotted",
+        "user-id": "dashed",
+      };
+      String input = "{{normal_var}}/{{api.key}}/{{user-id}}";
+      String expected = "normal/dotted/dashed";
+      expect(substituteVariables(input, envMap), expected);
+    });
   });
 
   group("Testing substituteHttpRequestModel function", () {
