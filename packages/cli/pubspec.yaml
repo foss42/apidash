@@ -1,0 +1,22 @@
+name: apidash_cli
+description: " CLI for Apidash"
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ^3.5.3
+
+resolution: workspace
+
+dependencies:
+  args: ^2.5.0
+  mason_logger: ^0.3.1
+  hive_ce: ^2.1.2
+  path: ^1.9.0
+  http: ^1.2.1
+  apidash_core:
+    path: ../apidash_core
+
+dev_dependencies:
+  test: ^1.24.0
+  lints: ^6.1.0
