@@ -18,6 +18,21 @@ void main() {
       expect(meta, {'x-trace': 'abc'});
     });
 
+    test('unchecked metadata rows are not sent', () async {
+      const model = GrpcRequestModel(
+        url: 'localhost:50051',
+        metadata: [
+          NameValueModel(name: 'X-Trace', value: 'abc'),
+          NameValueModel(name: 'X-Secret', value: 'do-not-send'),
+        ],
+        isMetadataEnabled: [true, false],
+      );
+
+      final meta = await buildGrpcMetadata(model);
+
+      expect(meta, {'x-trace': 'abc'});
+    });
+
     test('bearer auth -> authorization: Bearer <token>', () async {
       const model = GrpcRequestModel(
         url: 'localhost:50051',
