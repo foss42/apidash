@@ -105,4 +105,16 @@ void main() {
       'A: 1',
     ]);
   }, timeout: defaultTimeout);
+
+  test('split preserves + inside quoted values', () async {
+    final args = splitAsCommandLineArgs(
+      r"""--url 'https://api.apidash.dev/echo?q=a +b' + --data '{"expr": "1 + 2"}'""",
+    );
+    expect(args, [
+      '--url',
+      'https://api.apidash.dev/echo?q=a +b',
+      '--data',
+      '{"expr": "1 + 2"}',
+    ]);
+  }, timeout: defaultTimeout);
 }

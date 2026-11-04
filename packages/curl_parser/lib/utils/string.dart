@@ -7,13 +7,13 @@ import 'package:shlex/shlex.dart' as shlex;
 /// - Uses shlex to respect quoted strings.
 List<String> splitAsCommandLineArgs(String command) {
   // Normalize common shell continuations: backslash + newline
-  var normalized = command
+  final normalized = command
       .replaceAll(RegExp(r"\\\s*\r?\n"), ' ')
       .replaceAll('\r', '')
       .trim();
-  // Remove stray '+' line concatenation tokens if present in copied shells
-  normalized = normalized.replaceAll(RegExp(r"\s\+\s*\n?"), ' ');
-  return shlex.split(normalized);
+  // Remove stray '+' line concatenation tokens if present in copied shells.
+  // Done after splitting so a '+' inside quoted values is preserved.
+  return shlex.split(normalized).where((token) => token != '+').toList();
 }
 
 /// Removes surrounding quotes from a url/string token.
