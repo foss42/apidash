@@ -46,9 +46,10 @@ abstract class GrpcRequestModel with _$GrpcRequestModel {
   }) = _GrpcRequestModel;
 
   Map<String, String> get metadataMap {
-    if (metadata == null) return {};
     return {
-      for (var m in (metadata!))
+      for (var m
+          in getEnabledRows(metadata, isMetadataEnabled) ??
+              const <NameValueModel>[])
         if (m.name.isNotEmpty) m.name: m.value,
     };
   }
