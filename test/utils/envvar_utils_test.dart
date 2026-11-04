@@ -849,5 +849,37 @@ void main() {
       expect(result.firstWhere((v) => v.key == "baseUrl").value, "42");
       expect(result.firstWhere((v) => v.key == "retryCount").value, "0");
     });
+
+    test("keeps a disabled variable disabled when a script writes its key", () {
+      const disabledSecretToken = EnvironmentVariableModel(
+        key: "token",
+        value: "hidden",
+        enabled: false,
+        type: EnvironmentVariableType.secret,
+      );
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [enabledBaseUrl, disabledSecretToken],
+        updatedEnvironment: {
+          "baseUrl": "https://api.example.com",
+          "token": "script-injected-value",
+        },
+      );
+
+      final merged = result.firstWhere((v) => v.key == "token");
+      expect(merged.enabled, isFalse);
+      expect(merged.value, "script-injected-value");
+      expect(merged.type, EnvironmentVariableType.secret);
+    });
+
+    test("keeps an enabled variable enabled when a script writes its key", () {
+      final result = mergeScriptEnvironmentValues(
+        originalValues: [enabledApiKey],
+        updatedEnvironment: {"apiKey": "rotated-key"},
+      );
+
+      final merged = result.firstWhere((v) => v.key == "apiKey");
+      expect(merged.enabled, isTrue);
+      expect(merged.value, "rotated-key");
+    });
   });
 }
