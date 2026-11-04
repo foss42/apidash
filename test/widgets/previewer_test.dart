@@ -98,6 +98,10 @@ void main() {
   });
 
   testWidgets('Testing when type/subtype is video/H264', (tester) async {
+    final originalRegister = registerFvpBackend;
+    registerFvpBackend = () {};
+    addTearDown(() => registerFvpBackend = originalRegister);
+
     await tester.pumpWidget(
       MaterialApp(
         title: 'Previewer',

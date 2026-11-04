@@ -8,6 +8,13 @@ import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'error_message.dart';
 
+/// Registers the fvp video backend.
+///
+/// Replaced in tests, because fvp loads a native library during setup that is
+/// not available under `flutter test`.
+@visibleForTesting
+void Function() registerFvpBackend = fvp.registerWith;
+
 bool shouldRegisterFvpVideoBackend({
   required bool isWeb,
   required bool isLinux,
@@ -60,7 +67,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
       return;
     }
     try {
-      fvp.registerWith();
+      registerFvpBackend();
     } catch (e) {
       debugPrint("VideoPreviewer registerVideoPlayerBackend(): $e");
     }
