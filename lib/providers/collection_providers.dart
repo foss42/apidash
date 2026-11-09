@@ -762,7 +762,8 @@ class CollectionStateNotifier
         final uri = Uri.parse(substitutedUrl);
         final queryParams = Map<String, dynamic>.from(uri.queryParameters);
         for (int i = 0; i < wsModel.params!.length; i++) {
-          if (wsModel.isParamEnabledList![i]) {
+          if (i < wsModel.isParamEnabledList!.length &&
+              wsModel.isParamEnabledList![i]) {
             final param = wsModel.params![i];
             if (param.name.isNotEmpty) {
               final subKey =
@@ -797,7 +798,8 @@ class CollectionStateNotifier
     Map<String, String>? headers = {};
     if (wsModel.headers != null && wsModel.isHeaderEnabledList != null) {
       for (int i = 0; i < wsModel.headers!.length; i++) {
-        if (wsModel.isHeaderEnabledList![i]) {
+        if (i < wsModel.isHeaderEnabledList!.length &&
+            wsModel.isHeaderEnabledList![i]) {
           final header = wsModel.headers![i];
           if (header.name.isNotEmpty) {
             final subKey =

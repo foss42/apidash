@@ -502,6 +502,70 @@ void main() async {
       container.dispose();
     });
   });
+
+  group('WS headers and params length mismatch guard (#1904)', () {
+    late ProviderContainer container;
+    late CollectionStateNotifier notifier;
+    late String id;
+
+    setUp(() {
+      container = createContainer();
+      notifier = container.read(collectionStateNotifierProvider.notifier);
+      id = notifier.state!.entries.first.key;
+      notifier.update(id: id, apiType: APIType.websocket);
+    });
+
+    test(
+      'connectWs does not crash when headers.length > isHeaderEnabledList.length',
+      () async {
+        notifier.update(
+          id: id,
+          wsRequestModel: const WebSocketRequestModel(
+            url: 'wss://example.invalid',
+            headers: [
+              NameValueModel(name: 'Authorization', value: 'Bearer tok'),
+              NameValueModel(name: 'X-Custom', value: 'val'),
+            ],
+            isHeaderEnabledList: [true],
+          ),
+        );
+
+        container.read(selectedIdStateProvider.notifier).state = id;
+        await expectLater(
+          notifier.sendRequest(),
+          completes,
+        );
+      },
+    );
+
+    test(
+      'connectWs does not crash when params.length > isParamEnabledList.length',
+      () async {
+        notifier.update(
+          id: id,
+          wsRequestModel: const WebSocketRequestModel(
+            url: 'wss://example.invalid',
+            params: [
+              NameValueModel(name: 'param1', value: 'val1'),
+              NameValueModel(name: 'param2', value: 'val2'),
+            ],
+            isParamEnabledList: [true],
+          ),
+        );
+
+        container.read(selectedIdStateProvider.notifier).state = id;
+        await expectLater(
+          notifier.sendRequest(),
+          completes,
+        );
+      },
+    );
+
+    tearDown(() {
+      ConnectionManager.instance.disconnect(id);
+      container.dispose();
+    });
+  });
 }
 
 /// Helper that drives [sendRequest] for the currently-selected websocket
