@@ -54,5 +54,43 @@ void main() {
       expect(viaNulls.currentRequestId, next.currentRequestId);
       expect(viaNulls.lastError, next.lastError);
     });
+
+    test(
+      'lastError handling: setting, preserving, and clearing via clearLastError',
+      () {
+        const failure = ChatFailure('generic error', code: '400');
+        const base = ChatState();
+
+        // 1. Setting lastError
+        final stateWithError = base.copyWith(lastError: failure);
+        expect(stateWithError.lastError, failure);
+
+        // 2. Preserving lastError when clearLastError is false or omitted
+        final preserved = stateWithError.copyWith(isGenerating: true);
+        expect(preserved.lastError, failure);
+        expect(preserved.isGenerating, true);
+
+        final preservedWithExplicitFalse = stateWithError.copyWith(
+          clearLastError: false,
+        );
+        expect(preservedWithExplicitFalse.lastError, failure);
+
+        // 3. Setting a new lastError
+        const newFailure = ChatFailure('new error', code: '500');
+        final updatedError = stateWithError.copyWith(lastError: newFailure);
+        expect(updatedError.lastError, newFailure);
+
+        // 4. Clearing lastError when clearLastError is true
+        final cleared = stateWithError.copyWith(clearLastError: true);
+        expect(cleared.lastError, isNull);
+
+        // 5. When clearLastError is true, it overrides lastError argument
+        final clearedExplicit = stateWithError.copyWith(
+          lastError: newFailure,
+          clearLastError: true,
+        );
+        expect(clearedExplicit.lastError, isNull);
+      },
+    );
   });
 }

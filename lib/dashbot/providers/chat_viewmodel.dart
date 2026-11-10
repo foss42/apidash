@@ -7,6 +7,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import '../constants.dart';
+import '../error/chat_failure.dart';
 import '../models/models.dart';
 import '../prompts/prompts.dart' as dash;
 import '../repository/repository.dart';
@@ -81,6 +82,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         type != ChatMessageType.importCurl &&
         type != ChatMessageType.importOpenApi) {
       debugPrint('[Chat] No AI model configured');
+      if (state.lastError != null) {
+        state = state.copyWith(clearLastError: true);
+      }
       _appendSystem('AI model is not configured. Please set one.', type);
       return;
     }
@@ -101,6 +105,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final importFlowActive = lastSystemImport.id.isNotEmpty;
     if (text.trim().startsWith('curl ') &&
         (type == ChatMessageType.importCurl || importFlowActive)) {
+      if (state.lastError != null) {
+        state = state.copyWith(clearLastError: true);
+      }
       await handlePotentialCurlPaste(text);
       return;
     }
@@ -121,6 +128,9 @@ class ChatViewmodel extends StateNotifier<ChatState> {
     final openApiFlowActive = lastSystemOpenApi.id.isNotEmpty;
     if ((_looksLikeOpenApi(text) || _looksLikeUrl(text)) &&
         (type == ChatMessageType.importOpenApi || openApiFlowActive)) {
+      if (state.lastError != null) {
+        state = state.copyWith(clearLastError: true);
+      }
       if (_looksLikeOpenApi(text)) {
         await handlePotentialOpenApiPaste(text);
       } else {
@@ -233,7 +243,11 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       stream: false,
     );
 
-    state = state.copyWith(isGenerating: true, currentStreamingResponse: '');
+    state = state.copyWith(
+      isGenerating: true,
+      currentStreamingResponse: '',
+      clearLastError: true,
+    );
     try {
       final response = await _repo.sendChat(request: enriched);
       if (response != null && response.isNotEmpty) {
@@ -266,9 +280,15 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       } else {
         _appendSystem('No response received from the AI.', type);
       }
+    } on ChatFailure catch (e) {
+      debugPrint('[Chat] sendChat error: ${e.message}');
+      state = state.copyWith(lastError: e);
+      _appendSystem(_formatChatErrorMessage(e), type);
     } catch (e) {
       debugPrint('[Chat] sendChat error: $e');
-      _appendSystem('Error: $e', type);
+      final failure = ChatFailure(e.toString(), code: 'unknown');
+      state = state.copyWith(lastError: failure);
+      _appendSystem(_formatChatErrorMessage(failure), type);
     } finally {
       state = state.copyWith(isGenerating: false, currentStreamingResponse: '');
     }
@@ -286,6 +306,7 @@ class ChatViewmodel extends StateNotifier<ChatState> {
       chatSessions: newSessions,
       isGenerating: false,
       currentStreamingResponse: '',
+      clearLastError: true,
     );
     // Reset to base route (unpins chat) after clearing messages.
     _ref.read(dashbotActiveRouteProvider.notifier).resetToBaseRoute();
@@ -894,6 +915,38 @@ class ChatViewmodel extends StateNotifier<ChatState> {
         messageType: type,
       ),
     );
+  }
+
+  String _formatChatErrorMessage(ChatFailure failure) {
+    final String description;
+    switch (failure.code) {
+      case '401':
+      case '403':
+        description =
+            'Authentication failed. Please verify your API key or credentials.';
+        break;
+      case '429':
+        description =
+            'Rate limit reached. Please wait a moment and try again later.';
+        break;
+      case '500':
+      case '502':
+      case '503':
+      case '504':
+        description =
+            'The AI provider is temporarily unavailable. Please try again later.';
+        break;
+      case null:
+      case '':
+        description =
+            'Network or connection problem. Please check your internet connection.';
+        break;
+      default:
+        description =
+            'An unexpected error occurred while communicating with the AI provider.';
+        break;
+    }
+    return 'Error: $description';
   }
 
   // Prompt helper methods moved to PromptBuilder service.

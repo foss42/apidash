@@ -4,25 +4,52 @@ import 'package:better_networking/better_networking.dart';
 import 'package:flutter/foundation.dart';
 import 'package:nanoid/nanoid.dart';
 import '../models/models.dart';
+import 'error_utils.dart';
 
 Future<String?> executeGenAIRequest(AIRequestModel? aiRequestModel) async {
-  final httpRequestModel = aiRequestModel?.httpRequestModel;
+  if (aiRequestModel == null) return null;
+
+  final httpRequestModel = aiRequestModel.httpRequestModel;
   if (httpRequestModel == null) {
     debugPrint("executeGenAIRequest -> httpRequestModel is null");
-    return null;
+    throw const GenAIException(
+      'Invalid AI request configuration: unable to build HTTP request',
+    );
   }
-  final (response, _, _) = await sendHttpRequest(
+  final (response, duration, error) = await sendHttpRequest(
     nanoid(),
     APIType.rest,
     httpRequestModel,
   );
-  if (response == null) return null;
+  if (response == null) {
+    final errorMessage = (error != null && error.trim().isNotEmpty)
+        ? error.trim()
+        : 'Failed to connect to AI provider';
+    throw GenAIException(
+      errorMessage,
+      statusCode: null,
+    );
+  }
   if (response.statusCode == 200) {
-    final data = jsonDecode(response.body);
-    return aiRequestModel?.getFormattedOutput(data);
+    try {
+      final data = jsonDecode(response.body);
+      return aiRequestModel.getFormattedOutput(data);
+    } on FormatException {
+      throw const GenAIException(
+        'Malformed JSON response from AI provider',
+        statusCode: 200,
+      );
+    }
   } else {
-    debugPrint('LLM_EXCEPTION: ${response.statusCode}\n${response.body}');
-    return null;
+    final message = extractGenAIErrorMessage(
+      response.body,
+      response.statusCode,
+    );
+    debugPrint('LLM_EXCEPTION: ${response.statusCode} - $message');
+    throw GenAIException(
+      message,
+      statusCode: response.statusCode,
+    );
   }
 }
 

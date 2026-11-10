@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:apidash/dashbot/error/chat_failure.dart';
 import 'package:apidash/dashbot/providers/providers.dart';
 import 'package:apidash/dashbot/models/models.dart' show ChatMessage;
 import 'package:apidash/dashbot/repository/repository.dart';
@@ -63,6 +65,7 @@ void main() {
   late _PromptCaptureBuilder promptCapture;
 
   setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     await testSetUpTempDirForHive();
   });
 
@@ -225,7 +228,197 @@ void main() {
         final msgs = vm.currentMessages;
         expect(msgs, isNotEmpty);
         expect(msgs.last.content, contains('Error:'));
+        expect(msgs.last.content, contains('unexpected error occurred'));
+        expect(msgs.last.content, isNot(contains('Exception: boom')));
+        expect(vm.state.lastError, isNotNull);
       },
     );
+
+    group('Error handling and lastError lifecycle', () {
+      test(
+        'catches ChatFailure with 401 and sets lastError with authentication message',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure(
+            'Invalid API key provided',
+            code: '401',
+          );
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Hello');
+
+          expect(vm.state.lastError, isNotNull);
+          expect(vm.state.lastError!.code, '401');
+          expect(vm.state.lastError!.message, 'Invalid API key provided');
+          expect(vm.state.isGenerating, isFalse);
+
+          final lastMessage = vm.currentMessages.last.content;
+          expect(lastMessage, contains('Authentication failed'));
+          expect(lastMessage, isNot(contains('ChatFailure')));
+          expect(lastMessage, isNot(contains('Invalid API key provided')));
+        },
+      );
+
+      test(
+        'catches ChatFailure with 403 and sets lastError with authentication message',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure(
+            'Forbidden permission',
+            code: '403',
+          );
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Hello');
+
+          expect(vm.state.lastError?.code, '403');
+          final lastMessage = vm.currentMessages.last.content;
+          expect(lastMessage, contains('Authentication failed'));
+          expect(lastMessage, isNot(contains('ChatFailure')));
+        },
+      );
+
+      test(
+        'catches ChatFailure with 429 and sets lastError with rate limit message',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure(
+            'Rate limit exceeded',
+            code: '429',
+          );
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Hello');
+
+          expect(vm.state.lastError?.code, '429');
+          final lastMessage = vm.currentMessages.last.content;
+          expect(lastMessage, contains('Rate limit reached'));
+          expect(lastMessage, isNot(contains('ChatFailure')));
+          expect(lastMessage, isNot(contains('Rate limit exceeded')));
+        },
+      );
+
+      test(
+        'catches ChatFailure with 500/502/503/504 and sets lastError with unavailable message',
+        () async {
+          container = createTestContainer();
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          for (final code in ['500', '502', '503', '504']) {
+            mockRepo.mockError = ChatFailure(
+              'Server error for $code',
+              code: code,
+            );
+            await vm.sendMessage(text: 'Test $code');
+            expect(vm.state.lastError?.code, code);
+            final lastMessage = vm.currentMessages.last.content;
+            expect(lastMessage, contains('temporarily unavailable'));
+            expect(lastMessage, isNot(contains('ChatFailure')));
+            expect(lastMessage, isNot(contains('Server error')));
+          }
+        },
+      );
+
+      test(
+        'catches ChatFailure with no status code (transport error) and sets network message',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure(
+            'Failed to connect to AI provider',
+            code: null,
+          );
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Hello');
+
+          expect(vm.state.lastError?.code, isNull);
+          final lastMessage = vm.currentMessages.last.content;
+          expect(lastMessage, contains('Network or connection problem'));
+          expect(lastMessage, isNot(contains('ChatFailure')));
+          expect(lastMessage, isNot(contains('Failed to connect')));
+        },
+      );
+
+      test(
+        'catches other status code errors and formats safe generic message',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure(
+            'Bad Request 400',
+            code: '400',
+          );
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Hello');
+
+          expect(vm.state.lastError?.code, '400');
+          final lastMessage = vm.currentMessages.last.content;
+          expect(lastMessage, contains('unexpected error occurred'));
+          expect(lastMessage, isNot(contains('ChatFailure')));
+          expect(lastMessage, isNot(contains('Bad Request 400')));
+        },
+      );
+
+      test(
+        'clears previous lastError when a new message send begins',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure('Initial failure', code: '429');
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Fail first');
+          expect(vm.state.lastError, isNotNull);
+
+          // Now succeed on the next send
+          mockRepo.mockError = null;
+          mockRepo.mockResponse = '{"explanation":"All good","actions":[]}';
+
+          await vm.sendMessage(text: 'Try again');
+          expect(vm.state.lastError, isNull);
+        },
+      );
+
+      test(
+        'clears previous lastError when sending a message even if AI model is not configured',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure('Initial failure', code: '429');
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Fail first');
+          expect(vm.state.lastError, isNotNull);
+
+          // Now unset AI model in settings
+          container.read(settingsProvider.notifier).state =
+              const SettingsModel();
+
+          // Sending a message should clear lastError even though it exits early due to no AI model
+          await vm.sendMessage(text: 'Send with no model');
+          expect(vm.state.lastError, isNull);
+          expect(
+            vm.currentMessages.last.content,
+            contains('AI model is not configured'),
+          );
+        },
+      );
+
+      test(
+        'clears lastError and messages when clearCurrentChat is called',
+        () async {
+          container = createTestContainer();
+          mockRepo.mockError = const ChatFailure('Auth error', code: '401');
+          final vm = container.read(chatViewmodelProvider.notifier);
+
+          await vm.sendMessage(text: 'Fail message');
+          expect(vm.state.lastError, isNotNull);
+          expect(vm.currentMessages, isNotEmpty);
+
+          vm.clearCurrentChat();
+
+          expect(vm.state.lastError, isNull);
+          expect(vm.currentMessages, isEmpty);
+        },
+      );
+    });
   });
 }
