@@ -1,5 +1,6 @@
 export 'ai_request_model.dart';
 export 'available_models.dart';
+export 'genai_exception.dart';
 export 'model_config_value.dart';
 export 'model_config.dart';
 export 'model_provider.dart';

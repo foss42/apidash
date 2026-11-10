@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genai/models/ai_request_model.dart';
 import 'package:genai/interface/consts.dart';
+import 'package:genai/models/models.dart';
 import 'package:genai/utils/ai_request_utils.dart';
 
 void main() {
@@ -34,10 +34,41 @@ void main() {
             }),
           )
           ..close();
+      } else if (path.contains('error_401')) {
+        request.response
+          ..statusCode = HttpStatus.unauthorized
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              "error": {"message": "Invalid API key provided"},
+            }),
+          )
+          ..close();
+      } else if (path.contains('error_429')) {
+        request.response
+          ..statusCode = HttpStatus.tooManyRequests
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              "error": {"message": "Rate limit exceeded"},
+            }),
+          )
+          ..close();
+      } else if (path.contains('malformed_json_200')) {
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write('{ invalid json: [ }')
+          ..close();
       } else if (path.contains('error') && !path.contains('stream')) {
         request.response
           ..statusCode = HttpStatus.badRequest
-          ..write('Error')
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              "error": {"message": "Invalid request parameter"},
+            }),
+          )
           ..close();
       } else if (path.contains('stream_error')) {
         request.response
@@ -86,15 +117,138 @@ void main() {
       },
     );
 
-    test('executeGenAIRequest returns null on error', () async {
-      var model = AIRequestModel(
-        modelApiProvider: ModelAPIProvider.gemini,
-        url: '$serverUrl/error',
-        apiKey: 'fake_key',
-      );
-      final result = await executeGenAIRequest(model);
-      expect(result, isNull);
-    });
+    test(
+      'executeGenAIRequest throws GenAIException on HTTP 400 with status code and extracted message',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          url: '$serverUrl/error',
+          apiKey: 'fake_key',
+        );
+        expect(
+          () => executeGenAIRequest(model),
+          throwsA(
+            isA<GenAIException>()
+                .having((e) => e.statusCode, 'statusCode', 400)
+                .having(
+                  (e) => e.message,
+                  'message',
+                  'Invalid request parameter',
+                ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'executeGenAIRequest throws GenAIException on HTTP 401 preserving status code',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          url: '$serverUrl/error_401',
+          apiKey: 'fake_key',
+        );
+        expect(
+          () => executeGenAIRequest(model),
+          throwsA(
+            isA<GenAIException>()
+                .having((e) => e.statusCode, 'statusCode', 401)
+                .having(
+                  (e) => e.message,
+                  'message',
+                  'Invalid API key provided',
+                ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'executeGenAIRequest throws GenAIException on HTTP 429 preserving status code',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          url: '$serverUrl/error_429',
+          apiKey: 'fake_key',
+        );
+        expect(
+          () => executeGenAIRequest(model),
+          throwsA(
+            isA<GenAIException>()
+                .having((e) => e.statusCode, 'statusCode', 429)
+                .having(
+                  (e) => e.message,
+                  'message',
+                  'Rate limit exceeded',
+                ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'executeGenAIRequest throws GenAIException on transport failure',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          url: 'invalid://url',
+          apiKey: 'fake_key',
+        );
+        expect(
+          () => executeGenAIRequest(model),
+          throwsA(
+            isA<GenAIException>()
+                .having((e) => e.statusCode, 'statusCode', isNull)
+                .having((e) => e.message, 'message', isNotEmpty),
+          ),
+        );
+      },
+    );
+
+    test(
+      'executeGenAIRequest throws GenAIException on HTTP 200 with malformed JSON',
+      () async {
+        var model = AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          url: '$serverUrl/malformed_json_200',
+          apiKey: 'fake_key',
+        );
+        expect(
+          () => executeGenAIRequest(model),
+          throwsA(
+            isA<GenAIException>()
+                .having((e) => e.statusCode, 'statusCode', 200)
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Malformed JSON'),
+                ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'executeGenAIRequest throws GenAIException when httpRequestModel is missing',
+      () async {
+        var model = const AIRequestModel(
+          url: 'https://api.apidash.dev/test',
+          userPrompt: 'test prompt',
+        );
+        expect(
+          () => executeGenAIRequest(model),
+          throwsA(
+            isA<GenAIException>()
+                .having((e) => e.statusCode, 'statusCode', isNull)
+                .having(
+                  (e) => e.message,
+                  'message',
+                  contains('Invalid AI request configuration'),
+                ),
+          ),
+        );
+      },
+    );
 
     test('executeGenAIRequest returns null when model is null', () async {
       final result = await executeGenAIRequest(null);

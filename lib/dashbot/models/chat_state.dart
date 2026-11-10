@@ -22,6 +22,7 @@ class ChatState {
     String? currentStreamingResponse,
     String? currentRequestId,
     ChatFailure? lastError,
+    bool clearLastError = false,
   }) {
     return ChatState(
       chatSessions: chatSessions ?? this.chatSessions,
@@ -29,7 +30,7 @@ class ChatState {
       currentStreamingResponse:
           currentStreamingResponse ?? this.currentStreamingResponse,
       currentRequestId: currentRequestId ?? this.currentRequestId,
-      lastError: lastError ?? this.lastError,
+      lastError: clearLastError ? null : (lastError ?? this.lastError),
     );
   }
 }
