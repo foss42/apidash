@@ -182,8 +182,11 @@ void main() {
     });
 
     test('redacts Google AIza keys and Bearer tokens', () {
-      const googleBody =
-          '{"error": {"message": "Key AIzaSyD12345678901234567890123456789012 is blocked."}}';
+      // Construct synthetic key dynamically to avoid static secret-scanning false positives
+      // while testing the 39-character AIza + 35 regex redaction rule.
+      final fakeGoogleKey = 'AIza${List.filled(35, '0').join()}';
+      final googleBody =
+          '{"error": {"message": "Key $fakeGoogleKey is blocked."}}';
       expect(
         extractGenAIErrorMessage(googleBody, 403),
         'Key AIza*** is blocked.',
