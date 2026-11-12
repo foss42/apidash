@@ -88,9 +88,9 @@ class NodeViewModelState extends ChangeNotifier {
     dynamic value,
     bool isCollapsed = false,
     NodeViewModelState? parent,
-  })  : _isCollapsed = isCollapsed,
-        _parent = parent,
-        _value = value;
+  }) : _isCollapsed = isCollapsed,
+       _parent = parent,
+       _value = value;
 
   /// Build a [NodeViewModelState] as a property.
   /// A property is a single attribute in the json, can be of a type
@@ -103,13 +103,12 @@ class NodeViewModelState extends ChangeNotifier {
     required String key,
     required dynamic value,
     required NodeViewModelState? parent,
-  }) =>
-      NodeViewModelState._(
-        key: key,
-        value: value,
-        treeDepth: treeDepth,
-        parent: parent,
-      );
+  }) => NodeViewModelState._(
+    key: key,
+    value: value,
+    treeDepth: treeDepth,
+    parent: parent,
+  );
 
   /// Build a [NodeViewModelState] as a class.
   /// A class is a JSON node containing a whole class, a class can have
@@ -122,13 +121,12 @@ class NodeViewModelState extends ChangeNotifier {
     required int treeDepth,
     required String key,
     required NodeViewModelState? parent,
-  }) =>
-      NodeViewModelState._(
-        isClass: true,
-        key: key,
-        treeDepth: treeDepth,
-        parent: parent,
-      );
+  }) => NodeViewModelState._(
+    isClass: true,
+    key: key,
+    treeDepth: treeDepth,
+    parent: parent,
+  );
 
   /// Build a [NodeViewModelState] as an array.
   /// An array is a JSON node containing an array of objects, each element
@@ -142,13 +140,12 @@ class NodeViewModelState extends ChangeNotifier {
     required int treeDepth,
     required String key,
     required NodeViewModelState? parent,
-  }) =>
-      NodeViewModelState._(
-        isArray: true,
-        key: key,
-        treeDepth: treeDepth,
-        parent: parent,
-      );
+  }) => NodeViewModelState._(
+    isArray: true,
+    key: key,
+    treeDepth: treeDepth,
+    parent: parent,
+  );
 
   /// Returns [true] if this node is highlighted.
   ///
@@ -487,8 +484,9 @@ class JsonExplorerStore extends ChangeNotifier {
   /// See also:
   /// * [expandAll]
   void collapseAll() {
-    final rootNodes =
-        _displayNodes.where((node) => node.treeDepth == 0 && !node.isCollapsed);
+    final rootNodes = _displayNodes.where(
+      (node) => node.treeDepth == 0 && !node.isCollapsed,
+    );
     final collapsedNodes = List<NodeViewModelState>.from(_displayNodes);
     for (final node in rootNodes) {
       final nodeIndex = collapsedNodes.indexOf(node) + 1;
@@ -647,8 +645,9 @@ class JsonExplorerStore extends ChangeNotifier {
     final children = node.children;
     var count = 1;
     for (final child in children) {
-      count =
-          child.isCollapsed ? count + 1 : count + _visibleChildrenCount(child);
+      count = child.isCollapsed
+          ? count + 1
+          : count + _visibleChildrenCount(child);
     }
     return count;
   }
@@ -668,8 +667,9 @@ class JsonExplorerStore extends ChangeNotifier {
       }
 
       if (!node.isRoot) {
-        final matchesIndexes =
-            _getSearchTermMatchesIndexes(node.value.toString());
+        final matchesIndexes = _getSearchTermMatchesIndexes(
+          node.value.toString(),
+        );
 
         for (final matchIndex in matchesIndexes) {
           _searchResults.add(
@@ -689,7 +689,7 @@ class JsonExplorerStore extends ChangeNotifier {
   /// Finds all occurrences of [searchTerm] in [victim] and retrieves all their
   /// indexes.
   Iterable<int> _getSearchTermMatchesIndexes(String victim) {
-    final pattern = RegExp(searchTerm, caseSensitive: false);
+    final pattern = RegExp(RegExp.escape(searchTerm), caseSensitive: false);
 
     final matches = pattern.allMatches(victim).map((match) => match.start);
 
@@ -740,7 +740,4 @@ class SearchResult {
 /// The location of the search match in a node.
 ///
 /// Can be in the node's key or in the node's value.
-enum SearchMatchLocation {
-  key,
-  value,
-}
+enum SearchMatchLocation { key, value }
