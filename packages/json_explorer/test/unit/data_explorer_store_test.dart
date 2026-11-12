@@ -445,6 +445,35 @@ void main() {
     });
 
     group('search', () {
+      test(
+        'search handles regex metacharacters correctly without throwing',
+        () {
+          final store = JsonExplorerStore();
+          store.buildNodes({
+            'special[key]': 'value(with)special*chars',
+            'dot.key': 'dot.value',
+            'normal_key': 'normal_value',
+          });
+
+          // Metacharacters should not throw FormatException
+          expect(() => store.search('['), returnsNormally);
+          expect(() => store.search('('), returnsNormally);
+          expect(() => store.search('*'), returnsNormally);
+          expect(() => store.search('+'), returnsNormally);
+          expect(() => store.search('?'), returnsNormally);
+
+          // Verify literal matching
+          store.search('special[');
+          expect(store.searchResults, hasLength(1));
+
+          store.search('with)');
+          expect(store.searchResults, hasLength(1));
+
+          // Dot should match literal dot only, not any arbitrary character
+          store.search('dot.');
+          expect(store.searchResults, hasLength(2));
+        },
+      );
       test('can search', () {
         final store = JsonExplorerStore();
         store.buildNodes(json.decode(testJson));
