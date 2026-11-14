@@ -1732,6 +1732,20 @@ class CollectionStateNotifier
     }
   }
 
+  /// Persists all editable workspace data before a save action completes.
+  Future<void> saveWorkspace() async {
+    try {
+      await saveData();
+      await ref
+          .read(environmentsStateNotifierProvider.notifier)
+          .saveEnvironments();
+    } catch (_) {
+      ref.read(saveDataStateProvider.notifier).state = false;
+      unsave();
+      rethrow;
+    }
+  }
+
   Future<void> saveData() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
