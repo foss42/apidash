@@ -181,7 +181,9 @@ class HiveHandler {
     if (ids != null) {
       ids = ids as List;
       for (var key in dataBox.keys.toList()) {
-        if (key != kKeyDataBoxIds && !ids.contains(key)) {
+        if (key != kKeyDataBoxIds &&
+            key != kKeyWsTemplatesBox &&
+            !ids.contains(key)) {
           await dataBox.delete(key);
         }
       }

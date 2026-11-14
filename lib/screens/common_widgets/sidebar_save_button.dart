@@ -19,10 +19,7 @@ class SaveButton extends ConsumerWidget {
               await saveAndShowDialog(context, onSave: () async {
                 await ref
                     .read(collectionStateNotifierProvider.notifier)
-                    .saveData();
-                await ref
-                    .read(environmentsStateNotifierProvider.notifier)
-                    .saveEnvironments();
+                    .saveWorkspace();
               });
             },
       icon: const Icon(

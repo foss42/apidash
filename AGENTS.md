@@ -241,6 +241,8 @@ ref.read(requestSequenceProvider).add(id);
 - Root settings live in shared preferences through `lib/services/shared_preferences_services.dart`.
 - Desktop workspaces use a user-selected Hive directory. Mobile uses `Hive.initFlutter()`.
 - `CollectionStateNotifier.saveData()` controls whether responses are stored, based on `SettingsModel.saveResponses`.
+- User-facing save actions (sidebar and desktop close dialog) must await `CollectionStateNotifier.saveWorkspace()`, which saves both requests and environments. A failed save leaves the workspace dirty so it can be retried.
+- `apidash-data` also stores WebSocket message templates under `kKeyWsTemplatesBox`. Request cleanup must preserve this reserved key as well as `kKeyDataBoxIds`.
 
 Hive boxes:
 
