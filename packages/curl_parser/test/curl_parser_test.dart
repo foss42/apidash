@@ -566,4 +566,59 @@ void main() {
       ),
     );
   });
+
+  group('option values starting with a dash', () {
+    final echoUri = Uri.parse('https://api.apidash.dev/echo');
+
+    test('keeps a value passed to a short option', () {
+      expect(
+        Curl.parse(r"""curl -d '-1' 'https://api.apidash.dev/echo'"""),
+        Curl(method: 'POST', uri: echoUri, data: '-1'),
+      );
+    });
+
+    test('keeps a value passed to a long option', () {
+      expect(
+        Curl.parse(r"""curl --data-raw '--x' 'https://api.apidash.dev/echo'"""),
+        Curl(method: 'POST', uri: echoUri, data: '--x'),
+      );
+    });
+
+    test('does not read a value that looks like a known flag as a flag', () {
+      expect(
+        Curl.parse(r"""curl -d '-L' 'https://api.apidash.dev/echo'"""),
+        Curl(method: 'POST', uri: echoUri, data: '-L'),
+      );
+    });
+
+    test('keeps a value starting with a dash and a space', () {
+      expect(
+        Curl.parse(r"""curl -d '- item' 'https://api.apidash.dev/echo'"""),
+        Curl(method: 'POST', uri: echoUri, data: '- item'),
+      );
+    });
+
+    test('keeps values of non-data options', () {
+      expect(
+        Curl.parse(
+          r"""curl -u '-admin:pw' -A '-bot' 'https://api.apidash.dev/echo'""",
+        ),
+        Curl(method: 'GET', uri: echoUri, user: '-admin:pw', userAgent: '-bot'),
+      );
+    });
+
+    test('still drops unknown options before the URL', () {
+      expect(
+        Curl.parse(r"""curl --unknown -Z 'https://api.apidash.dev/echo'"""),
+        Curl(method: 'GET', uri: echoUri),
+      );
+    });
+
+    test('still parses an option given as --name=value', () {
+      expect(
+        Curl.parse(r"""curl --request=PUT 'https://api.apidash.dev/echo'"""),
+        Curl(method: 'PUT', uri: echoUri),
+      );
+    });
+  });
 }
