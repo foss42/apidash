@@ -49,13 +49,12 @@ class HarParserIO {
     ContentType bodyContentType = kDefaultContentType;
     String? body;
     List<FormDataModel>? formData = [];
-
-    if (request.postData?.mimeType == "application/json") {
-      bodyContentType = ContentType.json;
-      body = request.postData?.text;
-    }
     FormDataType formDataType = FormDataType.text;
-    if (request.postData?.mimeType == "application/x-www-form-urlencoded") {
+
+    final mediaType = getMediaTypeFromContentType(request.postData?.mimeType);
+    final mimeType = mediaType?.mimeType;
+
+    if (mimeType == "application/x-www-form-urlencoded") {
       bodyContentType = ContentType.formdata;
       var formDataStr = request.postData?.text;
       Map<String, String> parsedData = parseFormData(formDataStr);
@@ -69,9 +68,7 @@ class HarParserIO {
           type: formDataType,
         ));
       });
-    }
-
-    if (request.postData?.mimeType == "multipart/form-data") {
+    } else if (mimeType == "multipart/form-data") {
       bodyContentType = ContentType.formdata;
       String? name, val;
       for (var fd in request.postData?.params ?? <har.Param>[]) {
@@ -89,6 +86,10 @@ class HarParserIO {
           type: formDataType,
         ));
       }
+    } else if (request.postData?.text != null) {
+      bodyContentType =
+          getContentTypeFromMediaType(mediaType) ?? ContentType.text;
+      body = request.postData?.text;
     }
 
     return HttpRequestModel(
