@@ -33,6 +33,7 @@ class GeminiModel extends ModelProvider {
     return HttpRequestModel(
       method: HTTPVerb.post,
       url: endpoint,
+      params: params.isEmpty ? null : params,
       authModel: aiRequestModel.apiKey == null
           ? null
           : AuthModel(
