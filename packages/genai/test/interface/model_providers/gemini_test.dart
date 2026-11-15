@@ -1,7 +1,8 @@
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:genai/interface/consts.dart';
 import 'package:genai/interface/model_providers/gemini.dart';
 import 'package:genai/models/ai_request_model.dart';
-import 'package:genai/interface/consts.dart';
 
 void main() {
   group('GeminiModel', () {
@@ -29,6 +30,7 @@ void main() {
       expect(httpReq.url, contains('generateContent'));
       expect(httpReq.method.name, equals('post'));
       expect(httpReq.authModel?.apikey?.key, equals('123'));
+      expect(httpReq.params, isNull);
     });
 
     test('should create correct HttpRequestModel for streaming', () {
@@ -45,6 +47,11 @@ void main() {
       final httpReq = GeminiModel.instance.createRequest(req)!;
 
       expect(httpReq.url, contains('streamGenerateContent'));
+      expect(httpReq.params, isNotNull);
+      expect(
+        httpReq.params,
+        contains(const NameValueModel(name: 'alt', value: 'sse')),
+      );
     });
 
     test('should format output correctly', () {
