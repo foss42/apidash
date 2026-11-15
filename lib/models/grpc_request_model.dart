@@ -45,7 +45,7 @@ abstract class GrpcRequestModel with _$GrpcRequestModel {
     @Default([]) List<GrpcParameterModel> parameters,
   }) = _GrpcRequestModel;
 
-  Map<String, String> get metadataMap {
+  Map<String, String> get enabledMetadataMap {
     return {
       for (var m
           in getEnabledRows(metadata, isMetadataEnabled) ??
