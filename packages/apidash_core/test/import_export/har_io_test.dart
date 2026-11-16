@@ -12,51 +12,98 @@ void main() {
     });
 
     test('parses a simple key-value pair', () {
-      expect(harParser.parseFormData('name=apidash'), {'name': 'apidash'});
+      expect(harParser.parseFormData('name=apidash'), [('name', 'apidash')]);
+    });
+
+    test('keeps one entry per occurrence when a name repeats', () {
+      expect(harParser.parseFormData('tag=red&tag=blue&tag=green'), [
+        ('tag', 'red'),
+        ('tag', 'blue'),
+        ('tag', 'green'),
+      ]);
     });
 
     test('keeps values containing a trailing = (base64)', () {
-      expect(
-        harParser.parseFormData('token=YWJjZA=='),
-        {'token': 'YWJjZA=='},
-      );
+      expect(harParser.parseFormData('token=YWJjZA=='), [
+        ('token', 'YWJjZA=='),
+      ]);
     });
 
     test('keeps values containing = in the middle', () {
-      expect(
-        harParser.parseFormData('filter=a=b'),
-        {'filter': 'a=b'},
-      );
+      expect(harParser.parseFormData('filter=a=b'), [('filter', 'a=b')]);
     });
 
     test('preserves all pairs when a value contains =', () {
-      expect(
-        harParser.parseFormData('user=deepak&token=abc==&role=admin'),
-        {'user': 'deepak', 'token': 'abc==', 'role': 'admin'},
-      );
+      expect(harParser.parseFormData('user=deepak&token=abc==&role=admin'), [
+        ('user', 'deepak'),
+        ('token', 'abc=='),
+        ('role', 'admin'),
+      ]);
     });
 
     test('decodes percent-encoded keys and values', () {
-      expect(
-        harParser.parseFormData('full%20name=John%20Doe'),
-        {'full name': 'John Doe'},
-      );
+      expect(harParser.parseFormData('full%20name=John%20Doe'), [
+        ('full name', 'John Doe'),
+      ]);
     });
 
     test('decodes plus signs as spaces in form data', () {
-      expect(
-        harParser.parseFormData('full+name=John+Doe'),
-        {'full name': 'John Doe'},
-      );
+      expect(harParser.parseFormData('full+name=John+Doe'), [
+        ('full name', 'John Doe'),
+      ]);
     });
 
     test('handles an empty value', () {
-      expect(harParser.parseFormData('key='), {'key': ''});
+      expect(harParser.parseFormData('key='), [('key', '')]);
     });
 
-    test('returns an empty map for null or empty input', () {
-      expect(harParser.parseFormData(null), {});
-      expect(harParser.parseFormData(''), {});
+    test('returns no fields for null or empty input', () {
+      expect(harParser.parseFormData(null), []);
+      expect(harParser.parseFormData(''), []);
+    });
+  });
+
+  group('HarParserIO url-encoded body import', () {
+    HttpRequestModel importFormBody(String body) {
+      final content = jsonEncode({
+        'log': {
+          'entries': [
+            {
+              'request': {
+                'method': 'POST',
+                'url': 'https://api.apidash.dev/case/lower',
+                'postData': {
+                  'mimeType': 'application/x-www-form-urlencoded',
+                  'text': body,
+                },
+              },
+            },
+          ],
+        },
+      });
+      return HarParserIO().getHttpRequestModelList(content)!.single.$2;
+    }
+
+    test('keeps every field of a body with a repeated name', () {
+      final request = importFormBody('tag=red&tag=blue&tag=green');
+
+      expect(request.bodyContentType, ContentType.formdata);
+      expect(request.formData, const [
+        FormDataModel(name: 'tag', value: 'red', type: FormDataType.text),
+        FormDataModel(name: 'tag', value: 'blue', type: FormDataType.text),
+        FormDataModel(name: 'tag', value: 'green', type: FormDataType.text),
+      ]);
+    });
+
+    test('keeps the order of distinct fields around a repeated one', () {
+      final request = importFormBody('mode=fast&tag=red&tag=blue&page=2');
+
+      expect(request.formData?.map((field) => '${field.name}=${field.value}'), [
+        'mode=fast',
+        'tag=red',
+        'tag=blue',
+        'page=2',
+      ]);
     });
   });
 
