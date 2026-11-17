@@ -868,6 +868,38 @@ echo $res->getBody();
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+
+
+$headers = [
+
+];
+
+$body = fopen('/Documents/up/1.png', 'rb');
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/img', $body);
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.phpGuzzle,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

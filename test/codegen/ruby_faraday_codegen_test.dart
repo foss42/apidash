@@ -733,6 +733,38 @@ puts "Response Body: #{response.body}"
         expectedCode,
       );
     });
+    test('POST 10', () {
+      const expectedCode = r"""require 'uri'
+require 'faraday'
+
+REQUEST_URL = URI("https://api.apidash.dev/io/img")
+
+PAYLOAD = <<HEREDOC
+File.binread("/Documents/up/1.png")
+HEREDOC
+
+conn = Faraday.new do |faraday|
+  faraday.adapter Faraday.default_adapter
+end
+
+response = conn.post(REQUEST_URL, PAYLOAD) do |req|
+  req.headers = {
+    "Content-Type" => "application/octet-stream",
+  }
+end
+
+puts "Status Code: #{response.status}"
+puts "Response Body: #{response.body}"
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyFaraday,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

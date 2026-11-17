@@ -147,7 +147,18 @@ public class Main {
       // if request type is not form data, the request method can include
       // a body, and the body of the request is not null, in that case
       // we need to parse the body as it is, and write it to the body
-      if (requestModel.hasTextData || requestModel.hasJsonData) {
+      if (requestModel.hasFileData) {
+        result += "        String filePath = \"${requestModel.bodyFile}\";\n";
+        result += "        StringBuilder sb = new StringBuilder();\n";
+        result += "        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {\n";
+        result += "            String line;\n";
+        result += "            while ((line = br.readLine()) != null) {\n";
+        result += "                sb.append(line);\n";
+        result += "            }\n";
+        result += "        }\n";
+        result += "        String bodyContent = sb.toString();\n";
+        hasBody = true;
+      } else if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
         result += templateBodyContent.render({"body": requestModel.body});
         hasBody = true;

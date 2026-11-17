@@ -28,6 +28,13 @@ payload = {{body}}
 
 """;
 
+  String kTemplateFileBody = r'''
+
+with open("{{body}}", "rb") as f:
+    payload = f.read()
+
+''';
+
   String kTemplateHeaders = """
 
 headers = {{headers}}
@@ -147,6 +154,10 @@ print('Response Body:', response.text)
           hasBody = true;
           var templateBody = jj.Template(kTemplateBody);
           result += templateBody.render({"body": requestModel.body});
+        } else if (requestModel.hasFileData) {
+          hasBody = true;
+          var templateFileBody = jj.Template(kTemplateFileBody);
+          result += templateFileBody.render({"body": requestModel.bodyFile});
         }
 
         var headersList = requestModel.enabledHeaders;

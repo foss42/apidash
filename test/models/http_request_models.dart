@@ -388,6 +388,7 @@ const httpRequestModelGet4Json = <String, dynamic>{
   "body": null,
   "query": null,
   "formData": null,
+  "bodyFile": null,
 };
 
 const httpRequestModelPost10Json = <String, dynamic>{
@@ -418,6 +419,7 @@ const httpRequestModelPost10Json = <String, dynamic>{
 "text": "I LOVE Flutter"
 }''',
   "query": null,
+  'bodyFile': null,
   'formData': [
     {'name': 'token', 'value': 'xyz', 'type': 'text'},
     {'name': 'imfile', 'value': '/Documents/up/1.png', 'type': 'file'},
@@ -473,6 +475,14 @@ const httpRequestModelPost13 = HttpRequestModel(
   body: r"""{
 "text": "I LOVE Flutter"
 }""",
+);
+
+/// POST request model with file body
+const httpRequestModelPost14 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/io/img',
+  bodyContentType: ContentType.file,
+  bodyFile: '/Documents/up/1.png',
 );
 
 /// Basic OPTIONS request model

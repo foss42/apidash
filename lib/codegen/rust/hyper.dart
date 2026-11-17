@@ -90,6 +90,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
 
+  final String kTemplateFileBody = """
+    let payload = std::fs::read("{{ bodyFile }}")?;
+    let req_builder = req_builder.body(Body::from(payload))?;
+""";
+
   final String kTemplateRequestEnd = """
     let res = client.request(req_builder).await?;
     let status = res.status();
@@ -164,6 +169,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         if (requestModel.hasFormData) {
           result += jj.Template(kTemplateFormData).render({
             "fields_list": requestModel.formDataMapList,
+          });
+        } else if (requestModel.hasFileData) {
+          var templateFileBody = jj.Template(kTemplateFileBody);
+          result += templateFileBody.render({
+            "bodyFile": requestModel.bodyFile!,
           });
         } else if (requestBody == "" ||
             requestBody == null ||

@@ -590,6 +590,32 @@ print('Response Body:', response.text)
         expectedCode,
       );
     });
+    test('POST 10', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.apidash.dev/io/img'
+
+with open("/Documents/up/1.png", "rb") as f:
+    payload = f.read()
+
+headers = {
+  "content-type": "application/octet-stream"
+}
+
+response = requests.post(url, data=payload, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonRequests,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

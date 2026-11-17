@@ -141,7 +141,10 @@ multipart/form-data; boundary={{boundary}}''';
 
         var method = requestModel.method;
         var requestBody = requestModel.body;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
+        if (requestModel.hasFileData) {
+          hasBody = true;
+          result += "    let payload = std::fs::read(\"${requestModel.bodyFile}\")?;\n";
+        } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             if (requestModel.bodyContentType == ContentType.json) {

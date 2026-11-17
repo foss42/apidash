@@ -861,6 +861,35 @@ void main() {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/img";
+    let payload = std::fs::read("/Documents/up/1.png")?;
+
+    let response = client
+        .post(url)
+        .header("content-type", "application/octet-stream")
+        .body(payload)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustReqwest,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

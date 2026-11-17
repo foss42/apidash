@@ -785,6 +785,35 @@ print(data.decode("utf-8"))
         expectedCode,
       );
     });
+    test('POST 10', () {
+      const expectedCode = r"""import http.client
+
+with open("/Documents/up/1.png", "rb") as f:
+    body = f.read()
+
+headers = {
+  "content-type": "application/octet-stream"
+}
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/io/img",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.pythonHttpClient,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

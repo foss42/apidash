@@ -1062,6 +1062,38 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/img";
+    let client = awc::Client::default();
+    let mut request = client.post(url);    let payload = std::fs::read("/Documents/up/1.png")?;
+
+    request = request.insert_header(("content-type", "application/octet-stream"));
+    
+    let mut response = request.send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustActix,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

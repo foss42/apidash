@@ -803,6 +803,41 @@ fun main() {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/img"
+        val mediaType = MediaType.parse("application/octet-stream")
+        val body = RequestBody.create(mediaType, File("/Documents/up/1.png"))
+
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.kotlinOkHttp,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

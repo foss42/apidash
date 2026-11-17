@@ -125,6 +125,14 @@ fetch(url, options)
         result += templateBody.render({
           "body": 'payload',
         });
+      } else if (requestModel.hasFileData && isNodeJs) {
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({
+          "body": "fs.createReadStream(\"${requestModel.bodyFile}\")",
+        });
+        if (!importsData.contains("import fs")) {
+          importsData = "import fs from 'fs'\n" + importsData;
+        }
       }
 
       result += kStringRequest;

@@ -118,6 +118,7 @@ multipart/form-data; boundary={{boundary}}''';
 
       result += jj.Template(kTemplateStart).render({
         "hasFormData": requestModel.hasFormData,
+        "hasFileData": requestModel.hasFileData,
       });
 
       var rec = getValidRequestUri(
@@ -135,7 +136,9 @@ multipart/form-data; boundary={{boundary}}''';
         result += templateUrl.render({"url": harJson["url"]});
 
         String? bodyPublisher = "";
-        if (requestModel.hasTextData) {
+        if (requestModel.hasFileData) {
+          bodyPublisher = '      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("${requestModel.bodyFile}");\n';
+        } else if (requestModel.hasTextData) {
           var templateBody = jj.Template(kTemplateRawBody);
           bodyPublisher = templateBody.render({"body": requestBody});
         } else if (requestModel.hasJsonData) {

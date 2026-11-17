@@ -1093,6 +1093,56 @@ public class Main {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""import org.asynchttpclient.*;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
+public class Main {
+    public static void main(String[] args) {
+        try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
+            String url = "https://api.apidash.dev/io/img";
+        String filePath = "/Documents/up/1.png";
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        }
+        String bodyContent = sb.toString();
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
+            requestBuilder
+                .addHeader("Content-Type", "application/octet-stream");
+            requestBuilder.setBody(bodyContent);
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
+        } catch (InterruptedException | ExecutionException | IOException ignored) {
+
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaAsyncHttpClient,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

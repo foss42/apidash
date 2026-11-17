@@ -1010,6 +1010,52 @@ public class Main {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.RequestBody;
+import okhttp3.MediaType;
+
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
+
+        String url = "https://api.apidash.dev/io/img";
+        
+        MediaType mediaType = MediaType.parse("application/octet-stream");
+
+        RequestBody body = RequestBody.create(new File("/Documents/up/1.png"), mediaType);
+
+        Request request = new Request.Builder()
+            .url(url)
+            .post(body)
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            System.out.println(response.code());
+            if (response.body() != null) {
+                System.out.println(response.body().string());
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaOkHttp,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

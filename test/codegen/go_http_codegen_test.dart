@@ -1072,6 +1072,46 @@ url.RawQuery = query.Encode()
       expectedCode,
     );
   });
+  test("POST 10", () {
+    const expectedCode = r'''package main
+
+import (
+  "fmt"
+  "io"
+  "net/http"
+  "net/url"
+  "bytes"
+  "os"
+)
+
+func main() {
+  client := &http.Client{}
+  url, _ := url.Parse("https://api.apidash.dev/io/img")
+  file, _ := os.Open("/Documents/up/1.png")
+  defer file.Close()
+  payload := file
+  req, _ := http.NewRequest("POST", url.String(), payload)
+
+  response, err := client.Do(req)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
+}''';
+    expect(
+      codeGen.getCode(
+        CodegenLanguage.goHttp,
+        requestModelPost14,
+        SupportedUriSchemes.https,
+      ),
+      expectedCode,
+    );
+  });
 
   group('PUT Request', () {
     test('PUT 1', () {

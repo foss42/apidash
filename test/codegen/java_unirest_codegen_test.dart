@@ -606,6 +606,32 @@ public class Main {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""import kong.unirest.*;
+
+public class Main {
+    public static void main(String[] args) {
+        final String requestURL = "https://api.apidash.dev/io/img";
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                .header("Content-Type", "application/octet-stream")
+                              .body(new File("/Documents/up/1.png"))
+        .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.javaUnirest,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

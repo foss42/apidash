@@ -324,6 +324,7 @@ class CollectionStateNotifier
     List<bool>? isParamEnabledList,
     ContentType? bodyContentType,
     String? body,
+    String? bodyFile,
     String? query,
     List<FormDataModel>? formData,
     int? responseStatus,
@@ -429,6 +430,7 @@ class CollectionStateNotifier
           bodyContentType:
               bodyContentType ?? currentHttpRequestModel.bodyContentType,
           body: body ?? currentHttpRequestModel.body,
+          bodyFile: bodyFile ?? currentHttpRequestModel.bodyFile,
           query: query ?? currentHttpRequestModel.query,
           formData: formData ?? currentHttpRequestModel.formData,
         ),

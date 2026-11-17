@@ -952,7 +952,43 @@ class Program
         expectedCode,
       );
     });
-  });
+  
+        test("Post 9", () {
+      const expectedCode = r"""
+using System;
+using RestSharp;
+using System.Threading.Tasks;
+
+class Program
+{
+  static async Task Main(){
+    try{
+      const String _baseUrl = "https://api.apidash.dev";
+      var client = new RestClient(_baseUrl);
+
+      var request = new RestRequest("/io/img", Method.Post);
+
+      request.AddFile("file", "/Documents/up/1.png", options: options);
+      var response = await client.ExecuteAsync(request);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
+      Console.WriteLine("Response Content: " + response.Content);
+    }
+    catch(Exception ex){
+      Console.WriteLine("Error: " + ex);
+    }
+  }
+}
+""";
+      expect(
+        codegen.getCode(
+          CodegenLanguage.cSharpRestSharp,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
+});
 
   group("Patch Request Test", () {
     test("Patch 1", () {

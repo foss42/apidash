@@ -115,6 +115,13 @@ axios(config)
       } else if (harJson["postData"]?["text"] != null) {
         result += templateBody.render(
             {"body": kJsonEncoder.convert(harJson["postData"]["text"])});
+      } else if (requestModel.hasFileData && isNodeJs) {
+        result += templateBody.render({
+          "body": "fs.createReadStream(\"${requestModel.bodyFile}\")",
+        });
+        if (!importsData.contains("import fs")) {
+          importsData = "import fs from 'fs'\n" + importsData;
+        }
       }
       result += kStringRequest;
       return result;

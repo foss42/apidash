@@ -23,6 +23,13 @@ body = r'''{{body}}'''
 
 """;
 
+  String kTemplateFileBody = r'''
+
+with open("{{body}}", "rb") as f:
+    body = f.read()
+
+''';
+
   String kTemplateHeaders = """
 
 headers = {{headers}}
@@ -124,6 +131,9 @@ body = b'\r\n'.join(dataList)
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             var templateBody = jj.Template(kTemplateBody);
             result += templateBody.render({"body": requestModel.body});
+          } else if (requestModel.hasFileData) {
+            var templateFileBody = jj.Template(kTemplateFileBody);
+            result += templateFileBody.render({"body": requestModel.bodyFile});
           }
         }
 
@@ -135,6 +145,9 @@ body = b'\r\n'.join(dataList)
             hasHeaders = true;
             if (hasBody && !requestModel.hasContentTypeHeader) {
               if (requestModel.hasJsonData || requestModel.hasTextData) {
+                headers[HttpHeaders.contentTypeHeader] =
+                    requestModel.bodyContentType.header;
+              } else if (requestModel.hasFileData) {
                 headers[HttpHeaders.contentTypeHeader] =
                     requestModel.bodyContentType.header;
               } else if (requestModel.hasFormData) {

@@ -109,6 +109,10 @@ println("Response Body: \n$(String(response.body))")
           final templateBody = jj.Template(kTemplateBody);
           var bodyStr = requestModel.body;
           result += templateBody.render({"body": bodyStr});
+        } else if (requestModel.hasFileData) {
+          addHeaderForBody = true;
+          final templateBody = jj.Template(kTemplateBody);
+          result += templateBody.render({"body": "read(\"${requestModel.bodyFile}\")"});
         }
 
         if (requestModel.hasFormData) {

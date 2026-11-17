@@ -44,6 +44,13 @@ EOF;
 
 """;
 
+  // Template for file body (use stream factory with a resource)
+  String kTemplateFileBody = """
+\$stream = fopen('{{bodyPath}}', 'r');
+\$request = \$request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStreamFromResource(\$stream));
+
+""";
+
   String kTemplateHeaders = """
 \$headers = [{{headers}}];
 foreach (\$headers as \$name => \$value) {
@@ -115,7 +122,12 @@ echo \$response->getBody();
 
         var requestBody = requestModel.body;
 
-        if ((requestModel.hasTextData || requestModel.hasJsonData) &&
+        if (requestModel.hasFileData) {
+          var templateFileBody = jj.Template(kTemplateFileBody);
+          result += templateFileBody.render({
+            "bodyPath": requestModel.bodyFile!,
+          });
+        } else if ((requestModel.hasTextData || requestModel.hasJsonData) &&
             requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {

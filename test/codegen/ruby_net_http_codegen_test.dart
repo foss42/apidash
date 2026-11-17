@@ -699,6 +699,35 @@ puts "Response Body: #{response.body}"
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""require "uri"
+require "net/http"
+
+url = URI("https://api.apidash.dev/io/img")
+https = Net::HTTP.new(url.host, url.port)
+https.use_ssl = true
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = "application/octet-stream"
+request.body = File.binread("/Documents/up/1.png")
+
+response = https.request(request)
+
+puts "Response Code: #{response.code}"
+
+puts "Response Body: #{response.body}"
+
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rubyNetHttp,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

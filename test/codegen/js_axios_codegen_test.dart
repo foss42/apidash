@@ -891,5 +891,31 @@ axios(config)
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""const config = {
+  url: 'https://api.apidash.dev/io/img',
+  method: 'post'
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.jsAxios,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 }

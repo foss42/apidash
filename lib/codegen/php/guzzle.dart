@@ -52,6 +52,12 @@ END;
 
 """;
 
+  // Template for file body (assignment expression, not heredoc)
+  String kTemplateFileBody = """
+\$body = fopen('{{bodyPath}}', 'rb');
+
+""";
+
   String kTemplateRequest = r"""
 $client = new Client();
 
@@ -127,7 +133,12 @@ if (params.isNotEmpty) {
 
       var templateBody = jj.Template(kTemplateBody);
 
-      if (requestModel.hasJsonData || requestModel.hasTextData) {
+      if (requestModel.hasFileData) {
+        var templateFileBody = jj.Template(kTemplateFileBody);
+        result += templateFileBody.render({
+          "bodyPath": requestModel.bodyFile!,
+        });
+      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         result += templateBody.render({"body": requestModel.body});
       }
 

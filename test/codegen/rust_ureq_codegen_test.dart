@@ -890,6 +890,31 @@ fn main() -> Result<(), ureq::Error> {
         expectedCode,
       );
     });
+
+
+    test('POST 10', () {
+      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
+    let url = "https://api.apidash.dev/io/img";    let payload = std::fs::read("/Documents/up/1.png")?;
+
+    let response = ureq::post(url)
+        .header("content-type", "application/octet-stream")
+        .send(payload)?;
+
+    println!("Response Status: {}", response.status());
+    println!("Response: {}", response.into_body().read_to_string()?);
+
+    Ok(())
+}
+""";
+      expect(
+        codeGen.getCode(
+          CodegenLanguage.rustUreq,
+          requestModelPost14,
+          SupportedUriSchemes.https,
+        ),
+        expectedCode,
+      );
+    });
   });
 
   group('PUT Request', () {

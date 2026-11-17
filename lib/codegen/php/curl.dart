@@ -119,11 +119,15 @@ echo $response . "\n";
           hasBody = true;
           // contains the entire request body as a string if body is present
           var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({
-            'body': requestModel.hasFormData
-                ? requestModel.formDataMapList
-                : requestModel.body,
-          });
+          if (requestModel.hasFileData) {
+            result += "    \$request_body = curl_file_create('${requestModel.bodyFile}', 'application/octet-stream');\n";
+          } else {
+            result += templateBody.render({
+              'body': requestModel.hasFormData
+                  ? requestModel.formDataMapList
+                  : requestModel.body,
+            });
+          }
         }
 
         //checking and adding query params
