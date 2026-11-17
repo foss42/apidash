@@ -222,6 +222,8 @@ User selects file → Import dialog →
         Added to collection via CollectionStateNotifier
 ```
 
+The Postman v2.1 decoder accepts URL objects and literal URL strings. For a string, it keeps the original URL and decodes query entries in input order, including repeated names.
+
 ## Packages Overview
 
 The monorepo contains reusable packages managed by Melos:

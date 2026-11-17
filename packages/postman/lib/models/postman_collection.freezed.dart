@@ -897,7 +897,7 @@ $RequestCopyWith<$Res>? get request {
 /// @nodoc
 mixin _$Request {
 
- String? get method; List<Header>? get header; Body? get body; Url? get url;
+ String? get method; List<Header>? get header; Body? get body;@JsonKey(fromJson: _requestUrlFromJson) Url? get url;
 /// Create a copy of Request
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -930,7 +930,7 @@ abstract mixin class $RequestCopyWith<$Res>  {
   factory $RequestCopyWith(Request value, $Res Function(Request) _then) = _$RequestCopyWithImpl;
 @useResult
 $Res call({
- String? method, List<Header>? header, Body? body, Url? url
+ String? method, List<Header>? header, Body? body,@JsonKey(fromJson: _requestUrlFromJson) Url? url
 });
 
 
@@ -1062,7 +1062,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? method,  List<Header>? header,  Body? body,  Url? url)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? method,  List<Header>? header,  Body? body, @JsonKey(fromJson: _requestUrlFromJson)  Url? url)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Request() when $default != null:
 return $default(_that.method,_that.header,_that.body,_that.url);case _:
@@ -1083,7 +1083,7 @@ return $default(_that.method,_that.header,_that.body,_that.url);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? method,  List<Header>? header,  Body? body,  Url? url)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? method,  List<Header>? header,  Body? body, @JsonKey(fromJson: _requestUrlFromJson)  Url? url)  $default,) {final _that = this;
 switch (_that) {
 case _Request():
 return $default(_that.method,_that.header,_that.body,_that.url);case _:
@@ -1103,7 +1103,7 @@ return $default(_that.method,_that.header,_that.body,_that.url);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? method,  List<Header>? header,  Body? body,  Url? url)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? method,  List<Header>? header,  Body? body, @JsonKey(fromJson: _requestUrlFromJson)  Url? url)?  $default,) {final _that = this;
 switch (_that) {
 case _Request() when $default != null:
 return $default(_that.method,_that.header,_that.body,_that.url);case _:
@@ -1118,7 +1118,7 @@ return $default(_that.method,_that.header,_that.body,_that.url);case _:
 
 @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _Request implements Request {
-  const _Request({this.method, final  List<Header>? header, this.body, this.url}): _header = header;
+  const _Request({this.method, final  List<Header>? header, this.body, @JsonKey(fromJson: _requestUrlFromJson) this.url}): _header = header;
   factory _Request.fromJson(Map<String, dynamic> json) => _$RequestFromJson(json);
 
 @override final  String? method;
@@ -1132,7 +1132,7 @@ class _Request implements Request {
 }
 
 @override final  Body? body;
-@override final  Url? url;
+@override@JsonKey(fromJson: _requestUrlFromJson) final  Url? url;
 
 /// Create a copy of Request
 /// with the given fields replaced by the non-null parameter values.
@@ -1167,7 +1167,7 @@ abstract mixin class _$RequestCopyWith<$Res> implements $RequestCopyWith<$Res> {
   factory _$RequestCopyWith(_Request value, $Res Function(_Request) _then) = __$RequestCopyWithImpl;
 @override @useResult
 $Res call({
- String? method, List<Header>? header, Body? body, Url? url
+ String? method, List<Header>? header, Body? body,@JsonKey(fromJson: _requestUrlFromJson) Url? url
 });
 
 

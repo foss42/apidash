@@ -288,6 +288,7 @@ Hive boxes:
 
 - `lib/importer/importer.dart` is the root import facade for cURL, Postman, Insomnia, and HAR.
 - Format-specific parsing belongs in the corresponding package or `packages/apidash_core/lib/import_export/`.
+- The Postman v2.1 decoder accepts both URL objects and strings. Keep repeated query entries in their original order.
 - Importers should return `HttpRequestModel` data and leave collection insertion to app-level state notifiers.
 - OpenAPI import assistance currently lives in Dashbot services, not in the generic `ImportFormat` enum.
 

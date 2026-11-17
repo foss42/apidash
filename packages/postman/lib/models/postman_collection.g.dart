@@ -61,9 +61,7 @@ _Request _$RequestFromJson(Map json) => _Request(
   body: json['body'] == null
       ? null
       : Body.fromJson(Map<String, dynamic>.from(json['body'] as Map)),
-  url: json['url'] == null
-      ? null
-      : Url.fromJson(Map<String, dynamic>.from(json['url'] as Map)),
+  url: _requestUrlFromJson(json['url']),
 );
 
 Map<String, dynamic> _$RequestToJson(_Request instance) => <String, dynamic>{
