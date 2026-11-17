@@ -82,6 +82,17 @@ class HistoryRequestPane extends ConsumerWidget {
         ) ??
         false;
 
+    final hasVariables =
+        ref.watch(
+          selectedHistoryRequestModelProvider.select((value) {
+            if (apiType != APIType.graphql) {
+              return false;
+            }
+            return value?.httpRequestModel?.hasVariables;
+          }),
+        ) ??
+        false;
+
     final scriptsLength =
         ref.watch(
           selectedHistoryRequestModelProvider.select(
@@ -204,7 +215,7 @@ class HistoryRequestPane extends ConsumerWidget {
         showIndicators: [
           headerLength > 0,
           hasAuth,
-          hasQuery,
+          hasQuery || hasVariables,
           scriptsLength > 0,
         ],
         tabLabels: const [
@@ -373,11 +384,35 @@ class HisRequestBody extends ConsumerWidget {
       ),
       APIType.graphql => Padding(
         padding: kPt5o10,
-        child: TextFieldEditor(
-          key: Key("${selectedHistoryModel?.historyId}-query"),
-          fieldKey: "${selectedHistoryModel?.historyId}-query-viewer",
-          initialValue: requestModel?.query,
-          readOnly: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: TextFieldEditor(
+                key: Key("${selectedHistoryModel?.historyId}-query"),
+                fieldKey: "${selectedHistoryModel?.historyId}-query-viewer",
+                initialValue: requestModel?.query,
+                readOnly: true,
+              ),
+            ),
+            kVSpacer8,
+            Text(
+              kLabelGQLVariables,
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            Expanded(
+              flex: 2,
+              child: JsonTextFieldEditor(
+                key: Key("${selectedHistoryModel?.historyId}-gql-variables"),
+                fieldKey:
+                    "${selectedHistoryModel?.historyId}-gql-variables-viewer",
+                initialValue: requestModel?.variables,
+                readOnly: true,
+                isDark: Theme.of(context).brightness == Brightness.dark,
+              ),
+            ),
+          ],
         ),
       ),
       _ => kSizedBoxEmpty,

@@ -466,6 +466,7 @@ const kLabelBody = "Body";
 const kLabelScripts = "Scripts";
 const kLabelAuth = "Auth";
 const kLabelQuery = "Query";
+const kLabelGQLVariables = "Variables";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
 const kNameHeader = "Header Name";
@@ -484,6 +485,7 @@ const kHintContent = "Enter content";
 const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
+const kHintGraphQLVariables = "Enter GraphQL variables as JSON";
 // TODO: CodeField widget does not allow this hint. To be solved.
 const kHintScript = "// Use Javascript to modify this request dynamically";
 // Response Pane

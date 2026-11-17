@@ -91,6 +91,8 @@ HttpRequestModel substituteHttpRequestModel(
       );
     }).toList(),
     body: substituteVariables(httpRequestModel.body, combinedEnvVarMap),
+    variables:
+        substituteVariables(httpRequestModel.variables, combinedEnvVarMap),
     authModel:
         substituteAuthModel(httpRequestModel.authModel, combinedEnvVarMap),
   );

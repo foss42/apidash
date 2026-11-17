@@ -214,6 +214,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(TextFieldEditor), findsOneWidget);
+      expect(find.byType(JsonTextFieldEditor), findsOneWidget);
+      expect(find.text(kLabelGQLVariables), findsOneWidget);
     });
 
     testWidgets('renders HisRequestBody for REST (formdata) correctly', (

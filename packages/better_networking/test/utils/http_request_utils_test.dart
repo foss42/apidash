@@ -240,6 +240,54 @@ void main() {
       expect(result, '{\n  "query": "{ users { name } }"\n}');
     });
 
+    test('Includes parsed GraphQL variables when JSON is an object', () {
+      const model = HttpRequestModel(
+        query: r'query ($id: ID!) { user(id: $id) { name } }',
+        variables: '{"id": "42"}',
+        method: HTTPVerb.post,
+      );
+      final result = getRequestBody(APIType.graphql, model);
+      expect(
+        result,
+        '{\n'
+        '  "query": "query (\$id: ID!) { user(id: \$id) { name } }",\n'
+        '  "variables": {\n'
+        '    "id": "42"\n'
+        '  }\n'
+        '}',
+      );
+    });
+
+    test('Omits GraphQL variables when JSON is invalid', () {
+      const model = HttpRequestModel(
+        query: '{ users { name } }',
+        variables: '{id:}',
+        method: HTTPVerb.post,
+      );
+      final result = getRequestBody(APIType.graphql, model);
+      expect(result, '{\n  "query": "{ users { name } }"\n}');
+    });
+
+    test('Omits GraphQL variables when JSON is not an object', () {
+      const model = HttpRequestModel(
+        query: '{ users { name } }',
+        variables: '["id"]',
+        method: HTTPVerb.post,
+      );
+      final result = getRequestBody(APIType.graphql, model);
+      expect(result, '{\n  "query": "{ users { name } }"\n}');
+    });
+
+    test('Omits empty GraphQL variables', () {
+      const model = HttpRequestModel(
+        query: '{ users { name } }',
+        variables: '   ',
+        method: HTTPVerb.post,
+      );
+      final result = getRequestBody(APIType.graphql, model);
+      expect(result, '{\n  "query": "{ users { name } }"\n}');
+    });
+
     test('Returns null for GraphQL when query is missing', () {
       const model = HttpRequestModel(query: null);
       final result = getRequestBody(APIType.graphql, model);
