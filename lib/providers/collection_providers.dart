@@ -370,7 +370,10 @@ class CollectionStateNotifier
           httpRequestModel: null,
           aiRequestModel: defaultModel == null
               ? const AIRequestModel()
-              : AIRequestModel.fromJson(defaultModel),
+              : applyProviderCredentials(
+                  safeAIRequestModelFromJson(defaultModel),
+                  ref.read(settingsProvider).aiProviders,
+                ),
           wsRequestModel: null,
           mqttRequestModel: null,
           grpcRequestModel: null,

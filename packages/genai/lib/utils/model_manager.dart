@@ -62,14 +62,69 @@ class ModelManager {
     return kAvailableModels;
   }
 
+  static List<Model> knownModelsFor(ModelAPIProvider provider) {
+    return (kAvailableModels.map[provider]?.models ?? const [])
+        .where((m) => m.id != null && m.id!.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  static Future<List<Model>?> fetchProviderModels({
+    required ModelAPIProvider provider,
+    String? apiKey,
+    String? url,
+  }) async {
+    final key = apiKey?.trim() ?? '';
+    switch (provider) {
+      case ModelAPIProvider.ollama:
+        return fetchInstalledOllamaModels(
+          ollamaUrl: ollamaHostFromEndpoint(url),
+        );
+      case ModelAPIProvider.openai:
+        if (key.isEmpty) return null;
+        return _fetchDataIdModels(
+          modelsUrl: _modelsUrlFromChatUrl(url ?? kOpenAIUrl),
+          apiKey: key,
+        );
+      case ModelAPIProvider.anthropic:
+        if (key.isEmpty) return null;
+        return _fetchDataIdModels(
+          modelsUrl: 'https://api.anthropic.com/v1/models',
+          apiKey: key,
+          headers: const [
+            NameValueModel(name: 'anthropic-version', value: '2023-06-01'),
+          ],
+          auth: AuthModel(
+            type: APIAuthType.apiKey,
+            apikey: AuthApiKeyModel(key: key),
+          ),
+          nameKey: 'display_name',
+        );
+      case ModelAPIProvider.gemini:
+        if (key.isEmpty) return null;
+        return _fetchGeminiModels(apiKey: key, modelsBaseUrl: url);
+      case ModelAPIProvider.azureopenai:
+        return null;
+    }
+  }
+
+  static String ollamaHostFromEndpoint(String? url) {
+    final uri = Uri.tryParse(url?.trim() ?? '');
+    if (uri == null || uri.host.isEmpty) return kBaseOllamaUrl;
+    final port = uri.hasPort ? ':${uri.port}' : '';
+    return '${uri.scheme}://${uri.host}$port';
+  }
+
+  static String _modelsUrlFromChatUrl(String chatUrl) {
+    if (chatUrl.contains('/chat/completions')) {
+      return chatUrl.replaceFirst('/chat/completions', '/models');
+    }
+    return 'https://api.openai.com/v1/models';
+  }
+
   static Future<List<Model>?> fetchInstalledOllamaModels({
     String? ollamaUrl,
   }) async {
-    // All available models
-    // final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
-    // All loaded models
-    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/ps";
-
+    final url = "${ollamaUrl ?? kBaseOllamaUrl}/api/tags";
     try {
       final (resp, _, msg) = await sendHttpRequest(
         'OLLAMA_FETCH',
@@ -77,7 +132,6 @@ class ModelManager {
         HttpRequestModel(url: url, method: HTTPVerb.get),
         noSSL: true,
       );
-      // debugPrint("fetchInstalledOllamaModels -> $url -> ${resp?.body} -> $msg");
       if (resp == null) {
         return null;
       }
@@ -91,6 +145,82 @@ class ModelManager {
       return ollamaModels;
     } catch (e) {
       debugPrint('fetchInstalledOllamaModels -> ${e.toString()}');
+      return null;
+    }
+  }
+
+  static Future<List<Model>?> _fetchDataIdModels({
+    required String modelsUrl,
+    required String apiKey,
+    List<NameValueModel>? headers,
+    AuthModel? auth,
+    String nameKey = 'id',
+  }) async {
+    try {
+      final (resp, _, _) = await sendHttpRequest(
+        'PROVIDER_MODELS_FETCH',
+        APIType.rest,
+        HttpRequestModel(
+          url: modelsUrl,
+          method: HTTPVerb.get,
+          headers: headers,
+          authModel: auth ??
+              AuthModel(
+                type: APIAuthType.bearer,
+                bearer: AuthBearerModel(token: apiKey),
+              ),
+        ),
+      );
+      if (resp == null || resp.statusCode != 200) return null;
+      final data = jsonDecode(resp.body)['data'];
+      if (data is! List) return null;
+      final models = <Model>[
+        for (final m in data)
+          if (m is Map && m['id'] != null)
+            Model(
+              id: m['id'].toString(),
+              name: (m[nameKey] ?? m['id']).toString(),
+            ),
+      ];
+      models.sort((a, b) => (a.id ?? '').compareTo(b.id ?? ''));
+      return models;
+    } catch (e) {
+      debugPrint('_fetchDataIdModels -> $e');
+      return null;
+    }
+  }
+
+  static Future<List<Model>?> _fetchGeminiModels({
+    required String apiKey,
+    String? modelsBaseUrl,
+  }) async {
+    final base = (modelsBaseUrl != null && modelsBaseUrl.trim().isNotEmpty)
+        ? modelsBaseUrl.trim().replaceAll(RegExp(r'/$'), '')
+        : kGeminiUrl;
+    try {
+      final (resp, _, _) = await sendHttpRequest(
+        'GEMINI_MODELS_FETCH',
+        APIType.rest,
+        HttpRequestModel(
+          url: '$base?key=${Uri.encodeQueryComponent(apiKey)}',
+          method: HTTPVerb.get,
+        ),
+      );
+      if (resp == null || resp.statusCode != 200) return null;
+      final arr = jsonDecode(resp.body)['models'];
+      if (arr is! List) return null;
+      final models = <Model>[
+        for (final m in arr)
+          if (m is Map && m['name'] != null)
+            Model(
+              id: m['name'].toString().split('/').last,
+              name: (m['displayName'] ?? m['name']).toString(),
+            ),
+      ];
+      models.sort((a, b) => (a.id ?? '').compareTo(b.id ?? ''));
+      return models;
+    } catch (e) {
+      debugPrint('_fetchGeminiModels -> $e');
       return null;
     }
   }
