@@ -55,6 +55,15 @@ class WsConnectionSettings extends ConsumerWidget {
               _updateWsModel(ref, (ws) => ws.copyWith(autoReconnect: val));
             },
           ),
+          SwitchListTile(
+            title: const Text("Auto PONG replies"),
+            subtitle: const Text(
+                "Automatically reply to server PING with PONG"),
+            value: ref.watch(selectedRequestModelProvider.select((value) => value?.wsRequestModel?.autoPongEnabled)) ?? true,
+            onChanged: (val) {
+              _updateWsModel(ref, (ws) => ws.copyWith(autoPongEnabled: val));
+            },
+          ),
           // ── Group A: Automatic ping ─────────────────
           SwitchListTile(
             title: const Text("Send automatic pings"),

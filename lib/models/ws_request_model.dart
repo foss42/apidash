@@ -61,6 +61,9 @@ abstract class WebSocketRequestModel with _$WebSocketRequestModel {
     /// Whether to automatically re-establish the connection on close.
     @Default(false) bool autoReconnect,
 
+    /// Whether to automatically reply to server PING with PONG.
+    @Default(true) bool autoPongEnabled,
+
     /// Whether to send periodic keep-alive pings.
     @Default(false) bool enableHeartbeat,
 
