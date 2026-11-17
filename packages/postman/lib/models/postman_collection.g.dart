@@ -126,6 +126,9 @@ _Body _$BodyFromJson(Map json) => _Body(
   formdata: (json['formdata'] as List<dynamic>?)
       ?.map((e) => Formdatum.fromJson(Map<String, dynamic>.from(e as Map)))
       .toList(),
+  urlencoded: (json['urlencoded'] as List<dynamic>?)
+      ?.map((e) => Formdatum.fromJson(Map<String, dynamic>.from(e as Map)))
+      .toList(),
 );
 
 Map<String, dynamic> _$BodyToJson(_Body instance) => <String, dynamic>{
@@ -133,6 +136,7 @@ Map<String, dynamic> _$BodyToJson(_Body instance) => <String, dynamic>{
   'raw': ?instance.raw,
   'options': ?instance.options?.toJson(),
   'formdata': ?instance.formdata?.map((e) => e.toJson()).toList(),
+  'urlencoded': ?instance.urlencoded?.map((e) => e.toJson()).toList(),
 };
 
 _Options _$OptionsFromJson(Map json) => _Options(

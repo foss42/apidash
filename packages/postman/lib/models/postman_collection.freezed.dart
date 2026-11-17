@@ -2065,7 +2065,7 @@ as bool?,
 /// @nodoc
 mixin _$Body {
 
- String? get mode; String? get raw; Options? get options; List<Formdatum>? get formdata;
+ String? get mode; String? get raw; Options? get options; List<Formdatum>? get formdata; List<Formdatum>? get urlencoded;
 /// Create a copy of Body
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2078,16 +2078,16 @@ $BodyCopyWith<Body> get copyWith => _$BodyCopyWithImpl<Body>(this as Body, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Body&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.raw, raw) || other.raw == raw)&&(identical(other.options, options) || other.options == options)&&const DeepCollectionEquality().equals(other.formdata, formdata));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Body&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.raw, raw) || other.raw == raw)&&(identical(other.options, options) || other.options == options)&&const DeepCollectionEquality().equals(other.formdata, formdata)&&const DeepCollectionEquality().equals(other.urlencoded, urlencoded));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,mode,raw,options,const DeepCollectionEquality().hash(formdata));
+int get hashCode => Object.hash(runtimeType,mode,raw,options,const DeepCollectionEquality().hash(formdata),const DeepCollectionEquality().hash(urlencoded));
 
 @override
 String toString() {
-  return 'Body(mode: $mode, raw: $raw, options: $options, formdata: $formdata)';
+  return 'Body(mode: $mode, raw: $raw, options: $options, formdata: $formdata, urlencoded: $urlencoded)';
 }
 
 
@@ -2098,7 +2098,7 @@ abstract mixin class $BodyCopyWith<$Res>  {
   factory $BodyCopyWith(Body value, $Res Function(Body) _then) = _$BodyCopyWithImpl;
 @useResult
 $Res call({
- String? mode, String? raw, Options? options, List<Formdatum>? formdata
+ String? mode, String? raw, Options? options, List<Formdatum>? formdata, List<Formdatum>? urlencoded
 });
 
 
@@ -2115,12 +2115,13 @@ class _$BodyCopyWithImpl<$Res>
 
 /// Create a copy of Body
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? mode = freezed,Object? raw = freezed,Object? options = freezed,Object? formdata = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? mode = freezed,Object? raw = freezed,Object? options = freezed,Object? formdata = freezed,Object? urlencoded = freezed,}) {
   return _then(_self.copyWith(
 mode: freezed == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
 as String?,raw: freezed == raw ? _self.raw : raw // ignore: cast_nullable_to_non_nullable
 as String?,options: freezed == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
 as Options?,formdata: freezed == formdata ? _self.formdata : formdata // ignore: cast_nullable_to_non_nullable
+as List<Formdatum>?,urlencoded: freezed == urlencoded ? _self.urlencoded : urlencoded // ignore: cast_nullable_to_non_nullable
 as List<Formdatum>?,
   ));
 }
@@ -2218,10 +2219,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? mode,  String? raw,  Options? options,  List<Formdatum>? formdata)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? mode,  String? raw,  Options? options,  List<Formdatum>? formdata,  List<Formdatum>? urlencoded)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Body() when $default != null:
-return $default(_that.mode,_that.raw,_that.options,_that.formdata);case _:
+return $default(_that.mode,_that.raw,_that.options,_that.formdata,_that.urlencoded);case _:
   return orElse();
 
 }
@@ -2239,10 +2240,10 @@ return $default(_that.mode,_that.raw,_that.options,_that.formdata);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? mode,  String? raw,  Options? options,  List<Formdatum>? formdata)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? mode,  String? raw,  Options? options,  List<Formdatum>? formdata,  List<Formdatum>? urlencoded)  $default,) {final _that = this;
 switch (_that) {
 case _Body():
-return $default(_that.mode,_that.raw,_that.options,_that.formdata);case _:
+return $default(_that.mode,_that.raw,_that.options,_that.formdata,_that.urlencoded);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -2259,10 +2260,10 @@ return $default(_that.mode,_that.raw,_that.options,_that.formdata);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? mode,  String? raw,  Options? options,  List<Formdatum>? formdata)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? mode,  String? raw,  Options? options,  List<Formdatum>? formdata,  List<Formdatum>? urlencoded)?  $default,) {final _that = this;
 switch (_that) {
 case _Body() when $default != null:
-return $default(_that.mode,_that.raw,_that.options,_that.formdata);case _:
+return $default(_that.mode,_that.raw,_that.options,_that.formdata,_that.urlencoded);case _:
   return null;
 
 }
@@ -2274,7 +2275,7 @@ return $default(_that.mode,_that.raw,_that.options,_that.formdata);case _:
 
 @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _Body implements Body {
-  const _Body({this.mode, this.raw, this.options, final  List<Formdatum>? formdata}): _formdata = formdata;
+  const _Body({this.mode, this.raw, this.options, final  List<Formdatum>? formdata, final  List<Formdatum>? urlencoded}): _formdata = formdata,_urlencoded = urlencoded;
   factory _Body.fromJson(Map<String, dynamic> json) => _$BodyFromJson(json);
 
 @override final  String? mode;
@@ -2285,6 +2286,15 @@ class _Body implements Body {
   final value = _formdata;
   if (value == null) return null;
   if (_formdata is EqualUnmodifiableListView) return _formdata;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
+ final  List<Formdatum>? _urlencoded;
+@override List<Formdatum>? get urlencoded {
+  final value = _urlencoded;
+  if (value == null) return null;
+  if (_urlencoded is EqualUnmodifiableListView) return _urlencoded;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(value);
 }
@@ -2303,16 +2313,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Body&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.raw, raw) || other.raw == raw)&&(identical(other.options, options) || other.options == options)&&const DeepCollectionEquality().equals(other._formdata, _formdata));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Body&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.raw, raw) || other.raw == raw)&&(identical(other.options, options) || other.options == options)&&const DeepCollectionEquality().equals(other._formdata, _formdata)&&const DeepCollectionEquality().equals(other._urlencoded, _urlencoded));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,mode,raw,options,const DeepCollectionEquality().hash(_formdata));
+int get hashCode => Object.hash(runtimeType,mode,raw,options,const DeepCollectionEquality().hash(_formdata),const DeepCollectionEquality().hash(_urlencoded));
 
 @override
 String toString() {
-  return 'Body(mode: $mode, raw: $raw, options: $options, formdata: $formdata)';
+  return 'Body(mode: $mode, raw: $raw, options: $options, formdata: $formdata, urlencoded: $urlencoded)';
 }
 
 
@@ -2323,7 +2333,7 @@ abstract mixin class _$BodyCopyWith<$Res> implements $BodyCopyWith<$Res> {
   factory _$BodyCopyWith(_Body value, $Res Function(_Body) _then) = __$BodyCopyWithImpl;
 @override @useResult
 $Res call({
- String? mode, String? raw, Options? options, List<Formdatum>? formdata
+ String? mode, String? raw, Options? options, List<Formdatum>? formdata, List<Formdatum>? urlencoded
 });
 
 
@@ -2340,12 +2350,13 @@ class __$BodyCopyWithImpl<$Res>
 
 /// Create a copy of Body
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? mode = freezed,Object? raw = freezed,Object? options = freezed,Object? formdata = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? mode = freezed,Object? raw = freezed,Object? options = freezed,Object? formdata = freezed,Object? urlencoded = freezed,}) {
   return _then(_Body(
 mode: freezed == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
 as String?,raw: freezed == raw ? _self.raw : raw // ignore: cast_nullable_to_non_nullable
 as String?,options: freezed == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
 as Options?,formdata: freezed == formdata ? _self._formdata : formdata // ignore: cast_nullable_to_non_nullable
+as List<Formdatum>?,urlencoded: freezed == urlencoded ? _self._urlencoded : urlencoded // ignore: cast_nullable_to_non_nullable
 as List<Formdatum>?,
   ));
 }
