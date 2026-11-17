@@ -15,15 +15,9 @@ String postmanCollectionToJsonStr(PostmanCollection data) =>
 
 @freezed
 abstract class PostmanCollection with _$PostmanCollection {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
-  const factory PostmanCollection({
-    Info? info,
-    List<Item>? item,
-  }) = _PostmanCollection;
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory PostmanCollection({Info? info, List<Item>? item}) =
+      _PostmanCollection;
 
   factory PostmanCollection.fromJson(Map<String, dynamic> json) =>
       _$PostmanCollectionFromJson(json);
@@ -31,11 +25,7 @@ abstract class PostmanCollection with _$PostmanCollection {
 
 @freezed
 abstract class Info with _$Info {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Info({
     @JsonKey(name: '_postman_id') String? postmanId,
     String? name,
@@ -48,11 +38,7 @@ abstract class Info with _$Info {
 
 @freezed
 abstract class Item with _$Item {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Item({
     String? name,
     List<Item>? item,
@@ -65,29 +51,40 @@ abstract class Item with _$Item {
 
 @freezed
 abstract class Request with _$Request {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Request({
     String? method,
     List<Header>? header,
     Body? body,
-    Url? url,
+    @JsonKey(fromJson: _requestUrlFromJson) Url? url,
   }) = _Request;
 
   factory Request.fromJson(Map<String, dynamic> json) =>
       _$RequestFromJson(json);
 }
 
+Url? _requestUrlFromJson(Object? value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is String) {
+    final uri = Uri.tryParse(value);
+    return Url(
+      raw: value,
+      // Decode each pair separately so repeated keys stay in input order.
+      query: [
+        for (final pair in (uri?.query ?? '').split('&'))
+          for (final entry in Uri.splitQueryString(pair).entries)
+            Query(key: entry.key, value: entry.value),
+      ],
+    );
+  }
+  return Url.fromJson(Map<String, dynamic>.from(value as Map));
+}
+
 @freezed
 abstract class Header with _$Header {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Header({
     String? key,
     String? value,
@@ -100,11 +97,7 @@ abstract class Header with _$Header {
 
 @freezed
 abstract class Url with _$Url {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Url({
     String? raw,
     String? protocol,
@@ -118,27 +111,15 @@ abstract class Url with _$Url {
 
 @freezed
 abstract class Query with _$Query {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
-  const factory Query({
-    String? key,
-    String? value,
-    bool? disabled,
-  }) = _Query;
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory Query({String? key, String? value, bool? disabled}) = _Query;
 
   factory Query.fromJson(Map<String, dynamic> json) => _$QueryFromJson(json);
 }
 
 @freezed
 abstract class Body with _$Body {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Body({
     String? mode,
     String? raw,
@@ -151,14 +132,8 @@ abstract class Body with _$Body {
 
 @freezed
 abstract class Options with _$Options {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
-  const factory Options({
-    Raw? raw,
-  }) = _Options;
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory Options({Raw? raw}) = _Options;
 
   factory Options.fromJson(Map<String, dynamic> json) =>
       _$OptionsFromJson(json);
@@ -166,25 +141,15 @@ abstract class Options with _$Options {
 
 @freezed
 abstract class Raw with _$Raw {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
-  const factory Raw({
-    String? language,
-  }) = _Raw;
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+  const factory Raw({String? language}) = _Raw;
 
   factory Raw.fromJson(Map<String, dynamic> json) => _$RawFromJson(json);
 }
 
 @freezed
 abstract class Formdatum with _$Formdatum {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-    includeIfNull: false,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
   const factory Formdatum({
     String? key,
     String? value,

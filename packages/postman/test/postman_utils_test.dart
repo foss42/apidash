@@ -45,6 +45,26 @@ void main() {
       expect(requests[1].$2.url?.raw, 'https://example.com/2');
     });
 
+    test('imports a literal request URL and keeps its query values', () {
+      final collection = postmanCollectionFromJsonStr(
+        '{"info":{"name":"Example"}, "item":[{"name":"List items",'
+        '"request":{"method":"GET",'
+        '"url":"https://example.com/items?tag=one&label=a%20b&tag=two&literal=a%2Bb"}}]}',
+      );
+      final request = getRequestsFromPostmanCollection(collection).single.$2;
+
+      expect(
+        request.url?.raw,
+        'https://example.com/items?tag=one&label=a%20b&tag=two&literal=a%2Bb',
+      );
+      expect(request.url?.query, [
+        const Query(key: 'tag', value: 'one'),
+        const Query(key: 'label', value: 'a b'),
+        const Query(key: 'tag', value: 'two'),
+        const Query(key: 'literal', value: 'a+b'),
+      ]);
+    });
+
     test('getRequestsFromPostmanItem handles null/empty', () {
       expect(getRequestsFromPostmanItem(null), isEmpty);
       expect(getRequestsFromPostmanItem(Item()), isEmpty);
