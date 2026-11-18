@@ -762,6 +762,83 @@ void main() {
       expect(result.authModel?.oauth2?.identityToken, "itok");
       expect(result.authModel?.oauth2?.accessToken, "atok");
     });
+
+    test("Testing oauth2 auth with null optional fields does not crash", () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/test",
+        authModel: AuthModel(
+          type: APIAuthType.oauth2,
+          oauth2: AuthOAuth2Model(
+            authorizationUrl: "{{auth_url}}",
+            accessTokenUrl: "{{token_url}}",
+            clientId: "{{client_id}}",
+            clientSecret: "{{client_secret}}",
+          ),
+        ),
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: [
+          EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          EnvironmentVariableModel(key: "auth_url", value: "aurl"),
+          EnvironmentVariableModel(key: "token_url", value: "turl"),
+          EnvironmentVariableModel(key: "client_id", value: "cid"),
+          EnvironmentVariableModel(key: "client_secret", value: "csec"),
+        ],
+      };
+
+      final result = substituteHttpRequestModel(httpRequestModel, envMap, null);
+
+      expect(result.authModel?.oauth2?.authorizationUrl, "aurl");
+      expect(result.authModel?.oauth2?.accessTokenUrl, "turl");
+      expect(result.authModel?.oauth2?.clientId, "cid");
+      expect(result.authModel?.oauth2?.clientSecret, "csec");
+      expect(result.authModel?.oauth2?.credentialsFilePath, isNull);
+      expect(result.authModel?.oauth2?.redirectUrl, isNull);
+      expect(result.authModel?.oauth2?.scope, isNull);
+      expect(result.authModel?.oauth2?.state, isNull);
+      expect(result.authModel?.oauth2?.codeVerifier, isNull);
+      expect(result.authModel?.oauth2?.codeChallenge, isNull);
+      expect(result.authModel?.oauth2?.username, isNull);
+      expect(result.authModel?.oauth2?.password, isNull);
+      expect(result.authModel?.oauth2?.refreshToken, isNull);
+      expect(result.authModel?.oauth2?.identityToken, isNull);
+      expect(result.authModel?.oauth2?.accessToken, isNull);
+    });
+
+    test("Testing oauth1 auth with null optional fields does not crash", () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/test",
+        authModel: AuthModel(
+          type: APIAuthType.oauth1,
+          oauth1: AuthOAuth1Model(
+            consumerKey: "{{consumer_key}}",
+            consumerSecret: "{{consumer_secret}}",
+          ),
+        ),
+      );
+
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: [
+          EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          EnvironmentVariableModel(key: "consumer_key", value: "ckey"),
+          EnvironmentVariableModel(key: "consumer_secret", value: "csec"),
+        ],
+      };
+
+      final result = substituteHttpRequestModel(httpRequestModel, envMap, null);
+
+      expect(result.authModel?.oauth1?.consumerKey, "ckey");
+      expect(result.authModel?.oauth1?.consumerSecret, "csec");
+      expect(result.authModel?.oauth1?.credentialsFilePath, isNull);
+      expect(result.authModel?.oauth1?.accessToken, isNull);
+      expect(result.authModel?.oauth1?.tokenSecret, isNull);
+      expect(result.authModel?.oauth1?.realm, isNull);
+      expect(result.authModel?.oauth1?.callbackUrl, isNull);
+      expect(result.authModel?.oauth1?.verifier, isNull);
+      expect(result.authModel?.oauth1?.nonce, isNull);
+      expect(result.authModel?.oauth1?.timestamp, isNull);
+    });
   });
 
   group("Testing mergeScriptEnvironmentValues", () {
