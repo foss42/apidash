@@ -29,7 +29,7 @@ class AIRequestPromptSection extends ConsumerWidget {
       return kSizedBoxEmpty;
     }
 
-    return Container(
+    final content = Container(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,54 +39,109 @@ class AIRequestPromptSection extends ConsumerWidget {
             child: Text(kLabelSystemPrompt),
           ),
           kVSpacer10,
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: TextFieldEditor(
-                key: Key("$selectedId-aireq-sysprompt-body"),
-                fieldKey: "$selectedId-aireq-sysprompt-body",
-                initialValue: systemPrompt,
-                onChanged: (String value) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .update(
-                        aiRequestModel: aiRequestModel.copyWith(
-                          systemPrompt: value,
-                        ),
-                      );
-                },
-                hintText: kHintEnterSystemPrompt,
-              ),
-            ),
-          ),
+          context.isMediumWindow
+              ? SizedBox(
+                  height: 200,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-aireq-sysprompt-body"),
+                      fieldKey: "$selectedId-aireq-sysprompt-body",
+                      initialValue: systemPrompt,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(
+                              aiRequestModel: aiRequestModel.copyWith(
+                                systemPrompt: value,
+                              ),
+                            );
+                      },
+                      hintText: kHintEnterSystemPrompt,
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-aireq-sysprompt-body"),
+                      fieldKey: "$selectedId-aireq-sysprompt-body",
+                      initialValue: systemPrompt,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(
+                              aiRequestModel: aiRequestModel.copyWith(
+                                systemPrompt: value,
+                              ),
+                            );
+                      },
+                      hintText: kHintEnterSystemPrompt,
+                    ),
+                  ),
+                ),
           SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
             child: Text(kLabelUserPromptInput),
           ),
           kVSpacer10,
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: TextFieldEditor(
-                key: Key("$selectedId-aireq-userprompt-body"),
-                fieldKey: "$selectedId-aireq-userprompt-body",
-                initialValue: userPrompt,
-                onChanged: (String value) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .update(
-                        aiRequestModel: aiRequestModel.copyWith(
-                          userPrompt: value,
-                        ),
-                      );
-                },
-                hintText: kHintEnterUserPrompt,
-              ),
-            ),
-          ),
+          context.isMediumWindow
+              ? SizedBox(
+                  height: 200,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-aireq-userprompt-body"),
+                      fieldKey: "$selectedId-aireq-userprompt-body",
+                      initialValue: userPrompt,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(
+                              aiRequestModel: aiRequestModel.copyWith(
+                                userPrompt: value,
+                              ),
+                            );
+                      },
+                      hintText: kHintEnterUserPrompt,
+                    ),
+                  ),
+                )
+              : Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-aireq-userprompt-body"),
+                      fieldKey: "$selectedId-aireq-userprompt-body",
+                      initialValue: userPrompt,
+                      onChanged: (String value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(
+                              aiRequestModel: aiRequestModel.copyWith(
+                                userPrompt: value,
+                              ),
+                            );
+                      },
+                      hintText: kHintEnterUserPrompt,
+                    ),
+                  ),
+                ),
         ],
       ),
     );
+
+    if (context.isMediumWindow) {
+      return SingleChildScrollView(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: content,
+      );
+    }
+
+    return content;
   }
 }
