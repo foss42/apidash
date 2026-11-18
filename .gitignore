@@ -52,6 +52,7 @@ app.*.map.json
 linux/
 macos/
 windows/
+!packaging/windows/
 web/
 ios/
 android/
