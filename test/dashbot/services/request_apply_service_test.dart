@@ -330,6 +330,84 @@ void main() {
       expect(captured!['url'], contains('{{BASE_URL_'));
     });
 
+    test('apply_to_new carries query params into HttpRequestModel', () async {
+      newModel = null;
+      result = await service.applyOpenApi(
+        payload: {
+          'method': 'get',
+          'url': 'https://api.apidash.dev/pets/{petId}',
+          'baseUrl': 'https://api.apidash.dev',
+          'headers': {'X-Trace-Id': ''},
+          'params': {'status': 'available', 'limit': ''},
+        },
+        field: 'apply_to_new',
+        path: '/pets/{petId}',
+        requestId: 'r1',
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {},
+        addNewRequest: (model, {name}) => newModel = model,
+        ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
+      );
+      expect(result!.systemMessage, contains('Created a new request'));
+      expect(newModel!.params, const [
+        NameValueModel(name: 'status', value: 'available'),
+        NameValueModel(name: 'limit', value: ''),
+      ]);
+      expect(newModel!.isParamEnabledList, [true, true]);
+      expect(newModel!.headers!.first.name, 'X-Trace-Id');
+    });
+
+    test('apply_to_selected carries query params to updateSelected', () async {
+      List<NameValueModel>? capturedParams;
+      List<bool>? capturedEnabled;
+      result = await service.applyOpenApi(
+        payload: {
+          'method': 'get',
+          'url': 'https://api.apidash.dev/pets/{petId}',
+          'baseUrl': 'https://api.apidash.dev',
+          'headers': {'X-Trace-Id': ''},
+          'params': {'status': 'available', 'limit': ''},
+        },
+        field: 'apply_to_selected',
+        path: '/pets/{petId}',
+        requestId: 'openSel3',
+        updateSelected:
+            ({
+              required String id,
+              HTTPVerb? method,
+              String? url,
+              List<NameValueModel>? headers,
+              List<bool>? isHeaderEnabledList,
+              String? body,
+              ContentType? bodyContentType,
+              List<FormDataModel>? formData,
+              List<NameValueModel>? params,
+              List<bool>? isParamEnabledList,
+              String? postRequestScript,
+            }) {
+              capturedParams = params;
+              capturedEnabled = isParamEnabledList;
+            },
+        addNewRequest: (_, {name}) {},
+        ensureBaseUrl: (b) async => 'BASE_URL_API_APIDASH_DEV',
+      );
+      expect(result!.systemMessage, contains('Applied OpenAPI'));
+      expect(capturedParams!.map((p) => p.name), ['status', 'limit']);
+      expect(capturedEnabled, [true, true]);
+    });
+
     test('select_operation returns empty ApplyResult', () async {
       result = await service.applyOpenApi(
         payload: {

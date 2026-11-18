@@ -261,6 +261,48 @@ void main() {
       },
     );
 
+    test('payloadForOperation captures query params alongside header params',
+        () {
+      const specJson = '''
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Params API", "version": "1.0.0"},
+  "servers": [{"url": "https://api.apidash.dev"}],
+  "paths": {
+    "/pets/{petId}": {
+      "get": {
+        "parameters": [
+          {"name": "petId", "in": "path", "required": true, "schema": {"type": "string"}},
+          {"name": "status", "in": "query", "example": "available", "schema": {"type": "string"}},
+          {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+          {"name": "X-Trace-Id", "in": "header", "schema": {"type": "string"}}
+        ],
+        "responses": {"200": {"description": "ok"}}
+      }
+    }
+  }
+}
+''';
+      final spec = OpenApiImportService.tryParseSpec(specJson)!;
+      final op = spec.paths!['/pets/{petId}']!.get!;
+      final payload = OpenApiImportService.payloadForOperation(
+        baseUrl: spec.servers!.first.url!,
+        path: '/pets/{petId}',
+        method: 'get',
+        op: op,
+      );
+      // path param stays in the URL template
+      expect(payload['url'], 'https://api.apidash.dev/pets/{petId}');
+      final params = payload['params'] as Map<String, String>;
+      // query params captured (example used as value when present)
+      expect(params, {'status': 'available', 'limit': ''});
+      final headers = payload['headers'] as Map<String, String>;
+      expect(headers.containsKey('X-Trace-Id'), true);
+      // query and path params must not leak into headers
+      expect(headers.containsKey('status'), false);
+      expect(headers.containsKey('petId'), false);
+    });
+
     test('payloadForOperation covers form request body variants', () {
       final spec = OpenApiImportService.tryParseSpec(extendedSpecJson)!;
       final postOp = spec.paths!['/search']!.post!; // multipart form
