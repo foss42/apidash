@@ -22,5 +22,15 @@ void main() {
         ); // adjust this based on your expected result
       },
     );
+
+    test('createSpecialText returns null and does not throw', () {
+      var jsonHighlight = JsonHighlight(isFormating: true);
+
+      expect(
+        () => jsonHighlight.createSpecialText('"', index: 0),
+        returnsNormally,
+      );
+      expect(jsonHighlight.createSpecialText('"', index: 0), isNull);
+    });
   });
 }

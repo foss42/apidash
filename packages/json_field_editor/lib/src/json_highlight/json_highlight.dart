@@ -74,6 +74,6 @@ class JsonHighlight extends SpecialTextSpanBuilder {
     SpecialTextGestureTapCallback? onTap,
     required int index,
   }) {
-    throw UnimplementedError();
+    return null;
   }
 }
