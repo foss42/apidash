@@ -634,6 +634,47 @@ void main() {
         );
       });
 
+      test('search term is matched as literal text, not a regex', () {
+        final store = JsonExplorerStore();
+        store.buildNodes(json.decode(testJson));
+
+        // The `.` in the term used to match any character as a regex; it
+        // must now match the literal dot only.
+        store.search('firstClass.firstField');
+        expect(store.searchResults, hasLength(1));
+
+        // testJson contains no keys or values with these metacharacters,
+        // so each must yield zero results (and must not throw).
+        for (final term in ['[', '(', '*', '+', '?', '|', '\\']) {
+          store.search(term);
+          expect(store.searchResults, isEmpty, reason: 'search term: $term');
+        }
+
+        // `.` is a literal match: it finds the dotted key names, but does
+        // not match every character the way a regex `.` would.
+        store.search('.');
+        expect(store.searchResults, isNotEmpty);
+      });
+
+      test('literal regex characters in data are found', () {
+        final store = JsonExplorerStore();
+        store.buildNodes(
+          json.decode('{"url": "https://example.com/?q=[1,2]&b=(x)y"}'),
+        );
+
+        store.search('[');
+        expect(store.searchResults, hasLength(1));
+        expect(
+          store.searchResults.first.matchLocation,
+          SearchMatchLocation.value,
+        );
+        expect(store.searchResults.first.matchIndex, 23);
+
+        store.search('.com/');
+        expect(store.searchResults, hasLength(1));
+        expect(store.searchResults.first.matchIndex, 15);
+      });
+
       group('expand parent nodes', () {
         test('works properly', () {
           final store = JsonExplorerStore();
