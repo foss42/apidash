@@ -25,18 +25,28 @@ class ADListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final subtitleWidget = subtitle == null ? null : Text(subtitle!);
     return switch (type) {
       ListTileType.switchOnOff => SwitchListTile(
           hoverColor: hoverColor,
           title: Text(title),
-          subtitle: subtitle == null ? null : Text(subtitle ?? ''),
+          subtitle: subtitleWidget,
           value: value ?? false,
           onChanged: onChanged,
         ),
-      // TODO: Handle this case.
-      ListTileType.checkbox => throw UnimplementedError(),
-      // TODO: Handle this case.
-      ListTileType.button => throw UnimplementedError(),
+      ListTileType.checkbox => CheckboxListTile(
+          hoverColor: hoverColor,
+          title: Text(title),
+          subtitle: subtitleWidget,
+          value: value ?? false,
+          onChanged: onChanged,
+        ),
+      ListTileType.button => ListTile(
+          hoverColor: hoverColor,
+          title: Text(title),
+          subtitle: subtitleWidget,
+          onTap: onChanged == null ? null : () => onChanged?.call(value),
+        ),
     };
   }
 }
