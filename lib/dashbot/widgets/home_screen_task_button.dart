@@ -21,13 +21,18 @@ class HomeScreenTaskButton extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
         ),
         padding: const EdgeInsets.symmetric(
-          vertical: 0,
+          vertical: 8, //  increased padding
           horizontal: 16,
         ),
       ),
-      child: Text(
-        label,
-        textAlign: textAlign,
+      child: Tooltip( // NEW
+        message: label,
+        child: Text(
+          label,
+          textAlign: textAlign,
+          overflow: TextOverflow.ellipsis, //  NEW
+          maxLines: 1, //  NEW
+        ),
       ),
     );
   }
