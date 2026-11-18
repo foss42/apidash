@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_networking/better_networking.dart';
 import 'package:test/test.dart';
 
@@ -545,6 +547,52 @@ void main() {
 
         expect(result.headers, isEmpty);
         expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given sendHttpRequest when digest realm and nonce are empty then it should fetch the challenge and retry',
+      () async {
+        final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+        addTearDown(() => server.close(force: true));
+        server.listen((request) {
+          final auth = request.headers.value('authorization');
+          if (auth == null || !auth.startsWith('Digest ')) {
+            request.response
+              ..statusCode = HttpStatus.unauthorized
+              ..headers.set(
+                'WWW-Authenticate',
+                'Digest realm="test-realm", nonce="test-nonce", qop="auth"',
+              );
+          }
+          request.response.close();
+        });
+
+        final httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'http://${server.address.host}:${server.port}/digest',
+          authModel: const AuthModel(
+            type: APIAuthType.digest,
+            digest: AuthDigestModel(
+              username: 'digestuser',
+              password: 'digestpass',
+              realm: '',
+              nonce: '',
+              algorithm: 'MD5',
+              qop: 'auth',
+              opaque: '',
+            ),
+          ),
+        );
+
+        final result = await sendHttpRequest(
+          'digest-test',
+          APIType.rest,
+          httpRequestModel,
+        ).timeout(const Duration(seconds: 5));
+
+        expect(result.$3, isNull);
+        expect(result.$1?.statusCode, equals(200));
       },
     );
   });
