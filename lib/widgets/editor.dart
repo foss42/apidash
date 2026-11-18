@@ -24,7 +24,7 @@ class TextFieldEditor extends StatefulWidget {
 }
 
 class _TextFieldEditorState extends State<TextFieldEditor> {
-  final TextEditingController controller = TextEditingController();
+  late TextEditingController controller;
   late final FocusNode editorFocusNode;
 
   void insertTab() {
@@ -47,20 +47,44 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
   @override
   void initState() {
     super.initState();
+    final initialText = widget.initialValue ?? '';
+    controller = TextEditingController.fromValue(TextEditingValue(
+        text: initialText,
+        selection: TextSelection.collapsed(offset: initialText.length)));
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
   }
 
   @override
   void dispose() {
+    controller.dispose();
     editorFocusNode.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (widget.initialValue != null) {
+  void didUpdateWidget(TextFieldEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fieldKey != widget.fieldKey) {
+      controller = TextEditingController.fromValue(TextEditingValue(
+          text: widget.initialValue!,
+          selection: TextSelection.collapsed(
+              offset: widget.initialValue!.length)));
+    } else if (oldWidget.initialValue != widget.initialValue &&
+        widget.initialValue != null &&
+        controller.text != widget.initialValue) {
+      // Update controller text only if it differs from current text
+      // This preserves cursor position when typing
+      final currentSelection = controller.selection;
       controller.text = widget.initialValue!;
+      // Restore the selection if it's still valid
+      if (currentSelection.baseOffset <= controller.text.length) {
+        controller.selection = currentSelection;
+      }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return CallbackShortcuts(
       bindings: <ShortcutActivator, VoidCallback>{
         const SingleActivator(LogicalKeyboardKey.tab): () {
