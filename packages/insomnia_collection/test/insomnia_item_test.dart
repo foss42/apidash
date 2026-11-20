@@ -9,7 +9,31 @@ void main() {
         InsomniaItem.fromInsomniaCollection(InsomniaCollection()).id,
         isNull,
       );
+      expect(
+        InsomniaItem.fromInsomniaCollection(
+          InsomniaCollection(resources: []),
+        ).id,
+        isNull,
+      );
     });
+
+    test(
+      'fromInsomniaCollection handles resources without workspace or null id',
+      () {
+        final withoutWorkspace = InsomniaCollection(
+          resources: [Resource(id: 'r1', type: 'request', name: 'Orphan')],
+        );
+        expect(
+          InsomniaItem.fromInsomniaCollection(withoutWorkspace).id,
+          isNull,
+        );
+
+        final withNullId = InsomniaCollection(
+          resources: [Resource(type: 'request', name: 'NoId')],
+        );
+        expect(InsomniaItem.fromInsomniaCollection(withNullId).id, isNull);
+      },
+    );
 
     test('fromInsomniaCollection builds tree', () {
       final collection = InsomniaCollection(
