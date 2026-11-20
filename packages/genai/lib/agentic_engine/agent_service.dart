@@ -56,7 +56,7 @@ class AIAgentService {
         );
         if (res != null) {
           if (await agent.validator(res)) {
-            return agent.outputFormatter(res);
+            return await agent.outputFormatter(res);
           }
         }
       } catch (e) {
