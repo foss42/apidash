@@ -86,15 +86,30 @@ class _PreviewerState extends State<Previewer> {
       }
     }
     if (type == kTypeImage) {
-      return Image.memory(
-        widget.bytes,
-        errorBuilder: (context, _, stackTrace) {
-          return ErrorMessage(
-            message: errorTemplate.render({
-              "showRaw": false,
-              "showContentType": false,
-              "type": kTypeImage,
-            }),
+      // Decode the image at the size it is actually shown instead of at full
+      // resolution. cacheWidth is derived from the width the layout gives us
+      // (in physical pixels), so a large response image produces a much
+      // smaller decoded bitmap, lowering RAM and GPU memory with no visible
+      // quality loss inside the response pane.
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final dpr = MediaQuery.devicePixelRatioOf(context);
+          final maxW = constraints.maxWidth.isFinite
+              ? constraints.maxWidth
+              : MediaQuery.sizeOf(context).width;
+          final cacheW = (maxW * dpr).round();
+          return Image.memory(
+            widget.bytes,
+            cacheWidth: cacheW > 0 ? cacheW : null,
+            errorBuilder: (context, _, stackTrace) {
+              return ErrorMessage(
+                message: errorTemplate.render({
+                  "showRaw": false,
+                  "showContentType": false,
+                  "type": kTypeImage,
+                }),
+              );
+            },
           );
         },
       );
