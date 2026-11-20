@@ -282,8 +282,9 @@ EnvironmentVariableSuggestion getVariableStatus(
 /// original environment values.
 ///
 /// Disabled variables are never injected into the JS runtime, so their
-/// absence from [updatedEnvironment] is not a deletion. Enabled variables
-/// missing from the map were unset by the script and are dropped.
+/// absence from [updatedEnvironment] is not a deletion, and writing their key
+/// from a script preserves [EnvironmentVariableModel.enabled]. Enabled
+/// variables missing from the map were unset by the script and are dropped.
 List<EnvironmentVariableModel> mergeScriptEnvironmentValues({
   required List<EnvironmentVariableModel> originalValues,
   required Map<String, dynamic> updatedEnvironment,
@@ -297,7 +298,7 @@ List<EnvironmentVariableModel> mergeScriptEnvironmentValues({
       newValues.add(
         originalVariable.copyWith(
           value: newValue == null ? '' : newValue.toString(),
-          enabled: true,
+          enabled: originalVariable.enabled,
         ),
       );
       mutableUpdatedEnv.remove(originalVariable.key);
