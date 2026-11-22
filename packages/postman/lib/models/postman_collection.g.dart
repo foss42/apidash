@@ -160,6 +160,7 @@ _Formdatum _$FormdatumFromJson(Map json) => _Formdatum(
   value: json['value'] as String?,
   type: json['type'] as String?,
   src: json['src'] as String?,
+  disabled: json['disabled'] as bool?,
 );
 
 Map<String, dynamic> _$FormdatumToJson(_Formdatum instance) =>
@@ -168,4 +169,5 @@ Map<String, dynamic> _$FormdatumToJson(_Formdatum instance) =>
       'value': ?instance.value,
       'type': ?instance.type,
       'src': ?instance.src,
+      'disabled': ?instance.disabled,
     };

@@ -67,6 +67,7 @@ class PostmanIO {
             ? request.body?.formdata
             : request.body?.urlencoded;
         for (var fd in fields ?? <pm.Formdatum>[]) {
+          if (fd.disabled ?? false) continue;
           var name = fd.key ?? "";
           FormDataType formDataType;
           try {

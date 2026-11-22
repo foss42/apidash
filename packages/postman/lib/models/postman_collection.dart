@@ -191,6 +191,7 @@ abstract class Formdatum with _$Formdatum {
     String? value,
     String? type,
     String? src,
+    bool? disabled,
   }) = _Formdatum;
 
   factory Formdatum.fromJson(Map<String, dynamic> json) =>

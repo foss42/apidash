@@ -37,6 +37,19 @@ void main() {
       ]);
     });
 
+    test('skips disabled urlencoded fields', () {
+      final request = importBody({
+        'mode': 'urlencoded',
+        'urlencoded': [
+          {'key': 'text', 'value': 'API', 'type': 'text'},
+          {'key': 'times', 'value': '3', 'type': 'text', 'disabled': true},
+        ],
+      });
+      expect(request.formData, const [
+        FormDataModel(name: 'text', value: 'API', type: FormDataType.text),
+      ]);
+    });
+
     test('still imports formdata fields', () {
       final request = importBody({
         'mode': 'formdata',

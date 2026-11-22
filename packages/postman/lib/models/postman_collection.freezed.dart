@@ -2930,7 +2930,7 @@ as String?,
 /// @nodoc
 mixin _$Formdatum {
 
- String? get key; String? get value; String? get type; String? get src;
+ String? get key; String? get value; String? get type; String? get src; bool? get disabled;
 /// Create a copy of Formdatum
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2943,16 +2943,16 @@ $FormdatumCopyWith<Formdatum> get copyWith => _$FormdatumCopyWithImpl<Formdatum>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Formdatum&&(identical(other.key, key) || other.key == key)&&(identical(other.value, value) || other.value == value)&&(identical(other.type, type) || other.type == type)&&(identical(other.src, src) || other.src == src));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Formdatum&&(identical(other.key, key) || other.key == key)&&(identical(other.value, value) || other.value == value)&&(identical(other.type, type) || other.type == type)&&(identical(other.src, src) || other.src == src)&&(identical(other.disabled, disabled) || other.disabled == disabled));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,key,value,type,src);
+int get hashCode => Object.hash(runtimeType,key,value,type,src,disabled);
 
 @override
 String toString() {
-  return 'Formdatum(key: $key, value: $value, type: $type, src: $src)';
+  return 'Formdatum(key: $key, value: $value, type: $type, src: $src, disabled: $disabled)';
 }
 
 
@@ -2963,7 +2963,7 @@ abstract mixin class $FormdatumCopyWith<$Res>  {
   factory $FormdatumCopyWith(Formdatum value, $Res Function(Formdatum) _then) = _$FormdatumCopyWithImpl;
 @useResult
 $Res call({
- String? key, String? value, String? type, String? src
+ String? key, String? value, String? type, String? src, bool? disabled
 });
 
 
@@ -2980,13 +2980,14 @@ class _$FormdatumCopyWithImpl<$Res>
 
 /// Create a copy of Formdatum
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? key = freezed,Object? value = freezed,Object? type = freezed,Object? src = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? key = freezed,Object? value = freezed,Object? type = freezed,Object? src = freezed,Object? disabled = freezed,}) {
   return _then(_self.copyWith(
 key: freezed == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
 as String?,value: freezed == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String?,src: freezed == src ? _self.src : src // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,disabled: freezed == disabled ? _self.disabled : disabled // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
@@ -3071,10 +3072,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? key,  String? value,  String? type,  String? src)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? key,  String? value,  String? type,  String? src,  bool? disabled)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Formdatum() when $default != null:
-return $default(_that.key,_that.value,_that.type,_that.src);case _:
+return $default(_that.key,_that.value,_that.type,_that.src,_that.disabled);case _:
   return orElse();
 
 }
@@ -3092,10 +3093,10 @@ return $default(_that.key,_that.value,_that.type,_that.src);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? key,  String? value,  String? type,  String? src)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? key,  String? value,  String? type,  String? src,  bool? disabled)  $default,) {final _that = this;
 switch (_that) {
 case _Formdatum():
-return $default(_that.key,_that.value,_that.type,_that.src);case _:
+return $default(_that.key,_that.value,_that.type,_that.src,_that.disabled);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -3112,10 +3113,10 @@ return $default(_that.key,_that.value,_that.type,_that.src);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? key,  String? value,  String? type,  String? src)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? key,  String? value,  String? type,  String? src,  bool? disabled)?  $default,) {final _that = this;
 switch (_that) {
 case _Formdatum() when $default != null:
-return $default(_that.key,_that.value,_that.type,_that.src);case _:
+return $default(_that.key,_that.value,_that.type,_that.src,_that.disabled);case _:
   return null;
 
 }
@@ -3127,13 +3128,14 @@ return $default(_that.key,_that.value,_that.type,_that.src);case _:
 
 @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _Formdatum implements Formdatum {
-  const _Formdatum({this.key, this.value, this.type, this.src});
+  const _Formdatum({this.key, this.value, this.type, this.src, this.disabled});
   factory _Formdatum.fromJson(Map<String, dynamic> json) => _$FormdatumFromJson(json);
 
 @override final  String? key;
 @override final  String? value;
 @override final  String? type;
 @override final  String? src;
+@override final  bool? disabled;
 
 /// Create a copy of Formdatum
 /// with the given fields replaced by the non-null parameter values.
@@ -3148,16 +3150,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Formdatum&&(identical(other.key, key) || other.key == key)&&(identical(other.value, value) || other.value == value)&&(identical(other.type, type) || other.type == type)&&(identical(other.src, src) || other.src == src));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Formdatum&&(identical(other.key, key) || other.key == key)&&(identical(other.value, value) || other.value == value)&&(identical(other.type, type) || other.type == type)&&(identical(other.src, src) || other.src == src)&&(identical(other.disabled, disabled) || other.disabled == disabled));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,key,value,type,src);
+int get hashCode => Object.hash(runtimeType,key,value,type,src,disabled);
 
 @override
 String toString() {
-  return 'Formdatum(key: $key, value: $value, type: $type, src: $src)';
+  return 'Formdatum(key: $key, value: $value, type: $type, src: $src, disabled: $disabled)';
 }
 
 
@@ -3168,7 +3170,7 @@ abstract mixin class _$FormdatumCopyWith<$Res> implements $FormdatumCopyWith<$Re
   factory _$FormdatumCopyWith(_Formdatum value, $Res Function(_Formdatum) _then) = __$FormdatumCopyWithImpl;
 @override @useResult
 $Res call({
- String? key, String? value, String? type, String? src
+ String? key, String? value, String? type, String? src, bool? disabled
 });
 
 
@@ -3185,13 +3187,14 @@ class __$FormdatumCopyWithImpl<$Res>
 
 /// Create a copy of Formdatum
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? key = freezed,Object? value = freezed,Object? type = freezed,Object? src = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? key = freezed,Object? value = freezed,Object? type = freezed,Object? src = freezed,Object? disabled = freezed,}) {
   return _then(_Formdatum(
 key: freezed == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
 as String?,value: freezed == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String?,src: freezed == src ? _self.src : src // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,disabled: freezed == disabled ? _self.disabled : disabled // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
