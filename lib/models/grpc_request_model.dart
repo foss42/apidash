@@ -47,10 +47,18 @@ abstract class GrpcRequestModel with _$GrpcRequestModel {
 
   Map<String, String> get metadataMap {
     if (metadata == null) return {};
-    return {
-      for (var m in (metadata!))
-        if (m.name.isNotEmpty) m.name: m.value,
-    };
+    final rows = metadata!;
+    final enabledFlags = isMetadataEnabled;
+    final map = <String, String>{};
+    for (int i = 0; i < rows.length; i++) {
+      final isEnabled =
+          enabledFlags == null || i >= enabledFlags.length ? true : enabledFlags[i];
+      final row = rows[i];
+      if (isEnabled && row.name.isNotEmpty) {
+        map[row.name] = row.value;
+      }
+    }
+    return map;
   }
 
   List<NameValueModel> get nvParameters {
