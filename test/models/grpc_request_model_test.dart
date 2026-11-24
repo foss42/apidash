@@ -67,6 +67,44 @@ void main() {
       expect(map['Authorization'], 'Bearer token');
     });
 
+    test('metadataMap excludes unchecked metadata rows', () {
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-enabled', value: 'yes'),
+          NameValueModel(name: 'x-probe', value: 'disabled'),
+          NameValueModel(name: 'x-also-enabled', value: 'true'),
+        ],
+        isMetadataEnabled: [true, false, true],
+      );
+
+      expect(model.metadataMap, {
+        'x-enabled': 'yes',
+        'x-also-enabled': 'true',
+      });
+      expect(model.metadataMap.containsKey('x-probe'), isFalse);
+    });
+
+    test('metadataMap defaults missing enable flags to enabled', () {
+      const emptyFlagsModel = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'k1', value: 'v1'),
+          NameValueModel(name: 'k2', value: 'v2'),
+        ],
+        isMetadataEnabled: [],
+      );
+      expect(emptyFlagsModel.metadataMap, {'k1': 'v1', 'k2': 'v2'});
+
+      const shorterFlagsModel = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'k1', value: 'v1'),
+          NameValueModel(name: 'k2', value: 'v2'),
+          NameValueModel(name: 'k3', value: 'v3'),
+        ],
+        isMetadataEnabled: [false],
+      );
+      expect(shorterFlagsModel.metadataMap, {'k2': 'v2', 'k3': 'v3'});
+    });
+
     test('metadataMap handles null metadata', () {
       const model = GrpcRequestModel(metadata: null);
       final map = model.metadataMap;
