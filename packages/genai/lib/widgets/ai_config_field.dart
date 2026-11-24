@@ -17,13 +17,23 @@ class AIConfigField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      initialValue: configuration.value.value.toString(),
+      initialValue: configuration.value.value?.toString() ?? '',
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (value) {
+        if (!numeric || value == null || value.isEmpty) return null;
+        final parsed = num.tryParse(value);
+        if (parsed == null || !parsed.isFinite) {
+          return 'Please enter a valid number';
+        }
+        return null;
+      },
       onChanged: (x) {
         if (readonly) return;
         if (numeric) {
           if (x.isEmpty) x = '0';
-          if (num.tryParse(x) == null) return;
-          configuration.value.value = num.parse(x);
+          final parsed = num.tryParse(x);
+          if (parsed == null || !parsed.isFinite) return;
+          configuration.value.value = parsed;
         } else {
           configuration.value.value = x;
         }
