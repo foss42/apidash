@@ -32,7 +32,7 @@ import '../utils/utils.dart';
 /// path uses — so bearer/basic/api-key/jwt/etc. are formatted identically. Only
 /// header-targeted auth maps to gRPC; query-param auth (api-key/jwt set to
 /// `query`) has no gRPC equivalent and is ignored.
-Future<Map<String, String>> buildGrpcMetadata(
+Future> buildGrpcMetadata(
   GrpcRequestModel grpcModel,
 ) async {
   final merged = <String, String>{};
@@ -96,7 +96,7 @@ collectionStateNotifierProvider = StateNotifierProvider(
 );
 
 class CollectionStateNotifier
-    extends StateNotifier<Map<String, RequestModel>?> {
+    extends StateNotifier?> {
   CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
     var status = loadData();
     Future.microtask(() {
@@ -1751,7 +1751,7 @@ class CollectionStateNotifier
     ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }
 
-  Future<Map<String, dynamic>> exportDataToHAR() async {
+  Future> exportDataToHAR() async {
     var result = await collectionToHAR(state?.values.toList());
     return result;
   }
