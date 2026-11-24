@@ -80,18 +80,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
               requestUrl,
             );
             multiPartRequest.headers.addAll(headers);
-            for (var formData in authenticatedRequestModel.formDataList) {
-              if (formData.type == FormDataType.text) {
-                multiPartRequest.fields.addAll({formData.name: formData.value});
-              } else {
-                multiPartRequest.files.add(
-                  await http.MultipartFile.fromPath(
-                    formData.name,
-                    formData.value,
-                  ),
-                );
-              }
-            }
+            await addFormDataToMultipartRequest(
+              multiPartRequest,
+              authenticatedRequestModel.formDataList,
+            );
             http.StreamedResponse multiPartResponse = await client.send(
               multiPartRequest,
             );
@@ -175,6 +167,33 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 
 void cancelHttpRequest(String? requestId) {
   httpClientManager.cancelRequest(requestId);
+}
+
+/// Adds [formDataList] rows to a multipart [request].
+///
+/// [http.MultipartRequest.fields] is a map, so a repeated text field name
+/// (e.g. `tags=a`, `tags=b`) would keep only the last value. The first
+/// occurrence of a name goes into `fields`; later ones are added as
+/// filename-less parts, which servers read as ordinary form fields.
+Future<void> addFormDataToMultipartRequest(
+  http.MultipartRequest request,
+  List<FormDataModel> formDataList,
+) async {
+  for (final formData in formDataList) {
+    if (formData.type == FormDataType.text) {
+      if (request.fields.containsKey(formData.name)) {
+        request.files.add(
+          http.MultipartFile.fromString(formData.name, formData.value),
+        );
+      } else {
+        request.fields[formData.name] = formData.value;
+      }
+    } else {
+      request.files.add(
+        await http.MultipartFile.fromPath(formData.name, formData.value),
+      );
+    }
+  }
 }
 
 http.Request prepareHttpRequest({
@@ -361,15 +380,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
       requestModel.method.name.toUpperCase(),
       uri,
     )..headers.addAll(headers);
-    for (final data in requestModel.formDataList) {
-      if (data.type == FormDataType.text) {
-        multipart.fields[data.name] = data.value;
-      } else {
-        multipart.files.add(
-          await http.MultipartFile.fromPath(data.name, data.value),
-        );
-      }
-    }
+    await addFormDataToMultipartRequest(multipart, requestModel.formDataList);
     streamedResponse = await client.send(multipart);
   } else if (apiType == APIType.graphql) {
     // Handling GraphQL Requests
