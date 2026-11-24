@@ -357,7 +357,7 @@ abstract class Curl with _$Curl {
 
     // Request flags
     parser.addFlag('head', abbr: 'I');
-    parser.addMultiOption('form', abbr: 'F');
+    parser.addMultiOption('form', abbr: 'F', splitCommas: false);
     parser.addFlag('insecure', abbr: 'k');
     parser.addFlag('location', abbr: 'L');
 

@@ -145,6 +145,38 @@ void main() {
     );
   });
 
+  test(
+    'parse POST request with multipart/form-data containing comma in form value',
+    () {
+      const curl = r'''curl -X POST https://api.apidash.dev/upload \
+  -F "address=123 Main St, Springfield" \
+  -F "city=Springfield, OR"
+      ''';
+
+      expect(
+        Curl.parse(curl),
+        Curl(
+          method: 'POST',
+          uri: Uri.parse('https://api.apidash.dev/upload'),
+          headers: {'Content-Type': 'multipart/form-data'},
+          form: true,
+          formData: const [
+            FormDataModel(
+              name: 'address',
+              value: '123 Main St, Springfield',
+              type: FormDataType.text,
+            ),
+            FormDataModel(
+              name: 'city',
+              value: 'Springfield, OR',
+              type: FormDataType.text,
+            ),
+          ],
+        ),
+      );
+    },
+  );
+
   test('should throw exception when multipart/form-data is not valid', () {
     const curl = r'''curl -X POST https://api.apidash.dev/upload \
   -F "invalid_format" \
