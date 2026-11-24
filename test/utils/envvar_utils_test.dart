@@ -354,6 +354,49 @@ void main() {
         );
       },
     );
+
+    test(
+      "Testing substituteHttpRequestModel with environment variables in GraphQL query",
+      () {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.post,
+          url: "{{url}}/graphql",
+          query: 'query { user(id: "{{num}}", token: "{{token}}") { name } }',
+        );
+        Map<String?, List<EnvironmentVariableModel>> envMap = {
+          kGlobalEnvironmentId: globalVars,
+          "activeEnvId": activeEnvVars,
+        };
+        String? activeEnvironmentId = "activeEnvId";
+        const expected = HttpRequestModel(
+          method: HTTPVerb.post,
+          url: "api.apidash.dev/graphql",
+          query: 'query { user(id: "8940000", token: "token") { name } }',
+        );
+        expect(
+          substituteHttpRequestModel(
+            httpRequestModel,
+            envMap,
+            activeEnvironmentId,
+          ),
+          expected,
+        );
+      },
+    );
+
+    test(
+      "Testing substituteHttpRequestModel keeps a null GraphQL query null",
+      () {
+        const httpRequestModel = HttpRequestModel(url: "{{url}}/graphql");
+        Map<String?, List<EnvironmentVariableModel>> envMap = {
+          kGlobalEnvironmentId: globalVars,
+        };
+        expect(
+          substituteHttpRequestModel(httpRequestModel, envMap, null).query,
+          isNull,
+        );
+      },
+    );
   });
 
   group("Testing getEnvironmentTriggerSuggestions function", () {
