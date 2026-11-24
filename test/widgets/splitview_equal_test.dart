@@ -85,4 +85,49 @@ void main() {
 
     expect(find.text("World equal"), findsOneWidget);
   });
+
+  testWidgets('double-tap on the divider resets panes to a 50:50 split', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1300, 600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Equal SplitView',
+        home: Scaffold(
+          body: EqualSplitView(
+            leftWidget: Column(children: const [Text("Hello equal")]),
+            rightWidget: Column(children: const [Text("World equal")]),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final controller = tester
+        .widget<MultiSplitView>(find.byType(MultiSplitView))
+        .controller!;
+
+    // Make the split uneven, like a user drag would.
+    controller.areas[0].flex = 3;
+    await tester.pumpAndSettle();
+    expect(controller.areas[0].flex, 3);
+
+    // Double-tap the divider.
+    final divider = find.descendant(
+      of: find.byType(MultiSplitView),
+      matching: find.byType(GestureDetector),
+    );
+    expect(divider, findsOneWidget);
+    final center = tester.getCenter(divider);
+    await tester.tapAt(center);
+    await tester.pump(const Duration(milliseconds: 50));
+    await tester.tapAt(center);
+    await tester.pumpAndSettle();
+
+    expect(controller.areas[0].flex, 1);
+    expect(controller.areas[1].flex, 1);
+  });
 }
