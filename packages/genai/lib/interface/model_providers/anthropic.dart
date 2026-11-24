@@ -22,6 +22,7 @@ class AnthropicModel extends ModelProvider {
       headers: const [
         NameValueModel(name: "anthropic-version", value: "2023-06-01"),
       ],
+      isHeaderEnabledList: const [true],
       authModel: aiRequestModel.apiKey == null
           ? null
           : AuthModel(
