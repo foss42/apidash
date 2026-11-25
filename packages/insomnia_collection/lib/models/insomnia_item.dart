@@ -23,14 +23,19 @@ class InsomniaItem {
   final Resource? resource;
   final List<InsomniaItem?>? children;
 
+  /// Builds an [InsomniaItem] tree rooted at the workspace in [collection],
+  /// or returns an empty [InsomniaItem] when no workspace or resources exist.
   factory InsomniaItem.fromInsomniaCollection(
     InsomniaCollection? collection,
   ) {
-    if (collection?.resources == null) {
+    final resources = collection?.resources;
+    if (resources == null || resources.isEmpty) {
       return InsomniaItem();
     }
-    final resources = collection!.resources!;
-    final resourceMap = <String, Resource?>{for (var v in resources) v.id!: v};
+    final resourceMap = <String, Resource?>{
+      for (var v in resources)
+        if (v.id != null) v.id!: v,
+    };
     Map<String, List<String>> childrenMap = {};
     for (var item in resources) {
       if (item.parentId != null && item.id != null) {
@@ -41,7 +46,7 @@ class InsomniaItem {
         }
       }
     }
-    var wksp;
+    InsomniaItem? wksp;
     for (var item in resources) {
       if (item.type == ResourceType.workspace.name) {
         wksp = InsomniaItem(
@@ -57,7 +62,7 @@ class InsomniaItem {
         break;
       }
     }
-    return wksp;
+    return wksp ?? InsomniaItem();
   }
 }
 
