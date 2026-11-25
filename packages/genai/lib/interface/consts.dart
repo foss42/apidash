@@ -13,6 +13,7 @@ final kModelProvidersMap = {
 };
 
 const kAnthropicUrl = 'https://api.anthropic.com/v1/messages';
+const kAnthropicModelsUrl = 'https://api.anthropic.com/v1/models';
 const kGeminiUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 const kOpenAIUrl = 'https://api.openai.com/v1/chat/completions';
 const kOllamaUrl = '$kBaseOllamaUrl/v1/chat/completions';

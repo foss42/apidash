@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genai/interface/consts.dart';
 import 'package:genai/interface/model_providers/openai.dart';
@@ -133,6 +134,75 @@ void main() {
     test('should return null for malformed output', () {
       expect(OpenAIModel.instance.outputFormatter({}), isNull);
       expect(OpenAIModel.instance.streamOutputFormatter({}), isNull);
+    });
+
+    group('list models', () {
+      test('createListModelsRequest returns null without api key', () {
+        expect(
+          OpenAIModel.instance.createListModelsRequest(
+            const AIRequestModel(
+              modelApiProvider: ModelAPIProvider.openai,
+              url: kOpenAIUrl,
+            ),
+          ),
+          isNull,
+        );
+      });
+
+      test('createListModelsRequest builds GET /models with bearer auth', () {
+        final req = OpenAIModel.instance.createListModelsRequest(
+          const AIRequestModel(
+            modelApiProvider: ModelAPIProvider.openai,
+            url: kOpenAIUrl,
+            apiKey: 'sk-test',
+          ),
+        )!;
+        expect(req.method, HTTPVerb.get);
+        expect(req.url, 'https://api.openai.com/v1/models');
+        expect(req.authModel?.type, APIAuthType.bearer);
+      });
+
+      test('listModelsUrl derives endpoint from chat completions url', () {
+        expect(
+          OpenAIModel.listModelsUrl(
+            'https://api.groq.com/openai/v1/chat/completions',
+          ),
+          'https://api.groq.com/openai/v1/models',
+        );
+        expect(
+          OpenAIModel.listModelsUrl(null),
+          'https://api.openai.com/v1/models',
+        );
+        expect(
+          OpenAIModel.listModelsUrl('https://x.test/v1/models'),
+          'https://x.test/v1/models',
+        );
+      });
+
+      test('parseListModelsResponse parses data ids', () {
+        final models = OpenAIModel.instance.parseListModelsResponse(
+          jsonEncode({
+            'object': 'list',
+            'data': [
+              {'id': 'gpt-4o'},
+              {'id': 'gpt-4o-mini'},
+            ],
+          }),
+        )!;
+        expect(models.map((m) => m.id), ['gpt-4o', 'gpt-4o-mini']);
+        expect(models.first.name, 'gpt-4o');
+      });
+
+      test('parseListModelsResponse returns null on bad body', () {
+        expect(
+          OpenAIModel.instance.parseListModelsResponse('not json'),
+          isNull,
+        );
+        expect(
+          OpenAIModel.instance.parseListModelsResponse('{"foo": 1}'),
+          isNull,
+        );
+      });
     });
   });
 }

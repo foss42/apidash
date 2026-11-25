@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genai/consts.dart';
 import 'package:genai/interface/interface.dart';
+import 'package:genai/models/ai_request_model.dart';
 import 'package:genai/models/models_data.g.dart';
 import 'package:genai/utils/model_manager.dart';
 
@@ -38,6 +39,48 @@ void main() {
           ..statusCode = HttpStatus.ok
           ..headers.contentType = ContentType.json
           ..write(jsonEncode({}))
+          ..close();
+      } else if (request.uri.path == '/custom/v1/models') {
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              "object": "list",
+              "data": [
+                {"id": "gpt-4o", "object": "model"},
+                {"id": "gpt-4o-mini", "object": "model"},
+              ],
+            }),
+          )
+          ..close();
+      } else if (request.uri.path == '/gemini/v1beta/models') {
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              "models": [
+                {
+                  "name": "models/gemini-test",
+                  "displayName": "Gemini Test",
+                },
+              ],
+            }),
+          )
+          ..close();
+      } else if (request.uri.path == '/ollama/v1/models') {
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              "object": "list",
+              "data": [
+                {"id": "llama3.2", "object": "model"},
+              ],
+            }),
+          )
           ..close();
       } else if (request.uri.path == '/error') {
         request.response
@@ -129,6 +172,82 @@ void main() {
     test('fetchInstalledOllamaModels network error', () async {
       final res = await ModelManager.fetchInstalledOllamaModels(
         ollamaUrl: 'http://invalid.local',
+      );
+      expect(res, isNull);
+    });
+  });
+
+  group('fetchProviderModels', () {
+    test('openai-compatible provider returns parsed models', () async {
+      final res = await ModelManager.fetchProviderModels(
+        ModelAPIProvider.openai,
+        aiRequestModel: AIRequestModel(
+          modelApiProvider: ModelAPIProvider.openai,
+          url: '$serverUrl/custom/v1/chat/completions',
+          apiKey: 'sk-test',
+        ),
+      );
+      expect(res, isNotNull);
+      expect(res!.map((m) => m.id), ['gpt-4o', 'gpt-4o-mini']);
+    });
+
+    test('gemini provider returns parsed models', () async {
+      final res = await ModelManager.fetchProviderModels(
+        ModelAPIProvider.gemini,
+        aiRequestModel: AIRequestModel(
+          modelApiProvider: ModelAPIProvider.gemini,
+          url: '$serverUrl/gemini/v1beta/models',
+          apiKey: 'gemini-key',
+        ),
+      );
+      expect(res, isNotNull);
+      expect(res!.single.id, 'gemini-test');
+      expect(res.single.name, 'Gemini Test');
+    });
+
+    test('ollama provider returns parsed models without api key', () async {
+      final res = await ModelManager.fetchProviderModels(
+        ModelAPIProvider.ollama,
+        aiRequestModel: AIRequestModel(
+          modelApiProvider: ModelAPIProvider.ollama,
+          url: '$serverUrl/ollama/v1/chat/completions',
+        ),
+      );
+      expect(res, isNotNull);
+      expect(res!.single.id, 'llama3.2');
+    });
+
+    test('returns null when api key is missing', () async {
+      final res = await ModelManager.fetchProviderModels(
+        ModelAPIProvider.openai,
+        aiRequestModel: const AIRequestModel(
+          modelApiProvider: ModelAPIProvider.openai,
+          url: 'https://api.openai.com/v1/chat/completions',
+        ),
+      );
+      expect(res, isNull);
+    });
+
+    test('returns null for providers that cannot list models', () async {
+      final res = await ModelManager.fetchProviderModels(
+        ModelAPIProvider.azureopenai,
+        aiRequestModel: const AIRequestModel(
+          modelApiProvider: ModelAPIProvider.azureopenai,
+          url: 'https://example.openai.azure.com',
+          apiKey: 'key',
+        ),
+      );
+      expect(res, isNull);
+    });
+
+    test('returns null on server error', () async {
+      final res = await ModelManager.fetchProviderModels(
+        ModelAPIProvider.openai,
+        aiRequestModel: AIRequestModel(
+          modelApiProvider: ModelAPIProvider.openai,
+          url: '$serverUrl/error/v1/chat/completions',
+          apiKey: 'sk-test',
+        ),
       );
       expect(res, isNull);
     });

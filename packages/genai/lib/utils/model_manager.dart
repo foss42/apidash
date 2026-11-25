@@ -30,6 +30,38 @@ class ModelManager {
     return null;
   }
 
+  /// Fetches the models a provider makes available to the given credentials
+  /// (e.g. `GET /models` for OpenAI-compatible providers).
+  ///
+  /// Returns `null` when the provider cannot list models, credentials are
+  /// missing, or the request/response cannot be understood. The static
+  /// bundled list remains the fallback in all of those cases.
+  static Future<List<Model>?> fetchProviderModels(
+    ModelAPIProvider provider, {
+    required AIRequestModel aiRequestModel,
+  }) async {
+    try {
+      final modelProvider = kModelProvidersMap[provider];
+      final request = modelProvider?.createListModelsRequest(aiRequestModel);
+      if (request == null) {
+        return null;
+      }
+      final (resp, _, _) = await sendHttpRequest(
+        'FETCH_PROVIDER_MODELS_${provider.name}',
+        APIType.rest,
+        request,
+        noSSL: provider == ModelAPIProvider.ollama,
+      );
+      if (resp == null) {
+        return null;
+      }
+      return modelProvider?.parseListModelsResponse(resp.body);
+    } catch (e) {
+      debugPrint('fetchProviderModels -> ${e.toString()}');
+      return null;
+    }
+  }
+
   static Future<AvailableModels> fetchAvailableModels({
     String? ollamaUrl,
   }) async {

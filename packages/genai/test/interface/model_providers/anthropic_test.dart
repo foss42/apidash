@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:better_networking/better_networking.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genai/interface/model_providers/anthropic.dart';
 import 'package:genai/interface/interface.dart';
 import 'package:genai/models/models.dart';
 
@@ -66,6 +66,60 @@ void main() {
         }),
         'output',
       );
+    });
+
+    group('list models', () {
+      test('createListModelsRequest returns null without api key', () {
+        expect(
+          AnthropicModel.instance.createListModelsRequest(
+            const AIRequestModel(
+              modelApiProvider: ModelAPIProvider.anthropic,
+              url: kAnthropicUrl,
+            ),
+          ),
+          isNull,
+        );
+      });
+
+      test('createListModelsRequest hits /v1/models with api key auth', () {
+        final req = AnthropicModel.instance.createListModelsRequest(
+          const AIRequestModel(
+            modelApiProvider: ModelAPIProvider.anthropic,
+            url: kAnthropicUrl,
+            apiKey: 'sk-ant',
+          ),
+        )!;
+        expect(req.method, HTTPVerb.get);
+        expect(req.url, kAnthropicModelsUrl);
+        expect(req.authModel?.type, APIAuthType.apiKey);
+      });
+
+      test('parseListModelsResponse uses display_name when present', () {
+        final models = AnthropicModel.instance.parseListModelsResponse(
+          jsonEncode({
+            'data': [
+              {
+                'type': 'model',
+                'id': 'claude-test',
+                'display_name': 'Claude Test',
+              },
+            ],
+          }),
+        )!;
+        expect(models.single.id, 'claude-test');
+        expect(models.single.name, 'Claude Test');
+      });
+
+      test('parseListModelsResponse falls back to id for name', () {
+        final models = AnthropicModel.instance.parseListModelsResponse(
+          jsonEncode({
+            'data': [
+              {'type': 'model', 'id': 'claude-test'},
+            ],
+          }),
+        )!;
+        expect(models.single.name, 'claude-test');
+      });
     });
   });
 }

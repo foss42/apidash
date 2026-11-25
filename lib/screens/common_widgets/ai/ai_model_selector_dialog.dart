@@ -19,6 +19,8 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
   late final Future<AvailableModels> aM;
   ModelAPIProvider? selectedProvider;
   AIRequestModel? newAIRequestModel;
+  final Map<ModelAPIProvider, List<Model>> _fetchedModels = {};
+  bool _fetchingModels = false;
 
   @override
   void initState() {
@@ -155,7 +157,7 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
     );
   }
 
-  _buildModelSelector(AIModelProvider? aiModelProvider) {
+  Widget _buildModelSelector(AIModelProvider? aiModelProvider) {
     if (aiModelProvider == null) {
       return Center(child: Text(kLabelSelectAIProvider));
     }
@@ -204,8 +206,19 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(kLabelModels),
-            // IconButton(
-            //     onPressed: () => addNewModel(context), icon: Icon(Icons.add))
+            IconButton(
+              tooltip: kLabelUpdateModels,
+              onPressed: _fetchingModels
+                  ? null
+                  : () => _fetchProviderModels(aiModelProvider.providerId!),
+              icon: _fetchingModels
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.refresh),
+            ),
           ],
         ),
         kVSpacer8,
@@ -221,7 +234,10 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
               clipBehavior: Clip.hardEdge,
               child: Column(
                 children: [
-                  ...(aiModelProvider.models ?? []).map(
+                  ...(_fetchedModels[aiModelProvider.providerId] ??
+                          aiModelProvider.models ??
+                          [])
+                      .map(
                     (x) => ListTile(
                       title: Text(x.name ?? ""),
                       trailing: Row(
@@ -260,5 +276,35 @@ class _AIModelSelectorDialogState extends ConsumerState<AIModelSelectorDialog> {
         ),
       ],
     );
+  }
+
+  /// Fetches the live model list from [provider] using the API key and
+  /// endpoint currently entered in the dialog. On success the fetched list
+  /// replaces the bundled one for this provider until the dialog closes.
+  Future<void> _fetchProviderModels(ModelAPIProvider provider) async {
+    final base = kModelProvidersMap[provider]?.defaultAIRequestModel;
+    if (base == null) return;
+
+    var requestModel = base.copyWith(apiKey: newAIRequestModel?.apiKey ?? '');
+    final userUrl = newAIRequestModel?.url;
+    if (userUrl != null && userUrl.isNotEmpty) {
+      requestModel = requestModel.copyWith(url: userUrl);
+    }
+
+    setState(() => _fetchingModels = true);
+    final models = await ModelManager.fetchProviderModels(
+      provider,
+      aiRequestModel: requestModel,
+    );
+    if (!mounted) return;
+
+    setState(() => _fetchingModels = false);
+    if (models != null) {
+      setState(() => _fetchedModels[provider] = models);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to fetch models')),
+      );
+    }
   }
 }
