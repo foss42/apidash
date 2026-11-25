@@ -72,6 +72,7 @@ API Dash uses a Melos workspace with the root app plus 12 packages.
 | `packages/json_explorer` | Interactive JSON explorer widget |
 | `packages/json_field_editor` | JSON editing, validation, and highlighting widget |
 | `packages/multi_trigger_autocomplete_plus` | Multi-trigger autocomplete used for variable entry patterns |
+| `packages/perf_core` | Pure Dart performance-test results format and metrics calculator (no Flutter deps) |
 
 ## Standard Commands
 
