@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:apidash/services/connection_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -339,22 +340,20 @@ void main() {
 
   group('ConnectionManager — error / abnormal-close edges', () {
     test(
-      'connecting to an unreachable endpoint: channel.ready rejects but the '
-      'channel is still registered (connect itself does not throw)',
+      'connecting to an unreachable endpoint: connect throws and no channel '
+      'is registered',
       () async {
         final manager = ConnectionManager.instance;
         const id = 'req-unreachable';
 
         // Port 1 is reserved/closed, so the handshake cannot complete.
-        // IOWebSocketChannel.connect is lazy: connect() returns synchronously
-        // and only channel.ready surfaces the failure.
-        final channel = await manager.connect(id, 'ws://127.0.0.1:1/ws');
-        expect(manager.hasConnection(id), isTrue);
-
+        // connect() awaits WebSocket.connect, so the failure surfaces from
+        // connect() itself, before the channel is stored.
         await expectLater(
-          channel.ready.timeout(receiveTimeout),
-          throwsA(anything),
+          manager.connect(id, 'ws://127.0.0.1:1/ws').timeout(receiveTimeout),
+          throwsA(isA<SocketException>()),
         );
+        expect(manager.hasConnection(id), isFalse);
       },
     );
 

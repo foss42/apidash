@@ -32,6 +32,8 @@ void main() {
         }
         if (methodCall.method == 'close') return true;
         if (methodCall.method == 'startDragging') return true;
+        // windowManager.startDragging() checks this first on Windows.
+        if (methodCall.method == 'isFullScreen') return false;
         return null;
       },
     );
