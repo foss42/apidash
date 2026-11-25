@@ -37,7 +37,7 @@ Future<Map<String, String>> buildGrpcMetadata(
 ) async {
   final merged = <String, String>{};
 
-  grpcModel.metadataMap.forEach((name, value) {
+  grpcModel.enabledMetadataMap.forEach((name, value) {
     final key = name.trim().toLowerCase();
     if (key.isNotEmpty) merged[key] = value;
   });

@@ -54,7 +54,7 @@ void main() {
       expect(model.parameters, isEmpty);
     });
 
-    test('metadataMap extracts enabled/valid metadata correctly', () {
+    test('enabledMetadataMap extracts enabled/valid metadata correctly', () {
       const model = GrpcRequestModel(
         metadata: [
           NameValueModel(name: 'Authorization', value: 'Bearer token'),
@@ -62,14 +62,44 @@ void main() {
         ],
       );
 
-      final map = model.metadataMap;
+      final map = model.enabledMetadataMap;
       expect(map.length, 1);
       expect(map['Authorization'], 'Bearer token');
     });
 
-    test('metadataMap handles null metadata', () {
+    test('enabledMetadataMap leaves out unchecked rows', () {
+      const model = GrpcRequestModel(
+        metadata: [
+          NameValueModel(name: 'x-on', value: '1'),
+          NameValueModel(name: 'x-off', value: '2'),
+        ],
+        isMetadataEnabled: [true, false],
+      );
+
+      expect(model.enabledMetadataMap, {'x-on': '1'});
+    });
+
+    test('enabledMetadataMap is empty when every row is unchecked', () {
+      const model = GrpcRequestModel(
+        metadata: [NameValueModel(name: 'x-off', value: '2')],
+        isMetadataEnabled: [false],
+      );
+
+      expect(model.enabledMetadataMap, isEmpty);
+    });
+
+    test('enabledMetadataMap keeps rows without saved checkbox states', () {
+      const model = GrpcRequestModel(
+        metadata: [NameValueModel(name: 'x-on', value: '1')],
+        isMetadataEnabled: null,
+      );
+
+      expect(model.enabledMetadataMap, {'x-on': '1'});
+    });
+
+    test('enabledMetadataMap handles null metadata', () {
       const model = GrpcRequestModel(metadata: null);
-      final map = model.metadataMap;
+      final map = model.enabledMetadataMap;
       expect(map, isEmpty);
     });
 
