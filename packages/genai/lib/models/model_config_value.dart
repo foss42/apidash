@@ -57,7 +57,15 @@ class ConfigBooleanValue extends ConfigValue {
 }
 
 class ConfigNumericValue extends ConfigValue {
-  ConfigNumericValue({required num? value}) : super(value);
+  ConfigNumericValue({required num? value})
+    : super(value != null && value.isFinite ? value : null);
+
+  @override
+  dynamic getPayloadValue() {
+    final v = value;
+    if (v is num && !v.isFinite) return null;
+    return v;
+  }
 
   @override
   String serialize() {
@@ -65,7 +73,10 @@ class ConfigNumericValue extends ConfigValue {
   }
 
   static ConfigNumericValue deserialize(String x) {
-    return ConfigNumericValue(value: num.tryParse(x));
+    final parsed = num.tryParse(x);
+    return ConfigNumericValue(
+      value: (parsed != null && parsed.isFinite) ? parsed : null,
+    );
   }
 }
 

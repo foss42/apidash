@@ -161,6 +161,41 @@ void main() {
       await tester.pumpAndSettle();
       expect(updated, isFalse);
     });
+
+    testWidgets('rejects Infinity, -Infinity, and NaN in numeric mode', (
+      tester,
+    ) async {
+      bool updated = false;
+      var config = ModelConfig(
+        id: 'num1',
+        name: 'Num',
+        description: '',
+        type: ConfigType.numeric,
+        value: ConfigNumericValue(value: 10),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AIConfigField(
+              configuration: config,
+              numeric: true,
+              onConfigUpdated: (c) {
+                updated = true;
+              },
+            ),
+          ),
+        ),
+      );
+
+      for (final invalidInput in ['1e309', '-1e309', 'Infinity', 'NaN']) {
+        updated = false;
+        await tester.enterText(find.byType(TextFormField), invalidInput);
+        await tester.pumpAndSettle();
+        expect(updated, isFalse);
+        expect(config.value.value, 10);
+        expect(find.text('Please enter a valid number'), findsOneWidget);
+      }
+    });
   });
 
   group('AIConfigSlider', () {

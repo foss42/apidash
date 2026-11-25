@@ -40,6 +40,26 @@ void main() {
       final nullValue = ConfigNumericValue.deserialize('not_a_number');
       expect(nullValue.value, null);
     });
+
+    test('rejects Infinity, -Infinity, and NaN values', () {
+      expect(ConfigNumericValue(value: double.infinity).value, null);
+      expect(ConfigNumericValue(value: double.negativeInfinity).value, null);
+      expect(ConfigNumericValue(value: double.nan).value, null);
+
+      expect(ConfigNumericValue.deserialize('1e309').value, null);
+      expect(ConfigNumericValue.deserialize('-1e309').value, null);
+      expect(ConfigNumericValue.deserialize('Infinity').value, null);
+      expect(ConfigNumericValue.deserialize('-Infinity').value, null);
+      expect(ConfigNumericValue.deserialize('NaN').value, null);
+
+      final mutated = ConfigNumericValue(value: 10);
+      mutated.value = double.infinity;
+      expect(mutated.getPayloadValue(), null);
+      expect(
+        () => jsonEncode({'max_tokens': mutated.getPayloadValue()}),
+        returnsNormally,
+      );
+    });
   });
 
   group('ConfigSliderValue', () {
