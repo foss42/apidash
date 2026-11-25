@@ -112,6 +112,18 @@ abstract class Curl with _$Curl {
     for (var i = 0; i < tokens.length; i++) {
       final token = tokens[i];
 
+      // The token after an option that takes a value is that value, even if
+      // it starts with a dash, so it must not be filtered as an option
+      final option = token.startsWith('--')
+          ? parser.options[token.substring(2)]
+          : token.length == 2 && token.startsWith('-')
+          ? parser.findByAbbreviation(token[1])
+          : null;
+      if (option != null && !option.isFlag && i + 1 < tokens.length) {
+        filteredTokens.addAll([token, tokens[++i]]);
+        continue;
+      }
+
       if (token.startsWith('--')) {
         final name = token.split('=').first.substring(2);
         if (recognizedOptions.contains(name)) {
