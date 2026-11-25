@@ -97,26 +97,26 @@ void main() {
       .mqttRequestModel!;
 
   testWidgets(
-    'Settings-tab controls carry plain-language help: label help on '
+    'Settings-tab controls carry help: label help on '
     'EnvAuthField controls, adjacent info icons on switches/dropdowns',
     (tester) async {
       await pumpEditor(tester);
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
 
-      // Label help (EnvAuthField.infoText) — jargon-free, non-empty.
-      expect(infoTextOf(tester, 'Client ID'), contains('identify itself'));
-      expect(infoTextOf(tester, 'Port'), contains('door on the service'));
-      expect(infoTextOf(tester, 'Keep Alive (s)'), contains('still here'));
+      // Label help (EnvAuthField.infoText).
+      expect(infoTextOf(tester, 'Client ID'), contains('uniquely identifies'));
+      expect(infoTextOf(tester, 'Port'), contains('1883'));
+      expect(infoTextOf(tester, 'Keep Alive (s)'), contains('PINGREQ'));
 
       // Adjacent info icons on the non-EnvAuthField controls.
       expect(
-        helpIconWith('deliver a message'),
+        helpIconWith('at most once'),
         findsOneWidget,
         reason: 'Default QoS dropdown must have an adjacent help icon',
       );
       expect(
-        helpIconWith('Start fresh'),
+        helpIconWith('Start a fresh session'),
         findsOneWidget,
         reason: 'Clean Session/Start switch must have an adjacent help icon',
       );
@@ -143,7 +143,7 @@ void main() {
     await pumpEditor(tester);
     // Message is the default (first) tab.
     expect(
-      helpIconWith('subject line'),
+      helpIconWith('topic to publish'),
       findsOneWidget,
       reason: 'The "Send to topic" field must carry publish-topic help',
     );
@@ -153,8 +153,8 @@ void main() {
     await pumpEditor(tester);
     await tester.tap(find.text('Auth'));
     await tester.pumpAndSettle();
-    expect(infoTextOf(tester, 'Username'), contains('sign-in name'));
-    expect(infoTextOf(tester, 'Password'), contains('sign-in password'));
+    expect(infoTextOf(tester, 'Username'), contains('Username sent'));
+    expect(infoTextOf(tester, 'Password'), contains('Password sent'));
   });
 
   testWidgets(
@@ -166,7 +166,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final qosBefore = mqttOf(container, id).qos;
-      final iconFinder = helpIconWith('deliver a message');
+      final iconFinder = helpIconWith('at most once');
       final message = tester.widget<MqttHelpIcon>(iconFinder).message;
       // The help copy is not painted anywhere until the overlay is shown.
       expect(find.text(message), findsNothing);
