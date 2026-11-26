@@ -59,10 +59,15 @@ class PostmanIO {
         }
         body = request.body?.raw;
       }
-      if (request.body?.mode == 'formdata') {
+      final mode = request.body?.mode;
+      if (mode == 'formdata' || mode == 'urlencoded') {
         bodyContentType = ContentType.formdata;
         formData = [];
-        for (var fd in request.body?.formdata ?? <pm.Formdatum>[]) {
+        final fields = mode == 'formdata'
+            ? request.body?.formdata
+            : request.body?.urlencoded;
+        for (var fd in fields ?? <pm.Formdatum>[]) {
+          if (fd.disabled ?? false) continue;
           var name = fd.key ?? "";
           FormDataType formDataType;
           try {

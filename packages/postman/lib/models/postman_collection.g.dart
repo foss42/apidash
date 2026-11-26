@@ -126,6 +126,9 @@ _Body _$BodyFromJson(Map json) => _Body(
   formdata: (json['formdata'] as List<dynamic>?)
       ?.map((e) => Formdatum.fromJson(Map<String, dynamic>.from(e as Map)))
       .toList(),
+  urlencoded: (json['urlencoded'] as List<dynamic>?)
+      ?.map((e) => Formdatum.fromJson(Map<String, dynamic>.from(e as Map)))
+      .toList(),
 );
 
 Map<String, dynamic> _$BodyToJson(_Body instance) => <String, dynamic>{
@@ -133,6 +136,7 @@ Map<String, dynamic> _$BodyToJson(_Body instance) => <String, dynamic>{
   'raw': ?instance.raw,
   'options': ?instance.options?.toJson(),
   'formdata': ?instance.formdata?.map((e) => e.toJson()).toList(),
+  'urlencoded': ?instance.urlencoded?.map((e) => e.toJson()).toList(),
 };
 
 _Options _$OptionsFromJson(Map json) => _Options(
@@ -156,6 +160,7 @@ _Formdatum _$FormdatumFromJson(Map json) => _Formdatum(
   value: json['value'] as String?,
   type: json['type'] as String?,
   src: json['src'] as String?,
+  disabled: json['disabled'] as bool?,
 );
 
 Map<String, dynamic> _$FormdatumToJson(_Formdatum instance) =>
@@ -164,4 +169,5 @@ Map<String, dynamic> _$FormdatumToJson(_Formdatum instance) =>
       'value': ?instance.value,
       'type': ?instance.type,
       'src': ?instance.src,
+      'disabled': ?instance.disabled,
     };
