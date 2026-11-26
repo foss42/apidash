@@ -168,6 +168,12 @@ class RequestApplyService {
         .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
         .toList();
 
+    final paramsMap =
+        (payload['params'] as Map?)?.cast<String, dynamic>() ?? {};
+    final params = paramsMap.entries
+        .map((e) => NameValueModel(name: e.key, value: e.value.toString()))
+        .toList();
+
     final body = payload['body'] as String?;
     final formFlag = payload['form'] == true;
     final formDataListRaw = (payload['formData'] as List?)?.cast<dynamic>();
@@ -221,9 +227,9 @@ class RequestApplyService {
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
-        // Wipe existing parameters and authentication to ensure clean state
-        params: const [],
-        isParamEnabledList: const [],
+        // Replace existing parameters with the operation's query params
+        params: params,
+        isParamEnabledList: List<bool>.filled(params.length, true),
       );
       return const ApplyResult(
         systemMessage: 'Applied OpenAPI operation to the selected request.',
@@ -235,6 +241,8 @@ class RequestApplyService {
         url: withEnvUrl,
         headers: headers,
         isHeaderEnabledList: List<bool>.filled(headers.length, true),
+        params: params,
+        isParamEnabledList: List<bool>.filled(params.length, true),
         body: body,
         bodyContentType: bodyContentType,
         formData: formData.isEmpty ? null : formData,
