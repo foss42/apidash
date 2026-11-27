@@ -156,5 +156,26 @@ void main() {
       expect(result, 'mock response');
       expect(agent.formatterFailures, 0);
     });
+
+    test('callAgent returns null when outputFormatter keeps throwing',
+        () async {
+      var agent = MockAIAgent(formatterFailures: 5);
+      var baseObject = AIRequestModel(
+        modelApiProvider: ModelAPIProvider.gemini,
+        model: 'gemini-2.0-flash',
+        url: '$serverUrl/success',
+        apiKey: 'fake_key',
+      );
+
+      final result = await AIAgentService.callAgent(
+        agent,
+        baseObject,
+        query: 'query',
+      );
+
+      expect(result, isNull);
+      // All five attempts were used up.
+      expect(agent.formatterFailures, 0);
+    });
   });
 }
