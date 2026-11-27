@@ -10,8 +10,13 @@ import 'package:genai/agentic_engine/blueprint.dart';
 class MockAIAgent implements AIAgent {
   final bool failValidation;
   final bool throwException;
+  int formatterFailures;
 
-  MockAIAgent({this.failValidation = false, this.throwException = false});
+  MockAIAgent({
+    this.failValidation = false,
+    this.throwException = false,
+    this.formatterFailures = 0,
+  });
 
   @override
   String get agentName => 'mock_agent';
@@ -20,8 +25,13 @@ class MockAIAgent implements AIAgent {
   String getSystemPrompt() => 'Prompt with {{VAR}}';
 
   @override
-  Future<dynamic> outputFormatter(String rawResponse) async =>
-      rawResponse.trim();
+  Future<dynamic> outputFormatter(String rawResponse) async {
+    if (formatterFailures > 0) {
+      formatterFailures--;
+      throw Exception('formatting error');
+    }
+    return rawResponse.trim();
+  }
 
   @override
   Future<bool> validator(String response) async {
@@ -126,6 +136,46 @@ void main() {
       );
 
       expect(result, isNull);
+    });
+
+    test('callAgent retries when outputFormatter throws', () async {
+      var agent = MockAIAgent(formatterFailures: 1);
+      var baseObject = AIRequestModel(
+        modelApiProvider: ModelAPIProvider.gemini,
+        model: 'gemini-2.0-flash',
+        url: '$serverUrl/success',
+        apiKey: 'fake_key',
+      );
+
+      final result = await AIAgentService.callAgent(
+        agent,
+        baseObject,
+        query: 'query',
+      );
+
+      expect(result, 'mock response');
+      expect(agent.formatterFailures, 0);
+    });
+
+    test('callAgent returns null when outputFormatter keeps throwing',
+        () async {
+      var agent = MockAIAgent(formatterFailures: 5);
+      var baseObject = AIRequestModel(
+        modelApiProvider: ModelAPIProvider.gemini,
+        model: 'gemini-2.0-flash',
+        url: '$serverUrl/success',
+        apiKey: 'fake_key',
+      );
+
+      final result = await AIAgentService.callAgent(
+        agent,
+        baseObject,
+        query: 'query',
+      );
+
+      expect(result, isNull);
+      // All five attempts were used up.
+      expect(agent.formatterFailures, 0);
     });
   });
 }
