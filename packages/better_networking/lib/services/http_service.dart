@@ -80,18 +80,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequestV1(
               requestUrl,
             );
             multiPartRequest.headers.addAll(headers);
-            for (var formData in authenticatedRequestModel.formDataList) {
-              if (formData.type == FormDataType.text) {
-                multiPartRequest.fields.addAll({formData.name: formData.value});
-              } else {
-                multiPartRequest.files.add(
-                  await http.MultipartFile.fromPath(
-                    formData.name,
-                    formData.value,
-                  ),
-                );
-              }
-            }
+            await _addFormDataToMultipartRequest(
+              multiPartRequest,
+              authenticatedRequestModel.formDataList,
+            );
             http.StreamedResponse multiPartResponse = await client.send(
               multiPartRequest,
             );
@@ -361,15 +353,7 @@ Future<http.StreamedResponse> makeStreamedRequest({
       requestModel.method.name.toUpperCase(),
       uri,
     )..headers.addAll(headers);
-    for (final data in requestModel.formDataList) {
-      if (data.type == FormDataType.text) {
-        multipart.fields[data.name] = data.value;
-      } else {
-        multipart.files.add(
-          await http.MultipartFile.fromPath(data.name, data.value),
-        );
-      }
-    }
+    await _addFormDataToMultipartRequest(multipart, requestModel.formDataList);
     streamedResponse = await client.send(multipart);
   } else if (apiType == APIType.graphql) {
     // Handling GraphQL Requests
@@ -412,4 +396,30 @@ Future<http.StreamedResponse> makeStreamedRequest({
     streamedResponse = await client.send(request);
   }
   return streamedResponse;
+}
+
+Future<void> _addFormDataToMultipartRequest(
+  http.MultipartRequest request,
+  List<FormDataModel> formDataList,
+) async {
+  final seenTextNames = <String>{};
+  for (final formData in formDataList) {
+    if (formData.type == FormDataType.text) {
+      if (seenTextNames.contains(formData.name)) {
+        // Repeated text field name: keep the first value in `fields` and send
+        // later duplicates as filename-less parts so servers read them as
+        // normal form fields instead of overwriting the earlier value.
+        request.files.add(
+          http.MultipartFile.fromString(formData.name, formData.value),
+        );
+      } else {
+        request.fields[formData.name] = formData.value;
+        seenTextNames.add(formData.name);
+      }
+    } else {
+      request.files.add(
+        await http.MultipartFile.fromPath(formData.name, formData.value),
+      );
+    }
+  }
 }
