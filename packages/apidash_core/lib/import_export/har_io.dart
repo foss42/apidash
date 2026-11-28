@@ -57,17 +57,24 @@ class HarParserIO {
     if (mimeType == "application/x-www-form-urlencoded") {
       bodyContentType = ContentType.formdata;
       var formDataStr = request.postData?.text;
-      Map<String, String> parsedData = parseFormData(formDataStr);
-      parsedData.forEach((key, value) {
-        formDataType = FormDataType.text;
-        var name = key;
-        var val = value;
-        formData.add(FormDataModel(
-          name: name,
-          value: val,
-          type: formDataType,
-        ));
-      });
+      if (formDataStr != null && formDataStr.isNotEmpty) {
+        for (final (name, value) in parseFormDataEntries(formDataStr)) {
+          formData.add(
+            FormDataModel(name: name, value: value, type: FormDataType.text),
+          );
+        }
+      } else if (request.postData?.params != null) {
+        for (final fd in request.postData!.params!) {
+          if (fd.disabled ?? false) continue;
+          formData.add(
+            FormDataModel(
+              name: fd.name ?? "",
+              value: fd.value ?? "",
+              type: FormDataType.text,
+            ),
+          );
+        }
+      }
     } else if (mimeType == "multipart/form-data") {
       bodyContentType = ContentType.formdata;
       String? name, val;
@@ -80,11 +87,9 @@ class HarParserIO {
           formDataType = FormDataType.file;
           val = fd.fileName;
         }
-        formData.add(FormDataModel(
-          name: name ?? "",
-          value: val ?? "",
-          type: formDataType,
-        ));
+        formData.add(
+          FormDataModel(name: name ?? "", value: val ?? "", type: formDataType),
+        );
       }
     } else if (request.postData?.text != null) {
       bodyContentType =
@@ -93,27 +98,30 @@ class HarParserIO {
     }
 
     return HttpRequestModel(
-        method: method,
-        url: url,
-        headers: headers,
-        params: params,
-        isHeaderEnabledList: isHeaderEnabledList,
-        isParamEnabledList: isParamEnabledList,
-        body: body,
-        bodyContentType: bodyContentType,
-        formData: formData);
+      method: method,
+      url: url,
+      headers: headers,
+      params: params,
+      isHeaderEnabledList: isHeaderEnabledList,
+      isParamEnabledList: isParamEnabledList,
+      body: body,
+      bodyContentType: bodyContentType,
+      formData: formData,
+    );
   }
 
-  Map<String, String> parseFormData(String? data) {
-    // Return an empty map if the input is null or empty
+  /// Parses a URL-encoded form body into ordered `(key, value)` pairs,
+  /// preserving duplicate keys.
+  List<(String, String)> parseFormDataEntries(String? data) {
+    // Return an empty list if the input is null or empty
     if (data == null || data.isEmpty) {
-      return {};
+      return [];
     }
     // Split the input string into individual key-value pairs
     var pairs = data.split('&');
 
-    // Create a Map to store key-value pairs
-    Map<String, String> result = {};
+    // Collect key-value pairs in order without collapsing duplicate keys
+    final List<(String, String)> result = [];
 
     // Loop through the pairs and split them into keys and values
     for (var pair in pairs) {
@@ -128,10 +136,14 @@ class HarParserIO {
           pair.substring(separatorIndex + 1).replaceAll('+', ' '),
         );
 
-        result[key] = value;
+        result.add((key, value));
       }
     }
 
     return result;
+  }
+
+  Map<String, String> parseFormData(String? data) {
+    return {for (final (key, value) in parseFormDataEntries(data)) key: value};
   }
 }

@@ -16,38 +16,31 @@ void main() {
     });
 
     test('keeps values containing a trailing = (base64)', () {
-      expect(
-        harParser.parseFormData('token=YWJjZA=='),
-        {'token': 'YWJjZA=='},
-      );
+      expect(harParser.parseFormData('token=YWJjZA=='), {'token': 'YWJjZA=='});
     });
 
     test('keeps values containing = in the middle', () {
-      expect(
-        harParser.parseFormData('filter=a=b'),
-        {'filter': 'a=b'},
-      );
+      expect(harParser.parseFormData('filter=a=b'), {'filter': 'a=b'});
     });
 
     test('preserves all pairs when a value contains =', () {
-      expect(
-        harParser.parseFormData('user=deepak&token=abc==&role=admin'),
-        {'user': 'deepak', 'token': 'abc==', 'role': 'admin'},
-      );
+      expect(harParser.parseFormData('user=deepak&token=abc==&role=admin'), {
+        'user': 'deepak',
+        'token': 'abc==',
+        'role': 'admin',
+      });
     });
 
     test('decodes percent-encoded keys and values', () {
-      expect(
-        harParser.parseFormData('full%20name=John%20Doe'),
-        {'full name': 'John Doe'},
-      );
+      expect(harParser.parseFormData('full%20name=John%20Doe'), {
+        'full name': 'John Doe',
+      });
     });
 
     test('decodes plus signs as spaces in form data', () {
-      expect(
-        harParser.parseFormData('full+name=John+Doe'),
-        {'full name': 'John Doe'},
-      );
+      expect(harParser.parseFormData('full+name=John+Doe'), {
+        'full name': 'John Doe',
+      });
     });
 
     test('handles an empty value', () {
@@ -57,6 +50,33 @@ void main() {
     test('returns an empty map for null or empty input', () {
       expect(harParser.parseFormData(null), {});
       expect(harParser.parseFormData(''), {});
+    });
+  });
+
+  group('HarParserIO parseFormDataEntries', () {
+    late HarParserIO harParser;
+
+    setUp(() {
+      harParser = HarParserIO();
+    });
+
+    test('preserves duplicate keys in order', () {
+      expect(
+        harParser.parseFormDataEntries(
+          'tag=red&tag=blue&tag=green&name=apidash',
+        ),
+        const [
+          ('tag', 'red'),
+          ('tag', 'blue'),
+          ('tag', 'green'),
+          ('name', 'apidash'),
+        ],
+      );
+    });
+
+    test('returns an empty list for null or empty input', () {
+      expect(harParser.parseFormDataEntries(null), isEmpty);
+      expect(harParser.parseFormDataEntries(''), isEmpty);
     });
   });
 
@@ -120,5 +140,50 @@ void main() {
       expect(request.bodyContentType, ContentType.text);
       expect(request.body, 'hello');
     });
+
+    test('keeps duplicate keys in url-encoded postData.text in order', () {
+      final request = importPostData({
+        'mimeType': 'application/x-www-form-urlencoded',
+        'text': 'tag=red&tag=blue&tag=green&name=apidash',
+      });
+      expect(request.bodyContentType, ContentType.formdata);
+      expect(request.formData, const [
+        FormDataModel(name: 'tag', value: 'red', type: FormDataType.text),
+        FormDataModel(name: 'tag', value: 'blue', type: FormDataType.text),
+        FormDataModel(name: 'tag', value: 'green', type: FormDataType.text),
+        FormDataModel(name: 'name', value: 'apidash', type: FormDataType.text),
+      ]);
+    });
+
+    test('keeps duplicate keys in url-encoded postData.text with charset', () {
+      final request = importPostData({
+        'mimeType': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'text': 'tag=red&tag=blue',
+      });
+      expect(request.bodyContentType, ContentType.formdata);
+      expect(request.formData, const [
+        FormDataModel(name: 'tag', value: 'red', type: FormDataType.text),
+        FormDataModel(name: 'tag', value: 'blue', type: FormDataType.text),
+      ]);
+    });
+
+    test(
+      'keeps duplicate keys in url-encoded postData.params when text is absent',
+      () {
+        final request = importPostData({
+          'mimeType': 'application/x-www-form-urlencoded',
+          'params': [
+            {'name': 'tag', 'value': 'red'},
+            {'name': 'tag', 'value': 'blue'},
+            {'name': 'skip', 'value': 'ignored', 'disabled': true},
+          ],
+        });
+        expect(request.bodyContentType, ContentType.formdata);
+        expect(request.formData, const [
+          FormDataModel(name: 'tag', value: 'red', type: FormDataType.text),
+          FormDataModel(name: 'tag', value: 'blue', type: FormDataType.text),
+        ]);
+      },
+    );
   });
 }
